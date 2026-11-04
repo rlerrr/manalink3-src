@@ -428,8 +428,7 @@ int card_dragonsoul_knight(int player, int card, event_t event)
     instance->targets[3].player = instance->targets[3].player | 0x40000;
     add_status(player, result, 0x10000);
   }
-  result = generic_activated_ability(player, card, event, 0, 0, 1, 1, 1, 1, 1, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 0, 0, 1, 1, 1, 1, 1, 0, NULL, NULL);
 }
 
 int card_dreadwing(int player, int card, event_t event){
@@ -776,11 +775,11 @@ int card_goblin_razerunners(int player, int card, event_t event)
   int cless;
   int sacrificable_lands;
 
-  if ((trigger_condition == 0xcd) && (current_turn == player))
+  if ((trigger_condition == TRIGGER_EOT) && (current_turn == player))
   {
     target_definition_t td;
     default_target_definition(player, card, &td, 0x100);
-    td.zone = 4608;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     instance = get_card_instance(player, card);
     trigger_or_mana_result = count_counters(player, card, COUNTER_P1_P1);
     if ((trigger_or_mana_result < 1) ||
@@ -1563,8 +1562,7 @@ int card_paragon_of_the_amesha(int player, int card, event_t event)
     instance->targets[3].player = instance->targets[3].player | 0x40000;
     add_status(player, result, 0x10000);
   }
-  result = generic_activated_ability(player, card, event, 0, 0, 1, 1, 1, 1, 1, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 0, 0, 1, 1, 1, 1, 1, 0, NULL, NULL);
 }
 
 int card_parasitic_strix(int player, int card, event_t event){
@@ -2323,37 +2321,22 @@ Put one of those cards into your hand and the rest on the bottom of your library
 /* ManalinkEh 2022: 0x21e3e60; original cards/conflux.c:442. */
 int card_elder_mastery(int player, int card, event_t event)
 {
-  unsigned int damage_counts_or_turn_player;
-  int player_00;
-  card_instance_t *instance;
-  int result;
-  int times_damaged[2];
-  instance = get_card_instance(player, card);
-  if ((-1 < instance->damage_target_player) &&
-      (result = attached_creature_deals_damage(
-           player, card, event, DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER),
-       result != 0))
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->damage_target_player >= 0 &&
+      attached_creature_deals_damage(player, card, event,
+                                     DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER))
   {
     instance = get_card_instance(player, card);
-    player_00 = current_turn;
-    damage_counts_or_turn_player = instance->targets[1].player;
+    unsigned int packed_damage = instance->targets[1].player;
     instance->targets[1].player = 0;
-    times_damaged[0] = damage_counts_or_turn_player & 0xff;
-    times_damaged[1] = damage_counts_or_turn_player >> 8 & 0xff;
-    result = times_damaged[player_00];
-    damage_counts_or_turn_player = player_00;
-    while (result != 0)
-    {
-      new_multidiscard(player_00, 2, 0, player);
-      result = result + -1;
-      times_damaged[player_00] = result;
-      damage_counts_or_turn_player = current_turn;
-    }
-    for (result = times_damaged[damage_counts_or_turn_player ^ 1]; result != 0;
-         result = result + -1)
-    {
-      new_multidiscard(damage_counts_or_turn_player ^ 1, 2, 0, player);
-    }
+    int times_damaged[2] = {packed_damage & 0xff, packed_damage >> 8 & 0xff};
+    APNAP(p, {
+      while (times_damaged[p])
+      {
+        new_multidiscard(p, 2, 0, player);
+        --times_damaged[p];
+      }
+    });
   }
   return generic_aura(player, card, event, player, 3, 3, 0x20, 0, 0, 0, 0);
 }
@@ -2371,7 +2354,7 @@ int card_unstable_frontier(int player, int card, event_t event)
 
   int result;
   card_instance_t *instance;
-  int card_00;
+  int legacy_card;
   bool not_speculating;
   target_definition_t td;
 
@@ -2393,7 +2376,7 @@ int card_unstable_frontier(int player, int card, event_t event)
         instance->info_slot = 2;
         if ((not_speculating) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
         {
-          result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
+          result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Get mana", 1, 1,
                                "Change land type", 1, 5, 0, 0, 0, 0);
           if (result == 0)
           {
@@ -2438,9 +2421,9 @@ int card_unstable_frontier(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       result = recorded_rand(player, 5);
       result = choose_a_land(player, result + 1);
-      card_00 = create_targetted_legacy_effect(
+      legacy_card = create_targetted_legacy_effect(
           player, card, fx_change_landtype, instance->targets[0].player, instance->targets[0].card);
-      instance = get_card_instance(player, card_00);
+      instance = get_card_instance(player, legacy_card);
       instance->targets[1].player = result;
       return 0;
     }

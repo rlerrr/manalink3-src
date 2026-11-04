@@ -431,7 +431,7 @@ static int store_counters_legacy(int player, int card, event_t event)
 
 static void return_auras_and_counters_to_play(int player, int card)
 {
-  int player_00;
+  int target_player;
   unsigned int return_mode;
   card_instance_t *instance;
   int result;
@@ -442,24 +442,24 @@ static void return_auras_and_counters_to_play(int player, int card)
   int8_t attachment_player;
 
   instance = get_card_instance(player, card);
-  player_00 = instance->targets[0].player;
+  target_player = instance->targets[0].player;
   return_mode = instance->targets[0x12].player;
-  result = check_rfg(player_00, (unsigned int)cards_data[instance->targets[0].card].id);
+  result = check_rfg(target_player, (unsigned int)cards_data[instance->targets[0].card].id);
   returned_card = -1;
   if (result != 0)
   {
-    returned_card = add_card_to_hand(player_00, instance->targets[0].card);
-    remove_card_from_rfg(player_00, (unsigned int)cards_data[instance->targets[0].card].id);
+    returned_card = add_card_to_hand(target_player, instance->targets[0].card);
+    remove_card_from_rfg(target_player, (unsigned int)cards_data[instance->targets[0].card].id);
     if ((int)return_mode < 1)
     {
-      put_into_play(player_00, returned_card);
+      put_into_play(target_player, returned_card);
       return;
     }
     if ((return_mode & 0x10) != 0)
     {
-      add_state(player_00, returned_card, 0x10);
+      add_state(target_player, returned_card, 0x10);
     }
-    put_into_play(player_00, returned_card);
+    put_into_play(target_player, returned_card);
     if (((-1 < returned_card) && ((return_mode & 0x2a) != 0)) && (0 < active_cards_count[player]))
     {
       result = 0;
@@ -471,7 +471,7 @@ static void return_auras_and_counters_to_play(int player, int card)
             (((CardFunction)aura_or_counter_legacy->info_slot == store_counters_legacy &&
               (aura_or_counter_legacy->targets[0x11].card == instance->targets[0x12].card))))
         {
-          copy_counters(player, card, player_00, returned_card, player, result, 1);
+          copy_counters(player, card, target_player, returned_card, player, result, 1);
           kill_card(player, result, KILL_EXILE);
           break;
         }
@@ -493,7 +493,7 @@ static void return_auras_and_counters_to_play(int player, int card)
         result = add_card_to_hand(aura_record->player, aura_record->card);
         remove_card_from_rfg(aura_record->player, (unsigned int)cards_data[aura_record->card].id);
         aura_or_counter_legacy = get_card_instance(aura_record->player, result);
-        attachment_player = (int8_t)player_00;
+        attachment_player = (int8_t)target_player;
         aura_or_counter_legacy->damage_target_player = attachment_player;
         aura_or_counter_legacy->damage_target_card = returned_card;
         set_special_flags(aura_record->player, result, 0x20000000);

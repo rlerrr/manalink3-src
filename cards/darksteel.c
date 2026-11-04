@@ -686,13 +686,13 @@ int card_coretapper(int player, int card, event_t event)
     if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
     {
       td.extra = (int32_t)target_must_natively_use_charge_counters;
-      td.special = 0x8000;
+      td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     }
     result = can_sacrifice_this_as_cost(player, card);
-    result = dialog_impl(player, card, event, "Tap for 1 charge counter", 1, 3, "\001\020", 0, 0, 0,
-                         0, 0, 0, "\001\025", "\001\024", &td, "TARGET_ARTIFACT",
-                         "Sacrifice for 2 charge counters", result, 1, "\001\020", 0, 0, 0, 0, 0, 0,
-                         "\001\024", &td, "TARGET_ARTIFACT", 0, 0, 0, 0);
+    result = dialog_impl(player, card, event, "Tap for 1 charge counter", 1, 3, DLG_MANA6(0, 0, 0,
+                         0, 0, 0), DLG_TAP, DLG_TARGET(&td, "TARGET_ARTIFACT"),
+                         "Sacrifice for 2 charge counters", result, 1, DLG_MANA6(0, 0, 0, 0, 0, 0),
+                         DLG_TARGET(&td, "TARGET_ARTIFACT"), 0, 0, 0, 0);
     if (event != EVENT_CAN_ACTIVATE)
     {
       if (event != EVENT_ACTIVATE && event != EVENT_CAN_ACTIVATE)
@@ -870,80 +870,38 @@ int card_dismantle(int player, int card, event_t event)
   target_definition_t td;
   target_definition_t td2;
 
-  if (event == EVENT_CAN_CAST)
-  {
-    default_target_definition(player, card, &td, 0x40);
-    td.preferred_controller = 2;
-    get_card_instance(player, card);
-    return generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_ARTIFACT", 1, NULL);
-  }
-  if (event == EVENT_CAST_SPELL)
-  {
-    if (card != affected_card)
-    {
-      return 0;
-    }
-    if (player != affected_card_controller)
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 0x40);
-    td.preferred_controller = 2;
-    instance = get_card_instance(player, card);
-    if (((card != affected_card) || (player != affected_card_controller)) ||
-        (generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ARTIFACT", 1, NULL),
-         spell_fizzled == 1))
-      return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
-    target_player_or_counters = instance->targets[0].player;
-    target_card_or_priority = instance->targets[0].card;
-    if (player == target_player_or_counters)
-    {
-      target_player_or_counters = get_id(player, target_card_or_priority);
-      if (target_player_or_counters == 0x1adb)
-      {
-        target_player_or_counters =
-            count_counters(player, target_card_or_priority, COUNTER_invalid);
-        ai_modifier = ai_modifier + target_player_or_counters * 5;
-        return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
-      }
-    }
-    else
-    {
-      target_id_or_available = get_id(target_player_or_counters, target_card_or_priority);
-      if (target_id_or_available != 0x1adb)
-      {
-        ai_modifier = ai_modifier + 10;
-        return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
-      }
-      default_target_definition(player, card, &td2, 0x40);
-      td2.preferred_controller = player;
-      td2.allowed_controller = player;
-      if (can_target(&td2) != 0)
-      {
-        target_player_or_counters =
-            count_counters(target_player_or_counters, target_card_or_priority, COUNTER_invalid);
-        ai_modifier = ai_modifier + target_player_or_counters * 5;
-        return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
-      }
-    }
-    ai_modifier = ai_modifier + -0x19;
-    return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
-  }
-  if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
-  {
-    if (event != EVENT_CHANGE_TARGET)
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 0x40);
-    td.preferred_controller = 2;
-    get_card_instance(player, card);
-    return generic_spell(player, card, event, 1, &td, "TARGET_ARTIFACT", 1, NULL);
-  }
+  if (!IS_GS_EVENT(player, card, event))
+    return 0;
   default_target_definition(player, card, &td, 0x40);
   td.preferred_controller = 2;
   instance = get_card_instance(player, card);
-  if (!(event != EVENT_RESOLVE_SPELL))
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ARTIFACT", 1, NULL);
+    if (spell_fizzled != 1)
+    {
+      int ai_adjustment = -0x19;
+      int t_player = instance->targets[0].player;
+      int t_card = instance->targets[0].card;
+      if (player == t_player)
+      {
+        if (get_id(player, t_card) == CARD_ID_DARKSTEEL_REACTOR)
+          ai_adjustment = count_counters(player, t_card, COUNTER_invalid) * 5;
+      }
+      else if (get_id(t_player, t_card) != CARD_ID_DARKSTEEL_REACTOR)
+        ai_adjustment = 10;
+      else
+      {
+        default_target_definition(player, card, &td2, 0x40);
+        td2.preferred_controller = player;
+        td2.allowed_controller = player;
+        if (can_target(&td2))
+          ai_adjustment = count_counters(t_player, t_card, COUNTER_invalid) * 5;
+      }
+      ai_modifier += ai_adjustment;
+    }
+  }
+  if (event == EVENT_RESOLVE_SPELL)
   {
     if (valid_target(&td) != 0)
     {
@@ -959,11 +917,11 @@ int card_dismantle(int player, int card, event_t event)
         target_card_or_priority = 0;
         if (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0))
         {
-          td.special = 8;
+          td.special = TARGET_SPECIAL_ARTIFACT_CREATURE;
           if (can_target(&td) == 0)
           {
             td.extra = (int32_t)target_must_natively_use_charge_counters;
-            td.special = 0x8000;
+            td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
             target_id_or_available = can_target(&td);
             target_card_or_priority = 1;
             if (target_id_or_available == 0)
@@ -3149,7 +3107,7 @@ int card_talon_of_pain(int player, int card, event_t event)
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     if (event == EVENT_CAN_ACTIVATE)
     {
       return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 0, 0, 0,
@@ -3215,7 +3173,7 @@ int card_talon_of_pain(int player, int card, event_t event)
     }
     default_target_definition(player, card, &td, 0x102);
   }
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   if ((event == EVENT_RESOLVE_ACTIVATION) &&
       (counters_to_remove_or_result = valid_target(&td), counters_to_remove_or_result != 0))
   {
@@ -3629,29 +3587,20 @@ int card_slobad_goblin_tinkerer(int player, int card, event_t event)
   target_definition_t td;
   test_definition_t test;
 
-  if (event == EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  default_target_definition(player, card, &td, 0x40);
+  new_default_test_definition(&test, 0x40, "Select an artifact to sacrifice.");
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    default_target_definition(player, card, &td, 0x40);
-    new_default_test_definition(&test, 0x40, "Select an artifact to sacrifice.");
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    instance = get_card_instance(player, card);
+    result = valid_target(&td);
+    if (result != 0)
     {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 0x40);
-    new_default_test_definition(&test, 0x40, "Select an artifact to sacrifice.");
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      instance = get_card_instance(player, card);
-      result = valid_target(&td);
-      if (result != 0)
-      {
-        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
-                               instance->targets[0].player, instance->targets[0].card, 0, 0, 0,
-                               0x800);
-      }
+      pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                             instance->targets[0].player, instance->targets[0].card, 0, 0, 0,
+                             0x800);
     }
   }
   result = generic_activated_ability_with_sacrifice_as_cost(
@@ -3733,7 +3682,7 @@ int card_spawning_pit(int player, int card, event_t event)
       sacrifice_available_or_choice = generic_activated_ability_with_sacrifice_as_cost(
           player, card, EVENT_CAN_ACTIVATE, GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, TYPE_NONE,
           &test, SARV_0);
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1,
                            "Put a charge counter", sacrifice_available_or_choice, 5, "Create Token",
                            generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0,
                                                      0, 0, 0, 0x17b0200, NULL, NULL),
@@ -3778,7 +3727,7 @@ int card_spawning_pit(int player, int card, event_t event)
     }
     if (sacrifice_available_or_choice == CHOICE_TOKEN)
     {
-      generate_token_by_id(instance->parent_controller, instance->parent_card, 0x4988);
+      generate_token_by_id(instance->parent_controller, instance->parent_card, CARD_ID_SPAWN);
       return 0;
     }
   }
@@ -3838,7 +3787,7 @@ int card_arcbound_fiend(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
     if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
     {
-      td.special = 0x44000;
+      td.special = TARGET_SPECIAL_NOT_ME | TARGET_SPECIAL_REQUIRES_COUNTER;
       td.extra = 0;
     }
     instance = get_card_instance(player, card);

@@ -1,0 +1,244 @@
+{
+  "format": 1,
+  "status": "Fifty small-difference functions reviewed; two native arithmetic forms restored. Deafening Silence gains strict full native CFG correspondence, all 48 unchanged compiled contexts retained, build and 15,169 fixed slots pass.",
+  "files": [
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "before_bytes_sha256": "1f49c5a36a9455f9ceddb03dcfed76f68c962f4770b26f0d7384d4b7f2dbd539",
+      "after_bytes_sha256": "c87db72057d0c5410c4425f3512649846e7c4fc7226d864bd4761025d0261ba0",
+      "before_sha256": "ae1bc625a0f2cc546c601bc0790e9b8c26f982a9c2cba983d62684bfc842febe",
+      "after_sha256": "bbdd9645454c3d15559febe5cefe2d378a85b961d0feba2d2b3b5b9401ccabdd"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "before_bytes_sha256": "0ce91c984a59b32e0eb8f8a55bee935caa63eed9b6de2e712b1ecf469c93b874",
+      "after_bytes_sha256": "3c5166deaff1d45516b48e071a10f33be1f30d8536fb9d5de96d606ceb6f0704",
+      "before_sha256": "779e204e466ce34bcdea3e2f5d92560dbb4dace3d68581a237a7ba8e56b014b1",
+      "after_sha256": "d694bb5a0f1c6334de04fac38c57e6527a9a5c1502c87893c448c768e7b724b8"
+    }
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "baseline": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "1924720ae1023f518acd48c69fb4577118ebc0184ec93d412ed7a3d1f9906f76",
+      "ManalinkEh.dbg": "394da9225d2ec4eab357445ea923df1a4b608820634b56ec1ffb0baab325ebe0"
+    },
+    "results": [
+      {
+        "name": "card_deafening_silence",
+        "matched": false,
+        "reason": "('Operation changed', 'sub', 'cmp')",
+        "ranges": [
+          {
+            "address": "0x25cd560",
+            "size": 151,
+            "sha256": "eebf6f72ad5d9c2c24f2412770673e3218e42629c1655db15a9abac1866d3c88",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x257f030",
+            "size": 160,
+            "sha256": "f9cbddd16853d295eb5e559cfd2fccbffc95873451b421c08377d8c182c32d69",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_togglodyte",
+        "matched": false,
+        "reason": "('Operation changed', 'sar', 'shr')",
+        "ranges": [
+          {
+            "address": "0x2306480",
+            "size": 533,
+            "sha256": "eeeec5199dd79539fc182b39d378de20f3317eab8a84ab67498cc294c62e2b48",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x25ae100",
+            "size": 544,
+            "sha256": "fc4235b1adfd034bf3fa4a0040807be17376fc54db8db505382ec82fb1d0de38",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      }
+    ],
+    "checker_sha256": "be29e787b336fd3934957e792bb1bb2b8eb1f62043177543dc54d57db1486798",
+    "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+    "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+  },
+  "scope": "Two source arithmetic clarifications within a 50-function small-difference review. Deafening Silence avoids C signed-overflow UB while retaining the native wrapped predicate; Togglodyte restores signed high-word spelling with equivalent tag comparisons. No newly demonstrated gameplay behavior changes or original exact source spelling claimed.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "074ace25a820c556654dbce422b6178bb0f22a117c6837398ff6ca099553ec47",
+    "debug_sha256": "6a00e20a867d2cb044c288cbfec1760a4a7b71aab9f0e82563273da12746c5da",
+    "build_log_sha256": "3c69dae9160fa331e67565773381e0550e7fac71e2b14837efdc70d9321e0abc",
+    "source_definitions": 2,
+    "exact_file_projections": 2,
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "074ace25a820c556654dbce422b6178bb0f22a117c6837398ff6ca099553ec47",
+        "ManalinkEh.dbg": "6a00e20a867d2cb044c288cbfec1760a4a7b71aab9f0e82563273da12746c5da"
+      },
+      "results": [
+        {
+          "name": "card_deafening_silence",
+          "matched": true,
+          "proof": {
+            "cfg_states": 47,
+            "reached_instruction_counts": [
+              47,
+              47
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x267c220",
+                "rebuilt": "0x26869d0",
+                "identity": "_global_enchantment"
+              },
+              {
+                "native": "0x2681ca0",
+                "rebuilt": "0x2694c50",
+                "identity": "_is_what"
+              },
+              {
+                "native": "0x2691230",
+                "rebuilt": "0x26892b0",
+                "identity": "_infinite_casting_cost"
+              },
+              {
+                "native": "0x26c81a0",
+                "rebuilt": "0x26d4ac0",
+                "identity": "_get_specific_storm_count"
+              },
+              {
+                "native": "0x26c8240",
+                "rebuilt": "0x26d4b60",
+                "identity": "_get_stormcreature_count"
+              },
+              {
+                "native": "0x26dd430",
+                "rebuilt": "0x2653530",
+                "identity": "_is_humiliated"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x25cd560",
+              "size": 151,
+              "sha256": "eebf6f72ad5d9c2c24f2412770673e3218e42629c1655db15a9abac1866d3c88",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x257f030",
+              "size": 160,
+              "sha256": "b399686380ed66f8bf8cbf323b48136fa64a5a74769ec9e7f5158f3158aab52e",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_togglodyte",
+          "matched": false,
+          "reason": "Operand type or width changed",
+          "ranges": [
+            {
+              "address": "0x2306480",
+              "size": 533,
+              "sha256": "eeeec5199dd79539fc182b39d378de20f3317eab8a84ab67498cc294c62e2b48",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25ae100",
+              "size": 544,
+              "sha256": "451f952a09e2adbb1434b30819cb157968051cae9606b89cf20a7a3e059fd814",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "be29e787b336fd3934957e792bb1bb2b8eb1f62043177543dc54d57db1486798",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "new_complete_cfg_matches": [
+      "card_deafening_silence"
+    ],
+    "retained_source_contexts": 48,
+    "strict_retained_cfg_contexts": 47,
+    "complete_stream_with_noreturn_end": 1,
+    "manual_review_archive": {
+      "path": "docs/recovery-evidence/reccmp-tiny-site-batch-c693.json.gz",
+      "sha256": "6cb21f9fc73a82c6c4aeac000cafd9224518ca4eb23682f57af76138c9b55d01",
+      "functions": 50
+    },
+    "arithmetic_packets": [
+      {
+        "name": "card_togglodyte",
+        "native_c692_c693_shifts": [
+          [
+            {
+              "address": "0x2306529",
+              "instruction": "sar edx, 0x10"
+            },
+            {
+              "address": "0x23065a0",
+              "instruction": "sar edx, 0x10"
+            },
+            {
+              "address": "0x2306654",
+              "instruction": "sar edx, 0x10"
+            }
+          ],
+          [
+            {
+              "address": "0x25ae1a9",
+              "instruction": "shr edx, 0x10"
+            },
+            {
+              "address": "0x25ae220",
+              "instruction": "shr edx, 0x10"
+            },
+            {
+              "address": "0x25ae2d4",
+              "instruction": "shr edx, 0x10"
+            }
+          ],
+          [
+            {
+              "address": "0x25ae1a9",
+              "instruction": "sar edx, 0x10"
+            },
+            {
+              "address": "0x25ae220",
+              "instruction": "sar edx, 0x10"
+            },
+            {
+              "address": "0x25ae2d4",
+              "instruction": "sar edx, 0x10"
+            }
+          ]
+        ],
+        "current_range": {
+          "address": "0x25ae100",
+          "size": 544,
+          "sha256": "451f952a09e2adbb1434b30819cb157968051cae9606b89cf20a7a3e059fd814",
+          "bounds": "entry through next COFF function start, including trailing padding",
+          "bytes_hex": "5589e557565383ec188b7d108b5d088b750c83ff710f844d010000c744241400000000c744241002000000c744240c02000000897c240889742404891c24e80d8b0f0085c00f857501000083ff340f8484000000893c24e834ba0b0085c074080fbe500c39da741083c41831c05b5e5f5dc38db60000000039704875ebc74424080400000089742404891c24e89f530a0085c075d389742404891c24e84fcd0b008b809c00000089c2c1fa106681fad84575b56685c075b0a18c397a00c7442408ffffffff89442404a1848c7300890424e88a611000eb9039358c397a000f8570ffffff391d848c73000f8564ffffffc74424080400000089742404891c24e82c530a0085c00f8548ffffff89742404891c24e8d8cc0b008b809c00000089c2c1fa106681fad8450f8526ffffff6685c00f851dffffffc74424083400000089742404891c24e8950b0e00c74424083400000089742404891c24e851560a00e9f0feffff8d742600c744241001000000c744240cd8450000c7442408f0b35a0289742404891c24e814e8ffffc744241400000000c744241002000000c744240c02000000c74424087100000089742404891c24e898890f0085c00f8494feffff89742404891c24e824cc0b008b809c00000089c2c1fa106681fad845742ab80100000089442410c744240cd8450000c7442408f0b35a0289742404891c24e89de7ffffe943feffff6685c00f94c025ff000000ebce8db426000000008d742600"
+        }
+      }
+    ],
+    "staging": "preserved",
+    "scope": "One build after two arithmetic source clarifications. Deafening Silence gains strict full native CFG correspondence. Togglodyte restores all three native SAR operations but retains other width/equality-layout differences; its tag predicates are equivalent for every 32-bit input. Forty-eight unchanged-source compiled contexts retain their C692-to-C693 flow: 47 strict CFGs and one full instruction stream ending at declared noreturn fatal. These context checks do not claim full native equivalence for those 48 functions. The full reccmp report remains the C692 snapshot. No newly demonstrated gameplay bug or gameplay test claimed."
+  }
+}

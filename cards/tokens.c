@@ -589,7 +589,7 @@ int card_dinosaur_token(int player, int card, event_t event)
       event_result = event_result | 0x80;
     }
   }
-  result = token_characteristic_setting_effects(player, card, event, player, card);
+  result = generic_token(player, card, event);
   return result;
 }
 
@@ -605,7 +605,7 @@ int card_devil(int player, int card, event_t event)
     if (result != 0)
     {
       default_target_definition(player, card, &td, 0x102);
-      td.zone = 0x1200;
+      td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
       td.allow_cancel = 0;
       result = can_target(&td);
       if (result != 0)
@@ -630,7 +630,7 @@ int card_food(int player, int card, event_t event)
   {
     if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
     {
-      result = token_characteristic_setting_effects(player, card, event, player, card);
+      result = generic_token(player, card, event);
       return result;
     }
     if (event == EVENT_RESOLVE_ACTIVATION)
@@ -638,8 +638,7 @@ int card_food(int player, int card, event_t event)
       gain_life(player, 3);
     }
   }
-  result = generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
 /* ManalinkEh 2022: 0x25831f0; original cards/tokens.c:666. */
@@ -651,7 +650,7 @@ int card_satyr(int player, int card, event_t event)
   {
     cannot_block(player, card, event);
   }
-  result = token_characteristic_setting_effects(player, card, event, player, card);
+  result = generic_token(player, card, event);
   return result;
 }
 

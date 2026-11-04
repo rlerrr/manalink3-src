@@ -292,58 +292,33 @@ int has_type_dead_this_turn_in_grave(int player, test_definition_t *this_test){
 void seek_grave_to_reanimate_this_turn(int player, int t_player, int selected_type,
                                        reanimate_mode_t mode)
 {
-  int result;
-  card_instance_t *instance;
-  int player_00;
-  int dead_slot;
-
-  player_00 = 0;
-  do
+  int non_pw = selected_type & 0x40000000U;
+  for (int p = 0; p < 2; ++p)
   {
-    if (((t_player == player_00) || (t_player == 2)) &&
-        (result = get_deadbox_card(player_00), -1 < result))
+    if (t_player != p && t_player != 2)
+      continue;
+    int dbc = get_deadbox_card(p);
+    if (dbc < 0)
+      continue;
+    card_instance_t *instance = get_card_instance(p, dbc);
+    for (int dead_slot = 0; dead_slot < 36; ++dead_slot)
     {
-      instance = get_card_instance(player_00, result);
-      dead_slot = 0;
-      do
+      int iid = dead_slot & 1 ? instance->targets[dead_slot / 2].card
+                              : instance->targets[dead_slot / 2].player;
+      if (iid < 0 || !is_what(-1, iid, selected_type & 0x3fffffff))
+        continue;
+      iid = dead_slot & 1 ? instance->targets[dead_slot / 2].card
+                          : instance->targets[dead_slot / 2].player;
+      if (non_pw)
       {
-        if ((dead_slot & 1 ? instance->targets[dead_slot / 2].card
-                           : instance->targets[dead_slot / 2].player) >= 0 &&
-            (result = is_what(-1,
-                              (dead_slot & 1 ? instance->targets[dead_slot / 2].card
-                                             : instance->targets[dead_slot / 2].player),
-                              selected_type & 0x3fffffff),
-             result != 0))
-        {
-          result = (dead_slot & 1 ? instance->targets[dead_slot / 2].card
-                                  : instance->targets[dead_slot / 2].player);
-          bool reanimate = true;
-          if ((selected_type & 0x40000000U) != 0)
-          {
-            result = is_planeswalker(-1, result);
-            if (result != 0)
-              reanimate = false;
-            else
-              result = (dead_slot & 1 ? instance->targets[dead_slot / 2].card
-                                      : instance->targets[dead_slot / 2].player);
-          }
-          if (reanimate)
-          {
-            dead_slot = dead_slot + 1;
-            seek_grave_for_id_to_reanimate(player, -1, player_00,
-                                           (unsigned int)cards_data[result].id, mode);
-            continue;
-          }
-        }
-        dead_slot = dead_slot + 1;
-      } while (dead_slot != 36);
+        if (is_planeswalker(-1, iid))
+          continue;
+        iid = dead_slot & 1 ? instance->targets[dead_slot / 2].card
+                            : instance->targets[dead_slot / 2].player;
+      }
+      seek_grave_for_id_to_reanimate(player, -1, p, (unsigned int)cards_data[iid].id, mode);
     }
-    player_00 = player_00 + 1;
-    if (player_00 == 2)
-    {
-      return;
-    }
-  } while (true);
+  }
 }
 
 #endif

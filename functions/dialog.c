@@ -749,6 +749,16 @@ card_cryptic_command2(int player, int card, event_t event)
 }
 #endif
 
+typedef struct
+{
+  int bigcard_player;
+  int bigcard_card;
+  int smallcard_player;
+  int smallcard_card;
+  const char *prompt;
+  int human_chooses;
+} dialog_args_t;
+
 #define option_Layout		EXE_DWORD(0x787260)
 #define hwnd_FullCardClass	EXE_PTR_VOID(0x715ca0)
 

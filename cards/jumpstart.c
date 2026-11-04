@@ -75,7 +75,7 @@ int card_corsair_captain(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    generate_token_by_id(player, card, 0x4998);
+    generate_token_by_id(player, card, CARD_ID_TREASURE);
   }
   boost_subtype(player, card, event, SUBTYPE_PIRATE, 1, 1, 0, 0, BCT_CONTROLLER_ONLY);
   return 0;
@@ -105,8 +105,7 @@ int card_immolating_gyre(int player, int card, event_t event)
       return 0;
     }
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x2374220; original cards/jumpstart.c:467. */
@@ -114,23 +113,14 @@ int card_lightning_core_excavator(int player, int card, event_t event)
 {
   int result;
   target_definition_t td;
-  if (event == EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  default_target_definition(player, card, &td, 0x102);
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
-    default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-    {
-      damage_target0(player, card, 3);
-    }
+    damage_target0(player, card, 3);
   }
   result =
       generic_activated_ability(player, card, event, 0xd, 5, 0, 0, 0, 0, 0, 0, &td, "TARGET_ANY");
@@ -176,36 +166,18 @@ int card_nocturnal_feeder(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2374fe0; original cards/jumpstart.c:720. */
 int card_release_the_dogs(int player, int card, event_t event)
 {
-  int result;
   token_generation_t token;
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
+    return 0;
+  if (event == EVENT_RESOLVE_SPELL)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else if (event == EVENT_RESOLVE_SPELL)
-    {
-      default_token_definition(player, card, 0x494b, &token);
-      token.color_forced = ' ';
-      token.qty = '\x04';
-      generate_token(&token);
-      kill_card(player, card, KILL_DESTROY);
-    }
-    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
-    {
-      return 0;
-    }
+    default_token_definition(player, card, CARD_ID_DOG, &token);
+    token.color_forced = ' ';
+    token.qty = '\x04';
+    generate_token(&token);
+    kill_card(player, card, KILL_DESTROY);
   }
-  result = basic_spell(player, card, event);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x2375170; original cards/jumpstart.c:758. */
@@ -215,7 +187,7 @@ int card_sethron_hurloon_general(int player, int card, event_t event)
   test_definition_t test;
   check_legend_rule(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     default_test_definition(&test, 0xff);
@@ -226,7 +198,7 @@ int card_sethron_hurloon_general(int player, int card, event_t event)
   }
   if (event == EVENT_ETB)
   {
-    generate_token_by_id(player, card, 0x4964);
+    generate_token_by_id(player, card, CARD_ID_MINOTAUR);
   }
   else if (event == EVENT_CAN_ACTIVATE)
   {
@@ -268,16 +240,11 @@ int card_tinybones_trinket_thief(int player, int card, event_t event)
     draw_a_card(player);
     lose_life(player, 1);
   }
-  if (event != EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (hand_count[1 - player] == 0))
   {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (hand_count[1 - player] == 0))
-    {
-      lose_life(1 - player, 10);
-    }
+    lose_life(1 - player, 10);
   }
   result = generic_activated_ability(player, card, event, 0, 4, 2, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
@@ -321,7 +288,7 @@ int card_blessed_sanctuary(int player, int card, event_t event)
   {
     prevent_damage(affected_card_controller, affected_card, instance->info_slot);
   }
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     default_test_definition(&this_test, 2);
@@ -331,7 +298,7 @@ int card_blessed_sanctuary(int player, int card, event_t event)
   }
   if (event == EVENT_ETB)
   {
-    generate_token_by_id(player, card, 0x54f2);
+    generate_token_by_id(player, card, CARD_ID_UNICORN);
   }
   result = global_enchantment(player, card, event);
   return result;
@@ -363,12 +330,10 @@ static int allosaurus_legacy(int player, int card, event_t event);
 /* ManalinkEh 2022: 0x2372700; original cards/jumpstart.c:3. */
 static int allosaurus_legacy(int player, int card, event_t event)
 {
-  int result;
 
   attached_set_pt(player, card, event, 5, 5);
   attached_is_additional_subtype(player, card, event, SUBTYPE_DINOSAUR);
-  result = eot_trigger(player, card, event);
-  if (result == 0)
+  if (!eot_trigger(player, card, event))
   {
     return 0;
   }
@@ -379,43 +344,22 @@ static int allosaurus_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2372e70; original cards/jumpstart.c:11. */
 int card_allosaurus_shepherd(int player, int card, event_t event)
 {
-  int next_card_or_result;
-  int c;
-  test_definition_t test;
-
   cannot_be_countered(player, card, event);
-  default_test_definition(&test, 0xff);
-  test.color = get_sleighted_color_test(player, card, 8);
+  test_definition_t test;
+  default_test_definition(&test, TYPE_ANY);
+  test.color = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
   type_uncounterable(player, card, event, player, 0, &test);
-  if (event != EVENT_ACTIVATE)
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
 
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (0 < active_cards_count[player]))
-    {
-      c = 0;
-      do
-      {
-        while (
-            (next_card_or_result = is_what(player, c, 2),
-             next_card_or_result != 0 && (next_card_or_result = has_subtype(player, c, SUBTYPE_ELF),
-                                          next_card_or_result != 0)))
-        {
-          next_card_or_result = c + 1;
-          create_targetted_legacy_effect(player, card, allosaurus_legacy, player, c);
-          c = next_card_or_result;
-          if (active_cards_count[player] <= next_card_or_result)
-            return generic_activated_ability(player, card, event, 0, 4, 0, 0, 2, 0, 0, 0, NULL,
-                                             NULL);
-        }
-        c = c + 1;
-      } while (c < active_cards_count[player]);
-    }
-  }
-  return generic_activated_ability(player, card, event, 0, 4, 0, 0, 2, 0, 0, 0, NULL, NULL);
+  if (event != EVENT_ACTIVATE &&
+      1 < event - EVENT_RESOLVE_ACTIVATION && event != EVENT_CLEANUP)
+    return 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+    for (int c = 0; c < active_cards_count[player]; ++c)
+      if (is_what(player, c, TYPE_CREATURE) && has_subtype(player, c, SUBTYPE_ELF))
+        create_targetted_legacy_effect(player, card, allosaurus_legacy, player, c);
+
+  return generic_activated_ability(player, card, event, 0, 4, 0, 0, 2, 0, 0,
+                                   0, NULL, NULL);
 }
 
 /* ManalinkEh 2022: 0x2373860; original cards/jumpstart.c:225. */
@@ -448,7 +392,7 @@ int card_inniaz_the_gale_force(int player, int card, event_t event)
 
       turn_offset = 0;
       default_target_definition(player, card, &td, 0x47);
-      td.illegal_type = 1;
+      td.illegal_type = TYPE_LAND;
       td.illegal_abilities = 0;
       instance = get_card_instance(player, card);
       do
@@ -653,7 +597,7 @@ static int kels_fight_fixer_effect(int player, int card, event_t event)
           {
             instance->targets[0xb].player = 0;
           }
-          *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+          SET_BYTE2(instance->targets[0xb].player) = 1;
         }
         instance = get_card_instance(affected_card_controller, affected_card);
         if (instance->kill_code == '\x03')
@@ -828,7 +772,7 @@ static int spiteful_prankster_legacy(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
         return 0;
       }
       default_test_definition(&this_test, 2);
@@ -846,7 +790,7 @@ static int spiteful_prankster_legacy(int player, int card, event_t event)
       target_definition_t td;
 
       default_target_definition(player, card, &td, 0x102);
-      td.zone = 4608;
+      td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
       td.allow_cancel = 0;
       instance = get_card_instance(player, card);
       for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
@@ -939,7 +883,7 @@ int card_spiteful_prankster(int player, int card, event_t event)
     target_definition_t td;
 
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 4608;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     td.allow_cancel = 0;
     instance = get_card_instance(player, card);
     for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
@@ -966,7 +910,7 @@ int card_emiel_the_blessed(int player, int card, event_t event)
 
 
   check_legend_rule(player, card, event);
-  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if ((((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
@@ -999,7 +943,7 @@ int card_emiel_the_blessed(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
     td.allowed_controller = player;
     td.preferred_controller = player;
-    td.special = 0x4000;
+    td.special = TARGET_SPECIAL_NOT_ME;
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
 
@@ -1035,8 +979,8 @@ int card_trusty_retriever(int player, int card, event_t event)
       result = graveyard_has_shroud(player);
       retrieve_available = (unsigned int)(result == 0);
     }
-    result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\003",
-                         "\001\016", "Add a +1/+1 counter", 1, 5, "Retrieve a card",
+    result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
+                         DLG_AUTOCHOOSE_IF_1, "Add a +1/+1 counter", 1, 5, "Retrieve a card",
                          retrieve_available, 5, 0, 0, 0, 0);
     if (result == 1)
     {
@@ -1141,12 +1085,11 @@ int card_bruvac_the_grandiloquent(int player, int card, event_t event)
   };
 
   xtrigger_t current_trigger;
-  int result;
 
   check_legend_rule(player, card, event);
   enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_REPLACE_MILL;
   current_trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     current_trigger = xtrigger_impl_value_dont_use_directly;
   }
@@ -1155,8 +1098,7 @@ int card_bruvac_the_grandiloquent(int player, int card, event_t event)
       (((reason_for_trigger_controller == player && (1 - player == trigger_cause_controller)) &&
         (0 < replace_milled))))
   {
-    result = is_humiliated(player, card, AL_TRIG);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_TRIG))
     {
       if (event == EVENT_TRIGGER)
       {
@@ -1212,16 +1154,11 @@ int card_towering_titan(int player, int card, event_t event)
   test_definition_t test;
   result = get_toughness_sum(player);
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, result);
-  if (event != EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      pump_creatures_until_eot_no_repeat(player, card, 2, 0, 0x80, 0, NULL);
-    }
+    pump_creatures_until_eot_no_repeat(player, card, 2, 0, 0x80, 0, NULL);
   }
   default_test_definition(&test, 2);
   test.keyword = KEYWORD_DEFENDER;
@@ -1288,7 +1225,7 @@ int card_neyith_of_the_dire_hunt(int player, int card, event_t event)
       if (has_mana_hybrid(player, 1, 4, 3, creature_or_cost) != 0)
       {
         blocker_count_or_result = engine_any_legal_attacker(player);
-        choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\026", "\001\003",
+        choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_DISPLAY_FOR_AI, DLG_NO_CANCEL,
                              "Double a creature's power", 1, (blocker_count_or_result + 1) * 0xf,
                              "Pass", 1, 1, 0, 0, 0, 0);
         if (((choice == 1) &&

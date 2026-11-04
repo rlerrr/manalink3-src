@@ -494,7 +494,7 @@ int card_cackling_counterpart(int player, int card, event_t event){
 int card_champion_of_the_parish(int player, int card, event_t event)
 {
   test_definition_t this_test;
-  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if ((((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
@@ -707,105 +707,64 @@ int card_essence_of_the_wild(int player, int card, event_t event)
 
 int card_geist_honored_monk(int player, int card, event_t event)
 {
-  int newval;
   vigilance(player, card, event);
-  if (event - EVENT_POWER < 2)
-  {
-    if (((card == affected_card) && (affected_card_controller == player)) && (player != -1))
-    {
-      newval = count_subtype(player, 2, -1);
-      set_characteristic_pt(newval);
-    }
-    etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    return 0;
-  }
+  if (event - EVENT_POWER < 2 && card == affected_card &&
+      affected_card_controller == player && player != -1)
+    set_characteristic_pt(count_subtype(player, TYPE_CREATURE, -1));
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event != EVENT_ETB)
-  {
-    return 0;
-  }
-  create_spirit(player, card, 2);
+  if (event == EVENT_ETB)
+    create_spirit(player, card, 2);
   return 0;
 }
 
 int card_garruk_relentless(int player, int card, event_t event)
 {
-  enum
-  {
-    CHOICE_FIGHT = 1,
-    CHOICE_WOLF = 2
-  };
-
-  int loyalty_or_source_card;
-  card_instance_t *instance;
-  int amt;
-  int target_power_or_source_player;
-  target_definition_t td;
+  enum { CHOICE_FIGHT = 1, CHOICE_WOLF };
   check_legend_rule(player, card, event);
   double_faced_card(player, card, event);
-  if ((event == EVENT_ACTIVATE) || (event == EVENT_RESOLVE_ACTIVATION))
+  if (event == EVENT_ACTIVATE || event == EVENT_RESOLVE_ACTIVATION)
   {
-    instance = get_card_instance(player, card);
-    default_target_definition(player, card, &td, 2);
-    loyalty_or_source_card = dialog_impl(player, card, event, "Fight a creature", can_target(&td),
-                                         2, "Make a Wolf", 1, 1, 0, 0, 0, 0);
+    card_instance_t *instance = get_card_instance(player, card);
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    int choice = dialog_impl(player, card, event, "Fight a creature", can_target(&td), 2,
+                              "Make a Wolf", 1, 1, 0, 0, 0, 0);
     if (event == EVENT_ACTIVATE)
     {
-      instance->number_of_targets = '\0';
-      if (loyalty_or_source_card == CHOICE_FIGHT)
+      instance->number_of_targets = 0;
+      if (choice == CHOICE_FIGHT)
       {
         pick_target(&td, "TARGET_CREATURE");
-        if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+        if (ai_is_speculating == 1 || (player == AI && !(trace_mode & 2)))
         {
-          loyalty_or_source_card = count_counters(player, card, COUNTER_LOYALTY);
-          target_power_or_source_player =
-              get_power(instance->targets[0].player, instance->targets[0].card);
-          if (target_power_or_source_player < loyalty_or_source_card)
-          {
-            ai_modifier = ai_modifier + 0x40;
-          }
-          else
-          {
-            ai_modifier = ai_modifier + -0xc;
-          }
+          int loyalty = count_counters(player, card, COUNTER_LOYALTY);
+          int target_power = get_power(instance->targets[0].player, instance->targets[0].card);
+          ai_modifier += target_power < loyalty ? 64 : -12;
         }
       }
-      return planeswalker(player, card, event, 3);
     }
-    if (loyalty_or_source_card == CHOICE_FIGHT)
+    else if (choice == CHOICE_FIGHT && valid_target(&td))
     {
-      if (valid_target(&td) != 0)
-      {
-        amt = get_power(instance->targets[0].player, instance->targets[0].card);
-        damage_creature(instance->targets[0].player, instance->targets[0].card, 3, player, card);
-        loyalty_or_source_card = instance->parent_card;
-        target_power_or_source_player = instance->parent_controller;
-        instance->targets[1].card = loyalty_or_source_card;
-        instance->targets[1].player = target_power_or_source_player;
-        damage_creature(target_power_or_source_player, loyalty_or_source_card, amt,
-                        instance->targets[0].player, instance->targets[0].card);
-      }
+      int damage = get_power(instance->targets[0].player, instance->targets[0].card);
+      damage_creature(instance->targets[0].player, instance->targets[0].card, 3, player, card);
+      int source_card = instance->parent_card;
+      int source_player = instance->parent_controller;
+      instance->targets[1].card = source_card;
+      instance->targets[1].player = source_player;
+      damage_creature(source_player, source_card, damage,
+                       instance->targets[0].player, instance->targets[0].card);
     }
-    else if (loyalty_or_source_card == CHOICE_WOLF)
-    {
-      generate_token_by_id(player, card, 0x49a8);
-    }
+    else if (choice == CHOICE_WOLF)
+      generate_token_by_id(player, card, CARD_ID_WOLF);
   }
-  if (event == EVENT_STATIC_EFFECTS)
+  if (event == EVENT_STATIC_EFFECTS && count_counters(player, card, COUNTER_LOYALTY) < 3 &&
+      count_counters(player, card, COUNTER_LOYALTY) > 0)
   {
-    loyalty_or_source_card = count_counters(player, card, COUNTER_LOYALTY);
-    if (loyalty_or_source_card < 3)
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->targets[7].card != 0x42)
     {
-      loyalty_or_source_card = count_counters(player, card, COUNTER_LOYALTY);
-      if (0 < loyalty_or_source_card)
-      {
-        instance = get_card_instance(player, card);
-        if (instance->targets[7].card != 0x42)
-        {
-          instance->targets[7].card = 0x42;
-          transform(player, card);
-        }
-      }
+      instance->targets[7].card = 0x42;
+      transform(player, card);
     }
   }
   return planeswalker(player, card, event, 3);
@@ -1472,13 +1431,14 @@ int card_past_in_flames(int player, int card, event_t event ){
 
 int card_rakish_heir(int player, int card, event_t event)
 {
-  int source_card_offset;
-  int source_player_offset;
+  uint8_t *damage_sources;
+  int source_offset;
   card_instance_t *instance;
   card_instance_t *combat_damage;
   int i;
 
   instance = get_card_instance(player, card);
+  damage_sources = (uint8_t *)instance + offsetof(card_instance_t, targets);
   combat_damage = combat_damage_being_dealt(event);
   if ((((combat_damage != NULL) && (combat_damage->damage_source_player == player)) &&
        (combat_damage->damage_source_card != -1)) &&
@@ -1491,16 +1451,14 @@ int card_rakish_heir(int player, int card, event_t event)
       {
         if (instance->info_slot < 0x28)
         {
-          *(int8_t *)((int)&instance->targets[0].player + instance->info_slot * 2) =
-              combat_damage->damage_source_player;
-          *(char *)((int)&instance->targets[0].player + instance->info_slot * 2 + 1) =
-              (char)combat_damage->damage_source_card;
+          damage_sources[instance->info_slot * 2] = (uint8_t)combat_damage->damage_source_player;
+          damage_sources[instance->info_slot * 2 + 1] = (uint8_t)combat_damage->damage_source_card;
           instance->info_slot = instance->info_slot + 1;
         }
       }
     }
   }
-  if (((trigger_condition == 0xd7) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_DEAL_DAMAGE) && (card == affected_card)) &&
       ((player == affected_card_controller &&
         ((reason_for_trigger_controller == player && (0 < instance->info_slot))))))
   {
@@ -1513,14 +1471,11 @@ int card_rakish_heir(int player, int card, event_t event)
       i = 0;
       do
       {
-        source_card_offset = i * 2;
-        source_player_offset = i * 2;
+        source_offset = i * 2;
         i = i + 1;
         add_counters(player, card,
-                     (unsigned int)*(unsigned char *)((int)&instance->targets[0].player +
-                                                      source_player_offset),
-                     (unsigned int)*(unsigned char *)((int)&instance->targets[0].player +
-                                                      source_card_offset + 1),
+                     (unsigned int)damage_sources[source_offset],
+                     (unsigned int)damage_sources[source_offset + 1],
                      COUNTER_P1_P1, 1);
       } while (i < instance->info_slot);
       instance->info_slot = 0;
@@ -2738,7 +2693,7 @@ int card_gutter_grime(int player, int card, event_t event)
   {
     token_generation_t token;
     add_counters(player, card, player, card, COUNTER_SLIME, death_count & 0xff);
-    default_token_definition(player, card, 0x496c, &token);
+    default_token_definition(player, card, CARD_ID_OOZE, &token);
     token.qty = (char)death_count;
     token.tou = 16384;
     token.pow = 16384;
@@ -4491,37 +4446,23 @@ int card_ghoulcallers_chant(int player, int card, event_t event)
 
 int card_ghoulraiser(int player, int card, event_t event)
 {
-  int *graveyard;
-  int grave_count_or_selection;
-  int i;
-  int zombie_count;
-  int zombie_array[60];
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if ((event == EVENT_ETB) && (graveyard = graveyard_ptr_mutable[player], *graveyard != -1))
+  if (event == EVENT_ETB)
   {
-    zombie_count = 0;
-    grave_count_or_selection = count_graveyard(player);
-    i = 0;
-    if (0 < grave_count_or_selection)
+    int *grave = graveyard_ptr_mutable[player];
+    if (*grave != -1)
     {
-      do
+      int zombies[60];
+      int zombie_count = 0;
+      for (int i = 0; i < count_graveyard(player); ++i)
+        if (has_subtype_by_id(player, cards_data[grave[i]].id, SUBTYPE_ZOMBIE))
+          zombies[zombie_count++] = i;
+      if (zombie_count > 0)
       {
-        if (has_subtype_by_id(player, (unsigned int)cards_data[graveyard[i]].id, SUBTYPE_ZOMBIE) !=
-            0)
-        {
-          zombie_array[zombie_count] = i;
-          zombie_count = zombie_count + 1;
-        }
-        i = i + 1;
-        grave_count_or_selection = count_graveyard(player);
-      } while (i < grave_count_or_selection);
-    }
-    if (0 < zombie_count)
-    {
-      grave_count_or_selection = internal_rand(zombie_count);
-      grave_count_or_selection = zombie_array[grave_count_or_selection];
-      add_card_to_hand(player, graveyard[grave_count_or_selection]);
-      remove_card_from_grave(player, grave_count_or_selection);
+        int selected = zombies[internal_rand(zombie_count)];
+        add_card_to_hand(player, grave[selected]);
+        remove_card_from_grave(player, selected);
+      }
     }
   }
   return 0;
@@ -4911,38 +4852,31 @@ int card_laboratory_maniac(int player, int card, event_t event){
 
 int card_ludevics_test_subject(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
   double_faced_card(player, card, event);
   if (event == EVENT_SHOULD_AI_PLAY)
   {
-    result = count_counters(player, card, COUNTER_HATCHLING);
-    if (4 < result)
-    {
-      result = 4;
-    }
-    ai_modifier = ai_modifier + (((player == 1) - 1 & 0xfffffff0) + 8) * result * result;
+    int counters = count_counters(player, card, COUNTER_HATCHLING);
+    if (counters > 4)
+      counters = 4;
+    ai_modifier += ((unsigned int)(player == 1 ? 8 : -8)) * counters * counters;
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
     add_counters(player, card, player, card, COUNTER_HATCHLING, 1);
-    result = count_counters(player, card, COUNTER_HATCHLING);
-    if (result < 5)
+    int counters = count_counters(player, card, COUNTER_HATCHLING);
+    if (counters < 5)
     {
-      if ((current_phase != 0x1f) || (1 - player != current_turn))
-      {
-        ai_modifier = ai_modifier + ((player != 1) - 1 & 0xffffff80) + 0x40;
-      }
+      if (current_phase != 0x1f || 1 - player != current_turn)
+        ai_modifier += (unsigned int)(player != 1 ? 0 : -128) + 0x40;
     }
     else
     {
       remove_all_counters(player, card, player, card, COUNTER_HATCHLING);
-      instance = get_card_instance(player, card);
+      card_instance_t *instance = get_card_instance(player, card);
       transform(instance->parent_controller, instance->parent_card);
     }
   }
-  result = generic_activated_ability(player, card, event, 0, 1, 0, 1, 0, 0, 0, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 0, 1, 0, 1, 0, 0, 0, 0, NULL, NULL);
 }
 
 int card_lumberknot(int player, int card, event_t event ){
@@ -7097,7 +7031,7 @@ int card_wooden_stake(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  int player_00;
+  int target_player;
   instance = is_equipping(player, card);
   if (instance != NULL)
   {
@@ -7108,18 +7042,18 @@ int card_wooden_stake(int player, int card, event_t event)
           (event == EVENT_CHANGE_TYPE || event == EVENT_CHECK_DESTROY_IF_BLOCKED))
       {
         instance = get_card_instance(player, card);
-        player_00 = (int)instance->damage_target_player;
+        target_player = (int)instance->damage_target_player;
         result = instance->damage_target_card;
         if (event == EVENT_CHANGE_TYPE)
         {
-          if ((result == affected_card) && (player_00 == affected_card_controller))
+          if ((result == affected_card) && (target_player == affected_card_controller))
           {
             instance->destroys_if_blocked = instance->destroys_if_blocked | 1;
           }
         }
         else if (event == EVENT_CHANGE_TYPE || event == EVENT_CHECK_DESTROY_IF_BLOCKED)
         {
-          if ((result == affected_card) && (player_00 == affected_card_controller))
+          if ((result == affected_card) && (target_player == affected_card_controller))
           {
             result = has_subtype(attacking_card_controller, attacking_card, SUBTYPE_VAMPIRE);
             if (result != 0)
@@ -7130,14 +7064,14 @@ int card_wooden_stake(int player, int card, event_t event)
         }
         else
         {
-          instance = get_card_instance(player_00, result);
-          if ((current_turn == player_00) && ((instance->state & 4) != 0))
+          instance = get_card_instance(target_player, result);
+          if ((current_turn == target_player) && ((instance->state & 4) != 0))
           {
             for_each_creature_blocking_me(current_turn, result, bury_vampire, player, card);
           }
-          if ((1 - current_turn == player_00) && ((instance->state & 8) != 0))
+          if ((1 - current_turn == target_player) && ((instance->state & 8) != 0))
           {
-            for_each_creature_blocked_by_me(player_00, result, bury_vampire, player, card);
+            for_each_creature_blocked_by_me(target_player, result, bury_vampire, player, card);
           }
         }
       }

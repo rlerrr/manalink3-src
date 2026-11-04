@@ -1,0 +1,1828 @@
+{
+  "format": 1,
+  "status": "Five target/byte walks reconstructed; build, 15,169 fixed slots, 983,040 native/rebuilt fixtures, 3,276,800 packing contracts and five source projections pass.",
+  "receipt": {
+    "setup_sha256": "d25db1182ac775f3dea3705f1daebae3fcdef43204a64121b872cec30cb7f75e",
+    "report_sha256": "67291126c1471b66d7623caf0acdd303b6a549c38b928d8f8275aea74e1c69f0",
+    "inputs": {
+      "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dll": "d7f067ed03fa3db885444bd17a418bb32add89694ec86436ca50531b8821bedd",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "8126dd0c96fdb19f48cdb10a750e47acbf1d17a8f61bf418a835f540afa33b09",
+      "C:\\dev\\manalink3-src\\.recovery\\2022-Magic.exe": "0170f02b1c381a20a97ca0c12e99c8d338453ce4edbfc99148e726d565bee0de"
+    },
+    "metadata_sha256": "fbfd21cba133c7a2bb84bf2624afe02591c123763b8229da83977fed02c7cb73",
+    "metadata_snapshot": ".recovery\\reccmp\\external-refresh-c642.metadata.csv",
+    "global_metadata_snapshot": ".recovery\\reccmp\\external-refresh-c642.globals.csv",
+    "global_metadata_sha256": "4bd078c759882fd6f758d1ec43ab13606b0e8e288c32b13ec11f52609c5142c9",
+    "global_bindings_snapshot": ".recovery\\reccmp\\external-refresh-c642.globals.json",
+    "global_bindings_sha256": "6bedfd8e79c1441d626857899abc1e5db1ea48a76830f4de624b9f75708691f8",
+    "external_metadata_snapshot": ".recovery\\reccmp\\external-refresh-c642.externals.csv",
+    "external_metadata_sha256": "8dd2bc9adff98ec4456bdc2a752a289dea509b82753350b8d70c1f59d40c4bf7",
+    "external_bindings_snapshot": ".recovery\\reccmp\\external-refresh-c642.externals.json",
+    "external_bindings_sha256": "3034cec5bca7520a90f3f535b861c81c7587db65660163ffc73ca1c2cfcc2937",
+    "external_audit_snapshot": ".recovery\\reccmp\\external-refresh-c642.external-audit.json",
+    "external_audit_sha256": "5c8094bd8807e713f6d639d57f8f86ca99b456a77acb0911847621284f105b26",
+    "verified_external_bindings": 64,
+    "external_matching_enabled": true,
+    "verified_global_bindings": {
+      "verified": 293,
+      "bindings_sha256": "c9e543d9cfdb34f364c9bcd7fa4ea30c3ceaa3122b218314f60ac454a626bb98"
+    },
+    "project_config_sha256": "a978a638b5f154a514be6229cd0b012f96fb8431f1bfc4c4f00c3cf13bc0d371",
+    "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "comparator_source_sha256": {
+      "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+      "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+      "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+      "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\replacement.py": "28aec46cd59d06ca10cf6a9946e3b7fd1d3b3af3b2b400536afb5d4089b497c9",
+      "C:\\dev\\reccmp\\reccmp\\compare\\core.py": "bd85389476236576619e4bf404691d5aab618f4ddb12280e0ecae1fc865c1dbd",
+      "C:\\dev\\reccmp\\reccmp\\compare\\db.py": "364562d3eab1bb9ec03f9390804cb13d8131a09c06c25a6a2b66abc5d66f60a9",
+      "C:\\dev\\reccmp\\reccmp\\types.py": "d7096e7e44739d18054f1115f6ea23c65e1bb6dfbc994a86aef80668287aca14",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_globals.py": "1e870d89b4afbc15950d26c59a94162aecc70bec0700f60c032373a76910f3bc",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_externals.py": "d748a9223c09382c6f1302b0d019b6238062ddd0b619ded5992df67ef521fb83",
+      "C:\\dev\\manalink3-src\\tools\\reccmp_project.py": "c29d6cb6b6767e2fc3ea6a8d8915216301c1cb2b6e2c4288660c6dbc325e21b0"
+    },
+    "command": [
+      "reccmp-reccmp",
+      "--target",
+      "MANALINK2022",
+      "--no-color",
+      "--json",
+      ".recovery/reccmp/external-refresh-c642.json",
+      "--silent"
+    ],
+    "exit_code": 0
+  },
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "functions": [
+    {
+      "name": "card_deepglow_skate",
+      "source": "cards/commander_2016.c",
+      "native_address": "0x23e7070",
+      "native_size": 326,
+      "native_bytes_sha256": "811cd0ef3d9366ee55622ff28fb1d76273a61659a98328cdcd3354673225b92f",
+      "discovery_score": 0.9489795918367347,
+      "discovery_changes": [
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x20e9e74",
+              "inc esi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x23e712c",
+              "mov eax, dword ptr [edi + esi*8 + 0x78]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x20e9e7d",
+              "mov eax, dword ptr [edi + esi*8 + 0x70]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x23e7134",
+              "mov eax, dword ptr [edi + esi*8 + 0x74]"
+            ],
+            [
+              "0x23e7138",
+              "inc esi"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x20e9e85",
+              "mov eax, dword ptr [edi + esi*8 + 0x6c]"
+            ]
+          ]
+        },
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x20e9e96",
+              "cmp byte ptr [edi + 0x36], 0"
+            ],
+            [
+              "0x20e9e9a",
+              "je 0x5c"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x23e7148",
+              "cmp byte ptr [edi + 0x36], 0"
+            ],
+            [
+              "0x23e714c",
+              "je 0x5a"
+            ]
+          ],
+          "rebuilt": []
+        }
+      ],
+      "before_rebuilt_address": "0x20e9dc0"
+    },
+    {
+      "name": "freeze_when_damage",
+      "source": "functions/abilities.c",
+      "native_address": "0x26df2b0",
+      "native_size": 241,
+      "native_bytes_sha256": "401898b360c0be7eb2fd058f0e5fd4bc2e248b4ae5b164971a144e68384f6cc2",
+      "discovery_score": 0.9367088607594937,
+      "discovery_changes": [
+        {
+          "original": [
+            [
+              "0x26df348",
+              "cmp edi, dword ptr [<OFFSET5>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x26549e8",
+              "cmp dword ptr [<OFFSET5>], edi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x26df350",
+              "cmp esi, dword ptr [<OFFSET6>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x26549f0",
+              "cmp dword ptr [<OFFSET6>], esi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x26df370",
+              "mov eax, dword ptr [ebx + esi*8 + 0x78]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2654a10",
+              "inc esi"
+            ],
+            [
+              "0x2654a11",
+              "mov eax, dword ptr [ebx + esi*8 + 0x70]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x26df378",
+              "mov eax, dword ptr [ebx + esi*8 + 0x74]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2654a19",
+              "mov eax, dword ptr [ebx + esi*8 + 0x6c]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x26df38a",
+              "inc esi"
+            ]
+          ],
+          "rebuilt": []
+        }
+      ],
+      "before_rebuilt_address": "0x2654950"
+    },
+    {
+      "name": "card_venomous_fangs",
+      "source": "cards/urza_saga.c",
+      "native_address": "0x20585d0",
+      "native_size": 563,
+      "native_bytes_sha256": "ecae31014a8763daf47dd77bc976dc669d2bea4a723a5cd79c2ca7da57aa60c7",
+      "discovery_score": 0.9523809523809523,
+      "discovery_changes": [
+        {
+          "original": [
+            [
+              "0x2058690",
+              "cmp ebx, dword ptr [<OFFSET6>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25f13d0",
+              "cmp dword ptr [<OFFSET6>], ebx"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x205869c",
+              "cmp esi, dword ptr [<OFFSET7>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25f13dc",
+              "cmp dword ptr [<OFFSET7>], esi"
+            ]
+          ]
+        },
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x25f140c",
+              "inc edi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x20586d7",
+              "mov eax, dword ptr [edx + edi*8 + 0x78]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25f1418",
+              "mov eax, dword ptr [edx + edi*8 + 0x70]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x20586df",
+              "mov eax, dword ptr [edx + edi*8 + 0x74]"
+            ],
+            [
+              "0x20586e3",
+              "inc edi"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25f1420",
+              "mov eax, dword ptr [edx + edi*8 + 0x6c]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2058740",
+              "cmp al, byte ptr [ecx + 0xc]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25f1480",
+              "cmp byte ptr [ecx + 0xc], al"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x20587b8",
+              "cmp eax, dword ptr [<OFFSET6>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25f14f8",
+              "cmp dword ptr [<OFFSET6>], eax"
+            ]
+          ]
+        }
+      ],
+      "before_rebuilt_address": "0x25f1310"
+    },
+    {
+      "name": "card_rakish_heir",
+      "source": "cards/innistrad.c",
+      "native_address": "0x2078740",
+      "native_size": 383,
+      "native_bytes_sha256": "c29aebd665155f758f3b2a3e21ef36c733336717d5e7a3145ff22ace4df2e881",
+      "discovery_score": 0.9545454545454546,
+      "discovery_changes": [
+        {
+          "original": [
+            [
+              "0x2078818",
+              "cmp edi, dword ptr [<OFFSET6>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x224c958",
+              "cmp dword ptr [<OFFSET6>], edi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2078824",
+              "cmp esi, dword ptr [<OFFSET7>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x224c964",
+              "cmp dword ptr [<OFFSET7>], esi"
+            ]
+          ]
+        },
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x224c9a8",
+              "inc ebx"
+            ]
+          ]
+        },
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x224c9bb",
+              "mov dl, byte ptr [esi + ebx*2 + 0x73]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x207887d",
+              "mov dl, byte ptr [esi + ebx*2 + 0x75]"
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [
+            [
+              "0x2078887",
+              "mov dl, byte ptr [esi + ebx*2 + 0x74]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x224c9c8",
+              "mov dl, byte ptr [esi + ebx*2 + 0x72]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2078896",
+              "inc ebx"
+            ]
+          ],
+          "rebuilt": []
+        }
+      ],
+      "before_rebuilt_address": "0x224c880"
+    },
+    {
+      "name": "card_oonas_blackguard",
+      "source": "cards/morningtide.c",
+      "native_address": "0x2283c20",
+      "native_size": 617,
+      "native_bytes_sha256": "4ad9b1b9502656e0783e9b49eff135dd70219bd854df58484bca251257ccf0a7",
+      "discovery_score": 0.9556313993174061,
+      "discovery_changes": [
+        {
+          "original": [
+            [
+              "0x2283cd8",
+              "sar eax, 8"
+            ],
+            [
+              "0x2283cdb",
+              "test al, al"
+            ],
+            [
+              "0x2283cdd",
+              "jne 0x14d"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23b10e8",
+              "test ah, 0xff"
+            ],
+            [
+              "0x23b10eb",
+              "jne 0x14f"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2283cf9",
+              "jmp -0xb4"
+            ],
+            [
+              "0x2283cfe",
+              "nop "
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23b1107",
+              "jmp -0xb2"
+            ],
+            [
+              "0x23b110c",
+              "lea esi, [esi]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2283e30",
+              "and eax, 0xff"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23b1240",
+              "movzx eax, ah"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2283e56",
+              "nop "
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23b1264",
+              "lea esi, [esi]"
+            ]
+          ]
+        }
+      ],
+      "before_rebuilt_address": "0x23b1030"
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/commander_2016.c",
+      "before_sha256": "4e35decd00af5fffa31c75199045ed4ebd33ea9f2b3b84db66065214ce31245c",
+      "after_sha256": "ab097560d8d457828c90fe38a69508c4165a408394fde8c10936c83b46204188"
+    },
+    {
+      "source": "functions/abilities.c",
+      "before_sha256": "5261c23f3549c83aa9db70850943d9098454112f284e40ff2e5483874fafba93",
+      "after_sha256": "e30614baf3a856e615589dda4cf10c4b2199fa7872dd82c60a867f81eea507f8"
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "before_sha256": "2753d75d574ca32921e4ce9f669e1fe36b6f6b5bcb12694863cb6642e5593d5d",
+      "after_sha256": "9eb6cde0fc0abbaebe931397bd0687e9afdd5698d965a2ff250266ade8878172"
+    },
+    {
+      "source": "cards/innistrad.c",
+      "before_sha256": "31c7414a67651a41e151776da493b6980d9212d649437f176dfdd98915493281",
+      "after_sha256": "d6ce39cc29126176483916a406029c198573fd13cc9e88bf83c955d3db6ba6a2"
+    },
+    {
+      "source": "cards/morningtide.c",
+      "before_sha256": "58c49588cc01ce5766d337606f484993c5ca0f1ee9a6811a434d7629f36c6dfc",
+      "after_sha256": "6b52ea0ff514095edcfbab0d9e9cf6da597c0b5a156a5cdd9f343b565c3135f7"
+    }
+  ],
+  "packed_contract": {
+    "cases": 3276800,
+    "source": ".recovery\\target-walk-kernels-c643.c",
+    "source_sha256": "1bc49f60b3d38bcbd0d1d32f5eebcadec5517fc1f968efaa8b1dd4b3cedf1315",
+    "executable_sha256": "a75988631865b3ee76b50c880937ec9c59215899d3c160695b6e6c91564f9ab0",
+    "log_sha256": "708ece9e7a788e5efd11df598326cce2b1735d8796f4c6c864fba79e277e7133"
+  },
+  "before_objects": [
+    {
+      "source": "cards/commander_2016.c",
+      "before_runtime_sha256": "6d8882df2302e06b3e3f5976dbd5f95f2c00d4643914638f5d9afe70476d4f34",
+      "after_runtime_sha256": "123259dfdd47ff71d4c7278b1a141f4f386973088917221f4022f421e56128e6",
+      "runtime_identical": false,
+      "changed_section_bytes": [
+        ".text"
+      ]
+    },
+    {
+      "source": "functions/abilities.c",
+      "before_runtime_sha256": "edd9984db6affe0418d6ee321980eb9e30aa35034ee345fc908a91300b2b850d",
+      "after_runtime_sha256": "dd5b2d99e2b85d1216fdb095620ff15e5db5f431cafed3f66127df204bc14324",
+      "runtime_identical": false,
+      "changed_section_bytes": [
+        ".text"
+      ]
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "before_runtime_sha256": "ab46641260100ec46da8c5dcd6e3ede14b2af43882697054d72381733b01f92b",
+      "after_runtime_sha256": "d65986a4b4a881c0701f70fc7283ee5f9012bfb1fcb0fd1e0a8f9827003af8d3",
+      "runtime_identical": false,
+      "changed_section_bytes": [
+        ".text"
+      ]
+    },
+    {
+      "source": "cards/innistrad.c",
+      "before_runtime_sha256": "dd5642504ea87d7857b4ec7ecfed0ed8cd7f91e6ea050e2dc404e2a6a99f25e9",
+      "after_runtime_sha256": "09fa3fb012af50a783cae5650612f80f186aaf1aadc8e8df5c7ac63ff52986e6",
+      "runtime_identical": false,
+      "changed_section_bytes": [
+        ".text"
+      ]
+    },
+    {
+      "source": "cards/morningtide.c",
+      "before_runtime_sha256": "c17d08993c939392de697dc27f2319694af64c9667b7e4453666f3bf5f049eba",
+      "after_runtime_sha256": "e3716e3af4d70360ae954aa9f1e931e5858b12b1d9dce3f38be7711a1803c3b9",
+      "runtime_identical": false,
+      "changed_section_bytes": [
+        ".text"
+      ]
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "scope": "Readable reconstruction of five existing bodies, not new handlers. Three loops retain their pre-callback increment, dynamic bound rereads and helper arguments while replacing identical pointer aliases with direct target values; the copy precedes the local increment, and no callback occurs between the old pointer setup and its field reads. Rakish Heir retains two unsigned bytes per recorded damage source; Oona retains modulo-256 per-player counters, both independent player tests and all high bytes. Packing contracts cover all 16-bit count patterns under five high-word patterns and 40 slots with every signed-byte source pair. These checks do not establish unrestricted gameplay/native-body equivalence. Discovery event-order candidates remain in the queue.",
+  "object_snapshot_receipts": {
+    "before": {
+      "path": ".recovery\\reccmp\\target-walk-object-before-c643.json",
+      "sha256": "01f47f71ca3c3f9fbc973c9d4d00713518d1dfc67eba3861ea95d6eb22340858"
+    },
+    "after": {
+      "path": ".recovery\\reccmp\\target-walk-object-final-c643.json",
+      "sha256": "fedb0e678ca877bf2c7fb74f503c0538051e0440a3194b5a4eae4b4865b2f75d"
+    },
+    "reader_sha256": "fc302f92bfcc7c3374de769925f11e0dc0c121f12a7866ac506ab0f90a3edd30"
+  },
+  "execution_fixture": {
+    "cases": 983040,
+    "functions": 5,
+    "cases_per_function": 196608,
+    "calls": "Actual release DLL and actual rebuilt DLL, mapped without imports or entry-point execution.",
+    "fixture_inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "328f0e96502e853c17693d22912f24be805f95527215e6d06813bc5cfdaf77c8",
+      "ManalinkEh.dbg": "5fd62bffe32b5c280371718213b6790e87e732308f13b7a494d2f91f976c98fd"
+    },
+    "entries": [
+      {
+        "side": 0,
+        "index": 0,
+        "name": "card_deepglow_skate",
+        "address": "0x23e7070",
+        "size": 326,
+        "bytes_sha256": "811cd0ef3d9366ee55622ff28fb1d76273a61659a98328cdcd3354673225b92f"
+      },
+      {
+        "side": 0,
+        "index": 1,
+        "name": "freeze_when_damage",
+        "address": "0x26df2b0",
+        "size": 241,
+        "bytes_sha256": "401898b360c0be7eb2fd058f0e5fd4bc2e248b4ae5b164971a144e68384f6cc2"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "name": "card_venomous_fangs",
+        "address": "0x20585d0",
+        "size": 563,
+        "bytes_sha256": "ecae31014a8763daf47dd77bc976dc669d2bea4a723a5cd79c2ca7da57aa60c7"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "name": "card_rakish_heir",
+        "address": "0x2078740",
+        "size": 383,
+        "bytes_sha256": "c29aebd665155f758f3b2a3e21ef36c733336717d5e7a3145ff22ace4df2e881"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "name": "card_oonas_blackguard",
+        "address": "0x2283c20",
+        "size": 617,
+        "bytes_sha256": "4ad9b1b9502656e0783e9b49eff135dd70219bd854df58484bca251257ccf0a7"
+      },
+      {
+        "side": 1,
+        "index": 0,
+        "name": "card_deepglow_skate",
+        "address": "0x20e9dc0",
+        "size": 336,
+        "bytes_sha256": "c127fdef9868703c249a3c202066e3354ebad2d3d14bde75cd78506431c39599"
+      },
+      {
+        "side": 1,
+        "index": 1,
+        "name": "freeze_when_damage",
+        "address": "0x2654950",
+        "size": 256,
+        "bytes_sha256": "36cca23f0ed0810102bed89c0c6575ec1a09abf2ed6db11c06fe8bb2fcf88e4e"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "name": "card_venomous_fangs",
+        "address": "0x25f1310",
+        "size": 576,
+        "bytes_sha256": "63f2ac5804fb40e8a9fcdf286b06338c2a99efd079951cf899e2e7fe2004773a"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "name": "card_rakish_heir",
+        "address": "0x224c880",
+        "size": 368,
+        "bytes_sha256": "dd03b1f8e90957b1141e4536ebe4e41077c97cde1a257627714b37902591dc46"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "name": "card_oonas_blackguard",
+        "address": "0x23b1020",
+        "size": 640,
+        "bytes_sha256": "cc11f1c5ccd03fdf5a70a2ff59e0d2643a48295545a36f4c2fd7ed7de454c857"
+      }
+    ],
+    "patches": [
+      {
+        "side": 0,
+        "index": 0,
+        "offset": 38,
+        "kind": "call",
+        "target": "etb_ability",
+        "instruction": "0x23e7095",
+        "old": "0x26a5370"
+      },
+      {
+        "side": 0,
+        "index": 0,
+        "offset": 95,
+        "kind": "call",
+        "target": "default_target_definition",
+        "instruction": "0x23e70ce",
+        "old": "0x2660240"
+      },
+      {
+        "side": 0,
+        "index": 0,
+        "offset": 126,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x23e70ed",
+        "old": "0x26b2ab0"
+      },
+      {
+        "side": 0,
+        "index": 0,
+        "offset": 140,
+        "kind": "call",
+        "target": "can_target",
+        "instruction": "0x23e70fb",
+        "old": "0x26604c0"
+      },
+      {
+        "side": 0,
+        "index": 0,
+        "offset": 172,
+        "kind": "call",
+        "target": "new_pick_target",
+        "instruction": "0x23e711b",
+        "old": "0x2660db0"
+      },
+      {
+        "side": 0,
+        "index": 0,
+        "offset": 205,
+        "kind": "call",
+        "target": "state_untargettable",
+        "instruction": "0x23e713c",
+        "old": "0x2687da0"
+      },
+      {
+        "side": 0,
+        "index": 0,
+        "offset": 248,
+        "kind": "call",
+        "target": "state_untargettable",
+        "instruction": "0x23e7167",
+        "old": "0x2687da0"
+      },
+      {
+        "side": 0,
+        "index": 0,
+        "offset": 298,
+        "kind": "call",
+        "target": "copy_counters",
+        "instruction": "0x23e7199",
+        "old": "0x26d4ca0"
+      },
+      {
+        "side": 0,
+        "index": 1,
+        "offset": 23,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x26df2c6",
+        "old": "0x26b2ab0"
+      },
+      {
+        "side": 0,
+        "index": 1,
+        "offset": 62,
+        "kind": "call",
+        "target": "is_humiliated.part.0",
+        "instruction": "0x26df2ed",
+        "old": "0x26dd050"
+      },
+      {
+        "side": 0,
+        "index": 1,
+        "offset": 85,
+        "kind": "call",
+        "target": "damage_effects",
+        "instruction": "0x26df304",
+        "old": "0x26e1450"
+      },
+      {
+        "side": 0,
+        "index": 1,
+        "offset": 97,
+        "kind": "data",
+        "target": "trigger_condition",
+        "instruction": "0x26df30f",
+        "old": "0x7a2d78"
+      },
+      {
+        "side": 0,
+        "index": 1,
+        "offset": 154,
+        "kind": "data",
+        "target": "affected_card",
+        "instruction": "0x26df348",
+        "old": "0x7a398c"
+      },
+      {
+        "side": 0,
+        "index": 1,
+        "offset": 162,
+        "kind": "data",
+        "target": "affected_card_controller",
+        "instruction": "0x26df350",
+        "old": "0x738c84"
+      },
+      {
+        "side": 0,
+        "index": 1,
+        "offset": 170,
+        "kind": "data",
+        "target": "reason_for_trigger_controller",
+        "instruction": "0x26df358",
+        "old": "0x737e1c"
+      },
+      {
+        "side": 0,
+        "index": 1,
+        "offset": 220,
+        "kind": "call",
+        "target": "effect_frost_titan",
+        "instruction": "0x26df38b",
+        "old": "0x208f050"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 23,
+        "kind": "call",
+        "target": "in_play",
+        "instruction": "0x20585e6",
+        "old": "0x26b32d0"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 47,
+        "kind": "call",
+        "target": "is_humiliated",
+        "instruction": "0x20585fe",
+        "old": "0x26dd430"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 88,
+        "kind": "call",
+        "target": "aura",
+        "instruction": "0x2058627",
+        "old": "0x26e84a0"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 112,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x205863f",
+        "old": "0x26b2ab0"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 130,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x2058651",
+        "old": "0x26b2ab0"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 178,
+        "kind": "data",
+        "target": "trigger_condition",
+        "instruction": "0x2058680",
+        "old": "0x7a2d78"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 194,
+        "kind": "data",
+        "target": "affected_card",
+        "instruction": "0x2058690",
+        "old": "0x7a398c"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 206,
+        "kind": "data",
+        "target": "affected_card_controller",
+        "instruction": "0x205869c",
+        "old": "0x738c84"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 218,
+        "kind": "data",
+        "target": "reason_for_trigger_controller",
+        "instruction": "0x20586a8",
+        "old": "0x737e1c"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 280,
+        "kind": "call",
+        "target": "kill_card",
+        "instruction": "0x20586e7",
+        "old": "0x26b5a00"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 305,
+        "kind": "data",
+        "target": "affected_card",
+        "instruction": "0x2058700",
+        "old": "0x7a398c"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 317,
+        "kind": "data",
+        "target": "affected_card_controller",
+        "instruction": "0x205870c",
+        "old": "0x738c84"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 325,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x2058714",
+        "old": "0x26b2ab0"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 331,
+        "kind": "data",
+        "target": "damage_card",
+        "instruction": "0x2058719",
+        "old": "0x7904f8"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 427,
+        "kind": "call",
+        "target": "is_what",
+        "instruction": "0x205877a",
+        "old": "0x2681ca0"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 490,
+        "kind": "data",
+        "target": "affected_card",
+        "instruction": "0x20587b8",
+        "old": "0x7a398c"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 506,
+        "kind": "data",
+        "target": "affected_card_controller",
+        "instruction": "0x20587c8",
+        "old": "0x738c84"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 530,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x20587e1",
+        "old": "0x26b2ab0"
+      },
+      {
+        "side": 0,
+        "index": 2,
+        "offset": 553,
+        "kind": "data",
+        "target": "event_result",
+        "instruction": "0x20587f7",
+        "old": "0x6205b4"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "offset": 23,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x2078756",
+        "old": "0x26b2ab0"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "offset": 37,
+        "kind": "call",
+        "target": "combat_damage_being_dealt",
+        "instruction": "0x2078764",
+        "old": "0x26e3360"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "offset": 57,
+        "kind": "data",
+        "target": "trigger_condition",
+        "instruction": "0x2078777",
+        "old": "0x7a2d78"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "offset": 121,
+        "kind": "call",
+        "target": "check_special_flags",
+        "instruction": "0x20787b8",
+        "old": "0x2679dd0"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "offset": 155,
+        "kind": "call",
+        "target": "has_subtype",
+        "instruction": "0x20787da",
+        "old": "0x26738b0"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "offset": 218,
+        "kind": "data",
+        "target": "affected_card",
+        "instruction": "0x2078818",
+        "old": "0x7a398c"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "offset": 230,
+        "kind": "data",
+        "target": "affected_card_controller",
+        "instruction": "0x2078824",
+        "old": "0x738c84"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "offset": 242,
+        "kind": "data",
+        "target": "reason_for_trigger_controller",
+        "instruction": "0x2078830",
+        "old": "0x737e1c"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "offset": 344,
+        "kind": "call",
+        "target": "add_counters",
+        "instruction": "0x2078897",
+        "old": "0x26d4840"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "offset": 366,
+        "kind": "data",
+        "target": "event_result",
+        "instruction": "0x20788ad",
+        "old": "0x6205b4"
+      },
+      {
+        "side": 0,
+        "index": 3,
+        "offset": 374,
+        "kind": "data",
+        "target": "event_result",
+        "instruction": "0x20788b5",
+        "old": "0x6205b4"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 34,
+        "kind": "call",
+        "target": "is_humiliated",
+        "instruction": "0x2283c41",
+        "old": "0x26dd430"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 58,
+        "kind": "call",
+        "target": "is_humiliated",
+        "instruction": "0x2283c59",
+        "old": "0x26dd430"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 96,
+        "kind": "call",
+        "target": "in_play",
+        "instruction": "0x2283c7f",
+        "old": "0x26b32d0"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 111,
+        "kind": "call",
+        "target": "damage_being_dealt",
+        "instruction": "0x2283c8e",
+        "old": "0x26e3460"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 164,
+        "kind": "call",
+        "target": "resolve_damage_trigger",
+        "instruction": "0x2283cc3",
+        "old": "0x268dcf0"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 203,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x2283cea",
+        "old": "0x26b2ab0"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 232,
+        "kind": "call",
+        "target": "in_play",
+        "instruction": "0x2283d07",
+        "old": "0x26b32d0"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 281,
+        "kind": "call",
+        "target": "default_test_definition",
+        "instruction": "0x2283d38",
+        "old": "0x26bebb0"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 337,
+        "kind": "call",
+        "target": "test_enters_the_battlefield_with_counters",
+        "instruction": "0x2283d70",
+        "old": "0x227ed50"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 373,
+        "kind": "call",
+        "target": "in_play",
+        "instruction": "0x2283d94",
+        "old": "0x26b32d0"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 419,
+        "kind": "call",
+        "target": "count_counters",
+        "instruction": "0x2283dc2",
+        "old": "0x26d1730"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 448,
+        "kind": "call",
+        "target": "damage_is_to_planeswalker",
+        "instruction": "0x2283ddf",
+        "old": "0x26e34e0"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 468,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x2283df3",
+        "old": "0x26b2ab0"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 557,
+        "kind": "call",
+        "target": "new_multidiscard",
+        "instruction": "0x2283e4c",
+        "old": "0x269ebd0"
+      },
+      {
+        "side": 0,
+        "index": 4,
+        "offset": 602,
+        "kind": "call",
+        "target": "new_multidiscard",
+        "instruction": "0x2283e79",
+        "old": "0x269ebd0"
+      },
+      {
+        "side": 1,
+        "index": 0,
+        "offset": 38,
+        "kind": "call",
+        "target": "etb_ability",
+        "instruction": "0x20e9de5",
+        "old": "0x269c4d0"
+      },
+      {
+        "side": 1,
+        "index": 0,
+        "offset": 95,
+        "kind": "call",
+        "target": "default_target_definition",
+        "instruction": "0x20e9e1e",
+        "old": "0x26dae00"
+      },
+      {
+        "side": 1,
+        "index": 0,
+        "offset": 126,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x20e9e3d",
+        "old": "0x266b260"
+      },
+      {
+        "side": 1,
+        "index": 0,
+        "offset": 140,
+        "kind": "call",
+        "target": "can_target",
+        "instruction": "0x20e9e4b",
+        "old": "0x26db3b0"
+      },
+      {
+        "side": 1,
+        "index": 0,
+        "offset": 172,
+        "kind": "call",
+        "target": "new_pick_target",
+        "instruction": "0x20e9e6b",
+        "old": "0x26dc010"
+      },
+      {
+        "side": 1,
+        "index": 0,
+        "offset": 207,
+        "kind": "call",
+        "target": "state_untargettable",
+        "instruction": "0x20e9e8e",
+        "old": "0x26acea0"
+      },
+      {
+        "side": 1,
+        "index": 0,
+        "offset": 256,
+        "kind": "call",
+        "target": "state_untargettable",
+        "instruction": "0x20e9ebf",
+        "old": "0x26acea0"
+      },
+      {
+        "side": 1,
+        "index": 0,
+        "offset": 304,
+        "kind": "call",
+        "target": "copy_counters",
+        "instruction": "0x20e9eef",
+        "old": "0x2667870"
+      },
+      {
+        "side": 1,
+        "index": 1,
+        "offset": 23,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x2654966",
+        "old": "0x266b260"
+      },
+      {
+        "side": 1,
+        "index": 1,
+        "offset": 62,
+        "kind": "call",
+        "target": "is_humiliated.part.0",
+        "instruction": "0x265498d",
+        "old": "0x26538c0"
+      },
+      {
+        "side": 1,
+        "index": 1,
+        "offset": 85,
+        "kind": "call",
+        "target": "damage_effects",
+        "instruction": "0x26549a4",
+        "old": "0x26680d0"
+      },
+      {
+        "side": 1,
+        "index": 1,
+        "offset": 97,
+        "kind": "data",
+        "target": "trigger_condition",
+        "instruction": "0x26549af",
+        "old": "0x7a2d78"
+      },
+      {
+        "side": 1,
+        "index": 1,
+        "offset": 154,
+        "kind": "data",
+        "target": "affected_card",
+        "instruction": "0x26549e8",
+        "old": "0x7a398c"
+      },
+      {
+        "side": 1,
+        "index": 1,
+        "offset": 162,
+        "kind": "data",
+        "target": "affected_card_controller",
+        "instruction": "0x26549f0",
+        "old": "0x738c84"
+      },
+      {
+        "side": 1,
+        "index": 1,
+        "offset": 170,
+        "kind": "data",
+        "target": "reason_for_trigger_controller",
+        "instruction": "0x26549f8",
+        "old": "0x737e1c"
+      },
+      {
+        "side": 1,
+        "index": 1,
+        "offset": 222,
+        "kind": "call",
+        "target": "effect_frost_titan",
+        "instruction": "0x2654a2d",
+        "old": "0x22fc420"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 23,
+        "kind": "call",
+        "target": "in_play",
+        "instruction": "0x25f1326",
+        "old": "0x266ba30"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 47,
+        "kind": "call",
+        "target": "is_humiliated",
+        "instruction": "0x25f133e",
+        "old": "0x26539b0"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 88,
+        "kind": "call",
+        "target": "aura",
+        "instruction": "0x25f1367",
+        "old": "0x265a560"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 112,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x25f137f",
+        "old": "0x266b260"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 130,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x25f1391",
+        "old": "0x266b260"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 178,
+        "kind": "data",
+        "target": "trigger_condition",
+        "instruction": "0x25f13c0",
+        "old": "0x7a2d78"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 194,
+        "kind": "data",
+        "target": "affected_card",
+        "instruction": "0x25f13d0",
+        "old": "0x7a398c"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 206,
+        "kind": "data",
+        "target": "affected_card_controller",
+        "instruction": "0x25f13dc",
+        "old": "0x738c84"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 218,
+        "kind": "data",
+        "target": "reason_for_trigger_controller",
+        "instruction": "0x25f13e8",
+        "old": "0x737e1c"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 282,
+        "kind": "call",
+        "target": "kill_card",
+        "instruction": "0x25f1429",
+        "old": "0x266dcf0"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 313,
+        "kind": "data",
+        "target": "affected_card",
+        "instruction": "0x25f1448",
+        "old": "0x7a398c"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 325,
+        "kind": "data",
+        "target": "affected_card_controller",
+        "instruction": "0x25f1454",
+        "old": "0x738c84"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 333,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x25f145c",
+        "old": "0x266b260"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 339,
+        "kind": "data",
+        "target": "damage_card",
+        "instruction": "0x25f1461",
+        "old": "0x7904f8"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 435,
+        "kind": "call",
+        "target": "is_what",
+        "instruction": "0x25f14c2",
+        "old": "0x2694f00"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 498,
+        "kind": "data",
+        "target": "affected_card",
+        "instruction": "0x25f1500",
+        "old": "0x7a398c"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 514,
+        "kind": "data",
+        "target": "affected_card_controller",
+        "instruction": "0x25f1510",
+        "old": "0x738c84"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 538,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x25f1529",
+        "old": "0x266b260"
+      },
+      {
+        "side": 1,
+        "index": 2,
+        "offset": 561,
+        "kind": "data",
+        "target": "event_result",
+        "instruction": "0x25f153f",
+        "old": "0x6205b4"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "offset": 23,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x224c896",
+        "old": "0x266b260"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "offset": 39,
+        "kind": "call",
+        "target": "combat_damage_being_dealt",
+        "instruction": "0x224c8a6",
+        "old": "0x2669fe0"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "offset": 59,
+        "kind": "data",
+        "target": "trigger_condition",
+        "instruction": "0x224c8b9",
+        "old": "0x7a2d78"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "offset": 121,
+        "kind": "call",
+        "target": "check_special_flags",
+        "instruction": "0x224c8f8",
+        "old": "0x268d920"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "offset": 155,
+        "kind": "call",
+        "target": "has_subtype",
+        "instruction": "0x224c91a",
+        "old": "0x26b9f10"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "offset": 213,
+        "kind": "data",
+        "target": "affected_card",
+        "instruction": "0x224c953",
+        "old": "0x7a398c"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "offset": 225,
+        "kind": "data",
+        "target": "affected_card_controller",
+        "instruction": "0x224c95f",
+        "old": "0x738c84"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "offset": 237,
+        "kind": "data",
+        "target": "reason_for_trigger_controller",
+        "instruction": "0x224c96b",
+        "old": "0x737e1c"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "offset": 328,
+        "kind": "call",
+        "target": "add_counters",
+        "instruction": "0x224c9c7",
+        "old": "0x2666ca0"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "offset": 350,
+        "kind": "data",
+        "target": "event_result",
+        "instruction": "0x224c9dd",
+        "old": "0x6205b4"
+      },
+      {
+        "side": 1,
+        "index": 3,
+        "offset": 358,
+        "kind": "data",
+        "target": "event_result",
+        "instruction": "0x224c9e5",
+        "old": "0x6205b4"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 34,
+        "kind": "call",
+        "target": "is_humiliated",
+        "instruction": "0x23b1041",
+        "old": "0x26539b0"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 58,
+        "kind": "call",
+        "target": "is_humiliated",
+        "instruction": "0x23b1059",
+        "old": "0x26539b0"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 96,
+        "kind": "call",
+        "target": "in_play",
+        "instruction": "0x23b107f",
+        "old": "0x266ba30"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 111,
+        "kind": "call",
+        "target": "damage_being_dealt",
+        "instruction": "0x23b108e",
+        "old": "0x266a0e0"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 164,
+        "kind": "call",
+        "target": "resolve_damage_trigger",
+        "instruction": "0x23b10c3",
+        "old": "0x2688d20"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 206,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x23b10ed",
+        "old": "0x266b260"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 240,
+        "kind": "call",
+        "target": "in_play",
+        "instruction": "0x23b110f",
+        "old": "0x266ba30"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 289,
+        "kind": "call",
+        "target": "default_test_definition",
+        "instruction": "0x23b1140",
+        "old": "0x26b7020"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 345,
+        "kind": "call",
+        "target": "test_enters_the_battlefield_with_counters",
+        "instruction": "0x23b1178",
+        "old": "0x23ac2c0"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 381,
+        "kind": "call",
+        "target": "in_play",
+        "instruction": "0x23b119c",
+        "old": "0x266ba30"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 427,
+        "kind": "call",
+        "target": "count_counters",
+        "instruction": "0x23b11ca",
+        "old": "0x2663bd0"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 456,
+        "kind": "call",
+        "target": "damage_is_to_planeswalker",
+        "instruction": "0x23b11e7",
+        "old": "0x266a160"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 476,
+        "kind": "call",
+        "target": "get_card_instance",
+        "instruction": "0x23b11fb",
+        "old": "0x266b260"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 566,
+        "kind": "call",
+        "target": "new_multidiscard",
+        "instruction": "0x23b1255",
+        "old": "0x26a5aa0"
+      },
+      {
+        "side": 1,
+        "index": 4,
+        "offset": 610,
+        "kind": "call",
+        "target": "new_multidiscard",
+        "instruction": "0x23b1281",
+        "old": "0x26a5aa0"
+      }
+    ],
+    "plan_sha256": "a6b772f20fc8948387aba30b35a323fcd726c66d69cfcfef5a291ebb3819bf2b",
+    "patch_scope": "Only decoded 32-bit external leaf-call displacements and six known global-address operands are patched in process. Function bodies, local branches and source-slot bounds are retained.",
+    "private_abi": {
+      "worker": "is_humiliated.part.0",
+      "convention": "i386 regparm(3): eax=player, edx=card, ecx=ability class",
+      "evidence": "Checked caller register setup and worker prologue; both sides use the same checked fixture adapter."
+    },
+    "compared": [
+      "Return value",
+      "Complete four 300-byte card records",
+      "Complete four extension records",
+      "Event-result global",
+      "Exact ordered helper tags and arguments"
+    ],
+    "coverage": "Twelve event classes, both players, 8,192 environments per player/event with matching/mismatching trigger ownership, zero/positive loop bounds, helper rejection, suppression, byte-count return patterns and callbacks that mutate the remaining bounds/target records.",
+    "log_sha256": "b688a4ffc3804b147d2aa053eb1d51aebcc2d29a836c3cd85975408a101ff756",
+    "generated_source_sha256": "6be4b2643e77f86a63932d200475a7fec20de0707414ac26d25042b9cbb769a0",
+    "executable_sha256": "2b8bbc0a47d4e3cf5246f396c2ca86897abdeb300e07dcde64565701fc7f2a1e",
+    "source_template_sha256": "ed252167d1c1402dcc293a39869f312a4742fdb5a6d9392979dd6cdd2cb0fa1d",
+    "fixture_builder_sha256": "0b2ac6ff3b7f63d395734c617b99de52beb80ac7419b678bca4759cccc5cf8cc",
+    "fixture_planner_sha256": "84dc7bb24664167945925b8be084b74063043d32e2380d720bad3682b72e3514",
+    "scope": "Bounded native/rebuilt handler execution with leaf helpers stubbed. This is not full-game integration or unrestricted game-state equivalence."
+  },
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "build_log_sha256": "a7ac44f0e16311f2a594db6b00739763a0095c069f5eb3bc5ed8ce539352260c",
+    "dll_sha256": "328f0e96502e853c17693d22912f24be805f95527215e6d06813bc5cfdaf77c8",
+    "debug_sha256": "5fd62bffe32b5c280371718213b6790e87e732308f13b7a494d2f91f976c98fd",
+    "full_file_projections": 5,
+    "staging": "preserved",
+    "checker_sha256": "7cd729e9a50b161d209c0446ee8ab63bc6b4ad6ad59105a1d34d1468bd626599",
+    "code_generation": "All five objects have changed .text bytes; no byte-identity claim. Separate native fixture checks compare behavior.",
+    "full_reccmp": "Deferred; the external-refresh-c642 report/queues are the pre-edit discovery snapshot."
+  }
+}

@@ -570,7 +570,7 @@ int effect_damage(int player, int card, event_t event)
   }
   if ((flags & 0x20000000) != 0)
   {
-    generate_tokens_by_id((int)damage->damage_source_player, -1, 0x4991, amount);
+    generate_tokens_by_id((int)damage->damage_source_player, -1, CARD_ID_SQUIRREL, amount);
   }
   result = damage->targets[4].card;
   target_player = damage->targets[4].player;
@@ -648,7 +648,7 @@ int effect_damage(int player, int card, event_t event)
         source_csvid = damage->display_pic_csv_id;
         if ((source_csvid == 0x1916) || (result = 1, source_csvid == 0x1b04))
         {
-          result = (-(unsigned int)((damage->token_status & 0x140000) == 0) & 0xfffffff9) + 8;
+          result = (((damage->token_status & 0x140000) == 0) ? 1U : 8U);
         }
         set_special_flags(damage->targets[4].player, damage->targets[4].card, result);
         flags = damage->ext->sp_keywords;
@@ -770,7 +770,7 @@ int effect_damage(int player, int card, event_t event)
     }
     if (amount < result)
     {
-      if ((card_flags[target_player] & 0x10) == 0)
+      if ((card_flags[target_player] & CFLAGS_ARCHON_OF_CORONATION) == 0)
       {
         lose_life(target_player, result - amount);
       }
@@ -792,7 +792,7 @@ int effect_damage(int player, int card, event_t event)
     {
       return 0;
     }
-    default_token_definition(player, card, 0x3afa, &token);
+    default_token_definition(player, card, CARD_ID_CHANDRA_ROARING_FLAME_EMBLEM, &token);
     token.t_player = target_player;
     generate_token(&token);
     current_csvid = damage->display_pic_csv_id;
@@ -800,12 +800,12 @@ int effect_damage(int player, int card, event_t event)
   }
   if ((source_id == 0x3257) && (damage->targets[10].card == 0x3257))
   {
-    amount = generate_reserved_token_by_id(player, 0x6160);
+    amount = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);
     damage = get_card_instance(player, amount);
     damage->targets[3].player = target_player;
     damage->targets[2].player = 0x80;
     damage->targets[2].card = 0x3257;
-    create_card_name_legacy(player, amount, 0x3257);
+    create_card_name_legacy(player, amount, CARD_ID_AURELIAS_FURY);
   }
   return 0;
 }
@@ -1023,7 +1023,7 @@ static int if_attached_creature_dies_do_something(int player, int card, event_t 
         if (mode && (mode & 1))
         {
           int toughness = get_toughness(p, c);
-          instance->targets[1].player = (card_counts[player][5] + 1) * toughness;
+          instance->targets[1].player = (card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1) * toughness;
         }
         instance->targets[11].player = 1; // Otherwise "resolve_gfp_ability" won't trigger
         instance->damage_target_player = instance->damage_target_card = -1;
@@ -1052,7 +1052,7 @@ static int if_attached_creature_dies_do_something(int player, int card, event_t 
     }
     if (mode && (mode & 2))
     {
-      int amount = card_counts[player][5] + 1;
+      int amount = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
       do
       {
         if (do_dialog(instance->targets[0].player, player, card, -1, -1, " Draw a card\n Pass",

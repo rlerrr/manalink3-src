@@ -800,7 +800,7 @@ static int blowfly_infestation_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 1) = 1;
+        SET_BYTE1(instance->targets[0xb].player) = 1;
       }
       result = count_counters(affected_card_controller, affected_card, COUNTER_M1_M1);
       if (result != 0)
@@ -1528,6 +1528,7 @@ int card_din_of_the_fireherd(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
+			int tgt = get_card_instance(player, card)->targets[0].player;
 			token_generation_t token;
 			default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
 			token.pow = 5;
@@ -1543,7 +1544,7 @@ int card_din_of_the_fireherd(int player, int card, event_t event){
 				test_definition_t test2;
 				new_default_test_definition(&test2, TYPE_CREATURE, "Select a creature to sacrifice.");
 				test2.qty = result;
-				new_sacrifice(player, card, get_card_instance(player, card)->targets[0].player, SAC_CAUSED | SAC_NO_CANCEL, &test2);
+				new_sacrifice(player, card, tgt, SAC_CAUSED | SAC_NO_CANCEL, &test2);
 			}
 			this_test.color = COLOR_TEST_RED;
 			result = check_battlefield_for_special_card(player, card, player, CBFSC_GET_COUNT, &this_test);
@@ -1551,7 +1552,7 @@ int card_din_of_the_fireherd(int player, int card, event_t event){
 				test_definition_t test2;
 				new_default_test_definition(&test2, TYPE_LAND, "Select a land to sacrifice.");
 				test2.qty = result;
-				new_sacrifice(player, card, get_card_instance(player, card)->targets[0].player, SAC_CAUSED | SAC_NO_CANCEL, &test2);
+				new_sacrifice(player, card, tgt, SAC_CAUSED | SAC_NO_CANCEL, &test2);
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -1964,7 +1965,7 @@ int card_fate_transfer(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td_src, 2);
     td_src.allowed_controller = 2;
-    td_src.special = 0x40000;
+    td_src.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td_src.extra = 0xff;
     default_target_definition(player, card, &td, 2);
     td.allowed_controller = 2;
@@ -1982,7 +1983,7 @@ int card_fate_transfer(int player, int card, event_t event)
     {
       default_target_definition(player, card, &td_src, 2);
       td_src.allowed_controller = 2;
-      td_src.special = 0x40000;
+      td_src.special = TARGET_SPECIAL_REQUIRES_COUNTER;
       td_src.extra = 0xff;
       default_target_definition(player, card, &td, 2);
       td.allowed_controller = 2;
@@ -2014,7 +2015,7 @@ int card_fate_transfer(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td_src, 2);
     td_src.allowed_controller = 2;
-    td_src.special = 0x40000;
+    td_src.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td_src.extra = 0xff;
     default_target_definition(player, card, &td, 2);
     td.allowed_controller = 2;
@@ -2371,24 +2372,15 @@ int card_gnarled_effigy(int player, int card, event_t event)
   int result;
   target_definition_t td;
 
-  if (event == EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  default_target_definition(player, card, &td, 2);
+  instance = get_card_instance(player, card);
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
-    default_target_definition(player, card, &td, 2);
-    get_card_instance(player, card);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 2);
-    instance = get_card_instance(player, card);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-    {
-      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
-                               COUNTER_M1_M1, 1);
-    }
+    add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                             COUNTER_M1_M1, 1);
   }
   result = generic_activated_ability(player, card, event, 5, 4, 0, 0, 0, 0, 0, 0, &td,
                                      "TARGET_CREATURE");
@@ -2549,7 +2541,7 @@ int card_helm_of_the_ghastlord(int player, int card, event_t event)
         (instance = get_card_instance(player, card), -1 < instance->damage_target_card)) &&
        (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
       (((event == EVENT_DEAL_DAMAGE || (event == EVENT_GRAVEYARD_FROM_PLAY)) ||
-        ((trigger_condition == 0xd7 || (event == EVENT_CHANGE_TYPE))))))
+        ((trigger_condition == TRIGGER_DEAL_DAMAGE || (event == EVENT_CHANGE_TYPE))))))
   {
     instance = get_card_instance(player, card);
     if ((-1 < instance->damage_target_card) &&
@@ -3082,7 +3074,7 @@ int card_leech_bonder(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td_src, 2);
     td_src.allowed_controller = 2;
-    td_src.special = 0x40000;
+    td_src.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td_src.extra = 0xff;
     default_target_definition(player, card, &td, 2);
     instance = get_card_instance(player, card);
@@ -3139,7 +3131,7 @@ int card_leech_bonder(int player, int card, event_t event)
     }
     default_target_definition(player, card, &td_src, 2);
     td_src.allowed_controller = 2;
-    td_src.special = 0x40000;
+    td_src.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td_src.extra = 0xff;
     default_target_definition(player, card, &td, 2);
     instance = get_card_instance(player, card);
@@ -4452,7 +4444,7 @@ int card_prison_term(int player, int card, event_t event)
 
   instance = get_card_instance(player, card);
   trigger_mode_or_value = 1;
-  if (trigger_condition == 0xdb)
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY)
   {
     aura_in_play = in_play(player, card);
     if ((((aura_in_play != NULL) && (card == affected_card)) &&
@@ -5029,7 +5021,7 @@ int card_resplendant_mentor(int player, int card, event_t event)
     td.preferred_controller = player;
     td.allowed_controller = player;
     td.extra = (int32_t)can_be_activated;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.illegal_abilities = 0;
     td.required_color = get_sleighted_color_test(player, card, 0x20);
     instance = get_card_instance(player, card);
@@ -5069,7 +5061,7 @@ int card_resplendant_mentor(int player, int card, event_t event)
     td.preferred_controller = player;
     td.allowed_controller = player;
     td.extra = (int32_t)can_be_activated;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.illegal_abilities = 0;
     td.required_color = get_sleighted_color_test(player, card, 0x20);
     get_card_instance(player, card);
@@ -7040,7 +7032,7 @@ static int dire_undercurrents_blue_trig(int player, int card, event_t event)
   }
   instance = get_card_instance(player, card);
   default_target_definition(player, card, &td, 2);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   td.preferred_controller = player;
   result = new_pick_target(&td, "Select target player to draw a card.", 0, 0x80);
   if (result != 0)
@@ -7065,7 +7057,7 @@ static int dire_undercurrents_black_trig(int player, int card, event_t event)
   }
   instance = get_card_instance(player, card);
   default_target_definition(player, card, &td, 2);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   result = new_pick_target(&td, "Select target player to discard a card.", 0, 0x80);
   if (result != 0)
   {
@@ -7079,32 +7071,13 @@ static int dire_undercurrents_black_trig(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25517a0; original cards/shadowmoor.c:2524. */
 int card_guttural_response(int player, int card, event_t event)
 {
-  int result;
   target_definition_t td;
   hybrid(player, card, event);
-  if (event != EVENT_CAN_CAST)
-  {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
-             (event != EVENT_CHANGE_TARGET))
-    {
-      return 0;
-    }
-  }
+  if (!IS_GS_EVENT(player, card, event))
+    return 0;
   counterspell_target_definition(player, card, &td, 0x30);
   td.required_color = get_sleighted_color_test(player, card, 4);
-  result = counterspell(player, card, event, &td, 0);
-  return result;
+  return counterspell(player, card, event, &td, 0);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -7118,10 +7091,9 @@ int card_boon_reflection(int player, int card, event_t event)
   };
 
   xtrigger_t current_trigger;
-  int result;
 
   current_trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     current_trigger = xtrigger_impl_value_dont_use_directly;
   }
@@ -7130,8 +7102,7 @@ int card_boon_reflection(int player, int card, event_t event)
       (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
         (0 < life_gained))))
   {
-    result = is_humiliated(player, card, AL_TRIG);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_TRIG))
     {
       if (event == EVENT_TRIGGER)
       {

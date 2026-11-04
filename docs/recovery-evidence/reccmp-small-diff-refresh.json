@@ -1,0 +1,125 @@
+{
+  "format": 1,
+  "status": "Refreshed full JSON and grouped tiny-diff queues; snapshot precedes the partner-table source rewrite.",
+  "receipt": {
+    "setup_sha256": "5bbbc9dc43392419b64c370671dba94fef7dc70d8c65bead7e987616628e2701",
+    "report_sha256": "47e6b3ed732d5fc6bb56a56a9c59b5ae63c9ddff9780c2adf449459dcdb7b502",
+    "inputs": {
+      "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dll": "b2563df995bfa38272e7701409bbb1b8d818b9b48a11d1ad3751501431f62f5b",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "ff9c31fa0a50f69cb708177e60b5760a3f30e658e1db41f60c3975778e1875dc"
+    },
+    "metadata_sha256": "5e9a95b2a5e2339150b7600a3dc70805767ef1a1da5733d5173c752cf2fc9164",
+    "metadata_snapshot": ".recovery\\reccmp\\tiny-refresh-c637.metadata.csv",
+    "global_metadata_snapshot": ".recovery\\reccmp\\tiny-refresh-c637.globals.csv",
+    "global_metadata_sha256": "4bd078c759882fd6f758d1ec43ab13606b0e8e288c32b13ec11f52609c5142c9",
+    "global_bindings_snapshot": ".recovery\\reccmp\\tiny-refresh-c637.globals.json",
+    "global_bindings_sha256": "1587385634338a26f087eb61232907472a305a9307c7956d2e062154d70b042d",
+    "verified_global_bindings": {
+      "verified": 293,
+      "bindings_sha256": "b5fd9db366005e220b7bcd23e5f598e9794999cf7f56b39904f321aee2d6567e"
+    },
+    "project_config_sha256": "a978a638b5f154a514be6229cd0b012f96fb8431f1bfc4c4f00c3cf13bc0d371",
+    "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "comparator_source_sha256": {
+      "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+      "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+      "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+      "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_globals.py": "1e870d89b4afbc15950d26c59a94162aecc70bec0700f60c032373a76910f3bc",
+      "C:\\dev\\manalink3-src\\tools\\reccmp_project.py": "c63e3d0b734e532a9bf37141562308a06fd9d3327e85f02d01f67267c73876b6"
+    },
+    "command": [
+      "reccmp-reccmp",
+      "--target",
+      "MANALINK2022",
+      "--no-color",
+      "--json",
+      ".recovery/reccmp/tiny-refresh-c637.json",
+      "--silent"
+    ],
+    "exit_code": 0
+  },
+  "summary": {
+    "exact": 12531,
+    "different": 6024,
+    "effective": 273
+  },
+  "ranges": 18828,
+  "explicit_function_bindings": 160,
+  "verified_global_bindings": 293,
+  "default_queue": {
+    "candidates": 394,
+    "distinct_change_groups": 300,
+    "patterns": {
+      "inspect_operands_and_control_flow": 238,
+      "assertion_line_numbers": 19,
+      "branch_layout_or_padding": 74,
+      "instruction_reordering": 4,
+      "callee_or_address_mapping": 17,
+      "retarget_event_comparison_order": 42
+    }
+  },
+  "all_score_queue": {
+    "candidates": 617,
+    "distinct_change_groups": 440,
+    "maximum_changed_instructions_per_side": 8,
+    "minimum_score": 0
+  },
+  "queue_tool_sha256": "551f66be3775a1aad91847e1972b1e2dd087d00bf190e1eca5464579ba14495d",
+  "score_changes": [
+    {
+      "name": "get_test_score",
+      "address": "0x26be510",
+      "before": 0.7267080745341615,
+      "after": 0.10569105691056911
+    },
+    {
+      "name": "new_get_test_score",
+      "address": "0x26be6e0",
+      "before": 0.5252100840336135,
+      "after": 0.18041237113402062
+    }
+  ],
+  "score_change_interpretation": "Only the two scorer reconstructions change normalized scores. Their lower scores reflect the readable switches; separate release/rebuilt/source checks agree over 997,102 recorded cases. No source changes were made to chase assembly scores.",
+  "scorer_evidence": "docs/recovery-evidence/native-test-score-control-flow.json",
+  "reviewed_signals": [
+    {
+      "functions": [
+        "card_autumn_tail_kitsune_sage"
+      ],
+      "finding": "Native and rebuilt return zero outside the can-activate helper return; the extra xor is shared-tail layout. No edit."
+    },
+    {
+      "functions": [
+        "card_deftblade_elite"
+      ],
+      "finding": "The native get_power path increments the same toughness accumulator; rebuilt branches into the existing shared increment. No omitted store, no edit."
+    },
+    {
+      "functions": [
+        "card_shiv2"
+      ],
+      "finding": "The native failed can-use-ability branch jumps to the same spell_fizzled assignment used for dialog cancellation. Rebuilt duplicates the assignment. No edit."
+    },
+    {
+      "functions": [
+        "card_kitaki_wars_wage"
+      ],
+      "finding": "Native compares spell_fizzled against 1; rebuilt feeds that value into the common choice!=1 continuation. The observed difference is shared-tail layout, no edit."
+    },
+    {
+      "functions": [
+        "get_partner_with_id"
+      ],
+      "finding": "A 30-byte native lookup scores only 43.5% despite a small absolute delta. It exposes eleven named mappings and a deliberately preserved native missing reverse case; recovered separately.",
+      "evidence": "docs/recovery-evidence/native-partner-id-table.json"
+    }
+  ],
+  "grouping_scope": "Textual review batches; branch destinations and comparator-local OFFSET numbers are masked. Constants and branch conditions remain. All candidates are retained and each member requires its own control-flow/address check. Groups and scores do not establish equivalence.",
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110"
+}

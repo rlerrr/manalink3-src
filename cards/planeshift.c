@@ -757,7 +757,7 @@ Choose one -
 			int choice = DIALOG(player, card, event, DLG_RANDOM,
 								"Gain 5 life", 1, life[player] < 6 ? 25 : 1,
 								"Counterspell", can_counter, 15,
-								"Target crit gets -5/-5", can_target(&td), 5);
+								"Target creature gets -2/-2", can_target(&td), 5);
 			if( ! choice ){
 				spell_fizzled = 1;
 				return 0;
@@ -1943,7 +1943,7 @@ int card_star_compass(int player, int card, event_t event)
       }
   }
   card_instance_t* instance = get_card_instance(player, card);
-  if (instance->mana_color == 0 || instance->mana_color == COLOR_TEST_COLORLESS)
+  if (instance->mana_color == 0 || get_card_instance(player, card)->mana_color == COLOR_TEST_COLORLESS)
   {
     if (event == EVENT_CAN_ACTIVATE && player == AI)
       return 0;

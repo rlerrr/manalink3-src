@@ -251,40 +251,27 @@ static int qsort_cardvalue_ascending(void *lhs, void *rhs)
 /* ManalinkEh 2022: 0x26abfd0; original functions/engine.c:2502. */
 void undeclare_attacker(int player, int card)
 {
-  card_instance_t *instance;
-  int result;
-  int card_00;
-  int first_linked_attacker;
+  card_instance_t *inst = get_card_instance(player, card);
+  inst->state &= ~STATE_ATTACKING;
+  if (inst->blocking == 0xff)
+    return;
+  inst->blocking = 0xff;
 
-  instance = get_card_instance(player, card);
-  instance->state = instance->state & 0xfffffffb;
-
-  if ((instance->blocking != 0xff) && (instance->blocking = 0xff, 0 < active_cards_count[player]))
+  int band_base = -1;
+  int num_banded = 0;
+  for (int c = 0; c < active_cards_count[player]; ++c)
   {
-    result = 0;
-    first_linked_attacker = -1;
-    card_00 = 0;
-    do
+    card_instance_t *banded = in_play(player, c);
+    if (banded && (banded->state & STATE_ATTACKING) && card == (unsigned int)banded->blocking)
     {
-      instance = in_play(player, card_00);
-      if (instance != NULL && (instance->state & 4) != 0 &&
-          card == (unsigned int)instance->blocking)
-      {
-        instance->blocking = (uint8_t)card_00;
-        if (first_linked_attacker == -1)
-          first_linked_attacker = card_00;
-        result = result + 1;
-      }
-      card_00 = card_00 + 1;
-    } while (card_00 < active_cards_count[player]);
-    if (result == 1)
-    {
-      instance = get_card_instance(player, first_linked_attacker);
-      instance->blocking = 0xff;
-      return;
+      banded->blocking = (uint8_t)c;
+      if (band_base == -1)
+        band_base = c;
+      ++num_banded;
     }
   }
-  return;
+  if (num_banded == 1)
+    get_card_instance(player, band_base)->blocking = 0xff;
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -293,41 +280,18 @@ int is_being_cast(int player, int card);
 /* ManalinkEh 2022: 0x26adb20; original functions/engine.c:3232. */
 int is_being_cast(int player, int card)
 {
-  card_instance_t *queried_instance;
-  card_instance_t *stack_instance;
-  int result;
-  bool casting_spell;
-
-  queried_instance = get_card_instance(player, card);
-  if (queried_instance == NULL)
-  {
+  card_instance_t *inst = get_card_instance(player, card);
+  if (!inst)
     return 0;
-  }
-  if (queried_instance->internal_card_id == damage_card)
-  {
-    return queried_instance->targets[7].player & 2;
-  }
-  stack_instance = on_stack(player, card);
-  if (stack_instance == NULL)
-  {
-    queried_instance = in_hand(player, card);
-    if (queried_instance != NULL)
-    {
-      return (unsigned int)((((unsigned int)land_can_be_played >> 16 & 0xff) & 0x40) == 0);
-    }
-    queried_instance = in_play(player, card);
-    if (queried_instance == NULL)
-    {
-      return 0;
-    }
-    result = is_what(player, card, 199);
-    casting_spell = result == 0;
-  }
-  else
-  {
-    casting_spell = queried_instance->internal_card_id != activation_card;
-  }
-  return (unsigned int)casting_spell;
+  if (inst->internal_card_id == damage_card)
+    return inst->targets[7].player & 2;
+  if (on_stack(player, card))
+    return inst->internal_card_id != activation_card;
+  if (in_hand(player, card))
+    return (land_can_be_played & 0x400000) == 0;
+  if (!in_play(player, card))
+    return 0;
+  return is_what(player, card, 199) == 0;
 }
 
 
@@ -385,14 +349,14 @@ void count_mana(void)
         if ((cards_data[instance->internal_card_id].extra_ability & 0x1000) != 0)
           mana_sources[player][source_counts[player]++] = card;
         uint16_t csvid = cards_data[instance->internal_card_id].id;
-        if (csvid == 100 || (csvid == 0xee && (instance->state & 0x10) == 0))
+        if (csvid == CARD_ID_GLOOM || (csvid == CARD_ID_SUNGLASSES_OF_URZA && (instance->state & 0x10) == 0))
           dispatch_event_to_single_card(player, card, EVENT_COUNT_MANA, -1, -1);
       }
       instance = in_hand(player, card);
       if (instance != NULL)
       {
         uint16_t csvid = cards_data[instance->internal_card_id].id;
-        if (csvid == 0x8e3 || csvid == 0x2293)
+        if (csvid == CARD_ID_ELVISH_SPIRIT_GUIDE || csvid == CARD_ID_SIMIAN_SPIRIT_GUIDE)
           dispatch_event_to_single_card(player, card, EVENT_COUNT_MANA, -1, -1);
       }
     }
@@ -942,7 +906,7 @@ static int is_legal_block_impl2(int blocking_player, int blocking_card, int bloc
   uint32_t state = blocking->state;
   if (!(cards_data[blocking->internal_card_id].type & TYPE_CREATURE) && !(state & 0x2000000))
     return 0;
-  uint32_t illegal_state = 0x800008 | ((card_flags[blocking_player] & 1) ? 0 : 0x10);
+  uint32_t illegal_state = 0x800008 | ((card_flags[blocking_player] & CFLAGS_MASAKO) ? 0 : 0x10);
   if (state & illegal_state)
     return 0;
   if (state & 4)
@@ -1149,8 +1113,8 @@ void human_assign_blockers(int player)
   EXE_FN(void, 0x472260, void)();
   target_definition_t td_choose_blocker;
   base_target_definition(def, 0, &td_choose_blocker, 0x2000002);
-  td_choose_blocker.zone = 0x2200;
-  td_choose_blocker.special = 0x400;
+  td_choose_blocker.zone = TARGET_ZONE_IN_PLAY | TARGET_ZONE_0x2000;
+  td_choose_blocker.special = TARGET_SPECIAL_ALLOW_MULTIBLOCKER;
   td_choose_blocker.illegal_state = 0;
   td_choose_blocker.allow_cancel = 2;
   td_choose_blocker.who_chooses = who_chooses;
@@ -1160,7 +1124,7 @@ void human_assign_blockers(int player)
   base_target_definition(player, 0, &td_block_which_attacker, TYPE_CREATURE);
   td_block_which_attacker.allowed_controller = player;
   td_block_which_attacker.preferred_controller = player;
-  td_block_which_attacker.required_state = 2;
+  td_block_which_attacker.required_state = TARGET_STATE_ATTACKING;
   td_block_which_attacker.who_chooses = who_chooses;
   target_t blocker, blocked;
   for (;;)
@@ -1173,7 +1137,7 @@ void human_assign_blockers(int player)
       for (int j = 0; j < active_cards_count[def]; ++j)
       {
         card_instance_t *inst = get_card_instance(def, j);
-        uint32_t mask = 10 | ((card_flags[def] & 1) ? 0 : 0x10);
+        uint32_t mask = 10 | ((card_flags[def] & CFLAGS_MASAKO) ? 0 : 0x10);
         if ((inst->state & mask) == 2 && is_legal_block(def, j, player, i))
         {
           any = 1;
@@ -1230,15 +1194,22 @@ void human_assign_blockers(int player)
 
 
 #ifndef SHANDALAR
+typedef struct
+{
+  int card, effectiveness;
+  int8_t bands, one_of_best_7;
+} PotentialAttacker;
+
+typedef struct
+{
+  int potential_power, potential_toughness;
+  keyword_t abils;
+  int opinion_of_game_state_without_this;
+} ai_combat_data_t;
+
 /* ManalinkEh 2022: 0x26ac0a0; original functions/engine.c:2586. */
 void setup_ai_combat_data(int player)
 {
-  typedef struct
-  {
-    int potential_power, potential_toughness;
-    keyword_t abils;
-    int opinion_of_game_state_without_this;
-  } ai_combat_data_t;
   ai_combat_data_t(*data)[150] = (ai_combat_data_t(*)[150])0x609164;
   int old_ai_is_speculating = ai_is_speculating;
   int old_speculating_during_combat = EXE_DWORD(0x7a5378);
@@ -1326,7 +1297,7 @@ static int mod_pow_unblocked(int pow_unblocked, int player, int card)
     result = 9999;
   else if (id == 0x3372)
     result = life[1 - player] - 1;
-  if (has_subtype(player, card, SUBTYPE_ROGUE) && check_battlefield_for_id(player, 0x24de))
+  if (has_subtype(player, card, SUBTYPE_ROGUE) && check_battlefield_for_id(player, CARD_ID_STINKDRINKER_BANDIT))
     result += 2;
   return result;
 }
@@ -1614,8 +1585,12 @@ void ai_assign_blockers(int player)
     }
   }
   for (int i = 0; i < EXE_DWORD(0x607d54); ++i)
-    get_card_instance(EXE_DWORD(0x607c2c), EXE_DWORD_PTR(0x608304)[i])->blocking =
-        EXE_DWORD_PTR(0x60775c)[i];
+  {
+    uint32_t assignment = EXE_DWORD_PTR(0x60775c)[i];
+    card_instance_t *instance =
+        get_card_instance(EXE_DWORD(0x607c2c), EXE_DWORD_PTR(0x608304)[i]);
+    instance->blocking = assignment;
+  }
   enforce_minimum_blockers();
   for (int i = 0; i < EXE_DWORD(0x607d54); ++i)
   {
@@ -1670,17 +1645,6 @@ void ai_assign_blockers(int player)
 /* ManalinkEh 2022: 0x26ac340; original functions/engine.c:2674. */
 int ai_choose_attackers(int player)
 {
-  typedef struct
-  {
-    int potential_power, potential_toughness;
-    keyword_t abils;
-    int opinion_of_game_state_without_this;
-  } ai_combat_data_t;
-  typedef struct
-  {
-    int card, effectiveness;
-    int8_t bands, one_of_best_7;
-  } PotentialAttacker;
   typedef struct
   {
     int card, pow;
@@ -1940,14 +1904,14 @@ int ai_choose_attackers(int player)
         EXE_DWORD_PTR(0x607864)[n] = local_ai_combat_blocking_choices_bitmask[i];
         EXE_DWORD_PTR(0x607cd0)[n] = local_ai_combat_attack_defensive_modifier[i];
         EXE_DWORD_PTR(0x607c70)[n] = local_ai_combat_block_defensive_modifier[i];
-        if (csvid == 0x28 || csvid == 0x98)
+        if (csvid == CARD_ID_COCKATRICE || csvid == CARD_ID_LURE)
           EXE_DWORD(0x60779c) |= 1u << (n & 31);
         ++EXE_DWORD(0x607ccc);
       }
       else
       {
         inst->state &= ~4;
-        if (csvid == 0x19f || csvid == 0x84)
+        if (csvid == CARD_ID_ERG_RAIDERS || csvid == CARD_ID_JUGGERNAUT)
           combo_valid = 0;
         else
           combo_valid &= (bitfield_of_unk8000 & (1u << (i & 31))) == 0;
@@ -2281,7 +2245,7 @@ int charge_mana(int player, color_t color, int amount)
       if (pay_mana_xbugrwaU[c] == -1)
         pay_mana_has_x = 1;
 
-    if ((card_flags[player] & 2) != 0 && pay_mana_xbugrwaU[COLOR_BLACK] != 0 &&
+    if ((card_flags[player] & CFLAGS_KRRIK) != 0 && pay_mana_xbugrwaU[COLOR_BLACK] != 0 &&
         charge_mana_called_from_pay_phyrexian_mana == 0)
     {
       int can_pay = can_pay_life(player, 2);
@@ -2615,7 +2579,7 @@ int charge_mana(int player, color_t color, int amount)
   }
   pay_mana_xbugrwaU[7] = 0;
 
-  if ((card_flags[player] & 2) != 0)
+  if ((card_flags[player] & CFLAGS_KRRIK) != 0)
     lose_life(player, life_to_pay_for_krrik);
 
   max_x_value = -1;
@@ -3810,7 +3774,7 @@ int untap_phase(int player)
       if ((instance = in_play(p, c)))
       {
         if (p == player)
-          instance->state &= ~STATE_SICKNESS_UNUSED;
+          instance->state &= ~STATE_SUMMON_SICK_BACKUP;
         if (instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
             instance->info_slot == (int)target_player_skips_untap &&
             instance->targets[0].player == player && !skip)
@@ -4032,7 +3996,7 @@ static int any_can_block(int player)
     for (int blocker = 0; blocker < active_cards_count[defender]; ++blocker)
     {
       card_instance_t *inst = get_card_instance(defender, blocker);
-      uint32_t mask = 10 | ((card_flags[defender] & 1) ? 0 : 0x10);
+      uint32_t mask = 10 | ((card_flags[defender] & CFLAGS_MASAKO) ? 0 : 0x10);
       if ((inst->state & mask) == 2 && is_legal_block(defender, blocker, player, attacker))
         return 1;
     }

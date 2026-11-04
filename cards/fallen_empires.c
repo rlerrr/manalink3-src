@@ -100,7 +100,7 @@ int fe_chant(int player, int card, event_t event, int land_subtype)
 {
 
   basic_upkeep(player, card, event,
-               MANACOST_BU((land_subtype == SUBTYPE_FOREST), (land_subtype == SUBTYPE_SWAMP)));
+               MANACOST_BG((land_subtype == SUBTYPE_FOREST), (land_subtype == SUBTYPE_SWAMP)));
 
   if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card))
   {
@@ -235,7 +235,9 @@ Whenever enchanted creature attacks and isn't blocked, its controller may have i
 				default_target_definition(p, c, &td, TYPE_CREATURE);
 				td.who_chooses = p;
 				td.special = TARGET_SPECIAL_NOT_ME;
-				int will_use_ability = (life[1-player] - get_power(p, c)) > 6 ? 0 : 1;
+				int opponent_life = life[1-player];
+				int power = get_power(p, c);
+				int will_use_ability = opponent_life - power < 7;
 				if( can_target(&td) && do_dialog(p, player, card, -1, -1, " Damage creature\n Pass", 1) == will_use_ability ){
 					if( pick_target(&td, "TARGET_CREATURE") ){
 						damage_target0(p, c, get_power(p, c) + 2);
@@ -871,14 +873,14 @@ Enchantment
 
 int merseine_ability(int player, int card, event_t event)
 {
-  int card_00;
+  int target_card;
   int card_01;
   card_ptr_t *enchanted_card_data;
   card_instance_t *instance;
   int source_id_or_result;
   int aura_player_or_mana;
-  int player_00;
-  CardFunction generic_cost_bits;
+  int target_player;
+  int32_t generic_cost;
   if (event == EVENT_STATIC_EFFECTS)
   {
     if ((card == affected_card) && (player == affected_card_controller))
@@ -913,28 +915,28 @@ int merseine_ability(int player, int card, event_t event)
     {
       instance = get_card_instance(player, card);
       aura_player_or_mana = instance->targets[0].player;
-      card_00 = instance->targets[0].card;
-      instance = get_card_instance(aura_player_or_mana, card_00);
-      player_00 = (int)instance->damage_target_player;
+      target_card = instance->targets[0].card;
+      instance = get_card_instance(aura_player_or_mana, target_card);
+      target_player = (int)instance->damage_target_player;
       card_01 = instance->damage_target_card;
       if (event == EVENT_CAN_ACTIVATE)
       {
-        source_id_or_result = count_counters(aura_player_or_mana, card_00, COUNTER_NET);
-        if (((player == player_00) && (source_id_or_result != 0)) &&
-            (source_id_or_result = can_use_activated_abilities(aura_player_or_mana, card_00),
+        source_id_or_result = count_counters(aura_player_or_mana, target_card, COUNTER_NET);
+        if (((player == target_player) && (source_id_or_result != 0)) &&
+            (source_id_or_result = can_use_activated_abilities(aura_player_or_mana, target_card),
              source_id_or_result != 0))
         {
-          source_id_or_result = get_id(player_00, card_01);
+          source_id_or_result = get_id(target_player, card_01);
           enchanted_card_data = cards_ptr[source_id_or_result];
-          generic_cost_bits = (CardFunction)(unsigned int)enchanted_card_data->req_colorless;
+          generic_cost = enchanted_card_data->req_colorless;
           source_id_or_result = check_special_flags2(player, card, 0x20000);
           if (source_id_or_result != 0)
           {
-            instance = get_card_instance(player_00, card_01);
-            generic_cost_bits = generic_cost_bits + (int)instance->info_slot_fn;
+            instance = get_card_instance(target_player, card_01);
+            generic_cost = (uint32_t)generic_cost + (uint32_t)instance->info_slot;
           }
           aura_player_or_mana = get_cost_mod_for_activated_abilities(
-              aura_player_or_mana, card_00, (int)generic_cost_bits,
+              aura_player_or_mana, target_card, generic_cost,
               (unsigned int)enchanted_card_data->req_black,
               (unsigned int)enchanted_card_data->req_blue,
               (unsigned int)enchanted_card_data->req_green,
@@ -956,17 +958,17 @@ int merseine_ability(int player, int card, event_t event)
       {
         if (event == EVENT_ACTIVATE)
         {
-          source_id_or_result = get_id(player_00, card_01);
+          source_id_or_result = get_id(target_player, card_01);
           enchanted_card_data = cards_ptr[source_id_or_result];
-          generic_cost_bits = (CardFunction)(unsigned int)enchanted_card_data->req_colorless;
+          generic_cost = enchanted_card_data->req_colorless;
           source_id_or_result = check_special_flags2(player, card, 0x20000);
           if (source_id_or_result != 0)
           {
-            instance = get_card_instance(player_00, card_01);
-            generic_cost_bits = generic_cost_bits + (int)instance->info_slot_fn;
+            instance = get_card_instance(target_player, card_01);
+            generic_cost = (uint32_t)generic_cost + (uint32_t)instance->info_slot;
           }
           aura_player_or_mana = get_cost_mod_for_activated_abilities(
-              aura_player_or_mana, card_00, (int)generic_cost_bits,
+              aura_player_or_mana, target_card, generic_cost,
               (unsigned int)enchanted_card_data->req_black,
               (unsigned int)enchanted_card_data->req_blue,
               (unsigned int)enchanted_card_data->req_green,
@@ -982,7 +984,7 @@ int merseine_ability(int player, int card, event_t event)
         }
         if (event == EVENT_RESOLVE_ACTIVATION)
         {
-          remove_counters(player, card, aura_player_or_mana, card_00, COUNTER_NET, 1);
+          remove_counters(player, card, aura_player_or_mana, target_card, COUNTER_NET, 1);
         }
       }
     }
@@ -1948,13 +1950,13 @@ int card_tourachs_gate(int player, int card, event_t event)
           pump_priority = 0;
           if (current_turn == player)
           {
-            pump_priority = (current_phase != 0x18) - 1 & 10;
+            pump_priority = ((current_phase != 0x18) ? 0 : 10);
           }
           if ((sacrifice_available != 0) && (count_counters(player, card, COUNTER_TIME) < 1))
           {
             ai_modifier = ai_modifier + 0x19;
           }
-          choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Sac a Thrull",
+          choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, "Sac a Thrull",
                                sacrifice_available, time_count_or_result * -5 + 0xf,
                                "Pump attacking creatures", land_activation_available, pump_priority,
                                0, 0, 0, 0);
@@ -2070,14 +2072,13 @@ Dwarven Catapult	|X|R
 Instant
 ~ deals X damage divided evenly, rounded down, among all creatures target opponent controls. */
 
-	card_instance_t *instance = get_card_instance(player, card);
-
 	if( event == EVENT_CAN_CAST ){
 		return generic_spell(player, card, event, GS_X_SPELL, NULL, NULL, 0, NULL);
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		if( ! played_for_free(player, card) && ! is_token(player, card) ){
+			card_instance_t *instance = get_card_instance(player, card);
 			if( player == HUMAN ){
 				charge_mana(player, COLOR_COLORLESS, -1);
 				if( spell_fizzled != 1 ){
@@ -2104,7 +2105,10 @@ Instant
 	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		int amount = instance->info_slot / count_subtype(1-player, TYPE_CREATURE, -1);
+		card_instance_t *instance = get_card_instance(player, card);
+		int total_damage = instance->info_slot;
+		int creature_count = count_subtype(1-player, TYPE_CREATURE, -1);
+		int amount = total_damage / creature_count;
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
 		new_damage_all(player, card, 1-player, amount, NDA_ALL_CREATURES, &this_test);
@@ -2782,9 +2786,8 @@ int card_fungal_bloom(int player, int card, event_t event)
       }
     }
   }
-  result = generic_activated_ability(player, card, event, 6, 0, 0, 0, 2, 0, 0, 0, &td,
+  return generic_activated_ability(player, card, event, 6, 0, 0, 0, 2, 0, 0, 0, &td,
                                      "Select target Fungus.");
-  return result;
 }
 
 int card_night_soil(int player, int card, event_t event){
@@ -3348,7 +3351,7 @@ static int storage_land(int player, int card, event_t event, int color)
           if ((multi_mana_transmutation[player][0] != 0) &&
               ((1 < storage_count_or_result ||
                 ((storage_count_or_result == 1 &&
-                  (storage_count_or_result = check_battlefield_for_id(player, 0x2579),
+                  (storage_count_or_result = check_battlefield_for_id(player, CARD_ID_MANA_REFLECTION),
                    storage_count_or_result != 0))))))
           {
             storage_count_or_result = multi_mana_transmutation[player][1];
@@ -3385,7 +3388,7 @@ static int storage_land(int player, int card, event_t event, int color)
           if ((multi_mana_transmutation[player][0] != 0) &&
               ((1 < storage_count_or_result ||
                 ((storage_count_or_result == 1 &&
-                  (chosen_amount_or_result = check_battlefield_for_id(player, 0x2579),
+                  (chosen_amount_or_result = check_battlefield_for_id(player, CARD_ID_MANA_REFLECTION),
                    chosen_amount_or_result != 0))))))
           {
             storage_count_or_result = multi_mana_transmutation[player][1];

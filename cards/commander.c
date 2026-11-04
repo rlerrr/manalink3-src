@@ -864,7 +864,7 @@ static int martyrs_bond_effect(int player, int card, event_t event)
         {
           instance->targets[pointer].card = get_type(affected_card_controller, affected_card);
           ++instance->targets[11].player;
-          int copies = card_counts[player][5];
+          int copies = card_counts[player][CCOUNTS_TEYSA_KARLOV];
           if (is_what(affected_card_controller, affected_card, TYPE_CREATURE))
           {
             for (; copies > 0; --copies)
@@ -957,7 +957,7 @@ int card_martyrs_bond(int player, int card, event_t event)
     {
       instance->targets[pointer].card = get_type(affected_card_controller, affected_card);
       ++instance->targets[11].player;
-      int copies = card_counts[player][5];
+      int copies = card_counts[player][CCOUNTS_TEYSA_KARLOV];
       if (is_what(affected_card_controller, affected_card, TYPE_CREATURE))
       {
         for (; copies > 0; --copies)
@@ -1200,7 +1200,7 @@ int card_sewer_nemesis(int player, int card, event_t event)
     if (event == EVENT_RESOLVE_SPELL)
     {
       default_target_definition(player, card, &td, 2);
-      td.zone = 0x1000;
+      td.zone = TARGET_ZONE_PLAYERS;
       td.allow_cancel = 0;
       td.illegal_abilities = 0;
       pick_target(&td, "TARGET_PLAYER");
@@ -1514,27 +1514,24 @@ int card_the_mimeoplasm(int player, int card, event_t event)
 
 int card_trench_gorger(int player, int card, event_t event)
 {
-  int lands_exiled;
-  int tutor_result;
-  test_definition_t this_test;
-  lands_exiled = duh_mode(player);
-  etb_ability(player, card, event, (lands_exiled != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability(player, card, event, (duh_mode(player) != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
-  {
     return 0;
-  }
-  new_default_test_definition(&this_test, 1, "Select a land card to exile.");
-  lands_exiled = 0;
-  this_test.no_shuffle = 1;
+
+  test_definition_t test;
+  new_default_test_definition(&test, TYPE_LAND, "Select a land card to exile.");
+  test.no_shuffle = 1;
+  int lands_exiled = 0;
   do
   {
-    tutor_result = new_global_tutor(player, player, 1, 6, 0, 3, &this_test);
-    if (tutor_result < 0)
+    if (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_RFG, 0, AI_MIN_VALUE, &test) < 0)
       break;
-    lands_exiled = lands_exiled + 1;
-  } while ((lands_exiled != 4) || (player != 1));
-  add_status(player, real_set_pt(player, card, player, card, lands_exiled, lands_exiled, 8),
-             0x10000);
+    ++lands_exiled;
+  } while (lands_exiled != 4 || player != AI);
+
+  int effect = real_set_pt(player, card, player, card, lands_exiled, lands_exiled,
+                            SET_PT_RESET_SUBTYPES_AT_END);
+  add_status(player, effect, STATUS_INVISIBLE_FX);
   shuffle(player);
   return 0;
 }
@@ -1738,16 +1735,7 @@ At the beginning of your upkeep, you gain X life and draw X cards, where X is th
 	upkeep_trigger_ability(player, card, event, player);
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		int amount = 0;
-		int count = active_cards_count[1-player]-1;
-		while( count > -1 ){
-				if( in_play(1-player, count) && is_what(1-player, count, TYPE_PERMANENT) ){
-					if( is_stolen(1-player, count) ){
-						amount++;
-					}
-				}
-				count--;
-		}
+		int amount = count_permanents_you_control_but_you_dont_own(1-player, TYPE_PERMANENT);
 		gain_life(player, amount);
 		draw_cards(player, amount);
 	}
@@ -1800,38 +1788,14 @@ int count_permanents_you_control_but_you_dont_own(int player, int type);
 /* ManalinkEh 2022: 0x23e5c70; original cards/commander.c:1663. */
 int count_permanents_you_control_but_you_dont_own(int player, int type)
 {
-  card_instance_t *instance;
-  int stolen_or_type_match;
-  int card;
-  int player_00;
-  int stolen_count;
-
-  stolen_count = 0;
-  player_00 = 0;
-  do
-  {
-
-    if (((player == player_00) || (player_00 == 2)) &&
-        (card = active_cards_count[player_00] + -1, -1 < card))
-    {
-      instance = in_play(player_00, card);
-      while (true)
-      {
-        if ((instance != NULL) &&
-            (stolen_or_type_match = is_what(player_00, card, type), stolen_or_type_match != 0))
-        {
-          stolen_or_type_match = is_stolen(player_00, card);
-          stolen_count = (stolen_count + 1) - (unsigned int)(stolen_or_type_match == 0);
-        }
-        card = card + -1;
-        if (card == -1)
-          break;
-        instance = in_play(player_00, card);
-      }
-    }
-    player_00 = player_00 + 1;
-  } while (player_00 != 2);
-  return stolen_count;
+  int amount = 0;
+  for (int p = 0; p < 2; ++p)
+    // The release tests the loop player against ANYBODY here.
+    if (player == p || p == ANYBODY)
+      for (int c = active_cards_count[p] - 1; c >= 0; --c)
+        if (in_play(p, c) && is_what(p, c, type) && is_stolen(p, c))
+          ++amount;
+  return amount;
 }
 
 

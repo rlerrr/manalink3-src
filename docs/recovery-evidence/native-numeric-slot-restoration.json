@@ -1,0 +1,642 @@
+{
+  "format": 1,
+  "status": "Six numeric/snapshot source restorations,110 scoped site reviews; build and15,169 fixed slots pass. Ashiok and Jace gain complete strict native CFG matches.",
+  "files": [
+    {
+      "source": "cards/dragons_maze.c",
+      "before_bytes_sha256": "17907faa4ff916a8881df22b9d02073dcf87a909a59aba80c2f9b5be8acc1b69",
+      "after_bytes_sha256": "7f087d690596c42adb80b04d342d828d05a15e61330d211f0bd728f67eb787de",
+      "before_sha256": "bab35fee5b80f67979978d77d0783db5e6994a6f9142f6d5ed130b925fa98b95",
+      "after_sha256": "35514bbae4d6fd4777d00726fcddd8124a7d9f32ebed7fdaf8667489cea44071"
+    },
+    {
+      "source": "cards/fallen_empires.c",
+      "before_bytes_sha256": "571127d8d6853311d66b0dabc8453327389e4da72c7050662ec046392cad102b",
+      "after_bytes_sha256": "a19ea83a53c28a0608e279985f714a7e2d3b9eb9e89686f6692af8848a6a086b",
+      "before_sha256": "1a5df8d83e230c5f348bdd89706180566d618384b290a8e29e453ee48c2936fb",
+      "after_sha256": "3c2b199dbcc3531ced6a91ec6dd183b8912bc1f89ec82e72b6be25241005c23e"
+    },
+    {
+      "source": "cards/mirage.c",
+      "before_bytes_sha256": "871eca075a62be57fe0bf50149125d79b47b4bfbb592c9904ab04366147cb01b",
+      "after_bytes_sha256": "299a35b1a96801bbc5cae05fafc8201f107635c0a2c740019208d6b610b4a86e",
+      "before_sha256": "b6e93abecee366822e21935a8d837b11fca2fdff781d613885178367f01123ff",
+      "after_sha256": "d6f15f0dcb72d46c3f378de6174fa67a9dfd8fce1bab478342c7f94b65e93f71"
+    },
+    {
+      "source": "cards/ravnica.c",
+      "before_bytes_sha256": "1444e6515ae668767a1d891f981c044cb62c4031914798377eaf91285cc0f6da",
+      "after_bytes_sha256": "4434cb17b5115516c5fcf893b948662424717f34eeeb90e0a2561e61d7433c6c",
+      "before_sha256": "18f67abb6bd6516a0eb173071655c88bcef08a42ec835060d17fc44372f2096a",
+      "after_sha256": "3e68bf1ad6b9b8be75dfd622f8b23480efb52b4dde878be97562b469d8d5bd6c"
+    },
+    {
+      "source": "cards/theros.c",
+      "before_bytes_sha256": "7bf5f58c10e9df75713f1a3006d7177c93f1639d0a21ac14ab4418080a6ddb1b",
+      "after_bytes_sha256": "34710c64916298f2b1c1b8dde185b257844370ab9cf69bfbe4507810a3d362cd",
+      "before_sha256": "3a2e06ba6bdf4cbe2896a1bbb6e3da5cda5fca51a84df1101232f1d34ae34486",
+      "after_sha256": "7f940bf3766e940d28861f5a635c2aee0bd8c5bd87f7cf0277ecde9a835c1b3d"
+    },
+    {
+      "source": "cards/origins.c",
+      "before_bytes_sha256": "0af495f9ca7155f1e341598710bbdf25bed20dd31e3e247957b3e7734c1c01b3",
+      "after_bytes_sha256": "7895665b1f3d001da4f3054f1cc2b901c1a2b08ba7a2dbcfd02456753a09bffe",
+      "before_sha256": "5e5c1ab3027aeaa6d72a7746ec493dba1ea39544c23ec34fc37a0e1c317d2685",
+      "after_sha256": "2570702770b880282ede5a2e652f57a0ff9f68b9ad32191c606712bfcf563e6f"
+    }
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "baseline": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "074ace25a820c556654dbce422b6178bb0f22a117c6837398ff6ca099553ec47",
+      "ManalinkEh.dbg": "6a00e20a867d2cb044c288cbfec1760a4a7b71aab9f0e82563273da12746c5da"
+    },
+    "results": [
+      {
+        "name": "notion_thief_effect",
+        "matched": false,
+        "reason": "Operand type or width changed",
+        "ranges": [
+          {
+            "address": "0x2297700",
+            "size": 218,
+            "sha256": "b724227401518402cb4a09c82c045ad01b40f5f3a5699dafe23c2389f24bf274",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2167d30",
+            "size": 224,
+            "sha256": "4022a0cf5c17de1c291d957856862b49436827cdbe2328a29d9ee635e8c0376c",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "merseine_ability",
+        "matched": false,
+        "reason": "('Unbound operand', '0x30', '0x34')",
+        "ranges": [
+          {
+            "address": "0x241b5d0",
+            "size": 967,
+            "sha256": "7ae5e45a8c938a3737d0f9879d3d7a124819374b7de0652a3c18d06fc1e52238",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x21a9e80",
+            "size": 960,
+            "sha256": "8683755773085f078fc8d3d11b99f51e0d6a74eb6496376cae3efb43ac436252",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_binding_agony",
+        "matched": false,
+        "reason": "Conditional instruction changed",
+        "ranges": [
+          {
+            "address": "0x2389a70",
+            "size": 599,
+            "sha256": "1be62f0471607e67087a9123a6626bb9748e20baf916de2aa4ee6d31660fcacc",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x23646f0",
+            "size": 592,
+            "sha256": "9f930487705043d22b5ef6cc07bfaadeaf87ad8b656b90658beb157aa962e1c8",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_phytohydra",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x24edac0",
+            "size": 352,
+            "sha256": "bee5cc02c2ecc6ba1348b5383c3a36ac8226a0abb6c4d0730c65a69c792e5eed",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x246b940",
+            "size": 352,
+            "sha256": "a6342acf720820dfa887ea695346ad871f7101ce8907b9040915adc8f19292c3",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_ashiok_nightmare_weaver",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x263d0a0",
+            "size": 1666,
+            "sha256": "0329916d3496b87a7c273d7fbc7b0a3af6aa2148ae8f6ceced063f7b2d1841d3",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x256a0c0",
+            "size": 1680,
+            "sha256": "216edb2c2047d15ff99291e57ca2adafe47c2495c79e6d24f6ea235df4ef0e1d",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_jace_telepath_unbound",
+        "matched": false,
+        "reason": "('Operation changed', 'mov', 'add')",
+        "ranges": [
+          {
+            "address": "0x20ddab0",
+            "size": 1317,
+            "sha256": "9d5d1a1db5c36f6c05d90aba77cff22ba5dceb1fef45cba7185cfbc3a63f52ef",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x240fa60",
+            "size": 1328,
+            "sha256": "b28212ff20212c763ada6008081ac920560e1d55058d8e199bc1ab8248ecbe26",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      }
+    ],
+    "checker_sha256": "63fae90c2dc2777b697927adfceeb86a3b181e4903fb2150b6bcd282350d88a4",
+    "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+    "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+  },
+  "scope": "Four numeric info_slot consumers and two explicit native saved-value uses. These remove decompiler type artifacts and state native arithmetic/snapshots directly; no newly demonstrated gameplay bug, original exact source spelling, or full-function equivalence is claimed.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "5e97c7df0cc0ead61245e2e74dd01e8f9d4c032cc8f7685f7565ae9fcdd57588",
+    "debug_sha256": "8877294c37c8f4cce165ed19e792639a9470f95cca11585e0f34dcb660a40e9d",
+    "build_log_sha256": "43516d6f7230335de2e4e3125e8fac18e0b22058868e10b3377805524cb14856",
+    "exact_file_projections": 6,
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "5e97c7df0cc0ead61245e2e74dd01e8f9d4c032cc8f7685f7565ae9fcdd57588",
+        "ManalinkEh.dbg": "8877294c37c8f4cce165ed19e792639a9470f95cca11585e0f34dcb660a40e9d"
+      },
+      "results": [
+        {
+          "name": "notion_thief_effect",
+          "matched": false,
+          "reason": "Operand type or width changed",
+          "ranges": [
+            {
+              "address": "0x2297700",
+              "size": 218,
+              "sha256": "b724227401518402cb4a09c82c045ad01b40f5f3a5699dafe23c2389f24bf274",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2167d30",
+              "size": 224,
+              "sha256": "4022a0cf5c17de1c291d957856862b49436827cdbe2328a29d9ee635e8c0376c",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "merseine_ability",
+          "matched": false,
+          "reason": "('Unbound operand', '0x30', '0x34')",
+          "ranges": [
+            {
+              "address": "0x241b5d0",
+              "size": 967,
+              "sha256": "7ae5e45a8c938a3737d0f9879d3d7a124819374b7de0652a3c18d06fc1e52238",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x21a9e80",
+              "size": 960,
+              "sha256": "ce42a7a81eb263e4ad009e1a8fcf547adac7d4b6d21e1394d59793b81fac55c2",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_binding_agony",
+          "matched": false,
+          "reason": "Conditional instruction changed",
+          "ranges": [
+            {
+              "address": "0x2389a70",
+              "size": 599,
+              "sha256": "1be62f0471607e67087a9123a6626bb9748e20baf916de2aa4ee6d31660fcacc",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x23646f0",
+              "size": 592,
+              "sha256": "9f930487705043d22b5ef6cc07bfaadeaf87ad8b656b90658beb157aa962e1c8",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_phytohydra",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x24edac0",
+              "size": 352,
+              "sha256": "bee5cc02c2ecc6ba1348b5383c3a36ac8226a0abb6c4d0730c65a69c792e5eed",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x246b940",
+              "size": 352,
+              "sha256": "a6342acf720820dfa887ea695346ad871f7101ce8907b9040915adc8f19292c3",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_ashiok_nightmare_weaver",
+          "matched": true,
+          "proof": {
+            "cfg_states": 372,
+            "reached_instruction_counts": [
+              374,
+              374
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x215f420",
+                "rebuilt": "0x2439860",
+                "identity": "_planeswalker"
+              },
+              {
+                "native": "0x262fda0",
+                "rebuilt": "0x255d190",
+                "identity": "_ashiok_exiledby_remember"
+              },
+              {
+                "native": "0x2660240",
+                "rebuilt": "0x26dabd0",
+                "identity": "_default_target_definition"
+              },
+              {
+                "native": "0x26604c0",
+                "rebuilt": "0x26db180",
+                "identity": "_can_target"
+              },
+              {
+                "native": "0x2663890",
+                "rebuilt": "0x26b5330",
+                "identity": "_check_legend_rule"
+              },
+              {
+                "native": "0x2669e00",
+                "rebuilt": "0x26c2fa0",
+                "identity": "_put_into_play"
+              },
+              {
+                "native": "0x26730b0",
+                "rebuilt": "0x26bb050",
+                "identity": "_add_a_subtype_permanently"
+              },
+              {
+                "native": "0x2677460",
+                "rebuilt": "0x2683cd0",
+                "identity": "_empty"
+              },
+              {
+                "native": "0x267ab00",
+                "rebuilt": "0x26863d0",
+                "identity": "_create_targetted_legacy_effect"
+              },
+              {
+                "native": "0x267ee00",
+                "rebuilt": "0x269f9d0",
+                "identity": "_get_cmc_by_id"
+              },
+              {
+                "native": "0x268e850",
+                "rebuilt": "0x268f010",
+                "identity": "_charge_mana_for_activated_ability"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266aef0",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b2e30",
+                "rebuilt": "0x266b270",
+                "identity": "_add_card_to_hand"
+              },
+              {
+                "native": "0x26b33a0",
+                "rebuilt": "0x266b790",
+                "identity": "_in_hand"
+              },
+              {
+                "native": "0x26b5a00",
+                "rebuilt": "0x266d980",
+                "identity": "_kill_card"
+              },
+              {
+                "native": "0x26b6c50",
+                "rebuilt": "0x266e5f0",
+                "identity": "_rfg_card_in_deck"
+              },
+              {
+                "native": "0x26b6c70",
+                "rebuilt": "0x266e610",
+                "identity": "_rfg_whole_graveyard"
+              },
+              {
+                "native": "0x26b76c0",
+                "rebuilt": "0x266f030",
+                "identity": "_remove_card_from_rfg"
+              },
+              {
+                "native": "0x26d1730",
+                "rebuilt": "0x2663750",
+                "identity": "_count_counters"
+              },
+              {
+                "native": "0x26d5910",
+                "rebuilt": "0x2666640",
+                "identity": "_add_counters_as_cost"
+              },
+              {
+                "native": "0x26d6260",
+                "rebuilt": "0x26829f0",
+                "identity": "_exiledby_choose"
+              },
+              {
+                "native": "0x26d69c0",
+                "rebuilt": "0x2683150",
+                "identity": "_exiledby_find"
+              },
+              {
+                "native": "0x26e9c50",
+                "rebuilt": "0x2672ad0",
+                "identity": "_dialog_impl"
+              },
+              {
+                "native": "0x275bc29",
+                "rebuilt": "0x2755d95",
+                "identity": "readonly-DIALOG-token:24255ef5d941493b9978f3aabb0ed07d084ade196d23f463ff058954cbf6e9b6"
+              },
+              {
+                "native": "0x275bc2c",
+                "rebuilt": "0x2755d98",
+                "identity": "readonly-DIALOG-token:a12871fee210fb8619291eaea194581cbd2531e4b23759d225f6806923f63222"
+              },
+              {
+                "native": "0x275c041",
+                "rebuilt": "0x27561ad",
+                "identity": "readonly-C-string:df8eb42b37df4f774564ac36bc946beb2f4294f2e739f8ad1ce1c7e3ee9d60d1"
+              },
+              {
+                "native": "0x275c04a",
+                "rebuilt": "0x27561b6",
+                "identity": "readonly-C-string:73d213b753321d9e7b27353b0e59a5d5be46bd622e7f5693afd30b8761f5570f"
+              },
+              {
+                "native": "0x275c062",
+                "rebuilt": "0x27561ce",
+                "identity": "readonly-C-string:e9c8fea56d4a4e996bc350234dc31704b8f0d9bc5c9794b585b7e6e70f9040cd"
+              },
+              {
+                "native": "0x275c07b",
+                "rebuilt": "0x27561e7",
+                "identity": "readonly-C-string:44dcccafc0789ba63c1196a17aa08123ccc000f80f9a1d07d594dab3b1e9511f"
+              },
+              {
+                "native": "0x275c08e",
+                "rebuilt": "0x27561fa",
+                "identity": "readonly-C-string:2b0bbf533ae4903ad72acaaa98bcd144f1abc2bee56078f3a7ff80e6ff85247f"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x263d0a0",
+              "size": 1666,
+              "sha256": "0329916d3496b87a7c273d7fbc7b0a3af6aa2148ae8f6ceced063f7b2d1841d3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x256a0c0",
+              "size": 1680,
+              "sha256": "ba56a32e12b0642991ecc33ce5805861afe044cc666d617aaa64c082a9c02ec4",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_jace_telepath_unbound",
+          "matched": true,
+          "proof": {
+            "cfg_states": 281,
+            "reached_instruction_counts": [
+              281,
+              281
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x215f420",
+                "rebuilt": "0x2439860",
+                "identity": "_planeswalker"
+              },
+              {
+                "native": "0x2650de0",
+                "rebuilt": "0x26df6f0",
+                "identity": "_select_card_from_zone"
+              },
+              {
+                "native": "0x2660240",
+                "rebuilt": "0x26dabd0",
+                "identity": "_default_target_definition"
+              },
+              {
+                "native": "0x26604c0",
+                "rebuilt": "0x26db180",
+                "identity": "_can_target"
+              },
+              {
+                "native": "0x2660db0",
+                "rebuilt": "0x26dbde0",
+                "identity": "_new_pick_target"
+              },
+              {
+                "native": "0x2661750",
+                "rebuilt": "0x26db530",
+                "identity": "_valid_target"
+              },
+              {
+                "native": "0x2663890",
+                "rebuilt": "0x26b5330",
+                "identity": "_check_legend_rule"
+              },
+              {
+                "native": "0x26666b0",
+                "rebuilt": "0x26de280",
+                "identity": "_generate_token_by_id"
+              },
+              {
+                "native": "0x26681f0",
+                "rebuilt": "0x26c21c0",
+                "identity": "_create_spell_has_flashback_legacy"
+              },
+              {
+                "native": "0x2679eb0",
+                "rebuilt": "0x268d750",
+                "identity": "_can_legally_play_iid"
+              },
+              {
+                "native": "0x267a730",
+                "rebuilt": "0x268e980",
+                "identity": "_default_pump_ability_definition"
+              },
+              {
+                "native": "0x267ae90",
+                "rebuilt": "0x26ad750",
+                "identity": "_pump_ability"
+              },
+              {
+                "native": "0x2681ca0",
+                "rebuilt": "0x2694c50",
+                "identity": "_is_what"
+              },
+              {
+                "native": "0x2690d50",
+                "rebuilt": "0x26a2610",
+                "identity": "_has_mana_to_cast_iid"
+              },
+              {
+                "native": "0x2693bc0",
+                "rebuilt": "0x26938e0",
+                "identity": "_alternate_legacy_text"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266aef0",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b98e0",
+                "rebuilt": "0x266f6f0",
+                "identity": "_select_target_from_grave_source"
+              },
+              {
+                "native": "0x26b9bf0",
+                "rebuilt": "0x266fa00",
+                "identity": "_validate_target_from_grave_source"
+              },
+              {
+                "native": "0x26bea60",
+                "rebuilt": "0x26b6c00",
+                "identity": "_new_default_test_definition"
+              },
+              {
+                "native": "0x26e62e0",
+                "rebuilt": "0x26608a0",
+                "identity": "_new_special_count_grave"
+              },
+              {
+                "native": "0x26e9c50",
+                "rebuilt": "0x2672ad0",
+                "identity": "_dialog_impl"
+              },
+              {
+                "native": "0x272a528",
+                "rebuilt": "0x2749fec",
+                "identity": "readonly-C-string:3ba43e8291ee474b85b74ceeff733d3ed99ef9bb060faaec4c6ad52bf06df0aa"
+              },
+              {
+                "native": "0x272a598",
+                "rebuilt": "0x274a05c",
+                "identity": "readonly-DIALOG-token:24255ef5d941493b9978f3aabb0ed07d084ade196d23f463ff058954cbf6e9b6"
+              },
+              {
+                "native": "0x272a59b",
+                "rebuilt": "0x274a05f",
+                "identity": "readonly-DIALOG-token:a12871fee210fb8619291eaea194581cbd2531e4b23759d225f6806923f63222"
+              },
+              {
+                "native": "0x272a6e8",
+                "rebuilt": "0x274a1ac",
+                "identity": "readonly-C-string:a7e993a5ea8050480a8b35c1b9c152ce386e75446d50bd3a5627ecd9daceed5a"
+              },
+              {
+                "native": "0x272a70f",
+                "rebuilt": "0x274a1d3",
+                "identity": "readonly-C-string:c80a99ef8f2741adffe99d11c50443c2e285a5caae59f54e3377049dccd200d4"
+              },
+              {
+                "native": "0x272a716",
+                "rebuilt": "0x274a1da",
+                "identity": "readonly-C-string:917eaa3c4d90d53609901a6ec69ebe7b7c23bf5aaf166ac12487596f0b582b11"
+              },
+              {
+                "native": "0x272a730",
+                "rebuilt": "0x274a1f4",
+                "identity": "readonly-C-string:454f70f2261d5c413efce2c0290988fb6652972c151c8bba79abed2eb1203e03"
+              },
+              {
+                "native": "0x2794020",
+                "rebuilt": "0x2799720",
+                "identity": "_graveyard_source"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x20ddab0",
+              "size": 1317,
+              "sha256": "9d5d1a1db5c36f6c05d90aba77cff22ba5dceb1fef45cba7185cfbc3a63f52ef",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x240fa60",
+              "size": 1328,
+              "sha256": "2c2a52fb07794ca1369fdffe3e8bd8f981a5a2315869545b77ff2ba7ac823230",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "63fae90c2dc2777b697927adfceeb86a3b181e4903fb2150b6bcd282350d88a4",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "new_complete_cfg_matches": [
+      "card_ashiok_nightmare_weaver",
+      "card_jace_telepath_unbound"
+    ],
+    "site_review_archive": {
+      "path": "docs/recovery-evidence/reccmp-tiny-site-batch-c694.json.gz",
+      "sha256": "9b64efa9c130eb38c3ad3bb1d657e72696c6352e6b1945d1650e752460b4795f",
+      "functions": 110
+    },
+    "staging": "preserved",
+    "scope": "One incremental build after six definitions; focused strict CFG comparison for all six, with two full matches and four remaining instruction differences. No gameplay tests or full comparison refresh."
+  }
+}

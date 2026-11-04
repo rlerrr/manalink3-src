@@ -1,0 +1,1783 @@
+{
+  "format": 1,
+  "status": "Four native land/modal/split dispatch bodies restored; build, 15,169 fixed slots, four canonical/raw source projections and 524,288 bounded native/rebuilt comparisons pass.",
+  "files": [
+    {
+      "source": "cards/dominaria.c",
+      "before_bytes_sha256": "ec5efe4600497853caf19571f69c12484fa297c1c3d9c8015e06849b7c76aab2",
+      "after_bytes_sha256": "aab29d81a6a639ee1180b0dace31f9e960d7a8fcd99fe46dbcd633ec871da7e4",
+      "before_sha256": "fcd132196a72bfda4e97f22a0bbd0bd1a3d429c110a210fca46e10fe78904e1c",
+      "after_sha256": "215274e45249ec75a13aa7890a6e52f548238ef37bee9c6c4a587047a65926ba"
+    },
+    {
+      "source": "cards/tempest.c",
+      "before_bytes_sha256": "38f286b5d231547cf95e5d7b8909ed746b67eb949933c3252e6833a262f48811",
+      "after_bytes_sha256": "b22251879ede46f227c71ac3ceca71c4b7976df31106b7f1e4994d397bc11bcf",
+      "before_sha256": "a543b168e48ad18bb5300f4b12bd37c4c7d2226bf6e6d4a8c2832fbbd2cdcde8",
+      "after_sha256": "7dd8353e77ba5387eb6c907675d58f5fb19cb5159da04d7a4c3f79362c257d82"
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "before_bytes_sha256": "b64983c25c102a92c57cfb9e5601437b1e3cd3f4abc897845d675f6c0dc1757c",
+      "after_bytes_sha256": "b7bee2f3bd84207031aa97152ba3b1a316b95dbe84ef54c5953576e367f5e4c3",
+      "before_sha256": "d7f55f107fd5e3ecd36dd9e96bd5660f1ed1be75d4b0756a127a5025ae0cd36a",
+      "after_sha256": "93388a51c2c5dc95fc975fbd879218270aa1c3238711e74f8815fdad4d9d07e2"
+    },
+    {
+      "source": "cards/eldritch_moon.c",
+      "before_bytes_sha256": "f6763d1b5d3f78381784e677c4bf05b6fd24ed6d14b0d5ef41e2f0189f98a43d",
+      "after_bytes_sha256": "99d1d66b5d37cfe3f5064cb0dd6f6db83d89b8ddefc4aacfa5bf85983a0e2587",
+      "before_sha256": "b2ecb579b1b8bcc573c0b010258b5ad052fbc32bc7205243e98f845d8abd4b1c",
+      "after_sha256": "974eec370251bbcbd0c3d06715fe78b86febc90e706146d2e4fb4c4511f395f0"
+    }
+  ],
+  "functions": [
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_cabal_stronghold",
+      "before_definition_sha256": "382b6b8d21693666db47d29729e747e14825672a5bb84c832886ee59e646ae61",
+      "after_definition_sha256": "488402dd233c5da652d906727b0094000375877006f5ba54d29830dab818dfe4",
+      "before_lines": 128,
+      "after_lines": 75,
+      "native_range": {
+        "address": "0x22cc670",
+        "size": 1064,
+        "sha256": "9496c3aeca13142475fdf54759904c3bd561286f4e375e33403b8a7f5a101df2"
+      },
+      "rebuilt_range": {
+        "address": "0x2158180",
+        "size": 1008,
+        "sha256": "db27b9911a580994fdfcfd6411b3d452d51567c8fba3d9c4add11d273d3e86ba"
+      }
+    },
+    {
+      "source": "cards/tempest.c",
+      "name": "card_ghost_town",
+      "before_definition_sha256": "d7b646a47384afd15e4b1f5bd7295b8e4d60e58587c4795f44e3fb3f93754901",
+      "after_definition_sha256": "bcb53b51c4c8db8995fb2c38b08c11c4a0751b2f491db5afa8bf5bb24427dfb3",
+      "before_lines": 94,
+      "after_lines": 66,
+      "native_range": {
+        "address": "0x215b590",
+        "size": 988,
+        "sha256": "e062b17cd11045523c94e25b037391587bc1ece031a0b4eb4950d9931a66b86c"
+      },
+      "rebuilt_range": {
+        "address": "0x254b700",
+        "size": 976,
+        "sha256": "813b46070b7d840dd0db83759cd2a43d2084d48182cd5c35085f83dbe702a856"
+      }
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "card_repudiate_replicate",
+      "before_definition_sha256": "3e82ffcff8e3fa532e1f1ba78ac846b9a662e00ee89572e3757472e3c99138c3",
+      "after_definition_sha256": "f78b94bb39463e7547cfe0239e503727bc668760e3af6f0e16c249b78ac15853",
+      "before_lines": 78,
+      "after_lines": 55,
+      "native_range": {
+        "address": "0x25c1f60",
+        "size": 738,
+        "sha256": "da8857346235ba7a54bacdd502efdbdde3cec6bef06f794462f779faf8f7b333"
+      },
+      "rebuilt_range": {
+        "address": "0x247ba70",
+        "size": 784,
+        "sha256": "68b779b95e50b4bea3039737db57a9e247818456b0229d162ffe040245ef6024"
+      }
+    },
+    {
+      "source": "cards/eldritch_moon.c",
+      "name": "card_borrowed_grace",
+      "before_definition_sha256": "29381dabb67bc6dc2cd15f9cae6281530f1a9d5b83243ae048e8f9d551f1a88f",
+      "after_definition_sha256": "b2dd52feda06a6c7c9eca19c784d5c82ef28ee03d6bc1904b3041a22aa9ffa63",
+      "before_lines": 71,
+      "after_lines": 64,
+      "native_range": {
+        "address": "0x2474350",
+        "size": 977,
+        "sha256": "e0ed53624c9ba0b1dad9a6b777a8d990d1bc8a40c162dc1bbd8c63d29e793bbc"
+      },
+      "rebuilt_range": {
+        "address": "0x217afe0",
+        "size": 976,
+        "sha256": "c0fb7292fbe46c3d49a61fbe9699c57efb826671d7d623bb226f6aa97a3c6fe7"
+      }
+    }
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "before_dll_sha256": "4cdf0a58ae748d15b5827ec77dd7d7ff1af301195703eda19eb1df009895572c",
+  "before_debug_sha256": "7b681326dae62d8765e8b1a3f557b0c20711a38a7b4c849ff2fb42a7e990ea6c",
+  "inputs": {
+    ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85"
+  },
+  "scope": "Four existing cards. Borrowed Grace restores constant can-cast result and at most two selections, including final ignored mana query and exact fizzle reset; variable shifts explicitly preserve x86 modulo-32 counts. Cabal Stronghold retains dialog info_slot=2, two independent mana-readiness probes and post-charge recount. Ghost Town retains both live paying_mana queries and native bounce sentinel/cancellation writes. Repudiate retains stale marker when neither counter query succeeds, triggered precedence, info_slot rereads after counter resolution, and shared post-resolution availability calls. No game-rule repairs or public interface changes.",
+  "sound_argument": "play_land_sound_effect_force_color consumes a color-test mask: native 2 is COLOR_TEST_BLACK, not the different-domain color index COLOR_BLUE (also numerically 2).",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "0dae84efb993ed4d8ed06e1a3f7887edb27c7ece08375c24269849534bc1481f",
+    "debug_sha256": "e2f227a3558af25cdf32c5f77de89ee2b8563635229863961401753a924bc58a",
+    "build_log_sha256": "3ff5f595a8ada9041aef4d594aa385d01f70784f0109bf40479818a39eaba17a",
+    "source_definitions": 4,
+    "full_file_projections": 4,
+    "raw_file_projections": 4,
+    "land_mode_fixture": {
+      "cases": 524288,
+      "mismatches": 0,
+      "plan": {
+        "entries": [
+          {
+            "side": 0,
+            "index": 0,
+            "name": "card_cabal_stronghold",
+            "address": "0x22cc670",
+            "size": 1064,
+            "sha256": "9496c3aeca13142475fdf54759904c3bd561286f4e375e33403b8a7f5a101df2"
+          },
+          {
+            "side": 0,
+            "index": 1,
+            "name": "card_ghost_town",
+            "address": "0x215b590",
+            "size": 988,
+            "sha256": "e062b17cd11045523c94e25b037391587bc1ece031a0b4eb4950d9931a66b86c"
+          },
+          {
+            "side": 0,
+            "index": 2,
+            "name": "card_repudiate_replicate",
+            "address": "0x25c1f60",
+            "size": 738,
+            "sha256": "da8857346235ba7a54bacdd502efdbdde3cec6bef06f794462f779faf8f7b333"
+          },
+          {
+            "side": 0,
+            "index": 3,
+            "name": "card_borrowed_grace",
+            "address": "0x2474350",
+            "size": 977,
+            "sha256": "e0ed53624c9ba0b1dad9a6b777a8d990d1bc8a40c162dc1bbd8c63d29e793bbc"
+          },
+          {
+            "side": 1,
+            "index": 0,
+            "name": "card_cabal_stronghold",
+            "address": "0x2158180",
+            "size": 1008,
+            "sha256": "db27b9911a580994fdfcfd6411b3d452d51567c8fba3d9c4add11d273d3e86ba"
+          },
+          {
+            "side": 1,
+            "index": 1,
+            "name": "card_ghost_town",
+            "address": "0x254b700",
+            "size": 976,
+            "sha256": "813b46070b7d840dd0db83759cd2a43d2084d48182cd5c35085f83dbe702a856"
+          },
+          {
+            "side": 1,
+            "index": 2,
+            "name": "card_repudiate_replicate",
+            "address": "0x247ba70",
+            "size": 784,
+            "sha256": "68b779b95e50b4bea3039737db57a9e247818456b0229d162ffe040245ef6024"
+          },
+          {
+            "side": 1,
+            "index": 3,
+            "name": "card_borrowed_grace",
+            "address": "0x217afe0",
+            "size": 976,
+            "sha256": "c0fb7292fbe46c3d49a61fbe9699c57efb826671d7d623bb226f6aa97a3c6fe7"
+          }
+        ],
+        "patches": [
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 59,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x22cc6aa",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 108,
+            "kind": "call",
+            "target": "has_mana",
+            "instruction": "0x22cc6db",
+            "original": "0x49d510"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 128,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x22cc6ef",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 156,
+            "kind": "call",
+            "target": "mana_producer",
+            "instruction": "0x22cc70b",
+            "original": "0x266ed00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 168,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x22cc717",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 195,
+            "kind": "call",
+            "target": "play_land_sound_effect_force_color",
+            "instruction": "0x22cc732",
+            "original": "0x2698060"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 200,
+            "kind": "call",
+            "target": "count_mana",
+            "instruction": "0x22cc737",
+            "original": "0x26a9b30"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 217,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x22cc748",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 245,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x22cc764",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 257,
+            "kind": "call",
+            "target": "paying_mana",
+            "instruction": "0x22cc770",
+            "original": "0x267ee80"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 299,
+            "kind": "call",
+            "target": "produce_mana_tapped",
+            "instruction": "0x22cc79a",
+            "original": "0x266d010"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 313,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x22cc7a8",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 435,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x22cc822",
+            "original": "0x269db00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 452,
+            "kind": "data",
+            "target": "ai_is_speculating",
+            "instruction": "0x22cc832",
+            "original": "0x728574"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 497,
+            "kind": "call",
+            "target": "get_hacked_subtype",
+            "instruction": "0x22cc860",
+            "original": "0x2680be0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 509,
+            "kind": "call",
+            "target": "count_basic_lands",
+            "instruction": "0x22cc86c",
+            "original": "0x26817d0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 527,
+            "kind": "call",
+            "target": "is_tapped",
+            "instruction": "0x22cc87e",
+            "original": "0x4e81fe"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 558,
+            "kind": "call",
+            "target": "is_tapped",
+            "instruction": "0x22cc89d",
+            "original": "0x4e81fe"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 683,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x22cc91a",
+            "original": "0x26e9c50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 729,
+            "kind": "call",
+            "target": "add_state",
+            "instruction": "0x22cc948",
+            "original": "0x2687990"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 753,
+            "kind": "call",
+            "target": "charge_mana",
+            "instruction": "0x22cc960",
+            "original": "0x26ae610"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 759,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x22cc965",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 786,
+            "kind": "call",
+            "target": "get_hacked_subtype",
+            "instruction": "0x22cc981",
+            "original": "0x2680be0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 798,
+            "kind": "call",
+            "target": "count_basic_lands",
+            "instruction": "0x22cc98d",
+            "original": "0x26817d0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 840,
+            "kind": "call",
+            "target": "produce_mana_tapped_impl",
+            "instruction": "0x22cc9b7",
+            "original": "0x266cbf0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 851,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x22cc9c1",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 868,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x22cc9d2",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 885,
+            "kind": "call",
+            "target": "is_animated_and_sick",
+            "instruction": "0x22cc9e4",
+            "original": "0x2682170"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 905,
+            "kind": "call",
+            "target": "can_produce_mana",
+            "instruction": "0x22cc9f8",
+            "original": "0x26dd3a0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 940,
+            "kind": "call",
+            "target": "remove_state",
+            "instruction": "0x22cca1b",
+            "original": "0x2687a50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 951,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x22cca25",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 972,
+            "kind": "call",
+            "target": "is_animated_and_sick",
+            "instruction": "0x22cca3b",
+            "original": "0x2682170"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 992,
+            "kind": "call",
+            "target": "can_produce_mana",
+            "instruction": "0x22cca4f",
+            "original": "0x26dd3a0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 1024,
+            "kind": "call",
+            "target": "has_mana",
+            "instruction": "0x22cca6f",
+            "original": "0x49d510"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22cc670",
+            "offset": 1048,
+            "kind": "data",
+            "target": "trace_mode",
+            "instruction": "0x22cca86",
+            "original": "0x790640"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 54,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x215b5c5",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 105,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x215b5f8",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 222,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x215b66d",
+            "original": "0x269db00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 229,
+            "kind": "call",
+            "target": "paying_mana",
+            "instruction": "0x215b674",
+            "original": "0x267ee80"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 263,
+            "kind": "call",
+            "target": "paying_mana",
+            "instruction": "0x215b696",
+            "original": "0x267ee80"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 280,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x215b6a6",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 392,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x215b717",
+            "original": "0x269db00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 507,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x215b78a",
+            "original": "0x269db00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 527,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x215b79e",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 537,
+            "kind": "call",
+            "target": "paying_mana",
+            "instruction": "0x215b7a8",
+            "original": "0x267ee80"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 569,
+            "kind": "call",
+            "target": "mana_producer",
+            "instruction": "0x215b7c8",
+            "original": "0x266ed00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 596,
+            "kind": "call",
+            "target": "bounce_permanent",
+            "instruction": "0x215b7e3",
+            "original": "0x26b5c30"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 718,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x215b85d",
+            "original": "0x26e9c50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 813,
+            "kind": "call",
+            "target": "charge_mana_for_activated_ability",
+            "instruction": "0x215b8bc",
+            "original": "0x268e850"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 833,
+            "kind": "data",
+            "target": "tapped_for_mana_color",
+            "instruction": "0x215b8cf",
+            "original": "0x7904bc"
+          },
+          {
+            "side": 0,
+            "function_address": "0x215b590",
+            "offset": 944,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x215b93f",
+            "original": "0x269db00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 38,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x25c1f85",
+            "original": "0x2660240"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 56,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x25c1f97",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 125,
+            "kind": "call",
+            "target": "can_counter_activated_ability",
+            "instruction": "0x25c1fdc",
+            "original": "0x2692dd0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 173,
+            "kind": "call",
+            "target": "can_counter_triggered_ability",
+            "instruction": "0x25c200c",
+            "original": "0x2693060"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 204,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x25c202b",
+            "original": "0x26604c0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 285,
+            "kind": "call",
+            "target": "hybrid_split_card",
+            "instruction": "0x25c207c",
+            "original": "0x2619f70"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 386,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x25c20e1",
+            "original": "0x26b5a00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 394,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x25c20e9",
+            "original": "0x26604c0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 419,
+            "kind": "call",
+            "target": "can_sorcery_be_played",
+            "instruction": "0x25c2102",
+            "original": "0x2679b40"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 480,
+            "kind": "call",
+            "target": "cast_counter_triggered_ability",
+            "instruction": "0x25c213f",
+            "original": "0x26930f0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 503,
+            "kind": "call",
+            "target": "valid_target",
+            "instruction": "0x25c2156",
+            "original": "0x2661750"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 537,
+            "kind": "call",
+            "target": "copy_token",
+            "instruction": "0x25c2178",
+            "original": "0x2666680"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 604,
+            "kind": "call",
+            "target": "generic_spell",
+            "instruction": "0x25c21bb",
+            "original": "0x26a0250"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 632,
+            "kind": "call",
+            "target": "cast_counter_activated_ability",
+            "instruction": "0x25c21d7",
+            "original": "0x2692e80"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 675,
+            "kind": "call",
+            "target": "resolve_counter_triggered_ability",
+            "instruction": "0x25c2202",
+            "original": "0x2693260"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c1f60",
+            "offset": 723,
+            "kind": "call",
+            "target": "resolve_counter_activated_ability",
+            "instruction": "0x25c2232",
+            "original": "0x2692ff0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 53,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2474384",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 96,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x24743af",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 106,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x24743b8",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 114,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x24743c0",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 128,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x24743cf",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 134,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x24743d4",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 144,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x24743de",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 173,
+            "kind": "call",
+            "target": "check_special_flags2",
+            "instruction": "0x24743fc",
+            "original": "0x267a130"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 305,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x2474480",
+            "original": "0x26e9c50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 390,
+            "kind": "call",
+            "target": "has_mana_multi",
+            "instruction": "0x24744d5",
+            "original": "0x268ff90"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 514,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x2474551",
+            "original": "0x26e9c50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 577,
+            "kind": "call",
+            "target": "charge_mana_multi",
+            "instruction": "0x2474590",
+            "original": "0x267bc50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 586,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x2474598",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 724,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x2474623",
+            "original": "0x26e9c50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 809,
+            "kind": "call",
+            "target": "has_mana_multi",
+            "instruction": "0x2474678",
+            "original": "0x268ff90"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 883,
+            "kind": "call",
+            "target": "pump_subtype_until_eot",
+            "instruction": "0x24746c2",
+            "original": "0x2686030"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 903,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x24746d6",
+            "original": "0x26b5a00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 928,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x24746ef",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 949,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x2474703",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2474350",
+            "offset": 964,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x2474712",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bb8b0",
+            "offset": 35,
+            "kind": "call",
+            "target": "can_counter_activated_ability",
+            "instruction": "0x25bb8d2",
+            "original": "0x2692dd0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bb8b0",
+            "offset": 63,
+            "kind": "call",
+            "target": "can_counter_triggered_ability",
+            "instruction": "0x25bb8ee",
+            "original": "0x2693060"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 63,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21581be",
+            "original": "0x266aff0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 88,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21581d7",
+            "original": "0x266aff0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 95,
+            "kind": "call",
+            "target": "paying_mana",
+            "instruction": "0x21581de",
+            "original": "0x2686c50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 203,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x215824a",
+            "original": "0x26b1610"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 217,
+            "kind": "data",
+            "target": "ai_is_speculating",
+            "instruction": "0x2158257",
+            "original": "0x728574"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 242,
+            "kind": "data",
+            "target": "trace_mode",
+            "instruction": "0x2158270",
+            "original": "0x790640"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 269,
+            "kind": "call",
+            "target": "get_hacked_subtype",
+            "instruction": "0x215828c",
+            "original": "0x2691980"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 281,
+            "kind": "call",
+            "target": "count_basic_lands",
+            "instruction": "0x2158298",
+            "original": "0x26b4240"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 296,
+            "kind": "call",
+            "target": "is_tapped",
+            "instruction": "0x21582a7",
+            "original": "0x4e81fe"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 318,
+            "kind": "call",
+            "target": "is_tapped",
+            "instruction": "0x21582bd",
+            "original": "0x4e81fe"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 453,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x2158344",
+            "original": "0x2672b20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 499,
+            "kind": "call",
+            "target": "add_state",
+            "instruction": "0x2158372",
+            "original": "0x26a9fd0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 523,
+            "kind": "call",
+            "target": "charge_mana",
+            "instruction": "0x215838a",
+            "original": "0x2679cb0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 529,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x215838f",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 556,
+            "kind": "call",
+            "target": "get_hacked_subtype",
+            "instruction": "0x21583ab",
+            "original": "0x2691980"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 568,
+            "kind": "call",
+            "target": "count_basic_lands",
+            "instruction": "0x21583b7",
+            "original": "0x26b4240"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 610,
+            "kind": "call",
+            "target": "produce_mana_tapped_impl",
+            "instruction": "0x21583e1",
+            "original": "0x26c5fa0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 621,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x21583eb",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 638,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x21583fc",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 656,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x215840f",
+            "original": "0x266aff0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 683,
+            "kind": "call",
+            "target": "play_land_sound_effect_force_color",
+            "instruction": "0x215842a",
+            "original": "0x2698c40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 688,
+            "kind": "call",
+            "target": "count_mana",
+            "instruction": "0x215842f",
+            "original": "0x2676260"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 709,
+            "kind": "call",
+            "target": "mana_producer",
+            "instruction": "0x2158444",
+            "original": "0x26ca940"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 751,
+            "kind": "call",
+            "target": "produce_mana_tapped",
+            "instruction": "0x215846e",
+            "original": "0x26c63a0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 788,
+            "kind": "call",
+            "target": "has_mana",
+            "instruction": "0x2158493",
+            "original": "0x49d510"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 811,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21584aa",
+            "original": "0x266aff0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 840,
+            "kind": "call",
+            "target": "is_animated_and_sick",
+            "instruction": "0x21584c7",
+            "original": "0x26a9890"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 860,
+            "kind": "call",
+            "target": "can_produce_mana",
+            "instruction": "0x21584db",
+            "original": "0x2656f10"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 888,
+            "kind": "call",
+            "target": "is_animated_and_sick",
+            "instruction": "0x21584f7",
+            "original": "0x26a9890"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 908,
+            "kind": "call",
+            "target": "can_produce_mana",
+            "instruction": "0x215850b",
+            "original": "0x2656f10"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 942,
+            "kind": "call",
+            "target": "has_mana",
+            "instruction": "0x215852d",
+            "original": "0x49d510"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 976,
+            "kind": "call",
+            "target": "remove_state",
+            "instruction": "0x215854f",
+            "original": "0x26aa090"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2158180",
+            "offset": 994,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x2158560",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 50,
+            "kind": "call",
+            "target": "mana_producer",
+            "instruction": "0x254b731",
+            "original": "0x26ca940"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 64,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x254b73f",
+            "original": "0x266aff0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 197,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x254b7c4",
+            "original": "0x26b1610"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 301,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x254b82c",
+            "original": "0x26b1610"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 366,
+            "kind": "call",
+            "target": "bounce_permanent",
+            "instruction": "0x254b86d",
+            "original": "0x266dc50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 384,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x254b87f",
+            "original": "0x266aff0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 494,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x254b8ed",
+            "original": "0x26b1610"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 502,
+            "kind": "call",
+            "target": "paying_mana",
+            "instruction": "0x254b8f5",
+            "original": "0x2686c50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 522,
+            "kind": "call",
+            "target": "paying_mana",
+            "instruction": "0x254b909",
+            "original": "0x2686c50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 549,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x254b923",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 664,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x254b997",
+            "original": "0x26b1610"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 798,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x254ba1d",
+            "original": "0x2672b20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 890,
+            "kind": "call",
+            "target": "charge_mana_for_activated_ability",
+            "instruction": "0x254ba79",
+            "original": "0x268f050"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 910,
+            "kind": "data",
+            "target": "tapped_for_mana_color",
+            "instruction": "0x254ba8c",
+            "original": "0x7904bc"
+          },
+          {
+            "side": 1,
+            "function_address": "0x254b700",
+            "offset": 936,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x254baa7",
+            "original": "0x266aff0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 38,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x247ba95",
+            "original": "0x26dac10"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 56,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x247baa7",
+            "original": "0x266aff0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 112,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x247badf",
+            "original": "0x26db1c0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 149,
+            "kind": "call",
+            "target": "can_counter_activated_ability",
+            "instruction": "0x247bb04",
+            "original": "0x26908d0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 180,
+            "kind": "call",
+            "target": "can_counter_triggered_ability",
+            "instruction": "0x247bb23",
+            "original": "0x2690980"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 248,
+            "kind": "call",
+            "target": "hybrid_split_card",
+            "instruction": "0x247bb67",
+            "original": "0x2205d70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 304,
+            "kind": "call",
+            "target": "cast_counter_triggered_ability",
+            "instruction": "0x247bb9f",
+            "original": "0x268a620"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 331,
+            "kind": "call",
+            "target": "can_sorcery_be_played",
+            "instruction": "0x247bbba",
+            "original": "0x2686190"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 379,
+            "kind": "call",
+            "target": "can_counter_activated_ability",
+            "instruction": "0x247bbea",
+            "original": "0x26908d0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 427,
+            "kind": "call",
+            "target": "can_counter_triggered_ability",
+            "instruction": "0x247bc1a",
+            "original": "0x2690980"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 515,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x247bc72",
+            "original": "0x266da80"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 580,
+            "kind": "call",
+            "target": "generic_spell",
+            "instruction": "0x247bcb3",
+            "original": "0x26aaaa0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 608,
+            "kind": "call",
+            "target": "cast_counter_activated_ability",
+            "instruction": "0x247bccf",
+            "original": "0x2690a10"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 631,
+            "kind": "call",
+            "target": "valid_target",
+            "instruction": "0x247bce6",
+            "original": "0x26db570"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 665,
+            "kind": "call",
+            "target": "copy_token",
+            "instruction": "0x247bd08",
+            "original": "0x26de260"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 707,
+            "kind": "call",
+            "target": "resolve_counter_activated_ability",
+            "instruction": "0x247bd32",
+            "original": "0x2690b90"
+          },
+          {
+            "side": 1,
+            "function_address": "0x247ba70",
+            "offset": 755,
+            "kind": "call",
+            "target": "resolve_counter_triggered_ability",
+            "instruction": "0x247bd62",
+            "original": "0x268d550"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 59,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x217b01a",
+            "original": "0x266aff0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 106,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x217b048",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 114,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x217b050",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 128,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x217b05f",
+            "original": "0x266aff0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 134,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x217b064",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 144,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x217b06e",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 173,
+            "kind": "call",
+            "target": "check_special_flags2",
+            "instruction": "0x217b08c",
+            "original": "0x268da10"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 305,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x217b110",
+            "original": "0x2672b20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 322,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x217b120",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 393,
+            "kind": "call",
+            "target": "pump_subtype_until_eot",
+            "instruction": "0x217b168",
+            "original": "0x26afe30"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 413,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x217b17c",
+            "original": "0x266da80"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 432,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x217b18f",
+            "original": "0x266aff0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 524,
+            "kind": "call",
+            "target": "has_mana_multi",
+            "instruction": "0x217b1eb",
+            "original": "0x26972b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 648,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x217b267",
+            "original": "0x2672b20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 711,
+            "kind": "call",
+            "target": "charge_mana_multi",
+            "instruction": "0x217b2a6",
+            "original": "0x2690f20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 720,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x217b2ae",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 858,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x217b339",
+            "original": "0x2672b20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 938,
+            "kind": "call",
+            "target": "has_mana_multi",
+            "instruction": "0x217b389",
+            "original": "0x26972b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x217afe0",
+            "offset": 949,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x217b393",
+            "original": "0x4ef194"
+          }
+        ],
+        "supporting_workers": [
+          {
+            "side": 0,
+            "name": "can_counter_activated_or_triggered_ability",
+            "address": "0x25bb8b0",
+            "size": 96,
+            "sha256": "b1b0a5924e5adeaa2a0212c961454966d6fdb945058c578a5dbe29125e0724dd"
+          }
+        ],
+        "indirect_constant_calls": [],
+        "inputs": {
+          ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+          "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+          "ManalinkEh.dll": "0dae84efb993ed4d8ed06e1a3f7887edb27c7ece08375c24269849534bc1481f",
+          "ManalinkEh.dbg": "e2f227a3558af25cdf32c5f77de89ee2b8563635229863961401753a924bc58a"
+        },
+        "base_sha256": "75f23ae237c099fbcc035870ff7bc4f2f57395f69649a27f4c9bc27c0a9baadc",
+        "builder_sha256": "d973a3ca5bc19171ead96890a663acd577e28c21f76ac033d506800051e7f307",
+        "scope": "Actual native/current four caller bodies and available actual private counter workers. Opaque leaf stubs bind direct calls, checked constant indirect function pointers, and seven globals. Compare ordered arguments, returns, complete records and state over 4,096 environments, sixteen events and both players. Include changed payment queries, post-cost land counts, dialog returns outside normal choices, counter-resolution info_slot writes, and mana-query/charge writes to Borrowed Grace mode bits. No leaf or whole-game proof."
+      },
+      "plan_sha256": "8773e573b38d1b3fd181afbe4b4e0103ac6d3dc634cf83e339bf18e2e2eecf8c",
+      "log_sha256": "be4a647893305ad23a4a64fdce94d6487432afce1fa00c0d520692dfaef7bcf4",
+      "compiler_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "checker_sha256": "87f605312aaa18bf5094bff92b6fd2ed2bc96ae917338a111fced990b27e54f1",
+    "staging": "preserved",
+    "scope": "Exact canonical/raw source projections and bounded observations of four actual native/rebuilt card bodies, including available private counter workers and checked constant indirect calls. Leaf behavior is stubbed. No whole-game proof or full comparison in this batch."
+  }
+}

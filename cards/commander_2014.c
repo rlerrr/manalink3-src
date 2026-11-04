@@ -810,8 +810,7 @@ int card_well_of_ideas(int player, int card, event_t event)
       event_result = event_result + (current_turn == player) + 1;
     }
   }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 // Black (11)
@@ -3070,7 +3069,7 @@ static int titania_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       count_for_gfp_ability(player, card, 0x77, player, 1, NULL);
     }
@@ -3082,7 +3081,7 @@ static int titania_effect(int player, int card, event_t event)
   {
     if (check_status(player, card, 0x10000) == 0)
     {
-      default_token_definition(player, card, 0x4926, &token);
+      default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
       token.pow = 5;
       token.tou = 3;
       token.qty = (unsigned char)death_count_or_result;

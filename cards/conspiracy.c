@@ -1208,6 +1208,7 @@ int card_stasis_cell(int player, int card, event_t event){
 
 	card_instance_t* instance = get_card_instance(player, card);
 	if (instance->damage_target_player >= 0){
+		instance = get_card_instance(player, card);
 		does_not_untap(instance->damage_target_player, instance->damage_target_card, event);
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -1235,12 +1236,16 @@ int card_travellers_cloak(int player, int card, event_t event){
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 	if (event == EVENT_ETB_ABILITY){ draw_cards(player, 1); }
-	else if( event == EVENT_RESOLVE_SPELL ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.preferred_controller = player;
-		if( valid_target(&td) ){
-			get_card_instance(player, card)->info_slot = 1<<(choose_a_color(player, get_deck_color(player, 1-player))-1);
+	else if (IS_GS_EVENT(player, card, event)){
+		card_instance_t* instance = get_card_instance(player, card);
+		if (event == EVENT_RESOLVE_SPELL){
+			target_definition_t td;
+			default_target_definition(player, card, &td, TYPE_CREATURE);
+			td.preferred_controller = player;
+			if (valid_target(&td)){
+				int color = choose_a_color(player, get_deck_color(player, 1-player));
+				instance->info_slot = (int32_t)(1u << (((unsigned int)color - 1u) & 31u));
+			}
 		}
 	}
 
@@ -1515,11 +1520,11 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
   if (player == 1)
   {
     td.required_subtype = 0x27;
-    td.special = 0x1000;
+    td.special = TARGET_SPECIAL_ILLEGAL_SUBTYPE;
     default_target_definition(1, card, &td1, 2);
     td1.preferred_controller = 1;
     td.required_subtype = 0xd2;
-    td.special = 0x1000;
+    td.special = TARGET_SPECIAL_ILLEGAL_SUBTYPE;
   }
   else
   {
@@ -1620,7 +1625,7 @@ int card_boldwyr_intimidator(int player, int card, event_t event)
       return 0;
   }
   force_a_subtype_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
-                            ((instance->info_slot != 0x42) - 1 & 0xffffff55) + SUBTYPE_WARRIOR);
+                            (unsigned int)((instance->info_slot != 0x42) ? 0 : -171) + SUBTYPE_WARRIOR);
   return 0;
 }
 
@@ -2612,7 +2617,7 @@ int card_marchesa_the_black_rose(int player, int card, event_t event)
     if (event == EVENT_DAT_ABILITY)
     {
       instance = get_card_instance(player, card);
-      attacker_index = instance->info_slot - 1;
+      attacker_index = (int32_t)((uint32_t)instance->info_slot - 1U);
       if (-1 < (int)attacker_index)
       {
         do

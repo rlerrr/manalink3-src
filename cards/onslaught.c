@@ -225,7 +225,7 @@ void check_for_turned_face_up_card_interactions(int player, int card, int new_id
     if (scan_player_or_source_limit == 2)
     {
       result_or_grave_index = 0;
-      raptor_iid = get_internal_card_id_from_csv_id(0x3a21);
+      raptor_iid = get_internal_card_id_from_csv_id(CARD_ID_DEATHMIST_RAPTOR);
       scan_player_or_source_limit = next_graveyard_source_id;
       cage_checked = false;
       graveyard = graveyard_ptr_mutable[player];
@@ -247,9 +247,9 @@ void check_for_turned_face_up_card_interactions(int player, int card, int new_id
           }
           choice_or_reanimated = has_mana_multi(player, 4, 0, 0, 1, 0, 0);
           choice_or_reanimated =
-              dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\003",
-                          "\001\012", raptor_iid, "Return face-up", 1, 4, "Return face_down", 1,
-                          (-(unsigned int)(choice_or_reanimated == 0) & 0xfffffffa) + 8, "Decline",
+              dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
+                          DLG_FULLCARD_ID(raptor_iid), "Return face-up", 1, 4, "Return face_down", 1,
+                          ((choice_or_reanimated == 0) ? 2U : 8U), "Decline",
                           1, 1, 0, 0, 0, 0);
           if (choice_or_reanimated == 1)
           {
@@ -911,7 +911,7 @@ void activate_astral_slide(void)
             (result_or_selected_card = get_id(player, card), result_or_selected_card == 0x1837))
         {
           default_target_definition(player, card, &td, 0x102);
-          td.zone = 0x1200;
+          td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
           td.preferred_controller = opponent;
           instance = get_card_instance(player, card);
           default_choice = 0;
@@ -1016,7 +1016,7 @@ int card_aurification(int player, int card, event_t event)
                    damage_or_enchantment->damage_source_card, COUNTER_GOLD, 1);
     }
   }
-  if (((trigger_condition == 0xd7) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_DEAL_DAMAGE) && (card == affected_card)) &&
       ((player == affected_card_controller &&
         ((reason_for_trigger_controller == player &&
           (eligible_or_result = is_humiliated(player, card, AL_TRIG), eligible_or_result == 0))))))
@@ -1314,31 +1314,22 @@ int card_blistering_firecat(int player, int card, event_t event)
 
 int card_bloodline_shaman(int player, int card, event_t event)
 {
-  int *library;
-  int result;
-  card_instance_t *instance;
-  subtype_t subtype;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    instance = get_card_instance(player, card);
-    subtype = select_a_subtype_full_choice(instance->parent_controller, instance->parent_card,
-                                           instance->parent_controller, NULL, 0);
-    library = deck_ptr[player];
-    if (*library != -1)
+    card_instance_t *instance = get_card_instance(player, card);
+    subtype_t subt = select_a_subtype_full_choice(instance->parent_controller, instance->parent_card,
+                                                  instance->parent_controller, NULL, 0);
+    int *deck = deck_ptr[player];
+    if (*deck != -1)
     {
-      reveal_card_iid(player, card, *library);
-      result = is_what(-1, *library, 2);
-      if (result != 0)
+      reveal_card_iid(player, card, *deck);
+      if (is_what(-1, *deck, TYPE_CREATURE) && has_subtype(-1, *deck, subt))
       {
-        result = has_subtype(-1, *library, subtype);
-        if (result != 0)
-        {
-          add_card_to_hand(player, *library);
-          remove_card_from_deck(player, 0);
-          return generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
-        }
+        add_card_to_hand(player, *deck);
+        remove_card_from_deck(player, 0);
       }
-      mill(player, 1);
+      else
+        mill(player, 1);
     }
   }
   return generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -1780,7 +1771,7 @@ int card_cruel_revival(int player, int card, event_t event){
 		generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select target non-Zombie creature.", 1, NULL);
 		if( spell_fizzled != 1 ){
 			test_definition_t this_test;
-			new_default_test_definition(&this_test, TYPE_PERMANENT, "Select target Zombie card.");
+			new_default_test_definition(&this_test, TYPE_ANY, "Select target Zombie card.");
 			this_test.subtype = SUBTYPE_ZOMBIE;
 			if( any_in_graveyard_by_subtype(player, SUBTYPE_ZOMBIE) && !graveyard_has_shroud(player) ){
 				select_target_from_grave_source(player, card, player, SFG_NO_SPELL_FIZZLED, AI_MAX_VALUE, &this_test, 1);
@@ -2197,7 +2188,7 @@ int card_ebonblade_reaper(int player, int card, event_t event)
 int card_elvish_vanguard(int player, int card, event_t event)
 {
   test_definition_t this_test;
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     default_test_definition(&this_test, 0x47);
@@ -5523,7 +5514,6 @@ int card_daru_lancer(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25f4310; original cards/onslaught.c:3951. */
 int card_searing_flesh(int player, int card, event_t event)
 {
-  int result;
   target_definition_t td;
   if (!IS_GS_EVENT(player, card, event))
   {
@@ -5532,8 +5522,7 @@ int card_searing_flesh(int player, int card, event_t event)
   opponent_or_pw_target_definition(player, card, &td);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       damage_target0(player, card, 7);
     }
@@ -5597,7 +5586,7 @@ int card_chain_of_vapor(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0x47);
-  td.illegal_type = 1;
+  td.illegal_type = TYPE_LAND;
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
@@ -5649,7 +5638,7 @@ static int false_cure_legacy(int player, int card, event_t event)
     event_flags = event_flags | 0x200000;
   }
   current_trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     current_trigger = xtrigger_impl_value_dont_use_directly;
   }
@@ -5688,7 +5677,7 @@ static int effect_target_gains_trample_and_regenerate_for_g(int player, int card
 {
   int enchanted_card;
   card_instance_t *instance;
-  int player_00;
+  int target_player;
   if (effect_follows_control_of_attachment(player, card, event) != 0)
   {
     return 0;
@@ -5703,11 +5692,11 @@ static int effect_target_gains_trample_and_regenerate_for_g(int player, int card
     return 0;
   }
   instance = get_card_instance(player, card);
-  player_00 = (int)instance->damage_target_player;
+  target_player = (int)instance->damage_target_player;
   enchanted_card = instance->damage_target_card;
   if (event == EVENT_ACTIVATE)
   {
-    if (player_00 == -1)
+    if (target_player == -1)
     {
       return 0;
     }
@@ -5717,7 +5706,7 @@ static int effect_target_gains_trample_and_regenerate_for_g(int player, int card
     if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
     {
       if (((event == EVENT_ABILITIES) && (enchanted_card == affected_card)) &&
-          (player_00 == affected_card_controller))
+          (target_player == affected_card_controller))
       {
         event_result = event_result | 0x280;
       }
@@ -5725,16 +5714,16 @@ static int effect_target_gains_trample_and_regenerate_for_g(int player, int card
         kill_card(player, card, KILL_EXILE);
       return 0;
     }
-    if (player_00 == -1)
+    if (target_player == -1)
     {
       return 0;
     }
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (can_regenerate(player_00, enchanted_card) != 0))
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (can_regenerate(target_player, enchanted_card) != 0))
     {
-      regenerate_target(player_00, enchanted_card);
+      regenerate_target(target_player, enchanted_card);
     }
   }
-  return granted_generic_activated_ability(player, card, player_00, enchanted_card, event,
+  return granted_generic_activated_ability(player, card, target_player, enchanted_card, event,
                                            GAA_REGENERATION, 0, 0, 0, 1, 0, 0, 0, NULL, NULL);
 }
 
@@ -5747,7 +5736,6 @@ static int effect_target_gains_trample_and_regenerate_for_g(int player, int card
 int card_run_wild(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   target_definition_t td;
 
   if (!IS_GS_EVENT(player, card, event))
@@ -5759,8 +5747,7 @@ int card_run_wild(int player, int card, event_t event)
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       create_targetted_legacy_activate(
           player, card, effect_target_gains_trample_and_regenerate_for_g,

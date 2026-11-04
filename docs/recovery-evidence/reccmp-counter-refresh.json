@@ -1,0 +1,615 @@
+{
+  "format": 1,
+  "status": "Full comparison refreshed after counter/control-flow/typed-choice batches; snapshot precedes the residual-expression rewrite.",
+  "receipt": {
+    "setup_sha256": "b3e556a11d1953d08014365875064271fa543e6a534656b21e6ad9830d3cc488",
+    "report_sha256": "aa348a8b8a8d34634296c0331c2dc44e641255ed91e0c78d66a2b43ff1d6ac74",
+    "inputs": {
+      "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dll": "85499e10ed5e9fbd683ec1fd5dac729e62969aefe9389ae1a20b9b3006e705ab",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "f9213310f08e7a9886619662cad35b91c6862386bc34905c792fd225bd19b014"
+    },
+    "metadata_sha256": "82644c2fdccd05877828b02fd729a1382338c1ed14fec4be9f970cd89bb6966b",
+    "metadata_snapshot": ".recovery\\reccmp\\counter-refresh-c641.metadata.csv",
+    "global_metadata_snapshot": ".recovery\\reccmp\\counter-refresh-c641.globals.csv",
+    "global_metadata_sha256": "4bd078c759882fd6f758d1ec43ab13606b0e8e288c32b13ec11f52609c5142c9",
+    "global_bindings_snapshot": ".recovery\\reccmp\\counter-refresh-c641.globals.json",
+    "global_bindings_sha256": "df7e27936bf75cc41b86ae235b1f88870a77e57db0f51a63d9ee226eaab3faf3",
+    "verified_global_bindings": {
+      "verified": 293,
+      "bindings_sha256": "09f0af584dae4775fad88913c953571bc6c23beb6be25efc4b1c5fb5016ecd9f"
+    },
+    "project_config_sha256": "a978a638b5f154a514be6229cd0b012f96fb8431f1bfc4c4f00c3cf13bc0d371",
+    "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "comparator_source_sha256": {
+      "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+      "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+      "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+      "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_globals.py": "1e870d89b4afbc15950d26c59a94162aecc70bec0700f60c032373a76910f3bc",
+      "C:\\dev\\manalink3-src\\tools\\reccmp_project.py": "c63e3d0b734e532a9bf37141562308a06fd9d3327e85f02d01f67267c73876b6"
+    },
+    "command": [
+      "reccmp-reccmp",
+      "--target",
+      "MANALINK2022",
+      "--no-color",
+      "--json",
+      ".recovery/reccmp/counter-refresh-c641.json",
+      "--silent"
+    ],
+    "exit_code": 0
+  },
+  "ranges": 18828,
+  "summary": {
+    "exact": 12538,
+    "different": 6016,
+    "effective": 274
+  },
+  "explicit_function_bindings": 160,
+  "verified_data_bindings": 293,
+  "default_queue": {
+    "candidates": 393,
+    "distinct_change_groups": 299
+  },
+  "all_score_queue": {
+    "candidates": 612,
+    "distinct_change_groups": 435,
+    "maximum_changed_instructions_per_side": 8
+  },
+  "exact_matches_gained": [
+    {
+      "name": "card_spark_double",
+      "address": "0x21d6710"
+    },
+    {
+      "name": "card_tragic_fall",
+      "address": "0x2241ea0"
+    },
+    {
+      "name": "get_partner_with_id",
+      "address": "0x22c6410"
+    },
+    {
+      "name": "card_viashino_bey",
+      "address": "0x25bb020"
+    },
+    {
+      "name": "new_select_target_from_grave",
+      "address": "0x26b9850"
+    },
+    {
+      "name": "can_have_counters_placed_on_it",
+      "address": "0x26d44d0"
+    },
+    {
+      "name": "remove_counters",
+      "address": "0x26d4c10"
+    }
+  ],
+  "exact_matches_lost": [],
+  "effective_matches_gained": [
+    {
+      "name": "card_tourach_dread_cantor",
+      "address": "0x2241d50"
+    }
+  ],
+  "score_changes": [
+    {
+      "name": "card_remedy",
+      "address": "0x2023fa0",
+      "before": 0.33482142857142855,
+      "after": 0.33557046979865773
+    },
+    {
+      "name": "card_vision_charm",
+      "address": "0x20253c0",
+      "before": 0.5493827160493827,
+      "after": 0.35239567233384855
+    },
+    {
+      "name": "card_brightling",
+      "address": "0x2026a70",
+      "before": 0.257396449704142,
+      "after": 0.2656716417910448
+    },
+    {
+      "name": "card_serras_hymn",
+      "address": "0x2057160",
+      "before": 0.4517453798767967,
+      "after": 0.45267489711934156
+    },
+    {
+      "name": "ap_disciples",
+      "address": "0x205ffb0",
+      "before": 0.315004659832246,
+      "after": 0.2912442396313364
+    },
+    {
+      "name": "card_coral_reef",
+      "address": "0x2123aa0",
+      "before": 0.7448015122873346,
+      "after": 0.7058823529411765
+    },
+    {
+      "name": "card_samite_alchemist",
+      "address": "0x2128b20",
+      "before": 0.5229681978798587,
+      "after": 0.5460992907801419
+    },
+    {
+      "name": "card_reality_anchor",
+      "address": "0x215d010",
+      "before": 0.625,
+      "after": 0.6291390728476821
+    },
+    {
+      "name": "card_bandage",
+      "address": "0x215e690",
+      "before": 0.45652173913043476,
+      "after": 0.4782608695652174
+    },
+    {
+      "name": "mercadian_storage_land",
+      "address": "0x216d7f0",
+      "before": 0.5343228200371057,
+      "after": 0.6407407407407407
+    },
+    {
+      "name": "card_panacea",
+      "address": "0x2181d90",
+      "before": 0.5223880597014925,
+      "after": 0.5468164794007491
+    },
+    {
+      "name": "card_spark_double",
+      "address": "0x21d6710",
+      "before": 0.8516129032258064,
+      "after": 1.0
+    },
+    {
+      "name": "card_teferi_time_raveler",
+      "address": "0x21d6dc0",
+      "before": 0.5773809523809523,
+      "after": 0.5945945945945946
+    },
+    {
+      "name": "card_bound_determined",
+      "address": "0x221c000",
+      "before": 0.4897196261682243,
+      "after": 0.4915572232645403
+    },
+    {
+      "name": "card_wars_toll",
+      "address": "0x2229e90",
+      "before": 0.8609625668449198,
+      "after": 0.8900804289544236
+    },
+    {
+      "name": "card_tourach_dread_cantor",
+      "address": "0x2241d50",
+      "before": 0.8588957055214724,
+      "after": 0.9753086419753086
+    },
+    {
+      "name": "card_tragic_fall",
+      "address": "0x2241ea0",
+      "before": 0.8627450980392157,
+      "after": 1.0
+    },
+    {
+      "name": "card_unholy_heat",
+      "address": "0x2242380",
+      "before": 0.7231638418079096,
+      "after": 0.7657142857142857
+    },
+    {
+      "name": "card_verdant_command",
+      "address": "0x2242d30",
+      "before": 0.18331374853113983,
+      "after": 0.18396226415094338
+    },
+    {
+      "name": "card_zabaz_the_glimmerwasp",
+      "address": "0x2243f30",
+      "before": 0.38445807770961143,
+      "after": 0.3860369609856263
+    },
+    {
+      "name": "card_batterskull",
+      "address": "0x226de40",
+      "before": 0.7329842931937173,
+      "after": 0.7429577464788732
+    },
+    {
+      "name": "is_legal_general",
+      "address": "0x22c3220",
+      "before": 0.32051282051282054,
+      "after": 0.2569832402234637
+    },
+    {
+      "name": "get_partner_with_id",
+      "address": "0x22c6410",
+      "before": 0.43478260869565216,
+      "after": 1.0
+    },
+    {
+      "name": "card_edh",
+      "address": "0x22c6b40",
+      "before": 0.36023622047244097,
+      "after": 0.3824975417895772
+    },
+    {
+      "name": "dominaria_memorial_impl",
+      "address": "0x22ca5c0",
+      "before": 0.47010309278350515,
+      "after": 0.4896265560165975
+    },
+    {
+      "name": "card_shivan_fire",
+      "address": "0x22d2e60",
+      "before": 0.34576271186440677,
+      "after": 0.36177474402730375
+    },
+    {
+      "name": "card_destined_lead",
+      "address": "0x22e4ea0",
+      "before": 0.6535626535626535,
+      "after": 0.6765432098765433
+    },
+    {
+      "name": "card_benalish_missionary",
+      "address": "0x22f6a70",
+      "before": 0.584070796460177,
+      "after": 0.6071428571428571
+    },
+    {
+      "name": "card_desperate_gambit",
+      "address": "0x22f72b0",
+      "before": 0.48554913294797686,
+      "after": 0.4985507246376812
+    },
+    {
+      "name": "card_kithkin_armor",
+      "address": "0x22f7e40",
+      "before": 0.6313559322033898,
+      "after": 0.6454352441613588
+    },
+    {
+      "name": "card_endling",
+      "address": "0x2337540",
+      "before": 0.2812051649928264,
+      "after": 0.2881844380403458
+    },
+    {
+      "name": "card_serra_the_benevolent",
+      "address": "0x233c030",
+      "before": 0.6946564885496184,
+      "after": 0.7126436781609196
+    },
+    {
+      "name": "card_polukranos_unchained",
+      "address": "0x235f6b0",
+      "before": 0.6028169014084507,
+      "after": 0.6193181818181818
+    },
+    {
+      "name": "card_thassas_intervention",
+      "address": "0x23609c0",
+      "before": 0.4129263913824057,
+      "after": 0.4136690647482014
+    },
+    {
+      "name": "card_unseen_walker",
+      "address": "0x2393150",
+      "before": 0.8455284552845529,
+      "after": 0.9061224489795918
+    },
+    {
+      "name": "card_fury_charm",
+      "address": "0x23b9590",
+      "before": 0.3588235294117647,
+      "after": 0.37091988130563797
+    },
+    {
+      "name": "card_timebender",
+      "address": "0x23be760",
+      "before": 0.805111821086262,
+      "after": 0.8774193548387097
+    },
+    {
+      "name": "card_pestilent_cauldron",
+      "address": "0x23d5d90",
+      "before": 0.6448979591836734,
+      "after": 0.6403269754768393
+    },
+    {
+      "name": "card_rowan_scholar_of_sparks",
+      "address": "0x23d9cf0",
+      "before": 0.38735177865612647,
+      "after": 0.48031496062992124
+    },
+    {
+      "name": "card_crown_of_the_ages",
+      "address": "0x23f40c0",
+      "before": 0.5506329113924051,
+      "after": 0.5796178343949044
+    },
+    {
+      "name": "card_elvish_healer",
+      "address": "0x23f5ab0",
+      "before": 0.43853820598006643,
+      "after": 0.4584717607973422
+    },
+    {
+      "name": "card_fylgja",
+      "address": "0x23f8a30",
+      "before": 0.5882352941176471,
+      "after": 0.5957446808510638
+    },
+    {
+      "name": "card_hypnotic_cloud",
+      "address": "0x24987f0",
+      "before": 0.4854368932038835,
+      "after": 0.495114006514658
+    },
+    {
+      "name": "card_orims_touch",
+      "address": "0x24998b0",
+      "before": 0.26380368098159507,
+      "after": 0.28923076923076924
+    },
+    {
+      "name": "card_samite_ministration",
+      "address": "0x249b3a0",
+      "before": 0.2510460251046025,
+      "after": 0.2594142259414226
+    },
+    {
+      "name": "card_stand_deliver",
+      "address": "0x249ce40",
+      "before": 0.44976076555023925,
+      "after": 0.4556354916067146
+    },
+    {
+      "name": "card_treefolk_healer",
+      "address": "0x249db20",
+      "before": 0.49206349206349204,
+      "after": 0.5179282868525896
+    },
+    {
+      "name": "card_shivan_sand_mage",
+      "address": "0x257ae00",
+      "before": 0.6845238095238095,
+      "after": 0.7447447447447447
+    },
+    {
+      "name": "card_viashino_bey",
+      "address": "0x25bb020",
+      "before": 0.9323308270676691,
+      "after": 1.0
+    },
+    {
+      "name": "card_incubation_druid",
+      "address": "0x25c0110",
+      "before": 0.41148325358851673,
+      "after": 0.44976076555023925
+    },
+    {
+      "name": "card_seraph_of_the_scales",
+      "address": "0x25c28d0",
+      "before": 0.6198347107438017,
+      "after": 0.6237006237006237
+    },
+    {
+      "name": "card_very_cryptic_command_e",
+      "address": "0x25c5f90",
+      "before": 0.31497797356828194,
+      "after": 0.3197353914002205
+    },
+    {
+      "name": "check_for_turned_face_up_card_interactions",
+      "address": "0x25e8760",
+      "before": 0.4437596302003082,
+      "after": 0.44513137557959814
+    },
+    {
+      "name": "ribbon_snake_legacy",
+      "address": "0x25f9030",
+      "before": 0.42136498516320475,
+      "after": 0.4226190476190476
+    },
+    {
+      "name": "vintara_elephant_legacy",
+      "address": "0x25f9900",
+      "before": 0.42136498516320475,
+      "after": 0.4226190476190476
+    },
+    {
+      "name": "zerapa_minotaur_legacy",
+      "address": "0x25f9ba0",
+      "before": 0.42136498516320475,
+      "after": 0.4226190476190476
+    },
+    {
+      "name": "card_ribbon_snake",
+      "address": "0x26063c0",
+      "before": 0.3466666666666667,
+      "after": 0.3763440860215054
+    },
+    {
+      "name": "card_vintara_elephant",
+      "address": "0x2607dd0",
+      "before": 0.3582887700534759,
+      "after": 0.3763440860215054
+    },
+    {
+      "name": "card_zerapa_minotaur",
+      "address": "0x2608ac0",
+      "before": 0.3582887700534759,
+      "after": 0.3763440860215054
+    },
+    {
+      "name": "card_warden_of_the_first_tree",
+      "address": "0x262d160",
+      "before": 0.3531827515400411,
+      "after": 0.33402922755741127
+    },
+    {
+      "name": "card_penance",
+      "address": "0x264ee80",
+      "before": 0.42735042735042733,
+      "after": 0.4444444444444444
+    },
+    {
+      "name": "replace_all_instances_of_one_color_word_with_another",
+      "address": "0x267f930",
+      "before": 0.5372050816696915,
+      "after": 0.5045045045045045
+    },
+    {
+      "name": "replace_all_instances_of_one_basic_land_type_word_with_another",
+      "address": "0x267fdc0",
+      "before": 0.5215827338129496,
+      "after": 0.49731663685152055
+    },
+    {
+      "name": "granted_generic_activated_ability",
+      "address": "0x269c8c0",
+      "before": 0.37600716204118173,
+      "after": 0.37690241718889883
+    },
+    {
+      "name": "new_select_target_from_grave",
+      "address": "0x26b9850",
+      "before": 0.7032967032967034,
+      "after": 1.0
+    },
+    {
+      "name": "select_target_from_grave_source",
+      "address": "0x26b98e0",
+      "before": 0.47058823529411764,
+      "after": 0.5423728813559322
+    },
+    {
+      "name": "raw_counter_value",
+      "address": "0x26d1950",
+      "before": 0.08059384941675504,
+      "after": 0.046104928457869634
+    },
+    {
+      "name": "can_have_counters_placed_on_it",
+      "address": "0x26d44d0",
+      "before": 0.5507246376811594,
+      "after": 1.0
+    },
+    {
+      "name": "get_updated_counters_number_as_cost",
+      "address": "0x26d4540",
+      "before": 0.3669724770642202,
+      "after": 0.38596491228070173
+    },
+    {
+      "name": "get_updated_counters_number_impl",
+      "address": "0x26d45f0",
+      "before": 0.2777777777777778,
+      "after": 0.46987951807228917
+    },
+    {
+      "name": "add_counters",
+      "address": "0x26d4840",
+      "before": 0.7619047619047619,
+      "after": 0.819047619047619
+    },
+    {
+      "name": "remove_counters",
+      "address": "0x26d4c10",
+      "before": 0.7636363636363637,
+      "after": 1.0
+    },
+    {
+      "name": "add_counters_as_cost",
+      "address": "0x26d5910",
+      "before": 0.2857142857142857,
+      "after": 0.56
+    },
+    {
+      "name": "add_counters_predoubled",
+      "address": "0x26d5970",
+      "before": 0.84,
+      "after": 0.7524752475247525
+    },
+    {
+      "name": "effect_damage",
+      "address": "0x26e2330",
+      "before": 0.4344205412907703,
+      "after": 0.43858431644691187
+    },
+    {
+      "name": "make_pack_normal",
+      "address": "0x26eb8e0",
+      "before": 0.20696827873114926,
+      "after": 0.209375
+    }
+  ],
+  "scores_higher": 66,
+  "scores_lower": 10,
+  "queue_tool_sha256": "551f66be3775a1aad91847e1972b1e2dd087d00bf190e1eca5464579ba14495d",
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "scope": "Normalized instruction classifications and queue discovery only. Seven ranges become exact, one becomes effective, and no prior exact is lost. Some readability rewrites lower normalized scores while their separate native or typed-expression checks remain the functional evidence. No whole-program or newly recovered handler count is implied.",
+  "followup_external_jump_check": {
+    "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "rebuilt_dll_sha256": "d7f067ed03fa3db885444bd17a418bb32add89694ec86436ca50531b8821bedd",
+    "rebuilt_debug_sha256": "8126dd0c96fdb19f48cdb10a750e47acbf1d17a8f61bf418a835f540afa33b09",
+    "functions": [
+      {
+        "name": "card_detonate",
+        "native": {
+          "address": "0x2247780",
+          "instruction": "jmp 0x41cec0",
+          "target": "0x41cec0"
+        },
+        "rebuilt": {
+          "address": "0x2058b70",
+          "instruction": "jmp 0x41cec0",
+          "target": "0x41cec0"
+        },
+        "finding": "Same fixed external jump target despite zero normalized matching score in the full JSON snapshot."
+      },
+      {
+        "name": "card_whimsy",
+        "native": {
+          "address": "0x2410720",
+          "instruction": "jmp 0x473f50",
+          "target": "0x473f50"
+        },
+        "rebuilt": {
+          "address": "0x244ac10",
+          "instruction": "jmp 0x473f50",
+          "target": "0x473f50"
+        },
+        "finding": "Same fixed external jump target despite zero normalized matching score in the full JSON snapshot."
+      },
+      {
+        "name": "draw_cards",
+        "native": {
+          "address": "0x26b4050",
+          "instruction": "jmp 0x41c190",
+          "target": "0x41c190"
+        },
+        "rebuilt": {
+          "address": "0x266c3a0",
+          "instruction": "jmp 0x41c190",
+          "target": "0x41c190"
+        },
+        "finding": "Same fixed external jump target despite zero normalized matching score in the full JSON snapshot."
+      }
+    ],
+    "scope": "Read-only disassembly of three five-byte forwarders, not execution or EXE-body recovery. This identifies missing external-target identity as a comparison investigation."
+  },
+  "next_comparison_investigation": "Fixed external Magic.exe targets: three five-byte forwarders have the same decoded external target but score zero when represented as differing relative jumps. Inspect external-target matching before treating those scores as source differences."
+}

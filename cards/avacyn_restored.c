@@ -571,22 +571,10 @@ Return target creature card from your graveyard to the battlefield. If it's an A
 	test_definition_t test;
 	default_test_definition(&test, TYPE_CREATURE);
 
-	if( event == EVENT_CAN_CAST ){
-		return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &test);
-	}
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( player == HUMAN ){
-			return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &test);
-		}
-		else{
-			test.subtype = SUBTYPE_ANGEL;
-			if( new_special_count_grave(player, &test) ){
-				return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &test);
-			}
-			else{
-				default_test_definition(&test, TYPE_CREATURE);
-				return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &test);
-			}
+	if (event == EVENT_CAST_SPELL && affect_me(player, card) && player != HUMAN){
+		test.subtype = SUBTYPE_ANGEL;
+		if (!new_special_count_grave(player, &test)){
+			default_test_definition(&test, TYPE_CREATURE);
 		}
 	}
 
@@ -1752,6 +1740,7 @@ Enchanted creature has "Whenever this creature attacks, you may tap or untap tar
 
 	card_instance_t* instance = get_card_instance(player, card);
 	if (instance->damage_target_player >= 0){
+	    instance = get_card_instance(player, card);
 	    int p = instance->damage_target_player, c = instance->damage_target_card;
 	    if (is_humiliated(p, c, AL_TRIG)){ return 0; }
 	    store_attackers(player, card, event, RESOLVE_TRIGGER_AI(player), p, c, NULL);
@@ -1878,7 +1867,7 @@ int card_infinite_reflection(int player, int card, event_t event)
       legendary_or_humiliated = is_legendary(player, last_cloned_creature);
       legend_rule_override = 0;
       if ((((legendary_or_humiliated != 0) ||
-            (legend_rule_override = check_battlefield_for_id(2, 0x1f93),
+            (legend_rule_override = check_battlefield_for_id(2, CARD_ID_LEYLINE_OF_SINGULARITY),
              legend_rule_override != 0)) &&
            ((((unsigned int)player_bits[player] >> 24 & 0xff) & 8) == 0)) &&
           (0 < active_cards_count[player]))
@@ -2964,85 +2953,63 @@ Target creature gets -X/-X until end of turn. */
 
 int card_descent_into_madness(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-  int choosing_player;
-  int exiles_required;
-  int cards_exiled;
+  card_instance_t *instance = get_card_instance(player, card);
   target_definition_t td;
   target_definition_t td1;
-
-  instance = get_card_instance(player, card);
   upkeep_trigger_ability(player, card, event, player);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
     add_counters(player, card, player, card, COUNTER_DESPAIR, 1);
-    exiles_required = count_counters(player, card, COUNTER_DESPAIR);
-    choosing_player = 0;
-    do
+    int amount = count_counters(player, card, COUNTER_DESPAIR);
+    for (int i = 0; i < 2; ++i)
     {
       default_target_definition(player, card, &td, 0x47);
-      td.allowed_controller = choosing_player;
-      td.preferred_controller = choosing_player;
-      td.who_chooses = choosing_player;
+      td.allowed_controller = i;
+      td.preferred_controller = i;
+      td.who_chooses = i;
       td.illegal_abilities = 0;
       default_target_definition(player, card, &td1, 0xff);
-      td1.zone = 0x100;
-      td1.allowed_controller = choosing_player;
-      td1.preferred_controller = choosing_player;
-      td1.who_chooses = choosing_player;
+      td1.zone = TARGET_ZONE_HAND;
+      td1.allowed_controller = i;
+      td1.preferred_controller = i;
+      td1.who_chooses = i;
       td1.illegal_abilities = 0;
       td1.allow_cancel = 0;
-      result = count_subtype(choosing_player, 0x47, -1);
-      if (result < exiles_required)
+      int perms = count_subtype(i, 0x47, -1);
+      if (perms < amount)
+        amount = perms;
+      if (amount > 0)
       {
-        exiles_required = result;
-      }
-      if (0 < exiles_required)
-      {
-        cards_exiled = 0;
+        int sacrifices = 0;
         do
         {
-          instance->number_of_targets = '\0';
+          instance->number_of_targets = 0;
           bool choose_hand = false;
-          result = can_target(&td);
-          if (result == 0)
+          if (can_target(&td))
           {
-            result = can_target(&td1);
-            choose_hand = result != 0;
-          }
-          else
-          {
-            result = can_target(&td1);
-            td.allow_cancel = (int32_t)(result != 0);
-            result = new_pick_target(&td, "Select a permanent you control to exile.", 0, 0x80);
-            if (result == 0)
+            td.allow_cancel = can_target(&td1) != 0;
+            if (new_pick_target(&td, "Select a permanent you control to exile.", 0, 0x80))
             {
-              result = can_target(&td1);
-              choose_hand = result != 0;
+              kill_card(i, instance->targets[0].card, KILL_EXILE);
+              ++sacrifices;
             }
             else
-            {
-              kill_card(choosing_player, instance->targets[0].card, KILL_EXILE);
-              cards_exiled = cards_exiled + 1;
-            }
+              choose_hand = can_target(&td1) != 0;
           }
+          else
+            choose_hand = can_target(&td1) != 0;
           if (choose_hand)
           {
             td1.allow_cancel = 0;
-            result = new_pick_target(&td1, "Select a card in your hand to exile.", 0, 0x80);
-            if (result != 0)
+            if (new_pick_target(&td1, "Select a card in your hand to exile.", 0, 0x80))
             {
-              rfg_card_in_hand(choosing_player, instance->targets[0].card);
-              cards_exiled = cards_exiled + 1;
+              rfg_card_in_hand(i, instance->targets[0].card);
+              ++sacrifices;
             }
           }
-          result = can_target(&td);
-        } while (((result != 0) || (result = can_target(&td1), result != 0)) &&
-                 (cards_exiled < exiles_required));
+        } while ((can_target(&td) || can_target(&td1)) && sacrifices < amount);
       }
-      choosing_player = choosing_player + 1;
-    } while (choosing_player != 2);
+    }
   }
   return global_enchantment(player, card, event);
 }
@@ -4757,7 +4724,7 @@ int card_champion_of_lambholt(int player, int card, event_t event)
   int blocker_power;
   int champion_power;
   test_definition_t test;
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     default_test_definition(&test, 2);
@@ -6005,7 +5972,7 @@ int card_otherworld_atlas(int player, int card, event_t event)
       }
       charge_count_or_choice = count_counters(player, card, COUNTER_CHARGE);
       draw_priority_count = count_counters(player, card, COUNTER_CHARGE);
-      if (dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Add a counter", 1,
+      if (dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Add a counter", 1,
                       charge_count_or_choice * -5 + 0x14, "Both players draw", 1,
                       draw_priority_count * 5, 0, 0, 0, 0) != 0)
       {
@@ -6513,7 +6480,7 @@ int card_dark_impostor(int player, int card, event_t event)
       available_count_or_result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 4,
                                                             2, 0, 0, 0, 0, 0, &td, NULL);
       choice = dialog_impl(
-          player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\004", "Kill & steal ability",
+          player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL, "Kill & steal ability",
           available_count_or_result, 5, stolen_abilities_name[0], first_available_or_choice, 1,
           stolen_abilities_name[1], second_ability_available, 1, stolen_abilities_name[2],
           third_ability_available, 1, stolen_abilities_name[3], fourth_ability_available, 1,

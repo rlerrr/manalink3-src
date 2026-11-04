@@ -599,8 +599,8 @@ int card_ajani_goldmane(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     mode_life_or_scan = life[player];
     creature_count_or_result = count_subtype(player, 2, -1);
-    mode_life_or_scan = dialog_impl(player, card, event, "\001\002", "\001\017", "Gain 2 life", 1,
-                                    ((life[player] < 6) - 1 & 0xfffffff1) + 0x14, 1,
+    mode_life_or_scan = dialog_impl(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Gain 2 life", 1,
+                                    ((life[player] < 6) ? 20U : 5U), 1,
                                     "Give a +1/+1 counters to your crits", 1,
                                     creature_count_or_result * 3, 0xffffffff, "Generate an Avatar",
                                     1, mode_life_or_scan * 2, 0xfffffffa, 0, 0, 0, 0);
@@ -635,7 +635,7 @@ int card_ajani_goldmane(int player, int card, event_t event)
       }
       else if (mode_life_or_scan == CHOICE_AVATAR)
       {
-        default_token_definition(player, card, 0x4904, &token);
+        default_token_definition(player, card, CARD_ID_AVATAR, &token);
         token.special_infos = 0x42;
         generate_token(&token);
       }
@@ -745,7 +745,7 @@ As ~ enters the battlefield, you may reveal a Giant card from your hand. If you 
 
 static int effect_aquitects_will(int player, int card, event_t event)
 {
-  int card_00;
+  int target_card;
   card_instance_t *instance;
   card_instance_t *land_in_play;
   color_test_t col;
@@ -756,15 +756,15 @@ static int effect_aquitects_will(int player, int card, event_t event)
   result = (int)instance->damage_target_player;
   if (-1 < result)
   {
-    card_00 = instance->damage_target_card;
+    target_card = instance->damage_target_card;
     if (event == EVENT_STATIC_EFFECTS)
     {
-      if (-1 < card_00)
+      if (-1 < target_card)
       {
-        land_in_play = in_play(result, card_00);
+        land_in_play = in_play(result, target_card);
         if (land_in_play != NULL)
         {
-          result = count_counters(result, card_00, COUNTER_FLOOD);
+          result = count_counters(result, target_card, COUNTER_FLOOD);
           if (result == 0)
           {
             kill_card(player, card, KILL_EXILE);
@@ -778,7 +778,7 @@ static int effect_aquitects_will(int player, int card, event_t event)
     }
     else if (event == EVENT_CAN_ACTIVATE)
     {
-      result = count_counters(result, card_00, COUNTER_FLOOD);
+      result = count_counters(result, target_card, COUNTER_FLOOD);
       if (result != 0)
       {
         return mana_producer((int)instance->damage_target_player, instance->damage_target_card,
@@ -787,10 +787,10 @@ static int effect_aquitects_will(int player, int card, event_t event)
     }
     else if (event == EVENT_ACTIVATE)
     {
-      tap_card(result, card_00);
+      tap_card(result, target_card);
       col = basic_subtype_to_color_test(instance->targets[1].card);
       color = single_color_test_bit_to_color(col);
-      produce_mana_tapped(result, card_00, color, 1);
+      produce_mana_tapped(result, target_card, color, 1);
     }
   }
   attached_is_additional_subtype(player, card, event, instance->targets[1].card);
@@ -823,14 +823,16 @@ int card_aquitects_will(int player, int card, event_t event){
 			if( instance->targets[0].player == player ){
 				int legacy = create_targetted_legacy_activate(player, card, &effect_aquitects_will,
 												instance->targets[0].player, instance->targets[0].card);
-				get_card_instance(instance->targets[0].player, legacy)->targets[1].card = get_hacked_subtype(player, card, SUBTYPE_ISLAND);
+				card_instance_t *legacy_instance = get_card_instance(player, legacy);
+				legacy_instance->targets[1].card = get_hacked_subtype(player, card, SUBTYPE_ISLAND);
 			}
 			else{
 				int fake = add_card_to_hand(instance->targets[0].player, instance->internal_card_id);
 				hand_count[instance->targets[0].player]--;
 				int legacy = create_targetted_legacy_activate(instance->targets[0].player, fake, &effect_aquitects_will,
 												instance->targets[0].player, instance->targets[0].card);
-				get_card_instance(instance->targets[0].player, legacy)->targets[1].card = get_hacked_subtype(player, card, SUBTYPE_ISLAND);
+				card_instance_t *legacy_instance = get_card_instance(instance->targets[0].player, legacy);
+				legacy_instance->targets[1].card = get_hacked_subtype(player, card, SUBTYPE_ISLAND);
 				obliterate_card(instance->targets[0].player, fake);
 			}
 			if( check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_MERFOLK) ){
@@ -1608,7 +1610,7 @@ int card_chandra_nalaar(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     default_target_definition(player, card, &td1, 0x100);
-    td1.zone = 0x1200;
+    td1.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_target_definition(player, card, &td2, 2);
     if (player == 1)
     {
@@ -1618,7 +1620,7 @@ int card_chandra_nalaar(int player, int card, event_t event)
     loyalty_damage_or_available = can_target(&td1);
     toughness_or_available = can_target(&td2);
     mode_or_loyalty =
-        dialog_impl(player, card, event, "\001\002", "\001\017", "1 damage", can_target(&td1), 5, 1,
+        dialog_impl(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "1 damage", can_target(&td1), 5, 1,
                     "Damage a creature", toughness_or_available, 10, 0, "10 damage",
                     loyalty_damage_or_available, 0xf, 0xfffffff8, 0, 0, 0, 0);
     if (event == EVENT_CAN_ACTIVATE)
@@ -2159,68 +2161,28 @@ Choose two -
 
 int card_dauntless_dourbark(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-  int newval;
-  int card_00;
-  unsigned int other_treefolk_or_trample;
-  if (2 < event - EVENT_POWER)
-  {
+  if (2 < event - EVENT_POWER || !affect_me(player, card) || player == -1)
     return 0;
-  }
-  if (card != affected_card)
-  {
-    return 0;
-  }
-  if (affected_card_controller != player)
-  {
-    return 0;
-  }
-  if (player == -1)
-  {
-    return 0;
-  }
-  if (active_cards_count[player] < 1)
-  {
-    other_treefolk_or_trample = 0;
-    if (event < EVENT_ABILITIES)
+
+  int sum = 0;
+  int other_treefolk = 0;
+  for (int c = 0; c < active_cards_count[player]; ++c)
+    if (in_play(player, c))
     {
-      newval = 0;
-      set_characteristic_pt(newval);
-      return 0;
-    }
-  }
-  else
-  {
-    newval = 0;
-    card_00 = 0;
-    other_treefolk_or_trample = 0;
-    do
-    {
-      instance = in_play(player, card_00);
-      if (instance != NULL)
+      if (has_subtype(player, c, SUBTYPE_TREEFOLK))
       {
-        result = has_subtype(player, card_00, SUBTYPE_TREEFOLK);
-        if ((result != 0) && (newval = newval + 1, card != card_00))
-        {
-          other_treefolk_or_trample = 1;
-        }
-        result = has_subtype(player, card_00, SUBTYPE_FOREST);
-        newval = (newval + 1) - (unsigned int)(result == 0);
+        ++sum;
+        if (c != card)
+          other_treefolk = 1;
       }
-      card_00 = card_00 + 1;
-    } while (card_00 < active_cards_count[player]);
-    if (event < EVENT_ABILITIES)
-    {
-      set_characteristic_pt(newval);
-      return 0;
+      if (has_subtype(player, c, SUBTYPE_FOREST))
+        ++sum;
     }
-    if (other_treefolk_or_trample != 0)
-    {
-      other_treefolk_or_trample = 0x80;
-    }
-  }
-  event_result = event_result | other_treefolk_or_trample;
+
+  if (event < EVENT_ABILITIES)
+    set_characteristic_pt(sum);
+  else
+    event_result |= other_treefolk ? KEYWORD_TRAMPLE : 0;
   return 0;
 }
 
@@ -3027,7 +2989,7 @@ int card_guile(int player, int card, event_t event)
   minblockers_3(player, card, event);
   if (event == EVENT_STATIC_EFFECTS)
   {
-    card_flags[player] = card_flags[player] | 4;
+    card_flags[player] = card_flags[player] | CFLAGS_GUILE;
   }
   return 0;
 }
@@ -3036,7 +2998,7 @@ int card_hamletback_goliath(int player, int card, event_t event)
 {
   int result;
   test_definition_t test;
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     new_default_test_definition(&test, 2, "");
@@ -3734,31 +3696,27 @@ int card_jace_beleren(int player, int card, event_t event){
 
 int card_jagged_scar_archers(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  target_definition_t td;
   if (event - EVENT_POWER < 2)
   {
-    if (((card == affected_card) && (affected_card_controller == player)) && (player != -1))
+    if (card == affected_card && affected_card_controller == player && player != -1)
     {
-      result = count_subtype(player, 0x47, 0x3c);
-      set_characteristic_pt(result);
+      int elves = count_subtype(player, 0x47, 0x3c);
+      set_characteristic_pt(elves);
     }
   }
-  else if (((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
-           ((event == EVENT_RESOLVE_ACTIVATION || (event == EVENT_CLEANUP))))
+  else if (IS_GAA_EVENT(event))
   {
-    default_target_definition(player, card, &td, 2);
-    td.required_abilities = 0x20;
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.required_abilities = KEYWORD_FLYING;
+    if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
     {
-      instance = get_card_instance(player, card);
-      result = get_power(instance->parent_controller, instance->parent_card);
-      damage_target0(player, card, result);
+      card_instance_t *instance = get_card_instance(player, card);
+      int power = get_power(instance->parent_controller, instance->parent_card);
+      damage_target0(player, card, power);
     }
-    result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
+    return generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
                                        "TARGET_FLYING");
-    return result;
   }
   return 0;
 }
@@ -4520,7 +4478,7 @@ int card_oblivion_ring(int player, int card, event_t event){
 int oonas_prowler_effect(int player, int card, event_t event)
 {
   int p;
-  int card_00;
+  int target_card;
   card_instance_t *instance;
   int source_player_cost_or_id;
   if (event == EVENT_STATIC_EFFECTS)
@@ -4556,14 +4514,14 @@ int oonas_prowler_effect(int player, int card, event_t event)
     {
       instance = get_card_instance(player, card);
       source_player_cost_or_id = instance->targets[0].player;
-      card_00 = instance->targets[0].card;
+      target_card = instance->targets[0].card;
       if (event == EVENT_CAN_ACTIVATE)
       {
         if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x20, 0, 0, 0, 0, 0, 0, 0,
                                       NULL, NULL) != 0)
         {
           source_player_cost_or_id = get_cost_mod_for_activated_abilities(
-              source_player_cost_or_id, card_00, 0, 0, 0, 0, 0, 0);
+              source_player_cost_or_id, target_card, 0, 0, 0, 0, 0, 0);
           if (has_mana_multi(player, source_player_cost_or_id, 0, 0, 0, 0, 0) != 0)
           {
             return 1;
@@ -4573,7 +4531,7 @@ int oonas_prowler_effect(int player, int card, event_t event)
       else if (event == EVENT_ACTIVATE)
       {
         charge_mana_multi(player,
-                          get_cost_mod_for_activated_abilities(source_player_cost_or_id, card_00, 0,
+                          get_cost_mod_for_activated_abilities(source_player_cost_or_id, target_card, 0,
                                                                0, 0, 0, 0, 0),
                           0, 0, 0, 0, 0);
         if (spell_fizzled != 1)
@@ -4583,7 +4541,7 @@ int oonas_prowler_effect(int player, int card, event_t event)
       }
       else if (event == EVENT_RESOLVE_ACTIVATION)
       {
-        pump_until_eot(source_player_cost_or_id, card_00, source_player_cost_or_id, card_00, -2, 0);
+        pump_until_eot(source_player_cost_or_id, target_card, source_player_cost_or_id, target_card, -2, 0);
         return 0;
       }
     }
@@ -6542,7 +6500,7 @@ int card_lammastide_weave(int player, int card, event_t event)
   target_definition_t td;
   test_definition_t test;
   default_target_definition(player, card, &td, 0);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   if (event == EVENT_RESOLVE_SPELL)
   {
     if (valid_target(&td) != 0)
@@ -6636,31 +6594,22 @@ int card_tideshaper_mystic(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  int card_00;
+  int legacy_card;
   target_definition_t td;
 
-  if (event == EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  instance = get_card_instance(player, card);
+  default_target_definition(player, card, &td, 1);
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
-    get_card_instance(player, card);
-    default_target_definition(player, card, &td, 1);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    instance = get_card_instance(player, card);
-    default_target_definition(player, card, &td, 1);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-    {
-      result = recorded_rand(player, 5);
-      result = choose_a_land(player, result + 1);
-      card_00 = create_targetted_legacy_effect(
-          player, card, fx_change_landtype, instance->targets[0].player, instance->targets[0].card);
-      instance = get_card_instance(player, card_00);
-      instance->targets[1].player = result;
-    }
+    result = recorded_rand(player, 5);
+    result = choose_a_land(player, result + 1);
+    legacy_card = create_targetted_legacy_effect(
+        player, card, fx_change_landtype, instance->targets[0].player, instance->targets[0].card);
+    instance = get_card_instance(player, legacy_card);
+    instance->targets[1].player = result;
   }
   result = generic_activated_ability(
       player, card, event, 0x10007, 0, 0, 0, 0, 0, 0, 0, &td,
@@ -6778,7 +6727,7 @@ static int colfenors_urn_effect(int player, int card, event_t event)
           {
             instance->targets[0xb].player = 0;
           }
-          *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+          SET_BYTE2(instance->targets[0xb].player) = 1;
         }
         default_test_definition(&test, 2);
         test.toughness = 3;
@@ -6886,7 +6835,7 @@ static void buddy_creature_part(int player, int card, event_t event, subtype_t t
       subtype_prompt = get_subtype_text("Reveal %a card", type);
       scnprintf(msg, 100, "%s", subtype_prompt);
       scnprintf(test.message, 100, "Pay %d", amount);
-      cost_choice_or_selected = dialog_impl(player, card, event, "\001\002", "\001\014", msg, 1, 5,
+      cost_choice_or_selected = dialog_impl(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, msg, 1, 5,
                                             test.message, 1, 1, 0, 0, 0, 0);
       if (cost_choice_or_selected == 0)
       {

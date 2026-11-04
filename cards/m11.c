@@ -2455,30 +2455,22 @@ int card_hunters_feast(int player, int card, event_t event)
 
 int card_leyline_of_vitality(int player, int card, event_t event)
 {
-  int result;
-  test_definition_t this_test;
-  result = is_humiliated(player, card, AL_TRIG);
-  if (result == 0)
+  if (!is_humiliated(player, card, AL_TRIG))
   {
-    if (((trigger_condition == 0xdb) && (card == affected_card)) &&
-        (player == affected_card_controller))
+    if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card))
     {
-      default_test_definition(&this_test, 2);
-      result = duh_mode(player);
-      etb_ability_global(player, event, (result != 0) + 1, TYPE_NONE, &this_test, player, card);
+      test_definition_t test;
+      default_test_definition(&test, TYPE_CREATURE);
+      int mode = RESOLVE_TRIGGER_OPTIONAL + (duh_mode(player) != 0);
+      etb_ability_global(player, event, mode, TYPE_NONE, &test, player, card);
     }
     if (event == EVENT_ETB)
-    {
       gain_life(player, 1);
-      is_humiliated(player, card, AL_STATIC);
-      return global_enchantment(player, card, event);
-    }
   }
-  result = is_humiliated(player, card, AL_STATIC);
-  if (((event == EVENT_TOUGHNESS) && (result == 0)) && (affected_card_controller == player))
-  {
-    event_result = event_result + 1;
-  }
+
+  int suppressed = is_humiliated(player, card, AL_STATIC);
+  if (event == EVENT_TOUGHNESS && !suppressed && affected_card_controller == player)
+    ++event_result;
   return global_enchantment(player, card, event);
 }
 

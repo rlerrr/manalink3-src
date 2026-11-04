@@ -2231,7 +2231,7 @@ int card_sutured_ghoul(int player, int card, event_t event)
       new_default_test_definition(&this_test, 2, "Select a creature card to exile.");
       if (player == 1)
       {
-        this_test.id = 0x170c;
+        this_test.id = CARD_ID_ANGER;
         this_test.id_flag = 1;
       }
       grave_id = new_select_a_card(player, player, 2, 0, 2, -1, &this_test);
@@ -2398,7 +2398,6 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
   card_instance_t *instance;
   unsigned int death_count;
   card_instance_t *dying_permanent;
-  int result;
   test_definition_t this_test;
 
   if (event == EVENT_STATIC_EFFECTS)
@@ -2408,8 +2407,7 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       if ((-1 < instance->damage_target_player) &&
-          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           result != 0x1775))
+          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x1775))
       {
         kill_card(player, card, KILL_EXILE);
       }
@@ -2417,7 +2415,7 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
   }
   instance = get_card_instance(player, card);
   if ((-1 < instance->damage_target_player) &&
-      (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+      (effect_follows_control_of_attachment(player, card, event) != 0))
   {
     return 0;
   }
@@ -2426,7 +2424,7 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     dying_permanent = in_play(affected_card_controller, affected_card);
     if ((dying_permanent != NULL) &&
-        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+        (is_this_dying(affected_card_controller, affected_card) != 0))
     {
 
       if ((instance->damage_target_card == affected_card) &&
@@ -2439,7 +2437,7 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       default_test_definition(&this_test, 0x47);
       this_test.subtype = 0x16;
@@ -2451,8 +2449,7 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
     return 0;
   if (death_count != 0)
   {
-    result = check_status(player, card, 0x10000);
-    if (result == 0)
+    if (!check_status(player, card, 0x10000))
     {
 
       for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
@@ -2462,7 +2459,7 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
       kill_card(player, card, KILL_EXILE);
     }
   }
-  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
   {
     kill_card(player, card, KILL_EXILE);
   }

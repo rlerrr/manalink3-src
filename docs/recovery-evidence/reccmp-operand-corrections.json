@@ -1,0 +1,2692 @@
+{
+  "format": 1,
+  "status": "Ten native-backed corrections built; all ten compiled caller/control-flow contracts verified.",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "before_rebuilt_dll_sha256": "8cbc62ccae8f1d1e0af97566961f043da5b113ba737ae4ce5fedeeafa9d05d41",
+  "comparison_inputs": {
+    "setup_sha256": "a30c17b44cd21b80da43fd526d8e68226692b109d06b91b1e545b3175c2631c6",
+    "report_sha256": "400bf85cb2091f774897ca45e0b710417491471b3ca6503026ecc40eb23a5905",
+    "inputs": {
+      "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dll": "8cbc62ccae8f1d1e0af97566961f043da5b113ba737ae4ce5fedeeafa9d05d41",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "b4e6eed1b5d4cd16ef62f6a3d9da39ca28b29c9772bad17097f4a385876be465"
+    },
+    "metadata_sha256": "2858270a97c13c27365bacd1c82badb4ab00d816f814bcf82707203b820bf5be",
+    "metadata_snapshot": ".recovery\\reccmp\\source-bindings-c622.metadata.csv",
+    "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "comparator_source_sha256": {
+      "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+      "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+      "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+      "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b"
+    },
+    "command": [
+      "reccmp-reccmp",
+      "--target",
+      "MANALINK2022",
+      "--no-color",
+      "--json",
+      ".recovery/reccmp/source-bindings-c622.json",
+      "--silent"
+    ],
+    "exit_code": 0
+  },
+  "functions": [
+    {
+      "source": "cards/m12.c",
+      "name": "card_azure_mage",
+      "native_address": "0x249f9d0",
+      "native_size": 168,
+      "native_body_sha256": "98a7ebb7a5d10b979c4bb9d6dee0e2470e67aa803069fdbec51dec71014f9274",
+      "before_rebuilt_address": "0x22fec50",
+      "before_rebuilt_bytes": "5589e55383ec348b5d1083fb74747183fb72747c8b450c895c2408894424048b4508c744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c01000000c744241800000000c744241400000000c744241003000000c744240c00000000890424e8f6323b0083c4345b5dc383c434b8010000005b5dc38d742600908b4508c744240401000000890424e89deb3600e96cffffff",
+      "before_rebuilt_body_sha256": "2fbd5390294b090aa2640078c328701fe15cf6c2452d352002d741221540592a",
+      "before_reccmp_score": 0.9512195121951219,
+      "source_before_definition_sha256": "837e4f4792eb90b853afdcc46312f1ebaa39953c77ed4445e9d4501cc18ceb0f",
+      "source_after_definition_sha256": "b41a945ed9f373fb1a9cbabdf915e7b24a9a8b7abe344967a9747c534db26a08",
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x249fa1a",
+              "mov dword ptr [esp + 0x1c], 0"
+            ],
+            [
+              "0x249fa22",
+              "mov dword ptr [esp + 0x18], 1"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x22fec9a",
+              "mov dword ptr [esp + 0x1c], 1"
+            ],
+            [
+              "0x22feca2",
+              "mov dword ptr [esp + 0x18], 0"
+            ]
+          ]
+        }
+      ],
+      "contract": {
+        "kind": "ability_mana",
+        "native_sites": [
+          "0x249fa1a",
+          "0x249fa22"
+        ],
+        "callee": "generic_activated_ability",
+        "stack_arguments": {
+          "16": 3,
+          "20": 0,
+          "24": 1,
+          "28": 0,
+          "32": 0,
+          "36": 0
+        }
+      },
+      "reason": "Native generic_activated_ability arguments request three generic and one blue mana. The previous native-3G annotation was incorrect."
+    },
+    {
+      "source": "cards/m12.c",
+      "name": "card_jade_mage",
+      "native_address": "0x24a1450",
+      "native_size": 150,
+      "native_body_sha256": "a3c1869f259ca1642450f04573976dd9a239df9b00375f627fe0228f9ef40c12",
+      "before_rebuilt_address": "0x23006f0",
+      "before_rebuilt_bytes": "5589e557565383ec348b5d108b75088b7d0c83fb727469895c2408897c2404893424c744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c01000000c744241800000000c744241400000000c744241003000000c744240c00000000e859183b0083c4345b5e5f5dc390c74424087d490000897c2404893424e85ce63d00eb81",
+      "before_rebuilt_body_sha256": "bacf67cd5d9c183a6c64bb30576cfb29c86733242744c9cad7e6d60e53fb2494",
+      "before_reccmp_score": 0.9459459459459459,
+      "source_before_definition_sha256": "0253bef846f26fa4e77f73cde73bf977c1a71e2f69b3ce716a704aef3d912c3e",
+      "source_after_definition_sha256": "42de81d69668e1017e50159a4585c5e2a636916a7fb856e2b04c59ba6936d027",
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x24a149a",
+              "mov dword ptr [esp + 0x1c], 0"
+            ],
+            [
+              "0x24a14a2",
+              "mov dword ptr [esp + 0x18], 1"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x230073a",
+              "mov dword ptr [esp + 0x1c], 1"
+            ],
+            [
+              "0x2300742",
+              "mov dword ptr [esp + 0x18], 0"
+            ]
+          ]
+        }
+      ],
+      "contract": {
+        "kind": "ability_mana",
+        "native_sites": [
+          "0x24a149a",
+          "0x24a14a2"
+        ],
+        "callee": "generic_activated_ability",
+        "stack_arguments": {
+          "16": 3,
+          "20": 0,
+          "24": 1,
+          "28": 0,
+          "32": 0,
+          "36": 0
+        }
+      },
+      "reason": "Native Jade Mage also requests 3U, regardless of the printed 2G ability. Preserve the release behavior and correct the earlier annotation."
+    },
+    {
+      "source": "cards/fallen_empires.c",
+      "name": "fe_chant",
+      "native_address": "0x241c960",
+      "native_size": 707,
+      "native_body_sha256": "19697c179b80a8af24c75f33f5f702d347e3a1215d8c162b75e4485947135dd1",
+      "before_rebuilt_address": "0x21ab730",
+      "before_rebuilt_bytes": "5531c089e557565381ec20010000817d14095000000f94c08944241431c08b7d088b750c817d14015000008b5d10c7442420000000000f94c0c744241c00000000c74424180000000089442410c744240c00000000895c240889742404893c24e86b8f5300813d782d7a00db000000742781fb005100000f8493000000895c240889742404893c24e8d3c94d0081c4200100005b5e5f5dc33b358c397a0075d13b3d848c730075c98d951cffffffc744240401000000891424e862c150008b45148944240889742404893c24e82f6b4e008d951cffffff89742418897c241489542410c744240c00000000c744240802000000895c2404c7042402000000894584e80a194f00e966ffffff8d7426009089742404893c24e8040f4c008b157cc16200898514ffffff8d851cffffff89442408c744240c0200000089742404893c24899518ffffffe8b4fe52008d851cffffff8b9518ffffff890424899520ffffff899524ffffff89951cffffffc78538ffffff00000000c78560ffffff00000000e82a0453008b9518ffffff85c00f84a400000031c0891424833cbd28f54e000a0f9cc0c744243400000000c7442430000000008d44c001c744242c05000000c744242801000000c74424245053730289442420c744241c01000000c74424185e537302c74424143d537302c74424103a537302c744240cd7527302c74424086d00000089742404899518ffffffc744243c00000000c744243800000000e83d894c008b9518ffffff83f801742a83f8020f8546feffff908974240c897c2408c744240403000000891424e820af2ffee928feffff8d76008d851cffffffc744240c80000000c744240800000000c744240472537302890424e8920f530085c0750f8b8514ffffffc6403600e9ecfdffff8b8d14ffffffc744241401000000c7442410010000008b41788944240c8b41748974240489442408893c24e89fc74b00ebbf",
+      "before_rebuilt_body_sha256": "09bebb9612d9bee79e11a734a5ba31d07e4e05cc425c5314a86ffb913565fdc6",
+      "before_reccmp_score": 0.9863013698630136,
+      "source_before_definition_sha256": "4cf387e40fa209ab3460520f7a3328e5b90b754001fc346429e5bf29911aafef",
+      "source_after_definition_sha256": "2132544d98932e13b45c77bfff9fbcb03c7391c10a71cb329248e83d5e056311",
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x241c978",
+              "mov dword ptr [esp + 0x18], eax"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21ab748",
+              "mov dword ptr [esp + 0x14], eax"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x241c9a1",
+              "mov dword ptr [esp + 0x14], 0"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21ab771",
+              "mov dword ptr [esp + 0x18], 0"
+            ]
+          ]
+        }
+      ],
+      "contract": {
+        "kind": "upkeep_mana",
+        "native_sites": [
+          "0x241c978",
+          "0x241c9a1"
+        ],
+        "callee": "basic_upkeep",
+        "stack_arguments": {
+          "12": 0,
+          "20": 0,
+          "28": 0,
+          "32": 0
+        },
+        "dynamic_green_site": "0x241c978"
+      },
+      "reason": "Native basic_upkeep passes the Swamp comparison in its green-mana argument, alongside the Forest comparison in black. These are the actual native colors, rather than inferred printed costs."
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "add_force_a_subtype_permanently_legacy",
+      "native_address": "0x26726f0",
+      "native_size": 304,
+      "native_body_sha256": "d57aef64b22f90fe890d69125d18835d84e02174484e28c48400756bc4189af8",
+      "before_rebuilt_address": "0x26ba130",
+      "before_rebuilt_bytes": "5589e5565383ec10837d103c740a83c41031c05b5e5dc390a190f14e00a900000200750a0d00000100a390f14e008b450c894424048b4508890424e8e025fbff89c38b80800000008d50ff81fafe0f000077bb8b537c83fa01746d83fa0275ae8944240c8b450c894424048b4508c74424083c0000008904248db388000000e87c0afaff81c3d8000000eb0f8d74260083c60839de0f8473ffffff8b063dff0f00007fec8944240c8b450c894424048b4508c74424083c000000890424e86e09faffebcc8d7426008944240c8b450c894424048b4508c74424083c0000008904248db388000000e84409faff81c3d8000000eb0f8d74260083c60839de0f840bffffff8b063dff0f00007fec8944240c8b450c894424048b4508c74424083c000000890424e80609faffebcc",
+      "before_rebuilt_body_sha256": "7d0e89ef16028afe5c208a2a352172c15f28b1eac7237bb8a32f4d42a0f8a78e",
+      "before_reccmp_score": 0.9122807017543859,
+      "source_before_definition_sha256": "6b51a5cd5455bef99dca8baf1a756bcc183f9160b1a3371cde4d866d6338e2d6",
+      "source_after_definition_sha256": "f3d0a71657c2af2a3700d8aee1a3ef949c26268a06b9a9c6ee7e910679bbdfb0",
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x267278d",
+              "lea edx, [eax - 1]"
+            ],
+            [
+              "0x2672790",
+              "cmp edx, 0xffe"
+            ],
+            [
+              "0x2672796",
+              "ja -0x18"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x26ba1cd",
+              "cmp eax, 0xfff"
+            ],
+            [
+              "0x26ba1d2",
+              "jg -0x14"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x26727b6",
+              "jmp -0x38"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x26ba1f2",
+              "jmp -0x34"
+            ],
+            [
+              "0x26ba1f4",
+              "lea esi, [esi]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x26727f5",
+              "lea edx, [eax - 1]"
+            ],
+            [
+              "0x26727f8",
+              "cmp edx, 0xffe"
+            ],
+            [
+              "0x26727fe",
+              "ja -0x18"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x26ba235",
+              "cmp eax, 0xfff"
+            ],
+            [
+              "0x26ba23a",
+              "jg -0x14"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x267281e",
+              "jmp -0x38"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x26ba25a",
+              "jmp -0x34"
+            ]
+          ]
+        }
+      ],
+      "contract": {
+        "kind": "subtype_range",
+        "native_sites": [
+          "0x267278d",
+          "0x2672790",
+          "0x2672796",
+          "0x26727f5",
+          "0x26727f8",
+          "0x26727fe"
+        ]
+      },
+      "reason": "Restore both unsigned native subtype interval checks. Signed cursor values zero and negatives previously passed the upper-bound-only expression; the native unsigned range is 1..4095."
+    },
+    {
+      "source": "cards/ravnica.c",
+      "name": "golgari_germination_effect",
+      "native_address": "0x24df500",
+      "native_size": 754,
+      "native_body_sha256": "79c54ccb1d478b66c3434fb814a45b84d8dfff499c52c737d53a13d053c4d809",
+      "before_rebuilt_address": "0x245ebb0",
+      "before_rebuilt_bytes": "5589e557565381ecf40000008b75108b7d088b5d0c81fe004700000f849f010000895c2404893c24e873db200080785000793d83fe777451c744240c0200000089742408895c2404893c24e83017230089c285c00f850001000083fe220f849d01000081c4f400000031c05b5e5f5dc389742408895c2404893c24e8f090220085c075df83fe7775af895c2404893c24e80bdb2000898518ffffffa18c397a0089442404a1848c7300890424e8bfe2200085c0747fa18c397a0089442404a1848c7300890424e8d5da20008078680074638b8d18ffffff0fbe415084c0780f8b158c397a003951040f849d0100008d851cffffffc744240402000000890424e89c8c25008d851cffffff89442414c744241000000000897c240cc744240877000000895c2404893c2466c745880300e8aca12400c744240c02000000c744240877000000895c2404893c24e83016230089c285c00f8409ffffffc744240800000100895c2404893c24899518ffffffe82cbc24008b9518ffffff85c00f85d8feffff81e2ff000000c74424087d4900008954240c895c2404893c24e800012800c744240804000000895c2404893c24e87c042100e9a1feffff8db426000000003b1d8c397a007470895c2404893c24e8ccd92000807850000f885afeffff89742408895c2404893c24e8828f220085c00f8442feffffe968feffff8d74260090c744240800000100895c2404893c24e88cbb240085c00f8547feffffc744240804000000895c2404893c24e800042100e92efeffff8d76003b3d848c73007588895c2404893c24e854d920000fbe505084d20f8870ffffff8b400489142489442404e899e320003db51e00000f8456ffffffc744240804000000895c2404893c24e8aa032100e93dffffff3b05848c73000f8557feffffc74104ffffffffc64150ffc744240800000100895c2404893c24e82ae724008b8518ffffff8b90cc00000085d2790ac780cc000000000000008b8518ffffffc680cd00000001e90cfeffff",
+      "before_rebuilt_body_sha256": "625cd0e857525870e76efa8599ef530506c7492ded6fb37c0e4f6a3f32fe7b29",
+      "before_reccmp_score": 0.884393063583815,
+      "source_before_definition_sha256": "8941ed244afa23d79f18305ff9092a0066ce838db51eb61e71d99e308157261a",
+      "source_after_definition_sha256": "3204c2e184ebc0e7f29b64e5642ea796cc8dd645088734a236f7a1836368726b",
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x24df506",
+              "sub esp, 0xfc"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ebb6",
+              "sub esp, 0xf4"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df51b",
+              "je 0x1af"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ebcb",
+              "je 0x19f"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df554",
+              "jne 0x114"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ec04",
+              "jne 0x100"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df55d",
+              "je 0x1ad"
+            ],
+            [
+              "0x24df563",
+              "add esp, 0xfc"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ec0d",
+              "je 0x19d"
+            ],
+            [
+              "0x245ec13",
+              "add esp, 0xf4"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df5b3",
+              "je 0x8f"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ec63",
+              "je 0x7f"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df5d3",
+              "je 0x73"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ec7f",
+              "je 0x63"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df5ec",
+              "je 0x1a9"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ec98",
+              "je 0x19d"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df60e",
+              "mov dword ptr [esp + 0x1c], 0"
+            ],
+            [
+              "0x24df616",
+              "mov dword ptr [esp + 0x18], 0x40"
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [
+            [
+              "0x24df643",
+              "call count_for_gfp_ability_and_store_values (FUNCTION)"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ecdf",
+              "call count_for_gfp_ability (FUNCTION)"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df668",
+              "je -0x10b"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ed04",
+              "je -0xf7"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df690",
+              "jne -0x13c"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ed2c",
+              "jne -0x128"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df6c8",
+              "jmp -0x173"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ed64",
+              "jmp -0x15f"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df6e8",
+              "js -0x1b6"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ed88",
+              "js -0x1a6"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df700",
+              "je -0x1ce"
+            ],
+            [
+              "0x24df706",
+              "jmp -0x1a8"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245eda0",
+              "je -0x1be"
+            ],
+            [
+              "0x245eda6",
+              "jmp -0x198"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df726",
+              "jne -0x1c9"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245edc6",
+              "jne -0x1b9"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df740",
+              "jmp -0x1e2"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ede0",
+              "jmp -0x1d2"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df7a1",
+              "jne -0x1b5"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ee41",
+              "jne -0x1a9"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x24df7ed",
+              "jmp -0x200"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x245ee8d",
+              "jmp -0x1f4"
+            ]
+          ]
+        }
+      ],
+      "contract": {
+        "kind": "gfp_mode",
+        "native_sites": [
+          "0x24df60e",
+          "0x24df616",
+          "0x24df643"
+        ],
+        "callee": "count_for_gfp_ability_and_store_values",
+        "stack_arguments": {
+          "16": 0,
+          "24": 64,
+          "28": 0
+        }
+      },
+      "reason": "Restore the native extended GFP collector and its explicit 0x40 skip-token mode. Retain the existing nontoken test too."
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_null_brooch",
+      "native_address": "0x26464b0",
+      "native_size": 528,
+      "native_body_sha256": "3c8df02813c7f803415ee3d54c7686e145b8bc283b071068c1a903627eb31eb8",
+      "before_rebuilt_address": "0x21a0330",
+      "before_rebuilt_bytes": "5589e557565381ec8c0000008b5d108b750883fb73746183fb6d745c83fb72740583fb22753f8b450c8d7da089442404c744240cff000000897c2408893424e8bcb453008b450c89442404893424c745b402000000e8c6c34c0089c283fb720f84db00000031c081c48c0000005b5e5f5dc38db6000000008b450c8d7da089442404c744240cff000000897c2408893424e86ab453008b450c89442404893424c745b402000000e874c34c0083fb7389c20f84e100000083fb6d75a089459c8b450cc744241c00000000c744241800000000c744241400000000c744241000000000c744240c00000000c74424080200000089442404893424e8f2f54e0085c00f845fffffff8b450c89342489442404e8dbd15000893424e8635350008b559ca194917300c6423601894274a190917300894278e92cffffff8db426000000008b450cc744240c00000000897c24088944240489342489559ce842e64e008b559c85c00f84fcfeffff8b42788944240c8b4274894424088b8210010000894424048b820c010000890424e841384d0031c0e9d1feffff66908b450cc744243000000000897c242cc744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241002000000c744240c01040000c74424087300000089442404893424e8951a5100e967feffff",
+      "before_rebuilt_body_sha256": "90748b729738be65ab2885c6e6baa7fda34c106e15d224c20bcea4dc4a00f8de",
+      "before_reccmp_score": 0.8979591836734694,
+      "source_before_definition_sha256": "4d8b614957343fb7f8a30dedebbf6d10db446e09359983997898f5c5a1eb78b7",
+      "source_after_definition_sha256": "a2b97165d18d670a9565a8205b86ad3f353b719f60d40aa1cce4677e6dd0d38f",
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x264650f",
+              "je 0xeb"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21a038f",
+              "je 0xdb"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2646561",
+              "je 0xf1"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21a03e1",
+              "je 0xe1"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x26465b9",
+              "mov dword ptr [esp + 8], 0x10"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21a0439",
+              "mov dword ptr [esp], esi"
+            ]
+          ]
+        },
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x21a0440",
+              "call tap_card (FUNCTION)"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x26465c8",
+              "call add_state (FUNCTION)"
+            ],
+            [
+              "0x26465cd",
+              "mov dword ptr [esp], esi"
+            ],
+            [
+              "0x26465d0",
+              "mov dword ptr [<OFFSET5>], 0xffffffff"
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x21a0450",
+              "mov eax, dword ptr [<OFFSET6>]"
+            ],
+            [
+              "0x21a0455",
+              "mov byte ptr [edx + 0x36], 1"
+            ],
+            [
+              "0x21a0459",
+              "mov dword ptr [edx + 0x74], eax"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x26465e7",
+              "mov dword ptr [edx + 0x74], eax"
+            ],
+            [
+              "0x26465ea",
+              "mov eax, dword ptr [<OFFSET8>]"
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [
+            [
+              "0x26465f2",
+              "mov byte ptr [edx + 0x36], 1"
+            ],
+            [
+              "0x26465f6",
+              "jmp -0xe6"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21a0464",
+              "jmp -0xd4"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x26465ff",
+              "nop "
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [
+            [
+              "0x2646623",
+              "je -0x114"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21a0493",
+              "je -0x104"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2646651",
+              "jmp -0x13f"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21a04c1",
+              "jmp -0x12f"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x26466bb",
+              "jmp -0x1a9"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21a052b",
+              "jmp -0x199"
+            ]
+          ]
+        }
+      ],
+      "contract": {
+        "kind": "direct_tap",
+        "native_sites": [
+          "0x26465b9",
+          "0x26465c8",
+          "0x26465d0"
+        ],
+        "callee": "add_state",
+        "stack_arguments": {
+          "8": 16
+        },
+        "global_address": "0x7904bc"
+      },
+      "reason": "The native activation sets STATE_TAPPED directly without dispatching EVENT_TAP_CARD, then clears the mana-tap marker before discarding the hand."
+    },
+    {
+      "source": "cards/the_dark.c",
+      "name": "card_deep_water",
+      "native_address": "0x242cb80",
+      "native_size": 340,
+      "native_body_sha256": "2d5828e8bc51ad526ef2d5bc16be814d8751f1e30c95e244f6a0a9c53d3cf376",
+      "before_rebuilt_address": "0x25533c0",
+      "before_rebuilt_bytes": "5589e557565383ec348b5d108b75088b7d0c83fb6c0f849d00000083fb73742883fb6d742383fb720f84da000000895d10897d0c89750883c4345b5e5f5de98d4d13008d7426009031c083fe010f94c0c1e00d895c2408897c2404893424c744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241801000000c744241400000000c7442410000000008944240ce851eb150083c4345b5e5f5dc3903935848c73000f856affffffa18c397a00c74424080100000089442404893424e8a321140085c00f8449ffffffa18c397a00c74424080000002089442404a1848c7300890424e84daf1300e926ffffffc744240800045502897c2404893424e8c4451300e90dffffff",
+      "before_rebuilt_body_sha256": "c260231130b885a37d0f36b059ffe05325f5255316c5da4125b946017a8f56d1",
+      "before_reccmp_score": 0.7341772151898734,
+      "source_before_definition_sha256": "92c915f91370d7c8622614cfd0eb48a6dde2a490266fdb56626aa56e44ab1943",
+      "source_after_definition_sha256": "f01e3dede1184fa6afd6ce372e6a3533b8eb257d60a86d1bbd64150a79574d9b",
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x242cb95",
+              "je 0xa5"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25533d5",
+              "je 0x9d"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x242cba8",
+              "je 0xe2"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25533e8",
+              "je 0xda"
+            ]
+          ]
+        },
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x2553408",
+              "xor eax, eax"
+            ],
+            [
+              "0x255340a",
+              "cmp esi, 1"
+            ],
+            [
+              "0x255340d",
+              "sete al"
+            ],
+            [
+              "0x2553410",
+              "shl eax, 0xd"
+            ],
+            [
+              "0x2553413",
+              "mov dword ptr [esp + 8], ebx"
+            ],
+            [
+              "0x2553417",
+              "mov dword ptr [esp + 4], edi"
+            ],
+            [
+              "0x255341b",
+              "mov dword ptr [esp], esi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x242cc10",
+              "cmp esi, 1"
+            ],
+            [
+              "0x242cc13",
+              "je 0x97"
+            ],
+            [
+              "0x242cc19",
+              "mov dword ptr [esp + 8], ebx"
+            ],
+            [
+              "0x242cc1d",
+              "mov dword ptr [esp + 4], edi"
+            ],
+            [
+              "0x242cc21",
+              "mov dword ptr [esp], esi"
+            ],
+            [
+              "0x242cc24",
+              "mov dword ptr [esp + 0xc], 0"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2553466",
+              "mov dword ptr [esp + 0xc], eax"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x242cc39",
+              "lea esi, [esi]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2553477",
+              "nop "
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x242cc46",
+              "jne -0x9e"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x255347e",
+              "jne -0x96"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x242cc67",
+              "je -0xbf"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x255349f",
+              "je -0xb7"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x242cc72",
+              "mov dword ptr [esp + 8], 0x40"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25534aa",
+              "mov dword ptr [esp + 8], 0x20000000"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x242cc8b",
+              "jmp -0xe2"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25534c3",
+              "jmp -0xda"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x242cca4",
+              "jmp -0xfb"
+            ],
+            [
+              "0x242cca9",
+              "lea esi, [esi]"
+            ],
+            [
+              "0x242ccb0",
+              "mov dword ptr [esp + 8], ebx"
+            ],
+            [
+              "0x242ccb4",
+              "mov dword ptr [esp + 4], edi"
+            ],
+            [
+              "0x242ccb8",
+              "mov dword ptr [esp + 0xc], 0x2000"
+            ],
+            [
+              "0x242ccc0",
+              "mov dword ptr [esp], 1"
+            ],
+            [
+              "0x242ccc7",
+              "call generic_activated_ability (FUNCTION)"
+            ],
+            [
+              "0x242cccc",
+              "add esp, 0x34"
+            ],
+            [
+              "0x242cccf",
+              "pop ebx"
+            ],
+            [
+              "0x242ccd0",
+              "pop esi"
+            ],
+            [
+              "0x242ccd1",
+              "pop edi"
+            ],
+            [
+              "0x242ccd2",
+              "pop ebp"
+            ],
+            [
+              "0x242ccd3",
+              "ret "
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25534dc",
+              "jmp -0xf3"
+            ]
+          ]
+        }
+      ],
+      "contract": {
+        "kind": "mana_override",
+        "native_sites": [
+          "0x242cc72",
+          "0x242cc86"
+        ],
+        "callee": "set_special_flags2",
+        "stack_arguments": {
+          "8": 64
+        }
+      },
+      "reason": "Restore native shared mana-production override bit 0x40 for newly cast lands. The recovered Deep Water legacy and mana-override machinery already use this bit; do not globally renumber SF2_DEEP_WATER."
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "lichs_mastery_lifeloss_trigger",
+      "native_address": "0x22d0100",
+      "native_size": 957,
+      "native_body_sha256": "fa676c0ac8afb0e4d8f59383e021a958baa4a99095745f183e66906217a25ffa",
+      "before_rebuilt_address": "0x2158d50",
+      "before_rebuilt_bytes": "5589e55756538d85c8feffff81ec840100008b5d08894424088b450c89442404c744240c00000000891c24e8b02958008b4510c1e002c785d4feffff00030000899dccfeffff899dd0feffffc785e4feffff00000000c7850cffffff00000000c78500ffffff00800000c785f0feffffa0ea1402e8c7125a0029c48d4424488985c0feffff8b45108d04c508000000e8ac125a0029c48b450c89442404891c24e85b3951008d7424488985b8feffff31c089b5bcfeffffc785c4feffff0000000089c68d742600908d85c8feffff890424e8ba2e580085c075108b049d18704d008338ff0f84fe0100003975100f8ef50100008b049d18704d008338ff0f95c025ff00000089c78d85c8feffff890424e87b2e5800897c2430894424248b450cc744242c89237302c744242805000000c74424209e237302c744241cb51c7302c7442418b6237302c744241486237302c7442410e51c7302c744240c981f7302c74424086d00000089442404891c24c744244400000000c744244000000000c744243c00000000c744243800000000c74424340a000000e8a4b351008b8dc4feffff488d79010f84940000008d851cffffffc7442404ff000000890424e83eea55008b4510894424108d851cffffff897c240cc74424080c247302c744240464000000890424e8954b56008d851cffffff89442418c744241403000000c744241001000000c744240c06000000c744240802000000895c2404891c24e80f9258008b85c0feffff89bdc4feffffc704b00100000046e98efeffff8db6000000008b4510897c240c894424108d851cffffffc7442408bc237302c744240464000000890424e8174b56008b85bcfeffff8d04f0891c24894424108d851cffffff8944240c8d85c8feffff894424088b450c89442404e82736580085c074978b85b8feffff8b95bcfeffffc6403600c7442408010000008b44f204894424048b04f2890424e8a84555008b85c0feffff89bdc4feffffc704b00000000046e9e7fdffff8db426000000008b8dc4feffff31db8bb5bcfeffff85c90f8eb300000089f78bb5c0feffffeb0943399dc4feffff742b8b149e85d275f0c7442408000000008b54df04895424048b14df43891424e83c455500399dc4feffff75d531db8bb5c0feffffeb2966908b44df04894424048b04df890424e8854a51008b04df890424e80a6d510043399dc4feffff74428b049e85c075f08b44df04894424048b04df890424e8173f510085c075bbc7442408040000008b44df04894424048b04df43890424e8e7605100399dc4feffff75be8d65f45b5e5f5dc3",
+      "before_rebuilt_body_sha256": "f051f8e6f7618021a2f6cf77ee1df81c251c320daaad07fe3c1a3eee842f9f97",
+      "before_reccmp_score": 0.8293838862559242,
+      "source_before_definition_sha256": "a5f1d19557bbfd987b473e534691d3b2e41876e371037c340f2ffce83d4992e0",
+      "source_after_definition_sha256": "8e749bc7a49e3c7bacc843c24bdecba48d7ce8a7c011921464ff0050617c56b6",
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x22d0199",
+              "xor esi, esi"
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [
+            [
+              "0x22d01a7",
+              "lea edi, [esp + 0x48]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2158df5",
+              "lea esi, [esp + 0x48]"
+            ]
+          ]
+        },
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x2158dff",
+              "xor eax, eax"
+            ],
+            [
+              "0x2158e01",
+              "mov dword ptr [ebp - 0x144], esi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d01bb",
+              "mov dword ptr [ebp - 0x144], edi"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2158e11",
+              "mov esi, eax"
+            ]
+          ]
+        },
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x2158e17",
+              "nop "
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d01ea",
+              "cmp esi, dword ptr [ebp + 0x10]"
+            ],
+            [
+              "0x22d01ed",
+              "jge 0x1f5"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2158e3a",
+              "cmp dword ptr [ebp + 0x10], esi"
+            ],
+            [
+              "0x2158e3d",
+              "jle 0x1f5"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d0260",
+              "mov dword ptr [esp + 8], 0x72"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2158eb0",
+              "mov dword ptr [esp + 8], 0x6d"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d03f0",
+              "mov edi, dword ptr [ebp - 0x144]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2159040",
+              "mov esi, dword ptr [ebp - 0x144]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d03f8",
+              "jle 0x98"
+            ],
+            [
+              "0x22d03fe",
+              "mov esi, edi"
+            ],
+            [
+              "0x22d0400",
+              "mov edi, dword ptr [ebp - 0x140]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2159048",
+              "jle 0xb3"
+            ],
+            [
+              "0x215904e",
+              "mov edi, esi"
+            ],
+            [
+              "0x2159050",
+              "mov esi, dword ptr [ebp - 0x140]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d0411",
+              "mov edx, dword ptr [edi + ebx*4]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2159061",
+              "mov edx, dword ptr [esi + ebx*4]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d0420",
+              "mov edx, dword ptr [esi + ebx*8 + 4]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2159070",
+              "mov edx, dword ptr [edi + ebx*8 + 4]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d0428",
+              "mov edx, dword ptr [esi + ebx*8]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2159078",
+              "mov edx, dword ptr [edi + ebx*8]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d043e",
+              "mov edi, dword ptr [ebp - 0x140]"
+            ],
+            [
+              "0x22d0444",
+              "jmp 0xb"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x215908e",
+              "mov esi, dword ptr [ebp - 0x140]"
+            ],
+            [
+              "0x2159094",
+              "jmp 0x29"
+            ]
+          ]
+        },
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x2159098",
+              "mov eax, dword ptr [edi + ebx*8 + 4]"
+            ],
+            [
+              "0x215909c",
+              "mov dword ptr [esp + 4], eax"
+            ],
+            [
+              "0x21590a0",
+              "mov eax, dword ptr [edi + ebx*8]"
+            ],
+            [
+              "0x21590a3",
+              "mov dword ptr [esp], eax"
+            ],
+            [
+              "0x21590a6",
+              "call put_on_top_of_deck (FUNCTION)"
+            ],
+            [
+              "0x21590ab",
+              "mov eax, dword ptr [edi + ebx*8]"
+            ],
+            [
+              "0x21590ae",
+              "mov dword ptr [esp], eax"
+            ],
+            [
+              "0x21590b1",
+              "call rfg_top_card_of_deck (FUNCTION)"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d044f",
+              "je 0x45"
+            ],
+            [
+              "0x22d0451",
+              "mov eax, dword ptr [edi + ebx*4]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21590bd",
+              "je 0x42"
+            ],
+            [
+              "0x21590bf",
+              "mov eax, dword ptr [esi + ebx*4]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d0458",
+              "mov eax, dword ptr [esi + ebx*8 + 4]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21590c6",
+              "mov eax, dword ptr [edi + ebx*8 + 4]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d0460",
+              "mov eax, dword ptr [esi + ebx*8]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21590ce",
+              "mov eax, dword ptr [edi + ebx*8]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d046d",
+              "je 0x31"
+            ],
+            [
+              "0x22d046f",
+              "mov eax, dword ptr [esi + ebx*8 + 4]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21590db",
+              "jne -0x45"
+            ],
+            [
+              "0x21590dd",
+              "mov dword ptr [esp + 8], 4"
+            ],
+            [
+              "0x21590e5",
+              "mov eax, dword ptr [edi + ebx*8 + 4]"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d0477",
+              "mov eax, dword ptr [esi + ebx*8]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21590ed",
+              "mov eax, dword ptr [edi + ebx*8]"
+            ],
+            [
+              "0x21590f0",
+              "inc ebx"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d047d",
+              "call put_on_top_of_deck (FUNCTION)"
+            ],
+            [
+              "0x22d0482",
+              "mov eax, dword ptr [esi + ebx*8]"
+            ],
+            [
+              "0x22d0485",
+              "mov dword ptr [esp], eax"
+            ],
+            [
+              "0x22d0488",
+              "inc ebx"
+            ],
+            [
+              "0x22d0489",
+              "call rfg_top_card_of_deck (FUNCTION)"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21590f4",
+              "call kill_card (FUNCTION)"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d0494",
+              "jne -0x45"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21590ff",
+              "jne -0x42"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x22d049e",
+              "nop "
+            ],
+            [
+              "0x22d04a0",
+              "mov dword ptr [esp + 8], 4"
+            ],
+            [
+              "0x22d04a8",
+              "mov eax, dword ptr [esi + ebx*8 + 4]"
+            ],
+            [
+              "0x22d04ac",
+              "mov dword ptr [esp + 4], eax"
+            ],
+            [
+              "0x22d04b0",
+              "mov eax, dword ptr [esi + ebx*8]"
+            ],
+            [
+              "0x22d04b3",
+              "mov dword ptr [esp], eax"
+            ],
+            [
+              "0x22d04b6",
+              "call kill_card (FUNCTION)"
+            ],
+            [
+              "0x22d04bb",
+              "jmp -0x75"
+            ]
+          ],
+          "rebuilt": []
+        }
+      ],
+      "contract": {
+        "kind": "chooser_event",
+        "native_sites": [
+          "0x22d0260",
+          "0x22d0297"
+        ],
+        "callee": "dialog_impl",
+        "stack_arguments": {
+          "8": 114
+        }
+      },
+      "reason": "Restore native dialog event 0x72, EVENT_RESOLVE_ACTIVATION, rather than EVENT_ACTIVATE (0x6d). Preserve the release chooser semantics."
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_rishadan_port",
+      "native_address": "0x2179550",
+      "native_size": 894,
+      "native_body_sha256": "0b433d5d8eb3733c7e2bbdaf7e07f34290ac830c33148c64021403a9cb9026d3",
+      "before_rebuilt_address": "0x233f5f0",
+      "before_rebuilt_bytes": "5589e557565381ec900000008b75108b5d0883fe73741783fe6d743483fe720f849b00000083fe220f84920000008b450c8974240889442404891c24e82fbe380081c4900000005b5e5f5dc38d74260083fe7374d98b450c8d7da089442404c744240c01000000897c2408891c24e8cdc039008b450c89442404891c24e8ded0320083fe6d89c1756689459ce83f8d34008b4d9c85c00f84a4000000c74138010000008b450cc74424086d00000089442404891c24e8b6bd3800eb858d7426008b450c8d7da089442404c744240c01000000897c2408891c24e862c039008b450c89442404891c24e873d0320089c183fe72741431c081c4900000005b5e5f5dc38db426000000008379380275e6893c24894d9ce887c939008b4d9c85c074d48b4178894424048b4174890424e8fede360031c0e908ffffff8db426000000008b450cc744243000000000897c242cc744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241002000000c744240c05000000c74424087300000089442404891c24894d9ce82a2837008b4d9c85c00f84ebfeffff31c0391d708662000f95c0488b15a8317a0083e0d0c7442408ffffffff83c018c74424040100000001c2b80100000029d88915a8317a00890424e8701936008b0da8317a0083f8030f9fc025ff0000004883e0d083c01801c1890da8317a008b4d9c833d7485720001c74138020000000f849b00000083fb01750df60540067900020f84890000008b450cc744243400000000c744243000000000c744242c00000000c744242800000000c74424240a000000c744242001000000c744241ca2387402c744241805000000c744241401000000c7442410fc347402c744240c45317402c74424086d00000089442404891c24e8f849330085c00f84b700000083f8010f84eafdffff83f8020f8532feffff8b450cc74424081000000089442404891c24e8b7b036008b450cc744243096387402897c242cc744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241001000000c744240c04000000c74424086d00000089442404891c24e894263700833d94f14e00010f85abfdffff8b450cc74424081000000089442404891c24e8f0b0360031c0e98ffdffffc70594f14e0001000000e9cbfcffff",
+      "before_rebuilt_body_sha256": "defd6cb49d42c23c2cf65ab6cd6cf0c27b15b8f1241697930d867bcf48e91013",
+      "before_reccmp_score": 0.8972431077694235,
+      "source_before_definition_sha256": "328a909c7598c1cbd963412059a80c0d4d89c57bf6dab693f5f78de4ecb6a9d7",
+      "source_after_definition_sha256": "c9469a465d9b82a3b53bb67e752aaae4d9a0fa0417c0e7fb0e08830a38f9b65f",
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x2179556",
+              "sub esp, 0x94"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x233f5f6",
+              "sub esp, 0x90"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2179591",
+              "add esp, 0x94"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x233f631",
+              "add esp, 0x90"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2179646",
+              "add esp, 0x94"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x233f6e6",
+              "add esp, 0x90"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2179771",
+              "je 0xa3"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x233f811",
+              "je 0x9b"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2179783",
+              "je 0x91"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x233f823",
+              "je 0x89"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x217978c",
+              "mov dword ptr [esp + 0x38], 0"
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [
+            [
+              "0x21797ac",
+              "mov dword ptr [esp + 0x28], 0xa"
+            ],
+            [
+              "0x21797b4",
+              "mov dword ptr [esp + 0x24], 1"
+            ],
+            [
+              "0x21797bc",
+              "mov dword ptr [esp + 0x20], \"Tap a land\" (STRING)"
+            ],
+            [
+              "0x21797c4",
+              "mov dword ptr [esp + 0x1c], 5"
+            ],
+            [
+              "0x21797cc",
+              "mov dword ptr [esp + 0x18], 1"
+            ],
+            [
+              "0x21797d4",
+              "mov dword ptr [esp + 0x14], \"Get mana\" (STRING)"
+            ],
+            [
+              "0x21797dc",
+              "mov dword ptr [esp + 0x10], <OFFSET15>"
+            ],
+            [
+              "0x21797e4",
+              "mov dword ptr [esp + 0xc], <OFFSET16>"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x233f844",
+              "mov dword ptr [esp + 0x28], 0"
+            ],
+            [
+              "0x233f84c",
+              "mov dword ptr [esp + 0x24], 0xa"
+            ],
+            [
+              "0x233f854",
+              "mov dword ptr [esp + 0x20], 1"
+            ],
+            [
+              "0x233f85c",
+              "mov dword ptr [esp + 0x1c], \"Tap a land\" (STRING)"
+            ],
+            [
+              "0x233f864",
+              "mov dword ptr [esp + 0x18], 5"
+            ],
+            [
+              "0x233f86c",
+              "mov dword ptr [esp + 0x14], 1"
+            ],
+            [
+              "0x233f874",
+              "mov dword ptr [esp + 0x10], \"Get mana\" (STRING)"
+            ],
+            [
+              "0x233f87c",
+              "mov dword ptr [esp + 0xc], <OFFSET15>"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x217980b",
+              "je -0x21e"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x233f8a3",
+              "je -0x216"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2179814",
+              "jne -0x1d6"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x233f8ac",
+              "jne -0x1ce"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2179894",
+              "cmp dword ptr [<OFFSET20>], 1"
+            ],
+            [
+              "0x217989b",
+              "jne -0x25d"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x233f92c",
+              "cmp dword ptr [<OFFSET19>], 1"
+            ],
+            [
+              "0x233f933",
+              "jne -0x255"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x21798ba",
+              "jmp -0x279"
+            ],
+            [
+              "0x21798bf",
+              "mov dword ptr [<OFFSET20>], 1"
+            ],
+            [
+              "0x21798c9",
+              "jmp -0x33d"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x233f952",
+              "jmp -0x271"
+            ],
+            [
+              "0x233f957",
+              "mov dword ptr [<OFFSET19>], 1"
+            ],
+            [
+              "0x233f961",
+              "jmp -0x335"
+            ]
+          ]
+        }
+      ],
+      "contract": {
+        "kind": "chooser_tokens",
+        "native_sites": [
+          "0x21797dc",
+          "0x21797e4",
+          "0x21797fb"
+        ],
+        "callee": "dialog_impl",
+        "tokens": [
+          2,
+          14
+        ]
+      },
+      "reason": "Restore native chooser token 01 0e, automatically selecting the only legal option."
+    },
+    {
+      "source": "cards/oath_of_the_gatewatch.c",
+      "name": "card_sea_gate_wreckage",
+      "native_address": "0x226c580",
+      "native_size": 767,
+      "native_body_sha256": "99d6ce8b0caf41e8cad4af389b581c09095b03f389bdc9cdfb01d31048b18755",
+      "before_rebuilt_address": "0x23e6500",
+      "before_rebuilt_bytes": "5589e557565383ec388b5d108b75088b7d0c83fb73741783fb6d742c83fb720f84bb01000083fb220f84b2010000895d10897d0c89750883c4385b5e5f5de91d4f2e008d7426009083fb7374e1897c2404893424e8f761280083fb6d0f858a010000c740380000000031dbe8501e2a0085c07522c744240802000000c744240402000000893424e8d4e1feff89c385c00f8582010000c744240873000000897c2404893424e8b64e2e00c744243400000000c744243000000000c744242c00000000c744242800000000c74424240a000000895c2420c744241ca98f7402c74424180500000089442414c744241060987402c744240ca68f7402c74424086d000000897c2404893424e882dc280085c00f848a01000083f8010f849001000083f8020f85c9000000c744240810000000897c2404893424e844432c00c744240801000000c744240402000000893424e88ce1feff85c00f845f010000c744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241000000000c744240c01000000c74424086d000000897c2404893424e800b92c00833d94f14e00010f8411010000c705bc047900ffffffffeb188db42600000000897c2404893424e86460280083fb72740f83c43831c05b5e5f5dc38d742600908378380275ebc744240401000000893424e87a712800ebd98b04b5c4f14e0031db85c00f8f6dfeffffc744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241004000000c744240c01000000c744240873000000897c240489342431dbe831b82c0085c00f95c3e9fdfdffff8db42600000000c70594f14e0001000000e942ffffffc745106d000000e976fdffffc744240810000000897c2404893424e871422c00c70594f14e0001000000e9effeffffc744240810000000897c2404893424e84e422c00e9d6feffff",
+      "before_rebuilt_body_sha256": "7893ee84222af91a5cd65a7c56a4305b1e53a577dd0ad3c714d628f617b19f17",
+      "before_reccmp_score": 0.8589341692789969,
+      "source_before_definition_sha256": "7a4e0a6d5d3d693c38d4792b977bd5ce3333fb275b335ae806e20658a3e52052",
+      "source_after_definition_sha256": "cc2040c672df08b6d188cef7fcd0ca57c7ace2f5e0a15618c56a245c54fa59f0",
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x226c586",
+              "sub esp, 0x3c"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e6506",
+              "sub esp, 0x38"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c59f",
+              "je 0x1c3"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e651f",
+              "je 0x1bb"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c5a8",
+              "je 0x1ba"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e6528",
+              "je 0x1b2"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c5b7",
+              "add esp, 0x3c"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e6537",
+              "add esp, 0x38"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c5dc",
+              "jne 0x192"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e655c",
+              "jne 0x18a"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c610",
+              "jne 0x18a"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e6590",
+              "jne 0x182"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c62a",
+              "mov dword ptr [esp + 0x38], 0"
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [
+            [
+              "0x226c64a",
+              "mov dword ptr [esp + 0x28], 0xa"
+            ],
+            [
+              "0x226c652",
+              "mov dword ptr [esp + 0x24], ebx"
+            ],
+            [
+              "0x226c656",
+              "mov dword ptr [esp + 0x20], \"Draw a card\" (STRING)"
+            ],
+            [
+              "0x226c65e",
+              "mov dword ptr [esp + 0x1c], 5"
+            ],
+            [
+              "0x226c666",
+              "mov dword ptr [esp + 0x18], eax"
+            ],
+            [
+              "0x226c66a",
+              "mov dword ptr [esp + 0x14], \"Get mana\" (STRING)"
+            ],
+            [
+              "0x226c672",
+              "mov dword ptr [esp + 0x10], <OFFSET7>"
+            ],
+            [
+              "0x226c67a",
+              "mov dword ptr [esp + 0xc], <OFFSET8>"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e65c2",
+              "mov dword ptr [esp + 0x28], 0"
+            ],
+            [
+              "0x23e65ca",
+              "mov dword ptr [esp + 0x24], 0xa"
+            ],
+            [
+              "0x23e65d2",
+              "mov dword ptr [esp + 0x20], ebx"
+            ],
+            [
+              "0x23e65d6",
+              "mov dword ptr [esp + 0x1c], \"Draw a card\" (STRING)"
+            ],
+            [
+              "0x23e65de",
+              "mov dword ptr [esp + 0x18], 5"
+            ],
+            [
+              "0x23e65e6",
+              "mov dword ptr [esp + 0x14], eax"
+            ],
+            [
+              "0x23e65ea",
+              "mov dword ptr [esp + 0x10], \"Get mana\" (STRING)"
+            ],
+            [
+              "0x23e65f2",
+              "mov dword ptr [esp + 0xc], <OFFSET7>"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c748",
+              "cmp dword ptr [<OFFSET13>], 1"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e66c0",
+              "cmp dword ptr [<OFFSET12>], 1"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c755",
+              "mov dword ptr [<OFFSET14>], 0xffffffff"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e66cd",
+              "mov dword ptr [<OFFSET13>], 0xffffffff"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c779",
+              "add esp, 0x3c"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e66f1",
+              "add esp, 0x38"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c7ab",
+              "jg -0x19b"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e6723",
+              "jg -0x193"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c81c",
+              "jmp -0x20b"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e6794",
+              "jmp -0x203"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c828",
+              "mov dword ptr [<OFFSET13>], 1"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e67a0",
+              "mov dword ptr [<OFFSET12>], 1"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c83e",
+              "jmp -0x292"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e67b6",
+              "jmp -0x28a"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x226c857",
+              "mov dword ptr [<OFFSET13>], 1"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23e67cf",
+              "mov dword ptr [<OFFSET12>], 1"
+            ]
+          ]
+        }
+      ],
+      "contract": {
+        "kind": "chooser_tokens",
+        "native_sites": [
+          "0x226c672",
+          "0x226c67a",
+          "0x226c691"
+        ],
+        "callee": "dialog_impl",
+        "tokens": [
+          2,
+          14
+        ]
+      },
+      "reason": "Restore the same native automatic-single-option chooser token, retaining the current legality and payment checks."
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/m12.c",
+      "before_source_sha256": "6f5c26472b7f33b9332e47c654fcc5cdc7ae094dde2f8b4d7e82655e336199b8",
+      "after_source_sha256": "fac561c99ac9617757f741040e3596795de2dd6d68402764609efe24f1f7879e",
+      "before_bytes_sha256": "051e0fe4b09b4bc85bdc9d9b4dc6dedef5597bd4a9afffd76827917a50a147e4"
+    },
+    {
+      "source": "cards/fallen_empires.c",
+      "before_source_sha256": "5ff1e1764b98dc0e4e26d2b0c4d6dc33a1dda15d702207750703b2338eae1eef",
+      "after_source_sha256": "de7406d8107365d5667929af39ee8a398f86a3c338b87e139694de45866b4d63",
+      "before_bytes_sha256": "06eff72bcd1c9615982d6caf5bb6abcc6dd56e32d19c70dd84027b8d606624b6"
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "before_source_sha256": "2649216ba35600045a4693241616deefdb6b243bec9361af026aaedbbec6c714",
+      "after_source_sha256": "5c951686fa1ac21dbea2efe7ee31de2067d3aa9fd70ff904ad405a5df3428221",
+      "before_bytes_sha256": "2a424cf2ed3b2640c73210767c547bb1d56d25231ef385d9695a88773aa70f85"
+    },
+    {
+      "source": "cards/ravnica.c",
+      "before_source_sha256": "d8ebe893b5c8c89237ccdf83cf40878a7ab59dd0b4bff0f107d1c36ffe4d089c",
+      "after_source_sha256": "8ac265a1adb0e3181bb9680e6a2cbfe3782c8767eff6a553ce4240f0a4145250",
+      "before_bytes_sha256": "c2cc021957f214dcd354b39a296ec0d697aa612a7e100921c6089c499d59fb92"
+    },
+    {
+      "source": "cards/exodus.c",
+      "before_source_sha256": "87c8da7defcdb8efea63f0801c620ce0375f99f546e5e6e543dc83673fd59f34",
+      "after_source_sha256": "906377ce1b614aa1fc89c17a1c7ed3cf6f79b880c8c83b17d06ae00e69a1786a",
+      "before_bytes_sha256": "8095d86b8cb578ef6cabb41ccb212f2459cb5944b8dcccf0651cde368c0728c1"
+    },
+    {
+      "source": "cards/the_dark.c",
+      "before_source_sha256": "7f504306d8f51a5f28ab99a89f2b694ce3164613fa97c37da6eca742a2d54a9e",
+      "after_source_sha256": "24d9f3886fc419031907848af58dfa67bf81b277e57a269c520359d53f5623af",
+      "before_bytes_sha256": "8fca12a07ccaa04c1760b46c5e5d49168cce05e5b8d4e7bf30b72cb80f018c38"
+    },
+    {
+      "source": "cards/dominaria.c",
+      "before_source_sha256": "04a88b5b37fcfbaf97ed1debc73cf0da0a2f570eed1dad9fdf4b0f9d7c4c76cd",
+      "after_source_sha256": "a6ca2b54acbeecb486236eccc567772a9a5230e00937872884b501d7790e484f",
+      "before_bytes_sha256": "88d28ecb36c1ba56d96e63ca480aefa4a18ae346beab02b12e9920bd7b8898ef"
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "before_source_sha256": "2c918cf306b14719e003370edeebe98120793389a0873a09ff0a659723f9be44",
+      "after_source_sha256": "a7572b18e40995fafe8751066cff43c6bfcd4e580fe355a7b3cc5aeb9a800688",
+      "before_bytes_sha256": "6dd3be1b42bc7fe12ac999464d1922afa422f20334afd064cb68448bde914b64"
+    },
+    {
+      "source": "cards/oath_of_the_gatewatch.c",
+      "before_source_sha256": "a67e222ac446d7d6b882640037d0b4278439469767f6ad5a70640d5f66f4c137",
+      "after_source_sha256": "09ce0b60da1c09fba569e25a3fabda1fdccae4e5e5da07874dccedfaba333c2c",
+      "before_bytes_sha256": "8001178a234967ea4ab913ba95100fda544f934ae9c338a11c2af1cf7956904e"
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "review": [
+    "Previous goal turn made source corrections, verified a full comparison and improved mappings; it was progress. This batch uses that checked current worktree and binary snapshot.",
+    "Scan full JSON plus lower-scoring short diffs; compare raw native instructions, callee identity and actual stack argument positions. The Mage annotations from earlier recovery were contradicted by these native operands and have been corrected.",
+    "Fallen Empires basic_upkeep has no ability-mode parameter, unlike generic_activated_ability. Its green argument is at esp+0x18; do not infer colors from the slot alone.",
+    "Hissing Iguanar and Magnetic Mine byte-derived counts stay nonnegative; jg versus jne loops do not require source changes. Card-table base-plus-field offsets compensate exactly. Kaya cmp 8/setge equals cmp 7/setg. Chrome Mox native DUH mode is specialized through duh_mode and is not a constant mandatory-mode correction.",
+    "Dialog control-token scan independently found the two missing automatic-choice options. Native readonly strings encode 01 0e; the fork does not label these short control strings as ordinary text.",
+    "No global enum renumbering, padded source, forced register allocation or synthetic stack-slot aliases are used. One combined build and focused compiled contract checks follow; the baseline full report becomes a historical snapshot after rebuilding.",
+    "The first build caught a duplicate replacement at one subtype site. Both distinct sites were corrected before the successful build; final source receipts describe the corrected two-site edit.",
+    "The compiled-value checker also caught an event-name assumption: 0x72 is EVENT_RESOLVE_ACTIVATION; EVENT_CAN_ACTIVATE is 0x73. The final chooser source uses the native resolve event and no enum value is changed."
+  ],
+  "scope": "Native caller operands and control-flow contracts for ten functions. Neither printed card rules nor a similarity score override the release instructions. Not a whole-game equivalence or complete recovery claim.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "99726e599d2c2b774933548e83df300cd3a4671242cce03271693d1ed0f60d87",
+    "dbg_sha256": "1e2946472bf7419018669cbd1cc6c730e6a457d71aceec6917867cc68a83b962",
+    "functions": [
+      {
+        "source": "cards/m12.c",
+        "name": "card_azure_mage",
+        "address": "0x22fec60",
+        "size": 168,
+        "body_sha256": "4d670bc7402218041de2932a77a9f75e11e6ff82035d27b9c00300929f70bb48",
+        "contract": "ability_mana",
+        "proof": {
+          "calls": {
+            "native": "0x249fa45",
+            "current": "0x22fecd5",
+            "callee": "generic_activated_ability"
+          },
+          "native_arguments": {
+            "16": {
+              "address": "0x249fa32",
+              "instruction": "mov dword ptr [esp + 0x10], 3",
+              "value": 3
+            },
+            "20": {
+              "address": "0x249fa2a",
+              "instruction": "mov dword ptr [esp + 0x14], 0",
+              "value": 0
+            },
+            "24": {
+              "address": "0x249fa22",
+              "instruction": "mov dword ptr [esp + 0x18], 1",
+              "value": 1
+            },
+            "28": {
+              "address": "0x249fa1a",
+              "instruction": "mov dword ptr [esp + 0x1c], 0",
+              "value": 0
+            },
+            "32": {
+              "address": "0x249fa12",
+              "instruction": "mov dword ptr [esp + 0x20], 0",
+              "value": 0
+            },
+            "36": {
+              "address": "0x249fa0a",
+              "instruction": "mov dword ptr [esp + 0x24], 0",
+              "value": 0
+            }
+          },
+          "current_arguments": {
+            "16": {
+              "address": "0x22fecc2",
+              "instruction": "mov dword ptr [esp + 0x10], 3",
+              "value": 3
+            },
+            "20": {
+              "address": "0x22fecba",
+              "instruction": "mov dword ptr [esp + 0x14], 0",
+              "value": 0
+            },
+            "24": {
+              "address": "0x22fecb2",
+              "instruction": "mov dword ptr [esp + 0x18], 1",
+              "value": 1
+            },
+            "28": {
+              "address": "0x22fecaa",
+              "instruction": "mov dword ptr [esp + 0x1c], 0",
+              "value": 0
+            },
+            "32": {
+              "address": "0x22feca2",
+              "instruction": "mov dword ptr [esp + 0x20], 0",
+              "value": 0
+            },
+            "36": {
+              "address": "0x22fec9a",
+              "instruction": "mov dword ptr [esp + 0x24], 0",
+              "value": 0
+            }
+          }
+        }
+      },
+      {
+        "source": "cards/m12.c",
+        "name": "card_jade_mage",
+        "address": "0x2300700",
+        "size": 150,
+        "body_sha256": "395de26ef9d6665e20df05d6f03640fe2e0f3a017748c0a77e9d53992cc04507",
+        "contract": "ability_mana",
+        "proof": {
+          "calls": {
+            "native": "0x24a14c2",
+            "current": "0x2300772",
+            "callee": "generic_activated_ability"
+          },
+          "native_arguments": {
+            "16": {
+              "address": "0x24a14b2",
+              "instruction": "mov dword ptr [esp + 0x10], 3",
+              "value": 3
+            },
+            "20": {
+              "address": "0x24a14aa",
+              "instruction": "mov dword ptr [esp + 0x14], 0",
+              "value": 0
+            },
+            "24": {
+              "address": "0x24a14a2",
+              "instruction": "mov dword ptr [esp + 0x18], 1",
+              "value": 1
+            },
+            "28": {
+              "address": "0x24a149a",
+              "instruction": "mov dword ptr [esp + 0x1c], 0",
+              "value": 0
+            },
+            "32": {
+              "address": "0x24a1492",
+              "instruction": "mov dword ptr [esp + 0x20], 0",
+              "value": 0
+            },
+            "36": {
+              "address": "0x24a148a",
+              "instruction": "mov dword ptr [esp + 0x24], 0",
+              "value": 0
+            }
+          },
+          "current_arguments": {
+            "16": {
+              "address": "0x2300762",
+              "instruction": "mov dword ptr [esp + 0x10], 3",
+              "value": 3
+            },
+            "20": {
+              "address": "0x230075a",
+              "instruction": "mov dword ptr [esp + 0x14], 0",
+              "value": 0
+            },
+            "24": {
+              "address": "0x2300752",
+              "instruction": "mov dword ptr [esp + 0x18], 1",
+              "value": 1
+            },
+            "28": {
+              "address": "0x230074a",
+              "instruction": "mov dword ptr [esp + 0x1c], 0",
+              "value": 0
+            },
+            "32": {
+              "address": "0x2300742",
+              "instruction": "mov dword ptr [esp + 0x20], 0",
+              "value": 0
+            },
+            "36": {
+              "address": "0x230073a",
+              "instruction": "mov dword ptr [esp + 0x24], 0",
+              "value": 0
+            }
+          }
+        }
+      },
+      {
+        "source": "cards/fallen_empires.c",
+        "name": "fe_chant",
+        "address": "0x21ab740",
+        "size": 707,
+        "body_sha256": "7bb9e22accbddefcf1197827ff4658ec9a5ebdeb12b400f65975f5bda9786c8e",
+        "contract": "upkeep_mana",
+        "proof": {
+          "calls": {
+            "native": "0x241c9c0",
+            "current": "0x21ab7a0",
+            "callee": "basic_upkeep"
+          },
+          "native_arguments": {
+            "12": {
+              "address": "0x241c9ad",
+              "instruction": "mov dword ptr [esp + 0xc], 0",
+              "value": 0
+            },
+            "20": {
+              "address": "0x241c9a1",
+              "instruction": "mov dword ptr [esp + 0x14], 0",
+              "value": 0
+            },
+            "28": {
+              "address": "0x241c999",
+              "instruction": "mov dword ptr [esp + 0x1c], 0",
+              "value": 0
+            },
+            "32": {
+              "address": "0x241c98e",
+              "instruction": "mov dword ptr [esp + 0x20], 0",
+              "value": 0
+            }
+          },
+          "current_arguments": {
+            "12": {
+              "address": "0x21ab78d",
+              "instruction": "mov dword ptr [esp + 0xc], 0",
+              "value": 0
+            },
+            "20": {
+              "address": "0x21ab781",
+              "instruction": "mov dword ptr [esp + 0x14], 0",
+              "value": 0
+            },
+            "28": {
+              "address": "0x21ab779",
+              "instruction": "mov dword ptr [esp + 0x1c], 0",
+              "value": 0
+            },
+            "32": {
+              "address": "0x21ab76e",
+              "instruction": "mov dword ptr [esp + 0x20], 0",
+              "value": 0
+            }
+          },
+          "dynamic_and_zero_slots": [
+            {
+              "native": "0x241c978",
+              "current": "0x21ab758",
+              "instruction": "mov dword ptr [esp + 0x18], eax"
+            },
+            {
+              "native": "0x241c9a1",
+              "current": "0x21ab781",
+              "instruction": "mov dword ptr [esp + 0x14], 0"
+            }
+          ]
+        }
+      },
+      {
+        "source": "functions/has_creature_type.c",
+        "name": "add_force_a_subtype_permanently_legacy",
+        "address": "0x26ba150",
+        "size": 304,
+        "body_sha256": "a6cb1f876acb0a6e3d69f4e2286d1fe72a3bd92bbf0f51244bfe9927102500c1",
+        "contract": "subtype_range",
+        "proof": {
+          "unsigned_subtype_intervals": {
+            "native": [
+              {
+                "start": "0x2672738",
+                "instructions": [
+                  "lea edx, [eax - 1]",
+                  "cmp edx, 0xffe",
+                  "ja 0x26726fe"
+                ]
+              },
+              {
+                "start": "0x267278d",
+                "instructions": [
+                  "lea edx, [eax - 1]",
+                  "cmp edx, 0xffe",
+                  "ja 0x2672780"
+                ]
+              },
+              {
+                "start": "0x26727f5",
+                "instructions": [
+                  "lea edx, [eax - 1]",
+                  "cmp edx, 0xffe",
+                  "ja 0x26727e8"
+                ]
+              }
+            ],
+            "current": [
+              {
+                "start": "0x26ba198",
+                "instructions": [
+                  "lea edx, [eax - 1]",
+                  "cmp edx, 0xffe",
+                  "ja 0x26ba15e"
+                ]
+              },
+              {
+                "start": "0x26ba1ed",
+                "instructions": [
+                  "lea edx, [eax - 1]",
+                  "cmp edx, 0xffe",
+                  "ja 0x26ba1e0"
+                ]
+              },
+              {
+                "start": "0x26ba255",
+                "instructions": [
+                  "lea edx, [eax - 1]",
+                  "cmp edx, 0xffe",
+                  "ja 0x26ba248"
+                ]
+              }
+            ],
+            "changed_checks": 2,
+            "unchanged_outer_check": 1,
+            "accepted_values": "1..4095 inclusive; uint32 subtraction rejects zero and negative int32 cursor values"
+          }
+        }
+      },
+      {
+        "source": "cards/ravnica.c",
+        "name": "golgari_germination_effect",
+        "address": "0x245ebc0",
+        "size": 754,
+        "body_sha256": "f8969f044e5102544c204afbf5ff50de54137a448ce7a3a11b7d4bfb9a9938e4",
+        "contract": "gfp_mode",
+        "proof": {
+          "calls": {
+            "native": "0x24df643",
+            "current": "0x245ed03",
+            "callee": "count_for_gfp_ability_and_store_values"
+          },
+          "native_arguments": {
+            "16": {
+              "address": "0x24df622",
+              "instruction": "mov dword ptr [esp + 0x10], 0",
+              "value": 0
+            },
+            "24": {
+              "address": "0x24df616",
+              "instruction": "mov dword ptr [esp + 0x18], 0x40",
+              "value": 64
+            },
+            "28": {
+              "address": "0x24df60e",
+              "instruction": "mov dword ptr [esp + 0x1c], 0",
+              "value": 0
+            }
+          },
+          "current_arguments": {
+            "16": {
+              "address": "0x245ece2",
+              "instruction": "mov dword ptr [esp + 0x10], 0",
+              "value": 0
+            },
+            "24": {
+              "address": "0x245ecd6",
+              "instruction": "mov dword ptr [esp + 0x18], 0x40",
+              "value": 64
+            },
+            "28": {
+              "address": "0x245ecce",
+              "instruction": "mov dword ptr [esp + 0x1c], 0",
+              "value": 0
+            }
+          }
+        }
+      },
+      {
+        "source": "cards/exodus.c",
+        "name": "card_null_brooch",
+        "address": "0x21a0330",
+        "size": 528,
+        "body_sha256": "9f625444bd56bfa9d028b0f0bfc1180b0b88b9701194de01f79fff704d31b2fd",
+        "contract": "direct_tap",
+        "proof": {
+          "calls": {
+            "native": "0x26465c8",
+            "current": "0x21a0448",
+            "callee": "add_state"
+          },
+          "native_arguments": {
+            "8": {
+              "address": "0x26465b9",
+              "instruction": "mov dword ptr [esp + 8], 0x10",
+              "value": 16
+            }
+          },
+          "current_arguments": {
+            "8": {
+              "address": "0x21a0439",
+              "instruction": "mov dword ptr [esp + 8], 0x10",
+              "value": 16
+            }
+          },
+          "mana_marker": {
+            "native": "0x26465d0",
+            "current": "0x21a0450",
+            "instruction": "mov dword ptr [0x7904bc], 0xffffffff",
+            "tap_event_dispatch": "absent"
+          }
+        }
+      },
+      {
+        "source": "cards/the_dark.c",
+        "name": "card_deep_water",
+        "address": "0x25533e0",
+        "size": 289,
+        "body_sha256": "3eeb3555025fabede6f4512c75d10cea35551be40663d9d9c5c1eef528141a68",
+        "contract": "mana_override",
+        "proof": {
+          "calls": {
+            "native": "0x242cc86",
+            "current": "0x25534de",
+            "callee": "set_special_flags2"
+          },
+          "native_arguments": {
+            "8": {
+              "address": "0x242cc72",
+              "instruction": "mov dword ptr [esp + 8], 0x40",
+              "value": 64
+            }
+          },
+          "current_arguments": {
+            "8": {
+              "address": "0x25534ca",
+              "instruction": "mov dword ptr [esp + 8], 0x40",
+              "value": 64
+            }
+          }
+        }
+      },
+      {
+        "source": "cards/dominaria.c",
+        "name": "lichs_mastery_lifeloss_trigger",
+        "address": "0x2158d50",
+        "size": 953,
+        "body_sha256": "52586a84ab3f6795e644ebf7c6ee03b02f150272b9d1fcf25ff16e7444daad67",
+        "contract": "chooser_event",
+        "proof": {
+          "calls": {
+            "native": "0x22d0297",
+            "current": "0x2158ee7",
+            "callee": "dialog_impl"
+          },
+          "native_arguments": {
+            "8": {
+              "address": "0x22d0260",
+              "instruction": "mov dword ptr [esp + 8], 0x72",
+              "value": 114
+            }
+          },
+          "current_arguments": {
+            "8": {
+              "address": "0x2158eb0",
+              "instruction": "mov dword ptr [esp + 8], 0x72",
+              "value": 114
+            }
+          }
+        }
+      },
+      {
+        "source": "cards/mercadian_masques.c",
+        "name": "card_rishadan_port",
+        "address": "0x233f600",
+        "size": 894,
+        "body_sha256": "75ecf326a5d7c9a49a2446d05eeefbb624dd1f586da56bb085735f97c4081c61",
+        "contract": "chooser_tokens",
+        "proof": {
+          "calls": {
+            "native": "0x21797fb",
+            "current": "0x233f8ab",
+            "callee": "dialog_impl"
+          },
+          "chooser_control_tokens": {
+            "native": {
+              "tokens": [
+                2,
+                14
+              ],
+              "arguments": {
+                "12": {
+                  "address": "0x21797e4",
+                  "instruction": "mov dword ptr [esp + 0xc], 0x272f0f5",
+                  "value": 41087221
+                },
+                "16": {
+                  "address": "0x21797dc",
+                  "instruction": "mov dword ptr [esp + 0x10], 0x272f1a3",
+                  "value": 41087395
+                }
+              }
+            },
+            "current": {
+              "tokens": [
+                2,
+                14
+              ],
+              "arguments": {
+                "12": {
+                  "address": "0x233f894",
+                  "instruction": "mov dword ptr [esp + 0xc], 0x2743145",
+                  "value": 41169221
+                },
+                "16": {
+                  "address": "0x233f88c",
+                  "instruction": "mov dword ptr [esp + 0x10], 0x2743233",
+                  "value": 41169459
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "source": "cards/oath_of_the_gatewatch.c",
+        "name": "card_sea_gate_wreckage",
+        "address": "0x23e6510",
+        "size": 767,
+        "body_sha256": "5e0feb2e0023d42b0b8a77e9b7de26d437b9855a4d342dc776f9dbc414854a24",
+        "contract": "chooser_tokens",
+        "proof": {
+          "calls": {
+            "native": "0x226c691",
+            "current": "0x23e6621",
+            "callee": "dialog_impl"
+          },
+          "chooser_control_tokens": {
+            "native": {
+              "tokens": [
+                2,
+                14
+              ],
+              "arguments": {
+                "12": {
+                  "address": "0x226c67a",
+                  "instruction": "mov dword ptr [esp + 0xc], 0x2738a32",
+                  "value": 41126450
+                },
+                "16": {
+                  "address": "0x226c672",
+                  "instruction": "mov dword ptr [esp + 0x10], 0x2739351",
+                  "value": 41128785
+                }
+              }
+            },
+            "current": {
+              "tokens": [
+                2,
+                14
+              ],
+              "arguments": {
+                "12": {
+                  "address": "0x23e660a",
+                  "instruction": "mov dword ptr [esp + 0xc], 0x2748fa6",
+                  "value": 41193382
+                },
+                "16": {
+                  "address": "0x23e6602",
+                  "instruction": "mov dword ptr [esp + 0x10], 0x274988d",
+                  "value": 41195661
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "staging": "preserved",
+    "scope": "Ten changed native caller/control-flow contracts checked within fresh DWARF bounds. Full comparison intentionally deferred; the C622 report is now a historical input snapshot. No transitive gameplay-equivalence claim."
+  },
+  "build_log_sha256": "f17a1005541c2d45272a8a445172bd5900b82167f794c6772de405de9968e46f"
+}

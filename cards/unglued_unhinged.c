@@ -1147,16 +1147,13 @@ int card_duh(int player, int card, event_t event)
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
-/* ManalinkEh 2022: 0x2303230; original cards/unglued_unhinged.c:227. */
-int txtfx(int player, int card, event_t event, card_id_t marker)
+/* ManalinkEh 2022: 0x2302cb0; original cards/unglued_unhinged.c:227. */
+static int txtfx_name(int player, int card, event_t event, card_id_t marker)
 {
   unsigned int packed_text_effect;
   card_instance_t *instance;
   unsigned int stored_value;
-  if (event != EVENT_SET_LEGACY_EFFECT_NAME)
-  {
-    return txtfx_not_found;
-  }
+
   instance = get_displayed_card_instance(player, card);
   instance = get_displayed_card_instance((int)instance->damage_target_player,
                                          instance->damage_target_card);
@@ -1169,18 +1166,25 @@ int txtfx(int player, int card, event_t event, card_id_t marker)
   return stored_value;
 }
 
+/* ManalinkEh 2022: 0x2303230; original cards/unglued_unhinged.c:227. */
+int txtfx(int player, int card, event_t event, card_id_t marker)
+{
+  if (event == EVENT_SET_LEGACY_EFFECT_NAME)
+    return txtfx_name(player, card, event, marker);
+  return txtfx_not_found;
+}
+
 /* ManalinkEh 2022: 0x2303df0; original cards/unglued_unhinged.c:755. */
 int card_strategy_schmategy(int player, int card, event_t event)
 {
   int result;
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  result = basic_spell(player, card, event);
   return result;
 }
 
 /* ManalinkEh 2022: 0x2304240; original cards/unglued_unhinged.c:976. */
 int card_team_spirit(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t td;
   if (!IS_GS_EVENT(player, card, event))
@@ -1188,12 +1192,11 @@ int card_team_spirit(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   td.preferred_controller = player;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       instance = get_card_instance(player, card);
       pump_subtype_until_eot(player, card, instance->targets[0].player, -1, 1, 1, 0, 0);
@@ -1231,7 +1234,7 @@ int card_awol(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 2);
-  td.required_state = 2;
+  td.required_state = TARGET_STATE_ATTACKING;
   if (event == EVENT_RESOLVE_SPELL)
   {
     if (valid_target(&td) != 0)
@@ -1243,7 +1246,7 @@ int card_awol(int player, int card, event_t event)
         iid = get_original_internal_card_id(instance->targets[0].player,
                                               instance->targets[0].card);
         csvid = (unsigned int)cards_data[iid].id;
-        if ((csvid == 0x3eae || csvid == 0x3ef4) || (csvid == 0x3efb))
+        if ((csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || csvid == CARD_ID_CHITTERING_HOST) || (csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP))
         {
           unmeld(csvid, csvids, csvids + 1);
           kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
@@ -1297,13 +1300,13 @@ int card_uktabi_kong(int player, int card, event_t event)
     {
       target_definition_t td;
       base_target_definition(player, card, &td, 0x47);
-      td.illegal_state = 1;
+      td.illegal_state = TARGET_STATE_TAPPED;
       td.required_subtype = 5;
       td.allowed_controller = player;
       td.preferred_controller = player;
       if (event == EVENT_RESOLVE_ACTIVATION)
       {
-        default_token_definition(player, card, 0x4901, &token);
+        default_token_definition(player, card, CARD_ID_APE, &token);
         token.tou = 1;
         token.pow = 1;
         generate_token(&token);
@@ -1330,11 +1333,11 @@ static int words_in_name_by_csvid(int csvid)
 {
   if (csvid < 0 || csvid == 0x45ec)
     return 0;
-  if (csvid == 0x45a5)
+  if (csvid == CARD_ID_OUR_MARKET_RESEARCH_SHOWS_THAT_PLAYERS)
     return 25;
-  if (csvid == 0x45d5)
+  if (csvid == CARD_ID_THE_ULTIMATE_NIGHTMARE_OF_WOTC)
     return 10;
-  if (csvid == 0x45ee)
+  if (csvid == CARD_ID_RUMORS_OF_MY_DEATH)
     return 4;
   const char *name = get_card_name_by_id(csvid);
   int result = 1;
@@ -1375,7 +1378,7 @@ int card_flock_of_rabid_sheep(int player, int card, event_t event)
       } while (remaining_flips != 0);
       if (sheep_count != 0)
       {
-        default_token_definition(player, card, 0x4982, &token);
+        default_token_definition(player, card, CARD_ID_SHEEP, &token);
         token.qty = (unsigned char)sheep_count;
         token.tou = 2;
         token.pow = 2;
@@ -1423,7 +1426,7 @@ int card_double_header(int player, int card, event_t event)
   }
 
   default_target_definition(player, card, &td, 0x47);
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   td.extra = (int32_t)target_has_2_word_name;
   instance = get_card_instance(player, card);
   result = can_target(&td);
@@ -1688,7 +1691,6 @@ int has_reminder_text(int player, int card)
 /* ManalinkEh 2022: 0x2303350; original cards/unglued_unhinged.c:341. */
 int card_once_more_with_feeling(int player, int card, event_t event)
 {
-  int result;
   test_definition_t test;
 
   if (event == EVENT_CAST_SPELL)
@@ -1703,24 +1705,28 @@ int card_once_more_with_feeling(int player, int card, event_t event)
     default_test_definition(&test, 0x47);
     new_manipulate_all(player, card, 2, &test, ACT_KILL_REMOVE);
 
-    rfg_whole_graveyard(current_turn);
-    rfg_whole_graveyard(current_turn ^ 1);
+    APNAP(p, {
+      rfg_whole_graveyard(p);
+    });
 
-    reshuffle_hand_into_deck(current_turn, 1);
-    reshuffle_hand_into_deck(current_turn ^ 1, 1);
+    APNAP(p, {
+      reshuffle_hand_into_deck(p, 1);
+    });
 
-    shuffle(current_turn);
-    shuffle(current_turn ^ 1);
+    APNAP(p, {
+      shuffle(p);
+    });
 
-    draw_cards(current_turn, 7);
-    draw_cards(current_turn ^ 1, 7);
+    APNAP(p, {
+      draw_cards(p, 7);
+    });
 
-    set_life_total(current_turn, 10);
-    set_life_total(current_turn ^ 1, 10);
+    APNAP(p, {
+      set_life_total(p, 10);
+    });
     kill_card(player, card, KILL_EXILE);
   }
-  result = basic_spell(player, card, event);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -1780,7 +1786,7 @@ int card_mana_screw(int player, int card, event_t event)
 void make_txtfx(int player, int card, CardFunction fxfn, card_id_t marker, int val)
 {
   card_instance_t *instance;
-  int card_00;
+  int legacy_card;
   target_t existing_legacy;
 
   instance = get_card_instance(player, card);
@@ -1789,10 +1795,10 @@ void make_txtfx(int player, int card, CardFunction fxfn, card_id_t marker, int v
   if (existing_legacy.player < 0)
   {
 
-    card_00 = create_targetted_legacy_effect(player, card, fxfn, player, card);
-    if (-1 < card_00)
+    legacy_card = create_targetted_legacy_effect(player, card, fxfn, player, card);
+    if (-1 < legacy_card)
     {
-      instance = get_card_instance(player, card_00);
+      instance = get_card_instance(player, legacy_card);
       instance->eot_toughness = 0x100;
       return;
     }
@@ -1866,8 +1872,6 @@ char *target_has_silver_border(int who_chooses, int player, int card, int target
 /* ManalinkEh 2022: 0x23060d0; original cards/unglued_unhinged.c:2283. */
 int card_ass_whuppin(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
   target_definition_t td;
 
   if (!IS_GS_EVENT(player, card, event))
@@ -1875,16 +1879,15 @@ int card_ass_whuppin(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0x47);
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   td.extra = (int32_t)target_has_silver_border;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
 
-      instance = get_card_instance(player, card);
-      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      card_instance_t *inst = get_card_instance(player, card);
+      kill_card(inst->targets[0].player, inst->targets[0].card, KILL_DESTROY);
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -2016,7 +2019,7 @@ int card_chicken_egg(int player, int card, event_t event)
     if (result == 6)
     {
       kill_card(player, card, KILL_SACRIFICE);
-      generate_token_by_id(player, card, 0x45ed);
+      generate_token_by_id(player, card, CARD_ID_GIANT_BIRD);
     }
   }
   return 0;
@@ -2112,7 +2115,7 @@ int card_growth_spurt(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23046e0; original cards/unglued_unhinged.c:1163. */
 int card_urzas_science_fair_project(int player, int card, event_t event)
 {
-  int card_00;
+  int parent_card;
   int parent_player;
   int roll_power_or_keywords;
   card_instance_t *instance;
@@ -2125,8 +2128,8 @@ int card_urzas_science_fair_project(int player, int card, event_t event)
   roll_power_or_keywords = roll_d6t(player, player, card, -1, -1);
   instance = get_card_instance(player, card);
   parent_player = instance->parent_controller;
-  card_00 = instance->parent_card;
-  instance = in_play(parent_player, card_00);
+  parent_card = instance->parent_card;
+  instance = in_play(parent_player, parent_card);
   if (instance == NULL)
   {
     return 0;
@@ -2138,11 +2141,11 @@ int card_urzas_science_fair_project(int player, int card, event_t event)
   case 1:
     toughness_bonus = -2;
     roll_power_or_keywords = -2;
-    pump_until_eot_merge_previous_alt(player, card, parent_player, card_00, roll_power_or_keywords,
+    pump_until_eot_merge_previous_alt(player, card, parent_player, parent_card, roll_power_or_keywords,
                                       toughness_bonus, 1);
     return generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
   case 2:
-    negate_combat_damage_this_turn(player, card, parent_player, card_00, 2);
+    negate_combat_damage_this_turn(player, card, parent_player, parent_card, 2);
     return generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
   case 3:
     alternate_legacy_text_number = 3;
@@ -2162,11 +2165,11 @@ int card_urzas_science_fair_project(int player, int card, event_t event)
   case 6:
     toughness_bonus = 2;
     roll_power_or_keywords = 2;
-    pump_until_eot_merge_previous_alt(player, card, parent_player, card_00, roll_power_or_keywords,
+    pump_until_eot_merge_previous_alt(player, card, parent_player, parent_card, roll_power_or_keywords,
                                       toughness_bonus, 1);
     return generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
   }
-  pump_ability_until_eot_no_repeat_alt(player, card, parent_player, card_00, roll_power_or_keywords,
+  pump_ability_until_eot_no_repeat_alt(player, card, parent_player, parent_card, roll_power_or_keywords,
                                        toughness_bonus, alternate_legacy_text_number);
   return generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
@@ -2260,7 +2263,7 @@ int card_hungry_hungry_heifer(int player, int card, event_t event)
   base_target_definition(player, card, &td, 0x47);
   td.preferred_controller = player;
   td.allowed_controller = player;
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   td.extra = (int32_t)target_must_have_counters;
   instance = get_card_instance(player, card);
   instance->number_of_targets = '\0';
@@ -2360,11 +2363,11 @@ int card_the_fallen_apart(int player, int card, event_t event)
           sprintf(limbs, "%d arm%s, %d leg%s", arm_count, arm_plural, leg_count, leg_plural);
         }
         limb_description = limbs;
-        choice_or_result = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014",
-                                       "\001\003", "\001\011", limb_description, "Remove arm",
-                                       has_arms, ((1 < arm_count) - 1 & 0xfffffc19) + 1000,
+        choice_or_result = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE,
+                                       DLG_NO_CANCEL, DLG_HEADER(limb_description), "Remove arm",
+                                       has_arms, ((1 < arm_count) ? 1000U : 1U),
                                        "Remove leg", (unsigned int)has_legs,
-                                       ((1 < (int)leg_count) - 1 & 0xfffffc19) + 1000, 0, 0, 0, 0);
+                                       ((1 < (int)leg_count) ? 1000U : 1U), 0, 0, 0, 0);
         if (choice_or_result == 0)
         {
           if (has_arms)
@@ -2422,10 +2425,9 @@ int card_symbol_status(int player, int card, event_t event)
   int card_00;
   int any_expansion_symbols;
   int no_early_core_sets;
-  char expansions[198];
   if (event == EVENT_RESOLVE_SPELL)
   {
-    memset(expansions, 0, sizeof(expansions));
+    char expansions[198] = {0};
     get_config_data(0xffffffff, 1, &any_expansion_symbols);
     if (any_expansion_symbols != 0)
     {
@@ -2473,7 +2475,7 @@ int card_symbol_status(int player, int card, event_t event)
       } while (expansion_cursor != expansions + 198);
       if (0 < player_count_or_result)
       {
-        generate_tokens_by_id(player, card, 0x4d58, player_count_or_result);
+        generate_tokens_by_id(player, card, CARD_ID_EXPANSION_SYMBOL, player_count_or_result);
       }
     }
     kill_card(player, card, KILL_DESTROY);
@@ -2485,27 +2487,7 @@ int card_symbol_status(int player, int card, event_t event)
 #endif
 
 
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x2302cb0; original cards/unglued_unhinged.c:227. */
-static int txtfx_name(int player, int card, event_t event, card_id_t marker)
-{
-  unsigned int packed_text_effect;
-  card_instance_t *instance;
-  unsigned int stored_value;
 
-  instance = get_displayed_card_instance(player, card);
-  instance = get_displayed_card_instance((int)instance->damage_target_player,
-                                         instance->damage_target_card);
-  packed_text_effect = instance->targets[5].player;
-  stored_value = packed_text_effect & 0xffff;
-  if (packed_text_effect >> 0x10 != marker)
-  {
-    stored_value = txtfx_not_found;
-  }
-  return stored_value;
-}
-
-#endif
 
 
 #ifndef SHANDALAR
@@ -2693,7 +2675,7 @@ int card_togglodyte(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     packed_toggle = instance->targets[5].player;
-    if ((short)((unsigned int)packed_toggle >> 0x10) == 0x45d8)
+    if ((int16_t)(packed_toggle >> 16) == CARD_ID_TOGGLODYTE)
     {
       val = (unsigned int)((short)packed_toggle == 0);
     }
@@ -2710,7 +2692,7 @@ int card_togglodyte(int player, int card, event_t event)
     {
       instance = get_card_instance(player, card);
       packed_toggle = instance->targets[5].player;
-      if (((short)((unsigned int)packed_toggle >> 0x10) == 0x45d8) && ((short)packed_toggle == 0))
+      if (((int16_t)(packed_toggle >> 16) == CARD_ID_TOGGLODYTE) && ((short)packed_toggle == 0))
       {
         cannot_attack(player, card, EVENT_ABILITIES);
         cannot_block(player, card, EVENT_ABILITIES);
@@ -2725,7 +2707,7 @@ int card_togglodyte(int player, int card, event_t event)
     {
       instance = get_card_instance(player, card);
       packed_toggle = instance->targets[5].player;
-      if (((short)((unsigned int)packed_toggle >> 0x10) == 0x45d8) && ((short)packed_toggle == 0))
+      if (((int16_t)(packed_toggle >> 16) == CARD_ID_TOGGLODYTE) && ((short)packed_toggle == 0))
       {
         prevent_damage(affected_card_controller, affected_card, -1);
       }
@@ -2744,7 +2726,7 @@ int card_now_i_know_my_abcs(int player, int card, event_t event)
   int letter_count_or_result;
   int distinct_letters;
   int ai_weight;
-  if ((trigger_condition == 0xc9) && (event - EVENT_TRIGGER < 2))
+  if ((trigger_condition == TRIGGER_UPKEEP) && (event - EVENT_TRIGGER < 2))
   {
     if (((current_turn == player) &&
          (letter_count_or_result = num_letters_permanents_names_include(player),

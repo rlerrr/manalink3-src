@@ -1242,18 +1242,17 @@ int card_crow_storm(int player, int card, event_t event)
         result = get_storm_count();
         if (0 < result)
         {
-          generate_tokens_by_id(player, card, 0x48a, result);
+          generate_tokens_by_id(player, card, CARD_ID_STORM_CROW, result);
         }
       }
     }
   }
   else if (event == EVENT_RESOLVE_SPELL)
   {
-    generate_token_by_id(player, card, 0x48a);
+    generate_token_by_id(player, card, CARD_ID_STORM_CROW);
     kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -1308,7 +1307,7 @@ int card_oddly_uneven(int player, int card, event_t event)
       if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
       {
         result =
-            dialog_impl(player, card, event, "\001\002", "Odd", 1, 1, "Even", 1, 1, 0, 0, 0, 0);
+            dialog_impl(player, card, event, DLG_RANDOM, "Odd", 1, 1, "Even", 1, 1, 0, 0, 0, 0);
         if (event == EVENT_RESOLVE_SPELL)
         {
           default_test_definition(&test, 0x47);
@@ -1325,7 +1324,7 @@ int card_oddly_uneven(int player, int card, event_t event)
       }
     }
   }
-  dialog_impl(player, card, event, "\001\002", "Odd", 1, 1, "Even", 1, 1, 0, 0, 0, 0);
+  dialog_impl(player, card, event, DLG_RANDOM, "Odd", 1, 1, "Even", 1, 1, 0, 0, 0, 0);
   return basic_spell(player, card, event);
 }
 
@@ -1354,14 +1353,14 @@ int card_ineffable_blessing_a(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
 
-    selected_condition = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014",
-                                     "\001\003", "Flavorful", 1, 1, "Bland", 1, 1, 0, 0, 0, 0);
+    selected_condition = dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_RANDOM, DLG_NO_STORAGE,
+                                     DLG_NO_CANCEL, "Flavorful", 1, 1, "Bland", 1, 1, 0, 0, 0, 0);
     instance = get_card_instance(player, card);
     instance->targets[5].player = selected_condition | 0x46550000;
     result = create_targetted_legacy_effect(player, card, fx_0, player, card);
     alternate_legacy_text(selected_condition, player, result);
   }
-  else if ((trigger_condition == 0xdb) && (event - EVENT_TRIGGER < 2))
+  else if ((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (event - EVENT_TRIGGER < 2))
   {
 
     instance = get_card_instance(player, card);
@@ -1413,7 +1412,7 @@ int card_old_guard(int player, int card, event_t event)
   if (event == EVENT_ACTIVATE)
   {
     default_target_definition(player, card, &td, 2);
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_hasnt_reminder_text;
   }
   else
@@ -1423,7 +1422,7 @@ int card_old_guard(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 2);
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_hasnt_reminder_text;
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
@@ -1459,13 +1458,13 @@ int card_everythingamajig_c(int player, int card, event_t event)
   {
     own_turn = current_turn == player;
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     instance = get_card_instance(player, card);
     selected_mode =
-        dialog_impl(player, card, event, "\001\002", "\001\023", &instance->targets[5].card, "Mana",
-                    1, 1, "\001\020", 1, 0, 0, 0, 0, 0, "Discard", (unsigned int)own_turn, 1,
-                    "\001\020", 3, 0, 0, 0, 0, 0, "\001\025", "\001\024", &td, "TARGET_PLAYER",
-                    "Becomes Construct", 1, 1, "\001\020", 0xffffffff, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        dialog_impl(player, card, event, DLG_RANDOM, DLG_STORE_IN(&instance->targets[5].card), "Mana",
+                    1, 1, DLG_MANA6(1, 0, 0, 0, 0, 0), "Discard", (unsigned int)own_turn, 1,
+                    DLG_MANA6(3, 0, 0, 0, 0, 0), DLG_TAP, DLG_TARGET(&td, "TARGET_PLAYER"),
+                    "Becomes Construct", 1, 1, DLG_MANA6(0xffffffff, 0, 0, 0, 0, 0), 0, 0, 0, 0);
     if (event == EVENT_CAN_ACTIVATE)
     {
       if ((((unsigned int)land_can_be_played >> 16 & 0xff) & 4) == 0)
@@ -1560,48 +1559,25 @@ static int test_has_watermark_val(int iid, int val, int player, int card)
 /* ManalinkEh 2022: 0x25c5300; original cards/unstable.c:274. */
 int card_knight_of_the_widget(int player, int card, event_t event)
 {
-  int widget_permanents;
-  card_instance_t *instance;
-  unsigned int iid;
-  watermark_t watermark;
-  int permanent;
-  int card_00;
-
   vigilance(player, card, event);
-  if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
-       (affected_card_controller == player)) &&
-      (player != -1))
+  if (event - EVENT_POWER < 2 && affect_me(player, card) && player != -1 &&
+      !is_humiliated(player, card, AL_STATIC))
   {
-    if (is_humiliated(player, card, AL_STATIC) == 0)
+    int widgets = 0;
+    for (int c = 0; c < active_cards_count[player]; ++c)
     {
-
-      widget_permanents = 0;
-      if (0 < active_cards_count[player])
+      card_instance_t *instance = in_play(player, c);
+      if (instance)
       {
-        card_00 = 0;
-        do
-        {
-          instance = in_play(player, card_00);
-          if (instance != NULL)
-          {
-            iid = instance->internal_card_id;
-
-            if ((int)iid < 0)
-            {
-              iid = (unsigned int)instance->backup_internal_card_id;
-            }
-            watermark = get_watermark_by_iid(iid);
-            if (watermark == WMARK_ORDER_OF_THE_WIDGET)
-            {
-              permanent = is_what(player, card_00, 0x47);
-              widget_permanents = (widget_permanents + 1) - (unsigned int)(permanent == 0);
-            }
-          }
-          card_00 = card_00 + 1;
-        } while (card_00 < active_cards_count[player]);
+        int iid = instance->internal_card_id;
+        if (iid < 0)
+          iid = instance->backup_internal_card_id;
+        if (get_watermark_by_iid(iid) == WMARK_ORDER_OF_THE_WIDGET &&
+            is_what(player, c, TYPE_LAND | TYPE_CREATURE | TYPE_ENCHANTMENT | TYPE_ARTIFACT))
+          ++widgets;
       }
-      set_characteristic_pt(widget_permanents);
     }
+    set_characteristic_pt(widgets);
   }
   return 0;
 }
@@ -1627,19 +1603,11 @@ char *target_has_black_border(int who_chooses, int player, int card, int targeti
 /* ManalinkEh 2022: 0x25c4a60; original cards/unstable.c:756. */
 static int test_has_any_watermark(int iid, int val, int player, int card)
 {
-  card_instance_t *instance;
-  unsigned int iid_00;
-  watermark_t watermark;
-
-  instance = get_card_instance(player, card);
-  iid_00 = instance->internal_card_id;
-
-  if ((int)iid_00 < 0)
-  {
-    iid_00 = (unsigned int)instance->backup_internal_card_id;
-  }
-  watermark = get_watermark_by_iid(iid_00);
-  return (unsigned int)(watermark != WMARK_NONE);
+  card_instance_t *instance = get_card_instance(player, card);
+  int current_iid = instance->internal_card_id;
+  if (current_iid < 0)
+    current_iid = instance->backup_internal_card_id;
+  return get_watermark_by_iid(current_iid) != WMARK_NONE;
 }
 
 /* ManalinkEh 2022: 0x25c4aa0; original cards/unstable.c:1067. */
@@ -1647,15 +1615,15 @@ static char *target_has_league_watermark(int who_chooses, int player, int card,
                                          int targeting_player, int targeting_card)
 {
   card_instance_t *instance;
-  unsigned int iid;
+  int iid;
   watermark_t watermark;
 
   instance = get_card_instance(player, card);
   iid = instance->internal_card_id;
 
-  if ((int)iid < 0)
+  if (iid < 0)
   {
-    iid = (unsigned int)instance->backup_internal_card_id;
+    iid = instance->backup_internal_card_id;
   }
   watermark = get_watermark_by_iid(iid);
   if (watermark != WMARK_LEAGUE_OF_DASTARDLY_DOOM)
@@ -1678,7 +1646,7 @@ int card_rumors_of_my_death(int player, int card, event_t event)
     base_target_definition(player, card, &td, 0x47);
     td.preferred_controller = player;
     td.allowed_controller = player;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_has_league_watermark;
     new_default_test_definition(
         &test, 0x47, "Select target permanent card with a League of Dastardly Doom watermark.");
@@ -1734,7 +1702,7 @@ int card_rumors_of_my_death(int player, int card, event_t event)
     base_target_definition(player, card, &td, 0x47);
     td.preferred_controller = player;
     td.allowed_controller = player;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_has_league_watermark;
     new_default_test_definition(
         &test, 0x47, "Select target permanent card with a League of Dastardly Doom watermark.");
@@ -1762,7 +1730,7 @@ int card_hammer_boomtacular(int player, int card, event_t event)
   card_instance_t *instance;
 
 
-  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_SPELL_CAST) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     test_definition_t test;
@@ -1776,7 +1744,7 @@ int card_hammer_boomtacular(int player, int card, event_t event)
     target_definition_t td;
 
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 4608;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     td.allow_cancel = 0;
     instance = get_card_instance(player, card);
     result = can_target(&td);
@@ -1846,14 +1814,14 @@ int card_ineffable_blessing_c(int player, int card, event_t event)
   {
 
     selected_condition =
-        dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014", "\001\003",
+        dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
                     "White-bordered", 1, 1, "Silver-bordered", 1, 1, 0, 0, 0, 0);
     instance = get_card_instance(player, card);
     instance->targets[5].player = selected_condition | 0x46570000;
     result = create_targetted_legacy_effect(player, card, fx_0, player, card);
     alternate_legacy_text(selected_condition, player, result);
   }
-  else if ((trigger_condition == 0xdb) && (event - EVENT_TRIGGER < 2))
+  else if ((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (event - EVENT_TRIGGER < 2))
   {
 
     instance = get_card_instance(player, card);
@@ -1887,14 +1855,14 @@ int card_ineffable_blessing_d(int player, int card, event_t event)
   {
 
     selected_condition =
-        dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014", "\001\003", "Common",
+        dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, "Common",
                     1, 1, "Uncommon", 1, 1, "Rare", 1, 1, "Mythic Rare", 1, 1, 0, 0, 0, 0);
     instance = get_card_instance(player, card);
     instance->targets[5].player = selected_condition | 0x46580000;
     result = create_targetted_legacy_effect(player, card, fx_0, player, card);
     alternate_legacy_text(selected_condition, player, result);
   }
-  else if ((trigger_condition == 0xdb) && (event - EVENT_TRIGGER < 2))
+  else if ((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (event - EVENT_TRIGGER < 2))
   {
 
     instance = get_card_instance(player, card);
@@ -1934,10 +1902,10 @@ int card_everythingamajig_b(int player, int card, event_t event)
   {
     hand_count_or_mode = hand_count[player];
     hand_count_or_mode = dialog_impl(
-        player, card, event, "\001\002", "Draw", (unsigned int)(hand_count_or_mode < 1), 1,
-        "\001\020", 2, 0, 0, 0, 0, 0, "\001\025", "Gain life", 1, 1, "\001\020", 8, 0, 0, 0, 0, 0,
-        "\001\025", "Hand to battlefield", can_sacrifice_this_as_cost(player, card), 1, "\001\020",
-        4, 0, 0, 0, 0, 0, "\001\025", 0, 0, 0, 0);
+        player, card, event, DLG_RANDOM, "Draw", (unsigned int)(hand_count_or_mode < 1), 1,
+        DLG_MANA6(2, 0, 0, 0, 0, 0), DLG_TAP, "Gain life", 1, 1, DLG_MANA6(8, 0, 0, 0, 0, 0),
+        DLG_TAP, "Hand to battlefield", can_sacrifice_this_as_cost(player, card), 1, DLG_MANA6(
+        4, 0, 0, 0, 0, 0), DLG_TAP, 0, 0, 0, 0);
     if (event == EVENT_CAN_ACTIVATE)
     {
       ability_available = can_use_activated_abilities(player, card);
@@ -2011,7 +1979,7 @@ int card_ineffable_blessing_f(int player, int card, event_t event)
     }
     make_txtfx(player, card, fx_ineffable_blessing_f, CARD_ID_INEFFABLE_BLESSING_F, result);
   }
-  else if ((trigger_condition == 0xdb) && (event - EVENT_TRIGGER < 2))
+  else if ((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (event - EVENT_TRIGGER < 2))
   {
 
     instance = get_card_instance(player, card);
@@ -2150,7 +2118,6 @@ static int fx_stamp_of_approval(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c8e10; original cards/unstable.c:2423. */
 int card_stamp_of_approval(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   unsigned int iid;
   watermark_t encoded_or_actual_watermark;
@@ -2168,11 +2135,9 @@ int card_stamp_of_approval(int player, int card, event_t event)
   }
   else if ((event - EVENT_POWER < 2) && (affected_card_controller == player))
   {
-    result = is_what(player, affected_card, 2);
-    if (result != 0)
+    if (is_what(player, affected_card, 2))
     {
-      result = is_humiliated(player, card, AL_STATIC);
-      if (result == 0)
+      if (!is_humiliated(player, card, AL_STATIC))
       {
 
         instance = get_card_instance(player, card);
@@ -2285,7 +2250,7 @@ int card_go_to_jail(int player, int card, event_t event)
     }
     instance->number_of_targets = '\0';
   }
-  else if ((trigger_condition == 0xc9) && (event - EVENT_TRIGGER < 2))
+  else if ((trigger_condition == TRIGGER_UPKEEP) && (event - EVENT_TRIGGER < 2))
   {
     result = owner_of_obliviated_card(player, card);
     upkeep_trigger_ability(player, card, event, result);
@@ -2299,15 +2264,12 @@ int card_go_to_jail(int player, int card, event_t event)
       kill_card(player, card, KILL_SACRIFICE);
     }
   }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25c57c0; original cards/unstable.c:541. */
 int card_time_out(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
   target_definition_t td;
 
   if (!IS_GS_EVENT(player, card, event))
@@ -2317,15 +2279,14 @@ int card_time_out(int player, int card, event_t event)
   default_target_definition(player, card, &td, 2);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
 
-      instance = get_card_instance(player, card);
-      result = roll_d6t(player, player, card, instance->targets[0].player,
-                        instance->targets[0].card);
+      card_instance_t *inst = get_card_instance(player, card);
+      int x = roll_d6t(player, player, card, inst->targets[0].player,
+                        inst->targets[0].card);
       put_permanent_under_the_first_x_card_of_its_owners_library(
-          instance->targets[0].player, instance->targets[0].card, result);
+          inst->targets[0].player, inst->targets[0].card, x);
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -2335,90 +2296,52 @@ int card_time_out(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c69d0; original cards/unstable.c:1005. */
 int card_inhumaniac(int player, int card, event_t event)
 {
-  int result;
-
   upkeep_trigger_ability(player, card, event, player);
-  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    return 0;
-  }
-
-  result = roll_d6t(player, player, card, -1, -1);
-  if (result - 3U < 2)
-  {
-    result = 1;
-  }
-  else
-  {
-    if (result < 5)
+    int r = roll_d6t(player, player, card, -1, -1);
+    if (r - 3U < 2)
+      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
+    else if (r < 5)
     {
-      if (result != 1)
-      {
-        return 0;
-      }
-      remove_all_counters(player, card, player, card, COUNTER_P1_P1);
-      return 0;
+      if (r == 1)
+        remove_all_counters(player, card, player, card, COUNTER_P1_P1);
     }
-    result = 2;
+    else
+      add_counters(player, card, player, card, COUNTER_P1_P1, 2);
   }
-  add_counters(player, card, player, card, COUNTER_P1_P1, result);
   return 0;
 }
 
 /* ManalinkEh 2022: 0x25c7090; original cards/unstable.c:1204. */
 int card_sly_spy_f(int player, int card, event_t event)
 {
-  int hits;
-  card_instance_t *instance;
-  int amount;
-  int i;
-  unsigned int packed_damage_or_player;
-  unsigned int player_pass;
-  int times_damaged[2];
-
-  if (damage_dealt_by_me(player, card, event,
-                         DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
-                             DDBM_MUST_BE_COMBAT_DAMAGE) == 0)
-  {
+  if (!damage_dealt_by_me(player, card, event,
+                           DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
+                               DDBM_MUST_BE_COMBAT_DAMAGE))
     return 0;
-  }
-
-  instance = get_card_instance(player, card);
-
-  player_pass = 0;
-  packed_damage_or_player = instance->targets[1].player;
-  instance->targets[1].player = 0;
-  times_damaged[0] = packed_damage_or_player & 0xff;
-  times_damaged[1] = packed_damage_or_player >> 8 & 0xff;
-  do
-  {
-    packed_damage_or_player = player_pass ^ current_turn;
-
-    hits = times_damaged[packed_damage_or_player];
-    if (0 < hits)
+  card_instance_t *inst = get_card_instance(player, card);
+  unsigned int packed_damage = inst->targets[1].player;
+  inst->targets[1].player = 0;
+  int times_damaged[2] = { packed_damage & 0xff, (packed_damage >> 8) & 0xff };
+  APNAP(p, {
+    int hits = times_damaged[p];
+    for (int i = 0; i < hits; ++i)
     {
-      i = 0;
-      do
-      {
-        amount = roll_d6t(player, player, card, packed_damage_or_player, -1);
-        i = i + 1;
-        lose_life(packed_damage_or_player, amount);
-      } while (i != hits);
+      int amount = roll_d6t(player, player, card, p, -1);
+      lose_life(p, amount);
     }
-    player_pass = player_pass + 1;
-  } while (player_pass != 2);
+  });
   return 0;
 }
 
 /* ManalinkEh 2022: 0x25c73a0; original cards/unstable.c:1263. */
 int card_squirrel_powered_scheme(int player, int card, event_t event)
 {
-  int result;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_STATIC))
     {
       add_to_die_rolls[player] = add_to_die_rolls[player] + 2;
       return 0;
@@ -2435,7 +2358,7 @@ int card_box_of_free_range_goblins(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     result = roll_d6t(player, player, card, -1, -1);
-    generate_tokens_by_id(player, card, 0x493a, result);
+    generate_tokens_by_id(player, card, CARD_ID_GOBLIN, result);
     kill_card(player, card, KILL_DESTROY);
   }
   result = basic_spell(player, card, event);
@@ -2480,27 +2403,18 @@ int card_garbage_elemental_d(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c7630; original cards/unstable.c:1422. */
 int card_hammer_helper(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  target_definition_t td;
-
   if (!IS_GS_EVENT(player, card, event))
-  {
     return 0;
-  }
-  default_target_definition(player, card, &td, 2);
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
-
-      instance = get_card_instance(player, card);
-      result = roll_d6t(player, player, card, instance->targets[0].player,
-                        instance->targets[0].card);
+      card_instance_t *inst = get_card_instance(player, card);
+      int x = roll_d6t(player, player, card, inst->targets[0].player, inst->targets[0].card);
       effect_act_of_treason_and_modify_pt_or_abilities(
-          player, card, instance->targets[0].player, instance->targets[0].card, result, 0, 0,
-          0);
+          player, card, inst->targets[0].player, inst->targets[0].card, x, 0, 0, 0);
     }
     kill_card(player, card, KILL_DESTROY);
     return 0;
@@ -2600,7 +2514,7 @@ int card_garbage_elemental_c(int player, int card, event_t event)
     return 0;
   }
   howmany = roll_2d6t_difference(player, player, card, -1, -1);
-  generate_tokens_by_id(player, card, 0x493a, howmany);
+  generate_tokens_by_id(player, card, CARD_ID_GOBLIN, howmany);
   return 0;
 }
 
@@ -2698,7 +2612,7 @@ int card_very_cryptic_command_b(int player, int card, event_t event)
   td_permanent.preferred_controller = player;
   available_or_target_index = target_available(player, card, &td_permanent);
   default_target_definition(player, card, &td_player, 0);
-  td_player.zone = 0x1000;
+  td_player.zone = TARGET_ZONE_PLAYERS;
   next_index_or_valid = can_target(&td_player);
   new_default_test_definition(&test_instant_sorcery, 0x38,
                               "Select target instant or sorcery card.");
@@ -2710,7 +2624,7 @@ int card_very_cryptic_command_b(int player, int card, event_t event)
     raise_available = (unsigned int)(grave_available == 0);
   }
   choices[0] =
-      dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002", "Untap",
+      dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM, "Untap",
                   (unsigned int)(1 < available_or_target_index), 1, "Tap", next_index_or_valid, 1,
                   "Discard, draw", 1, 1, "Graveyard to hand", raise_available, 1, 0, 0, 0, 0);
   if (event == EVENT_CAN_CAST)
@@ -2902,20 +2816,20 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     counterspell_target_definition(player, card, &td_spell, 0);
-    td_spell.special = 0x8000;
+    td_spell.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td_spell.extra = (int32_t)target_has_black_border;
     counter_available_or_target_index = counterspell(player, card, EVENT_CAN_CAST, &td_spell, -1);
     default_target_definition(player, card, &td_creature, 2);
     creature_available_or_target_player = can_target(&td_creature);
     default_target_definition(player, card, &td_player, 0);
-    td_player.zone = 0x1000;
+    td_player.zone = TARGET_ZONE_PLAYERS;
     player_available_or_mill_count = can_target(&td_player);
-    if (dialog_impl(player, card, EVENT_CAN_CAST, "\001\005", choices + 1, "\001\015", "\001\002",
+    if (dialog_impl(player, card, EVENT_CAN_CAST, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM,
                     "Counter spell", counter_available_or_target_index, 1, "Creature to hand",
                     creature_available_or_target_player, 1, "Untap permanents", 1, 1, "Mill",
                     player_available_or_mill_count, 1, 0, 0, 0, 0) != 0)
     {
-      return (-(unsigned int)(counter_available_or_target_index == 0) & 0xffffff9e) + 99;
+      return ((counter_available_or_target_index == 0) ? 1U : 99U);
     }
   }
   else if (event == EVENT_CAST_SPELL)
@@ -2923,16 +2837,16 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
       counterspell_target_definition(player, card, &td_spell, 0);
-      td_spell.special = 0x8000;
+      td_spell.special = TARGET_SPECIAL_EXTRA_FUNCTION;
       td_spell.extra = (int32_t)target_has_black_border;
       counter_available_or_target_index = counterspell(player, card, EVENT_CAN_CAST, &td_spell, -1);
       default_target_definition(player, card, &td_creature, 2);
       creature_available_or_target_player = can_target(&td_creature);
       default_target_definition(player, card, &td_player, 0);
-      td_player.zone = 0x1000;
+      td_player.zone = TARGET_ZONE_PLAYERS;
       player_available_or_mill_count = can_target(&td_player);
-      choices[0] = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\005", choices + 1, "\001\015",
-                               "\001\002", "Counter spell", counter_available_or_target_index, 1,
+      choices[0] = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS,
+                               DLG_RANDOM, "Counter spell", counter_available_or_target_index, 1,
                                "Creature to hand", creature_available_or_target_player, 1,
                                "Untap permanents", 1, 1, "Mill", player_available_or_mill_count, 1,
                                0, 0, 0, 0);
@@ -2983,16 +2897,16 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
            (event == EVENT_CHANGE_TARGET))
   {
     counterspell_target_definition(player, card, &td_spell, 0);
-    td_spell.special = 0x8000;
+    td_spell.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td_spell.extra = (int32_t)target_has_black_border;
     counter_available_or_target_index = counterspell(player, card, EVENT_CAN_CAST, &td_spell, -1);
     default_target_definition(player, card, &td_creature, 2);
     creature_available_or_target_player = can_target(&td_creature);
     default_target_definition(player, card, &td_player, 0);
-    td_player.zone = 0x1000;
+    td_player.zone = TARGET_ZONE_PLAYERS;
     player_available_or_mill_count = can_target(&td_player);
     choices[0] =
-        dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
+        dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM,
                     "Counter spell", counter_available_or_target_index, 1, "Creature to hand",
                     creature_available_or_target_player, 1, "Untap permanents", 1, 1, "Mill",
                     player_available_or_mill_count, 1, 0, 0, 0, 0);
@@ -3175,29 +3089,22 @@ int card_sly_spy_a(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c4e40; original cards/unstable.c:48. */
 static char choose_a_consonant_not_nrst(int player, int src_player, int src_card)
 {
-  char letter;
-  int result;
   char *choices[17] = {"B", "C", "D", "F", "G", "H", "J", "K", "L",
                        "M", "P", "Q", "V", "W", "X", "Y", "Z"};
-  char buf[300];
-
-  if ((ai_is_speculating != 1) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+  int num_choices = 17;
+  if (ai_is_speculating != 1 && (player != 1 || ((unsigned char)trace_mode & 2)))
   {
-    result = do_dialog_lots_of_choices(player, src_player, src_card, choices, 0x11);
-    return *choices[result];
+    int choice = do_dialog_lots_of_choices(player, src_player, src_card, choices, num_choices);
+    return *choices[choice];
   }
-  result = recorded_rand(player, 0x11);
-  if (ai_is_speculating == 1)
+  int choice = recorded_rand(player, num_choices);
+  if (ai_is_speculating != 1)
   {
-    letter = *choices[result];
-  }
-  else
-  {
-    sprintf(buf, " %s\n", choices[result]);
+    char buf[300];
+    sprintf(buf, " %s\n", choices[choice]);
     do_dialog(player, src_player, src_card, -1, -1, buf, 0);
-    letter = *choices[result];
   }
-  return letter;
+  return *choices[choice];
 }
 
 #endif
@@ -3309,39 +3216,22 @@ int card_staff_of_the_letter_magus(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c6880; original cards/unstable.c:939. */
 int card_capital_offense(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  const char *rules_cursor;
-  char current_char;
-  target_definition_t td;
-  char rules[3000];
   if (event != EVENT_RESOLVE_SPELL)
+    return vanilla_instant_pump(player, card, event, ANYBODY, 1-player, -1, -1, 0, 0);
+
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  if (valid_target(&td))
   {
-    return vanilla_instant_pump(player, card, event, 2, 1 - player, -1, -1, 0, 0);
-  }
-  default_target_definition(player, card, &td, 2);
-  result = valid_target(&td);
-  if (result != 0)
-  {
-    instance = get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
+    char rules[3000];
     get_rules_text(rules, instance->targets[0].player, instance->targets[0].card, 1);
-    current_char = rules[0];
-    if (current_char != '\0')
-    {
-      result = 0;
-      rules_cursor = rules;
-      do
-      {
-        result = result + (unsigned int)((unsigned char)(current_char + 0xbfU) < 0x1a);
-        rules_cursor = rules_cursor + 1;
-        current_char = *rules_cursor;
-      } while (current_char != '\0');
-      if (0 < result)
-      {
-        pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
-                       -result, -result);
-      }
-    }
+    int capitals = 0;
+    for (const char *cursor = rules; *cursor; ++cursor)
+      capitals += (unsigned char)(*cursor - 'A') < 26;
+    if (capitals > 0)
+      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                     -capitals, -capitals);
   }
   kill_card(player, card, KILL_DESTROY);
   return 0;
@@ -3354,40 +3244,19 @@ int card_capital_offense(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c6aa0; original cards/unstable.c:1038. */
 int card_old_fashioned_vampire(int player, int card, event_t event)
 {
-  bool nighttime;
-  unsigned int packed_time;
-  int result;
-  unsigned int hour;
   if (event - EVENT_POWER < 3)
   {
-    packed_time = localtime_hour_minute();
-    hour = packed_time >> 0x10;
-    if (hour == 5)
+    unsigned int hm = localtime_hour_minute();
+    unsigned int hour = hm >> 16;
+    unsigned int minute = hm & 0xffff;
+    bool nighttime = hour == 5 ? minute < 30
+        : hour == 18 ? minute > 29 : hour - 5U > 13U;
+    if (nighttime && !is_humiliated(player, card, AL_STATIC))
     {
-      nighttime = (packed_time & 0xffff) < 0x1e;
-    }
-    else if (hour == 0x12)
-    {
-      nighttime = 0x1d < (packed_time & 0xffff);
-    }
-    else
-    {
-      nighttime = 0xd < hour - 5;
-    }
-    if (nighttime)
-    {
-      result = is_humiliated(player, card, AL_STATIC);
-      if (result == 0)
-      {
-        if (event == EVENT_ABILITIES)
-        {
-          deathtouch(player, card, EVENT_ABILITIES);
-        }
-        else
-        {
-          event_result = event_result + 2;
-        }
-      }
+      if (event == EVENT_ABILITIES)
+        deathtouch(player, card, EVENT_ABILITIES);
+      else
+        event_result += 2;
     }
   }
   return 0;
@@ -3402,32 +3271,25 @@ int card_hot_fix(int player, int card, event_t event)
 {
   if (event != EVENT_RESOLVE_SPELL)
     return basic_spell(player, card, event);
-  int32_t started;
-  uint32_t needs_shuffle;
+  int32_t started = 0;
+  bool offline_ai_rearranged = false;
   if (ai_is_speculating == 1)
-  {
-    started = 0;
-    goto rearrange;
-  }
-  if (player == 1 && (trace_mode & 2) == 0)
+    rearrange_top_x(player, player, 500);
+  else if (player == 1 && (trace_mode & 2) == 0)
   {
     rearrange_top_x(1, 1, 500);
-    started = 0;
-    if (ai_is_speculating != 1)
-      goto check_ai_clock;
-    if ((trace_mode & 2) != 0)
-      goto receive_result;
-    goto finish;
+    offline_ai_rearranged = true;
   }
-  started = time_in_ms();
-rearrange:
-  rearrange_top_x(player, player, 500);
-  if (ai_is_speculating == 1)
-    needs_shuffle = started < -10000;
   else
   {
-  check_ai_clock:
-    if (player == 1 && (trace_mode & 2) == 0)
+    started = time_in_ms();
+    rearrange_top_x(player, player, 500);
+  }
+  int speculating_after_rearrange = ai_is_speculating;
+  uint32_t needs_shuffle = 0;
+  if (!offline_ai_rearranged || speculating_after_rearrange != 1)
+  {
+    if (speculating_after_rearrange == 1 || (player == 1 && (trace_mode & 2) == 0))
       needs_shuffle = started < -10000;
     else
     {
@@ -3438,21 +3300,21 @@ rearrange:
   if ((trace_mode & 2) != 0)
   {
     if (player == 1)
-      goto receive_result;
-    EXE_DWORD(0x78fee8) = needs_shuffle;
-    EXE_BYTE(0x78fee4) = 28;
-    EXE_FN(int, 0x4a6bc0, int, int)(0, 28);
+    {
+      EXE_FN(int, 0x4a70c0, int, int)(1, 28);
+      needs_shuffle = EXE_DWORD(0x78fee8);
+    }
+    else
+    {
+      EXE_DWORD(0x78fee8) = needs_shuffle;
+      EXE_BYTE(0x78fee4) = 28;
+      EXE_FN(int, 0x4a6bc0, int, int)(0, 28);
+    }
   }
-check_shuffle:
-  if (needs_shuffle != 0)
+  if (needs_shuffle)
     shuffle(player);
-finish:
   kill_card(player, card, KILL_DESTROY);
   return basic_spell(player, card, event);
-receive_result:
-  EXE_FN(int, 0x4a70c0, int, int)(1, 28);
-  needs_shuffle = EXE_DWORD(0x78fee8);
-  goto check_shuffle;
 }
 
 #endif

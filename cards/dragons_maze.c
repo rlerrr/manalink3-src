@@ -1048,7 +1048,7 @@ int card_renegade_krasis(int player, int card, event_t event)
   int own_stat;
   test_definition_t test;
 
-  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if ((((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (trigger_cause_controller == player))
   {
@@ -1932,9 +1932,18 @@ int card_legions_initiative(int player, int card, event_t event)
     {
       if (marked[i])
       {
-        int id = get_id(player, i);
-        int melded = id == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || id == CARD_ID_CHITTERING_HOST ||
-                     id == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP;
+        int csvid = get_id(player, i);
+        int melded = csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES;
+        if (!melded)
+        {
+          csvid = get_id(player, i);
+          melded = csvid == CARD_ID_CHITTERING_HOST;
+        }
+        if (!melded)
+        {
+          csvid = get_id(player, i);
+          melded = csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP;
+        }
         if (legacy == -1)
           legacy = create_legacy_effect(player, card, legions_initiative_legacy);
         int pos;
@@ -1951,7 +1960,7 @@ int card_legions_initiative(int player, int card, event_t event)
         if (melded)
         {
           int csvida, csvidb;
-          unmeld(id, &csvida, &csvidb);
+          unmeld(csvid, &csvida, &csvidb);
           leg->targets[pos].card = get_internal_card_id_from_csv_id(csvida);
           leg->targets[removed_count].card = get_internal_card_id_from_csv_id(csvidb);
           leg->targets[removed_count].player = get_owner(player, i);
@@ -2872,27 +2881,17 @@ int card_vorel_of_the_hull_clade(int player, int card, event_t event)
   target_definition_t td;
 
   check_legend_rule(player, card, event);
-  if (event == EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  default_target_definition(player, card, &td, 0x43);
+  td.preferred_controller = player;
+  instance = get_card_instance(player, card);
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
-    default_target_definition(player, card, &td, 0x43);
-    td.preferred_controller = player;
-    get_card_instance(player, card);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 0x43);
-    td.preferred_controller = player;
-    instance = get_card_instance(player, card);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-    {
-      result = instance->targets[0].card;
-      t_player = instance->targets[0].player;
-      copy_counters(player, card, t_player, result, t_player, result, 0);
-    }
+    result = instance->targets[0].card;
+    t_player = instance->targets[0].player;
+    copy_counters(player, card, t_player, result, t_player, result, 0);
   }
   result = generic_activated_ability(player, card, event, 5, 0, 0, 1, 1, 0, 0, 0, &td, "TWIDDLE");
   return result;
@@ -2991,7 +2990,7 @@ int card_alive_well(int player, int card, event_t event)
         half_flags = instance->info_slot;
         if ((half_flags & 1) != 0)
         {
-          default_token_definition(player, card, 0x4914, &token);
+          default_token_definition(player, card, CARD_ID_CENTAUR, &token);
           token.pow = 3;
           token.tou = 3;
           token.color_forced = '\b';
@@ -3149,7 +3148,7 @@ int card_beck_call(int player, int card, event_t event)
       }
       if ((half_flags & 2) != 0)
       {
-        generate_tokens_by_id(player, card, 0x4908, 4);
+        generate_tokens_by_id(player, card, CARD_ID_BIRD, 4);
       }
       kill_card(player, card, KILL_DESTROY);
     }
@@ -3177,7 +3176,7 @@ int card_breaking_entering(int player, int card, event_t event)
   {
     target_definition_t td2;
     default_target_definition(player, card, &td2, 2);
-    td2.zone = 0x1000;
+    td2.zone = TARGET_ZONE_PLAYERS;
     return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4ad5, can_target(&td2), 0,
                                 0x4af5, 1, 0);
   }
@@ -3185,7 +3184,7 @@ int card_breaking_entering(int player, int card, event_t event)
   {
     target_definition_t td3;
     default_target_definition(player, card, &td3, 2);
-    td3.zone = 0x1000;
+    td3.zone = TARGET_ZONE_PLAYERS;
     if (new_pick_target(&td3, "Select target player for Breaking.", 0, 0x81) == 0)
     {
       instance->number_of_targets = '\0';
@@ -3197,7 +3196,7 @@ int card_breaking_entering(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 2);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   if (event == EVENT_RESOLVE_SPELL)
   {
     half_flags = instance->info_slot;
@@ -3342,7 +3341,7 @@ int card_down_dirty(int player, int card, event_t event)
   {
     target_definition_t td;
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     grave_count_or_selection = count_graveyard(player);
     dirty_available = 0;
     if (grave_count_or_selection != 0)
@@ -3357,7 +3356,7 @@ int card_down_dirty(int player, int card, event_t event)
   {
     target_definition_t td2;
     default_target_definition(player, card, &td2, 0);
-    td2.zone = 0x1000;
+    td2.zone = TARGET_ZONE_PLAYERS;
     if (new_pick_target(&td2, "Select target player for Down.", -1, 0x81) == 0)
     {
       instance->number_of_targets = '\0';
@@ -3385,7 +3384,7 @@ int card_down_dirty(int player, int card, event_t event)
       event != EVENT_CHANGE_TARGET)
     return 0;
   default_target_definition(player, card, &td3, 2);
-  td3.zone = 0x1000;
+  td3.zone = TARGET_ZONE_PLAYERS;
   grave_count_or_selection = count_graveyard(player);
   opponent = 1 - player;
   dirty_available = 0;
@@ -3438,7 +3437,7 @@ int card_far_away(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 2);
     default_target_definition(player, card, &td2, 2);
-    td2.zone = 0x1000;
+    td2.zone = TARGET_ZONE_PLAYERS;
     away_available = can_target(&td2);
     return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4afa, can_target(&td), 0, 0x4ace,
                                 away_available, 0);
@@ -3455,7 +3454,7 @@ int card_far_away(int player, int card, event_t event)
   if (event == EVENT_PLAY_SECOND_HALF)
   {
     default_target_definition(player, card, &td2, 2);
-    td2.zone = 0x1000;
+    td2.zone = TARGET_ZONE_PLAYERS;
     if (new_pick_target(&td2, "Select target player for Away.", -1, 0x81) != 0)
     {
       return 0;
@@ -3474,7 +3473,7 @@ int card_far_away(int player, int card, event_t event)
 
   default_target_definition(player, card, &td, 2);
   default_target_definition(player, card, &td2, 2);
-  td2.zone = 0x1000;
+  td2.zone = TARGET_ZONE_PLAYERS;
   if (event == EVENT_RESOLVE_SPELL)
   {
     half_flags = instance->info_slot;
@@ -3530,7 +3529,7 @@ int card_flesh_blood(int player, int card, event_t event)
     td2 = td;
     td2.allowed_controller = player;
     default_target_definition(player, card, &td3, 0x102);
-    td3.zone = 0x1200;
+    td3.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     source_card_or_result = count_graveyard_by_type(2, 2);
     if ((source_card_or_result == 0) ||
         (source_card_or_result = graveyard_has_shroud(2), source_card_or_result != 0))
@@ -3578,7 +3577,7 @@ int card_flesh_blood(int player, int card, event_t event)
     td2.preferred_controller = player;
     td2.allowed_controller = player;
     default_target_definition(player, card, &td4, 0x102);
-    td4.zone = 0x1200;
+    td4.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     source_card_or_result = 0;
     if ((instance->info_slot & 1U) != 0)
     {
@@ -3607,7 +3606,7 @@ int card_flesh_blood(int player, int card, event_t event)
   td2 = td;
   td2.allowed_controller = player;
   default_target_definition(player, card, &td5, 0x102);
-  td5.zone = 0x1200;
+  td5.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   source_card_or_result = count_graveyard_by_type(2, 2);
   if ((source_card_or_result == 0) ||
       (source_card_or_result = graveyard_has_shroud(2), source_card_or_result != 0))
@@ -3685,7 +3684,7 @@ int card_give_take(int player, int card, event_t event)
     td2.allowed_controller = player;
     if (player == 1)
     {
-      td2.special = 0x40000;
+      td2.special = TARGET_SPECIAL_REQUIRES_COUNTER;
       td2.extra = 0x200;
     }
     take_available_or_counters = can_target(&td2);
@@ -3709,7 +3708,7 @@ int card_give_take(int player, int card, event_t event)
     td2.allowed_controller = player;
     if (player == 1)
     {
-      td2.special = 0x40000;
+      td2.special = TARGET_SPECIAL_REQUIRES_COUNTER;
       td2.extra = 0x200;
     }
     if (new_pick_target(&td2, "Select target creature for Take.", -1, 0x81) != 0)
@@ -3731,7 +3730,7 @@ int card_give_take(int player, int card, event_t event)
   td2.allowed_controller = player;
   if (player == 1)
   {
-    td2.special = 0x40000;
+    td2.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td2.extra = 0x200;
   }
   give_target_definition = &td;
@@ -3970,9 +3969,9 @@ int card_toil_trouble(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 0);
     td.preferred_controller = player;
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     default_target_definition(player, card, &td2, 0);
-    td2.zone = 0x1000;
+    td2.zone = TARGET_ZONE_PLAYERS;
     trouble_priority_or_player = can_target(&td2);
     return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b3e, can_target(&td), 0, 0x4b40,
                                 trouble_priority_or_player, 0);
@@ -3980,7 +3979,7 @@ int card_toil_trouble(int player, int card, event_t event)
   if (event == EVENT_PLAY_FIRST_HALF)
   {
     default_target_definition(player, card, &td2, 0);
-    td2.zone = 0x1000;
+    td2.zone = TARGET_ZONE_PLAYERS;
     td2.preferred_controller = player;
     if (new_pick_target(&td2, "Select target player for Toil.", -1, 0x81) == 0)
     {
@@ -3991,7 +3990,7 @@ int card_toil_trouble(int player, int card, event_t event)
   if (event == EVENT_PLAY_SECOND_HALF)
   {
     default_target_definition(player, card, &td2, 0);
-    td2.zone = 0x1000;
+    td2.zone = TARGET_ZONE_PLAYERS;
     if (new_pick_target(&td2, "Select target player for Trouble.", -1, 0x81) != 0)
     {
       return 0;
@@ -4005,10 +4004,10 @@ int card_toil_trouble(int player, int card, event_t event)
       event != EVENT_CHANGE_TARGET)
     return 0;
   default_target_definition(player, card, &td, 0);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   td.preferred_controller = player;
   default_target_definition(player, card, &td2, 0);
-  td2.zone = 0x1000;
+  td2.zone = TARGET_ZONE_PLAYERS;
   trouble_priority_or_player = 5;
   toil_priority = hand_count[player] * -3 + 0x15 + life[player];
   if (event == EVENT_RESOLVE_SPELL)
@@ -4069,7 +4068,7 @@ int card_turn_burn(int player, int card, event_t event)
     target_definition_t td3;
     default_target_definition(player, card, &td2, 2);
     default_target_definition(player, card, &td3, 0x102);
-    td3.zone = 0x1200;
+    td3.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     burn_available = can_target(&td3);
     return split_card_with_fuse(player, card, EVENT_MODIFY_COST, 0x4b42, can_target(&td2), 0,
                                 0x4ad6, burn_available, 0);
@@ -4088,7 +4087,7 @@ int card_turn_burn(int player, int card, event_t event)
   {
     target_definition_t td5;
     default_target_definition(player, card, &td5, 0x102);
-    td5.zone = 0x1200;
+    td5.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     if (new_pick_target(&td5, "Select target creature, player, or planeswalker for Burn.", -1,
                         0x81) != 0)
     {
@@ -4108,7 +4107,7 @@ int card_turn_burn(int player, int card, event_t event)
 
   default_target_definition(player, card, &td, 2);
   default_target_definition(player, card, &td2, 0x102);
-  td2.zone = 0x1200;
+  td2.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   if (event == EVENT_RESOLVE_SPELL)
   {
     half_flags_or_target_count = instance->info_slot;
@@ -4542,13 +4541,13 @@ int notion_thief_effect(int player, int card, event_t event);
 /* ManalinkEh 2022: 0x2297700; original cards/dragons_maze.c:2176. */
 int notion_thief_effect(int player, int card, event_t event)
 {
-  CardFunction draw_count_bits;
+  int32_t draw_count;
   card_instance_t *instance;
   int result;
 
   instance = in_play(player, card);
   if (((((instance != NULL) &&
-         (result = is_humiliated(player, card, AL_STATIC), trigger_condition == 0xcf)) &&
+         (result = is_humiliated(player, card, AL_STATIC), trigger_condition == TRIGGER_REPLACE_CARD_DRAW)) &&
         (card == affected_card)) &&
        ((player == affected_card_controller && (reason_for_trigger_controller != player)))) &&
       (result == 0 && suppress_draw == 0))
@@ -4563,8 +4562,8 @@ int notion_thief_effect(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       if ((current_phase == 10) &&
-          (draw_count_bits = instance->info_slot_fn,
-           instance->info_slot = (int32_t)(draw_count_bits + 1), (int)(draw_count_bits + 1) < 2))
+          (draw_count = (uint32_t)instance->info_slot + 1u,
+           instance->info_slot = draw_count, draw_count < 2))
       {
         return 0;
       }

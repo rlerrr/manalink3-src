@@ -1,0 +1,216 @@
+{
+  "format": 1,
+  "status": "Six existing caller definitions clarified/restored; build, 15,169 fixed slots, source projections, native shared-helper boundaries and 517 native/rebuilt chooser-dispatch cases pass.",
+  "functions": [
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_implement_of_improvement",
+      "before_sha256": "c1e9973ce10392e78992d28625a979ae63a959ca01dfcc41c7dc3e1666e71de0",
+      "after_sha256": "4948c3d1faa941a107312c3467c874fc03433646e3c274003ee97d9cdf0f5b81",
+      "before_lines": 23,
+      "after_lines": 11,
+      "native_range": {
+        "address": "0x20c3050",
+        "size": 194,
+        "sha256": "0b139f167a8415218ed4ce73fa0f4fb30a204577ee70ca3133771a9829b5e7ee"
+      },
+      "before_rebuilt_range": {
+        "address": "0x2019840",
+        "size": 224,
+        "sha256": "63d4894038a33c38f17af99ead1d7111f8236b71cead1a149c3498b7dd3acf1e"
+      },
+      "after_rebuilt_range": {
+        "address": "0x2019850",
+        "size": 208,
+        "sha256": "806dac683d7f2cbf5835e2f2fe9c1abeea9351c3a5cd4ec079049199a514a308"
+      }
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_inspiring_statuary",
+      "before_sha256": "6900e07d01c25c8487768d576d50cbfa6deac27225314da54c631cc826cc608e",
+      "after_sha256": "5833564f30e9053453aacbdfbe6af2a69f861921f299e14fbe93f6a1bdd6b50a",
+      "before_lines": 36,
+      "after_lines": 20,
+      "native_range": {
+        "address": "0x20c3ac0",
+        "size": 303,
+        "sha256": "735e02b18d2e06a419c2cac46a8b1eeb5bb618c96baa0c9e3ae38e159d4a6bb5"
+      },
+      "before_rebuilt_range": {
+        "address": "0x2025820",
+        "size": 304,
+        "sha256": "2c11219ac34833e3564758a206a05696272b4a4d279bc76629c372e7715fd76a"
+      },
+      "after_rebuilt_range": {
+        "address": "0x2025820",
+        "size": 304,
+        "sha256": "02a3e466d4ee7216e4394bb9a13302fce559bc0e936dcbefbc9d6d56948224d3"
+      }
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_spring_mind",
+      "before_sha256": "c820de415f9e426ec2aa914d12aca115b22d8545f764388d0c2d0d24d0a52f01",
+      "after_sha256": "de5c520e74728495b36c5cf99646cc96197e0a12ec27c563002ac4e8b43f5413",
+      "before_lines": 39,
+      "after_lines": 23,
+      "native_range": {
+        "address": "0x22e5590",
+        "size": 413,
+        "sha256": "2e50a3c57c8abd62084ba982e23c222a135dc4cbd0bc174900653eeb1e84e4c7"
+      },
+      "before_rebuilt_range": {
+        "address": "0x2048b50",
+        "size": 448,
+        "sha256": "1ebc3c9006ccb961c9fc6ec53bb0d158cad0a0cd84c6916046a2382e3ace6894"
+      },
+      "after_rebuilt_range": {
+        "address": "0x2048b50",
+        "size": 416,
+        "sha256": "c96cf1d2c24ec0e8da6454fab561ae7339e438aef5b1e6a796956283f32536a4"
+      }
+    },
+    {
+      "source": "cards/commander.c",
+      "name": "card_trench_gorger",
+      "before_sha256": "6df96072877e11040f4654449484166b70e36c57770b0a99f195c0e4494e1eee",
+      "after_sha256": "32f4131d08cfa407b3c3e96c2b99a44af98addefd045043188e82d99767a45a0",
+      "before_lines": 26,
+      "after_lines": 23,
+      "native_range": {
+        "address": "0x23e5220",
+        "size": 276,
+        "sha256": "35b18009c2451c686701b59304c13cab7822abc8326c6f34f1f16efd96079eb8"
+      },
+      "before_rebuilt_range": {
+        "address": "0x20d2bc0",
+        "size": 272,
+        "sha256": "5e9b12754c6ad0b7c7a1f6a8ccb6285c4b568e113c8b51f5d6f802b2263f3085"
+      },
+      "after_rebuilt_range": {
+        "address": "0x20d2ba0",
+        "size": 272,
+        "sha256": "12ae6317944a2766395a41422e569512d48ea041aa88ec7064ae8a24bda6284c"
+      }
+    },
+    {
+      "source": "cards/odissey.c",
+      "name": "card_petrified_field",
+      "before_sha256": "58e413fc1160eb89a1e79496455f6dd0f0f7ccd470323daa1ebca194770d764d",
+      "after_sha256": "5c77ace2171f4de3827756f89baf47461f173359b1e6b2d39f5d24fa704cb1c9",
+      "before_lines": 46,
+      "after_lines": 42,
+      "native_range": {
+        "address": "0x250f990",
+        "size": 735,
+        "sha256": "cb8fd071e7acfe34eb5c6a1fb0ba816ea03ad982aad2b2f0b1063ec4a7f7f610"
+      },
+      "before_rebuilt_range": {
+        "address": "0x23f39d0",
+        "size": 720,
+        "sha256": "4850cf370a3433f85c5e9be60a2ff7325b0a4cd4a77b9fd81e3cad88479bd27d"
+      },
+      "after_rebuilt_range": {
+        "address": "0x23f39b0",
+        "size": 752,
+        "sha256": "a222daf5efe67b30092ccd259916330aaf632433bd73e37e5b36b0f32bbf02c2"
+      }
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "card_herald_of_anafenza",
+      "before_sha256": "04a0eb2a7314dd847a85832ef66bf2599acd59bef954edc2d822fdcbd498efa4",
+      "after_sha256": "9b214dbee247f292d906d7f914d9a01a48a9851f3bb047a2d11fde8c0b5bf55e",
+      "before_lines": 24,
+      "after_lines": 17,
+      "native_range": {
+        "address": "0x219a5d0",
+        "size": 277,
+        "sha256": "d1acbc0c7ba93d5556421cae1cc77cee579a1151ed44112650de8e4fdfff5475"
+      },
+      "before_rebuilt_range": {
+        "address": "0x22ac780",
+        "size": 256,
+        "sha256": "b3ede9c768e7d251c3063363afb474301f4d098c72d6a1e6018f8e721612d4ca"
+      },
+      "after_rebuilt_range": {
+        "address": "0x22ac760",
+        "size": 256,
+        "sha256": "c992f70389730792afa864f7f473ac0a1c3846bee24261a5e7c686d7ac77b9c7"
+      }
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/aether_revolt.c",
+      "before_bytes_sha256": "1290ca238efa0b96d51c30dc85f7770bff3b9bc14ccc704c859a2acf62ea36c8",
+      "after_bytes_sha256": "e8d363aa99fc9d39d3d957e6a76bba15cf55ba53ffd06bb915d87c8bfebb7673",
+      "before_sha256": "9de803ba392275847946ef7051bc175c8155b25ec629ce1c19405354c178a4e5",
+      "after_sha256": "91c95a36b0839d4ed4e5b9a5b63c21d6d67c3cdfdffca2bd8807f964bb9ff0f8"
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "before_bytes_sha256": "b3cde177b871c16ca00e27f444cccbfdcff9236dfdf03a7d4b076c61af060018",
+      "after_bytes_sha256": "7059d0bbaa3ba9768f93e832dfa393f62d8057a38478722ed647ed94684b161e",
+      "before_sha256": "47cbeded480415516197b4182a62e2b3be5634c894332c8506765220b6d8447a",
+      "after_sha256": "7173d65983daf9fe8e22782a81e7af82de082032629e9fa72696bd1b79e6731e"
+    },
+    {
+      "source": "cards/commander.c",
+      "before_bytes_sha256": "0899beee4085605ffac63bc7c03c73d5a74f1fa5ff4153529e615b5b71f1e9e9",
+      "after_bytes_sha256": "52aba5ff7edf48029afe9c518a2c819d98ad887cfb9dd12c93f8e90bc0d2fb2b",
+      "before_sha256": "a9635e1b8109f30c987338bfa8b65031d31f53d2c2cae902a7130ab3534cea8d",
+      "after_sha256": "fccffe415ff5371c216546f0cab9deda7943f7f75d1881b76fba290f342c13c6"
+    },
+    {
+      "source": "cards/odissey.c",
+      "before_bytes_sha256": "c5c1cc930648d3208b6f124d0116058f85f7cd9bc478db522c318172b0641e49",
+      "after_bytes_sha256": "d0d53aa5af77ea002e0d0dbccdec11723a18bc280bbb30d3b2f6c8568fcac8ca",
+      "before_sha256": "c4ffd1b0bb25a08ccd408321dc9598d45a18b45dc8d453f4427b3898c2166d1b",
+      "after_sha256": "fc01053404eaa6a52fb77d14582526026b9d6acf83f41a78b8594ef9a9d430c0"
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "before_bytes_sha256": "2984db8e3ac1d15d7d5b9d9c9658df4be8b7e099afe55db9e23a5bdf78867530",
+      "after_bytes_sha256": "289dcaa27f893ea20b8e3723c9d57a361caed01c30f9be2f31f3c0b39d8729e3",
+      "before_sha256": "6d0bd91965a96719dad3f9cfa9d819ac8c9540907d3b58d13a1d58ed358e68ea",
+      "after_sha256": "7cf19652b7721c19a7f356becac3f77d5a50bc2f26f70ef6f8741d822201a312"
+    }
+  ],
+  "before_dll_sha256": "663cfc469afe8fa0661c6619bfead97ab6758b300e255869f10a1efa0d99d72c",
+  "before_debug_sha256": "7418dc34119ecee56fb3157fdb68323c2878b4cb3a3c2c10e20f03e9ee2d72de",
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "discovery_report_sha256": "36b2ac06a260ba9372ef17c636105cc84fede7e70951e50ca6aafb9f7e94232d",
+  "notes": [
+    "Petrified Field: native result 0 sets fizzle; 1 produces mana; 2 returns the graveyard activation helper result; every other result returns zero without calling mana_producer.",
+    "Implement of Improvement returns the existing aer_implement helper outside the four native activation/cleanup events; do not call it additionally on those events.",
+    "Spring // Mind restores basic_spell on EVENT_CAN_CAST and retains both get_aftermath calls and the shared aftermath fallback.",
+    "Inspiring Statuary keeps casting_card captured after is_token and before check_special_flags3; named event arguments denote the already-tested event.",
+    "Trench Gorger retains its native four-land AI limit and zero-land effect creation; mode 8 names RESET_SUBTYPES_AT_END, not an assumed until-EOT duration.",
+    "Herald of Anafenza retains its native outlast cost and white 1/1 Warrior token fields."
+  ],
+  "scope": "Six existing definitions, not new handlers. The explicit invalid-choice guard is a native fidelity correction; practical impact depends on dialog_impl returns. Other edits restore helper boundaries/readability; no whole-handler gameplay equivalence claim.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "54942d5171b69aab2118e766e11bdfef7cab0b52f4c4246605c3589eb8907e04",
+    "debug_sha256": "2c95c7ddfb250857f98a6cf5229a00ab84d610f20d1529f3cadc7c37c46f80f6",
+    "build_log_sha256": "049d6245b460b5f63a2f514459a583dfa88d3b8d2c94183b233bf7164e293e25",
+    "full_file_projections": 5,
+    "raw_file_projections": 5,
+    "chooser_dispatch": {
+      "cases": 517,
+      "mismatches": 0,
+      "model": "Bounded interpretation of decoded instructions from the dialog return to the next external helper or return; full-width EAX equality guards against 0/1/2 only. Check helper destination and cancellation write, not callee behavior or final return values.",
+      "receipt_sha256": "0e4d638387b28e493b2d375aab8504507e3c50a729824935129f7d5d294e7328"
+    },
+    "native_basic_spell_boundaries": 2,
+    "native_aer_implement_boundary": 1,
+    "checker_sha256": "fa26519f2d796bfab6094eabd76205b547959968f82e2dd09dcaad3a713e699c",
+    "staging": "preserved",
+    "comparison": "No second full reccmp or historical replay. Earlier JSON remains a discovery snapshot. Source projections verify only these six definitions changed within the five input files."
+  }
+}

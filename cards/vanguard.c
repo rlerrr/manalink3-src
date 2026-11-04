@@ -1259,7 +1259,7 @@ int card_avatar_heartwood_storyteller(int player, int card, event_t event){
 int card_avatar_mirri_the_cursed(int player, int card, event_t event)
 {
   card_instance_t *parent;
-  int player_00;
+  int target_player;
   card_instance_t *instance;
   card_instance_t *damaged_creature;
   int result;
@@ -1270,7 +1270,7 @@ int card_avatar_mirri_the_cursed(int player, int card, event_t event)
   default_target_definition(player, card, &td, 2);
   td.allowed_controller = player;
   td.preferred_controller = player;
-  td.illegal_state = 1;
+  td.illegal_state = TARGET_STATE_TAPPED;
   td.illegal_abilities = 0;
   default_target_definition(player, card, &td1, 2);
   td1.allow_cancel = 0;
@@ -1299,10 +1299,10 @@ int card_avatar_mirri_the_cursed(int player, int card, event_t event)
     if (spell_fizzled != 1)
     {
       result = instance->targets[0].card;
-      player_00 = instance->targets[0].player;
+      target_player = instance->targets[0].player;
       instance->targets[1].card = result;
-      instance->targets[1].player = player_00;
-      damaged_creature = get_card_instance(player_00, result);
+      instance->targets[1].player = target_player;
+      damaged_creature = get_card_instance(target_player, result);
       instance->card_color = damaged_creature->card_color;
       damaged_creature->state = damaged_creature->state | 0x100000;
       result = target_available(player, card, &td1);
@@ -1613,7 +1613,7 @@ static int edh_special_case(int internal_card_id)
   if (cards_data[internal_card_id].cc[2] != '\x03')
   {
     result = is_what(-1, internal_card_id, 1);
-    if ((result == 0) || (cards_data[internal_card_id].id == 0x22d4))
+    if ((result == 0) || (cards_data[internal_card_id].id == CARD_ID_DRYAD_ARBOR))
     {
       result = is_what(-1, internal_card_id, 0x40);
       if (result == 0)
@@ -1628,36 +1628,34 @@ static int edh_special_case(int internal_card_id)
 
 static int is_legal_general(int iid)
 {
-  uint16_t csvid;
-  int result;
-  csvid = cards_data[iid].id;
-  if (((((((((((((((csvid != 0x389a && csvid != 0x3873) && csvid != 0x387e) && csvid != 0x1f6f) &&
-                 csvid != 0x1f7d) &&
-                csvid != 0x1f8b) &&
-               csvid != 0x48c2) &&
-              csvid != 0x48dd) &&
-             csvid != 0x4a84) &&
-            csvid != 0x4a93) &&
-           csvid != 0x4a9d) &&
-          csvid != 0x4aaf) &&
-         csvid != 0x567e) &&
-        csvid != 0x56c4) &&
-       (csvid & 0xfffd) != 0x388c) &&
-      ((csvid & 0xfffb) != 0x1fe0))
+  switch (cards_data[iid].id)
   {
-    result = is_legendary(-1, iid);
-    if (result == 0)
-    {
+  case CARD_ID_DUNE_BROOD_NEPHILIM:
+  case CARD_ID_GLINT_EYE_NEPHILIM:
+  case CARD_ID_INK_TREADER_NEPHILIM:
+  case CARD_ID_WITCH_MAW_NEPHILIM:
+  case CARD_ID_YORE_TILLER_NEPHILIM:
+  case CARD_ID_DARETTI_SCRAP_SAVANT:
+  case CARD_ID_FREYALISE_LLANOWARS_FURY:
+  case CARD_ID_NAHIRI_THE_LITHOMANCER:
+  case CARD_ID_OB_NIXILIS_OF_THE_BLACK_OATH:
+  case CARD_ID_TEFERI_TEMPORAL_ARCHMAGE:
+  case CARD_ID_ROWAN_KENRITH:
+  case CARD_ID_WILL_KENRITH:
+  case CARD_ID_AMINATOU_THE_FATESHIFTER:
+  case CARD_ID_ESTRID_THE_MASKED:
+  case CARD_ID_LORD_WINDGRACE:
+  case CARD_ID_SAHEELI_THE_GIFTED:
+  case CARD_ID_JESKA_THRICE_REBORN:
+  case CARD_ID_TEVESH_SZAT_DOOM_OF_FOOLS:
+    return 1;
+  default:
+    if (!is_legendary(-1, iid))
       return 0;
-    }
-    result = is_what(-1, iid, 2);
-    if (result == 0)
-    {
-      result = has_subtype_by_id(-1, (unsigned int)cards_data[iid].id, SUBTYPE_GOD);
-      return (unsigned int)(result != 0);
-    }
+    if (is_what(-1, iid, TYPE_CREATURE))
+      return 1;
+    return has_subtype_by_id(-1, cards_data[iid].id, SUBTYPE_GOD) != 0;
   }
-  return 1;
 }
 
 int general_has_partner(int csvid)
@@ -1788,7 +1786,7 @@ static int legacy_edh_general(int player, int card, event_t event)
           }
           if (commander_slot_or_iid == 2)
           {
-            *(uint8_t *)((int)&edh_record->targets[3].player + 1) = 4;
+            SET_BYTE1(edh_record->targets[3].player) = 4;
           }
         }
       }
@@ -1849,7 +1847,7 @@ static int legacy_edh_general(int player, int card, event_t event)
     }
     if (commander_slot_or_iid == 2)
     {
-      *(uint8_t *)((int)&edh_record->targets[3].player + 1) = command_zone_state;
+      SET_BYTE1(edh_record->targets[3].player) = command_zone_state;
     }
     kill_card(player, card, KILL_EXILE);
   }
@@ -1876,14 +1874,14 @@ int commander_enters_the_battlefield(int edh_player, int edh_card, int commander
   }
   else if (commander_code == 2)
   {
-    *(uint8_t *)((int)&instance->targets[3].player + 1) = 2;
+    SET_BYTE1(instance->targets[3].player) = 2;
     instance->targets[4].card = commander_card;
   }
   set_special_flags2(commander_player, commander_card, 0x1000000);
   return card;
 }
 
-int can_play_commander(int player, int card, event_t event, int commander_code)
+static int can_play_commander(int player, int card, event_t event, int commander_code)
 {
   card_ptr_t *tasigur_cost;
   uint16_t commander_csvid;
@@ -1917,7 +1915,7 @@ int can_play_commander(int player, int card, event_t event, int commander_code)
           ((available_or_temporary_card = count_counters(player, card, COUNTER_VORTEX),
             available_or_temporary_card < 1 ||
                 ((instance->targets[3].player == 1 &&
-                  (available_or_temporary_card = check_rfg(player, 0x352e),
+                  (available_or_temporary_card = check_rfg(player, CARD_ID_DEREVI_EMPYRIAL_TACTICIAN),
                    available_or_temporary_card != 0))))))
       {
         return 2;
@@ -1927,7 +1925,7 @@ int can_play_commander(int player, int card, event_t event, int commander_code)
     if (commander_csvid == 0x392e)
     {
       available_or_grave_size = general_in_rfg_comm_zone(player, card, commander_code);
-      tasigur_cost = cards_ptr[0x392e];
+      tasigur_cost = cards_ptr[CARD_ID_TASIGUR_THE_GOLDEN_FANG];
       if (available_or_grave_size == 0)
       {
         return 0;
@@ -1971,8 +1969,8 @@ int can_play_commander(int player, int card, event_t event, int commander_code)
           return 0;
         }
         base_target_definition(player, card, &td, 2);
-        td.required_state = 2;
-        td.illegal_state = 8;
+        td.required_state = TARGET_STATE_ATTACKING;
+        td.illegal_state = TARGET_STATE_ISBLOCKED;
         td.allowed_controller = player;
         td.preferred_controller = player;
         if (((current_phase == 0x18) &&
@@ -2040,7 +2038,7 @@ int card_edh(int player, int card, event_t event)
   bool yuriko_available;
   card_instance_t *instance;
   card_instance_t *scanned_or_damage_instance;
-  int player_00;
+  int opponent;
   int first_commander_or_result;
   card_instance_t *other_edh_record;
   int choice_iid_or_result;
@@ -2174,7 +2172,7 @@ int card_edh(int player, int card, event_t event)
       second_commander_iid = -1;
     if (player == 0)
     {
-      if ((csvid == 0x56c6) || (csvid_00 == 0x56c6))
+      if ((csvid == CARD_ID_THE_PRISMATIC_PIPER) || (csvid_00 == 0x56c6))
       {
         csvid_colors_or_available = color_to_color_test(choose_a_color(0, 1));
         color_identity = color_identity | csvid_colors_or_available;
@@ -2460,7 +2458,7 @@ int card_edh(int player, int card, event_t event)
     second_commander_prompt = msg2;
 
     choice = dialog_impl(
-        player, card, EVENT_ACTIVATE, "\001\002", "\001\004", "\001\016", first_commander_prompt,
+        player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_OMIT_ILLEGAL, DLG_AUTOCHOOSE_IF_1, first_commander_prompt,
         (unsigned int)(first_commander_or_result == 99 || first_commander_or_result == 1), 1,
         second_commander_prompt, csvid_colors_or_available, 1, "Put Derevi into play",
         error_count_or_derevi_available, 5, "Put Yuriko into play", (unsigned int)yuriko_available,
@@ -2489,8 +2487,8 @@ int card_edh(int player, int card, event_t event)
       base_target_definition(player, card, &td, 2);
       td.allowed_controller = player;
       td.preferred_controller = player;
-      td.required_state = 2;
-      td.illegal_state = 8;
+      td.required_state = TARGET_STATE_ATTACKING;
+      td.illegal_state = TARGET_STATE_ISBLOCKED;
       td.illegal_abilities = 0;
 
       choice_iid_or_result = can_target(&td);
@@ -2608,7 +2606,7 @@ int card_edh(int player, int card, event_t event)
     {
       *(uint8_t *)&parent->targets[3].player = 4;
 
-      choice_iid_or_result = add_card_to_hand(player, get_internal_card_id_from_csv_id(0x352e));
+      choice_iid_or_result = add_card_to_hand(player, get_internal_card_id_from_csv_id(CARD_ID_DEREVI_EMPYRIAL_TACTICIAN));
 
       set_special_flags2(player, choice_iid_or_result, 0x1000000);
 
@@ -2618,7 +2616,7 @@ int card_edh(int player, int card, event_t event)
     {
       *(uint8_t *)&parent->targets[3].player = 4;
 
-      choice_iid_or_result = add_card_to_hand(player, get_internal_card_id_from_csv_id(0x4abe));
+      choice_iid_or_result = add_card_to_hand(player, get_internal_card_id_from_csv_id(CARD_ID_YURIKO_THE_TIGERS_SHADOW));
 
       set_special_flags2(player, choice_iid_or_result, 0x1000000);
 
@@ -2632,7 +2630,7 @@ int card_edh(int player, int card, event_t event)
       if (choice_iid_or_result == CHOICE_PLAY_COM2)
       {
         selected_commander_csvid = cards_data[instance->targets[2].card].id;
-        *(uint8_t *)((int)&parent->targets[3].player + 1) = 4;
+        SET_BYTE1(parent->targets[3].player) = 4;
       }
       else
       {
@@ -2666,7 +2664,7 @@ int card_edh(int player, int card, event_t event)
         }
       }
     }
-    if ((-1 < iid_count_or_result) && (*(char *)((int)&instance->targets[3].player + 1) == '\x04'))
+    if ((-1 < iid_count_or_result) && ((char)SET_BYTE1(instance->targets[3].player) == '\x04'))
     {
 
       choice_iid_or_result = is_token(affected_card_controller, affected_card);
@@ -2690,16 +2688,16 @@ int card_edh(int player, int card, event_t event)
   {
     choice_iid_or_result = instance->targets[4].player;
     iid_count_or_result = instance->targets[4].card;
-    player_00 = 1 - player;
+    opponent = 1 - player;
 
-    other_edh_record = get_card_instance(player_00, locate_edh_card(player_00));
+    other_edh_record = get_card_instance(opponent, locate_edh_card(opponent));
     first_commander_or_result = other_edh_record->targets[4].player;
     second_commander_or_result = other_edh_record->targets[4].card;
     if (((-1 < choice_iid_or_result) &&
          (scanned_or_damage_instance->damage_source_card == choice_iid_or_result)) &&
         ((scanned_or_damage_instance->damage_source_player == player &&
           ((scanned_or_damage_instance->damage_target_card == -1 &&
-            (player_00 == scanned_or_damage_instance->damage_target_player))))))
+            (opponent == scanned_or_damage_instance->damage_target_player))))))
     {
 
       choice_iid_or_result = damage_is_to_planeswalker(scanned_or_damage_instance);
@@ -2713,7 +2711,7 @@ int card_edh(int player, int card, event_t event)
         if (0x14 < choice_iid_or_result)
         {
 
-          lose_the_game(player_00);
+          lose_the_game(opponent);
         }
       }
     }
@@ -2721,7 +2719,7 @@ int card_edh(int player, int card, event_t event)
           (scanned_or_damage_instance->damage_source_card == iid_count_or_result)) &&
          (scanned_or_damage_instance->damage_source_player == player)) &&
         ((scanned_or_damage_instance->damage_target_card == -1 &&
-          (player_00 == scanned_or_damage_instance->damage_target_player))))
+          (opponent == scanned_or_damage_instance->damage_target_player))))
     {
 
       choice_iid_or_result = damage_is_to_planeswalker(scanned_or_damage_instance);
@@ -2735,7 +2733,7 @@ int card_edh(int player, int card, event_t event)
         if (0x14 < choice_iid_or_result)
         {
 
-          lose_the_game(player_00);
+          lose_the_game(opponent);
         }
       }
     }
@@ -2743,7 +2741,7 @@ int card_edh(int player, int card, event_t event)
          (scanned_or_damage_instance->damage_source_card == first_commander_or_result)) &&
         ((scanned_or_damage_instance->damage_source_player == player &&
           ((scanned_or_damage_instance->damage_target_card == -1 &&
-            (player_00 == scanned_or_damage_instance->damage_target_player))))))
+            (opponent == scanned_or_damage_instance->damage_target_player))))))
     {
 
       choice_iid_or_result = damage_is_to_planeswalker(scanned_or_damage_instance);
@@ -2757,7 +2755,7 @@ int card_edh(int player, int card, event_t event)
         if (0x14 < choice_iid_or_result)
         {
 
-          lose_the_game(player_00);
+          lose_the_game(opponent);
         }
       }
     }
@@ -2765,7 +2763,7 @@ int card_edh(int player, int card, event_t event)
           (scanned_or_damage_instance->damage_source_card == second_commander_or_result)) &&
          (scanned_or_damage_instance->damage_source_player == player)) &&
         ((scanned_or_damage_instance->damage_target_card == -1 &&
-          (player_00 == scanned_or_damage_instance->damage_target_player))))
+          (opponent == scanned_or_damage_instance->damage_target_player))))
     {
 
       choice_iid_or_result = damage_is_to_planeswalker(scanned_or_damage_instance);
@@ -2779,12 +2777,12 @@ int card_edh(int player, int card, event_t event)
         if (0x14 < choice_iid_or_result)
         {
 
-          lose_the_game(player_00);
+          lose_the_game(opponent);
         }
       }
     }
   }
-  if (trigger_condition == 0xc9 && card == affected_card && player == affected_card_controller &&
+  if (trigger_condition == TRIGGER_UPKEEP && card == affected_card && player == affected_card_controller &&
       reason_for_trigger_controller == player)
   {
     int second_iid = instance->targets[2].card;
@@ -2858,7 +2856,7 @@ int card_edh(int player, int card, event_t event)
       }
     }
   }
-  if (trigger_condition == 0xdb && card == affected_card && player == affected_card_controller &&
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY && card == affected_card && player == affected_card_controller &&
       reason_for_trigger_controller == player)
   {
     int second_iid = instance->targets[2].card;
@@ -2912,7 +2910,7 @@ int card_edh(int player, int card, event_t event)
       }
     }
   }
-  if (trigger_condition == 0xd3 && card == affected_card && player == affected_card_controller &&
+  if (trigger_condition == TRIGGER_SPELL_CAST && card == affected_card && player == affected_card_controller &&
       reason_for_trigger_controller == player)
   {
     int second_iid = instance->targets[2].card;
@@ -2946,7 +2944,7 @@ int card_edh(int player, int card, event_t event)
         if (choice_iid_or_result != 0)
         {
           token_generation_t token;
-          default_token_definition(player, card, 0x49a0, &token);
+          default_token_definition(player, card, CARD_ID_VAMPIRE, &token);
           token.tou = 1;
           token.pow = 1;
           generate_token(&token);
@@ -2986,7 +2984,7 @@ int card_edh(int player, int card, event_t event)
         td.required_subtype = 0x1f;
         td.allowed_controller = player;
         td.preferred_controller = player;
-        td.special = 0x4000;
+        td.special = TARGET_SPECIAL_NOT_ME;
         instance->number_of_targets = 0;
         choice_iid_or_result = can_target(&td);
         if (choice_iid_or_result != 0)
@@ -3026,7 +3024,7 @@ int card_edh(int player, int card, event_t event)
       if (scanned_or_damage_instance == NULL)
       {
         instance->targets[4].card = -1;
-        *(uint8_t *)((int)&instance->targets[3].player + 1) = 4;
+        SET_BYTE1(instance->targets[3].player) = 4;
       }
     }
   }
@@ -3691,7 +3689,7 @@ static int general_in_rfg_comm_zone(int player, int card, int commander_code)
     instance = get_card_instance(player, card);
     if (instance->targets[3].card != -1)
     {
-      return (unsigned int)(*(char *)((int)&instance->targets[3].player + 1) == '\x01');
+      return (unsigned int)((char)SET_BYTE1(instance->targets[3].player) == '\x01');
     }
   }
   return 0;
@@ -3705,8 +3703,8 @@ static int prismatic_piper_check(int player, int card, int card_color, int to_co
   unsigned int identity_color_count;
 
   instance = get_card_instance(player, card);
-  if ((player == 1) && ((cards_data[instance->targets[2].player].id == 0x56c6 ||
-                         (cards_data[instance->targets[2].card].id == 0x56c6))))
+  if ((player == 1) && ((cards_data[instance->targets[2].player].id == CARD_ID_THE_PRISMATIC_PIPER ||
+                         (cards_data[instance->targets[2].card].id == CARD_ID_THE_PRISMATIC_PIPER))))
   {
     color_count_or_mask = num_bits_set(card_color);
     identity_color_count = num_bits_set(to_compare);
@@ -3724,23 +3722,9 @@ static int prismatic_piper_check(int player, int card, int card_color, int to_co
 /* ManalinkEh 2022: 0x22c64f0; original cards/vanguard.c:1803. */
 int locate_edh_card(int player)
 {
-  card_instance_t *instance;
-  int result;
-  int card;
-
-  if (0 < active_cards_count[player])
-  {
-    card = 0;
-    do
-    {
-      instance = in_play(player, card);
-      if ((instance != NULL) && (result = get_id(player, card), result == 0x3953))
-      {
-        return card;
-      }
-      card = card + 1;
-    } while (card < active_cards_count[player]);
-  }
+  for (int i = 0; i < active_cards_count[player]; ++i)
+    if (in_play(player, i) && get_id(player, i) == CARD_ID_ELDER_DRAGON_HIGHLANDER)
+      return i;
   return -1;
 }
 
@@ -3754,15 +3738,10 @@ void put_commander_in_the_command_zone_from_play(int player, int card);
 /* ManalinkEh 2022: 0x22c6940; original cards/vanguard.c:1813. */
 int get_commander_storm_count(int player)
 {
-  int result;
-
-  result = locate_edh_card(player);
-  if (result == -1)
-  {
+  int edh_card = locate_edh_card(player);
+  if (edh_card == -1)
     return 0;
-  }
-  result = count_counters(player, result, COUNTER_VORTEX);
-  return result / 2;
+  return count_counters(player, edh_card, COUNTER_VORTEX) / 2;
 }
 
 /* ManalinkEh 2022: 0x22c6590; original cards/vanguard.c:1830. */
@@ -3817,9 +3796,9 @@ static int put_commander_from_command_zone_to_impl(int player, int where, int wh
         choice_or_priority = 10;
       }
       choice_or_priority = dialog_impl(
-          player, edh_or_added_card, EVENT_CAST_SPELL, "\001\014", "\001\004", "\001\016",
-          "\001\003", buffer1, (packed_state_or_iid ^ 0xffffffffU) >> 0x1f, choice_or_priority,
-          buffer2, (id ^ 0xffffffffU) >> 0x1f, (second_cmc <= first_cmc) - 1 & 10, 0, 0, 0, 0);
+          player, edh_or_added_card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL, DLG_AUTOCHOOSE_IF_1,
+          DLG_NO_CANCEL, buffer1, (packed_state_or_iid ^ 0xffffffffU) >> 0x1f, choice_or_priority,
+          buffer2, (id ^ 0xffffffffU) >> 0x1f, ((second_cmc <= first_cmc) ? 0 : 10), 0, 0, 0, 0);
     }
 
     commander_slot = 1;
@@ -3836,7 +3815,7 @@ static int put_commander_from_command_zone_to_impl(int player, int where, int wh
         }
         else if (commander_slot == 2)
         {
-          *(uint8_t *)((int)&instance->targets[3].player + 1) = 4;
+          SET_BYTE1(instance->targets[3].player) = 4;
         }
         edh_or_added_card = add_card_to_hand(player, packed_state_or_iid);
         if (rv != NULL)
@@ -3875,21 +3854,21 @@ int put_all_commanders_from_command_zone_to(int player, int where, int *rv)
 /* ManalinkEh 2022: 0x22c69d0; original cards/vanguard.c:1886. */
 int get_commander_id(int player, int commander_code)
 {
-  int32_t card;
+  int32_t edh_card;
   card_instance_t *instance;
 
-  card = locate_edh_card(player);
-  if (card != -1)
+  edh_card = locate_edh_card(player);
+  if (edh_card != -1)
   {
     if (commander_code == 2)
     {
-      instance = get_card_instance(player, card);
+      instance = get_card_instance(player, edh_card);
       return instance->targets[2].card;
     }
-    instance = get_card_instance(player, card);
-    card = instance->targets[2].player;
+    instance = get_card_instance(player, edh_card);
+    edh_card = instance->targets[2].player;
   }
-  return card;
+  return edh_card;
 }
 
 /* ManalinkEh 2022: 0x22c6a20; original cards/vanguard.c:1895. */
@@ -3948,18 +3927,33 @@ int get_partner_with_id(int csvid);
 /* ManalinkEh 2022: 0x22c6410; original cards/vanguard.c:1531. */
 int get_partner_with_id(int csvid)
 {
-  int result;
-  result = -1;
-  if (csvid - 0x48a6U < 0x3b)
+  switch (csvid)
   {
-    static const int16_t partner_with_ids[59] = {
-        18651, -1, -1, -1, -1, -1,    -1, 18643, -1,    18625, -1,    -1, -1, -1,    -1,
-        -1,    -1, -1, -1, -1, 18656, -1, -1,    18648, -1,    -1,    -1, -1, 18653, -1,
-        -1,    -1, -1, -1, -1, -1,    -1, -1,    -1,    -1,    -1,    -1, -1, -1,    -1,
-        18605, -1, -1, -1, -1, 18621, -1, -1,    18598, -1,    18626, -1, -1, 18618};
-    result = partner_with_ids[(uint32_t)csvid - 0x48a6U];
+  case CARD_ID_GORM_THE_GREAT:
+    return CARD_ID_VIRTUS_THE_VEILED;
+  case CARD_ID_KHORVATH_BRIGHTFLAME:
+    return CARD_ID_SYLVIA_BRIGHTSPEAR;
+  case CARD_ID_KRAV_THE_UNREDEEMED:
+    return CARD_ID_REGNA_THE_REDEEMER;
+  case CARD_ID_OKAUN_EYE_OF_CHAOS:
+    return CARD_ID_ZNDRSPLT_EYE_OF_WISDOM;
+  case CARD_ID_PIR_IMAGINATIVE_RASCAL:
+    return CARD_ID_TOOTHY_IMAGINARY_FRIEND;
+  case CARD_ID_ROWAN_KENRITH:
+    return CARD_ID_WILL_KENRITH;
+  case CARD_ID_SYLVIA_BRIGHTSPEAR:
+    return CARD_ID_KHORVATH_BRIGHTFLAME;
+  case CARD_ID_TOOTHY_IMAGINARY_FRIEND:
+    return CARD_ID_PIR_IMAGINATIVE_RASCAL;
+  case CARD_ID_VIRTUS_THE_VEILED:
+    return CARD_ID_GORM_THE_GREAT;
+  case CARD_ID_WILL_KENRITH:
+    return CARD_ID_ROWAN_KENRITH;
+  case CARD_ID_ZNDRSPLT_EYE_OF_WISDOM:
+    return CARD_ID_OKAUN_EYE_OF_CHAOS;
+  default:
+    return -1;
   }
-  return result;
 }
 
 #endif

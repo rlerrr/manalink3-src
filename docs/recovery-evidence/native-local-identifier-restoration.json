@@ -1,0 +1,4219 @@
+{
+  "format": 1,
+  "status": "Twenty original DWARF local names restored at 95 sites in twenty definitions across fourteen C files; exact storage/instruction alignment, source projections, unchanged runtime objects/sections, build and 15,169 fixed slots pass.",
+  "functions": [
+    {
+      "source": "cards/alliances.c",
+      "name": "card_fyndhorn_druid",
+      "before_sha256": "499e8471720bc3d0661b7dd220deccf30cd818cba47789802ef762c902653e2b",
+      "after_sha256": "0d03eeec11807762e614c1ab3eeea81ac8f444a3fb4effd8e05774156fe0e52c",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "leg",
+          "native_die": "0x91da86",
+          "current_die": "0x23ed71",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                96,
+                103,
+                [
+                  80
+                ]
+              ],
+              [
+                103,
+                137,
+                [
+                  83
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/alliances.c",
+        "name": "card_fyndhorn_druid",
+        "address": "0x20aa490",
+        "native_size": 137,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "499e8471720bc3d0661b7dd220deccf30cd818cba47789802ef762c902653e2b",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "leg",
+            "native_die": "0x91da86",
+            "current_die": "0x23ed71",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  96,
+                  103,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  103,
+                  137,
+                  [
+                    83
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x2040b80",
+        "size": 137,
+        "ranges": [
+          {
+            "address": "0x20aa490",
+            "size": 137,
+            "sha256": "53971701902cb425bd033bba3bf5e6d5c1cbb0d32df814face4889a7890c9eb9"
+          },
+          {
+            "address": "0x2040b80",
+            "size": 137,
+            "sha256": "f6397bd28c8b4307f824808b6a1d76aacee93fe1113f8a8c3d2045c1c22fd05f"
+          }
+        ],
+        "instructions": 42,
+        "address_correspondences": [
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x209d380",
+            "rebuilt": "0x20305a0",
+            "identity": "_fyndhorn_druid_dies_legacy"
+          },
+          {
+            "native": "0x267aa10",
+            "rebuilt": "0x26864e0",
+            "identity": "_create_legacy_effect"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/antiquities.c",
+      "name": "pump_until_source_is_in_play_and_tapped",
+      "before_sha256": "a27e2b865abf57e0c0d2a472c663af04c8cf690b1bbbb3db0d48e6cf53ae6524",
+      "after_sha256": "ca1325420577ebdf2deb108cb8b833a2365d3dd7f8868785a62f744e6643467f",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "l2",
+          "native_die": "0x203f7f1",
+          "current_die": "0x3de859",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                159,
+                163,
+                [
+                  80
+                ]
+              ],
+              [
+                163,
+                225,
+                [
+                  87
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/antiquities.c",
+        "name": "pump_until_source_is_in_play_and_tapped",
+        "address": "0x2245110",
+        "native_size": 227,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "a27e2b865abf57e0c0d2a472c663af04c8cf690b1bbbb3db0d48e6cf53ae6524",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "l2",
+            "native_die": "0x203f7f1",
+            "current_die": "0x3de859",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  159,
+                  163,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  163,
+                  225,
+                  [
+                    87
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x20564d0",
+        "size": 227,
+        "ranges": [
+          {
+            "address": "0x2245110",
+            "size": 227,
+            "sha256": "f96f59e19c1dc93b8abd5cb43a4658b5c7f75a4617919d11787d5fcb7f15b10a"
+          },
+          {
+            "address": "0x20564d0",
+            "size": 227,
+            "sha256": "d1d5a9eb512c29bf10653350a8f7b481a91e5c1681d6942d0a69d6e3c1073d06"
+          }
+        ],
+        "instructions": 65,
+        "address_correspondences": [
+          {
+            "native": "0x267a730",
+            "rebuilt": "0x268eb70",
+            "identity": "_default_pump_ability_definition"
+          },
+          {
+            "native": "0x267ae90",
+            "rebuilt": "0x26ad970",
+            "identity": "_pump_ability"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x2244410",
+            "rebuilt": "0x20557d0",
+            "identity": "_kill_legacy_if_source_is_not_in_play_or_untapped"
+          },
+          {
+            "native": "0x267ab00",
+            "rebuilt": "0x26865d0",
+            "identity": "_create_targetted_legacy_effect"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x2687d40",
+            "rebuilt": "0x26acd90",
+            "identity": "_add_status"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/apocalypse.c",
+      "name": "card_credit_voucher",
+      "before_sha256": "3f08a4798cb3392e4a540e75a2ac3f906ede7f597d654ec6aa15ff348bf06786",
+      "after_sha256": "098833c6851ce63ca91e96d26a7d99309b31abe0781f26e8e4c3f309665962a6",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "selected",
+          "native_die": "0x5531a8",
+          "current_die": "0x4922a4",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                181,
+                195,
+                [
+                  80
+                ]
+              ],
+              [
+                256,
+                260,
+                [
+                  80
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/apocalypse.c",
+        "name": "card_credit_voucher",
+        "address": "0x2063090",
+        "native_size": 285,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "3f08a4798cb3392e4a540e75a2ac3f906ede7f597d654ec6aa15ff348bf06786",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "selected",
+            "native_die": "0x5531a8",
+            "current_die": "0x4922a4",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  181,
+                  195,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  256,
+                  260,
+                  [
+                    80
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x2068550",
+        "size": 285,
+        "ranges": [
+          {
+            "address": "0x2063090",
+            "size": 285,
+            "sha256": "0cdbfebfef3d296895b666648acc9d109b393fd6ad655cb3465d79913c136df1"
+          },
+          {
+            "address": "0x2068550",
+            "size": 285,
+            "sha256": "879e479abf9e5dc4690ee9b92151fec2000087fd447bb70e1b9674b59bf1e4bc"
+          }
+        ],
+        "instructions": 66,
+        "address_correspondences": [
+          {
+            "native": "0x269db00",
+            "rebuilt": "0x26b17f0",
+            "identity": "_generic_activated_ability"
+          },
+          {
+            "native": "0x27259f8",
+            "rebuilt": "0x27284cc",
+            "identity": "readonly literal contents:83e3d94cff2a33b73cc7b46e494499634511a16d8dea9233cfa437c11b924262"
+          },
+          {
+            "native": "0x26bea60",
+            "rebuilt": "0x26b6e20",
+            "identity": "_new_default_test_definition"
+          },
+          {
+            "native": "0x26b4310",
+            "rebuilt": "0x266c580",
+            "identity": "_put_on_top_of_deck"
+          },
+          {
+            "native": "0x2651300",
+            "rebuilt": "0x26e0630",
+            "identity": "_new_select_a_card"
+          },
+          {
+            "native": "0x269a940",
+            "rebuilt": "0x26a5120",
+            "identity": "_shuffle"
+          },
+          {
+            "native": "0x26b4050",
+            "rebuilt": "0x266c2e0",
+            "identity": "_draw_cards"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_dizzying_gaze",
+      "before_sha256": "6ea59809bd7aaa85353f5e253d1986832566fadbb53804969301029de24fa31f",
+      "after_sha256": "eba8abf0760a0bd94a123a7270c25613dc38bf7ff7fdb83c6c480808e0720bda",
+      "mappings": [
+        {
+          "before": "player_00",
+          "after": "t_player",
+          "native_die": "0x5d6ab9f",
+          "current_die": "0x1ca6eee",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                187,
+                197,
+                [
+                  80
+                ]
+              ],
+              [
+                197,
+                434,
+                [
+                  145,
+                  144,
+                  127
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/exodus.c",
+        "name": "card_dizzying_gaze",
+        "address": "0x264d7e0",
+        "native_size": 434,
+        "aliases": [
+          "player_00"
+        ],
+        "before_sha256": "6ea59809bd7aaa85353f5e253d1986832566fadbb53804969301029de24fa31f",
+        "mappings": [
+          {
+            "before": "player_00",
+            "after": "t_player",
+            "native_die": "0x5d6ab9f",
+            "current_die": "0x1ca6eee",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  187,
+                  197,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  197,
+                  434,
+                  [
+                    145,
+                    144,
+                    127
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x21a8a40",
+        "size": 434,
+        "ranges": [
+          {
+            "address": "0x264d7e0",
+            "size": 434,
+            "sha256": "16da46d70e868d0fb4f4bb687f8ec5f4938755dcdea832639687f83e7e4b9fa7"
+          },
+          {
+            "address": "0x21a8a40",
+            "size": 434,
+            "sha256": "fbf14a93a86032cef0b95781d7d34349e55be11dc9b3507a1c6da23e4dafe032"
+          }
+        ],
+        "instructions": 105,
+        "address_correspondences": [
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x26dd430",
+            "rebuilt": "0x26538f0",
+            "identity": "_is_humiliated"
+          },
+          {
+            "native": "0x2660240",
+            "rebuilt": "0x26dadf0",
+            "identity": "_default_target_definition"
+          },
+          {
+            "native": "0x275c914",
+            "rebuilt": "0x27343c0",
+            "identity": "readonly literal contents:2754a4d440c2c16018ba6f90ded4cb269cb328cb3ea0c7d52d1d0dff0ff50454"
+          },
+          {
+            "native": "0x26e84a0",
+            "rebuilt": "0x265a4a0",
+            "identity": "_aura"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x2660240",
+            "rebuilt": "0x26dadf0",
+            "identity": "_default_target_definition"
+          },
+          {
+            "native": "0x2661710",
+            "rebuilt": "0x26db710",
+            "identity": "_validate_target"
+          },
+          {
+            "native": "0x26e1c90",
+            "rebuilt": "0x2668830",
+            "identity": "_damage_creature"
+          },
+          {
+            "native": "0x275c8f0",
+            "rebuilt": "0x273439c",
+            "identity": "readonly literal contents:adf6639c6ffb2c4dbc35dd39eea2de32c48c32aa8f72a08c633f28f0c0b0b9ad"
+          },
+          {
+            "native": "0x269c8c0",
+            "rebuilt": "0x26b04b0",
+            "identity": "_granted_generic_activated_ability"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_tempered_sliver",
+      "before_sha256": "a90b315819105d16cbef8be890a927dfd29ad0dacdf706e3bddca59006bc8ac7",
+      "after_sha256": "819258557b840329758de19842edad89afd2de802c1245f449eceb98fdc6a689",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "c",
+          "native_die": "0x3025a20",
+          "current_die": "0x37bc9c2",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                75,
+                117,
+                [
+                  81
+                ]
+              ],
+              [
+                117,
+                294,
+                [
+                  145,
+                  100
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/modern_horizons.c",
+        "name": "card_tempered_sliver",
+        "address": "0x233d3a0",
+        "native_size": 294,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "a90b315819105d16cbef8be890a927dfd29ad0dacdf706e3bddca59006bc8ac7",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "c",
+            "native_die": "0x3025a20",
+            "current_die": "0x37bc9c2",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  75,
+                  117,
+                  [
+                    81
+                  ]
+                ],
+                [
+                  117,
+                  294,
+                  [
+                    145,
+                    100
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x238c400",
+        "size": 294,
+        "ranges": [
+          {
+            "address": "0x233d3a0",
+            "size": 294,
+            "sha256": "8d830c13e1067554047e74ed30c8ba92ff235f0a024b6ac0f0907fca41317a8c"
+          },
+          {
+            "address": "0x238c400",
+            "size": 294,
+            "sha256": "d80622676f82a518f85317a19ed2dbe126d7963daef77b4fbec19fd8e119ce1d"
+          }
+        ],
+        "instructions": 83,
+        "address_correspondences": [
+          {
+            "native": "0x2572850",
+            "rebuilt": "0x21d07d0",
+            "identity": "_slivercycling"
+          },
+          {
+            "native": "0x26e3360",
+            "rebuilt": "0x2669f20",
+            "identity": "_combat_damage_being_dealt"
+          },
+          {
+            "native": "0x2679dd0",
+            "rebuilt": "0x268d860",
+            "identity": "_check_special_flags"
+          },
+          {
+            "native": "0x2681ca0",
+            "rebuilt": "0x2694e40",
+            "identity": "_is_what"
+          },
+          {
+            "native": "0x26738b0",
+            "rebuilt": "0x26b9e40",
+            "identity": "_has_subtype"
+          },
+          {
+            "native": "0x26dd430",
+            "rebuilt": "0x26538f0",
+            "identity": "_is_humiliated"
+          },
+          {
+            "native": "0x26dd430",
+            "rebuilt": "0x26538f0",
+            "identity": "_is_humiliated"
+          },
+          {
+            "native": "0x2335650",
+            "rebuilt": "0x2386f90",
+            "identity": "_tempered_sliver_legacy"
+          },
+          {
+            "native": "0x267ab00",
+            "rebuilt": "0x26865d0",
+            "identity": "_create_targetted_legacy_effect"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_grief2",
+      "before_sha256": "d1d13790e0bda9779cea80dfacb6b4e35c09a9e704c654f4b4a6cbd5654b6cba",
+      "after_sha256": "a622c09e72a840ec15dfc6a171e250c73a2573390c6ca6477dafc94f0e1102e7",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "selected",
+          "native_die": "0x1f717ef",
+          "current_die": "0x388275c",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                336,
+                368,
+                [
+                  80
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_grief2",
+        "address": "0x2237770",
+        "native_size": 374,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "d1d13790e0bda9779cea80dfacb6b4e35c09a9e704c654f4b4a6cbd5654b6cba",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "selected",
+            "native_die": "0x1f717ef",
+            "current_die": "0x388275c",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  336,
+                  368,
+                  [
+                    80
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x23a1030",
+        "size": 374,
+        "ranges": [
+          {
+            "address": "0x2237770",
+            "size": 374,
+            "sha256": "94f1f4108ff3cd904cd6f8564588d0bdb319b508329b9370b277b3d134ff0f81"
+          },
+          {
+            "address": "0x23a1030",
+            "size": 374,
+            "sha256": "f73efb653a4e3a0749b794e5eee34b0c58b2431d227bbd37b2b715ef20f432ad"
+          }
+        ],
+        "instructions": 89,
+        "address_correspondences": [
+          {
+            "native": "0x26a5370",
+            "rebuilt": "0x269c410",
+            "identity": "_etb_ability"
+          },
+          {
+            "native": "0x222b4b0",
+            "rebuilt": "0x2391c10",
+            "identity": "_evoke_with_cards_in_hand"
+          },
+          {
+            "native": "0x2660240",
+            "rebuilt": "0x26dadf0",
+            "identity": "_default_target_definition"
+          },
+          {
+            "native": "0x26604c0",
+            "rebuilt": "0x26db3a0",
+            "identity": "_can_target"
+          },
+          {
+            "native": "0x258ebb0",
+            "rebuilt": "0x22e0070",
+            "identity": "_evoked"
+          },
+          {
+            "native": "0x26b5a00",
+            "rebuilt": "0x266dc30",
+            "identity": "_kill_card"
+          },
+          {
+            "native": "0x2736ee9",
+            "rebuilt": "0x2745e6c",
+            "identity": "readonly literal contents:83eee468f240fdc59710872833872e1aabb43cda9af65a70ffb01ea3ad2168f1"
+          },
+          {
+            "native": "0x2660db0",
+            "rebuilt": "0x26dc000",
+            "identity": "_new_pick_target"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x273744a",
+            "rebuilt": "0x274657e",
+            "identity": "readonly literal contents:65b14eaf34b5db4bf12ba359666cdbba71be592d679bb06d07fd0919386bd048"
+          },
+          {
+            "native": "0x26bea60",
+            "rebuilt": "0x26b6e20",
+            "identity": "_new_default_test_definition"
+          },
+          {
+            "native": "0x2651300",
+            "rebuilt": "0x26e0630",
+            "identity": "_new_select_a_card"
+          },
+          {
+            "native": "0x269a430",
+            "rebuilt": "0x26a4820",
+            "identity": "_new_discard_card"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "cathedral_membrane_legacy",
+      "before_sha256": "aa10bc27f8347c2ac08483c68bee50afa4d5867582c5a6f7adbba5720e12b1d3",
+      "after_sha256": "bb2ab7c11083171395f9875ee8ebcffb62e68e38dfbaaf5a637778fb153ef8bb",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "leg",
+          "native_die": "0x2291102",
+          "current_die": "0x3ad1b33",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                49,
+                60,
+                [
+                  80
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/new_phyrexia.c",
+        "name": "cathedral_membrane_legacy",
+        "address": "0x226d140",
+        "native_size": 87,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "aa10bc27f8347c2ac08483c68bee50afa4d5867582c5a6f7adbba5720e12b1d3",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "leg",
+            "native_die": "0x2291102",
+            "current_die": "0x3ad1b33",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  49,
+                  60,
+                  [
+                    80
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x23c1ab0",
+        "size": 87,
+        "ranges": [
+          {
+            "address": "0x226d140",
+            "size": 87,
+            "sha256": "287d8b3102c32ac8365da2e6ffedf9eee674c7b10458e8264a568d47c7320a56"
+          },
+          {
+            "address": "0x23c1ab0",
+            "size": 87,
+            "sha256": "bbfda76310f8e77454a097a193de9fb8f217009e9d3fca5ece707be366b2e138"
+          }
+        ],
+        "instructions": 30,
+        "address_correspondences": [
+          {
+            "native": "0x226d1a0",
+            "rebuilt": "0x23c1b10",
+            "identity": "_deal_6_damage_legacy"
+          },
+          {
+            "native": "0x267ab00",
+            "rebuilt": "0x26865d0",
+            "identity": "_create_targetted_legacy_effect"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_yuan_shaos_infantry",
+      "before_sha256": "890bbdfd640419bf1dec551688fd92ae6df4a87848f2b204b24a81e4cebd0e61",
+      "after_sha256": "c17b68307a1753702b0daf2054d8440600d260e9ce6a155303b387a1b322f888",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "leg",
+          "native_die": "0x1885945",
+          "current_die": "0x41be5c4",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                124,
+                140,
+                [
+                  80
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/portal_1_2_3k.c",
+        "name": "card_yuan_shaos_infantry",
+        "address": "0x21c5ef0",
+        "native_size": 153,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "890bbdfd640419bf1dec551688fd92ae6df4a87848f2b204b24a81e4cebd0e61",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "leg",
+            "native_die": "0x1885945",
+            "current_die": "0x41be5c4",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  124,
+                  140,
+                  [
+                    80
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x2446e30",
+        "size": 153,
+        "ranges": [
+          {
+            "address": "0x21c5ef0",
+            "size": 153,
+            "sha256": "400630b895d223f38ccdf5ea6931a39ba972be6e447bbe630c8f9f4c503c8889"
+          },
+          {
+            "address": "0x2446e30",
+            "size": 153,
+            "sha256": "57b86c781cb8727553705b5f34ae6e9ed113f59b0e5adea9f718e92fa06362ac"
+          }
+        ],
+        "instructions": 41,
+        "address_correspondences": [
+          {
+            "native": "0x268d9a0",
+            "rebuilt": "0x26a0580",
+            "identity": "_dat_ability"
+          },
+          {
+            "native": "0x267af00",
+            "rebuilt": "0x26ad9e0",
+            "identity": "_pump_ability_until_eot"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_barbed_field",
+      "before_sha256": "b022d9e58f28f361088ffbb1bd384b3dfe0d4724944a8af481a1c8b41b3cbde7",
+      "after_sha256": "615918d085c4a3ea0f5316ab9a7d452b407de54cb72536f484dcdad783603510",
+      "mappings": [
+        {
+          "before": "player_00",
+          "after": "p",
+          "native_die": "0x598b4c1",
+          "current_die": "0x433cfe8",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                183,
+                187,
+                [
+                  82
+                ]
+              ],
+              [
+                187,
+                577,
+                [
+                  145,
+                  144,
+                  127
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/prophecy.c",
+        "name": "card_barbed_field",
+        "address": "0x2600950",
+        "native_size": 577,
+        "aliases": [
+          "event_00",
+          "player_00",
+          "td_00"
+        ],
+        "before_sha256": "b022d9e58f28f361088ffbb1bd384b3dfe0d4724944a8af481a1c8b41b3cbde7",
+        "mappings": [
+          {
+            "before": "player_00",
+            "after": "p",
+            "native_die": "0x598b4c1",
+            "current_die": "0x433cfe8",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  183,
+                  187,
+                  [
+                    82
+                  ]
+                ],
+                [
+                  187,
+                  577,
+                  [
+                    145,
+                    144,
+                    127
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x245ae80",
+        "size": 577,
+        "ranges": [
+          {
+            "address": "0x2600950",
+            "size": 577,
+            "sha256": "71701585772a8c8b03633a2c347e2df0cf58075c433d829d1f36fc066780340f"
+          },
+          {
+            "address": "0x245ae80",
+            "size": 577,
+            "sha256": "2b6d067623228e4bc81b521c0dfe30e4aa04b7a19c85404dd14e17680f6d15ce"
+          }
+        ],
+        "instructions": 128,
+        "address_correspondences": [
+          {
+            "native": "0x26dd430",
+            "rebuilt": "0x26538f0",
+            "identity": "_is_humiliated"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x2660240",
+            "rebuilt": "0x26dadf0",
+            "identity": "_default_target_definition"
+          },
+          {
+            "native": "0x2759d05",
+            "rebuilt": "0x274cfd1",
+            "identity": "readonly literal contents:b2420ecba89632be76499f01875dde0cf7aecb9dd63c1da78c27bb58287e4a54"
+          },
+          {
+            "native": "0x26e8560",
+            "rebuilt": "0x265a560",
+            "identity": "_aura_literal_prompt"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x2660240",
+            "rebuilt": "0x26dadf0",
+            "identity": "_default_target_definition"
+          },
+          {
+            "native": "0x2661710",
+            "rebuilt": "0x26db710",
+            "identity": "_validate_target"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x26e1c90",
+            "rebuilt": "0x2668830",
+            "identity": "_damage_creature"
+          },
+          {
+            "native": "0x269c8c0",
+            "rebuilt": "0x26b04b0",
+            "identity": "_granted_generic_activated_ability"
+          },
+          {
+            "native": "0x2759beb",
+            "rebuilt": "0x274ca8b",
+            "identity": "readonly literal contents:7c93a00c592365fdc450d381c3a13b28fde44334a555974dd4de8b4bd5632825"
+          },
+          {
+            "native": "0x2660d50",
+            "rebuilt": "0x26dbfa0",
+            "identity": "_pick_target"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_verdant_field",
+      "before_sha256": "844e2f2498788bb5ae9de53ebeba595c724e29c5c38c9b5ff0495b4fb819fb0e",
+      "after_sha256": "cd2ea95901fa68d4da02f61a279fb2956665ec0ad1f22d751c5e0dc3cfe2df95",
+      "mappings": [
+        {
+          "before": "player_00",
+          "after": "p",
+          "native_die": "0x5980bbe",
+          "current_die": "0x433cac7",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                182,
+                189,
+                [
+                  80
+                ]
+              ],
+              [
+                189,
+                609,
+                [
+                  145,
+                  144,
+                  127
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/prophecy.c",
+        "name": "card_verdant_field",
+        "address": "0x2607b60",
+        "native_size": 609,
+        "aliases": [
+          "event_00",
+          "player_00"
+        ],
+        "before_sha256": "844e2f2498788bb5ae9de53ebeba595c724e29c5c38c9b5ff0495b4fb819fb0e",
+        "mappings": [
+          {
+            "before": "player_00",
+            "after": "p",
+            "native_die": "0x5980bbe",
+            "current_die": "0x433cac7",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  182,
+                  189,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  189,
+                  609,
+                  [
+                    145,
+                    144,
+                    127
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x245b3f0",
+        "size": 609,
+        "ranges": [
+          {
+            "address": "0x2607b60",
+            "size": 609,
+            "sha256": "e29237f217485dbe8a6a2f5bc79088fceb0a7839114abada604938ef50ed642c"
+          },
+          {
+            "address": "0x245b3f0",
+            "size": 609,
+            "sha256": "b8376e586df0e01151d8b10e674bbe6b4d3a3a71b76481b6381c3a245669983d"
+          }
+        ],
+        "instructions": 134,
+        "address_correspondences": [
+          {
+            "native": "0x26dd430",
+            "rebuilt": "0x26538f0",
+            "identity": "_is_humiliated"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x2660240",
+            "rebuilt": "0x26dadf0",
+            "identity": "_default_target_definition"
+          },
+          {
+            "native": "0x2759d05",
+            "rebuilt": "0x274cfd1",
+            "identity": "readonly literal contents:b2420ecba89632be76499f01875dde0cf7aecb9dd63c1da78c27bb58287e4a54"
+          },
+          {
+            "native": "0x26e8560",
+            "rebuilt": "0x265a560",
+            "identity": "_aura_literal_prompt"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x2660240",
+            "rebuilt": "0x26dadf0",
+            "identity": "_default_target_definition"
+          },
+          {
+            "native": "0x2661710",
+            "rebuilt": "0x26db710",
+            "identity": "_validate_target"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x267af00",
+            "rebuilt": "0x26ad9e0",
+            "identity": "_pump_ability_until_eot"
+          },
+          {
+            "native": "0x2759a6a",
+            "rebuilt": "0x274c90a",
+            "identity": "readonly literal contents:3ba43e8291ee474b85b74ceeff733d3ed99ef9bb060faaec4c6ad52bf06df0aa"
+          },
+          {
+            "native": "0x269c8c0",
+            "rebuilt": "0x26b04b0",
+            "identity": "_granted_generic_activated_ability"
+          },
+          {
+            "native": "0x2759a6a",
+            "rebuilt": "0x274c90a",
+            "identity": "readonly literal contents:3ba43e8291ee474b85b74ceeff733d3ed99ef9bb060faaec4c6ad52bf06df0aa"
+          },
+          {
+            "native": "0x2660d50",
+            "rebuilt": "0x26dbfa0",
+            "identity": "_pick_target"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "imprint",
+      "before_sha256": "3432525517f693fae03a7c8e8d2af7e4317ac55c53279985af552844255db586",
+      "after_sha256": "efac5174a4057500437b758e49cd4d7e552cb5895fa4f42bac6a838908912ae8",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "legacy_id",
+          "native_die": "0x3f82a3d",
+          "current_die": "0x48a980d",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                42,
+                46,
+                [
+                  80
+                ]
+              ],
+              [
+                46,
+                88,
+                [
+                  86
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/scars_of_mirrodin.c",
+        "name": "imprint",
+        "address": "0x24372c0",
+        "native_size": 91,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "3432525517f693fae03a7c8e8d2af7e4317ac55c53279985af552844255db586",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "legacy_id",
+            "native_die": "0x3f82a3d",
+            "current_die": "0x48a980d",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  42,
+                  46,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  46,
+                  88,
+                  [
+                    86
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x24b7170",
+        "size": 91,
+        "ranges": [
+          {
+            "address": "0x24372c0",
+            "size": 91,
+            "sha256": "552464cb1b6f2d5444e39a99a3fec20f961d15afa41f4ac48fca8db433dd5177"
+          },
+          {
+            "address": "0x24b7170",
+            "size": 91,
+            "sha256": "cf834bc0166abdafe588b4d07013970b5fafefaae3f92847a18424abc4d49733"
+          }
+        ],
+        "instructions": 32,
+        "address_correspondences": [
+          {
+            "native": "0x2436e90",
+            "rebuilt": "0x24b6d40",
+            "identity": "_imprint_legacy"
+          },
+          {
+            "native": "0x267aa10",
+            "rebuilt": "0x26864e0",
+            "identity": "_create_legacy_effect"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x2687d40",
+            "rebuilt": "0x26acd90",
+            "identity": "_add_status"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_livewire_lash",
+      "before_sha256": "683ce0364ff5b5fb3ba8debb1225f7f4111a48723c729ad3e47c337a18893a04",
+      "after_sha256": "80e6a8de69f3f3f039e87a864d4d1022f5021b3472a1153d3b72765aa6262097",
+      "mappings": [
+        {
+          "before": "player_00",
+          "after": "p",
+          "native_die": "0x3f71e1e",
+          "current_die": "0x48b2076",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                63,
+                67,
+                [
+                  82
+                ]
+              ],
+              [
+                67,
+                95,
+                [
+                  145,
+                  148,
+                  127
+                ]
+              ],
+              [
+                165,
+                445,
+                [
+                  145,
+                  148,
+                  127
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/scars_of_mirrodin.c",
+        "name": "card_livewire_lash",
+        "address": "0x24456b0",
+        "native_size": 445,
+        "aliases": [
+          "player_00"
+        ],
+        "before_sha256": "683ce0364ff5b5fb3ba8debb1225f7f4111a48723c729ad3e47c337a18893a04",
+        "mappings": [
+          {
+            "before": "player_00",
+            "after": "p",
+            "native_die": "0x3f71e1e",
+            "current_die": "0x48b2076",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  63,
+                  67,
+                  [
+                    82
+                  ]
+                ],
+                [
+                  67,
+                  95,
+                  [
+                    145,
+                    148,
+                    127
+                  ]
+                ],
+                [
+                  165,
+                  445,
+                  [
+                    145,
+                    148,
+                    127
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x24c55b0",
+        "size": 445,
+        "ranges": [
+          {
+            "address": "0x24456b0",
+            "size": 445,
+            "sha256": "1e00ba64f0cdeb2f3c6f04511f627da9931c2e1339fb878cb83d26bc6edb796f"
+          },
+          {
+            "address": "0x24c55b0",
+            "size": 445,
+            "sha256": "f122a3f9224dbb11284a7cf83b7155d928dad95365f06872119750b7212a31ea"
+          }
+        ],
+        "instructions": 116,
+        "address_correspondences": [
+          {
+            "native": "0x26eda00",
+            "rebuilt": "0x267ece0",
+            "identity": "_is_equipping"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x26dd430",
+            "rebuilt": "0x26538f0",
+            "identity": "_is_humiliated"
+          },
+          {
+            "native": "0x26ee500",
+            "rebuilt": "0x267f820",
+            "identity": "_vanilla_equipment"
+          },
+          {
+            "native": "0x26dd430",
+            "rebuilt": "0x26538f0",
+            "identity": "_is_humiliated"
+          },
+          {
+            "native": "0x2661960",
+            "rebuilt": "0x26d7ea0",
+            "identity": "_becomes_target_of_spell"
+          },
+          {
+            "native": "0x2660240",
+            "rebuilt": "0x26dadf0",
+            "identity": "_default_target_definition"
+          },
+          {
+            "native": "0x26604c0",
+            "rebuilt": "0x26db3a0",
+            "identity": "_can_target"
+          },
+          {
+            "native": "0x274b1f7",
+            "rebuilt": "0x275007b",
+            "identity": "readonly literal contents:7c93a00c592365fdc450d381c3a13b28fde44334a555974dd4de8b4bd5632825"
+          },
+          {
+            "native": "0x2660db0",
+            "rebuilt": "0x26dc000",
+            "identity": "_new_pick_target"
+          },
+          {
+            "native": "0x26e1c90",
+            "rebuilt": "0x2668830",
+            "identity": "_damage_creature"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_ilharg_the_raze_boar",
+      "before_sha256": "1c822346baf5be135ff5d504e50265735a1f3cb8eef7b379868514d15eb2a1b4",
+      "after_sha256": "0af0a1886531b47eacd499994fa921c50018270f737b84e68f1a3e9d23b37cd3",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "legacy",
+          "native_die": "0x195862c",
+          "current_die": "0x5a866f9",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                285,
+                298,
+                [
+                  80
+                ]
+              ],
+              [
+                315,
+                326,
+                [
+                  80
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/war_of_the_spark.c",
+        "name": "card_ilharg_the_raze_boar",
+        "address": "0x21cf300",
+        "native_size": 336,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "1c822346baf5be135ff5d504e50265735a1f3cb8eef7b379868514d15eb2a1b4",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "legacy",
+            "native_die": "0x195862c",
+            "current_die": "0x5a866f9",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  285,
+                  298,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  315,
+                  326,
+                  [
+                    80
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x2619fd0",
+        "size": 336,
+        "ranges": [
+          {
+            "address": "0x21cf300",
+            "size": 336,
+            "sha256": "a6efd88d559b8ccfd05854798a7963562aa8966e3fe8a8673b438fe1264d309b"
+          },
+          {
+            "address": "0x2619fd0",
+            "size": 336,
+            "sha256": "a214cec324b5405fec8540c64c8a0a6033506072cc2e18f717f64cc4c2844d09"
+          }
+        ],
+        "instructions": 85,
+        "address_correspondences": [
+          {
+            "native": "0x26795b0",
+            "rebuilt": "0x2685fb0",
+            "identity": "_duh_mode"
+          },
+          {
+            "native": "0x268d9a0",
+            "rebuilt": "0x26a0580",
+            "identity": "_dat_ability"
+          },
+          {
+            "native": "0x21c6fc0",
+            "rebuilt": "0x260bf50",
+            "identity": "_war_god_eternal"
+          },
+          {
+            "native": "0x27324eb",
+            "rebuilt": "0x275bca3",
+            "identity": "readonly literal contents:ab6d84b8f00bcb44e0fcbc392c862d52db4c2441cb4c1349abab9df424eee1d0"
+          },
+          {
+            "native": "0x26bea60",
+            "rebuilt": "0x26b6e20",
+            "identity": "_new_default_test_definition"
+          },
+          {
+            "native": "0x26c0860",
+            "rebuilt": "0x26b8c50",
+            "identity": "_check_battlefield_for_special_card"
+          },
+          {
+            "native": "0x2651300",
+            "rebuilt": "0x26e0630",
+            "identity": "_new_select_a_card"
+          },
+          {
+            "native": "0x2687990",
+            "rebuilt": "0x26aa1b0",
+            "identity": "_add_state"
+          },
+          {
+            "native": "0x21c7e40",
+            "rebuilt": "0x260bca0",
+            "identity": "_bounce_at_eot"
+          },
+          {
+            "native": "0x267ab00",
+            "rebuilt": "0x26865d0",
+            "identity": "_create_targetted_legacy_effect"
+          },
+          {
+            "native": "0x2669e00",
+            "rebuilt": "0x26c31c0",
+            "identity": "_put_into_play"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_spark_double",
+      "before_sha256": "86a49d63400af2b7ab058c146dfd8a097f665caaca65a23f63c88488f26c12ca",
+      "after_sha256": "d0813c106962358e106a0bac668fffd2e51e15ad62314879879f2b710ea4fae1",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "c",
+          "native_die": "0x194ea81",
+          "current_die": "0x5a8e436",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                129,
+                171,
+                [
+                  82
+                ]
+              ],
+              [
+                171,
+                267,
+                [
+                  145,
+                  148,
+                  127
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/war_of_the_spark.c",
+        "name": "card_spark_double",
+        "address": "0x21d6710",
+        "native_size": 267,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "86a49d63400af2b7ab058c146dfd8a097f665caaca65a23f63c88488f26c12ca",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "c",
+            "native_die": "0x194ea81",
+            "current_die": "0x5a8e436",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  129,
+                  171,
+                  [
+                    82
+                  ]
+                ],
+                [
+                  171,
+                  267,
+                  [
+                    145,
+                    148,
+                    127
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x2613e40",
+        "size": 267,
+        "ranges": [
+          {
+            "address": "0x21d6710",
+            "size": 267,
+            "sha256": "0392da8084d7c7f9c18791eb62c790cee8896282d1fafffb997582d08e185f6f"
+          },
+          {
+            "address": "0x2613e40",
+            "size": 267,
+            "sha256": "9fddbb493d8629896da0cde6682e3416bdb11ad51f8539fc0c90a736b34eb557"
+          }
+        ],
+        "instructions": 77,
+        "address_correspondences": [
+          {
+            "native": "0x26601a0",
+            "rebuilt": "0x26dad50",
+            "identity": "_base_target_definition"
+          },
+          {
+            "native": "0x2732e2c",
+            "rebuilt": "0x275bd80",
+            "identity": "readonly literal contents:bb1a7674e6c8ac86a6e1b89bc46a04d074bf3a71f19379c3441d62408d64e78a"
+          },
+          {
+            "native": "0x267f4a0",
+            "rebuilt": "0x2694a20",
+            "identity": "_enters_the_battlefield_as_copy_of_any"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x279528c",
+            "rebuilt": "0x27996e8",
+            "identity": "_hack_silent_counters"
+          },
+          {
+            "native": "0x279528c",
+            "rebuilt": "0x27996e8",
+            "identity": "_hack_silent_counters"
+          },
+          {
+            "native": "0x2681ca0",
+            "rebuilt": "0x2694e40",
+            "identity": "_is_what"
+          },
+          {
+            "native": "0x26d4840",
+            "rebuilt": "0x2666be0",
+            "identity": "_add_counters"
+          },
+          {
+            "native": "0x279528c",
+            "rebuilt": "0x27996e8",
+            "identity": "_hack_silent_counters"
+          },
+          {
+            "native": "0x279528c",
+            "rebuilt": "0x27996e8",
+            "identity": "_hack_silent_counters"
+          },
+          {
+            "native": "0x2681ca0",
+            "rebuilt": "0x2694e40",
+            "identity": "_is_what"
+          }
+        ]
+      }
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_skyclave_squid",
+      "before_sha256": "dd7414e2c19786b4dc989dba26e4187f1c8fb8b40f3f9c608ac3fa10bd8408de",
+      "after_sha256": "bb1f7ba4e5a5c47ddf74dc36eb91c4ad3de2e856216180a7816a19fc4476ac85",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "leg",
+          "native_die": "0x2d17236",
+          "current_die": "0x5da8c8f",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                84,
+                100,
+                [
+                  80
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "cards/zendikar_rising.c",
+        "name": "card_skyclave_squid",
+        "address": "0x230e8e0",
+        "native_size": 115,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "dd7414e2c19786b4dc989dba26e4187f1c8fb8b40f3f9c608ac3fa10bd8408de",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "leg",
+            "native_die": "0x2d17236",
+            "current_die": "0x5da8c8f",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  84,
+                  100,
+                  [
+                    80
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x2647e40",
+        "size": 115,
+        "ranges": [
+          {
+            "address": "0x230e8e0",
+            "size": 115,
+            "sha256": "ac9f6e2c2807b83a91d582cf2c81903536881cf8ffb6f72c8861cb1d7ce62920"
+          },
+          {
+            "address": "0x2647e40",
+            "size": 115,
+            "sha256": "ca0e511dd88c4ea54be86f206bee62334465b15be0e149e8cbd1a3be70fe09e2"
+          }
+        ],
+        "instructions": 38,
+        "address_correspondences": [
+          {
+            "native": "0x25d7310",
+            "rebuilt": "0x26371d0",
+            "identity": "_landfall"
+          },
+          {
+            "native": "0x26814d0",
+            "rebuilt": "0x2687330",
+            "identity": "_effect_defender_can_attack_until_eot"
+          },
+          {
+            "native": "0x267b380",
+            "rebuilt": "0x268d480",
+            "identity": "_create_targetted_legacy_effect_no_repeat"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          }
+        ]
+      }
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "pump_until_eot",
+      "before_sha256": "dbf77adaa13ec2130abaf62f5b761f753deb3e5dca552f79b3fec2b89390376a",
+      "after_sha256": "2f1b9e1fd5aa8483df2d23ef45bc10448805ea3acf2a5be9dd70c85acfad6670",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "result",
+          "native_die": "0x65ae116",
+          "current_die": "0x6737be0",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                55,
+                58,
+                [
+                  80
+                ]
+              ],
+              [
+                58,
+                142,
+                [
+                  83
+                ]
+              ],
+              [
+                142,
+                146,
+                [
+                  80
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "functions/functions.c",
+        "name": "pump_until_eot",
+        "address": "0x267ab60",
+        "native_size": 146,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "dbf77adaa13ec2130abaf62f5b761f753deb3e5dca552f79b3fec2b89390376a",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "result",
+            "native_die": "0x65ae116",
+            "current_die": "0x6737be0",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  55,
+                  58,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  58,
+                  142,
+                  [
+                    83
+                  ]
+                ],
+                [
+                  142,
+                  146,
+                  [
+                    80
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x268ed40",
+        "size": 146,
+        "ranges": [
+          {
+            "address": "0x267ab60",
+            "size": 146,
+            "sha256": "9ca8739d846faefe6517c36c3a9cc12bd726d145d029f6044697308c2dec1228"
+          },
+          {
+            "address": "0x268ed40",
+            "size": 146,
+            "sha256": "f208cb8e3d6405d429ac8fb804c9900fd8694a2a16816cda1facd0fa5b97af4f"
+          }
+        ],
+        "instructions": 45,
+        "address_correspondences": [
+          {
+            "native": "0x26775c0",
+            "rebuilt": "0x2685370",
+            "identity": "_effect_pump_until_eot"
+          },
+          {
+            "native": "0x267ab00",
+            "rebuilt": "0x26865d0",
+            "identity": "_create_targetted_legacy_effect"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x26b32d0",
+            "rebuilt": "0x266b970",
+            "identity": "_in_play"
+          },
+          {
+            "native": "0x26cc810",
+            "rebuilt": "0x2680b50",
+            "identity": "_get_abilities"
+          }
+        ]
+      }
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "can_block_additional_until_eot",
+      "before_sha256": "5b599f7b4fa20dfea66df88bf5efe95c99a474c7adeb12989c4817e613305e93",
+      "after_sha256": "c008274f267df1b8be9e26de0461acdc9cf4edad72618f9b4a45b4a8d2636d46",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "legacy_card",
+          "native_die": "0x65acebf",
+          "current_die": "0x6737653",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                58,
+                62,
+                [
+                  80
+                ]
+              ],
+              [
+                62,
+                136,
+                [
+                  83
+                ]
+              ],
+              [
+                136,
+                140,
+                [
+                  80
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "functions/functions.c",
+        "name": "can_block_additional_until_eot",
+        "address": "0x267af90",
+        "native_size": 140,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "5b599f7b4fa20dfea66df88bf5efe95c99a474c7adeb12989c4817e613305e93",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "legacy_card",
+            "native_die": "0x65acebf",
+            "current_die": "0x6737653",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  58,
+                  62,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  62,
+                  136,
+                  [
+                    83
+                  ]
+                ],
+                [
+                  136,
+                  140,
+                  [
+                    80
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x268ef40",
+        "size": 140,
+        "ranges": [
+          {
+            "address": "0x267af90",
+            "size": 140,
+            "sha256": "2c744e3ea9d757844024e8b5a43df58584031ca4585426568229dded960b0db7"
+          },
+          {
+            "address": "0x268ef40",
+            "size": 140,
+            "sha256": "9b50fd9e50c43705882bd2e81d3b4b914071f731bba5b9ab82073ecf9a0157e0"
+          }
+        ],
+        "instructions": 38,
+        "address_correspondences": [
+          {
+            "native": "0x26a2390",
+            "rebuilt": "0x269af00",
+            "identity": "_legacy_effect_pump_ability_until_eot"
+          },
+          {
+            "native": "0x267ab00",
+            "rebuilt": "0x26865d0",
+            "identity": "_create_targetted_legacy_effect"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          }
+        ]
+      }
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "create_legacy_activate_for_opponent",
+      "before_sha256": "8dd71e1f4479c17b683de05d76e3ea88631b0418609c1f193430f28dc2c8d5c2",
+      "after_sha256": "1cfc7b156b4a20492a66e3162840af136d54acce179b855a0e1035e4a2ed6663",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "legacy",
+          "native_die": "0x65aabc7",
+          "current_die": "0x673b611",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                176,
+                184,
+                [
+                  80
+                ]
+              ],
+              [
+                184,
+                271,
+                [
+                  87
+                ]
+              ],
+              [
+                271,
+                273,
+                [
+                  80
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "functions/functions.c",
+        "name": "create_legacy_activate_for_opponent",
+        "address": "0x267b5a0",
+        "native_size": 297,
+        "aliases": [
+          "card_00",
+          "player_00"
+        ],
+        "before_sha256": "8dd71e1f4479c17b683de05d76e3ea88631b0418609c1f193430f28dc2c8d5c2",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "legacy",
+            "native_die": "0x65aabc7",
+            "current_die": "0x673b611",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  176,
+                  184,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  184,
+                  271,
+                  [
+                    87
+                  ]
+                ],
+                [
+                  271,
+                  273,
+                  [
+                    80
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x268d150",
+        "size": 297,
+        "ranges": [
+          {
+            "address": "0x267b5a0",
+            "size": 297,
+            "sha256": "4ecb4725396d72bf8b7c2538ebfee10cb0498217c6f869806f5650c1883deb00"
+          },
+          {
+            "address": "0x268d150",
+            "size": 297,
+            "sha256": "e3205b2bb48cc61e3e6ca65a39b85905397e24d63e15d749f9b3d04374adb73a"
+          }
+        ],
+        "instructions": 89,
+        "address_correspondences": [
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x26b2e30",
+            "rebuilt": "0x266b520",
+            "identity": "_add_card_to_hand"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x2701e18",
+            "rebuilt": "0x26ff518",
+            "identity": "_memcpy"
+          },
+          {
+            "native": "0x267aa60",
+            "rebuilt": "0x2686530",
+            "identity": "_create_legacy_activate"
+          },
+          {
+            "native": "0x26b4510",
+            "rebuilt": "0x266c780",
+            "identity": "_obliterate_card"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          },
+          {
+            "native": "0x26c79c0",
+            "rebuilt": "0x26d1920",
+            "identity": "_get_card_image_number"
+          },
+          {
+            "native": "0x275fad4",
+            "rebuilt": "0x276ed80",
+            "identity": "readonly literal contents:215f83330924b0b17a81de5b63d8b69717d0d44ceb428bf8b466499004f804a5"
+          },
+          {
+            "native": "0x26c11b0",
+            "rebuilt": "0x26d7770",
+            "identity": "_backtrace_and_abort"
+          }
+        ]
+      }
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "create_card_name_legacy_unattached",
+      "before_sha256": "f52781c20bc06300cf1743f6c2358f19a567094a74cb2efc7c91c1f444607cbd",
+      "after_sha256": "0d1a9c4f56f6ad28f2a560eb0192e2d1c49e6bcd49fd6005a862285f438080b4",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "legacy_card",
+          "native_die": "0x65875cc",
+          "current_die": "0x673ca2a",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                60,
+                64,
+                [
+                  80
+                ]
+              ],
+              [
+                64,
+                80,
+                [
+                  83
+                ]
+              ],
+              [
+                80,
+                83,
+                [
+                  80
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "functions/functions.c",
+        "name": "create_card_name_legacy_unattached",
+        "address": "0x2693e80",
+        "native_size": 83,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "f52781c20bc06300cf1743f6c2358f19a567094a74cb2efc7c91c1f444607cbd",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "legacy_card",
+            "native_die": "0x65875cc",
+            "current_die": "0x673ca2a",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  60,
+                  64,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  64,
+                  80,
+                  [
+                    83
+                  ]
+                ],
+                [
+                  80,
+                  83,
+                  [
+                    80
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x268a940",
+        "size": 83,
+        "ranges": [
+          {
+            "address": "0x2693e80",
+            "size": 83,
+            "sha256": "aff3da8c5ab75f4db98303e5f7ec6c49856ba988a185977d88f80aff7afa29dd"
+          },
+          {
+            "address": "0x268a940",
+            "size": 83,
+            "sha256": "3b82a774266e08bf8db2cefb34fb6f0109e9bcaa27d3afdef0f057093f1288ba"
+          }
+        ],
+        "instructions": 27,
+        "address_correspondences": [
+          {
+            "native": "0x26a9140",
+            "rebuilt": "0x26797e0",
+            "identity": "_create_legacy_effect_exe"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          }
+        ]
+      }
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "remove_a_subtype_permanently",
+      "before_sha256": "9ebddb5cb87033f3f41addf1500dcab911a9e1b36d6e1b7893912b2ae528b30b",
+      "after_sha256": "cf6d2230dd5db2d8f8d323aff6f653a37f4f1a8a6bd8ee6a698773b336f77370",
+      "mappings": [
+        {
+          "before": "card_00",
+          "after": "legacy",
+          "native_die": "0x6402896",
+          "current_die": "0x68d7ada",
+          "storage": {
+            "contract": [
+              "scalar",
+              4,
+              5
+            ],
+            "locations": [
+              [
+                57,
+                61,
+                [
+                  80
+                ]
+              ],
+              [
+                61,
+                84,
+                [
+                  83
+                ]
+              ],
+              [
+                84,
+                87,
+                [
+                  80
+                ]
+              ]
+            ]
+          }
+        }
+      ],
+      "native_current_alignment": {
+        "source": "functions/has_creature_type.c",
+        "name": "remove_a_subtype_permanently",
+        "address": "0x26731c0",
+        "native_size": 87,
+        "aliases": [
+          "card_00"
+        ],
+        "before_sha256": "9ebddb5cb87033f3f41addf1500dcab911a9e1b36d6e1b7893912b2ae528b30b",
+        "mappings": [
+          {
+            "before": "card_00",
+            "after": "legacy",
+            "native_die": "0x6402896",
+            "current_die": "0x68d7ada",
+            "storage": {
+              "contract": [
+                "scalar",
+                4,
+                5
+              ],
+              "locations": [
+                [
+                  57,
+                  61,
+                  [
+                    80
+                  ]
+                ],
+                [
+                  61,
+                  84,
+                  [
+                    83
+                  ]
+                ],
+                [
+                  84,
+                  87,
+                  [
+                    80
+                  ]
+                ]
+              ]
+            }
+          }
+        ],
+        "current_address": "0x26bd040",
+        "size": 87,
+        "ranges": [
+          {
+            "address": "0x26731c0",
+            "size": 87,
+            "sha256": "7dbaf07c7cbad6cb9906ef44dff0f37720943444b3f26962fdc17d4b2c85eb19"
+          },
+          {
+            "address": "0x26bd040",
+            "size": 87,
+            "sha256": "22c3d25c53571fc6b1d7310d1bc66d798f07b14ecf8320a1cfaa066b0869b08e"
+          }
+        ],
+        "instructions": 28,
+        "address_correspondences": [
+          {
+            "native": "0x2672e30",
+            "rebuilt": "0x26bceb0",
+            "identity": "_remove_a_subtype_permanently_legacy"
+          },
+          {
+            "native": "0x267ab00",
+            "rebuilt": "0x26865d0",
+            "identity": "_create_targetted_legacy_effect"
+          },
+          {
+            "native": "0x26b2ab0",
+            "rebuilt": "0x266b1a0",
+            "identity": "_get_card_instance"
+          }
+        ]
+      }
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/alliances.c",
+      "before_bytes_sha256": "b19aad34abeb0cefa56bb1ec02415c5f4d9ad4c70bc055c973d888c98393dfe9",
+      "after_bytes_sha256": "0ee1fb31dbcabba6bbb60b9b3033da09c4d1b499d357d2d670dfa4edce72ac16",
+      "before_sha256": "55a69a8ee0404f48ef622f2e1477f310773f1da92eb6fa269b86b7579c0621d5",
+      "after_sha256": "5e2310763806bb18790ec870d34d7be1a0f5df485e1dba40dd8fd1ea67f8272f"
+    },
+    {
+      "source": "cards/antiquities.c",
+      "before_bytes_sha256": "26ef4ce38371572707b4b591d71e324044b56eb3cc7977bd186428c2b6a78b74",
+      "after_bytes_sha256": "dc46c28fe2ad105936c0993c53a5f491c9b762aa73800c1a09ebeb67f270c631",
+      "before_sha256": "73a0c9e58f73c893f69f2f1c6aa173867fa826c829c8ad63ac09789005c83109",
+      "after_sha256": "3f7211fe215f9c4d287e78e55770c006841eaea4ee64aff7c7db7112e63b4f4b"
+    },
+    {
+      "source": "cards/apocalypse.c",
+      "before_bytes_sha256": "b58011e3c48eb24f62078a4002f63e15cf3aa2e11a5a9a4dc2c14a6dc6cfeb9a",
+      "after_bytes_sha256": "f9909870d3c2de539306fd9a4a78bb3ed13aca898959d17021b25ab8b1b4a5c4",
+      "before_sha256": "f5829d1ea59d30e46b6a4435c0ae0c9e2fca8454766c24d00e792f0228ec3173",
+      "after_sha256": "9159f68005a44a5fa6995c48ca6d75d2c1907a2aa4d815994f3a641ad0076211"
+    },
+    {
+      "source": "cards/exodus.c",
+      "before_bytes_sha256": "6e38b475e705937f8e796985480d53c43cd8e78f5ac87e864ca76d71932d50ac",
+      "after_bytes_sha256": "cce3a7b05cab121641672f2aab396b4048ab9111dc6e3f88b5fba7c717b83a7f",
+      "before_sha256": "11ff2eca2515e8dae1983e87e1365c974cc63a4719bd440b19f3a6eacaff964d",
+      "after_sha256": "62f63579b6c8c3f11673cd40fc302a4034e36f451d02a607161112a4b85a23ae"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "before_bytes_sha256": "7cd15c6e33572e39b0d2e7df4709d2f1eabc0189d8bc9512eff0957f21bbd3d2",
+      "after_bytes_sha256": "739d3064122c5bf3b735216f63bf56cfadfe5aea954f8229c7274478b9f499b0",
+      "before_sha256": "e12077249c56e6dab7d3a07c5a4f507cb0429c04d5ec4c80d19c29eb0f9319e3",
+      "after_sha256": "6e0c22d82045e4ba00b6ec098e981ebc520a6912f9c82a753bc496818fd6af9f"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "before_bytes_sha256": "b7fe84379d0d5e13d841fb26306c7e5a3be86591a8648f40e6fd5c7954bf4db9",
+      "after_bytes_sha256": "f991b4854b48bedde2953d58beb368580dcaf4ef36df9cf8cbf9fb230bd6219d",
+      "before_sha256": "f68d3b0d5fd1a3ab95a26027ec08e0b661c6ba16383e87200c0c6edc1365110c",
+      "after_sha256": "375fb10159c884a855c7f7ec53c1cebec7c30f23d93d9d945182e87acc38d697"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "before_bytes_sha256": "eec86fe4952ecb4239f94995d61cd2cf81b7ce12d845e7a75a1e5b75b412cf96",
+      "after_bytes_sha256": "e794923d6e8d879a07276df6b7e590cbc69adfd4256a13b345694cf3120e523f",
+      "before_sha256": "4739259352fabfe1a626d86c95c12f7f99027faf7d3089adedeaf92d146a7a0f",
+      "after_sha256": "31c9fceb42e498dafaada10eadaec3c73f3fa3d3ee8f11f97a04f3e0a21c1574"
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "before_bytes_sha256": "f3d25b014c113338ee0118345953a5b46d893c7626f558e8b0c99d952c4ae8ea",
+      "after_bytes_sha256": "1671745078cc666c806996fa25608fa61502bd02c1ae24625ea72aa3a80732f9",
+      "before_sha256": "a2570dc3369d90bb4b037301692009d8a8deaca1da588db36dd7ad7b5bf68e20",
+      "after_sha256": "9e13978c187cf262b2b35966b33200bb23126d41ae14bb256d3916567189c800"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "before_bytes_sha256": "1d1189df761d5eeef54bd7ec308fc991a788989b7703f1634e097abe3de667b6",
+      "after_bytes_sha256": "cca190865dbd1a803fd9770d30fc75e6bc9362a8cbd5dea75684c61db7b2204e",
+      "before_sha256": "b5076e9cc5806ca94ec2b6bd5a46866a38b3dab71558d38cfa8084e638eb3f67",
+      "after_sha256": "d56657c3e992f0597ea192305c09f2ba6a9910e46a5e3bfce07f789859fd042a"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "before_bytes_sha256": "9a1b4051ed805cb2489919f39dbae46dc6558802b4b47e082c9ac70cf9465818",
+      "after_bytes_sha256": "15e126a77180cdfe5e362a93c5fad023b20420fd611aaca1e6c44addb7292bed",
+      "before_sha256": "9b376fe7f85bc5fd7d335aa5cc3cfd0e20f7256a51c393b5c7ef58744576d76c",
+      "after_sha256": "3fcdcd92dbd77a1a2d8c2ca7870641e71c443aea85c4267a04aca810580c3fe2"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "before_bytes_sha256": "204b5010da8973088fbc03a61f305ec4c9651f8a295776879f021afc63a2a209",
+      "after_bytes_sha256": "e78db3097b65e3432aea2e5e8f7b4ab75e0edfb4c11612242f3f19c51cd6f548",
+      "before_sha256": "258bd1b7307fdf65b995eb8812955678d4ae97e24ce2322edc9ee87ae4f12cbd",
+      "after_sha256": "879b2a9be964fa20bcc7025758d7d554a72d8526b51a928c0eabd362bb03051e"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "before_bytes_sha256": "c066bf89ec3c10b87f7b6d0023fa724be2e2a30b91d715d7a445bbcb170ea2a5",
+      "after_bytes_sha256": "b9b425fc653b26ebb03c7cf9830ba5bfc821963c9801c7ccb79da330beeea777",
+      "before_sha256": "2220e4a58ec726ea4f2cd2b31a069bdc6158fa21c0f856d5b210a43bdce03ec1",
+      "after_sha256": "a9a51c2b0957e45c960b4a4946065d1864c77fd5b2e7d55c35040e58c5523f1b"
+    },
+    {
+      "source": "functions/functions.c",
+      "before_bytes_sha256": "a370c9d7c88a8b6943c554ea714d786e7da9b40346e6ad7630f9a69a1563680b",
+      "after_bytes_sha256": "ceee18f2f1042891298725dab060aff1126722b1e13ccdf98e4343c65b45fb50",
+      "before_sha256": "bf78288654a4e55d9ce86be28ca1c5b303542e61439dcb30dec60b2fd143f9fa",
+      "after_sha256": "a2a13f777ce53f421c7d952d5cbd4b769b0e8ab0e068a684deed44d01c02dd52"
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "before_bytes_sha256": "c30156680b0d0518cf8047053ab09a3a2521ab76111801c2803cdcf71251bda5",
+      "after_bytes_sha256": "e1301a304224c846e72340bef7b50a5cbd953ca11152598362da2f93f7d61d08",
+      "before_sha256": "1c3a1f3dbe9fd95ff5ebb15e1f655231bf9efef7c058d6b553c8067372156f06",
+      "after_sha256": "fd8dd189b015db91927bdfa7063d339c8abc0db98410cbf338b0710ae8499585"
+    }
+  ],
+  "references": [
+    {
+      "source": "cards/alliances.c",
+      "name": "card_fyndhorn_druid",
+      "offset": 206238,
+      "end": 206245,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/alliances.c",
+      "name": "card_fyndhorn_druid",
+      "offset": 206458,
+      "end": 206465,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/alliances.c",
+      "name": "card_fyndhorn_druid",
+      "offset": 206576,
+      "end": 206583,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/alliances.c",
+      "name": "card_fyndhorn_druid",
+      "offset": 206675,
+      "end": 206682,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/antiquities.c",
+      "name": "pump_until_source_is_in_play_and_tapped",
+      "offset": 1730,
+      "end": 1737,
+      "before": "card_00",
+      "after": "l2"
+    },
+    {
+      "source": "cards/antiquities.c",
+      "name": "pump_until_source_is_in_play_and_tapped",
+      "offset": 2041,
+      "end": 2048,
+      "before": "card_00",
+      "after": "l2"
+    },
+    {
+      "source": "cards/antiquities.c",
+      "name": "pump_until_source_is_in_play_and_tapped",
+      "offset": 2213,
+      "end": 2220,
+      "before": "card_00",
+      "after": "l2"
+    },
+    {
+      "source": "cards/antiquities.c",
+      "name": "pump_until_source_is_in_play_and_tapped",
+      "offset": 2442,
+      "end": 2449,
+      "before": "card_00",
+      "after": "l2"
+    },
+    {
+      "source": "cards/apocalypse.c",
+      "name": "card_credit_voucher",
+      "offset": 105355,
+      "end": 105362,
+      "before": "card_00",
+      "after": "selected"
+    },
+    {
+      "source": "cards/apocalypse.c",
+      "name": "card_credit_voucher",
+      "offset": 105632,
+      "end": 105639,
+      "before": "card_00",
+      "after": "selected"
+    },
+    {
+      "source": "cards/apocalypse.c",
+      "name": "card_credit_voucher",
+      "offset": 105710,
+      "end": 105717,
+      "before": "card_00",
+      "after": "selected"
+    },
+    {
+      "source": "cards/apocalypse.c",
+      "name": "card_credit_voucher",
+      "offset": 105777,
+      "end": 105784,
+      "before": "card_00",
+      "after": "selected"
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_dizzying_gaze",
+      "offset": 143327,
+      "end": 143336,
+      "before": "player_00",
+      "after": "t_player"
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_dizzying_gaze",
+      "offset": 143584,
+      "end": 143593,
+      "before": "player_00",
+      "after": "t_player"
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_dizzying_gaze",
+      "offset": 143712,
+      "end": 143721,
+      "before": "player_00",
+      "after": "t_player"
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_dizzying_gaze",
+      "offset": 143921,
+      "end": 143930,
+      "before": "player_00",
+      "after": "t_player"
+    },
+    {
+      "source": "cards/exodus.c",
+      "name": "card_dizzying_gaze",
+      "offset": 144337,
+      "end": 144346,
+      "before": "player_00",
+      "after": "t_player"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_tempered_sliver",
+      "offset": 64179,
+      "end": 64186,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_tempered_sliver",
+      "offset": 64484,
+      "end": 64491,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_tempered_sliver",
+      "offset": 64524,
+      "end": 64531,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_tempered_sliver",
+      "offset": 64674,
+      "end": 64681,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_tempered_sliver",
+      "offset": 64740,
+      "end": 64747,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_tempered_sliver",
+      "offset": 64811,
+      "end": 64818,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_tempered_sliver",
+      "offset": 64987,
+      "end": 64994,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_tempered_sliver",
+      "offset": 65091,
+      "end": 65098,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_tempered_sliver",
+      "offset": 65187,
+      "end": 65194,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_grief2",
+      "offset": 199623,
+      "end": 199630,
+      "before": "card_00",
+      "after": "selected"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_grief2",
+      "offset": 200242,
+      "end": 200249,
+      "before": "card_00",
+      "after": "selected"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_grief2",
+      "offset": 200320,
+      "end": 200327,
+      "before": "card_00",
+      "after": "selected"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_grief2",
+      "offset": 200382,
+      "end": 200389,
+      "before": "card_00",
+      "after": "selected"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "cathedral_membrane_legacy",
+      "offset": 172927,
+      "end": 172934,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "cathedral_membrane_legacy",
+      "offset": 172971,
+      "end": 172978,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "cathedral_membrane_legacy",
+      "offset": 173107,
+      "end": 173114,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_yuan_shaos_infantry",
+      "offset": 153030,
+      "end": 153037,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_yuan_shaos_infantry",
+      "offset": 153209,
+      "end": 153216,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_yuan_shaos_infantry",
+      "offset": 153295,
+      "end": 153302,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "name": "card_yuan_shaos_infantry",
+      "offset": 153363,
+      "end": 153370,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_barbed_field",
+      "offset": 189652,
+      "end": 189661,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_barbed_field",
+      "offset": 189981,
+      "end": 189990,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_barbed_field",
+      "offset": 190116,
+      "end": 190125,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_barbed_field",
+      "offset": 190433,
+      "end": 190442,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_barbed_field",
+      "offset": 190892,
+      "end": 190901,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_barbed_field",
+      "offset": 191208,
+      "end": 191217,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_barbed_field",
+      "offset": 191333,
+      "end": 191342,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_verdant_field",
+      "offset": 194304,
+      "end": 194313,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_verdant_field",
+      "offset": 194708,
+      "end": 194717,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_verdant_field",
+      "offset": 194843,
+      "end": 194852,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_verdant_field",
+      "offset": 195140,
+      "end": 195149,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_verdant_field",
+      "offset": 195681,
+      "end": 195690,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_verdant_field",
+      "offset": 196004,
+      "end": 196013,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_verdant_field",
+      "offset": 196127,
+      "end": 196136,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "imprint",
+      "offset": 225479,
+      "end": 225486,
+      "before": "card_00",
+      "after": "legacy_id"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "imprint",
+      "offset": 225523,
+      "end": 225530,
+      "before": "card_00",
+      "after": "legacy_id"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "imprint",
+      "offset": 225625,
+      "end": 225632,
+      "before": "card_00",
+      "after": "legacy_id"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "imprint",
+      "offset": 225868,
+      "end": 225875,
+      "before": "card_00",
+      "after": "legacy_id"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_livewire_lash",
+      "offset": 152694,
+      "end": 152703,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_livewire_lash",
+      "offset": 152858,
+      "end": 152867,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_livewire_lash",
+      "offset": 152992,
+      "end": 153001,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_livewire_lash",
+      "offset": 153105,
+      "end": 153114,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_livewire_lash",
+      "offset": 153227,
+      "end": 153236,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_livewire_lash",
+      "offset": 153649,
+      "end": 153658,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_livewire_lash",
+      "offset": 153992,
+      "end": 154001,
+      "before": "player_00",
+      "after": "p"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_ilharg_the_raze_boar",
+      "offset": 208836,
+      "end": 208843,
+      "before": "card_00",
+      "after": "legacy"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_ilharg_the_raze_boar",
+      "offset": 209424,
+      "end": 209431,
+      "before": "card_00",
+      "after": "legacy"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_ilharg_the_raze_boar",
+      "offset": 209557,
+      "end": 209564,
+      "before": "card_00",
+      "after": "legacy"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_ilharg_the_raze_boar",
+      "offset": 209626,
+      "end": 209633,
+      "before": "card_00",
+      "after": "legacy"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_spark_double",
+      "offset": 117301,
+      "end": 117308,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_spark_double",
+      "offset": 117808,
+      "end": 117815,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_spark_double",
+      "offset": 117868,
+      "end": 117875,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_spark_double",
+      "offset": 117976,
+      "end": 117983,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_spark_double",
+      "offset": 118088,
+      "end": 118095,
+      "before": "card_00",
+      "after": "c"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_skyclave_squid",
+      "offset": 11967,
+      "end": 11974,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_skyclave_squid",
+      "offset": 12077,
+      "end": 12084,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_skyclave_squid",
+      "offset": 12214,
+      "end": 12221,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_skyclave_squid",
+      "offset": 12280,
+      "end": 12287,
+      "before": "card_00",
+      "after": "leg"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "pump_until_eot",
+      "offset": 482524,
+      "end": 482531,
+      "before": "card_00",
+      "after": "result"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "pump_until_eot",
+      "offset": 482568,
+      "end": 482575,
+      "before": "card_00",
+      "after": "result"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "pump_until_eot",
+      "offset": 482712,
+      "end": 482719,
+      "before": "card_00",
+      "after": "result"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "pump_until_eot",
+      "offset": 483031,
+      "end": 483038,
+      "before": "card_00",
+      "after": "result"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "can_block_additional_until_eot",
+      "offset": 486658,
+      "end": 486665,
+      "before": "card_00",
+      "after": "legacy_card"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "can_block_additional_until_eot",
+      "offset": 486702,
+      "end": 486709,
+      "before": "card_00",
+      "after": "legacy_card"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "can_block_additional_until_eot",
+      "offset": 486898,
+      "end": 486905,
+      "before": "card_00",
+      "after": "legacy_card"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "can_block_additional_until_eot",
+      "offset": 487263,
+      "end": 487270,
+      "before": "card_00",
+      "after": "legacy_card"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "create_legacy_activate_for_opponent",
+      "offset": 408868,
+      "end": 408875,
+      "before": "card_00",
+      "after": "legacy"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "create_legacy_activate_for_opponent",
+      "offset": 409456,
+      "end": 409463,
+      "before": "card_00",
+      "after": "legacy"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "create_legacy_activate_for_opponent",
+      "offset": 409601,
+      "end": 409608,
+      "before": "card_00",
+      "after": "legacy"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "create_legacy_activate_for_opponent",
+      "offset": 410016,
+      "end": 410023,
+      "before": "card_00",
+      "after": "legacy"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "create_card_name_legacy_unattached",
+      "offset": 337766,
+      "end": 337773,
+      "before": "card_00",
+      "after": "legacy_card"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "create_card_name_legacy_unattached",
+      "offset": 337810,
+      "end": 337817,
+      "before": "card_00",
+      "after": "legacy_card"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "create_card_name_legacy_unattached",
+      "offset": 337929,
+      "end": 337936,
+      "before": "card_00",
+      "after": "legacy_card"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "create_card_name_legacy_unattached",
+      "offset": 337991,
+      "end": 337998,
+      "before": "card_00",
+      "after": "legacy_card"
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "remove_a_subtype_permanently",
+      "offset": 71220,
+      "end": 71227,
+      "before": "card_00",
+      "after": "legacy"
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "remove_a_subtype_permanently",
+      "offset": 71264,
+      "end": 71271,
+      "before": "card_00",
+      "after": "legacy"
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "remove_a_subtype_permanently",
+      "offset": 71459,
+      "end": 71466,
+      "before": "card_00",
+      "after": "legacy"
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "remove_a_subtype_permanently",
+      "offset": 71556,
+      "end": 71563,
+      "before": "card_00",
+      "after": "legacy"
+    }
+  ],
+  "before_objects": [
+    {
+      "path": ".recovery/build-gcc93/obj/cards/alliances.o",
+      "runtime_sha256": "32713a34931f65455ae09dba874462e3ee9b1ba025b1989cda49a7690065f2a6"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/cards/antiquities.o",
+      "runtime_sha256": "ae7ca2c3a91dc10d7afd119257568b093460fff067ca2ffa3ea8aab84725e32c"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/cards/apocalypse.o",
+      "runtime_sha256": "69b142ff348e1afb0ff35b79fb4eb4b056aa2e4d542925ec2eef55d63d9dba68"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/cards/exodus.o",
+      "runtime_sha256": "90bb309b175a996a403cc1452d92f747ab9d39a26b392d572fd5bfca3c19f19b"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/cards/modern_horizons.o",
+      "runtime_sha256": "cd721e2e39eda273e085d3a24c3f0774ca321a6326950208fd306b1b7606f6be"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/cards/modern_horizons_2.o",
+      "runtime_sha256": "58357e886488d7849e52470525f84fb27ed5de0c5553e646df863803944042ef"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/cards/new_phyrexia.o",
+      "runtime_sha256": "51de67f5e0ee6aeb0e22e0893a42e0757096378c417df6abdc51d8a741a65fd9"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/cards/portal_1_2_3k.o",
+      "runtime_sha256": "c4f237063aaf8291e62727c97f3c218e34fd4fe40a80a6f5dd146547018b5b2a"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/cards/prophecy.o",
+      "runtime_sha256": "80d3aedefc46c955f332a1fb7f97c71e7b8b5cbfd7aafcb12332f4380f3fecd1"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/cards/scars_of_mirrodin.o",
+      "runtime_sha256": "baefd2809dfbba8ce9f791e58dec46de6bce288083e9b942a8613b499258c758"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/cards/war_of_the_spark.o",
+      "runtime_sha256": "2c3a23c02a279ac88f0cee7b825f0e396b241670b9e93198f38dd966b109f4b1"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/cards/zendikar_rising.o",
+      "runtime_sha256": "51bdf1ac79c28085f1256a49f4d919e0be2cca55dc543c88e8bba32f51af9508"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/functions/functions.o",
+      "runtime_sha256": "068b613266054afeb0defe0220343e68fbba0eaf472e7d4f679591bb1c8343db"
+    },
+    {
+      "path": ".recovery/build-gcc93/obj/functions/has_creature_type.o",
+      "runtime_sha256": "54d68d0a274c692366ea69976bf3e5f7ffd2c670bc4168af3681ec57f95c4f45"
+    }
+  ],
+  "before_runtime_sections": [
+    {
+      "name": ".text",
+      "rva": 4096,
+      "virtual_size": 7407936,
+      "raw_size": 7408128,
+      "flags": 1616904288,
+      "sha256": "d23853295f1cdf17f97d279613130d59438bf8be21330bc68e9ac60dc87a2ad3"
+    },
+    {
+      "name": "/4",
+      "rva": 7413760,
+      "virtual_size": 216,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "2afbf6749c7589403ab5561280444247fee452cecaec1a92637547e7a9311c74"
+    },
+    {
+      "name": "/19",
+      "rva": 7417856,
+      "virtual_size": 64,
+      "raw_size": 512,
+      "flags": 1615855648,
+      "sha256": "770325023f6190b0e922bb1ea7a8e3a3e6c1dba097ed2677e91e0e60a8159a7a"
+    },
+    {
+      "name": "/33",
+      "rva": 7421952,
+      "virtual_size": 64,
+      "raw_size": 512,
+      "flags": 1615855648,
+      "sha256": "4d0c25253b8c6806d015cade8ddf9fac210442a1e892b15197f5c5569cd135b5"
+    },
+    {
+      "name": "/85",
+      "rva": 7426048,
+      "virtual_size": 48,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "9d942831b3673d69c1a538c5434c170d350369d0bbea33d54f097681e312a5d9"
+    },
+    {
+      "name": "/129",
+      "rva": 7430144,
+      "virtual_size": 48,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "431b9bbfd31251347596f03492c887d770862ea47ed64c6c06b7f2376d77bcf3"
+    },
+    {
+      "name": "/169",
+      "rva": 7434240,
+      "virtual_size": 48,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "895b5037a61df361a67ef4f42d6b430da5afdd48f8f041467477031fc3a15f0d"
+    },
+    {
+      "name": "/208",
+      "rva": 7438336,
+      "virtual_size": 48,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "968071a2efa28bf856075c62a13be57598628008972fa920cda40b8b890be4b2"
+    },
+    {
+      "name": "/249",
+      "rva": 7442432,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "3c3a6ce93a3a5b8e2a2f175e35131ac86923645d44c699f63a05089fa2d55c82"
+    },
+    {
+      "name": "/293",
+      "rva": 7446528,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "06bc4d7196efcb5f74afcf0cbbe4de3baba2ffa4b04f0c0682f28a56b618ffeb"
+    },
+    {
+      "name": "/338",
+      "rva": 7450624,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "e29feff371e77a22b55260c9c164fe631d55888ae4d97e74760304755815812c"
+    },
+    {
+      "name": "/387",
+      "rva": 7454720,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "12d68e8a0b6d5f4b981442940c3a99644cc352e53eeccf369bb60b80b77fa40a"
+    },
+    {
+      "name": "/432",
+      "rva": 7458816,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "c85b4b05716a3c8e2818dace1be57f73957b89946531386fd0770dd90952cbbf"
+    },
+    {
+      "name": "/477",
+      "rva": 7462912,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "8a7744cadff3101fe5d0648a00a18c0972216fe9cd5f8ae596bdfa3ec18eac14"
+    },
+    {
+      "name": "/523",
+      "rva": 7467008,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "1eaf3ad77073ddc3108f33cf70087966d2c073a987af6e2a4424767932963ac4"
+    },
+    {
+      "name": "/567",
+      "rva": 7471104,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "b1365be66ae99b35588c08a352d498433cf7b8ee4223e674ad48520303a4c9c6"
+    },
+    {
+      "name": "/614",
+      "rva": 7475200,
+      "virtual_size": 156,
+      "raw_size": 512,
+      "flags": 1613758496,
+      "sha256": "c78747db2f54862385e5f0b197878de96269da387306d3c18ffff450b9edbf74"
+    },
+    {
+      "name": "/662",
+      "rva": 7479296,
+      "virtual_size": 112,
+      "raw_size": 512,
+      "flags": 1615855648,
+      "sha256": "722977cada0ad1526ae9c5bf8574f0f9cf75a10766b9958bdb19972deed697b8"
+    },
+    {
+      "name": ".data",
+      "rva": 7483392,
+      "virtual_size": 7540,
+      "raw_size": 7680,
+      "flags": 3227516992,
+      "sha256": "0ccb628ac02926793256920c10e5f07f4ebd638580a81d23ec11438e4380aaf7"
+    },
+    {
+      "name": ".rdata",
+      "rva": 7491584,
+      "virtual_size": 349740,
+      "raw_size": 350208,
+      "flags": 1080033344,
+      "sha256": "d2fbce25fd7a5580b70fbf5f2fcbd4d0aa1665f5bfd29935d30c4f4beed2f782"
+    },
+    {
+      "name": ".bss",
+      "rva": 7843840,
+      "virtual_size": 260092,
+      "raw_size": 0,
+      "flags": 3227517056,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": ".idata",
+      "rva": 8110080,
+      "virtual_size": 5596,
+      "raw_size": 5632,
+      "flags": 3224371264,
+      "sha256": "8cdbcc794bb4d486b1d5558e7e7af1a35a1c7cdbd8b3bc32ef0cfaaa9ec60edc"
+    },
+    {
+      "name": ".CRT",
+      "rva": 8118272,
+      "virtual_size": 48,
+      "raw_size": 512,
+      "flags": 3224371264,
+      "sha256": "2056f76e27dc5075e4b3d4b6f44961b0b1aedfca384b2577cf6cdcf603f96754"
+    },
+    {
+      "name": ".tls",
+      "rva": 8122368,
+      "virtual_size": 8,
+      "raw_size": 512,
+      "flags": 3224371264,
+      "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+    },
+    {
+      "name": ".reloc",
+      "rva": 8126464,
+      "virtual_size": 197416,
+      "raw_size": 197632,
+      "flags": 1110442048,
+      "sha256": "e6764e02be325086552801c66d1b2e639fd89049a1531c566032d2972c22dbe3"
+    }
+  ],
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "before_dll_sha256": "b3a8c3455f1add3a8fde1f692550c3115d73de74f3d4175938393b3480ad66e1",
+  "before_debug_sha256": "183465c1e5a588a4bf5d2f35a5db37551350e9135460b16bcf8597814f6033a1",
+  "staged_diff_sha256": "6273e6c937a5a117fb7bf6d41177a819943425f7ecb09751c91db914547fb818",
+  "alignment_sha256": "33ab13c038752b514ba5784a5426385501ebc23f099065428d718f8a848c3d98",
+  "scout_sha256": "9c5a35120e2b796fc976c4d71511567188541baf4661384102b84dacc36f15e0",
+  "rejected_alignment_candidates": [
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_kaldra_compleat",
+      "reason": "Operand width/type changed"
+    },
+    {
+      "source": "cards/mirage.c",
+      "name": "effect_soul_echo",
+      "reason": "Register changed"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_armored_skyhunter",
+      "reason": "Register changed"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_fall_from_favor",
+      "reason": "Instruction/offset changed"
+    }
+  ],
+  "native_callback_contracts": [
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "whenever_a_creature_blocks_black_red",
+      "die": "0x14a314d",
+      "parameters": [
+        {
+          "name": "color_test",
+          "contract": [
+            "scalar",
+            4,
+            5
+          ]
+        },
+        {
+          "name": "val",
+          "contract": [
+            "scalar",
+            4,
+            5
+          ]
+        },
+        {
+          "name": "t_player",
+          "contract": [
+            "scalar",
+            4,
+            5
+          ]
+        },
+        {
+          "name": "t_card",
+          "contract": [
+            "scalar",
+            4,
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "source": "functions/multiblock.c",
+      "name": "for_each_creature_blocked_by_me",
+      "die": "0x6985549",
+      "parameters": [
+        {
+          "name": "player",
+          "contract": [
+            "scalar",
+            4,
+            5
+          ]
+        },
+        {
+          "name": "card",
+          "contract": [
+            "scalar",
+            4,
+            5
+          ]
+        },
+        {
+          "name": "fn",
+          "contract": [
+            "code_pointer",
+            4,
+            {
+              "result": [
+                "void"
+              ],
+              "parameters": [
+                [
+                  "scalar",
+                  4,
+                  5
+                ],
+                [
+                  "scalar",
+                  4,
+                  5
+                ],
+                [
+                  "scalar",
+                  4,
+                  5
+                ],
+                [
+                  "scalar",
+                  4,
+                  5
+                ]
+              ],
+              "variadic": false,
+              "calling_convention": 1
+            }
+          ]
+        },
+        {
+          "name": "arg1",
+          "contract": [
+            "scalar",
+            4,
+            5
+          ]
+        },
+        {
+          "name": "arg2",
+          "contract": [
+            "scalar",
+            4,
+            5
+          ]
+        }
+      ]
+    }
+  ],
+  "callback_note": "The remaining Righteous Indignation pointer-to-integer expression forwards an address through the native signed four-byte arg2/val callback payload. Preserve the original integer ABI rather than changing the generic iterator signature.",
+  "scope": "Twenty local identifier mappings in twenty existing definitions. Unique native/current DWARF type and normalized location-list signatures, identical extents and complete aligned instructions support the original names. Reject ambiguous storage/name collisions, non-storage expressions, different instructions and unsupported addresses. No broad rename inference from register reuse or score alone; no new handlers.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "5c6ea270e6bfc798b56ad1e233e9e2a0403dcf15d875aca72b723559482c2486",
+    "debug_sha256": "af65d4f0b11ca03412ad3be293387207f287f16c92934a4eb1071969c22d946e",
+    "build_log_sha256": "3778a6bfc1839bdc1baaed6c2dd8b71fa29febea4ba3761b1d4d7383a129731e",
+    "native_local_names": 20,
+    "source_definitions": 20,
+    "identifier_sites": 95,
+    "source_files": 14,
+    "full_file_projections": 14,
+    "independent_identifier_range_projections": 14,
+    "preserved_line_counts_and_endings": 14,
+    "identical_runtime_objects": 14,
+    "identical_dll_runtime_sections": [
+      {
+        "name": ".text",
+        "rva": 4096,
+        "virtual_size": 7407936,
+        "raw_size": 7408128,
+        "flags": 1616904288,
+        "sha256": "d23853295f1cdf17f97d279613130d59438bf8be21330bc68e9ac60dc87a2ad3"
+      },
+      {
+        "name": "/4",
+        "rva": 7413760,
+        "virtual_size": 216,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "2afbf6749c7589403ab5561280444247fee452cecaec1a92637547e7a9311c74"
+      },
+      {
+        "name": "/19",
+        "rva": 7417856,
+        "virtual_size": 64,
+        "raw_size": 512,
+        "flags": 1615855648,
+        "sha256": "770325023f6190b0e922bb1ea7a8e3a3e6c1dba097ed2677e91e0e60a8159a7a"
+      },
+      {
+        "name": "/33",
+        "rva": 7421952,
+        "virtual_size": 64,
+        "raw_size": 512,
+        "flags": 1615855648,
+        "sha256": "4d0c25253b8c6806d015cade8ddf9fac210442a1e892b15197f5c5569cd135b5"
+      },
+      {
+        "name": "/85",
+        "rva": 7426048,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "9d942831b3673d69c1a538c5434c170d350369d0bbea33d54f097681e312a5d9"
+      },
+      {
+        "name": "/129",
+        "rva": 7430144,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "431b9bbfd31251347596f03492c887d770862ea47ed64c6c06b7f2376d77bcf3"
+      },
+      {
+        "name": "/169",
+        "rva": 7434240,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "895b5037a61df361a67ef4f42d6b430da5afdd48f8f041467477031fc3a15f0d"
+      },
+      {
+        "name": "/208",
+        "rva": 7438336,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "968071a2efa28bf856075c62a13be57598628008972fa920cda40b8b890be4b2"
+      },
+      {
+        "name": "/249",
+        "rva": 7442432,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "3c3a6ce93a3a5b8e2a2f175e35131ac86923645d44c699f63a05089fa2d55c82"
+      },
+      {
+        "name": "/293",
+        "rva": 7446528,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "06bc4d7196efcb5f74afcf0cbbe4de3baba2ffa4b04f0c0682f28a56b618ffeb"
+      },
+      {
+        "name": "/338",
+        "rva": 7450624,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "e29feff371e77a22b55260c9c164fe631d55888ae4d97e74760304755815812c"
+      },
+      {
+        "name": "/387",
+        "rva": 7454720,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "12d68e8a0b6d5f4b981442940c3a99644cc352e53eeccf369bb60b80b77fa40a"
+      },
+      {
+        "name": "/432",
+        "rva": 7458816,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "c85b4b05716a3c8e2818dace1be57f73957b89946531386fd0770dd90952cbbf"
+      },
+      {
+        "name": "/477",
+        "rva": 7462912,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "8a7744cadff3101fe5d0648a00a18c0972216fe9cd5f8ae596bdfa3ec18eac14"
+      },
+      {
+        "name": "/523",
+        "rva": 7467008,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "1eaf3ad77073ddc3108f33cf70087966d2c073a987af6e2a4424767932963ac4"
+      },
+      {
+        "name": "/567",
+        "rva": 7471104,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "b1365be66ae99b35588c08a352d498433cf7b8ee4223e674ad48520303a4c9c6"
+      },
+      {
+        "name": "/614",
+        "rva": 7475200,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "c78747db2f54862385e5f0b197878de96269da387306d3c18ffff450b9edbf74"
+      },
+      {
+        "name": "/662",
+        "rva": 7479296,
+        "virtual_size": 112,
+        "raw_size": 512,
+        "flags": 1615855648,
+        "sha256": "722977cada0ad1526ae9c5bf8574f0f9cf75a10766b9958bdb19972deed697b8"
+      },
+      {
+        "name": ".data",
+        "rva": 7483392,
+        "virtual_size": 7540,
+        "raw_size": 7680,
+        "flags": 3227516992,
+        "sha256": "0ccb628ac02926793256920c10e5f07f4ebd638580a81d23ec11438e4380aaf7"
+      },
+      {
+        "name": ".rdata",
+        "rva": 7491584,
+        "virtual_size": 349740,
+        "raw_size": 350208,
+        "flags": 1080033344,
+        "sha256": "d2fbce25fd7a5580b70fbf5f2fcbd4d0aa1665f5bfd29935d30c4f4beed2f782"
+      },
+      {
+        "name": ".bss",
+        "rva": 7843840,
+        "virtual_size": 260092,
+        "raw_size": 0,
+        "flags": 3227517056,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": ".idata",
+        "rva": 8110080,
+        "virtual_size": 5596,
+        "raw_size": 5632,
+        "flags": 3224371264,
+        "sha256": "8cdbcc794bb4d486b1d5558e7e7af1a35a1c7cdbd8b3bc32ef0cfaaa9ec60edc"
+      },
+      {
+        "name": ".CRT",
+        "rva": 8118272,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 3224371264,
+        "sha256": "2056f76e27dc5075e4b3d4b6f44961b0b1aedfca384b2577cf6cdcf603f96754"
+      },
+      {
+        "name": ".tls",
+        "rva": 8122368,
+        "virtual_size": 8,
+        "raw_size": 512,
+        "flags": 3224371264,
+        "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+      },
+      {
+        "name": ".reloc",
+        "rva": 8126464,
+        "virtual_size": 197416,
+        "raw_size": 197632,
+        "flags": 1110442048,
+        "sha256": "e6764e02be325086552801c66d1b2e639fd89049a1531c566032d2972c22dbe3"
+      }
+    ],
+    "object_reader_sha256": "fc302f92bfcc7c3374de769925f11e0dc0c121f12a7866ac506ab0f90a3edd30",
+    "checker_sha256": "e1fab1c1194706355dd5a806e8d40ae1958aa57b7764cd93e2f21ee03870820f",
+    "staging": "No agent index writes; initial selection unchanged at final check.",
+    "observed_staged_diff_sha256": "6273e6c937a5a117fb7bf6d41177a819943425f7ecb09751c91db914547fb818",
+    "scope": "Identifier-only edits; all fourteen edited allocated objects and DLL runtime sections are unchanged, including code/data and relocation targets. Debug/export metadata excluded. Native name recovery uses exact variable storage signatures plus aligned instructions; it does not extend earlier bounded gameplay/leaf evidence beyond its stated scope."
+  }
+}

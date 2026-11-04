@@ -1,0 +1,5314 @@
+{
+  "format": 1,
+  "status": "Eight existing permanent/counter handlers reconstructed from 473 to 289 lines. Combined build, 15,169 fixed slots, six raw/canonical source projections and 1,179,648 bounded native/rebuilt observations pass before and after the reconstruction.",
+  "files": [
+    {
+      "source": "cards/war_of_the_spark.c",
+      "before_bytes_sha256": "cf8b11550b523ced83f3d6c821fc2e7c9612459b8ab566d8f2def98c9147ebe8",
+      "after_bytes_sha256": "2935d8af2f8df0b3d5a0cec8c7f06bd892f92e4cfc00e443c8d1b336dd1e19c8",
+      "before_sha256": "154f0885d8c8da101ceaf0047d2d454b9e8ee00c73fea89f6d928b5b1fbf045a",
+      "after_sha256": "329ffc70f7f18e7ab039cdac9a6d7b368603c17b2dc8f760fe157e03a0c6859a"
+    },
+    {
+      "source": "cards/innistrad.c",
+      "before_bytes_sha256": "0400eaa6b6c2d6a6948705db469aadcf5ba15690b7526097a956a7f1574ccd6e",
+      "after_bytes_sha256": "60bebf9fb10fb2a2640174ffd0e02937b6eec08f233b826b1143d808899ed98b",
+      "before_sha256": "380ee4ccacfd8cf36ba718e0848382cb129f6d3208926896cf1a5fe83cf2aa31",
+      "after_sha256": "65d23d71e44d294441ac957ce8905640de047ab4d2e2d948aa08fd68784aba96"
+    },
+    {
+      "source": "cards/planar_chaos.c",
+      "before_bytes_sha256": "2ce510262445593fbfa994c2ef293afcf285595b4c59ecda556d5553682ef7fb",
+      "after_bytes_sha256": "105428dde77e4d1456970ccd1632d8cfe999636f4c84372a6ba1cc8e3b7088cd",
+      "before_sha256": "fcf7b280ae8cfa8f94a7352d313a1e81a14356f59b7d73e4eaa960602f7affd9",
+      "after_sha256": "a886e11120a5c384317c4f18c1b2df3b882b3d620e49d364493ece5797b8d99e"
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "before_bytes_sha256": "e673ea3b1d4d7ef1dd1451ac5344ee6874f50a3123a5b50dc875abccbdedf5f8",
+      "after_bytes_sha256": "6574b804641108c458f64a4216c3c26697073f483d7ee68be581ce55493d8c36",
+      "before_sha256": "29edbd8da71644432727d6bea83d3366286f30cd425dbd6dc6020d88bc0a9305",
+      "after_sha256": "19cfd18533013eff889b23229f7d839c621d521bc6a0fbcd3129c4b85996a5bf"
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "before_bytes_sha256": "08af07d5085de0207e2d3f624fbf2adec0cd0ee074ee749f6bc5c11ebc1c6795",
+      "after_bytes_sha256": "40207ac5f6fee86ac2b6282bba324a7aeb78c1f77f110b2b02c58072b7bca0dd",
+      "before_sha256": "ca2374a38b3ac10f319ee5482464a9b617599272fec201c137329c1c05e74e35",
+      "after_sha256": "732c404451890ee1d9830731183f0d0ad2c749f63557ad04cfa721113c3df9dd"
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "before_bytes_sha256": "cd2c6cc15d28e4a757f7cc7a5e44fbdf6d2e42cd51bb34f6d787be95b7a84c45",
+      "after_bytes_sha256": "f1fba06a0bdb8b77e3d23cd4090dca7943cc88317798a0f7fab2e2da840581dd",
+      "before_sha256": "9491df16ddf84a21047e32bbadc668293f845d8d431c4747158a752bb5063b3f",
+      "after_sha256": "905a036f2b38d9a4ea1f75342a91ccec7492ffca57b3ae45c3af993401d95066"
+    }
+  ],
+  "names": [
+    "card_ashiok_dream_render",
+    "card_arlinn_voice_of_the_pack",
+    "card_angrath_captain_of_chaos",
+    "card_garruk_relentless",
+    "card_timebender",
+    "card_simic_ascendancy",
+    "card_kiora_bests_the_sea_god",
+    "unquenchable_fury_legacy"
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "counts": {
+    "definitions": 8,
+    "source_files": 6,
+    "before_lines": 473,
+    "after_lines": 289
+  },
+  "baseline_fixture": {
+    "plan": {
+      "entries": [
+        {
+          "side": 0,
+          "index": 0,
+          "name": "card_ashiok_dream_render",
+          "address": "0x21c8cd0",
+          "size": 509,
+          "sha256": "147cd86b227ba8eba309fecaca8375263b02a8fc6135985a1fb958792d03b9a4"
+        },
+        {
+          "side": 0,
+          "index": 1,
+          "name": "card_arlinn_voice_of_the_pack",
+          "address": "0x21c8a00",
+          "size": 577,
+          "sha256": "bfd2c6332b9fd748240dcaa4f816adf192f5255b81112f30a9edbf7d1aa5654f"
+        },
+        {
+          "side": 0,
+          "index": 2,
+          "name": "card_angrath_captain_of_chaos",
+          "address": "0x21c8760",
+          "size": 433,
+          "sha256": "f3657c55f6c3efd542a31c7199147cc3a41dbd44dced947ff315153986876e9f"
+        },
+        {
+          "side": 0,
+          "index": 3,
+          "name": "card_garruk_relentless",
+          "address": "0x2076000",
+          "size": 727,
+          "sha256": "748578a11842d88d90529a879efaa3fbe74a47510ac91865a28e190313129c63"
+        },
+        {
+          "side": 0,
+          "index": 4,
+          "name": "card_timebender",
+          "address": "0x23be760",
+          "size": 641,
+          "sha256": "5ae5ddfb16abdafb52df1f2d39ecfba642b0847e538742b9806409368005182e"
+        },
+        {
+          "side": 0,
+          "index": 5,
+          "name": "card_simic_ascendancy",
+          "address": "0x25c2eb0",
+          "size": 588,
+          "sha256": "d653ec39be995486123707db4ac3231ac668559ae51d0331af76c309450f7151"
+        },
+        {
+          "side": 0,
+          "index": 6,
+          "name": "card_kiora_bests_the_sea_god",
+          "address": "0x235e100",
+          "size": 525,
+          "sha256": "e9d16073abbc7a49c06e85b18b982f2721621351cc4e65f67394dbfb69a2558d"
+        },
+        {
+          "side": 0,
+          "index": 7,
+          "name": "unquenchable_fury_legacy",
+          "address": "0x20351a0",
+          "size": 220,
+          "sha256": "2ddb18cb4d2c46726ac307b0cd7d3c420be98c0ca272b850a56c8d7baab735fa"
+        },
+        {
+          "side": 1,
+          "index": 0,
+          "name": "card_ashiok_dream_render",
+          "address": "0x260e3e0",
+          "size": 576,
+          "sha256": "76e7842077b889c4c83ba48726f17ef9e4976c79a848536906868643a54747b1"
+        },
+        {
+          "side": 1,
+          "index": 1,
+          "name": "card_arlinn_voice_of_the_pack",
+          "address": "0x260e160",
+          "size": 640,
+          "sha256": "bb2343c77d5f594de2475e79869d5cb6ad1139f0ace0bfdee04db74db65da2f6"
+        },
+        {
+          "side": 1,
+          "index": 2,
+          "name": "card_angrath_captain_of_chaos",
+          "address": "0x2616a80",
+          "size": 512,
+          "sha256": "18281942b2604412160aa8cf821c560ef163e95a9706040ea8c60470a7892f41"
+        },
+        {
+          "side": 1,
+          "index": 3,
+          "name": "card_garruk_relentless",
+          "address": "0x2249f80",
+          "size": 768,
+          "sha256": "46c2394de5831d2f44c3c83f80647ec868226e9c2038fc4d0ca633c3e9860dec"
+        },
+        {
+          "side": 1,
+          "index": 4,
+          "name": "card_timebender",
+          "address": "0x2425c90",
+          "size": 720,
+          "sha256": "dc75c2026f43cd87f555b97952756f98f993818c17e6a0b60813ca43059b299e"
+        },
+        {
+          "side": 1,
+          "index": 5,
+          "name": "card_simic_ascendancy",
+          "address": "0x2478300",
+          "size": 608,
+          "sha256": "88fb9336f294d6e10fd2ce3f50cc6a1bc6ac9cadc57b814fd1025d8b36e1df55"
+        },
+        {
+          "side": 1,
+          "index": 6,
+          "name": "card_kiora_bests_the_sea_god",
+          "address": "0x25780c0",
+          "size": 544,
+          "sha256": "78c324565a56ad8e397625c757697e5837d9d600325dd1ae416f92e51fbb2f92"
+        },
+        {
+          "side": 1,
+          "index": 7,
+          "name": "unquenchable_fury_legacy",
+          "address": "0x20a5460",
+          "size": 240,
+          "sha256": "3f0d907840b52cf7f7d7f1d226f45acb22b3dd804f78f2a96468ad90346ad5c1"
+        }
+      ],
+      "patches": [
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 33,
+          "kind": "call",
+          "target": "check_legend_rule",
+          "instruction": "0x21c8cf0",
+          "original": "0x2663890"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 49,
+          "kind": "call",
+          "target": "hybrid",
+          "instruction": "0x21c8d00",
+          "original": "0x254b7d0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 96,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x21c8d2f",
+          "original": "0x2660240"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 122,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21c8d49",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 155,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x21c8d6a",
+          "original": "0x215f420"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 199,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x21c8d96",
+          "original": "0x2660240"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 225,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21c8db0",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 241,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x21c8dc0",
+          "original": "0x26604c0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 280,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x21c8de7",
+          "original": "0x26604c0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 400,
+          "kind": "call",
+          "target": "dialog_impl",
+          "instruction": "0x21c8e5f",
+          "original": "0x26e9c50"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 413,
+          "kind": "data",
+          "target": "spell_fizzled",
+          "instruction": "0x21c8e6b",
+          "original": "0x4ef194"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 447,
+          "kind": "call",
+          "target": "mill",
+          "instruction": "0x21c8e8e",
+          "original": "0x26b9430"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 462,
+          "kind": "call",
+          "target": "rfg_whole_graveyard",
+          "instruction": "0x21c8e9d",
+          "original": "0x26b6c70"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8cd0",
+          "offset": 500,
+          "kind": "call",
+          "target": "new_pick_target",
+          "instruction": "0x21c8ec3",
+          "original": "0x2660db0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 33,
+          "kind": "call",
+          "target": "check_legend_rule",
+          "instruction": "0x21c8a20",
+          "original": "0x2663890"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 45,
+          "kind": "call",
+          "target": "in_play",
+          "instruction": "0x21c8a2c",
+          "original": "0x26b32d0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 69,
+          "kind": "call",
+          "target": "is_humiliated",
+          "instruction": "0x21c8a44",
+          "original": "0x26dd430"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 113,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21c8a70",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 146,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x21c8a91",
+          "original": "0x215f420"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 183,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x21c8ab5",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 207,
+          "kind": "call",
+          "target": "default_test_definition",
+          "instruction": "0x21c8ace",
+          "original": "0x26bebb0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 222,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x21c8add",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 231,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x21c8ae6",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 267,
+          "kind": "call",
+          "target": "new_make_test_in_play",
+          "instruction": "0x21c8b0a",
+          "original": "0x26bebe0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 280,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x21c8b17",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 297,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x21c8b28",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 317,
+          "kind": "call",
+          "target": "enters_the_battlefield_with_counters",
+          "instruction": "0x21c8b3c",
+          "original": "0x2681660"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 336,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21c8b4f",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 361,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x21c8b68",
+          "original": "0x26d1730"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 524,
+          "kind": "call",
+          "target": "dialog_impl",
+          "instruction": "0x21c8c0b",
+          "original": "0x26e9c50"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 538,
+          "kind": "data",
+          "target": "spell_fizzled",
+          "instruction": "0x21c8c18",
+          "original": "0x4ef194"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8a00",
+          "offset": 568,
+          "kind": "call",
+          "target": "generate_token_by_id",
+          "instruction": "0x21c8c37",
+          "original": "0x26666b0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8760",
+          "offset": 30,
+          "kind": "call",
+          "target": "check_legend_rule",
+          "instruction": "0x21c877d",
+          "original": "0x2663890"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8760",
+          "offset": 46,
+          "kind": "call",
+          "target": "hybrid",
+          "instruction": "0x21c878d",
+          "original": "0x254b7d0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8760",
+          "offset": 110,
+          "kind": "call",
+          "target": "boost_subtype",
+          "instruction": "0x21c87cd",
+          "original": "0x26eb180"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8760",
+          "offset": 142,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21c87ed",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8760",
+          "offset": 175,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x21c880e",
+          "original": "0x215f420"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8760",
+          "offset": 200,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21c8827",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8760",
+          "offset": 225,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x21c8840",
+          "original": "0x26d1730"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8760",
+          "offset": 376,
+          "kind": "call",
+          "target": "dialog_impl",
+          "instruction": "0x21c88d7",
+          "original": "0x26e9c50"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8760",
+          "offset": 390,
+          "kind": "data",
+          "target": "spell_fizzled",
+          "instruction": "0x21c88e4",
+          "original": "0x4ef194"
+        },
+        {
+          "side": 0,
+          "function_address": "0x21c8760",
+          "offset": 424,
+          "kind": "call",
+          "target": "amass",
+          "instruction": "0x21c8907",
+          "original": "0x21c7f50"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 33,
+          "kind": "call",
+          "target": "check_legend_rule",
+          "instruction": "0x2076020",
+          "original": "0x2663890"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 49,
+          "kind": "call",
+          "target": "double_faced_card",
+          "instruction": "0x2076030",
+          "original": "0x25e9550"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 95,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x207605e",
+          "original": "0x215f420"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 120,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2076077",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 150,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x2076095",
+          "original": "0x2660240"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 161,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x20760a0",
+          "original": "0x26604c0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 253,
+          "kind": "call",
+          "target": "dialog_impl",
+          "instruction": "0x20760fc",
+          "original": "0x26e9c50"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 300,
+          "kind": "call",
+          "target": "generate_token_by_id",
+          "instruction": "0x207612b",
+          "original": "0x26666b0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 328,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x2076147",
+          "original": "0x26d1730"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 357,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x2076164",
+          "original": "0x26d1730"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 377,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2076178",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 412,
+          "kind": "call",
+          "target": "transform",
+          "instruction": "0x207619b",
+          "original": "0x20743e0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 431,
+          "kind": "call",
+          "target": "valid_target",
+          "instruction": "0x20761ae",
+          "original": "0x2661750"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 460,
+          "kind": "call",
+          "target": "get_power",
+          "instruction": "0x20761cb",
+          "original": "0x2696a40"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 500,
+          "kind": "call",
+          "target": "damage_creature",
+          "instruction": "0x20761f3",
+          "original": "0x26e1c90"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 560,
+          "kind": "call",
+          "target": "damage_creature",
+          "instruction": "0x207622f",
+          "original": "0x26e1c90"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 605,
+          "kind": "call",
+          "target": "pick_target",
+          "instruction": "0x207625c",
+          "original": "0x2660d50"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 611,
+          "kind": "data",
+          "target": "ai_is_speculating",
+          "instruction": "0x2076261",
+          "original": "0x728574"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 629,
+          "kind": "data",
+          "target": "trace_mode",
+          "instruction": "0x2076273",
+          "original": "0x790640"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 656,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x207628f",
+          "original": "0x26d1730"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 680,
+          "kind": "call",
+          "target": "get_power",
+          "instruction": "0x20762a7",
+          "original": "0x2696a40"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 691,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x20762b1",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 700,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x20762ba",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 710,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x20762c5",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2076000",
+          "offset": 718,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x20762cd",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 87,
+          "kind": "call",
+          "target": "morph",
+          "instruction": "0x23be7b6",
+          "original": "0x25e9320"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 127,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x23be7de",
+          "original": "0x2660240"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 155,
+          "kind": "callback",
+          "target": "is_permanent_or_suspended_legacy",
+          "instruction": "0x23be7f8",
+          "original": "0x23b4070"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 160,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x23be7ff",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 211,
+          "kind": "call",
+          "target": "do_dialog",
+          "instruction": "0x23be832",
+          "original": "0x471eb0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 227,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x23be842",
+          "original": "0x26604c0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 267,
+          "kind": "call",
+          "target": "new_pick_target",
+          "instruction": "0x23be86a",
+          "original": "0x2660db0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 304,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x23be88f",
+          "original": "0x26d1730"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 354,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x23be8c1",
+          "original": "0x26d4840"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 369,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x23be8d0",
+          "original": "0x26604c0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 409,
+          "kind": "call",
+          "target": "new_pick_target",
+          "instruction": "0x23be8f8",
+          "original": "0x2660db0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 462,
+          "kind": "call",
+          "target": "remove_counters",
+          "instruction": "0x23be92d",
+          "original": "0x26d4c10"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 488,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x23be947",
+          "original": "0x26d1730"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 498,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x23be950",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 507,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x23be959",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 540,
+          "kind": "call",
+          "target": "is_what",
+          "instruction": "0x23be97b",
+          "original": "0x2681ca0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 546,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x23be980",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 565,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x23be993",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 590,
+          "kind": "call",
+          "target": "is_what",
+          "instruction": "0x23be9ad",
+          "original": "0x2681ca0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 596,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x23be9b2",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x23be760",
+          "offset": 618,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x23be9c8",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 37,
+          "kind": "call",
+          "target": "upkeep_trigger_ability",
+          "instruction": "0x25c2ed4",
+          "original": "0x2695450"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 42,
+          "kind": "data",
+          "target": "enable_xtrigger_flags",
+          "instruction": "0x25c2ed9",
+          "original": "0x2795280"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 56,
+          "kind": "data",
+          "target": "enable_xtrigger_flags",
+          "instruction": "0x25c2ee7",
+          "original": "0x2795280"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 67,
+          "kind": "data",
+          "target": "trigger_condition",
+          "instruction": "0x25c2ef2",
+          "original": "0x7a2d78"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 79,
+          "kind": "data",
+          "target": "xtrigger_impl_value_dont_use_directly",
+          "instruction": "0x25c2efe",
+          "original": "0x2795284"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 141,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x25c2f3c",
+          "original": "0x2660240"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 258,
+          "kind": "call",
+          "target": "generic_activated_ability",
+          "instruction": "0x25c2fb1",
+          "original": "0x269db00"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 282,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x25c2fc8",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 294,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x25c2fd4",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 306,
+          "kind": "data",
+          "target": "trigger_cause_controller",
+          "instruction": "0x25c2fe0",
+          "original": "0x62c17c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 318,
+          "kind": "data",
+          "target": "reason_for_trigger_controller",
+          "instruction": "0x25c2fec",
+          "original": "0x737e1c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 344,
+          "kind": "call",
+          "target": "is_humiliated",
+          "instruction": "0x25c3007",
+          "original": "0x26dd430"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 375,
+          "kind": "data",
+          "target": "counters_added",
+          "instruction": "0x25c3026",
+          "original": "0x2795288"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 407,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x25c3046",
+          "original": "0x26d4840"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 423,
+          "kind": "call",
+          "target": "global_enchantment",
+          "instruction": "0x25c3056",
+          "original": "0x267c220"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 456,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x25c3077",
+          "original": "0x26d1730"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 480,
+          "kind": "call",
+          "target": "lose_the_game",
+          "instruction": "0x25c308f",
+          "original": "0x2692810"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 504,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x25c30a7",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 522,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x25c30b9",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 564,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x25c30e3",
+          "original": "0x26d4840"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25c2eb0",
+          "offset": 578,
+          "kind": "data",
+          "target": "event_result",
+          "instruction": "0x25c30f0",
+          "original": "0x6205b4"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 70,
+          "kind": "call",
+          "target": "saga",
+          "instruction": "0x235e145",
+          "original": "0x22cabe0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 101,
+          "kind": "data",
+          "target": "active_cards_count",
+          "instruction": "0x235e162",
+          "original": "0x4ef520"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 124,
+          "kind": "data",
+          "target": "active_cards_count",
+          "instruction": "0x235e179",
+          "original": "0x4ef520"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 138,
+          "kind": "call",
+          "target": "in_play",
+          "instruction": "0x235e189",
+          "original": "0x26b32d0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 162,
+          "kind": "call",
+          "target": "is_what",
+          "instruction": "0x235e1a1",
+          "original": "0x2681ca0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 186,
+          "kind": "call",
+          "target": "is_what",
+          "instruction": "0x235e1b9",
+          "original": "0x2681ca0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 216,
+          "kind": "call",
+          "target": "effect_frost_titan",
+          "instruction": "0x235e1d7",
+          "original": "0x208f050"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 253,
+          "kind": "call",
+          "target": "default_token_definition",
+          "instruction": "0x235e1fc",
+          "original": "0x2665470"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 282,
+          "kind": "call",
+          "target": "generate_token",
+          "instruction": "0x235e219",
+          "original": "0x26659d0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 325,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x235e244",
+          "original": "0x2660240"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 353,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x235e260",
+          "original": "0x26604c0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 393,
+          "kind": "call",
+          "target": "new_pick_target",
+          "instruction": "0x235e288",
+          "original": "0x2660db0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 419,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x235e2a2",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 440,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x235e2b7",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 462,
+          "kind": "call",
+          "target": "gain_control_permanently",
+          "instruction": "0x235e2cd",
+          "original": "0x2664690"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 480,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x235e2df",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 501,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x235e2f4",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x235e100",
+          "offset": 516,
+          "kind": "call",
+          "target": "untap_card",
+          "instruction": "0x235e303",
+          "original": "0x2679c90"
+        },
+        {
+          "side": 0,
+          "function_address": "0x20351a0",
+          "offset": 66,
+          "kind": "call",
+          "target": "default_test_definition",
+          "instruction": "0x20351e1",
+          "original": "0x26bebb0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x20351a0",
+          "offset": 73,
+          "kind": "data",
+          "target": "active_cards_count",
+          "instruction": "0x20351e6",
+          "original": "0x4ef520"
+        },
+        {
+          "side": 0,
+          "function_address": "0x20351a0",
+          "offset": 108,
+          "kind": "data",
+          "target": "active_cards_count",
+          "instruction": "0x2035209",
+          "original": "0x4ef520"
+        },
+        {
+          "side": 0,
+          "function_address": "0x20351a0",
+          "offset": 122,
+          "kind": "call",
+          "target": "in_play",
+          "instruction": "0x2035219",
+          "original": "0x26b32d0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x20351a0",
+          "offset": 150,
+          "kind": "call",
+          "target": "new_make_test_in_play",
+          "instruction": "0x2035235",
+          "original": "0x26bebe0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x20351a0",
+          "offset": 174,
+          "kind": "call",
+          "target": "menace",
+          "instruction": "0x203524d",
+          "original": "0x26df5f0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x20351a0",
+          "offset": 203,
+          "kind": "call",
+          "target": "kill_card",
+          "instruction": "0x203526a",
+          "original": "0x26b5a00"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 33,
+          "kind": "call",
+          "target": "check_legend_rule",
+          "instruction": "0x260e400",
+          "original": "0x26b5280"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 49,
+          "kind": "call",
+          "target": "hybrid",
+          "instruction": "0x260e410",
+          "original": "0x24d5d00"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 96,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x260e43f",
+          "original": "0x26dab20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 122,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x260e459",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 155,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x260e47a",
+          "original": "0x24394c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 199,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x260e4a6",
+          "original": "0x26dab20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 225,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x260e4c0",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 256,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x260e4df",
+          "original": "0x26db0d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 376,
+          "kind": "call",
+          "target": "dialog_impl",
+          "instruction": "0x260e557",
+          "original": "0x2672a20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 389,
+          "kind": "data",
+          "target": "spell_fizzled",
+          "instruction": "0x260e563",
+          "original": "0x4ef194"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 423,
+          "kind": "call",
+          "target": "mill",
+          "instruction": "0x260e586",
+          "original": "0x2671f80"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 438,
+          "kind": "call",
+          "target": "rfg_whole_graveyard",
+          "instruction": "0x260e595",
+          "original": "0x266e560"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 452,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x260e5a3",
+          "original": "0x26db0d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 488,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x260e5c7",
+          "original": "0x24394c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 532,
+          "kind": "call",
+          "target": "new_pick_target",
+          "instruction": "0x260e5f3",
+          "original": "0x26dbd30"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e3e0",
+          "offset": 560,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x260e60f",
+          "original": "0x24394c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 33,
+          "kind": "call",
+          "target": "check_legend_rule",
+          "instruction": "0x260e180",
+          "original": "0x26b5280"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 45,
+          "kind": "call",
+          "target": "in_play",
+          "instruction": "0x260e18c",
+          "original": "0x266b610"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 69,
+          "kind": "call",
+          "target": "is_humiliated",
+          "instruction": "0x260e1a4",
+          "original": "0x2653590"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 113,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x260e1d0",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 146,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x260e1f1",
+          "original": "0x24394c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 183,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x260e215",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 207,
+          "kind": "call",
+          "target": "default_test_definition",
+          "instruction": "0x260e22e",
+          "original": "0x26b6ca0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 222,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x260e23d",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 231,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x260e246",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 267,
+          "kind": "call",
+          "target": "new_make_test_in_play",
+          "instruction": "0x260e26a",
+          "original": "0x26b6cd0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 280,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x260e277",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 297,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x260e288",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 317,
+          "kind": "call",
+          "target": "enters_the_battlefield_with_counters",
+          "instruction": "0x260e29c",
+          "original": "0x2687110"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 336,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x260e2af",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 480,
+          "kind": "call",
+          "target": "dialog_impl",
+          "instruction": "0x260e33f",
+          "original": "0x2672a20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 490,
+          "kind": "data",
+          "target": "spell_fizzled",
+          "instruction": "0x260e348",
+          "original": "0x4ef194"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 520,
+          "kind": "call",
+          "target": "generate_token_by_id",
+          "instruction": "0x260e367",
+          "original": "0x26de1d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 552,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x260e387",
+          "original": "0x26637b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 591,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x260e3ae",
+          "original": "0x24394c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x260e160",
+          "offset": 624,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x260e3cf",
+          "original": "0x24394c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 30,
+          "kind": "call",
+          "target": "check_legend_rule",
+          "instruction": "0x2616a9d",
+          "original": "0x26b5280"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 46,
+          "kind": "call",
+          "target": "hybrid",
+          "instruction": "0x2616aad",
+          "original": "0x24d5d00"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 110,
+          "kind": "call",
+          "target": "boost_subtype",
+          "instruction": "0x2616aed",
+          "original": "0x265bee0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 142,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2616b0d",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 175,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x2616b2e",
+          "original": "0x24394c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 200,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2616b47",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 344,
+          "kind": "call",
+          "target": "dialog_impl",
+          "instruction": "0x2616bd7",
+          "original": "0x2672a20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 354,
+          "kind": "data",
+          "target": "spell_fizzled",
+          "instruction": "0x2616be0",
+          "original": "0x4ef194"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 384,
+          "kind": "call",
+          "target": "amass",
+          "instruction": "0x2616bff",
+          "original": "0x26168c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 416,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x2616c1f",
+          "original": "0x26637b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 455,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x2616c46",
+          "original": "0x24394c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2616a80",
+          "offset": 488,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x2616c67",
+          "original": "0x24394c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 33,
+          "kind": "call",
+          "target": "check_legend_rule",
+          "instruction": "0x2249fa0",
+          "original": "0x26b5280"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 49,
+          "kind": "call",
+          "target": "double_faced_card",
+          "instruction": "0x2249fb0",
+          "original": "0x23fb6f0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 95,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x2249fde",
+          "original": "0x24394c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 120,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2249ff7",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 150,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x224a015",
+          "original": "0x26dab20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 161,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x224a020",
+          "original": "0x26db0d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 253,
+          "kind": "call",
+          "target": "dialog_impl",
+          "instruction": "0x224a07c",
+          "original": "0x2672a20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 300,
+          "kind": "call",
+          "target": "generate_token_by_id",
+          "instruction": "0x224a0ab",
+          "original": "0x26de1d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 328,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x224a0c7",
+          "original": "0x26637b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 357,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x224a0e4",
+          "original": "0x26637b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 377,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x224a0f8",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 412,
+          "kind": "call",
+          "target": "transform",
+          "instruction": "0x224a11b",
+          "original": "0x2248380"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 462,
+          "kind": "call",
+          "target": "planeswalker",
+          "instruction": "0x224a14d",
+          "original": "0x24394c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 479,
+          "kind": "call",
+          "target": "valid_target",
+          "instruction": "0x224a15e",
+          "original": "0x26db480"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 508,
+          "kind": "call",
+          "target": "get_power",
+          "instruction": "0x224a17b",
+          "original": "0x2689d40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 548,
+          "kind": "call",
+          "target": "damage_creature",
+          "instruction": "0x224a1a3",
+          "original": "0x26684d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 608,
+          "kind": "call",
+          "target": "damage_creature",
+          "instruction": "0x224a1df",
+          "original": "0x26684d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 639,
+          "kind": "call",
+          "target": "pick_target",
+          "instruction": "0x224a1fe",
+          "original": "0x26dbcd0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 645,
+          "kind": "data",
+          "target": "ai_is_speculating",
+          "instruction": "0x224a203",
+          "original": "0x728574"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 663,
+          "kind": "data",
+          "target": "trace_mode",
+          "instruction": "0x224a215",
+          "original": "0x790640"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 690,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x224a231",
+          "original": "0x26637b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 713,
+          "kind": "call",
+          "target": "get_power",
+          "instruction": "0x224a248",
+          "original": "0x2689d40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 723,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x224a251",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 732,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x224a25a",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 742,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x224a265",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2249f80",
+          "offset": 750,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x224a26d",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 87,
+          "kind": "call",
+          "target": "morph",
+          "instruction": "0x2425ce6",
+          "original": "0x23fb4c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 127,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x2425d0e",
+          "original": "0x26dab20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 155,
+          "kind": "callback",
+          "target": "is_permanent_or_suspended_legacy",
+          "instruction": "0x2425d28",
+          "original": "0x241a570"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 160,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2425d2f",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 211,
+          "kind": "call",
+          "target": "do_dialog",
+          "instruction": "0x2425d62",
+          "original": "0x471eb0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 227,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x2425d72",
+          "original": "0x26db0d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 267,
+          "kind": "call",
+          "target": "new_pick_target",
+          "instruction": "0x2425d9a",
+          "original": "0x26dbd30"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 304,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x2425dbf",
+          "original": "0x26637b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 354,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x2425df1",
+          "original": "0x2666880"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 369,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x2425e00",
+          "original": "0x26db0d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 409,
+          "kind": "call",
+          "target": "new_pick_target",
+          "instruction": "0x2425e28",
+          "original": "0x26dbd30"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 462,
+          "kind": "call",
+          "target": "remove_counters",
+          "instruction": "0x2425e5d",
+          "original": "0x2666cb0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 488,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x2425e77",
+          "original": "0x26637b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 498,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2425e80",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 507,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2425e89",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 540,
+          "kind": "call",
+          "target": "is_what",
+          "instruction": "0x2425eab",
+          "original": "0x2694ba0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 546,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2425eb0",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 565,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2425ec3",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 590,
+          "kind": "call",
+          "target": "is_what",
+          "instruction": "0x2425edd",
+          "original": "0x2694ba0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 596,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2425ee2",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 613,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2425ef4",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2425c90",
+          "offset": 699,
+          "kind": "call",
+          "target": "morph",
+          "instruction": "0x2425f4a",
+          "original": "0x23fb4c0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 37,
+          "kind": "call",
+          "target": "upkeep_trigger_ability",
+          "instruction": "0x2478324",
+          "original": "0x2689d10"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 42,
+          "kind": "data",
+          "target": "enable_xtrigger_flags",
+          "instruction": "0x2478329",
+          "original": "0x279a7e0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 56,
+          "kind": "data",
+          "target": "enable_xtrigger_flags",
+          "instruction": "0x2478337",
+          "original": "0x279a7e0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 67,
+          "kind": "data",
+          "target": "trigger_condition",
+          "instruction": "0x2478342",
+          "original": "0x7a2d78"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 79,
+          "kind": "data",
+          "target": "xtrigger_impl_value_dont_use_directly",
+          "instruction": "0x247834e",
+          "original": "0x279a7e4"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 141,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x247838c",
+          "original": "0x26dab20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 258,
+          "kind": "call",
+          "target": "generic_activated_ability",
+          "instruction": "0x2478401",
+          "original": "0x26b1520"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 282,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x2478418",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 294,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x2478424",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 306,
+          "kind": "data",
+          "target": "trigger_cause_controller",
+          "instruction": "0x2478430",
+          "original": "0x62c17c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 318,
+          "kind": "data",
+          "target": "reason_for_trigger_controller",
+          "instruction": "0x247843c",
+          "original": "0x737e1c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 344,
+          "kind": "call",
+          "target": "is_humiliated",
+          "instruction": "0x2478457",
+          "original": "0x2653590"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 376,
+          "kind": "data",
+          "target": "event_result",
+          "instruction": "0x2478476",
+          "original": "0x6205b4"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 393,
+          "kind": "call",
+          "target": "global_enchantment",
+          "instruction": "0x2478488",
+          "original": "0x2686920"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 424,
+          "kind": "call",
+          "target": "count_counters",
+          "instruction": "0x24784a7",
+          "original": "0x26637b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 448,
+          "kind": "call",
+          "target": "lose_the_game",
+          "instruction": "0x24784bf",
+          "original": "0x26a05f0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 472,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x24784d7",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 490,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x24784e9",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 532,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x2478513",
+          "original": "0x2666880"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 545,
+          "kind": "data",
+          "target": "counters_added",
+          "instruction": "0x2478520",
+          "original": "0x27996e4"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 577,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x2478540",
+          "original": "0x2666880"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2478300",
+          "offset": 597,
+          "kind": "call",
+          "target": "global_enchantment",
+          "instruction": "0x2478554",
+          "original": "0x2686920"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 70,
+          "kind": "call",
+          "target": "saga",
+          "instruction": "0x2578105",
+          "original": "0x2153d00"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 103,
+          "kind": "data",
+          "target": "active_cards_count",
+          "instruction": "0x2578124",
+          "original": "0x4ef520"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 119,
+          "kind": "call",
+          "target": "in_play",
+          "instruction": "0x2578136",
+          "original": "0x266b610"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 132,
+          "kind": "data",
+          "target": "active_cards_count",
+          "instruction": "0x2578141",
+          "original": "0x4ef520"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 146,
+          "kind": "call",
+          "target": "in_play",
+          "instruction": "0x2578151",
+          "original": "0x266b610"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 170,
+          "kind": "call",
+          "target": "is_what",
+          "instruction": "0x2578169",
+          "original": "0x2694ba0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 194,
+          "kind": "call",
+          "target": "is_what",
+          "instruction": "0x2578181",
+          "original": "0x2694ba0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 224,
+          "kind": "call",
+          "target": "effect_frost_titan",
+          "instruction": "0x257819f",
+          "original": "0x22fc1f0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 261,
+          "kind": "call",
+          "target": "default_token_definition",
+          "instruction": "0x25781c4",
+          "original": "0x26dce70"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 290,
+          "kind": "call",
+          "target": "generate_token",
+          "instruction": "0x25781e1",
+          "original": "0x26dcf80"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 333,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x257820c",
+          "original": "0x26dab20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 361,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x2578228",
+          "original": "0x26db0d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 401,
+          "kind": "call",
+          "target": "new_pick_target",
+          "instruction": "0x2578250",
+          "original": "0x26dbd30"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 427,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x257826a",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 448,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x257827f",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 470,
+          "kind": "call",
+          "target": "gain_control_permanently",
+          "instruction": "0x2578295",
+          "original": "0x26b6040"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 488,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x25782a7",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 509,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x25782bc",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25780c0",
+          "offset": 524,
+          "kind": "call",
+          "target": "untap_card",
+          "instruction": "0x25782cb",
+          "original": "0x26ad360"
+        },
+        {
+          "side": 1,
+          "function_address": "0x20a5460",
+          "offset": 68,
+          "kind": "call",
+          "target": "default_test_definition",
+          "instruction": "0x20a54a3",
+          "original": "0x26b6ca0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x20a5460",
+          "offset": 75,
+          "kind": "data",
+          "target": "active_cards_count",
+          "instruction": "0x20a54a8",
+          "original": "0x4ef520"
+        },
+        {
+          "side": 1,
+          "function_address": "0x20a5460",
+          "offset": 105,
+          "kind": "call",
+          "target": "in_play",
+          "instruction": "0x20a54c8",
+          "original": "0x266b610"
+        },
+        {
+          "side": 1,
+          "function_address": "0x20a5460",
+          "offset": 124,
+          "kind": "data",
+          "target": "active_cards_count",
+          "instruction": "0x20a54d9",
+          "original": "0x4ef520"
+        },
+        {
+          "side": 1,
+          "function_address": "0x20a5460",
+          "offset": 138,
+          "kind": "call",
+          "target": "in_play",
+          "instruction": "0x20a54e9",
+          "original": "0x266b610"
+        },
+        {
+          "side": 1,
+          "function_address": "0x20a5460",
+          "offset": 166,
+          "kind": "call",
+          "target": "new_make_test_in_play",
+          "instruction": "0x20a5505",
+          "original": "0x26b6cd0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x20a5460",
+          "offset": 190,
+          "kind": "call",
+          "target": "menace",
+          "instruction": "0x20a551d",
+          "original": "0x26572e0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x20a5460",
+          "offset": 219,
+          "kind": "call",
+          "target": "kill_card",
+          "instruction": "0x20a553a",
+          "original": "0x266d8d0"
+        }
+      ],
+      "supporting_workers": [],
+      "indirect_constant_calls": [],
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "c6a9095e6cd22d1a208eb7a76e1b17709887be1beb541abc245f7e06a3e2cbc1",
+        "ManalinkEh.dbg": "f2b67457989b986eb876ce65c7f94cef4000d2283589cb61d93bff0a60b0ab1c"
+      },
+      "base_sha256": "ef8d6a4b84ea9ed20507b6a668328c18558665e5107c310849e970fef1a16b4c",
+      "builder_sha256": "e1c918f50009cd0cb02fc0976d52618aa0d2ac200f87846396e0bf4ed559ff51",
+      "scope": "Eight actual native/rebuilt permanent and counter handlers, 44 opaque helper/callback bindings and fourteen globals. Observe full records, ordered arguments, raw returns, changing target/parent pairs, live battlefield bounds and repeated counter/getter queries over 4,096 environments, eighteen events and both players. No helper-leaf, UI or whole-game proof."
+    },
+    "plan_sha256": "01776bcc98c64c58f9b3357b748e5451dcecaa083f552df77abc8c14e4c6fadb",
+    "log_sha256": "a756ddf8f0977d0898351e7e69954c3cc70ba7187653dfe82c492313d9aeb5ef"
+  },
+  "scope": "Eight existing native handlers: four planeswalkers, Timebender, Simic Ascendancy, Kiora Bests the Sea God and Unquenchable Fury legacy. Readability reconstruction preserving activation/cleanup getter timing, humiliation probes, callback-mutated target/parent rereads, repeated loyalty checks, raw returns and native counter/AI quirks. Not a new gameplay-bug or handler-recovery count.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "6b838e8d70759702fd0b4ebbb73a2d5efaec95ab7844caf2a215f70fd6a358dc",
+    "debug_sha256": "a561ec0f69999a92af5e55f6830923e22b36c5d0dfb60969fb7f512811ed765e",
+    "build_log_sha256": "f1c5692f32e4575984f0cc3f81b0cb534cc757d979371bb0ba4744323087cefe",
+    "source_definitions": 8,
+    "canonical_and_raw_file_projections": 6,
+    "permanent_flow_fixture": {
+      "cases": 1179648,
+      "mismatches": 0,
+      "helper_callback_bindings": 43,
+      "globals": 14,
+      "plan": {
+        "entries": [
+          {
+            "side": 0,
+            "index": 0,
+            "name": "card_ashiok_dream_render",
+            "address": "0x21c8cd0",
+            "size": 509,
+            "sha256": "147cd86b227ba8eba309fecaca8375263b02a8fc6135985a1fb958792d03b9a4"
+          },
+          {
+            "side": 0,
+            "index": 1,
+            "name": "card_arlinn_voice_of_the_pack",
+            "address": "0x21c8a00",
+            "size": 577,
+            "sha256": "bfd2c6332b9fd748240dcaa4f816adf192f5255b81112f30a9edbf7d1aa5654f"
+          },
+          {
+            "side": 0,
+            "index": 2,
+            "name": "card_angrath_captain_of_chaos",
+            "address": "0x21c8760",
+            "size": 433,
+            "sha256": "f3657c55f6c3efd542a31c7199147cc3a41dbd44dced947ff315153986876e9f"
+          },
+          {
+            "side": 0,
+            "index": 3,
+            "name": "card_garruk_relentless",
+            "address": "0x2076000",
+            "size": 727,
+            "sha256": "748578a11842d88d90529a879efaa3fbe74a47510ac91865a28e190313129c63"
+          },
+          {
+            "side": 0,
+            "index": 4,
+            "name": "card_timebender",
+            "address": "0x23be760",
+            "size": 641,
+            "sha256": "5ae5ddfb16abdafb52df1f2d39ecfba642b0847e538742b9806409368005182e"
+          },
+          {
+            "side": 0,
+            "index": 5,
+            "name": "card_simic_ascendancy",
+            "address": "0x25c2eb0",
+            "size": 588,
+            "sha256": "d653ec39be995486123707db4ac3231ac668559ae51d0331af76c309450f7151"
+          },
+          {
+            "side": 0,
+            "index": 6,
+            "name": "card_kiora_bests_the_sea_god",
+            "address": "0x235e100",
+            "size": 525,
+            "sha256": "e9d16073abbc7a49c06e85b18b982f2721621351cc4e65f67394dbfb69a2558d"
+          },
+          {
+            "side": 0,
+            "index": 7,
+            "name": "unquenchable_fury_legacy",
+            "address": "0x20351a0",
+            "size": 220,
+            "sha256": "2ddb18cb4d2c46726ac307b0cd7d3c420be98c0ca272b850a56c8d7baab735fa"
+          },
+          {
+            "side": 1,
+            "index": 0,
+            "name": "card_ashiok_dream_render",
+            "address": "0x260e390",
+            "size": 512,
+            "sha256": "17ead2de0830f888f7e4caaba701b609257291b9a29fde169fa6d0c33a7d346f"
+          },
+          {
+            "side": 1,
+            "index": 1,
+            "name": "card_arlinn_voice_of_the_pack",
+            "address": "0x260e140",
+            "size": 592,
+            "sha256": "99271e394f187272b3ae50ebd469b0f73b855fa31b947a3029ea894bb3cfb7c9"
+          },
+          {
+            "side": 1,
+            "index": 2,
+            "name": "card_angrath_captain_of_chaos",
+            "address": "0x26169f0",
+            "size": 448,
+            "sha256": "dea9ccd0e588f9e679504f76495bce6f1018ccff816fe46a3ad53eed856d3693"
+          },
+          {
+            "side": 1,
+            "index": 3,
+            "name": "card_garruk_relentless",
+            "address": "0x2249f70",
+            "size": 768,
+            "sha256": "623f7558458639e564777e65f4c4f172ffe738b4224983d2ed95b1d52592b192"
+          },
+          {
+            "side": 1,
+            "index": 4,
+            "name": "card_timebender",
+            "address": "0x2425c80",
+            "size": 720,
+            "sha256": "0563cf3c0eb411a2977c1c44a099ec38dc0499527125b0c18eba53a0279b1b8d"
+          },
+          {
+            "side": 1,
+            "index": 5,
+            "name": "card_simic_ascendancy",
+            "address": "0x24782f0",
+            "size": 608,
+            "sha256": "6f384bfaef619868b39ee1233264c94739510a2281fc29d2cff3b032cead32e4"
+          },
+          {
+            "side": 1,
+            "index": 6,
+            "name": "card_kiora_bests_the_sea_god",
+            "address": "0x25780b0",
+            "size": 528,
+            "sha256": "57a854c9cee03e35b594349c2d37f84690d8c8f6308f8c35d77bb59984bb02d3"
+          },
+          {
+            "side": 1,
+            "index": 7,
+            "name": "unquenchable_fury_legacy",
+            "address": "0x20a5460",
+            "size": 224,
+            "sha256": "25cf16b621f5d7590ee0e41580f32a31ff84c9aace20565ca57a90680b7d3258"
+          }
+        ],
+        "patches": [
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 33,
+            "kind": "call",
+            "target": "check_legend_rule",
+            "instruction": "0x21c8cf0",
+            "original": "0x2663890"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 49,
+            "kind": "call",
+            "target": "hybrid",
+            "instruction": "0x21c8d00",
+            "original": "0x254b7d0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 96,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x21c8d2f",
+            "original": "0x2660240"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 122,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21c8d49",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 155,
+            "kind": "call",
+            "target": "planeswalker",
+            "instruction": "0x21c8d6a",
+            "original": "0x215f420"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 199,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x21c8d96",
+            "original": "0x2660240"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 225,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21c8db0",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 241,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x21c8dc0",
+            "original": "0x26604c0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 280,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x21c8de7",
+            "original": "0x26604c0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 400,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x21c8e5f",
+            "original": "0x26e9c50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 413,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x21c8e6b",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 447,
+            "kind": "call",
+            "target": "mill",
+            "instruction": "0x21c8e8e",
+            "original": "0x26b9430"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 462,
+            "kind": "call",
+            "target": "rfg_whole_graveyard",
+            "instruction": "0x21c8e9d",
+            "original": "0x26b6c70"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8cd0",
+            "offset": 500,
+            "kind": "call",
+            "target": "new_pick_target",
+            "instruction": "0x21c8ec3",
+            "original": "0x2660db0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 33,
+            "kind": "call",
+            "target": "check_legend_rule",
+            "instruction": "0x21c8a20",
+            "original": "0x2663890"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 45,
+            "kind": "call",
+            "target": "in_play",
+            "instruction": "0x21c8a2c",
+            "original": "0x26b32d0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 69,
+            "kind": "call",
+            "target": "is_humiliated",
+            "instruction": "0x21c8a44",
+            "original": "0x26dd430"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 113,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21c8a70",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 146,
+            "kind": "call",
+            "target": "planeswalker",
+            "instruction": "0x21c8a91",
+            "original": "0x215f420"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 183,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x21c8ab5",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 207,
+            "kind": "call",
+            "target": "default_test_definition",
+            "instruction": "0x21c8ace",
+            "original": "0x26bebb0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 222,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x21c8add",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 231,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x21c8ae6",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 267,
+            "kind": "call",
+            "target": "new_make_test_in_play",
+            "instruction": "0x21c8b0a",
+            "original": "0x26bebe0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 280,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x21c8b17",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 297,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x21c8b28",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 317,
+            "kind": "call",
+            "target": "enters_the_battlefield_with_counters",
+            "instruction": "0x21c8b3c",
+            "original": "0x2681660"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 336,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21c8b4f",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 361,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x21c8b68",
+            "original": "0x26d1730"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 524,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x21c8c0b",
+            "original": "0x26e9c50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 538,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x21c8c18",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8a00",
+            "offset": 568,
+            "kind": "call",
+            "target": "generate_token_by_id",
+            "instruction": "0x21c8c37",
+            "original": "0x26666b0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8760",
+            "offset": 30,
+            "kind": "call",
+            "target": "check_legend_rule",
+            "instruction": "0x21c877d",
+            "original": "0x2663890"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8760",
+            "offset": 46,
+            "kind": "call",
+            "target": "hybrid",
+            "instruction": "0x21c878d",
+            "original": "0x254b7d0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8760",
+            "offset": 110,
+            "kind": "call",
+            "target": "boost_subtype",
+            "instruction": "0x21c87cd",
+            "original": "0x26eb180"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8760",
+            "offset": 142,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21c87ed",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8760",
+            "offset": 175,
+            "kind": "call",
+            "target": "planeswalker",
+            "instruction": "0x21c880e",
+            "original": "0x215f420"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8760",
+            "offset": 200,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21c8827",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8760",
+            "offset": 225,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x21c8840",
+            "original": "0x26d1730"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8760",
+            "offset": 376,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x21c88d7",
+            "original": "0x26e9c50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8760",
+            "offset": 390,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x21c88e4",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x21c8760",
+            "offset": 424,
+            "kind": "call",
+            "target": "amass",
+            "instruction": "0x21c8907",
+            "original": "0x21c7f50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 33,
+            "kind": "call",
+            "target": "check_legend_rule",
+            "instruction": "0x2076020",
+            "original": "0x2663890"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 49,
+            "kind": "call",
+            "target": "double_faced_card",
+            "instruction": "0x2076030",
+            "original": "0x25e9550"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 95,
+            "kind": "call",
+            "target": "planeswalker",
+            "instruction": "0x207605e",
+            "original": "0x215f420"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 120,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2076077",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 150,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x2076095",
+            "original": "0x2660240"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 161,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x20760a0",
+            "original": "0x26604c0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 253,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x20760fc",
+            "original": "0x26e9c50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 300,
+            "kind": "call",
+            "target": "generate_token_by_id",
+            "instruction": "0x207612b",
+            "original": "0x26666b0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 328,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x2076147",
+            "original": "0x26d1730"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 357,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x2076164",
+            "original": "0x26d1730"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 377,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2076178",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 412,
+            "kind": "call",
+            "target": "transform",
+            "instruction": "0x207619b",
+            "original": "0x20743e0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 431,
+            "kind": "call",
+            "target": "valid_target",
+            "instruction": "0x20761ae",
+            "original": "0x2661750"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 460,
+            "kind": "call",
+            "target": "get_power",
+            "instruction": "0x20761cb",
+            "original": "0x2696a40"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 500,
+            "kind": "call",
+            "target": "damage_creature",
+            "instruction": "0x20761f3",
+            "original": "0x26e1c90"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 560,
+            "kind": "call",
+            "target": "damage_creature",
+            "instruction": "0x207622f",
+            "original": "0x26e1c90"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 605,
+            "kind": "call",
+            "target": "pick_target",
+            "instruction": "0x207625c",
+            "original": "0x2660d50"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 611,
+            "kind": "data",
+            "target": "ai_is_speculating",
+            "instruction": "0x2076261",
+            "original": "0x728574"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 629,
+            "kind": "data",
+            "target": "trace_mode",
+            "instruction": "0x2076273",
+            "original": "0x790640"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 656,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x207628f",
+            "original": "0x26d1730"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 680,
+            "kind": "call",
+            "target": "get_power",
+            "instruction": "0x20762a7",
+            "original": "0x2696a40"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 691,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x20762b1",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 700,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x20762ba",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 710,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x20762c5",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2076000",
+            "offset": 718,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x20762cd",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 87,
+            "kind": "call",
+            "target": "morph",
+            "instruction": "0x23be7b6",
+            "original": "0x25e9320"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 127,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x23be7de",
+            "original": "0x2660240"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 155,
+            "kind": "callback",
+            "target": "is_permanent_or_suspended_legacy",
+            "instruction": "0x23be7f8",
+            "original": "0x23b4070"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 160,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x23be7ff",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 211,
+            "kind": "call",
+            "target": "do_dialog",
+            "instruction": "0x23be832",
+            "original": "0x471eb0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 227,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x23be842",
+            "original": "0x26604c0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 267,
+            "kind": "call",
+            "target": "new_pick_target",
+            "instruction": "0x23be86a",
+            "original": "0x2660db0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 304,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x23be88f",
+            "original": "0x26d1730"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 354,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x23be8c1",
+            "original": "0x26d4840"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 369,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x23be8d0",
+            "original": "0x26604c0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 409,
+            "kind": "call",
+            "target": "new_pick_target",
+            "instruction": "0x23be8f8",
+            "original": "0x2660db0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 462,
+            "kind": "call",
+            "target": "remove_counters",
+            "instruction": "0x23be92d",
+            "original": "0x26d4c10"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 488,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x23be947",
+            "original": "0x26d1730"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 498,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x23be950",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 507,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x23be959",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 540,
+            "kind": "call",
+            "target": "is_what",
+            "instruction": "0x23be97b",
+            "original": "0x2681ca0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 546,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x23be980",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 565,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x23be993",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 590,
+            "kind": "call",
+            "target": "is_what",
+            "instruction": "0x23be9ad",
+            "original": "0x2681ca0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 596,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x23be9b2",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x23be760",
+            "offset": 618,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x23be9c8",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 37,
+            "kind": "call",
+            "target": "upkeep_trigger_ability",
+            "instruction": "0x25c2ed4",
+            "original": "0x2695450"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 42,
+            "kind": "data",
+            "target": "enable_xtrigger_flags",
+            "instruction": "0x25c2ed9",
+            "original": "0x2795280"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 56,
+            "kind": "data",
+            "target": "enable_xtrigger_flags",
+            "instruction": "0x25c2ee7",
+            "original": "0x2795280"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 67,
+            "kind": "data",
+            "target": "trigger_condition",
+            "instruction": "0x25c2ef2",
+            "original": "0x7a2d78"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 79,
+            "kind": "data",
+            "target": "xtrigger_impl_value_dont_use_directly",
+            "instruction": "0x25c2efe",
+            "original": "0x2795284"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 141,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x25c2f3c",
+            "original": "0x2660240"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 258,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x25c2fb1",
+            "original": "0x269db00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 282,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x25c2fc8",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 294,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x25c2fd4",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 306,
+            "kind": "data",
+            "target": "trigger_cause_controller",
+            "instruction": "0x25c2fe0",
+            "original": "0x62c17c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 318,
+            "kind": "data",
+            "target": "reason_for_trigger_controller",
+            "instruction": "0x25c2fec",
+            "original": "0x737e1c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 344,
+            "kind": "call",
+            "target": "is_humiliated",
+            "instruction": "0x25c3007",
+            "original": "0x26dd430"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 375,
+            "kind": "data",
+            "target": "counters_added",
+            "instruction": "0x25c3026",
+            "original": "0x2795288"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 407,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x25c3046",
+            "original": "0x26d4840"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 423,
+            "kind": "call",
+            "target": "global_enchantment",
+            "instruction": "0x25c3056",
+            "original": "0x267c220"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 456,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x25c3077",
+            "original": "0x26d1730"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 480,
+            "kind": "call",
+            "target": "lose_the_game",
+            "instruction": "0x25c308f",
+            "original": "0x2692810"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 504,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x25c30a7",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 522,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x25c30b9",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 564,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x25c30e3",
+            "original": "0x26d4840"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25c2eb0",
+            "offset": 578,
+            "kind": "data",
+            "target": "event_result",
+            "instruction": "0x25c30f0",
+            "original": "0x6205b4"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 70,
+            "kind": "call",
+            "target": "saga",
+            "instruction": "0x235e145",
+            "original": "0x22cabe0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 101,
+            "kind": "data",
+            "target": "active_cards_count",
+            "instruction": "0x235e162",
+            "original": "0x4ef520"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 124,
+            "kind": "data",
+            "target": "active_cards_count",
+            "instruction": "0x235e179",
+            "original": "0x4ef520"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 138,
+            "kind": "call",
+            "target": "in_play",
+            "instruction": "0x235e189",
+            "original": "0x26b32d0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 162,
+            "kind": "call",
+            "target": "is_what",
+            "instruction": "0x235e1a1",
+            "original": "0x2681ca0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 186,
+            "kind": "call",
+            "target": "is_what",
+            "instruction": "0x235e1b9",
+            "original": "0x2681ca0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 216,
+            "kind": "call",
+            "target": "effect_frost_titan",
+            "instruction": "0x235e1d7",
+            "original": "0x208f050"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 253,
+            "kind": "call",
+            "target": "default_token_definition",
+            "instruction": "0x235e1fc",
+            "original": "0x2665470"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 282,
+            "kind": "call",
+            "target": "generate_token",
+            "instruction": "0x235e219",
+            "original": "0x26659d0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 325,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x235e244",
+            "original": "0x2660240"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 353,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x235e260",
+            "original": "0x26604c0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 393,
+            "kind": "call",
+            "target": "new_pick_target",
+            "instruction": "0x235e288",
+            "original": "0x2660db0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 419,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x235e2a2",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 440,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x235e2b7",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 462,
+            "kind": "call",
+            "target": "gain_control_permanently",
+            "instruction": "0x235e2cd",
+            "original": "0x2664690"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 480,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x235e2df",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 501,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x235e2f4",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x235e100",
+            "offset": 516,
+            "kind": "call",
+            "target": "untap_card",
+            "instruction": "0x235e303",
+            "original": "0x2679c90"
+          },
+          {
+            "side": 0,
+            "function_address": "0x20351a0",
+            "offset": 66,
+            "kind": "call",
+            "target": "default_test_definition",
+            "instruction": "0x20351e1",
+            "original": "0x26bebb0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x20351a0",
+            "offset": 73,
+            "kind": "data",
+            "target": "active_cards_count",
+            "instruction": "0x20351e6",
+            "original": "0x4ef520"
+          },
+          {
+            "side": 0,
+            "function_address": "0x20351a0",
+            "offset": 108,
+            "kind": "data",
+            "target": "active_cards_count",
+            "instruction": "0x2035209",
+            "original": "0x4ef520"
+          },
+          {
+            "side": 0,
+            "function_address": "0x20351a0",
+            "offset": 122,
+            "kind": "call",
+            "target": "in_play",
+            "instruction": "0x2035219",
+            "original": "0x26b32d0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x20351a0",
+            "offset": 150,
+            "kind": "call",
+            "target": "new_make_test_in_play",
+            "instruction": "0x2035235",
+            "original": "0x26bebe0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x20351a0",
+            "offset": 174,
+            "kind": "call",
+            "target": "menace",
+            "instruction": "0x203524d",
+            "original": "0x26df5f0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x20351a0",
+            "offset": 203,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x203526a",
+            "original": "0x26b5a00"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 33,
+            "kind": "call",
+            "target": "check_legend_rule",
+            "instruction": "0x260e3b0",
+            "original": "0x26b51b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 49,
+            "kind": "call",
+            "target": "hybrid",
+            "instruction": "0x260e3c0",
+            "original": "0x24d5cf0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 96,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x260e3ef",
+            "original": "0x26daa50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 122,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x260e409",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 155,
+            "kind": "call",
+            "target": "planeswalker",
+            "instruction": "0x260e42a",
+            "original": "0x24394b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 199,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x260e456",
+            "original": "0x26daa50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 225,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x260e470",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 241,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x260e480",
+            "original": "0x26db000"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 280,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x260e4a7",
+            "original": "0x26db000"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 400,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x260e51f",
+            "original": "0x2672950"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 413,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x260e52b",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 447,
+            "kind": "call",
+            "target": "mill",
+            "instruction": "0x260e54e",
+            "original": "0x2671eb0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 462,
+            "kind": "call",
+            "target": "rfg_whole_graveyard",
+            "instruction": "0x260e55d",
+            "original": "0x266e490"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e390",
+            "offset": 500,
+            "kind": "call",
+            "target": "new_pick_target",
+            "instruction": "0x260e583",
+            "original": "0x26dbc60"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 33,
+            "kind": "call",
+            "target": "check_legend_rule",
+            "instruction": "0x260e160",
+            "original": "0x26b51b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 45,
+            "kind": "call",
+            "target": "in_play",
+            "instruction": "0x260e16c",
+            "original": "0x266b540"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 69,
+            "kind": "call",
+            "target": "is_humiliated",
+            "instruction": "0x260e184",
+            "original": "0x26534c0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 113,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x260e1b0",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 146,
+            "kind": "call",
+            "target": "planeswalker",
+            "instruction": "0x260e1d1",
+            "original": "0x24394b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 183,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x260e1f5",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 207,
+            "kind": "call",
+            "target": "default_test_definition",
+            "instruction": "0x260e20e",
+            "original": "0x26b6bd0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 222,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x260e21d",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 231,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x260e226",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 267,
+            "kind": "call",
+            "target": "new_make_test_in_play",
+            "instruction": "0x260e24a",
+            "original": "0x26b6c00"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 280,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x260e257",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 297,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x260e268",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 317,
+            "kind": "call",
+            "target": "enters_the_battlefield_with_counters",
+            "instruction": "0x260e27c",
+            "original": "0x2687040"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 336,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x260e28f",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 361,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x260e2a8",
+            "original": "0x26636e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 524,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x260e34b",
+            "original": "0x2672950"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 538,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x260e358",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x260e140",
+            "offset": 568,
+            "kind": "call",
+            "target": "generate_token_by_id",
+            "instruction": "0x260e377",
+            "original": "0x26de100"
+          },
+          {
+            "side": 1,
+            "function_address": "0x26169f0",
+            "offset": 30,
+            "kind": "call",
+            "target": "check_legend_rule",
+            "instruction": "0x2616a0d",
+            "original": "0x26b51b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x26169f0",
+            "offset": 46,
+            "kind": "call",
+            "target": "hybrid",
+            "instruction": "0x2616a1d",
+            "original": "0x24d5cf0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x26169f0",
+            "offset": 110,
+            "kind": "call",
+            "target": "boost_subtype",
+            "instruction": "0x2616a5d",
+            "original": "0x265be10"
+          },
+          {
+            "side": 1,
+            "function_address": "0x26169f0",
+            "offset": 142,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2616a7d",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x26169f0",
+            "offset": 175,
+            "kind": "call",
+            "target": "planeswalker",
+            "instruction": "0x2616a9e",
+            "original": "0x24394b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x26169f0",
+            "offset": 200,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2616ab7",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x26169f0",
+            "offset": 225,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x2616ad0",
+            "original": "0x26636e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x26169f0",
+            "offset": 376,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x2616b67",
+            "original": "0x2672950"
+          },
+          {
+            "side": 1,
+            "function_address": "0x26169f0",
+            "offset": 390,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x2616b74",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x26169f0",
+            "offset": 424,
+            "kind": "call",
+            "target": "amass",
+            "instruction": "0x2616b97",
+            "original": "0x2616830"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 33,
+            "kind": "call",
+            "target": "check_legend_rule",
+            "instruction": "0x2249f90",
+            "original": "0x26b51b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 49,
+            "kind": "call",
+            "target": "double_faced_card",
+            "instruction": "0x2249fa0",
+            "original": "0x23fb6e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 95,
+            "kind": "call",
+            "target": "planeswalker",
+            "instruction": "0x2249fce",
+            "original": "0x24394b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 120,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2249fe7",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 150,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x224a005",
+            "original": "0x26daa50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 161,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x224a010",
+            "original": "0x26db000"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 253,
+            "kind": "call",
+            "target": "dialog_impl",
+            "instruction": "0x224a06c",
+            "original": "0x2672950"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 300,
+            "kind": "call",
+            "target": "generate_token_by_id",
+            "instruction": "0x224a09b",
+            "original": "0x26de100"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 328,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x224a0b7",
+            "original": "0x26636e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 357,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x224a0d4",
+            "original": "0x26636e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 377,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x224a0e8",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 412,
+            "kind": "call",
+            "target": "transform",
+            "instruction": "0x224a10b",
+            "original": "0x2248370"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 462,
+            "kind": "call",
+            "target": "planeswalker",
+            "instruction": "0x224a13d",
+            "original": "0x24394b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 479,
+            "kind": "call",
+            "target": "valid_target",
+            "instruction": "0x224a14e",
+            "original": "0x26db3b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 508,
+            "kind": "call",
+            "target": "get_power",
+            "instruction": "0x224a16b",
+            "original": "0x2689c70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 548,
+            "kind": "call",
+            "target": "damage_creature",
+            "instruction": "0x224a193",
+            "original": "0x2668400"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 608,
+            "kind": "call",
+            "target": "damage_creature",
+            "instruction": "0x224a1cf",
+            "original": "0x2668400"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 639,
+            "kind": "call",
+            "target": "pick_target",
+            "instruction": "0x224a1ee",
+            "original": "0x26dbc00"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 645,
+            "kind": "data",
+            "target": "ai_is_speculating",
+            "instruction": "0x224a1f3",
+            "original": "0x728574"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 663,
+            "kind": "data",
+            "target": "trace_mode",
+            "instruction": "0x224a205",
+            "original": "0x790640"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 690,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x224a221",
+            "original": "0x26636e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 713,
+            "kind": "call",
+            "target": "get_power",
+            "instruction": "0x224a238",
+            "original": "0x2689c70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 719,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x224a23d",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2249f70",
+            "offset": 744,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x224a256",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 90,
+            "kind": "call",
+            "target": "morph",
+            "instruction": "0x2425cd9",
+            "original": "0x23fb4b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 135,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x2425d06",
+            "original": "0x26daa50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 163,
+            "kind": "callback",
+            "target": "is_permanent_or_suspended_legacy",
+            "instruction": "0x2425d20",
+            "original": "0x241a560"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 168,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2425d27",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 219,
+            "kind": "call",
+            "target": "do_dialog",
+            "instruction": "0x2425d5a",
+            "original": "0x471eb0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 245,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x2425d74",
+            "original": "0x26db000"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 284,
+            "kind": "call",
+            "target": "new_pick_target",
+            "instruction": "0x2425d9b",
+            "original": "0x26dbc60"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 348,
+            "kind": "call",
+            "target": "remove_counters",
+            "instruction": "0x2425ddb",
+            "original": "0x2666be0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 377,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x2425df8",
+            "original": "0x26636e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 387,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2425e01",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 396,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2425e0a",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 433,
+            "kind": "call",
+            "target": "is_what",
+            "instruction": "0x2425e30",
+            "original": "0x2694ad0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 439,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2425e35",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 458,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2425e48",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 483,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x2425e62",
+            "original": "0x26db000"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 520,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x2425e87",
+            "original": "0x26636e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 570,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x2425eb9",
+            "original": "0x26667b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 595,
+            "kind": "call",
+            "target": "is_what",
+            "instruction": "0x2425ed2",
+            "original": "0x2694ad0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 601,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2425ed7",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 623,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2425eed",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2425c80",
+            "offset": 709,
+            "kind": "call",
+            "target": "morph",
+            "instruction": "0x2425f44",
+            "original": "0x23fb4b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 37,
+            "kind": "call",
+            "target": "upkeep_trigger_ability",
+            "instruction": "0x2478314",
+            "original": "0x2689c40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 42,
+            "kind": "data",
+            "target": "enable_xtrigger_flags",
+            "instruction": "0x2478319",
+            "original": "0x279a7e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 56,
+            "kind": "data",
+            "target": "enable_xtrigger_flags",
+            "instruction": "0x2478327",
+            "original": "0x279a7e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 67,
+            "kind": "data",
+            "target": "trigger_condition",
+            "instruction": "0x2478332",
+            "original": "0x7a2d78"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 79,
+            "kind": "data",
+            "target": "xtrigger_impl_value_dont_use_directly",
+            "instruction": "0x247833e",
+            "original": "0x279a7e4"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 141,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x247837c",
+            "original": "0x26daa50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 258,
+            "kind": "call",
+            "target": "generic_activated_ability",
+            "instruction": "0x24783f1",
+            "original": "0x26b1450"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 282,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x2478408",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 294,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x2478414",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 306,
+            "kind": "data",
+            "target": "trigger_cause_controller",
+            "instruction": "0x2478420",
+            "original": "0x62c17c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 318,
+            "kind": "data",
+            "target": "reason_for_trigger_controller",
+            "instruction": "0x247842c",
+            "original": "0x737e1c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 344,
+            "kind": "call",
+            "target": "is_humiliated",
+            "instruction": "0x2478447",
+            "original": "0x26534c0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 376,
+            "kind": "data",
+            "target": "event_result",
+            "instruction": "0x2478466",
+            "original": "0x6205b4"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 393,
+            "kind": "call",
+            "target": "global_enchantment",
+            "instruction": "0x2478478",
+            "original": "0x2686850"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 424,
+            "kind": "call",
+            "target": "count_counters",
+            "instruction": "0x2478497",
+            "original": "0x26636e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 448,
+            "kind": "call",
+            "target": "lose_the_game",
+            "instruction": "0x24784af",
+            "original": "0x26a0520"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 472,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x24784c7",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 490,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x24784d9",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 532,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x2478503",
+            "original": "0x26667b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 545,
+            "kind": "data",
+            "target": "counters_added",
+            "instruction": "0x2478510",
+            "original": "0x27996e4"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 577,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x2478530",
+            "original": "0x26667b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24782f0",
+            "offset": 597,
+            "kind": "call",
+            "target": "global_enchantment",
+            "instruction": "0x2478544",
+            "original": "0x2686850"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 70,
+            "kind": "call",
+            "target": "saga",
+            "instruction": "0x25780f5",
+            "original": "0x2153cf0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 103,
+            "kind": "data",
+            "target": "active_cards_count",
+            "instruction": "0x2578114",
+            "original": "0x4ef520"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 124,
+            "kind": "data",
+            "target": "active_cards_count",
+            "instruction": "0x2578129",
+            "original": "0x4ef520"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 138,
+            "kind": "call",
+            "target": "in_play",
+            "instruction": "0x2578139",
+            "original": "0x266b540"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 162,
+            "kind": "call",
+            "target": "is_what",
+            "instruction": "0x2578151",
+            "original": "0x2694ad0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 186,
+            "kind": "call",
+            "target": "is_what",
+            "instruction": "0x2578169",
+            "original": "0x2694ad0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 216,
+            "kind": "call",
+            "target": "effect_frost_titan",
+            "instruction": "0x2578187",
+            "original": "0x22fc1e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 253,
+            "kind": "call",
+            "target": "default_token_definition",
+            "instruction": "0x25781ac",
+            "original": "0x26dcda0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 282,
+            "kind": "call",
+            "target": "generate_token",
+            "instruction": "0x25781c9",
+            "original": "0x26dceb0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 325,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x25781f4",
+            "original": "0x26daa50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 353,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x2578210",
+            "original": "0x26db000"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 393,
+            "kind": "call",
+            "target": "new_pick_target",
+            "instruction": "0x2578238",
+            "original": "0x26dbc60"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 419,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2578252",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 440,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2578267",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 462,
+            "kind": "call",
+            "target": "gain_control_permanently",
+            "instruction": "0x257827d",
+            "original": "0x26b5f70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 480,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x257828f",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 501,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x25782a4",
+            "original": "0x266ad70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25780b0",
+            "offset": 516,
+            "kind": "call",
+            "target": "untap_card",
+            "instruction": "0x25782b3",
+            "original": "0x26ad290"
+          },
+          {
+            "side": 1,
+            "function_address": "0x20a5460",
+            "offset": 66,
+            "kind": "call",
+            "target": "default_test_definition",
+            "instruction": "0x20a54a1",
+            "original": "0x26b6bd0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x20a5460",
+            "offset": 73,
+            "kind": "data",
+            "target": "active_cards_count",
+            "instruction": "0x20a54a6",
+            "original": "0x4ef520"
+          },
+          {
+            "side": 1,
+            "function_address": "0x20a5460",
+            "offset": 108,
+            "kind": "data",
+            "target": "active_cards_count",
+            "instruction": "0x20a54c9",
+            "original": "0x4ef520"
+          },
+          {
+            "side": 1,
+            "function_address": "0x20a5460",
+            "offset": 122,
+            "kind": "call",
+            "target": "in_play",
+            "instruction": "0x20a54d9",
+            "original": "0x266b540"
+          },
+          {
+            "side": 1,
+            "function_address": "0x20a5460",
+            "offset": 150,
+            "kind": "call",
+            "target": "new_make_test_in_play",
+            "instruction": "0x20a54f5",
+            "original": "0x26b6c00"
+          },
+          {
+            "side": 1,
+            "function_address": "0x20a5460",
+            "offset": 174,
+            "kind": "call",
+            "target": "menace",
+            "instruction": "0x20a550d",
+            "original": "0x2657210"
+          },
+          {
+            "side": 1,
+            "function_address": "0x20a5460",
+            "offset": 203,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x20a552a",
+            "original": "0x266d800"
+          }
+        ],
+        "supporting_workers": [],
+        "indirect_constant_calls": [],
+        "inputs": {
+          ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+          "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+          "ManalinkEh.dll": "6b838e8d70759702fd0b4ebbb73a2d5efaec95ab7844caf2a215f70fd6a358dc",
+          "ManalinkEh.dbg": "a561ec0f69999a92af5e55f6830923e22b36c5d0dfb60969fb7f512811ed765e"
+        },
+        "base_sha256": "ef8d6a4b84ea9ed20507b6a668328c18558665e5107c310849e970fef1a16b4c",
+        "builder_sha256": "12ae84f1fab65ee77c28f9debc232f905e694aa358250be2db76887053e54398",
+        "scope": "Eight actual native/rebuilt permanent and counter handlers, 43 opaque helper/callback bindings and fourteen globals. Observe full records, ordered arguments, raw returns, changing target/parent pairs, live battlefield bounds and repeated counter/getter queries over 4,096 environments, eighteen events and both players. No helper-leaf, UI or whole-game proof."
+      },
+      "plan_sha256": "5da5a42d53643c382cc66170bd89c7d321696b362b168fef43c49a762526af5a",
+      "log_sha256": "a756ddf8f0977d0898351e7e69954c3cc70ba7187653dfe82c492313d9aeb5ef",
+      "compiler_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "generated_source_sha256": "55522a3f915ee958e1da9bdc9aaa8ea0600dce78dce8228180402fae7b89485d"
+    },
+    "checker_sha256": "ba291ce04f15f81995ef2180973efc4ec982ccabcf11dcad87e1e70ccf7131bb",
+    "staging": "preserved",
+    "baseline_builder_metadata_correction": "Baseline scope prose counted 44 bindings; its actual helper list contains 43. The current builder differs only by that corrected count string; both builders and original plans/logs are pinned.",
+    "scope": "Eight actual release/rebuilt callers under 43 opaque helper/callback bindings and fourteen globals. Compare ordered arguments, complete card records, raw returns, globals and query counts over 4,096 environments, eighteen events and both players. Exercise target/parent mutation at calls, repeated loyalty/getter queries, changing loop bounds, cancellation and noncanonical nonzero helper returns. Token record size is 76 bytes. Helper behavior, actual UI, unrestricted aliasing, exception flow and whole-game equivalence are outside this bounded check. Full reccmp JSON not regenerated."
+  },
+  "native_flow_notes": [
+    "Ashiok, Arlinn and Angrath keep getters on every GAA event including cleanup. CAN_ACTIVATE and cancellation failures retain zero returns; successful/tail planeswalker returns remain raw.",
+    "Arlinn probes in-play and humiliation before checking cast/clone event, and re-reads affected-card globals after its test helper. Its two subtype names are native Wolf/Werewolf values.",
+    "Garruk preserves its ordinary two-choice dialog without planeswalker dialog tokens, cached retaliation damage, live parent/target reads after damage callbacks, the two short-circuited loyalty queries and the 0x42 transform guard.",
+    "Timebender keeps the native rule that adding counters requires an existing time counter, both exact prompt strings, post-removal count query and the re-read of target ownership after the first is_what call for AI scoring.",
+    "Simic retains the second getter for the target player after snapshotting the target card, unconditional upkeep helper/trigger enabling and its immediate enchantment tail after resolving the counter trigger.",
+    "Kiora keeps live battlefield bounds, four target getter calls around gaining control and untapping, a 76-byte 8/8 hexproof Kraken token and raw saga return. The legacy keeps attacking Minotaur filtering, live bounds and cleanup exile."
+  ]
+}

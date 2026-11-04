@@ -45,7 +45,7 @@ int pump_until_source_is_in_play_and_tapped(int player, int card, int t_player, 
 {
   int result;
   card_instance_t *instance;
-  int card_00;
+  int l2;
   pump_ability_t pump;
 
   default_pump_ability_definition(player, card, &pump, pow, tou, key, s_key);
@@ -53,15 +53,15 @@ int pump_until_source_is_in_play_and_tapped(int player, int card, int t_player, 
   instance = get_card_instance(player, card);
   instance->targets[1].player = t_player;
   instance->targets[1].card = t_card;
-  card_00 = create_targetted_legacy_effect(
+  l2 = create_targetted_legacy_effect(
       player, card, kill_legacy_if_source_is_not_in_play_or_untapped, t_player, t_card);
-  instance = get_card_instance(player, card_00);
+  instance = get_card_instance(player, l2);
   instance->targets[1].card = card;
   instance->targets[1].player = player;
   instance->targets[2].player = player;
   instance->targets[2].card = result;
   instance->targets[3].player = mode;
-  add_status(player, card_00, 0x10000);
+  add_status(player, l2, 0x10000);
   return result;
 }
 
@@ -297,12 +297,12 @@ int card_armageddon_clock(int player, int card, event_t event)
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
     add_counters(player, card, player, card, COUNTER_DOOM, 1);
-    if (trigger_condition != 0xce)
+    if (trigger_condition != TRIGGER_DRAW_PHASE)
     {
       return 0;
     }
   }
-  else if ((trigger_condition != 0xce) && (event != EVENT_SHOULD_AI_PLAY))
+  else if ((trigger_condition != TRIGGER_DRAW_PHASE) && (event != EVENT_SHOULD_AI_PLAY))
     check_damage_trigger = false;
   if (check_damage_trigger)
   {
@@ -525,7 +525,7 @@ int card_ashnods_transmogrant(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
-    td.illegal_type = 0x40;
+    td.illegal_type = TYPE_ARTIFACT;
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
@@ -567,7 +567,7 @@ int card_ashnods_transmogrant(int player, int card, event_t event)
     }
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
-    td.illegal_type = 0x40;
+    td.illegal_type = TYPE_ARTIFACT;
     instance = get_card_instance(player, card);
     if (event == EVENT_CHECK_PUMP)
     {
@@ -1017,7 +1017,7 @@ int card_drafnas_restoration(int player, int card, event_t event)
 		  do
 			{
 			  selected = new_global_tutor(player, instance->targets[0].player, TUTOR_FROM_GRAVE, TUTOR_DECK, 0, AI_MAX_VALUE, &test);
-			} while (selected != -1 && !IS_AI(player));	// AI puts best artifact on top of own deck.
+			} while (selected >= 0 && !IS_AI(player));	// AI puts best artifact on top of own deck.
 		}
 
 	  kill_card(player, card, KILL_DESTROY);
@@ -1126,7 +1126,7 @@ int card_energy_flux(int player, int card, event_t event)
     }
     if ((player != 1) || (affected_card_controller != 1))
     {
-      if (trigger_condition != 0xc9)
+      if (trigger_condition != TRIGGER_UPKEEP)
       {
         return 0;
       }
@@ -1139,7 +1139,7 @@ int card_energy_flux(int player, int card, event_t event)
       ai_modifier = ai_modifier + (upkeeps_or_artifact_count - ai_artifact_or_count) * 5;
     }
   }
-  if (trigger_condition != 0xc9)
+  if (trigger_condition != TRIGGER_UPKEEP)
   {
     return 0;
   }
@@ -2282,7 +2282,7 @@ int card_shapeshifter2(int player, int card, event_t event)
       }
     }
   }
-  if (((trigger_condition == 0xc9) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_UPKEEP) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     characteristic_or_result = duh_mode(player);
@@ -2774,7 +2774,7 @@ int card_tetravus(int player, int card, event_t event)
         remove_counters(player, card, player, card, COUNTER_P1_P1, 1);
       } while (release_count_or_result != i);
       token_generation_t token;
-      default_token_definition(player, card, 0x37b, &token);
+      default_token_definition(player, card, CARD_ID_TETRAVITE, &token);
       token.qty = (unsigned char)release_count_or_result;
       token.special_infos = get_special_infos(player, card);
       generate_token(&token);
@@ -2864,7 +2864,7 @@ int card_tetravus(int player, int card, event_t event)
       default_target_definition(player, card, &td, 2);
       td.illegal_abilities = 0;
       td.extra = (int32_t)(is_my_tetravite);
-      td.special = 0x8000;
+      td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
       tetra_code = get_special_infos(player, card);
       while (
           (release_count_or_result = can_target(&td),
@@ -3373,31 +3373,19 @@ int triskelion_like_creature(int player, int card, event_t event, int amount_of_
 int triskelion_like_creature(int player, int card, event_t event, int amount_of_starting_counters,
                              int c, int b, int u, int g, int r, int w)
 {
-  int result;
-  target_definition_t td;
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
-                                       amount_of_starting_counters);
-  if (event == EVENT_ACTIVATE)
-  {
-    default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-    {
-      damage_target0(player, card, 1);
-    }
-  }
-  result =
-      generic_activated_ability(player, card, event, 0x44, c, b, u, g, r, w, 0, &td, "TARGET_ANY");
-  return result;
+                                      amount_of_starting_counters);
+  if (event != EVENT_ACTIVATE && event != EVENT_CAN_ACTIVATE &&
+      event != EVENT_RESOLVE_ACTIVATION && event != EVENT_CLEANUP)
+    return 0;
+
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+  if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
+    damage_target0(player, card, 1);
+  return generic_activated_ability(player, card, event, 0x44, c, b, u, g, r, w, 0,
+                                   &td, "TARGET_ANY");
 }
 
 

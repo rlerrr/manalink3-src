@@ -4100,7 +4100,7 @@ int card_resounding_scream(int player, int card, event_t event){
 	 * Cycling |5|U|B|R
 	 * When you cycle ~, target player discards two cards at random. */
 
-	if (IS_CASTING(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
+	if (IS_GS_EVENT(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.zone = TARGET_ZONE_PLAYERS;
@@ -4133,7 +4133,7 @@ int card_resounding_silence(int player, int card, event_t event){
 	 * Cycling |5|G|W|U
 	 * When you cycle ~, exile up to two target attacking creatures. */
 
-	if (IS_CASTING(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
+	if (IS_GS_EVENT(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.required_state = TARGET_STATE_ATTACKING;
@@ -4172,7 +4172,7 @@ int card_resounding_thunder(int player, int card, event_t event){
 	 * ~ deals 3 damage to any target.
 	 * Cycling |5|B|R|G
 	 * When you cycle ~, it deals 6 damage to any target. */
-	if (IS_CASTING(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
+	if (IS_GS_EVENT(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
 		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
@@ -4203,7 +4203,7 @@ int card_resounding_wave(int player, int card, event_t event){
 	 * Cycling |5|W|U|B
 	 * When you cycle ~, return two target permanents to their owners' hands. */
 
-	if (IS_CASTING(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
+	if (IS_GS_EVENT(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_PERMANENT);
 
@@ -4218,7 +4218,7 @@ int card_resounding_wave(int player, int card, event_t event){
 			}
 			kill_card(player, card, KILL_DESTROY );
 		}
-		if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && !(player_bits[player] & PB_GY_ABILITIES_DISABLED) && can_target(&td) ){
+		if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && can_target(&td) && !(player_bits[player] & PB_GY_ABILITIES_DISABLED) ){
 			td.allow_cancel = 0;
 			int rfged = 0;
 			while( rfged < 2 && can_target(&td) ){
@@ -4666,7 +4666,7 @@ int card_sigil_of_distinction(int player, int card, event_t event)
   target_definition_t td;
   if (event == EVENT_MODIFY_COST)
   {
-    if (check_battlefield_for_id(2, 0x23ba) != 0)
+    if (check_battlefield_for_id(2, CARD_ID_GADDOCK_TEEG) != 0)
     {
 
       infinite_casting_cost();
@@ -5013,7 +5013,7 @@ int card_tezzeret_the_seeker(int player, int card, event_t event)
         choice_or_artifact_value = choice_or_artifact_value + loyalty_or_artifact_count * 5 + -0x19;
       }
       choice_or_artifact_value = dialog_impl(
-          player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Untap up to 2 artifacts", 1, 10, 1,
+          player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_PLANESWALKER, "Untap up to 2 artifacts", 1, 10, 1,
           "Tutor an artifact", 1, tutor_priority, 0, "Global artifact animation", 1,
           choice_or_artifact_value, 0xfffffffb, 0, 0, 0, 0);
       instance->number_of_targets = '\0';
@@ -5057,7 +5057,7 @@ int card_tezzeret_the_seeker(int player, int card, event_t event)
     else
     {
       choice_or_artifact_value = dialog_impl(
-          player, card, event, "\001\002", "\001\017", "Untap up to 2 artifacts", 1, 10, 1,
+          player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Untap up to 2 artifacts", 1, 10, 1,
           "Tutor an artifact", 1, 0, 0, "Global artifact animation", 1, 0, 0xfffffffb, 0, 0, 0, 0);
       if (event == EVENT_CAN_ACTIVATE)
       {
@@ -5168,7 +5168,7 @@ int card_tidehollow_sculler(int player, int card, event_t event)
   {
     opponent = 1 - player;
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     selection_or_data_index = would_validate_arbitrary_target(&td, opponent, -1);
     if ((selection_or_data_index != 0) && (hand_count[opponent] != 0))
     {

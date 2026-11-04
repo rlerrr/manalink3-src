@@ -76,7 +76,7 @@ int card_flame_burst(int player, int card, event_t event)
     {
       result_or_flame_burst_count = get_id(player, card);
       result_or_flame_burst_count = count_graveyard_by_id(2, result_or_flame_burst_count);
-      firecat_count = count_graveyard_by_id(2, 0x160d);
+      firecat_count = count_graveyard_by_id(2, CARD_ID_PARDIC_FIRECAT);
       damage_target0(player, card, result_or_flame_burst_count + 2 + firecat_count);
     }
     kill_card(player, card, KILL_DESTROY);
@@ -258,7 +258,7 @@ static int verdant_succession_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       default_test_definition(&this_test, 2);
       this_test.color = get_sleighted_color_test(player, card, 8);
@@ -298,7 +298,7 @@ static int verdant_succession_effect(int player, int card, event_t event)
         do
         {
           stored_name = (*stored_entry)[1];
-          tutor_count = card_counts[player][5] + 1;
+          tutor_count = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
           do
           {
             if (stored_name == -1)
@@ -453,7 +453,7 @@ int card_verdant_succession(int player, int card, event_t event)
         do
         {
           stored_name = (*stored_entry)[1];
-          tutor_count = card_counts[player][5] + 1;
+          tutor_count = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
           do
           {
             if (stored_name == -1)

@@ -2578,12 +2578,11 @@ int card_drana_liberator_of_malakir(int player, int card, event_t event)
   card_instance_t *instance;
   int live_count_or_result;
   int c;
-  char marked[151];
   check_legend_rule(player, card, event);
   num = has_combat_damage_been_inflicted_to_a_player(player, card, event);
   if (num > 0)
   {
-    memset(marked, 0, sizeof(marked));
+    char marked[151] = {0};
     c = 0;
     if (active_cards_count[player] > 0)
     {
@@ -3799,26 +3798,21 @@ int card_greenwarden_of_murasa(int player, int card, event_t event)
 
 int card_infuse_with_the_elements(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  target_definition_t td;
   store_num_colors_paid_in_info_slot(player, card, event);
   if (!IS_GS_EVENT(player, card, event))
-  {
     return 0;
-  }
-  default_target_definition(player, card, &td, 2);
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
   td.preferred_controller = player;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
-      instance = get_card_instance(player, card);
-      add_counters(player, card, instance->targets[0].player,
-                               instance->targets[0].card, COUNTER_P1_P1, instance->info_slot);
-      pump_ability_until_eot(player, card, instance->targets[0].player,
-                             instance->targets[0].card, 0, 0, 0x80, 0);
+      card_instance_t *inst = get_card_instance(player, card);
+      add_counters(player, card, inst->targets[0].player, inst->targets[0].card,
+                   COUNTER_P1_P1, inst->info_slot);
+      pump_ability_until_eot(player, card, inst->targets[0].player, inst->targets[0].card,
+                             0, 0, 0x80, 0);
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -4421,7 +4415,7 @@ int card_bring_to_light(int player, int card, event_t event)
 
 	  int csvid = new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_RFG, 0, AI_MAX_VALUE, &test);
 	  int iid = get_internal_card_id_from_csv_id(csvid);
-	  if (csvid != -1
+	  if (csvid >= 0
 		  && !is_what(-1, iid, TYPE_LAND)
 		  && can_legally_play_iid(player, iid)
 		  && DIALOG(player, card, EVENT_CAST_SPELL,
@@ -4570,7 +4564,7 @@ int card_kiora_master_of_the_depths(int player, int card, event_t event)
 				  test.no_shuffle = 2;
 				  test.create_minideck = sz;
 
-				  if (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test) != -1)
+				  if (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test) >= 0)
 					--sz;
 
 				  if (deck_ptr[player][0] != -1)
@@ -4579,7 +4573,7 @@ int card_kiora_master_of_the_depths(int player, int card, event_t event)
 					  test.no_shuffle = 2;
 					  test.create_minideck = sz;
 
-					  if (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test) != -1)
+					  if (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test) >= 0)
 						--sz;
 					}
 
@@ -4940,8 +4934,8 @@ int card_veteran_warleader(int player, int card, event_t event)
   td.preferred_controller = player;
   td.allowed_controller = player;
   td.required_subtype = 1;
-  td.illegal_state = 1;
-  td.special = 0x4000;
+  td.illegal_state = TARGET_STATE_TAPPED;
+  td.special = TARGET_SPECIAL_NOT_ME;
   if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE)
   {
     ability_result = generic_activated_ability(player, card, event, 6, 0, 0, 0, 0, 0, 0, 0, &td,
@@ -4961,8 +4955,8 @@ int card_veteran_warleader(int player, int card, event_t event)
   }
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    td.illegal_state = 1;
-    td.special = 0x4000;
+    td.illegal_state = TARGET_STATE_TAPPED;
+    td.special = TARGET_SPECIAL_NOT_ME;
     td.required_subtype = 1;
     td.allowed_controller = player;
     td.preferred_controller = td.allowed_controller;
@@ -4988,7 +4982,7 @@ int card_veteran_warleader(int player, int card, event_t event)
       trample_priority_or_choice = -(unsigned int)(trample_available == 0) & 100;
     }
     first_strike_or_choice = dialog_impl(
-        player, card, EVENT_RESOLVE_ACTIVATION, "\001\002", "\001\014", "\001\003", "First strike",
+        player, card, EVENT_RESOLVE_ACTIVATION, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, "First strike",
         1, -(unsigned int)(first_strike_or_choice == 0) & 100, "Vigilance", 1, vigilance_priority,
         "Trample", 1, trample_priority_or_choice, 0, 0, 0, 0);
     trample_priority_or_choice = first_strike_or_choice - CHOICE_FIRST_STRIKE;
@@ -5342,7 +5336,7 @@ int card_tangoland(int player, int card, event_t event)
   // inlines comes_into_play_tapped()
   if ((event == EVENT_CAST_SPELL || event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE) && affect_me(player, card)
 	  && !check_special_flags2(player, card, SF2_FACE_DOWN_DUE_TO_MANIFEST)
-	  && !((card_flags[0] | card_flags[1]) & 8) && !is_humiliated(player, card, AL_TRIG))
+	  && !((card_flags[0] | card_flags[1]) & CFLAGS_ARCHELOS) && !is_humiliated(player, card, AL_TRIG))
 	{
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_LAND, "");
@@ -5666,7 +5660,6 @@ static int catacomb_sifter_effect(int player, int card, event_t event)
 {
   card_instance_t *instance;
   card_instance_t *dying_permanent;
-  int result;
   unsigned int death_count;
 
   if (event == EVENT_STATIC_EFFECTS)
@@ -5676,8 +5669,7 @@ static int catacomb_sifter_effect(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       if ((-1 < instance->damage_target_player) &&
-          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           result != 0x3bbb))
+          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x3bbb))
       {
         kill_card(player, card, KILL_EXILE);
       }
@@ -5685,7 +5677,7 @@ static int catacomb_sifter_effect(int player, int card, event_t event)
   }
   instance = get_card_instance(player, card);
   if ((-1 < instance->damage_target_player) &&
-      (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+      (effect_follows_control_of_attachment(player, card, event) != 0))
   {
     return 0;
   }
@@ -5694,7 +5686,7 @@ static int catacomb_sifter_effect(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     dying_permanent = in_play(affected_card_controller, affected_card);
     if ((dying_permanent != NULL) &&
-        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+        (is_this_dying(affected_card_controller, affected_card) != 0))
     {
 
       if ((instance->damage_target_card == affected_card) &&
@@ -5707,7 +5699,7 @@ static int catacomb_sifter_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
         return 0;
       }
       count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
@@ -5718,8 +5710,7 @@ static int catacomb_sifter_effect(int player, int card, event_t event)
     return 0;
   if (death_count != 0)
   {
-    result = check_status(player, card, 0x10000);
-    if (result == 0)
+    if (!check_status(player, card, 0x10000))
     {
 
       death_count = death_count & 0xff;
@@ -5734,7 +5725,7 @@ static int catacomb_sifter_effect(int player, int card, event_t event)
       kill_card(player, card, KILL_EXILE);
     }
   }
-  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
   {
     kill_card(player, card, KILL_EXILE);
   }
@@ -5754,7 +5745,7 @@ int card_zada_hedron_grinder(int player, int card, event_t event)
   unsigned int spell_iid;
   int marked[151];
   check_legend_rule(player, card, event);
-  if ((((trigger_condition == 0xd3) && (card == affected_card)) &&
+  if ((((trigger_condition == TRIGGER_SPELL_CAST) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {

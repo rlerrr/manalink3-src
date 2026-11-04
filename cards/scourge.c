@@ -167,9 +167,9 @@ int card_astral_steel(int player, int card, event_t event){
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.preferred_controller = player;
+	card_instance_t* instance = get_card_instance(player, card);
 	if (event == EVENT_RESOLVE_SPELL){
 		if (valid_target(&td)){
-			card_instance_t* instance = get_card_instance(player, card);
 			pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 1, 2);
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -557,7 +557,7 @@ int card_day_of_the_dragons(int player, int card, event_t event)
         creature_card = creature_card - 1;
       } while (creature_card != -1);
     }
-    default_token_definition(player, card, 0x4920, &token);
+    default_token_definition(player, card, CARD_ID_DRAGON_SPIRIT, &token);
     token.tou = 5;
     token.pow = 5;
     token.key_plus = 0x20;
@@ -672,7 +672,7 @@ int card_decree_of_annihilation(int player, int card, event_t event)
                         permanent_check == 0)) ||
                   (permanent_check = is_planeswalker(c, permanent_card), permanent_check != 0))))
             {
-              cast_priority = cast_priority + ((player == c) - 1 & 0xffffffe8) + 0xc;
+              cast_priority = cast_priority + (unsigned int)((player == c) ? 0 : -24) + 0xc;
             }
             permanent_card = permanent_card + -1;
           } while (permanent_card != -1);
@@ -970,7 +970,7 @@ int card_dimensional_breach(int player, int card, event_t event){
 	                    int csvids[2] = {-1, -1};
 	                    int csvid = cards_data[iid].id;
 	                    int amount = 1;
-	                    if (csvid == 0x3eae || csvid == 0x3ef4 || csvid == 0x3efb){
+	                    if (csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || csvid == CARD_ID_CHITTERING_HOST || csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP){
 	                        unmeld(csvid, &csvids[0], &csvids[1]);
 	                        iid = get_internal_card_id_from_csv_id(csvids[0]);
 	                        amount = 2;
@@ -1304,7 +1304,7 @@ int card_forgotten_ancient(int player, int card, event_t event)
   instance = get_card_instance(player, card);
   base_target_definition(player, card, &td, 2);
   td.preferred_controller = player;
-  td.special = 0x4000;
+  td.special = TARGET_SPECIAL_NOT_ME;
   td.allow_cancel = 2;
   while (true)
   {
@@ -1653,7 +1653,7 @@ int card_krosan_warchief(int player, int card, event_t event){
 static int effect_lethal_vapors(int player, int card, event_t event)
 {
   int p;
-  int card_00;
+  int target_card;
   card_instance_t *instance;
   int opponent_creatures;
   int own_creatures;
@@ -1691,12 +1691,12 @@ static int effect_lethal_vapors(int player, int card, event_t event)
     {
       instance = get_card_instance(player, card);
       p = instance->targets[0].player;
-      card_00 = instance->targets[0].card;
+      target_card = instance->targets[0].card;
       if (event == EVENT_CAN_ACTIVATE)
       {
-        if (can_use_activated_abilities(p, card_00) != 0)
+        if (can_use_activated_abilities(p, target_card) != 0)
         {
-          source_id_or_cost = get_cost_mod_for_activated_abilities(p, card_00, 0, 0, 0, 0, 0, 0);
+          source_id_or_cost = get_cost_mod_for_activated_abilities(p, target_card, 0, 0, 0, 0, 0, 0);
           if (has_mana(player, 0, source_id_or_cost) != 0)
           {
             return 1;
@@ -1711,13 +1711,13 @@ static int effect_lethal_vapors(int player, int card, event_t event)
           own_creatures = count_subtype(player, 2, -1);
           ai_modifier = ai_modifier + (opponent_creatures - own_creatures) * 0xc;
           charge_mana(player, COLOR_COLORLESS,
-                      get_cost_mod_for_activated_abilities(p, card_00, 0, 0, 0, 0, 0, 0));
+                      get_cost_mod_for_activated_abilities(p, target_card, 0, 0, 0, 0, 0, 0));
           return 0;
         }
         if (event == EVENT_RESOLVE_ACTIVATION)
         {
-          skip_next_turn(p, card_00, player);
-          kill_card(p, card_00, KILL_DESTROY);
+          skip_next_turn(p, target_card, player);
+          kill_card(p, target_card, KILL_DESTROY);
         }
       }
     }
@@ -2452,9 +2452,10 @@ int card_tendrils_of_agony(int player, int card, event_t event)
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.zone = TARGET_ZONE_PLAYERS;
+	card_instance_t* instance = get_card_instance(player, card);
 	if (event == EVENT_RESOLVE_SPELL){
 		if (valid_target(&td)){
-			lose_life(get_card_instance(player, card)->targets[0].player, 2);
+			lose_life(instance->targets[0].player, 2);
 			gain_life(player, 2);
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -2827,7 +2828,6 @@ int card_titanic_bulvox(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x24fdb10; original cards/scourge.c:2563. */
 int card_temporal_fissure(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t td;
 
@@ -2843,8 +2843,7 @@ int card_temporal_fissure(int player, int card, event_t event)
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       bounce_permanent(instance->targets[0].player, instance->targets[0].card);
     }
@@ -2858,26 +2857,26 @@ int card_temporal_fissure(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x24f6980; original cards/scourge.c:88. */
 static int ageless_sentinels_subtypes_abils(int player, int card, event_t event)
 {
-  int card_00;
+  int target_card;
   card_instance_t *instance;
-  int player_00;
+  int target_player;
 
   if ((event & 0xfffffff7) == EVENT_ABILITIES)
   {
 
     instance = get_card_instance(player, card);
-    card_00 = instance->damage_target_card;
-    player_00 = (int)instance->damage_target_player;
-    if (((card_00 == affected_card) && (affected_card_controller == player_00)) &&
+    target_card = instance->damage_target_card;
+    target_player = (int)instance->damage_target_player;
+    if (((target_card == affected_card) && (affected_card_controller == target_player)) &&
         (event == EVENT_ABILITIES))
     {
       event_result = event_result & 0xff7fffff;
     }
     else if (event == EVENT_CHANGE_TYPE)
     {
-      remove_a_subtype(player_00, card_00, SUBTYPE_WALL);
-      add_a_subtype(player_00, card_00, SUBTYPE_BIRD);
-      add_a_subtype(player_00, card_00, SUBTYPE_GIANT);
+      remove_a_subtype(target_player, target_card, SUBTYPE_WALL);
+      add_a_subtype(target_player, target_card, SUBTYPE_BIRD);
+      add_a_subtype(target_player, target_card, SUBTYPE_GIANT);
     }
   }
   return 0;

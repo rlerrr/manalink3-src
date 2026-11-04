@@ -151,38 +151,20 @@ static int get_special_permanent_for_sacrifice(int player, int type, int flag1, 
 /* ManalinkEh 2022: 0x26e36e0; original functions/sacrifices.c:4. */
 static type_t types_cannot_sac(void)
 {
-  card_instance_t *instance;
-  int card;
-  int player;
-  type_t prohibited_types;
-
-  prohibited_types = TYPE_NONE;
-  player = 0;
-  do
-  {
-    card = 0;
-    if (0 < active_cards_count[player])
+  type_t rv = TYPE_NONE;
+  for (int p = 0; p < 2; ++p)
+    for (int c = 0; c < active_cards_count[p]; ++c)
     {
-      do
-      {
-        instance = in_play(player, card);
-        if (instance != NULL && cards_data[instance->internal_card_id].id == 0x3010 &&
-            is_humiliated(player, card, AL_STATIC) == 0)
-          prohibited_types = prohibited_types | TYPE_CREATURE;
-        instance = in_play(player, card);
-        if (instance != NULL && cards_data[instance->internal_card_id].id == 0x5626 &&
-            is_humiliated(player, card, AL_STATIC) == 0)
-          prohibited_types =
-              TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_ENCHANTMENT | TYPE_CREATURE;
-        card = card + 1;
-      } while (card < active_cards_count[player]);
+      card_instance_t *inst = in_play(p, c);
+      if (inst && cards_data[inst->internal_card_id].id == CARD_ID_ANGEL_OF_JUBILATION &&
+          !is_humiliated(p, c, AL_STATIC))
+        rv |= TYPE_CREATURE;
+      inst = in_play(p, c);
+      if (inst && cards_data[inst->internal_card_id].id == CARD_ID_YASHARN_IMPLACABLE_EARTH &&
+          !is_humiliated(p, c, AL_STATIC))
+        rv = TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_ENCHANTMENT | TYPE_CREATURE;
     }
-    player = player + 1;
-    if (player == 2)
-    {
-      return prohibited_types;
-    }
-  } while (true);
+  return rv;
 }
 
 
@@ -263,32 +245,16 @@ static const char *can_sacrifice_this(int who_chooses, int player, int card)
 /* ManalinkEh 2022: 0x26e3990; original functions/sacrifices.c:87. */
 static int can_cause_sacrifice_part(int player, int t_player)
 {
-  card_instance_t *instance;
-  int result;
-  int card;
-
-  if (active_cards_count[t_player] < 1)
+  for (int c = 0; c < active_cards_count[t_player]; ++c)
   {
-    return 1;
-  }
-  card = 0;
-  do
-  {
-    instance = in_play(t_player, card);
-    if (instance != NULL)
+    if (in_play(t_player, c))
     {
-      result = get_id(t_player, card);
-      if (((result == 0x30b1) || (result == 0x4e30)) || (result == 0x2b35))
-      {
-        result = is_humiliated(t_player, card, AL_STATIC);
-        if (result == 0)
-        {
-          return 0;
-        }
-      }
+      int id = get_id(t_player, c);
+      if ((id == 0x30b1 || id == 0x4e30 || id == 0x2b35) &&
+          !is_humiliated(t_player, c, AL_STATIC))
+        return 0;
     }
-    card = card + 1;
-  } while (card < active_cards_count[t_player]);
+  }
   return 1;
 }
 
@@ -388,14 +354,9 @@ int can_sacrifice_type_as_cost(int player, int amount, type_t type)
 /* ManalinkEh 2022: 0x26e3c70; original functions/sacrifices.c:87. */
 int can_cause_sacrifice(int player, int t_player)
 {
-  int result;
-
-  if (player != t_player)
-  {
-    result = can_cause_sacrifice_part(player, t_player);
-    return result;
-  }
-  return 1;
+  if (player == t_player)
+    return 1;
+  return can_cause_sacrifice_part(player, t_player);
 }
 
 
@@ -517,34 +478,15 @@ int is_nice_creature_to_sacrifice(int player, int card)
 /* ManalinkEh 2022: 0x26e3ec0; original functions/sacrifices.c:156. */
 int get_best_permanent_for_sacrifice(int player, int type)
 {
-  card_instance_t *instance;
-  int result;
-  int card;
-
-  if (0 < active_cards_count[player])
-  {
-    card = 0;
-    do
+  for (int card = 0; card < active_cards_count[player]; ++card)
+    if (in_play(player, card) && is_what(player, card, type) &&
+        !check_special_flags2(player, card, 0x400000) &&
+        is_nice_creature_to_sacrifice(player, card))
     {
-      while ((((instance = in_play(player, card),
-                instance != NULL && (result = is_what(player, card, type), result != 0)) &&
-               (result = check_special_flags2(player, card, 0x400000), result == 0)) &&
-              (result = is_nice_creature_to_sacrifice(player, card), result != 0)))
-      {
-        instance = get_card_instance(player, card);
-        if (instance->kill_code < 2)
-        {
-          return card;
-        }
-        card = card + 1;
-        if (active_cards_count[player] <= card)
-        {
-          return -1;
-        }
-      }
-      card = card + 1;
-    } while (card < active_cards_count[player]);
-  }
+      card_instance_t *instance = get_card_instance(player, card);
+      if (instance->kill_code < 2)
+        return card;
+    }
   return -1;
 }
 
@@ -640,11 +582,11 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t op
 
   base_target_definition(player, card, &td, 0x47);
   td.allow_cancel = options & (SAC_DONE | SAC_NO_CANCEL) ^ SAC_NO_CANCEL;
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   td.extra = (int32_t)passes_test_definition_and_not_dying;
   if (test->not_me == 1)
   {
-    td.special = 0xc000;
+    td.special = TARGET_SPECIAL_NOT_ME | TARGET_SPECIAL_EXTRA_FUNCTION;
   }
   requested_types = test->type & 0x147;
   required_types_or_marking_state = td.required_type;
@@ -762,7 +704,7 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t op
             if (t_player == 1)
             {
               required_types_or_marking_state =
-                  (-(unsigned int)((trace_mode & 2U) == 0) & 0x100000) + 0x200000;
+                  (((trace_mode & 2U) == 0) ? 0x300000U : 0x200000U);
             }
           }
           selected_instance->state = selected_instance->state | required_types_or_marking_state;
@@ -825,7 +767,7 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t op
                 available_card_or_result != 0))
       {
         token_generation_t token;
-        default_token_definition(player, card, 0x493b, &token);
+        default_token_definition(player, card, CARD_ID_GOBLIN_ROGUE, &token);
         token.t_player = last_selected_player;
         token.qty = '\x02';
         token.action = TOKEN_ACTION_HASTE;
@@ -924,7 +866,7 @@ int pick_creature_for_sacrifice(int player, int card, int cannot_cancel)
   td.illegal_abilities = 0;
   td.who_chooses = player;
   td.extra = (int32_t)can_sacrifice_this;
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   instance = get_card_instance(player, card);
   result = can_target(&td);
   if (result != 0)
@@ -959,7 +901,7 @@ int pick_permanent_for_sacrifice(int player, int card, int type, int cannot_canc
   td.illegal_abilities = 0;
   td.who_chooses = player;
   td.extra = (int32_t)can_sacrifice_this;
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   instance = get_card_instance(player, card);
   result = can_target(&td);
   if (result != 0)
@@ -1000,7 +942,7 @@ int pick_special_permanent_for_sacrifice(int player, int card, int cannot_cancel
   td.illegal_abilities = 0;
   td.who_chooses = player;
   td.extra = (int32_t)can_sacrifice_this;
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   instance = get_card_instance(player, card);
   result = can_target(&td);
   if (result != 0)
@@ -1190,66 +1132,45 @@ void player_sacrifices_a_creature(int s_player, int s_card, int t_player)
 /* ManalinkEh 2022: 0x26e5240; original functions/sacrifices.c:626. */
 int prevent_damage_sacrificing_a_creature(int player, int card, event_t event, int mode)
 {
-  card_instance_t *instance;
-  int result;
   target_definition_t td;
-  target_definition_t td1;
-
   default_target_definition(player, card, &td, 0);
   td.extra = damage_card;
   td.allow_cancel = 0;
-  default_target_definition(player, card, &td1, 2);
+  target_definition_t td1;
+  default_target_definition(player, card, &td1, TYPE_CREATURE);
   td1.allowed_controller = player;
   td1.preferred_controller = player;
   td1.illegal_abilities = 0;
-  instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_CAN_ACTIVATE)
   {
-    result = can_sacrifice_as_cost(player, 1, 2, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-    if ((result != 0) && (result = can_target(&td), result != 0))
+    if (can_sacrifice_as_cost(player, 1, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0) &&
+        can_target(&td))
     {
-      if (mode == 1)
-      {
-        result = has_mana(player, 0, 1);
-        if (result != 0)
-        {
-          return 99;
-        }
-      }
-      else if (mode == 2)
-      {
+      if ((mode == 1 && has_mana(player, COLOR_COLORLESS, 1)) || mode == 2)
         return 99;
-      }
       return 0;
     }
-    return global_enchantment(player, card, event);
   }
-  if (event != EVENT_ACTIVATE)
+  else if (event == EVENT_ACTIVATE)
   {
-    if ((event == EVENT_RESOLVE_ACTIVATION) &&
-        (instance = get_card_instance(instance->targets[0].player, instance->targets[0].card),
-         0 < instance->info_slot))
+    bool resolved = mode == 2;
+    if (mode == 1)
     {
-      instance->info_slot = 0;
+      charge_mana(player, COLOR_COLORLESS, 1);
+      resolved = spell_fizzled != 1;
     }
-    return global_enchantment(player, card, event);
-  }
-  bool pay_sacrifice = mode == 2;
-  if (mode == 1)
-  {
-    charge_mana(player, COLOR_COLORLESS, 1);
-    pay_sacrifice = spell_fizzled != 1;
-  }
-  if (pay_sacrifice)
-  {
-    result = controller_sacrifices_a_permanent(player, card, 2, 0);
-    if (result != 0)
-    {
+    if (resolved && controller_sacrifices_a_permanent(player, card, TYPE_CREATURE, 0))
       pick_target(&td, "TARGET_DAMAGE");
-      return global_enchantment(player, card, event);
-    }
+    else
+      spell_fizzled = 1;
   }
-  spell_fizzled = 1;
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    card_instance_t *target = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+    if (target->info_slot > 0)
+      target->info_slot = 0;
+  }
   return global_enchantment(player, card, event);
 }
 
@@ -1411,7 +1332,7 @@ int altar_extended(int player, int card, event_t event, int act_mode, int type, 
                    int flag5)
 {
   card_instance_t *instance;
-  int sacrificed_card_or_result;
+  int sacrificed_card;
   int sacrifice_stat;
   unsigned int available_modes;
 
@@ -1420,19 +1341,17 @@ int altar_extended(int player, int card, event_t event, int act_mode, int type, 
   {
     if (can_use_activated_abilities(player, card) != 0)
     {
-      sacrificed_card_or_result = is_sick(player, card);
+      int is_summoning_sick = is_sick(player, card);
       available_modes = 0;
-      if (sacrificed_card_or_result == 0)
+      if (!is_summoning_sick)
       {
         available_modes = act_mode & 1;
       }
-      sacrificed_card_or_result = is_animated_and_sick(player, card);
-      if ((sacrificed_card_or_result == 0) && ((act_mode & 2U) != 0))
+      if (!is_animated_and_sick(player, card) && (act_mode & 2U))
       {
         available_modes = available_modes + 2;
       }
-      sacrificed_card_or_result = is_tapped(player, card);
-      if ((sacrificed_card_or_result == 0) && ((act_mode & 4U) != 0))
+      if (!is_tapped(player, card) && (act_mode & 4U))
       {
         available_modes = available_modes + 4;
       }
@@ -1453,23 +1372,23 @@ int altar_extended(int player, int card, event_t event, int act_mode, int type, 
   }
   else if (event == EVENT_ACTIVATE)
   {
-    sacrificed_card_or_result = pick_special_permanent_for_sacrifice(
+    sacrificed_card = pick_special_permanent_for_sacrifice(
         player, card, 0, type, flag1, subtype, flag2, color, flag3, id, flag4, cmc, flag5);
-    if (sacrificed_card_or_result == -1)
+    if (sacrificed_card == -1)
     {
       spell_fizzled = 1;
     }
     else
     {
-      sacrifice_stat = get_power(player, sacrificed_card_or_result);
+      sacrifice_stat = get_power(player, sacrificed_card);
       instance->targets[1].player = sacrifice_stat;
-      sacrifice_stat = get_toughness(player, sacrificed_card_or_result);
+      sacrifice_stat = get_toughness(player, sacrificed_card);
       instance->targets[1].card = sacrifice_stat;
-      sacrifice_stat = get_color(player, sacrificed_card_or_result);
+      sacrifice_stat = get_color(player, sacrificed_card);
       instance->targets[2].player = sacrifice_stat;
-      sacrifice_stat = get_cmc(player, sacrificed_card_or_result);
+      sacrifice_stat = get_cmc(player, sacrificed_card);
       instance->targets[2].card = sacrifice_stat;
-      kill_card(player, sacrificed_card_or_result, KILL_SACRIFICE);
+      kill_card(player, sacrificed_card, KILL_SACRIFICE);
       if ((act_mode & 4U) != 0)
       {
         tap_card(player, card);

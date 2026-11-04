@@ -12,7 +12,7 @@ void boost_creatures_by_counters(int player, int card, event_t event, int counte
 
 // Global functions
 
-static int outlast(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white){
+int outlast(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white){
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance(player, card);
 		add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_P1_P1, 1);
@@ -310,27 +310,20 @@ int card_firehoof_cavalry(int player, int card, event_t event){
 
 int card_herald_of_anafenza(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  token_generation_t token;
-  if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+  if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE)
+    return outlast(player, card, event, MANACOST_XW(2, 1));
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    if (event != EVENT_RESOLVE_ACTIVATION)
-    {
-      return 0;
-    }
-    instance = get_card_instance(player, card);
-    add_counters(player, card, instance->parent_controller, instance->parent_card,
-                             COUNTER_P1_P1, 1);
-    default_token_definition(instance->parent_controller, instance->parent_card, 0x49a4, &token);
+    card_instance_t *instance = get_card_instance(player, card);
+    add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_P1_P1, 1);
+    token_generation_t token;
+    default_token_definition(instance->parent_controller, instance->parent_card, CARD_ID_WARRIOR, &token);
     token.pow = 1;
     token.tou = 1;
-    token.color_forced = ' ';
+    token.color_forced = COLOR_TEST_WHITE;
     generate_token(&token);
-    return 0;
   }
-  result = outlast(player, card, event, 2, 0, 0, 0, 0, 1);
-  return result;
+  return 0;
 }
 
 int card_high_sentinel_of_arashin(int player, int card, event_t event){
@@ -478,7 +471,13 @@ int card_seeker_of_the_way(int player, int card, event_t event)
     Whenever you cast a noncreature spell, Seeker of the Way gains lifelink until end of turn.
     2/2
   */
-  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    test.type_flag = DOESNT_MATCH;
+    sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
+  }
   if (event == EVENT_SPA)
   {
     prowess(player, card, event);
@@ -1686,8 +1685,6 @@ int card_grim_haruspex(int player, int card, event_t event){
 	  Whenever another nontoken creature you control dies, draw a card.
 	  3/2
 	*/
-	card_instance_t *instance = get_card_instance(player, card);
-
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		int found = 0;
 		int c;
@@ -1713,6 +1710,8 @@ int card_grim_haruspex(int player, int card, event_t event){
 			add_status(player, legacy, STATUS_INVISIBLE_FX);
 		}
 	}
+
+	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
 		test_definition_t this_test;
@@ -2206,7 +2205,7 @@ int card_retribution_of_the_ancients(int player, int card, event_t event)
   default_target_definition(player, card, &td, 2);
   if (player == 1)
   {
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)has_tou_lesser_than_available_p1_p1_counters;
   }
   creature_target_definition = &td;
@@ -2214,7 +2213,7 @@ int card_retribution_of_the_ancients(int player, int card, event_t event)
   tdc.allowed_controller = player;
   tdc.preferred_controller = player;
   tdc.illegal_abilities = 0;
-  tdc.special = 0x40000;
+  tdc.special = TARGET_SPECIAL_REQUIRES_COUNTER;
   tdc.extra = 0;
   instance = get_card_instance(player, card);
   if (event == EVENT_CAN_ACTIVATE)
@@ -2588,14 +2587,19 @@ int card_bring_low(int player, int card, event_t event){
 static int burn_away_legacy(int player, int card, event_t event)
 {
   card_instance_t *instance = get_card_instance(player, card);
-  if (instance->damage_target_player > -1 && event == EVENT_GRAVEYARD_FROM_PLAY)
+  if (instance->damage_target_player >= 0)
   {
-    int p = instance->damage_target_player;
-    int c = instance->damage_target_card;
-    if (affect_me(p, c) && !check_for_death_trigger_removal(p, c) && is_this_dying(p, c))
+    instance = get_card_instance(player, card);
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
     {
-      instance->damage_target_player = instance->damage_target_card = -1;
-      instance->targets[11].player = 66;
+      int c = instance->damage_target_card;
+      int p = instance->damage_target_player;
+      if (affect_me(p, c) && !check_for_death_trigger_removal(p, c) && is_this_dying(p, c))
+      {
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
+        instance->targets[11].player = 66;
+      }
     }
   }
   if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
@@ -3850,8 +3854,8 @@ int card_anafenza_the_foremost(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
     td.allowed_controller = (int32_t)(player);
     td.preferred_controller = (int32_t)(player);
-    td.required_state = 1;
-    td.special = 16384;
+    td.required_state = TARGET_STATE_TAPPED;
+    td.special = TARGET_SPECIAL_NOT_ME;
     instance = get_card_instance(player, card);
     instance->number_of_targets = '\0';
     result = can_target(&td);
@@ -6025,7 +6029,6 @@ static int grim_haruspex_effect(int player, int card, event_t event)
 {
   card_instance_t *instance;
   card_instance_t *dying_permanent;
-  int result;
   unsigned int death_count;
   test_definition_t this_test;
 
@@ -6036,8 +6039,7 @@ static int grim_haruspex_effect(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       if ((-1 < instance->damage_target_player) &&
-          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           result != 0x37c5))
+          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x37c5))
       {
         kill_card(player, card, KILL_EXILE);
       }
@@ -6045,7 +6047,7 @@ static int grim_haruspex_effect(int player, int card, event_t event)
   }
   instance = get_card_instance(player, card);
   if ((-1 < instance->damage_target_player) &&
-      (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+      (effect_follows_control_of_attachment(player, card, event) != 0))
   {
     return 0;
   }
@@ -6054,7 +6056,7 @@ static int grim_haruspex_effect(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     dying_permanent = in_play(affected_card_controller, affected_card);
     if ((dying_permanent != NULL) &&
-        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+        (is_this_dying(affected_card_controller, affected_card) != 0))
     {
 
       if ((instance->damage_target_card == affected_card) &&
@@ -6067,7 +6069,7 @@ static int grim_haruspex_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
         return 0;
       }
       default_test_definition(&this_test, 2);
@@ -6081,14 +6083,13 @@ static int grim_haruspex_effect(int player, int card, event_t event)
     return 0;
   if (death_count != 0)
   {
-    result = check_status(player, card, 0x10000);
-    if (result == 0)
+    if (!check_status(player, card, 0x10000))
     {
       draw_cards(player, death_count & 0xff);
       kill_card(player, card, KILL_EXILE);
     }
   }
-  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
   {
     kill_card(player, card, KILL_EXILE);
   }
@@ -6101,7 +6102,6 @@ static int kheru_bloodsucker_effect(int player, int card, event_t event)
   card_instance_t *instance;
   unsigned int death_count;
   card_instance_t *dying_permanent;
-  int result;
   test_definition_t this_test;
 
   if (event == EVENT_STATIC_EFFECTS)
@@ -6111,8 +6111,7 @@ static int kheru_bloodsucker_effect(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       if ((-1 < instance->damage_target_player) &&
-          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           result != 0x37de))
+          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x37de))
       {
         kill_card(player, card, KILL_EXILE);
       }
@@ -6120,7 +6119,7 @@ static int kheru_bloodsucker_effect(int player, int card, event_t event)
   }
   instance = get_card_instance(player, card);
   if ((-1 < instance->damage_target_player) &&
-      (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+      (effect_follows_control_of_attachment(player, card, event) != 0))
   {
     return 0;
   }
@@ -6129,14 +6128,13 @@ static int kheru_bloodsucker_effect(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     dying_permanent = in_play(affected_card_controller, affected_card);
     if ((dying_permanent != NULL) &&
-        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+        (is_this_dying(affected_card_controller, affected_card) != 0))
     {
 
       if ((instance->damage_target_card == affected_card) &&
           (instance->damage_target_player == affected_card_controller))
       {
-        result = is_what((int)instance->damage_target_player, instance->damage_target_card, 2);
-        if (result == 0)
+        if (!is_what((int)instance->damage_target_player, instance->damage_target_card, 2))
         {
           count_for_gfp_ability(player, card, 0x77, player, 0x47, NULL);
         }
@@ -6147,7 +6145,7 @@ static int kheru_bloodsucker_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       default_test_definition(&this_test, 2);
       this_test.toughness = 3;
@@ -6160,8 +6158,7 @@ static int kheru_bloodsucker_effect(int player, int card, event_t event)
     return 0;
   if (death_count != 0)
   {
-    result = check_status(player, card, 0x10000);
-    if (result == 0)
+    if (!check_status(player, card, 0x10000))
     {
 
       for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
@@ -6172,7 +6169,7 @@ static int kheru_bloodsucker_effect(int player, int card, event_t event)
       kill_card(player, card, KILL_EXILE);
     }
   }
-  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
   {
     kill_card(player, card, KILL_EXILE);
   }
@@ -6185,7 +6182,6 @@ static int sultai_flayer_effect(int player, int card, event_t event)
   card_instance_t *instance;
   unsigned int death_count;
   card_instance_t *dying_permanent;
-  int result;
   test_definition_t this_test;
 
   if (event == EVENT_STATIC_EFFECTS)
@@ -6195,8 +6191,7 @@ static int sultai_flayer_effect(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       if ((-1 < instance->damage_target_player) &&
-          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           result != 0x3837))
+          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x3837))
       {
         kill_card(player, card, KILL_EXILE);
       }
@@ -6204,7 +6199,7 @@ static int sultai_flayer_effect(int player, int card, event_t event)
   }
   instance = get_card_instance(player, card);
   if ((-1 < instance->damage_target_player) &&
-      (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+      (effect_follows_control_of_attachment(player, card, event) != 0))
   {
     return 0;
   }
@@ -6213,7 +6208,7 @@ static int sultai_flayer_effect(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     dying_permanent = in_play(affected_card_controller, affected_card);
     if ((dying_permanent != NULL) &&
-        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+        (is_this_dying(affected_card_controller, affected_card) != 0))
     {
 
       if ((instance->damage_target_card == affected_card) &&
@@ -6226,7 +6221,7 @@ static int sultai_flayer_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       default_test_definition(&this_test, 2);
       this_test.toughness = 3;
@@ -6239,8 +6234,7 @@ static int sultai_flayer_effect(int player, int card, event_t event)
     return 0;
   if (death_count != 0)
   {
-    result = check_status(player, card, 0x10000);
-    if (result == 0)
+    if (!check_status(player, card, 0x10000))
     {
 
       death_count = death_count & 0xff;
@@ -6255,7 +6249,7 @@ static int sultai_flayer_effect(int player, int card, event_t event)
       kill_card(player, card, KILL_EXILE);
     }
   }
-  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
   {
     kill_card(player, card, KILL_EXILE);
   }
@@ -6391,7 +6385,7 @@ static int abzan_ascendancy_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       count_for_gfp_ability_and_store_values(player, card, 0x77, player, 2, NULL, 0x40, 0);
     }
@@ -6404,7 +6398,7 @@ static int abzan_ascendancy_effect(int player, int card, event_t event)
     if (check_status(player, card, 0x10000) == 0)
     {
 
-      default_token_definition(player, card, 0x498d, &token);
+      default_token_definition(player, card, CARD_ID_SPIRIT, &token);
       token.pow = 1;
       token.tou = 1;
       token.color_forced = ' ';

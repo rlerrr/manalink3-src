@@ -72,124 +72,94 @@ int mana_battery_generic(int player, int card, event_t event, color_t color, int
   };
 
   int num_counters;
-  int mana_amount_or_choice;
-  card_instance_t *instance;
-  unsigned int charge_available;
   int charge_priority;
   char prompt1[300];
   char prompt2[600];
-  if ((event - EVENT_RESOLVE_ACTIVATION < 2) || (event == EVENT_ACTIVATE))
+  if ((event - EVENT_RESOLVE_ACTIVATION < 2) || event == EVENT_ACTIVATE)
   {
     if (event == EVENT_CAN_ACTIVATE)
     {
       if (is_tapped(player, card) != 0)
-      {
         return 0;
-      }
       if (is_animated_and_sick(player, card) != 0)
-      {
         return 0;
-      }
     }
     else if (event == EVENT_ACTIVATE)
-    {
       load_text(NULL, "MANABATTERY");
-    }
+
     num_counters = count_counters(player, card, COUNTER_CHARGE);
     charge_priority = 1;
-    if (current_phase == 0x1f)
+    if (current_phase == PHASE_DISCARD)
       charge_priority = (unsigned int)(current_turn != player) * 2 + 1;
-    charge_available = 0;
+    unsigned int charge_available = 0;
     if (paying_mana() == 0 && can_use_activated_abilities(player, card) != 0)
     {
-      mana_amount_or_choice = has_mana_for_activated_ability(
+      int has_charge_mana = has_mana_for_activated_ability(
           player, card, num_counters + 1 + colorless_cost, 0, 0, 0, 0, 0);
-      charge_available = (unsigned int)(mana_amount_or_choice != 0);
+      charge_available = (unsigned int)(has_charge_mana != 0);
     }
-    mana_amount_or_choice = can_produce_mana(player, card);
-    mana_amount_or_choice =
-        dialog_impl(player, card, event, "\001\016", text_lines, mana_amount_or_choice, 2, 0x715dd8,
-                    charge_available, charge_priority, 0, 0, 0, 0);
+    int mana_available = can_produce_mana(player, card);
+    int choice = dialog_impl(
+        player, card, event, DLG_AUTOCHOOSE_IF_1, text_lines, mana_available, 2, 0x715dd8,
+        charge_available, charge_priority, 0, 0, 0, 0);
     if (event == EVENT_CAN_ACTIVATE)
-    {
-      return mana_amount_or_choice;
-    }
+      return choice;
     if (event == EVENT_ACTIVATE)
     {
-      if (mana_amount_or_choice == CHOICE_MANA)
+      if (choice == CHOICE_MANA)
       {
+        int amount;
         if (num_counters == 0)
-        {
-          mana_amount_or_choice = 1;
-        }
+          amount = 1;
         else
         {
-          if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
-          {
-            mana_amount_or_choice = recorded_rand(player, num_counters + 1);
-          }
+          if (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0))
+            amount = recorded_rand(player, num_counters + 1);
           else
           {
             load_text(NULL, "MANABATTERY");
             scnprintf(prompt1, 300, text_lines[3], num_counters);
-            mana_amount_or_choice = get_id(player, card);
-            scnprintf(prompt2, 600, "%s\n\n%s", cards_ptr[mana_amount_or_choice]->full_name,
-                      prompt1);
-            mana_amount_or_choice = choose_a_number(player, prompt2, 0);
+            int id = get_id(player, card);
+            scnprintf(prompt2, 600, "%s\n\n%s", cards_ptr[id]->full_name, prompt1);
+            amount = choose_a_number(player, prompt2, 0);
           }
-          if (mana_amount_or_choice == -1)
+          if (amount == -1)
           {
             spell_fizzled = 1;
             return 0;
           }
-          if (num_counters < mana_amount_or_choice)
-          {
-            mana_amount_or_choice = num_counters;
-          }
-          remove_counters(player, card, player, card, COUNTER_CHARGE, mana_amount_or_choice);
-          mana_amount_or_choice = mana_amount_or_choice + 1;
+          if (num_counters < amount)
+            amount = num_counters;
+          remove_counters(player, card, player, card, COUNTER_CHARGE, amount);
+          amount = amount + 1;
         }
-        produce_mana_tapped(player, card, color, mana_amount_or_choice);
+        produce_mana_tapped(player, card, color, amount);
       }
-      else if (mana_amount_or_choice == CHOICE_CHARGE)
+      else if (choice == CHOICE_CHARGE)
       {
-        instance = get_card_instance(player, card);
-        instance->state = instance->state | 0x10;
+        card_instance_t *instance = get_card_instance(player, card);
+        instance->state = instance->state | STATE_TAPPED;
         if (charge_mana_for_activated_ability(player, card, colorless_cost, 0, 0, 0, 0, 0) == 0)
-        {
           untap_card_no_event(player, card);
-        }
         tapped_for_mana_color = -1;
       }
       return 0;
     }
-    if (mana_amount_or_choice == CHOICE_CHARGE)
-    {
+    if (choice == CHOICE_CHARGE)
       add_counters(player, card, player, card, COUNTER_CHARGE, 1);
-    }
   }
   if (event == EVENT_COUNT_MANA)
   {
     if (card != affected_card)
-    {
       return 0;
-    }
     if (player != affected_card_controller)
-    {
       return 0;
-    }
     if (is_tapped(player, card) != 0)
-    {
       return 0;
-    }
     if (is_animated_and_sick(player, card) != 0)
-    {
       return 0;
-    }
     if (can_produce_mana(player, card) == 0)
-    {
       return 0;
-    }
     num_counters = count_counters(player, card, COUNTER_CHARGE);
     declare_mana_available(player, color, num_counters + 1);
     return 0;
@@ -197,27 +167,19 @@ int mana_battery_generic(int player, int card, event_t event, color_t color, int
   if (event == EVENT_CAN_WASTE_MANA)
   {
     if (is_tapped(player, card) != 0)
-    {
       return 0;
-    }
     if (is_animated_and_sick(player, card) != 0)
-    {
       return 0;
-    }
     if (can_use_activated_abilities(player, card) == 0)
-    {
       return 0;
-    }
     num_counters = count_counters(player, card, COUNTER_CHARGE);
-    if (has_mana_for_activated_ability(player, card, colorless_cost + 1 + num_counters, 0, 0, 0, 0,
-                                       0) == 0)
-    {
+    if (has_mana_for_activated_ability(player, card, colorless_cost + 1 + num_counters,
+                                       0, 0, 0, 0, 0) == 0)
       return 0;
-    }
     event_result = event_result | 1;
     return 0;
   }
-  if ((event == EVENT_SHOULD_AI_PLAY) && (player == 1))
+  if (event == EVENT_SHOULD_AI_PLAY && player == 1)
   {
     num_counters = count_counters(1, card, COUNTER_CHARGE);
     ai_modifier = ai_modifier + num_counters * 0xc;
@@ -246,7 +208,8 @@ static int leg_color_hoser(int player, int card, event_t event, int permanent_co
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_PERMANENT);
-	td.required_color = 1<<get_sleighted_color_test(player, card, permanent_color);
+	unsigned int color_shift = get_sleighted_color_test(player, card, permanent_color);
+	td.required_color = 1U << (color_shift & 31);
 
 	target_definition_t td2;
 	default_target_definition(player, card, &td2, TYPE_LAND);
@@ -2853,7 +2816,7 @@ int card_glyph_of_delusion(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td_wall, 2);
     td_wall.preferred_controller = player;
-    td_wall.required_state = 0x10;
+    td_wall.required_state = TARGET_STATE_BLOCKING;
     td_wall.required_subtype = 0xd1;
     default_target_definition(player, card, &td_blocked_by_wall, 2);
     get_card_instance(player, card);
@@ -2866,7 +2829,7 @@ int card_glyph_of_delusion(int player, int card, event_t event)
     {
       default_target_definition(player, card, &td_wall, 2);
       td_wall.preferred_controller = player;
-      td_wall.required_state = 0x10;
+      td_wall.required_state = TARGET_STATE_BLOCKING;
       td_wall.required_subtype = 0xd1;
       default_target_definition(player, card, &td_blocked_by_wall, 2);
       instance = get_card_instance(player, card);
@@ -2883,7 +2846,7 @@ int card_glyph_of_delusion(int player, int card, event_t event)
           }
           glyph_of_delusion_wall_card = instance->targets[0].card;
           td_blocked_by_wall.extra = (int32_t)target_is_blocked_by_glyph_of_delusion_wall_card;
-          td_blocked_by_wall.special = 0x8000;
+          td_blocked_by_wall.special = TARGET_SPECIAL_EXTRA_FUNCTION;
           result = can_target(&td_blocked_by_wall);
           if (result == 0)
           {
@@ -2906,7 +2869,7 @@ int card_glyph_of_delusion(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td_wall, 2);
     td_wall.preferred_controller = player;
-    td_wall.required_state = 0x10;
+    td_wall.required_state = TARGET_STATE_BLOCKING;
     td_wall.required_subtype = 0xd1;
     default_target_definition(player, card, &td_blocked_by_wall, 2);
     instance = get_card_instance(player, card);
@@ -2933,7 +2896,7 @@ int card_glyph_of_delusion(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td_wall, 2);
     td_wall.preferred_controller = player;
-    td_wall.required_state = 0x10;
+    td_wall.required_state = TARGET_STATE_BLOCKING;
     td_wall.required_subtype = 0xd1;
     default_target_definition(player, card, &td_blocked_by_wall, 2);
     get_card_instance(player, card);
@@ -4743,7 +4706,7 @@ static int lands_edge_effect(int player, int card, event_t event)
       event != EVENT_CLEANUP)
     return 0;
   default_target_definition(player, card, &td, 0x100);
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   new_default_test_definition(&this_test, 0xff, "Select a card to discard.");
   if (player == 1)
     this_test.type = 1;
@@ -7554,7 +7517,7 @@ int card_stangg(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    generate_token_by_id(player, card, 0x37d);
+    generate_token_by_id(player, card, CARD_ID_STANGG_TWIN);
     leaves_play(player, card, EVENT_ETB, 1, 0);
     return 0;
   }
@@ -7930,7 +7893,11 @@ int card_takklemaggot(int player, int card, event_t event){
 
 		if( c > -1 ){
 			if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(p, c) ){
-				if (!check_for_death_trigger_removal(p, c) && is_this_dying(p, c)){
+				if (is_this_dying(p, c)){
+					if (check_for_death_trigger_removal(p, c)){
+						kill_card(player, card, KILL_STATE_BASED_ACTION);
+						return 0;
+					}
 					int legacy = create_legacy_effect(player, card, &takklemaggot_legacy);
 					card_instance_t *leg = get_card_instance(player, legacy);
 					leg->targets[0].player = get_owner(player, card);
@@ -8170,14 +8137,17 @@ Enchanted creature gets +1/+0.
 |R|R|R: Regenerate enchanted creature. */
 
 	card_instance_t* instance = get_card_instance(player, card);
-	if (instance->damage_target_player >= 0 && IS_GAA_EVENT(event)){
-		int p = instance->damage_target_player, c = instance->damage_target_card;
-		if (event == EVENT_RESOLVE_ACTIVATION){
-			if (can_be_regenerated(p, c)){ regenerate_target(p, c); }
-		}else if (event == EVENT_CAN_ACTIVATE){
-			if (p < 0 || !(land_can_be_played & LCBP_REGENERATION) || !can_be_regenerated(p, c)){ return 0; }
+	if (instance->damage_target_player >= 0){
+		instance = get_card_instance(player, card);
+		if (IS_GAA_EVENT(event)){
+			int p = instance->damage_target_player, c = instance->damage_target_card;
+			if (event == EVENT_RESOLVE_ACTIVATION){
+				if (can_be_regenerated(p, c)){ regenerate_target(p, c); }
+			}else if (event == EVENT_CAN_ACTIVATE){
+				if (p < 0 || !(land_can_be_played & LCBP_REGENERATION) || !can_be_regenerated(p, c)){ return 0; }
+			}
+			return generic_activated_ability(player, card, event, 0, MANACOST_R(3), 0, NULL, NULL) ? 99 : 0;
 		}
-		return generic_activated_ability(player, card, event, 0, MANACOST_R(3), 0, NULL, NULL) ? 99 : 0;
 	}
 	return generic_aura(player, card, event, player, 1, 0, 0, 0, 0, 0, 0);
 }
@@ -8325,7 +8295,7 @@ int card_time_elemental(int player, int card, event_t event)
       event != EVENT_CLEANUP)
     return 0;
   default_target_definition(player, card, &td, 0x47);
-  td.illegal_state = 0x40;
+  td.illegal_state = TARGET_STATE_ENCHANTED;
   instance = get_card_instance(player, card);
   if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
@@ -8523,7 +8493,7 @@ int card_triassic_egg(int player, int card, event_t event)
         grave_count_or_shroud = graveyard_has_shroud(player);
         grave_tutor_available = (unsigned int)(grave_count_or_shroud == 0);
       }
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Add a counter",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Add a counter",
                            charge_available_or_selection, 2, "Tutor creature from hand",
                            hand_tutor_available, 5, "Tutor creature grave", grave_tutor_available,
                            10, 0, 0, 0, 0);
@@ -8886,7 +8856,7 @@ int card_venarian_gold(int player, int card, event_t event)
   char enchanted_player;
   card_instance_t *instance;
   int enchanted_card_or_result;
-  int player_00;
+  int target_player;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
@@ -8904,23 +8874,23 @@ int card_venarian_gold(int player, int card, event_t event)
   {
 
     instance = get_card_instance(player, card);
-    player_00 = (int)instance->damage_target_player;
+    target_player = (int)instance->damage_target_player;
     enchanted_card_or_result = instance->damage_target_card;
     if (event == EVENT_UNTAP)
     {
       if (((enchanted_card_or_result == affected_card) &&
-           (player_00 == affected_card_controller)) &&
-          (count_counters(player_00, enchanted_card_or_result, COUNTER_SLEEP) != 0))
+           (target_player == affected_card_controller)) &&
+          (count_counters(target_player, enchanted_card_or_result, COUNTER_SLEEP) != 0))
       {
-        does_not_untap(player_00, enchanted_card_or_result, EVENT_UNTAP);
+        does_not_untap(target_player, enchanted_card_or_result, EVENT_UNTAP);
       }
-      upkeep_trigger_ability(player, card, EVENT_UNTAP, player_00);
+      upkeep_trigger_ability(player, card, EVENT_UNTAP, target_player);
     }
     else
     {
-      upkeep_trigger_ability(player, card, event, player_00);
+      upkeep_trigger_ability(player, card, event, target_player);
       if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
-        remove_counters(player, card, player_00, enchanted_card_or_result, COUNTER_SLEEP, 1);
+        remove_counters(player, card, target_player, enchanted_card_or_result, COUNTER_SLEEP, 1);
     }
   }
 
@@ -9114,41 +9084,18 @@ Prevent all damage that would be dealt to ~ by enchanted creatures. */
 
 int card_wall_of_shadows(int player, int card, event_t event)
 {
-  card_instance_t *damage;
-  card_instance_t *attacking_source;
-  int result;
-
-  if ((((event == EVENT_CHECK_ABILITIES) && (card == affected_card)) &&
-       (player == affected_card_controller)) &&
-      ((1 - player == current_turn && (current_phase < 0x18))))
-  {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
-    {
-      check_abilities_toughness = check_abilities_toughness + 0x3fff;
-    }
-  }
-  damage = damage_being_prevented(event);
-  if (((damage != NULL) && (damage->damage_target_player == player)) &&
-      ((damage->damage_target_card == card && ((damage->targets[3].player & 2) != 0))))
-  {
-    if ((current_turn != player) && (damage->damage_source_player == current_turn))
-    {
-      attacking_source = in_play((int)damage->damage_source_player, damage->damage_source_card);
-      if (attacking_source != NULL)
-      {
-        result = is_blocking(card, damage->damage_source_card);
-        if (result != 0)
-        {
-          result = is_humiliated(player, card, AL_STATIC);
-          if (result == 0)
-          {
-            prevent_damage(affected_card_controller, affected_card, -1);
-          }
-        }
-      }
-    }
-  }
+  if (event == EVENT_CHECK_ABILITIES && affect_me(player, card) &&
+      1 - player == current_turn && current_phase < 0x18 &&
+      !is_humiliated(player, card, AL_STATIC))
+    check_abilities_toughness += 0x3fff;
+  card_instance_t *damage = damage_being_prevented(event);
+  if (damage && damage->damage_target_player == player && damage->damage_target_card == card &&
+      (damage->targets[3].player & 2) && current_turn != player &&
+      damage->damage_source_player == current_turn &&
+      in_play(damage->damage_source_player, damage->damage_source_card) &&
+      is_blocking(card, damage->damage_source_card) &&
+      !is_humiliated(player, card, AL_STATIC))
+    prevent_damage(affected_card_controller, affected_card, -1);
   return 0;
 }
 

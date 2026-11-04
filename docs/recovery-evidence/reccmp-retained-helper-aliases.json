@@ -1,0 +1,4703 @@
+{
+  "format": 1,
+  "status": "Two renamed retained helper identities restored to the comparison; full current-build report and review queues refreshed.",
+  "game_source_changes": 0,
+  "game_build": "Unchanged C674 DLL/debug pair; no rebuild needed.",
+  "checks": {
+    "checks": [
+      "two real source-bound identities",
+      "wrong native source rejected",
+      "wrong native name rejected",
+      "missing native entry rejected",
+      "duplicate native range rejected",
+      "duplicate alias rejected",
+      "canonical mapping conflict rejected",
+      "ambiguous rebuilt range has no identity",
+      "conflux_basic_landcycling identity verified; argument-store order and epilogue remain compiler differences",
+      "commander_basic_landcycling strict complete entry-reachable CFG match"
+    ],
+    "proofs": [
+      {
+        "alias": {
+          "native_address": "0x21e27a0",
+          "native_name": "basic_landcycling",
+          "source": "cards/conflux.c",
+          "rebuilt_name": "conflux_basic_landcycling"
+        },
+        "identity": {
+          "rebuilt_address": 34662000,
+          "rebuilt_size": 154,
+          "source": "cards/conflux.c",
+          "name": "conflux_basic_landcycling",
+          "resolution": "unique C source/name range on each side"
+        },
+        "ranges": [
+          {
+            "address": "0x21e27a0",
+            "size": 154,
+            "sha256": "b44a7eb21bb81c0478c462750d712acad6a64d874ab9f03d4e0f1906bb2d6d02"
+          },
+          {
+            "address": "0x210e670",
+            "size": 154,
+            "sha256": "18b0a1ba79cc9cb3badba2fec121ad7e737357bd51940115cc912f8deac4f6e6"
+          }
+        ],
+        "strict_cfg": {
+          "matched": false,
+          "reason": "('Unbound operand', '0x0', '0x8')",
+          "manual_difference_review": "In the successful land-tutor branch, stores to separate outgoing argument slots ESP+0/4/8 are reordered before the same call, and the native duplicated return epilogue becomes a jump to the common epilogue. Both write player/1/1 and preserve the zero return across the call. This is a manual explanation, not a strict CFG match."
+        }
+      },
+      {
+        "alias": {
+          "native_address": "0x23e6840",
+          "native_name": "basic_landcycling",
+          "source": "cards/commander_2016.c",
+          "rebuilt_name": "commander_basic_landcycling"
+        },
+        "identity": {
+          "rebuilt_address": 34509856,
+          "rebuilt_size": 146,
+          "source": "cards/commander_2016.c",
+          "name": "commander_basic_landcycling",
+          "resolution": "unique C source/name range on each side"
+        },
+        "ranges": [
+          {
+            "address": "0x23e6840",
+            "size": 146,
+            "sha256": "9d04349c5749c3a99c9758055a479375e2dfdbc57e42aefc63025c35cc1ef803"
+          },
+          {
+            "address": "0x20e9420",
+            "size": 146,
+            "sha256": "8837cd7a7b73a5930109a62bf0cf45933aa27e0b1d74e78ae8d2e43dbfa4b1c9"
+          }
+        ],
+        "strict_cfg": {
+          "matched": true,
+          "proof": {
+            "cfg_states": 40,
+            "reached_instruction_counts": [
+              40,
+              40
+            ],
+            "terminals": 3,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x26529a0",
+                "rebuilt": "0x26e24d0",
+                "identity": "_tutor_basic_land"
+              },
+              {
+                "native": "0x2699590",
+                "rebuilt": "0x26a3f00",
+                "identity": "_cycling"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "6b838e8d70759702fd0b4ebbb73a2d5efaec95ab7844caf2a215f70fd6a358dc",
+      "ManalinkEh.dbg": "a561ec0f69999a92af5e55f6830923e22b36c5d0dfb60969fb7f512811ed765e"
+    },
+    "alias_manifest_sha256": "fe82e7273b9e667f0087d7ec390f56a1f44421b5796ae061d9ab3992b23483ff",
+    "wrapper_sha256": "cfd0a664cf31c9eff80f9e919e5505bc334dc39f9e40daee154b679bafa41efe",
+    "cfg_reviewer_sha256": "ac4635b540e5155d36807b065c9a3c10d46bd965e19728f919ae287f309d384b",
+    "checker_sha256": "4c9581be01226ccfef7b847f194a58cd26f0f292e107f4d4907567dd6ae460b7",
+    "scope": "Explicit address/source/name identities and strict entry-reachable CFG correspondence under unique callee/global COFF symbols and fixed engine addresses. No symbolic/equality/pointer-tail relaxations. Callee identities are assumptions, not callee or whole-game equivalence proofs. No source change or game rebuild."
+  },
+  "report_receipt": {
+    "setup_sha256": "8d8b3e29c3cabf33a8430f6df06570751491fa1e9ca953207ea244932ad478d9",
+    "report_sha256": "5abab5b477b42869d78ee636b6dcc1f9427c10c3a9ccf1dbcbfd2155a1f03eb2",
+    "inputs": {
+      "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dll": "6b838e8d70759702fd0b4ebbb73a2d5efaec95ab7844caf2a215f70fd6a358dc",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "a561ec0f69999a92af5e55f6830923e22b36c5d0dfb60969fb7f512811ed765e",
+      "C:\\dev\\manalink3-src\\.recovery\\2022-Magic.exe": "0170f02b1c381a20a97ca0c12e99c8d338453ce4edbfc99148e726d565bee0de"
+    },
+    "metadata_sha256": "bb90088de8a7b72d2df3e8f5e6d6c392b742d05587511b2199781566d55a878e",
+    "metadata_snapshot": ".recovery\\reccmp\\comparison-aliases-c677.metadata.csv",
+    "global_metadata_snapshot": ".recovery\\reccmp\\comparison-aliases-c677.globals.csv",
+    "global_metadata_sha256": "4bd078c759882fd6f758d1ec43ab13606b0e8e288c32b13ec11f52609c5142c9",
+    "global_bindings_snapshot": ".recovery\\reccmp\\comparison-aliases-c677.globals.json",
+    "global_bindings_sha256": "f960400aa30a29dd481e74bbd99127a152e03f2401054b06828d7ba881f5e30c",
+    "external_metadata_snapshot": ".recovery\\reccmp\\comparison-aliases-c677.externals.csv",
+    "external_metadata_sha256": "8dd2bc9adff98ec4456bdc2a752a289dea509b82753350b8d70c1f59d40c4bf7",
+    "external_bindings_snapshot": ".recovery\\reccmp\\comparison-aliases-c677.externals.json",
+    "external_bindings_sha256": "05fbba292356282781d0df699765b2aa77f1fd9d52498ce88338913d3dfc7fc7",
+    "external_audit_snapshot": ".recovery\\reccmp\\comparison-aliases-c677.external-audit.json",
+    "external_audit_sha256": "3e939a63f8c8c2b6e309063eca1aeb5812e88848ab9ea673b6964bfce5edb792",
+    "verified_external_bindings": 64,
+    "external_matching_enabled": true,
+    "verified_global_bindings": {
+      "verified": 293,
+      "bindings_sha256": "c5bc2995d0485aef07e039bf6b4e9405ea95e54f8eebf6b8e23a0e649cd5901b"
+    },
+    "project_config_sha256": "a978a638b5f154a514be6229cd0b012f96fb8431f1bfc4c4f00c3cf13bc0d371",
+    "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "comparator_source_sha256": {
+      "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+      "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+      "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+      "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\replacement.py": "28aec46cd59d06ca10cf6a9946e3b7fd1d3b3af3b2b400536afb5d4089b497c9",
+      "C:\\dev\\reccmp\\reccmp\\compare\\core.py": "bd85389476236576619e4bf404691d5aab618f4ddb12280e0ecae1fc865c1dbd",
+      "C:\\dev\\reccmp\\reccmp\\compare\\db.py": "364562d3eab1bb9ec03f9390804cb13d8131a09c06c25a6a2b66abc5d66f60a9",
+      "C:\\dev\\reccmp\\reccmp\\types.py": "d7096e7e44739d18054f1115f6ea23c65e1bb6dfbc994a86aef80668287aca14",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_globals.py": "1e870d89b4afbc15950d26c59a94162aecc70bec0700f60c032373a76910f3bc",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_externals.py": "d748a9223c09382c6f1302b0d019b6238062ddd0b619ded5992df67ef521fb83",
+      "C:\\dev\\manalink3-src\\tools\\reccmp_project.py": "cfd0a664cf31c9eff80f9e919e5505bc334dc39f9e40daee154b679bafa41efe"
+    },
+    "command": [
+      "reccmp-reccmp",
+      "--target",
+      "MANALINK2022",
+      "--no-color",
+      "--json",
+      ".recovery/reccmp/comparison-aliases-c677.json",
+      "--silent"
+    ],
+    "exit_code": 0
+  },
+  "old_report_sha256": "a41c30e89c183520edc7611675339c04dbc9297c01501bc5036bd5540cf167f7",
+  "summary": {
+    "total": 18830,
+    "categories": {
+      "exact": 12599,
+      "different": 5956,
+      "effective": 275
+    },
+    "added_ranges": [
+      {
+        "address": "0x21e27a0",
+        "name": "conflux_basic_landcycling",
+        "matching": 0.9,
+        "recomp": "0x210e670",
+        "diff": [
+          [
+            "@@ -0x21e27b7,32 +0x210e687,28 @@",
+            [
+              {
+                "both": [
+                  [
+                    "0x21e27b7",
+                    "cmp ecx, 0xb3",
+                    "0x210e687"
+                  ],
+                  [
+                    "0x21e27bd",
+                    "je 0x9",
+                    "0x210e68d"
+                  ],
+                  [
+                    "0x21e27bf",
+                    "add esp, 0x28",
+                    "0x210e68f"
+                  ],
+                  [
+                    "0x21e27c2",
+                    "pop ebx",
+                    "0x210e692"
+                  ],
+                  [
+                    "0x21e27c3",
+                    "pop esi",
+                    "0x210e693"
+                  ],
+                  [
+                    "0x21e27c4",
+                    "pop ebp",
+                    "0x210e694"
+                  ],
+                  [
+                    "0x21e27c5",
+                    "ret ",
+                    "0x210e695"
+                  ],
+                  [
+                    "0x21e27c6",
+                    "nop ",
+                    "0x210e696"
+                  ],
+                  [
+                    "0x21e27c8",
+                    "cmp dword ptr [<OFFSET1>], 1",
+                    "0x210e698"
+                  ],
+                  [
+                    "0x21e27cf",
+                    "je -0x12",
+                    "0x210e69f"
+                  ]
+                ]
+              },
+              {
+                "orig": [
+                  [
+                    "0x21e27d1",
+                    "mov dword ptr [esp], esi"
+                  ]
+                ],
+                "recomp": []
+              },
+              {
+                "both": [
+                  [
+                    "0x21e27d4",
+                    "mov dword ptr [esp + 8], 1",
+                    "0x210e6a1"
+                  ],
+                  [
+                    "0x21e27dc",
+                    "mov dword ptr [esp + 4], 1",
+                    "0x210e6a9"
+                  ]
+                ]
+              },
+              {
+                "orig": [],
+                "recomp": [
+                  [
+                    "0x210e6b1",
+                    "mov dword ptr [esp], esi"
+                  ]
+                ]
+              },
+              {
+                "both": [
+                  [
+                    "0x21e27e4",
+                    "mov dword ptr [ebp - 0xc], eax",
+                    "0x210e6b4"
+                  ],
+                  [
+                    "0x21e27e7",
+                    "call tutor_basic_lands (FUNCTION)",
+                    "0x210e6b7"
+                  ],
+                  [
+                    "0x21e27ec",
+                    "mov eax, dword ptr [ebp - 0xc]",
+                    "0x210e6bc"
+                  ]
+                ]
+              },
+              {
+                "orig": [
+                  [
+                    "0x21e27ef",
+                    "add esp, 0x28"
+                  ],
+                  [
+                    "0x21e27f2",
+                    "pop ebx"
+                  ],
+                  [
+                    "0x21e27f3",
+                    "pop esi"
+                  ],
+                  [
+                    "0x21e27f4",
+                    "pop ebp"
+                  ],
+                  [
+                    "0x21e27f5",
+                    "ret "
+                  ],
+                  [
+                    "0x21e27f6",
+                    "nop "
+                  ]
+                ],
+                "recomp": [
+                  [
+                    "0x210e6bf",
+                    "jmp -0x32"
+                  ],
+                  [
+                    "0x210e6c1",
+                    "lea esi, [esi]"
+                  ]
+                ]
+              },
+              {
+                "both": [
+                  [
+                    "0x21e27f8",
+                    "mov ebx, dword ptr [ebp + 0x18]",
+                    "0x210e6c8"
+                  ],
+                  [
+                    "0x21e27fb",
+                    "mov dword ptr [esp + 0xc], 1",
+                    "0x210e6cb"
+                  ],
+                  [
+                    "0x21e2803",
+                    "mov dword ptr [esp + 0x20], ebx",
+                    "0x210e6d3"
+                  ],
+                  [
+                    "0x21e2807",
+                    "mov ebx, dword ptr [ebp + 0x14]",
+                    "0x210e6d7"
+                  ],
+                  [
+                    "0x21e280a",
+                    "mov dword ptr [esp + 0x1c], ebx",
+                    "0x210e6da"
+                  ],
+                  [
+                    "0x21e280e",
+                    "mov ebx, dword ptr [ebp + 0x10]",
+                    "0x210e6de"
+                  ],
+                  [
+                    "0x21e2811",
+                    "mov dword ptr [esp + 0x18], ebx",
+                    "0x210e6e1"
+                  ],
+                  [
+                    "0x21e2815",
+                    "mov ebx, dword ptr [ebp + 0xc]",
+                    "0x210e6e5"
+                  ],
+                  [
+                    "0x21e2818",
+                    "mov dword ptr [esp + 0x14], ebx",
+                    "0x210e6e8"
+                  ],
+                  [
+                    "0x21e281c",
+                    "mov ebx, dword ptr [ebp + 8]",
+                    "0x210e6ec"
+                  ]
+                ]
+              }
+            ]
+          ]
+        ],
+        "type": 1
+      },
+      {
+        "address": "0x23e6840",
+        "name": "commander_basic_landcycling",
+        "matching": 1.0,
+        "recomp": "0x20e9420",
+        "type": 1
+      }
+    ],
+    "score_changes": [
+      {
+        "address": "0x21e2840",
+        "name": "card_absorb_vis",
+        "before": "different",
+        "after": "different",
+        "before_score": 0.8189655172413793,
+        "after_score": 0.8275862068965517
+      },
+      {
+        "address": "0x21e48f0",
+        "name": "card_fiery_fall",
+        "before": "different",
+        "after": "different",
+        "before_score": 0.8173913043478261,
+        "after_score": 0.8260869565217391
+      },
+      {
+        "address": "0x21e4e20",
+        "name": "card_gleam_of_resistence",
+        "before": "different",
+        "after": "exact",
+        "before_score": 0.9846153846153847,
+        "after_score": 1.0
+      },
+      {
+        "address": "0x21e8600",
+        "name": "card_sylvan_bounty",
+        "before": "different",
+        "after": "different",
+        "before_score": 0.7982456140350878,
+        "after_score": 0.8070175438596491
+      },
+      {
+        "address": "0x21e8ff0",
+        "name": "card_traumatic_visions",
+        "before": "different",
+        "after": "exact",
+        "before_score": 0.9714285714285714,
+        "after_score": 1.0
+      },
+      {
+        "address": "0x23e8b10",
+        "name": "card_ancient_excavation",
+        "before": "different",
+        "after": "different",
+        "before_score": 0.28776978417266186,
+        "after_score": 0.302158273381295
+      },
+      {
+        "address": "0x23e9410",
+        "name": "card_grave_upheaval",
+        "before": "different",
+        "after": "different",
+        "before_score": 0.8620689655172413,
+        "after_score": 0.8706896551724138
+      },
+      {
+        "address": "0x23e9af0",
+        "name": "card_migratory_route",
+        "before": "different",
+        "after": "different",
+        "before_score": 0.3953488372093023,
+        "after_score": 0.4186046511627907
+      },
+      {
+        "address": "0x23ea670",
+        "name": "card_sylvan_reclamation",
+        "before": "different",
+        "after": "different",
+        "before_score": 0.625,
+        "after_score": 0.6484375
+      },
+      {
+        "address": "0x23eab50",
+        "name": "card_treacherous_terrain",
+        "before": "different",
+        "after": "different",
+        "before_score": 0.594059405940594,
+        "after_score": 0.6138613861386139
+      }
+    ],
+    "prior_categories": {
+      "exact": 12596,
+      "different": 5957,
+      "effective": 275
+    }
+  },
+  "metadata_changes": [
+    {
+      "address": "0x222bd80",
+      "before": "rebuilt entry 0x23a29c0",
+      "after": "recovery ledger"
+    }
+  ],
+  "queues": {
+    "tiny": {
+      "path": ".recovery/reccmp/current-tiny-reviewed-c677.json",
+      "sha256": "a3ca0a9f0438b5ce68a4c128c02c2401c6e88361c80f82ad53fec002c030a4d0",
+      "candidates": 576,
+      "groups": 422,
+      "annotated_change_sites": 284,
+      "candidates_without_site_review": 292
+    },
+    "wide": {
+      "path": ".recovery/reccmp/current-wide-reviewed-c677.json",
+      "sha256": "bd9fb8af04540b18e41cda5f3ba181b64b41fb6ea01f59a27d450a04d132ba7f",
+      "candidates": 2766,
+      "groups": 2075,
+      "annotated_change_sites": 514,
+      "candidates_without_site_review": 2252
+    }
+  },
+  "review_transfers": {
+    "tiny": {
+      "retained": [
+        {
+          "address": "0x2612170",
+          "name": "card_autumn_tail_kitsune_sage",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26bca20",
+          "name": "challenge_mode_upkeep",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x203e2f0",
+          "name": "card_whims_of_the_fates",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x24dab10",
+          "name": "card_athreos_god_of_passage",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x25810f0",
+          "name": "card_archenemy",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x2136920",
+          "name": "hissing_iguanar_effect",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x252b3c0",
+          "name": "teysa_orzhov_scion_effect",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x241fc00",
+          "name": "card_tidal_flats",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2314f20",
+          "name": "card_ichorid",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26a7700",
+          "name": "ai_mod_for_untap_effects",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2654640",
+          "name": "effect_fof",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x213ea90",
+          "name": "card_hissing_iguanar",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x22bd080",
+          "name": "card_cyclone",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x265d3b0",
+          "name": "fill_arr",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x2653870",
+          "name": "choose_between_two_piles",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x267b470",
+          "name": "create_legacy_effect_for_opponent",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x2657560",
+          "name": "initialize_ability_tooltip_names",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26edf70",
+          "name": "can_activate_basic_equipment",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x268ecf0",
+          "name": "new_card_from_list",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x26d43d0",
+          "name": "add_player_counters",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x265d020",
+          "name": "time_in_ms",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2667050",
+          "name": "action_on_target",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x23c8b60",
+          "name": "make_one_fractal",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x2302910",
+          "name": "test_has_border_val",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x2621c50",
+          "name": "renowned_weaponsmith_tutor",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x25c4af0",
+          "name": "test_has_watermark_val",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x2040f20",
+          "name": "card_mogis_god_of_slaughter",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20f66a0",
+          "name": "card_norin_the_wary",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x235f030",
+          "name": "card_nyx_lotus",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2477390",
+          "name": "card_final_iteration",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25b38f0",
+          "name": "card_deranged_hermit",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2327d70",
+          "name": "card_kolaghans_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x22539c0",
+          "name": "card_panoptic_mirror",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x259ac70",
+          "name": "card_primal_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x214bee0",
+          "name": "card_cold_storage",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x24de590",
+          "name": "eye_of_the_storm_trigger",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x2329310",
+          "name": "card_silumgars_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2596d70",
+          "name": "card_incendiary_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23286d0",
+          "name": "card_ojutais_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x25933e0",
+          "name": "card_cryptic_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x258d250",
+          "name": "hideaway",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x2384110",
+          "name": "card_reign_of_chaos",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2546020",
+          "name": "card_spellweaver_helix",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x23a4820",
+          "name": "card_chandra_torch_of_defiance",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x2323330",
+          "name": "card_vandalize",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23bb9b0",
+          "name": "card_piracy_charm",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23836b0",
+          "name": "card_purgatory",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x232af80",
+          "name": "magnetic_mine_effect",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x23c3e50",
+          "name": "card_jeleva_nephalias_scourge",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x251bbd0",
+          "name": "card_lord_of_the_void",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x21dea30",
+          "name": "card_scrap_mastery",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x254b4d0",
+          "name": "hybrid_casting",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x257e760",
+          "name": "set_scheme_in_motion",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x24579d0",
+          "name": "card_ulamogs_nullifier",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2331440",
+          "name": "card_magnetic_mine",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x25ef070",
+          "name": "card_erratic_explosion",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23f6bf0",
+          "name": "card_essence_vortex",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x24ecdb0",
+          "name": "card_nightmare_void",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23f6730",
+          "name": "card_essence_filter",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x20e3e10",
+          "name": "card_aerial_volley",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x244f7b0",
+          "name": "card_roils_retribution",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2503300",
+          "name": "card_aether_burst",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2130c10",
+          "name": "card_portcullis",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x2247790",
+          "name": "card_drafnas_restoration",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x247feb0",
+          "name": "card_spreading_flames",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2512720",
+          "name": "card_shower_of_coals",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x20ec5f0",
+          "name": "card_cavalry_master",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25be180",
+          "name": "card_drill_bit",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2598630",
+          "name": "card_lammastide_weave",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x25dde60",
+          "name": "card_needlebite_trap",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2543b70",
+          "name": "card_razor_barrier",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x210ff50",
+          "name": "card_gruesome_discovery",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x21068c0",
+          "name": "card_sowing_salt",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2106a70",
+          "name": "card_splinter2",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x22911c0",
+          "name": "legions_initiative_legacy",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x21089e0",
+          "name": "card_encroach",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x22cd560",
+          "name": "card_divest",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x24a37d0",
+          "name": "card_distress",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2113ab0",
+          "name": "card_hunger_of_the_howlpack",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x21a2620",
+          "name": "card_see_the_unwritten",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x255bb80",
+          "name": "card_smash_to_smithereens",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2222370",
+          "name": "card_macabre_waltz",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23c3aa0",
+          "name": "card_unexpectedly_absent",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2069810",
+          "name": "card_urborg_uprising",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2030770",
+          "name": "card_magma_jet",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x25f6230",
+          "name": "card_starstorm",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x207a9a0",
+          "name": "card_brimstone_volley",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2654c70",
+          "name": "put_top_x_on_bottom_in_random_order",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x2191bf0",
+          "name": "card_dire_fleet_daredevil",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x26a7d10",
+          "name": "return_cards_exiled_by_me_to_play",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x24eb840",
+          "name": "card_life_from_the_loam",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x251d570",
+          "name": "card_furious_resistance",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x26a7c60",
+          "name": "return_cards_exiled_by_me_to_hand",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x2294430",
+          "name": "card_phytoburst",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x22b8b90",
+          "name": "card_serpents_gift",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x253a060",
+          "name": "card_bloodscent",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2331e70",
+          "name": "card_morbid_plunder",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x268f920",
+          "name": "lifegaining_charm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26b4fd0",
+          "name": "turn_card_in_grave_face_down",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26b4f40",
+          "name": "from_exile_to_graveyard",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26b5050",
+          "name": "turn_card_in_grave_face_up",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x2302d00",
+          "name": "fx_spark_fiend",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c73a0",
+          "name": "card_squirrel_powered_scheme",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x267c110",
+          "name": "is_basic_land",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25a8760",
+          "name": "card_hans_eriksson",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2562230",
+          "name": "card_mask",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20b5790",
+          "name": "card_kitaki_wars_wage",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x23a4ed0",
+          "name": "card_combustible_gearhulk",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2696810",
+          "name": "twiddle",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2697f30",
+          "name": "insurrection_effect",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2216020",
+          "name": "card_commune_with_dinosaurs",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2146f50",
+          "name": "card_worldheart_phoenix",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24772a0",
+          "name": "card_docent_of_perfection",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2557480",
+          "name": "card_prismatic_omen",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x212ad10",
+          "name": "destroy_token_at_next_eot",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x218eda0",
+          "name": "remove_token_at_end_of_next_turn_unless_cb",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23761b0",
+          "name": "sacrifice_token_at_next_eot",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x245fed0",
+          "name": "card_search_the_city",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26c01c0",
+          "name": "my_base_value_by_id",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x20ba9d0",
+          "name": "midnight_entourage_effect",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x2336980",
+          "name": "card_ayula_queen_among_bears",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x20e1fc0",
+          "name": "card_chandra_roaring_flame",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26d6ac0",
+          "name": "exiledby_remember(1)",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26eec30",
+          "name": "UnorderedMapIntInt_delete",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x247b840",
+          "name": "card_noosegraf_mob",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c8fd0",
+          "name": "acclaimed_contender_fn",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x21a2c00",
+          "name": "card_trail_of_mystery",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2302d80",
+          "name": "fx_togglodyte",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2563a40",
+          "name": "card_loyal_drake",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2194c00",
+          "name": "card_legion_lieutenant",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2194c60",
+          "name": "card_merfolk_mistbinder",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25d09c0",
+          "name": "card_inspiring_veteran",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x209d320",
+          "name": "sd_is_blocking_him",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x209d350",
+          "name": "is_blocking_sd",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2148470",
+          "name": "is_blocking_flowstone_salamander",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22eada0",
+          "name": "is_blocking_master_of_arms",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2376a50",
+          "name": "is_blocking_kod(2)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2376a80",
+          "name": "is_blocking_urborg_panther",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x242f590",
+          "name": "card_goblin_wizard",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2386140",
+          "name": "card_tainted_specter",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2117730",
+          "name": "card_grim_backwoods",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20805f0",
+          "name": "card_graveyard_shovel",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2099bf0",
+          "name": "card_eye_of_yawgmoth",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23303b0",
+          "name": "card_distant_memories",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20201a0",
+          "name": "card_waterspout_djinn",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2306700",
+          "name": "malakir_rebirth_effect",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x201ef30",
+          "name": "card_teferis_realm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x217ee30",
+          "name": "card_deepwood_legate",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x21c43d0",
+          "name": "card_angel_of_fury",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22e2400",
+          "name": "card_watchful_naga",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x264e2b0",
+          "name": "card_grollub",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2678000",
+          "name": "has_only_1_target_and_could_legally_change_target_and_targets_me",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2192730",
+          "name": "card_polyraptor",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x268f0e0",
+          "name": "can_pay_life_impl",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2216cb0",
+          "name": "card_ripjaw_raptor",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x255f810",
+          "name": "is_aura_or_equipment(3)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22ca570",
+          "name": "dominaria_target_only_permanents_unless_in_hand",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x266b520",
+          "name": "produce_mana_all_one_color",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2119d90",
+          "name": "card_council_guardian",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25b28c0",
+          "name": "effect_memory_jar",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x20a4110",
+          "name": "card_misfortune",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24fd6e0",
+          "name": "card_stifle",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26eea90",
+          "name": "SetVoidptr_insert",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23fcd90",
+          "name": "card_illusions_of_grandeur",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x20cc7e0",
+          "name": "card_weldfast_engineer",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x239b0b0",
+          "name": "etb_fabricate",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24585f0",
+          "name": "card_kiora_master_of_the_depths_emblem",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2672360",
+          "name": "add_force_a_subtype_until_eot_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22df300",
+          "name": "card_soul_scar_mage",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20b2c30",
+          "name": "card_erayos_essence",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2563b20",
+          "name": "card_loyal_subordinate",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22358e0",
+          "name": "card_funnel_web_recluse",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26c90f0",
+          "name": "increase_trap_condition",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26e09a0",
+          "name": "get_protection_source",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26927f0",
+          "name": "can_lose_the_game",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23b08e0",
+          "name": "card_chandra_pyrogenius",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2054f90",
+          "name": "card_disorder",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26d4810",
+          "name": "get_updated_counters_number",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x240e120",
+          "name": "card_call_from_the_grave",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24f3b60",
+          "name": "card_tolsimir_wolfblood",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x227c460",
+          "name": "card_tormentor_exarch",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x228dfa0",
+          "name": "card_vindictive_lich",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25f5140",
+          "name": "card_slate_of_ancestry",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20215d0",
+          "name": "card_giant_caterpillar",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2669160",
+          "name": "escape_spell",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26775c0",
+          "name": "effect_pump_until_eot",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24279f0",
+          "name": "has_only_1_target_and_could_legally_change_target_and_targets_a_creature",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21c0af0",
+          "name": "card_noxious_toad",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2666790",
+          "name": "generate_reserved_token_by_id",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d8470",
+          "name": "card_gideon_of_the_trials_emblem",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26965d0",
+          "name": "type_text",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2302940",
+          "name": "target_has_silver_border",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c4bb0",
+          "name": "target_has_black_border",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2302a00",
+          "name": "target_has_2_word_name",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x210a2b0",
+          "name": "you_own",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x222b780",
+          "name": "target_you_own",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x224d6b0",
+          "name": "not_already_dying(1)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x252a420",
+          "name": "not_already_dying(2)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x265d550",
+          "name": "get_protections_from",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20a4f70",
+          "name": "card_phantasmal_fiend",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2050c40",
+          "name": "card_show_and_tell",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23c8600",
+          "name": "hofri_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20ccd20",
+          "name": "card_yahennis_expertise",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22c9630",
+          "name": "memorial_to_folly_impl",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x222b940",
+          "name": "target_is_snow_or_can_produce_colorless",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20ba7d0",
+          "name": "non_mana_source",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2302b70",
+          "name": "target_must_have_counters(2)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23ed060",
+          "name": "not_indestructible",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x259ff70",
+          "name": "is_entered_the_battlefield_this_turn",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25a0360",
+          "name": "is_commander",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2160760",
+          "name": "can_have_counters_placed_on_it_shim",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d6fa0",
+          "name": "target_is_token_too",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2394640",
+          "name": "is_legendary_by_iid",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x255f760",
+          "name": "is_token_targ",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c4b80",
+          "name": "target_hasnt_reminder_text",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21b8010",
+          "name": "card_scuttling_doom_engine",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23b1300",
+          "name": "card_guardian_of_the_great_conduit",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x215cdd0",
+          "name": "card_pallimud",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2308780",
+          "name": "card_brushfire_elemental",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20ca3b0",
+          "name": "card_srams_expertise",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c60f0",
+          "name": "card_outland_boar",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24c9c60",
+          "name": "card_nightmare2",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x257c8b0",
+          "name": "card_tarmogoyf",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2121a00",
+          "name": "card_an_havva_constable",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x222f020",
+          "name": "card_break_ties",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22480d0",
+          "name": "card_gaeas_avenger",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2432140",
+          "name": "card_people_of_the_woods",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2099750",
+          "name": "card_coiling_woodworm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d6060",
+          "name": "card_desert_of_the_fervent",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d60d0",
+          "name": "card_desert_of_the_glorified",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d6140",
+          "name": "card_desert_of_the_indomitable",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d61b0",
+          "name": "card_desert_of_the_mindful",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d6220",
+          "name": "card_desert_of_the_true",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2237f10",
+          "name": "card_hell_mongrel",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x223c790",
+          "name": "card_revolutionist",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22408e0",
+          "name": "card_terminal_agony",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d9e20",
+          "name": "card_censor",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d9e90",
+          "name": "card_compelling_argument",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22da080",
+          "name": "card_floodwaters",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22da630",
+          "name": "card_lay_claim",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22dd880",
+          "name": "card_wander_in_death",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22defe0",
+          "name": "card_limits_of_solidarity",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22df290",
+          "name": "card_pursue_glory",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22df680",
+          "name": "card_violent_impact",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22e02e0",
+          "name": "card_dissenters_deliverance",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22e0530",
+          "name": "card_greater_sandwurm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22e0850",
+          "name": "card_haze_of_pollen",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x236c900",
+          "name": "card_primalcrux",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24ef740",
+          "name": "card_scion_of_the_wild",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2131740",
+          "name": "card_revenant",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25b2290",
+          "name": "target_is_attached_to_creature",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2050370",
+          "name": "card_serra_avatar",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2380fc0",
+          "name": "card_maro",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20e6680",
+          "name": "card_zendikar_incarnate",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x263f080",
+          "name": "card_spellheart_chimera",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x234cc30",
+          "name": "card_tibalt_the_fiend_blooded",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x257fc60",
+          "name": "scheme_introductions_are_in_order",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25d46f0",
+          "name": "card_stonecoil_serpent",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x265c8b0",
+          "name": "draw_fullcard_special_effect_card",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2261200",
+          "name": "card_bearer_of_silence",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2068370",
+          "name": "card_rakavolver",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2591c90",
+          "name": "card_cairn_wanderer",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2621b60",
+          "name": "card_vraska_golgari_queen_emblem",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x267f4a0",
+          "name": "enters_the_battlefield_as_copy_of_any",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22c6430",
+          "name": "commander_enters_the_battlefield",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22922c0",
+          "name": "card_maze_glider",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25cdca0",
+          "name": "card_edgewall_innkeeper",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x242a990",
+          "name": "card_angry_mob",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2029340",
+          "name": "store_num_colors_paid_in_eot_toughness0",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2405d00",
+          "name": "card_pestilence_rats",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2192290",
+          "name": "card_tilonallis_summoner",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26e7eb0",
+          "name": "attached_is_forced_color",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2300210",
+          "name": "card_sigil_captain",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25d2040",
+          "name": "card_lucky_clover",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2598af0",
+          "name": "card_liliana_vess",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25576b0",
+          "name": "card_pucas_mischief",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22645b0",
+          "name": "card_eldrazi_obligator",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2510090",
+          "name": "card_predict",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2660620",
+          "name": "pick_next_target_noload_arbitrary",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c0ef0",
+          "name": "card_fen_hauler",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x230d980",
+          "name": "card_scute_swarm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26615c0",
+          "name": "target_opponent",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2025f40",
+          "name": "archon_of_valors_reach_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x268fdf0",
+          "name": "how_much_life_can_i_pay_impl",
+          "kind": "structural_cfg_correspondence"
+        }
+      ],
+      "not_copied": [],
+      "prior_annotated_outside_queue": []
+    },
+    "wide": {
+      "retained": [
+        {
+          "address": "0x2612170",
+          "name": "card_autumn_tail_kitsune_sage",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26bca20",
+          "name": "challenge_mode_upkeep",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x203e2f0",
+          "name": "card_whims_of_the_fates",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x24dab10",
+          "name": "card_athreos_god_of_passage",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x25810f0",
+          "name": "card_archenemy",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x2136920",
+          "name": "hissing_iguanar_effect",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x252b3c0",
+          "name": "teysa_orzhov_scion_effect",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x241fc00",
+          "name": "card_tidal_flats",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2314f20",
+          "name": "card_ichorid",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26a7700",
+          "name": "ai_mod_for_untap_effects",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2654640",
+          "name": "effect_fof",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x213ea90",
+          "name": "card_hissing_iguanar",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x22bd080",
+          "name": "card_cyclone",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x265d3b0",
+          "name": "fill_arr",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x2653870",
+          "name": "choose_between_two_piles",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x267b470",
+          "name": "create_legacy_effect_for_opponent",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x2657560",
+          "name": "initialize_ability_tooltip_names",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26edf70",
+          "name": "can_activate_basic_equipment",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x268ecf0",
+          "name": "new_card_from_list",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x26d43d0",
+          "name": "add_player_counters",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x265d020",
+          "name": "time_in_ms",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2667050",
+          "name": "action_on_target",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x23c8b60",
+          "name": "make_one_fractal",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x2302910",
+          "name": "test_has_border_val",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x2621c50",
+          "name": "renowned_weaponsmith_tutor",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x25c4af0",
+          "name": "test_has_watermark_val",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x2040f20",
+          "name": "card_mogis_god_of_slaughter",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20f66a0",
+          "name": "card_norin_the_wary",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x235f030",
+          "name": "card_nyx_lotus",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2477390",
+          "name": "card_final_iteration",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25b38f0",
+          "name": "card_deranged_hermit",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2327d70",
+          "name": "card_kolaghans_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x22539c0",
+          "name": "card_panoptic_mirror",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x259ac70",
+          "name": "card_primal_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x214bee0",
+          "name": "card_cold_storage",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x24de590",
+          "name": "eye_of_the_storm_trigger",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x2329310",
+          "name": "card_silumgars_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2596d70",
+          "name": "card_incendiary_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23286d0",
+          "name": "card_ojutais_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x25933e0",
+          "name": "card_cryptic_command",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x258d250",
+          "name": "hideaway",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x2384110",
+          "name": "card_reign_of_chaos",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2546020",
+          "name": "card_spellweaver_helix",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x23a4820",
+          "name": "card_chandra_torch_of_defiance",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x2323330",
+          "name": "card_vandalize",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23bb9b0",
+          "name": "card_piracy_charm",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23836b0",
+          "name": "card_purgatory",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x232af80",
+          "name": "magnetic_mine_effect",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x23c3e50",
+          "name": "card_jeleva_nephalias_scourge",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x251bbd0",
+          "name": "card_lord_of_the_void",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x21dea30",
+          "name": "card_scrap_mastery",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x254b4d0",
+          "name": "hybrid_casting",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x257e760",
+          "name": "set_scheme_in_motion",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x24579d0",
+          "name": "card_ulamogs_nullifier",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2331440",
+          "name": "card_magnetic_mine",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x25ef070",
+          "name": "card_erratic_explosion",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23f6bf0",
+          "name": "card_essence_vortex",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x24ecdb0",
+          "name": "card_nightmare_void",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23f6730",
+          "name": "card_essence_filter",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x20e3e10",
+          "name": "card_aerial_volley",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x244f7b0",
+          "name": "card_roils_retribution",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2503300",
+          "name": "card_aether_burst",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2130c10",
+          "name": "card_portcullis",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x2247790",
+          "name": "card_drafnas_restoration",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x247feb0",
+          "name": "card_spreading_flames",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2512720",
+          "name": "card_shower_of_coals",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x20ec5f0",
+          "name": "card_cavalry_master",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25be180",
+          "name": "card_drill_bit",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2598630",
+          "name": "card_lammastide_weave",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x25dde60",
+          "name": "card_needlebite_trap",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2543b70",
+          "name": "card_razor_barrier",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x210ff50",
+          "name": "card_gruesome_discovery",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x21068c0",
+          "name": "card_sowing_salt",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2106a70",
+          "name": "card_splinter2",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x22911c0",
+          "name": "legions_initiative_legacy",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x21089e0",
+          "name": "card_encroach",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x22cd560",
+          "name": "card_divest",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x24a37d0",
+          "name": "card_distress",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2113ab0",
+          "name": "card_hunger_of_the_howlpack",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x21a2620",
+          "name": "card_see_the_unwritten",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x255bb80",
+          "name": "card_smash_to_smithereens",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2222370",
+          "name": "card_macabre_waltz",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x23c3aa0",
+          "name": "card_unexpectedly_absent",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2069810",
+          "name": "card_urborg_uprising",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2030770",
+          "name": "card_magma_jet",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x25f6230",
+          "name": "card_starstorm",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x207a9a0",
+          "name": "card_brimstone_volley",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2654c70",
+          "name": "put_top_x_on_bottom_in_random_order",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x2191bf0",
+          "name": "card_dire_fleet_daredevil",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x26a7d10",
+          "name": "return_cards_exiled_by_me_to_play",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x24eb840",
+          "name": "card_life_from_the_loam",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x251d570",
+          "name": "card_furious_resistance",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x26a7c60",
+          "name": "return_cards_exiled_by_me_to_hand",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x2294430",
+          "name": "card_phytoburst",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x22b8b90",
+          "name": "card_serpents_gift",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x253a060",
+          "name": "card_bloodscent",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x2331e70",
+          "name": "card_morbid_plunder",
+          "kind": "verified_event_predicate_permutation"
+        },
+        {
+          "address": "0x268f920",
+          "name": "lifegaining_charm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26b4fd0",
+          "name": "turn_card_in_grave_face_down",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26b4f40",
+          "name": "from_exile_to_graveyard",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26b5050",
+          "name": "turn_card_in_grave_face_up",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x2302d00",
+          "name": "fx_spark_fiend",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c73a0",
+          "name": "card_squirrel_powered_scheme",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x267c110",
+          "name": "is_basic_land",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25a8760",
+          "name": "card_hans_eriksson",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2562230",
+          "name": "card_mask",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20b5790",
+          "name": "card_kitaki_wars_wage",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x23a4ed0",
+          "name": "card_combustible_gearhulk",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2696810",
+          "name": "twiddle",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2697f30",
+          "name": "insurrection_effect",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2216020",
+          "name": "card_commune_with_dinosaurs",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2146f50",
+          "name": "card_worldheart_phoenix",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24772a0",
+          "name": "card_docent_of_perfection",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2557480",
+          "name": "card_prismatic_omen",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x212ad10",
+          "name": "destroy_token_at_next_eot",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x218eda0",
+          "name": "remove_token_at_end_of_next_turn_unless_cb",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23761b0",
+          "name": "sacrifice_token_at_next_eot",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x245fed0",
+          "name": "card_search_the_city",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26c01c0",
+          "name": "my_base_value_by_id",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x20ba9d0",
+          "name": "midnight_entourage_effect",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x2336980",
+          "name": "card_ayula_queen_among_bears",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x20e1fc0",
+          "name": "card_chandra_roaring_flame",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26d6ac0",
+          "name": "exiledby_remember(1)",
+          "kind": "diagnostic_source_lines_only"
+        },
+        {
+          "address": "0x26eec30",
+          "name": "UnorderedMapIntInt_delete",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x247b840",
+          "name": "card_noosegraf_mob",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c8fd0",
+          "name": "acclaimed_contender_fn",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x21a2c00",
+          "name": "card_trail_of_mystery",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2302d80",
+          "name": "fx_togglodyte",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2563a40",
+          "name": "card_loyal_drake",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2194c00",
+          "name": "card_legion_lieutenant",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2194c60",
+          "name": "card_merfolk_mistbinder",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25d09c0",
+          "name": "card_inspiring_veteran",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x209d320",
+          "name": "sd_is_blocking_him",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x209d350",
+          "name": "is_blocking_sd",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2148470",
+          "name": "is_blocking_flowstone_salamander",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22eada0",
+          "name": "is_blocking_master_of_arms",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2376a50",
+          "name": "is_blocking_kod(2)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2376a80",
+          "name": "is_blocking_urborg_panther",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x242f590",
+          "name": "card_goblin_wizard",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2386140",
+          "name": "card_tainted_specter",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2117730",
+          "name": "card_grim_backwoods",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20805f0",
+          "name": "card_graveyard_shovel",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2099bf0",
+          "name": "card_eye_of_yawgmoth",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23303b0",
+          "name": "card_distant_memories",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20201a0",
+          "name": "card_waterspout_djinn",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2306700",
+          "name": "malakir_rebirth_effect",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x201ef30",
+          "name": "card_teferis_realm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x217ee30",
+          "name": "card_deepwood_legate",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x21c43d0",
+          "name": "card_angel_of_fury",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22e2400",
+          "name": "card_watchful_naga",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x264e2b0",
+          "name": "card_grollub",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2678000",
+          "name": "has_only_1_target_and_could_legally_change_target_and_targets_me",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2192730",
+          "name": "card_polyraptor",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x268f0e0",
+          "name": "can_pay_life_impl",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2216cb0",
+          "name": "card_ripjaw_raptor",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x255f810",
+          "name": "is_aura_or_equipment(3)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22ca570",
+          "name": "dominaria_target_only_permanents_unless_in_hand",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x266b520",
+          "name": "produce_mana_all_one_color",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2119d90",
+          "name": "card_council_guardian",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25b28c0",
+          "name": "effect_memory_jar",
+          "kind": "verified_card_data_address_bias"
+        },
+        {
+          "address": "0x20a4110",
+          "name": "card_misfortune",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24fd6e0",
+          "name": "card_stifle",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26eea90",
+          "name": "SetVoidptr_insert",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23fcd90",
+          "name": "card_illusions_of_grandeur",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x20cc7e0",
+          "name": "card_weldfast_engineer",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x239b0b0",
+          "name": "etb_fabricate",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24585f0",
+          "name": "card_kiora_master_of_the_depths_emblem",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2672360",
+          "name": "add_force_a_subtype_until_eot_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22df300",
+          "name": "card_soul_scar_mage",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20b2c30",
+          "name": "card_erayos_essence",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2563b20",
+          "name": "card_loyal_subordinate",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22358e0",
+          "name": "card_funnel_web_recluse",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26c90f0",
+          "name": "increase_trap_condition",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26e09a0",
+          "name": "get_protection_source",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26927f0",
+          "name": "can_lose_the_game",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23b08e0",
+          "name": "card_chandra_pyrogenius",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2054f90",
+          "name": "card_disorder",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26d4810",
+          "name": "get_updated_counters_number",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x240e120",
+          "name": "card_call_from_the_grave",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24f3b60",
+          "name": "card_tolsimir_wolfblood",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x227c460",
+          "name": "card_tormentor_exarch",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x228dfa0",
+          "name": "card_vindictive_lich",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25f5140",
+          "name": "card_slate_of_ancestry",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20215d0",
+          "name": "card_giant_caterpillar",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2669160",
+          "name": "escape_spell",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26775c0",
+          "name": "effect_pump_until_eot",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24279f0",
+          "name": "has_only_1_target_and_could_legally_change_target_and_targets_a_creature",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21c0af0",
+          "name": "card_noxious_toad",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2666790",
+          "name": "generate_reserved_token_by_id",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d8470",
+          "name": "card_gideon_of_the_trials_emblem",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26965d0",
+          "name": "type_text",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2302940",
+          "name": "target_has_silver_border",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c4bb0",
+          "name": "target_has_black_border",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2302a00",
+          "name": "target_has_2_word_name",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x210a2b0",
+          "name": "you_own",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x222b780",
+          "name": "target_you_own",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x224d6b0",
+          "name": "not_already_dying(1)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x252a420",
+          "name": "not_already_dying(2)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x265d550",
+          "name": "get_protections_from",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20a4f70",
+          "name": "card_phantasmal_fiend",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2050c40",
+          "name": "card_show_and_tell",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23c8600",
+          "name": "hofri_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20ccd20",
+          "name": "card_yahennis_expertise",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2560470",
+          "name": "rfg_at_end_of_combat(1)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x222ee70",
+          "name": "card_bottle_golems",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22c9630",
+          "name": "memorial_to_folly_impl",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x222b940",
+          "name": "target_is_snow_or_can_produce_colorless",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20ba7d0",
+          "name": "non_mana_source",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2302b70",
+          "name": "target_must_have_counters(2)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23ed060",
+          "name": "not_indestructible",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x259ff70",
+          "name": "is_entered_the_battlefield_this_turn",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25a0360",
+          "name": "is_commander",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2160760",
+          "name": "can_have_counters_placed_on_it_shim",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d6fa0",
+          "name": "target_is_token_too",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2394640",
+          "name": "is_legendary_by_iid",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x255f760",
+          "name": "is_token_targ",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c4b80",
+          "name": "target_hasnt_reminder_text",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21b8010",
+          "name": "card_scuttling_doom_engine",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23b1300",
+          "name": "card_guardian_of_the_great_conduit",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21c7140",
+          "name": "ugins_token_processing",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x215cdd0",
+          "name": "card_pallimud",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2308780",
+          "name": "card_brushfire_elemental",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20ca3b0",
+          "name": "card_srams_expertise",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c60f0",
+          "name": "card_outland_boar",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24c9c60",
+          "name": "card_nightmare2",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x257c8b0",
+          "name": "card_tarmogoyf",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2121a00",
+          "name": "card_an_havva_constable",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x222f020",
+          "name": "card_break_ties",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22480d0",
+          "name": "card_gaeas_avenger",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2432140",
+          "name": "card_people_of_the_woods",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2099750",
+          "name": "card_coiling_woodworm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d6060",
+          "name": "card_desert_of_the_fervent",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d60d0",
+          "name": "card_desert_of_the_glorified",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d6140",
+          "name": "card_desert_of_the_indomitable",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d61b0",
+          "name": "card_desert_of_the_mindful",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d6220",
+          "name": "card_desert_of_the_true",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2237f10",
+          "name": "card_hell_mongrel",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x223c790",
+          "name": "card_revolutionist",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22408e0",
+          "name": "card_terminal_agony",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d9e20",
+          "name": "card_censor",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d9e90",
+          "name": "card_compelling_argument",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22da080",
+          "name": "card_floodwaters",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22da630",
+          "name": "card_lay_claim",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22dd880",
+          "name": "card_wander_in_death",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22defe0",
+          "name": "card_limits_of_solidarity",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22df290",
+          "name": "card_pursue_glory",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22df680",
+          "name": "card_violent_impact",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22e02e0",
+          "name": "card_dissenters_deliverance",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22e0530",
+          "name": "card_greater_sandwurm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22e0850",
+          "name": "card_haze_of_pollen",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x236c900",
+          "name": "card_primalcrux",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24ef740",
+          "name": "card_scion_of_the_wild",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2131740",
+          "name": "card_revenant",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25b2290",
+          "name": "target_is_attached_to_creature",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2050370",
+          "name": "card_serra_avatar",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2380fc0",
+          "name": "card_maro",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20e6680",
+          "name": "card_zendikar_incarnate",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x263f080",
+          "name": "card_spellheart_chimera",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x234cc30",
+          "name": "card_tibalt_the_fiend_blooded",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x257fc60",
+          "name": "scheme_introductions_are_in_order",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25d46f0",
+          "name": "card_stonecoil_serpent",
+          "kind": "manual_source_and_assembly_review"
+        },
+        {
+          "address": "0x265c8b0",
+          "name": "draw_fullcard_special_effect_card",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2261200",
+          "name": "card_bearer_of_silence",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2068370",
+          "name": "card_rakavolver",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22dd960",
+          "name": "card_ahn_crop_crasher",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2591c90",
+          "name": "card_cairn_wanderer",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2114510",
+          "name": "card_ulvenwald_bear",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2621b60",
+          "name": "card_vraska_golgari_queen_emblem",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x267f4a0",
+          "name": "enters_the_battlefield_as_copy_of_any",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22c6430",
+          "name": "commander_enters_the_battlefield",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22922c0",
+          "name": "card_maze_glider",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25cdca0",
+          "name": "card_edgewall_innkeeper",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x242a990",
+          "name": "card_angry_mob",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2029340",
+          "name": "store_num_colors_paid_in_eot_toughness0",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2405d00",
+          "name": "card_pestilence_rats",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c4f50",
+          "name": "fx_stamp_of_approval",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23ac700",
+          "name": "card_aetherworks_marvel",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2192290",
+          "name": "card_tilonallis_summoner",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26e7eb0",
+          "name": "attached_is_forced_color",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2300210",
+          "name": "card_sigil_captain",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25d2040",
+          "name": "card_lucky_clover",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22425d0",
+          "name": "card_urban_daggertooth",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c49f0",
+          "name": "get_watermark_by_iid",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22fb790",
+          "name": "card_blitz_hellion",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2090920",
+          "name": "greatest_power_among_creatures",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x209c790",
+          "name": "not_the_enchanted",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2598af0",
+          "name": "card_liliana_vess",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25576b0",
+          "name": "card_pucas_mischief",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22645b0",
+          "name": "card_eldrazi_obligator",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2510090",
+          "name": "card_predict",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2660620",
+          "name": "pick_next_target_noload_arbitrary",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c0ef0",
+          "name": "card_fen_hauler",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x230d980",
+          "name": "card_scute_swarm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26615c0",
+          "name": "target_opponent",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x268ca10",
+          "name": "sacrifice_at_end_of_combat",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2025f40",
+          "name": "archon_of_valors_reach_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25a12d0",
+          "name": "attacking_the_same_player_or_planeswalker",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x268fdf0",
+          "name": "how_much_life_can_i_pay_impl",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2038e50",
+          "name": "card_tromokratis",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x235e310",
+          "name": "card_klothys_god_of_destiny",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x215d7b0",
+          "name": "card_shimmering_wings",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2024740",
+          "name": "card_sun_clasp",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20ae8f0",
+          "name": "card_viscerid_armor",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x212d5f0",
+          "name": "card_conviction",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24952e0",
+          "name": "card_whip_silk",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2090c20",
+          "name": "card_aether_barrier",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x216ba40",
+          "name": "targets_a_creature",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2208fa0",
+          "name": "card_inferno_hellion",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22ca230",
+          "name": "has_highest_power",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21013b0",
+          "name": "card_caltrops",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c7f10",
+          "name": "card_renegade_wheelsmith",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25bfc00",
+          "name": "card_hydroid_krasis",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25bf230",
+          "name": "card_gate_colossus",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2583130",
+          "name": "card_food",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d4190",
+          "name": "card_tempest_djinn",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x238deb0",
+          "name": "card_haunting_apparition",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x249e6f0",
+          "name": "card_wayfaring_giant",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2498c20",
+          "name": "card_kavu_scout",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2673970",
+          "name": "shares_creature_subtype",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x251fbc0",
+          "name": "card_serene_remembrance",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x223d690",
+          "name": "card_sanctifier_en_vec",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x268d9a0",
+          "name": "dat_ability",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c6a30",
+          "name": "card_pendulum_of_patterns",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2582190",
+          "name": "card_demon_token",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26d4840",
+          "name": "add_counters",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23969f0",
+          "name": "card_corpse_knight",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25bf9b0",
+          "name": "card_hero_of_precinct_one",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26b0480",
+          "name": "is_a_tappable_mana_source",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26544a0",
+          "name": "scry",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2652b90",
+          "name": "select_multiple_cards_from_graveyard_to_array",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x217bcb0",
+          "name": "card_trade_routes",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x243e320",
+          "name": "card_nim_deathmantle",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25cca30",
+          "name": "card_charming_prince",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x215a1a0",
+          "name": "card_chaotic_goo",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2498b30",
+          "name": "card_kavu_runner",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2058a90",
+          "name": "card_wirecat",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24ed720",
+          "name": "card_perilous_forays",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2693060",
+          "name": "can_counter_triggered_ability",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21905d0",
+          "name": "card_kitesail_corsair",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2233220",
+          "name": "card_dihadas_ploy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22c3380",
+          "name": "edh_special_case",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2486a20",
+          "name": "invasion_apprentices",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x267f030",
+          "name": "cloning",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d3ec0",
+          "name": "card_teferi_timebender",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24f0630",
+          "name": "card_shambling_shell",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25a1e20",
+          "name": "encore_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20590c0",
+          "name": "generic_wish_effect",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26222e0",
+          "name": "manifesting_aura",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21fab90",
+          "name": "card_nether_void",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24a1a20",
+          "name": "card_rites_of_flourishing",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25a1f80",
+          "name": "aura_or_equipment",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x247a4f0",
+          "name": "card_cryptbreaker",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x208e000",
+          "name": "card_leyline_of_vitality",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2288800",
+          "name": "triome",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x264d270",
+          "name": "card_cinder_crawler",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26a98c0",
+          "name": "autotap_mana_source",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d16b0",
+          "name": "card_wildfire_eternal",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25de100",
+          "name": "card_quest_for_the_gravelord",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24eeb60",
+          "name": "card_remand",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c8500",
+          "name": "card_border_guardian",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2510270",
+          "name": "card_price_of_glory",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21c37b0",
+          "name": "card_talas_researcher",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x264dca0",
+          "name": "card_fade_away",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x261dee0",
+          "name": "card_knight_of_autumn",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x268fc50",
+          "name": "exchange_life_totals",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22bbcd0",
+          "name": "oubliette_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25ab540",
+          "name": "card_krark_the_thumbless",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26d5970",
+          "name": "add_counters_predoubled",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x241a130",
+          "name": "card_takenuma2",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21d5390",
+          "name": "card_roalesk_apex_hybrid",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21971d0",
+          "name": "card_the_immortal_sun",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22797f0",
+          "name": "card_mortis_dogs",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x230db10",
+          "name": "card_sea_gate_stormcaller",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2303870",
+          "name": "card_temp_of_the_damned",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21bc3a0",
+          "name": "card_goblin_general",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2241730",
+          "name": "card_timeless_dragon",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2055a10",
+          "name": "card_lingering_mirage",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21ecf20",
+          "name": "spirit_link_effect_part",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x240c670",
+          "name": "card_wiitigo",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24f37f0",
+          "name": "card_three_dreams",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25d1790",
+          "name": "card_linden_the_steadfast_queen",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23b3a10",
+          "name": "card_ohran_frostfang",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24ecca0",
+          "name": "card_necroplasm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25fb1a0",
+          "name": "destroy_unless_pay_2",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2376ef0",
+          "name": "prismatic_lace_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2079770",
+          "name": "card_liliana_of_the_veil",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24d9380",
+          "name": "card_heroes_bane",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2183a00",
+          "name": "card_security_detail",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2606b30",
+          "name": "card_shrouded_serpent",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2665820",
+          "name": "token_characteristic_setting_effects",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2135b40",
+          "name": "card_stronghold_taskmaster",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22e0c40",
+          "name": "card_oashra_cultivator",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25fb260",
+          "name": "gain_2_life_unless_they_pay_2",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25fb320",
+          "name": "lose_2_life_unless_pay_2",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d4980",
+          "name": "card_the_flame_of_keld",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2663930",
+          "name": "verify_legend_rule",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2194cc0",
+          "name": "card_path_of_mettle",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22182e0",
+          "name": "card_conquerors_galleon",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24dd4e0",
+          "name": "card_ecstatic_piper",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23b9cc0",
+          "name": "card_ghost_tactician",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2207a00",
+          "name": "card_desecrated_tomb",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2304110",
+          "name": "card_hungry_hungry_heifer",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24cabe0",
+          "name": "card_phantasmal_terrain",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21086d0",
+          "name": "card_disappear",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x223aeb0",
+          "name": "card_orchard_strider",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x215c430",
+          "name": "card_magmasaur",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20cbfd0",
+          "name": "card_verdant_automaton",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23ed670",
+          "name": "effect_touch_of_vitae",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20ba870",
+          "name": "is_aura_equipment_or_vehicle",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2235800",
+          "name": "card_fractured_sanity",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d24e0",
+          "name": "card_rite_of_belzenlok",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x222dfe0",
+          "name": "card_bannerhide_krushok",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25841c0",
+          "name": "card_admonition_angel",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23fb8a0",
+          "name": "card_hipparion",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23d8ea0",
+          "name": "card_quintorius_field_historian",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23f8370",
+          "name": "card_freyalises_charm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x256fc50",
+          "name": "card_tendo_ice_bridge",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20cd3f0",
+          "name": "effect_driven",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24b4970",
+          "name": "card_thought_gorger",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21927b0",
+          "name": "card_tendershoot_dryad",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26e3a30",
+          "name": "get_sacrifice_prompt_text",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2136fc0",
+          "name": "prince_of_thralls_effect",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x267a3d0",
+          "name": "true_return_from_oblivion",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2027f60",
+          "name": "card_pirs_whim",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c1c90",
+          "name": "card_herald_of_anguish",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25a2850",
+          "name": "encore",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d74b0",
+          "name": "embalm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23c7530",
+          "name": "fdoc_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22c9c40",
+          "name": "the_antiquities_war_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x235a610",
+          "name": "card_alseid_of_lifes_bounty",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x205c2f0",
+          "name": "card_grip_of_amnesia",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c2cd0",
+          "name": "card_implement_of_combustion",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2014b10",
+          "name": "prosperity_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20902e0",
+          "name": "pale_moon_legacy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22e2650",
+          "name": "card_bounty_of_the_luxa",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22b9820",
+          "name": "card_thragtusk",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2428100",
+          "name": "card_quicksilver_dragon",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x238c500",
+          "name": "card_dirtwater_wraith",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2424c50",
+          "name": "card_fungal_bloom",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2206800",
+          "name": "card_aethershield_artificer",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20f0580",
+          "name": "card_fallen_ideal",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2214900",
+          "name": "card_kitesail_freebooter",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2315ce0",
+          "name": "card_mesmeric_fiend",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x261dc70",
+          "name": "card_ionize",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c1fc0",
+          "name": "card_hidden_stockpile",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2217bf0",
+          "name": "card_regisaur_alpha",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26e3e40",
+          "name": "is_nice_creature_to_sacrifice",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24da760",
+          "name": "card_ajani_mentor_of_heroes",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x255ecd0",
+          "name": "card_witherscale_wurm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2326280",
+          "name": "card_surrak_the_hunt_caller",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23102a0",
+          "name": "effect_prevent_combat_damage_to_or_from",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22009f0",
+          "name": "card_stangg",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2128ef0",
+          "name": "card_sengir_autocrat",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2023bf0",
+          "name": "card_raging_gorilla",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2230860",
+          "name": "card_chitterspitter",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2309150",
+          "name": "card_felidar_retreat",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21d49e0",
+          "name": "card_prison_realm",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25d9bf0",
+          "name": "card_beastmaster_ascension",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x223f7b0",
+          "name": "card_step_through",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x215b280",
+          "name": "card_fylamarid",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x207fb90",
+          "name": "card_ghostly_possession",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22e5590",
+          "name": "card_spring_mind",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24a5060",
+          "name": "card_trollhide",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24b2990",
+          "name": "card_training_grounds",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22f8300",
+          "name": "card_llanowar_druid",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25d2580",
+          "name": "card_mystical_dispute",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25c5150",
+          "name": "card_go_to_jail",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20cd780",
+          "name": "eternalize",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2361560",
+          "name": "card_the_birth_of_meletis",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x23dcf60",
+          "name": "card_stonebound_mentor",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2374400",
+          "name": "card_muxus_goblin_grandee",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24a7500",
+          "name": "card_crypt_sliver",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2687a50",
+          "name": "remove_state",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2375800",
+          "name": "card_stone_haven_pilgrim",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2273ad0",
+          "name": "card_vital_splicer",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x238a780",
+          "name": "card_brushwagg",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x209d520",
+          "name": "effect_cant_be_blocked_except_by_walls(1)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22b7f20",
+          "name": "card_omniscience",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x227e740",
+          "name": "reinforce(1)",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x260cf30",
+          "name": "card_boseiju_who_shelters_all",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24f2d60",
+          "name": "card_suppression_field",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26c5ff0",
+          "name": "companion_effect",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x230f7b0",
+          "name": "card_valakut_exploration",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x25e7820",
+          "name": "effect_target_gains_trample_and_regenerate_for_g",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x245c510",
+          "name": "scavenge",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20dbb40",
+          "name": "card_sentinel_of_the_eternal_watch",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21b8cb0",
+          "name": "dread_charge_effect",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x26a7e80",
+          "name": "end_the_turn",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x221dd00",
+          "name": "card_supply_demand",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2069a60",
+          "name": "card_whirlpool_warrior",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x223b6b0",
+          "name": "card_priest_of_fell_rites",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d5cb0",
+          "name": "card_god_pharaohs_gift",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x235e870",
+          "name": "card_medomais_prophecy",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x21081f0",
+          "name": "card_capashen_standard",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2108ff0",
+          "name": "card_illuminated_wings",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20d1f50",
+          "name": "card_the_locust_god",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x215acc0",
+          "name": "card_flailing_drake",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c9770",
+          "name": "card_shielded_aether_thief",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2617260",
+          "name": "card_soratami_seer",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24993a0",
+          "name": "card_mourning",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2497290",
+          "name": "card_crosiss_attendant",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2497470",
+          "name": "card_darigaazs_attendant",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x24978c0",
+          "name": "card_dromars_attendant",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x249aff0",
+          "name": "card_riths_attendant",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x249dd50",
+          "name": "card_trevas_attendant",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c14d0",
+          "name": "card_gontis_machinations",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x228c300",
+          "name": "card_the_ozolith",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x218fb20",
+          "name": "card_radiant_destiny",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x241c290",
+          "name": "effect_delifs_cube",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x235a200",
+          "name": "escape_with_counters_impl",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x22d4a40",
+          "name": "card_the_mending_of_dominaria",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x20c22c0",
+          "name": "card_hope_of_ghirapur",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x252c6d0",
+          "name": "card_conjurers_ban",
+          "kind": "structural_cfg_correspondence"
+        },
+        {
+          "address": "0x2015780",
+          "name": "card_chronatog",
+          "kind": "structural_cfg_correspondence"
+        }
+      ],
+      "not_copied": [],
+      "prior_annotated_outside_queue": []
+    }
+  },
+  "mappings": {
+    "compared": 18830,
+    "explicit_source_entries": 161,
+    "excluded": [
+      {
+        "address": 33970832,
+        "size": 117,
+        "name": "check_deck_for_test",
+        "source": "cards/apocalypse.c",
+        "match_name": "check_deck_for_test",
+        "mapping": "same native name",
+        "reason": "no rebuilt function with this name"
+      },
+      {
+        "address": 34778336,
+        "size": 48,
+        "name": "bounce_at_end_of_combat",
+        "source": "cards/stronghold.c",
+        "match_name": "bounce_at_end_of_combat",
+        "mapping": "same native name",
+        "reason": "ambiguous original name"
+      },
+      {
+        "address": 35704960,
+        "size": 970,
+        "name": "you_become_the_monarch",
+        "source": "cards/conspiracy-take-the-crown.c",
+        "match_name": "you_become_the_monarch",
+        "mapping": "same native name",
+        "reason": "ambiguous original name"
+      },
+      {
+        "address": 36169888,
+        "size": 103,
+        "name": "tribal_spell_played",
+        "source": "cards/morningtide.c",
+        "match_name": "tribal_spell_played",
+        "mapping": "same native name",
+        "reason": "ambiguous original name"
+      },
+      {
+        "address": 36171024,
+        "size": 58,
+        "name": "tribal_spell_played",
+        "source": "cards/morningtide.c",
+        "match_name": "tribal_spell_played",
+        "mapping": "same native name",
+        "reason": "ambiguous original name"
+      },
+      {
+        "address": 37335936,
+        "size": 81,
+        "name": "ai_helper_function_for_harness_lightning",
+        "source": "cards/kaladesh.c",
+        "match_name": "ai_helper_function_for_harness_lightning",
+        "mapping": "same native name",
+        "reason": "no rebuilt function with this name"
+      },
+      {
+        "address": 37438576,
+        "size": 144,
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "source": "cards/planar_chaos.c",
+        "match_name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "mapping": "same native name",
+        "reason": "ambiguous original name"
+      },
+      {
+        "address": 37672784,
+        "size": 38,
+        "name": "basic_subtype_to_color",
+        "source": "cards/ice_age.c",
+        "match_name": "basic_subtype_to_color_part",
+        "mapping": "recovery ledger",
+        "reason": "no rebuilt function with this name"
+      },
+      {
+        "address": 39527456,
+        "size": 311,
+        "name": "debuff_for_T_sac",
+        "source": "cards/urza_legacy.c",
+        "match_name": "debuff_for_T_sac",
+        "mapping": "recovery ledger",
+        "reason": "no rebuilt function with this name"
+      },
+      {
+        "address": 39565488,
+        "size": 93,
+        "name": "can_counter_activated_or_triggered_ability",
+        "source": "cards/ravnica_allegiance.c",
+        "match_name": "can_counter_activated_or_triggered_ability",
+        "mapping": "recovery ledger",
+        "reason": "no rebuilt function with this name"
+      },
+      {
+        "address": 39744496,
+        "size": 76,
+        "name": "target_is_attached_to_creature",
+        "source": "cards/onslaught.c",
+        "match_name": "target_is_attached_to_creature",
+        "mapping": "same native name",
+        "reason": "verified equivalent native helper shares a canonical implementation"
+      },
+      {
+        "address": 40176432,
+        "size": 17,
+        "name": "qsort_compare_target_player_descending",
+        "source": "functions/tutors.c",
+        "match_name": "qsort_compare_target_player_descending",
+        "mapping": "recovery ledger",
+        "reason": "no rebuilt function with this name"
+      },
+      {
+        "address": 40265280,
+        "size": 51,
+        "name": "copy_token",
+        "source": "functions/token_generation.c",
+        "match_name": "copy_token_part",
+        "mapping": "recovery ledger",
+        "reason": "no rebuilt function with this name"
+      },
+      {
+        "address": 40330032,
+        "size": 42,
+        "name": "snprintf",
+        "source": "functions/load_text.c",
+        "match_name": "snprintf",
+        "mapping": "same native name",
+        "reason": "ambiguous original name"
+      },
+      {
+        "address": 40571456,
+        "size": 64,
+        "name": "remember_ai_value",
+        "source": "functions/ai.c",
+        "match_name": "remember_ai_value_impl",
+        "mapping": "recovery ledger",
+        "reason": "no rebuilt function with this name"
+      },
+      {
+        "address": 40692720,
+        "size": 102,
+        "name": "get_counter_name_by_type",
+        "source": "functions/counters.c",
+        "match_name": "get_counter_name_by_type",
+        "mapping": "same native name",
+        "reason": "ambiguous original name"
+      },
+      {
+        "address": 40751376,
+        "size": 30,
+        "name": "indestructible",
+        "source": "functions/abilities.c",
+        "match_name": "indestructible_part",
+        "mapping": "recovery ledger",
+        "reason": "no rebuilt function with this name"
+      },
+      {
+        "address": 40751408,
+        "size": 32,
+        "name": "misc_protection",
+        "source": "functions/abilities.c",
+        "match_name": "set_misc_protection_impl",
+        "mapping": "recovery ledger",
+        "reason": "no rebuilt function with this name"
+      },
+      {
+        "address": 40824864,
+        "size": 25,
+        "name": "__tcf_0",
+        "source": "functions/choose_a_card.cpp",
+        "match_name": "__tcf_0",
+        "mapping": "same native name",
+        "reason": "ambiguous rebuilt name"
+      }
+    ],
+    "globals": 293,
+    "engine_targets": 64,
+    "fixed_slots": 15169,
+    "source_stubs": 0
+  },
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "scope": "Identity/mapping correction for two retained source helpers, not newly recovered gameplay logic. The Commander helper has a strict complete entry-reachable CFG match under symbol identities; Conflux has manually reviewed compiler differences. Scores measure instruction similarity. Review transfers preserve original scope only for identical complete report rows on the identical game binaries; unsupported changed rows remain unannotated."
+}

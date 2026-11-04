@@ -40,16 +40,11 @@ int card_anje_falkenrath(int player, int card, event_t event)
   {
     untap_card(player, card);
   }
-  if (event != EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      draw_a_card(player);
-    }
+    draw_a_card(player);
   }
   result = generic_activated_ability(player, card, event, 0x21, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
@@ -94,7 +89,7 @@ int card_dockside_extortionist(int player, int card, event_t event)
     return 0;
   }
   howmany = count_permanents_by_type(1 - player, TYPE_ARTIFACT | TYPE_ENCHANTMENT);
-  generate_tokens_by_id(player, card, 0x4998, howmany);
+  generate_tokens_by_id(player, card, CARD_ID_TREASURE, howmany);
   return 0;
 }
 
@@ -423,7 +418,6 @@ static int atla_palani_effect(int player, int card, event_t event)
 {
   card_instance_t *instance;
   unsigned int egg_death_count;
-  int result;
   card_instance_t *dying_permanent;
   test_definition_t test;
 
@@ -434,8 +428,7 @@ static int atla_palani_effect(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       if ((-1 < instance->damage_target_player) &&
-          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           result != 0x4fe3))
+          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x4fe3))
       {
         kill_card(player, card, KILL_EXILE);
       }
@@ -466,7 +459,7 @@ static int atla_palani_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       default_test_definition(&test, 0x47);
       test.subtype = 0xfb;
@@ -474,8 +467,7 @@ static int atla_palani_effect(int player, int card, event_t event)
     }
   }
   egg_death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  result = check_status(player, card, 0x10000);
-  if (result == 0)
+  if (!check_status(player, card, 0x10000))
   {
     egg_death_count = egg_death_count & 0xff;
     if (egg_death_count != 0)
@@ -489,7 +481,7 @@ static int atla_palani_effect(int player, int card, event_t event)
       } while (egg_death_count != 0);
     }
   }
-  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
   {
     kill_card(player, card, KILL_EXILE);
   }
@@ -575,7 +567,7 @@ int card_atla_palani_nest_tender(int player, int card, event_t event)
       event != EVENT_CLEANUP)
     return 0;
   if (event == EVENT_RESOLVE_ACTIVATION)
-    generate_token_by_id(player, card, 0x4fed);
+    generate_token_by_id(player, card, CARD_ID_EGG);
   return generic_activated_ability(player, card, event, 1, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
@@ -624,7 +616,7 @@ int card_elsha_of_the_infinite(int player, int card, event_t event)
     }
   }
   result =
-      dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "Check top card of deck",
+      dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, "Check top card of deck",
                   look_available, 0, "Play top card", play_available, 10, 0, 0, 0, 0);
   if (result != 0)
   {
@@ -664,13 +656,13 @@ int card_grismold_the_dreadsower(int player, int card, event_t event)
                                    first_token_player = current_turn, end_step_triggered != 0))
   {
 
-    default_token_definition(player, card, 0x4973, &token);
+    default_token_definition(player, card, CARD_ID_PLANT, &token);
     token.t_player = first_token_player;
     token.pow = 1;
     token.tou = 1;
     generate_token(&token);
     other_player_or_deaths = current_turn ^ 1;
-    default_token_definition(player, card, 0x4973, &token);
+    default_token_definition(player, card, CARD_ID_PLANT, &token);
     token.pow = 1;
     token.tou = 1;
     token.t_player = other_player_or_deaths;
@@ -695,33 +687,16 @@ int card_grismold_the_dreadsower(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23b25b0; original cards/commander_2019.c:235. */
 int card_bone_miser(int player, int card, event_t event)
 {
-  int discarded_creature;
-  int discarded_land;
-
-  if (discard_trigger(player, card, event, player, 2, 0) == 0)
-  {
+  if (!discard_trigger(player, card, event, player, 2, 0))
     return 0;
-  }
-
-  discarded_creature = is_what(trigger_cause_controller, trigger_cause, 2);
-  discarded_land = is_what(trigger_cause_controller, trigger_cause, 1);
-  if (discarded_creature == 0)
-  {
-    if (discarded_land == 0)
-    {
-      draw_a_card(player);
-      return 0;
-    }
-  }
-  else
-  {
-    generate_token_by_id(player, card, 0x49ac);
-    if (discarded_land == 0)
-    {
-      return 0;
-    }
-  }
-  produce_mana(player, 1, 2);
+  int creature = is_what(trigger_cause_controller, trigger_cause, 2);
+  int land = is_what(trigger_cause_controller, trigger_cause, 1);
+  if (creature)
+    generate_token_by_id(player, card, CARD_ID_ZOMBIE);
+  if (land)
+    produce_mana(player, 1, 2);
+  else if (!creature)
+    draw_a_card(player);
   return 0;
 }
 
@@ -737,7 +712,7 @@ int card_sanctum_of_eternity(int player, int card, event_t event)
     if (event == EVENT_ACTIVATE)
     {
       default_target_definition(player, card, &td, 0x47);
-      td.special = 0x8000;
+      td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
       td.extra = (int32_t)commander_you_own;
       instance = get_card_instance(player, card);
 
@@ -775,7 +750,7 @@ int card_sanctum_of_eternity(int player, int card, event_t event)
     if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
     {
       default_target_definition(player, card, &td, 0x47);
-      td.special = 0x8000;
+      td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
       td.extra = (int32_t)commander_you_own;
       instance = get_card_instance(player, card);
       if ((event == EVENT_RESOLVE_ACTIVATION) && (0 < instance->info_slot))
@@ -878,7 +853,7 @@ static int volrath_the_shapestealer_impl(int player, int card, event_t event, in
     return 0;
   }
   default_target_definition(player, card, &td_copy, 2);
-  td_copy.special = 0x40000;
+  td_copy.special = TARGET_SPECIAL_REQUIRES_COUNTER;
   td_copy.extra = 0;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
@@ -956,7 +931,7 @@ int card_doomed_artisan(int player, int card, event_t event)
   }
   if ((current_turn == player) && (result = eot_trigger(player, card, event), result != 0))
   {
-    default_token_definition(player, card, 0x500b, &token);
+    default_token_definition(player, card, CARD_ID_SCULPTURE, &token);
     token.special_infos = 0x42;
     generate_token(&token);
   }
@@ -976,7 +951,7 @@ int card_ghired_conclave_exile(int player, int card, event_t event)
   if (event == EVENT_ETB)
   {
     token_generation_t token;
-    default_token_definition(player, card, 0x4978, &token);
+    default_token_definition(player, card, CARD_ID_RHINO, &token);
     token.tou = 4;
     token.pow = 4;
     token.key_plus = 0x80;
@@ -998,7 +973,6 @@ int card_ghired_conclave_exile(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23b36b0; original cards/commander_2019.c:720. */
 int card_krrik_son_of_yawgmoth(int player, int card, event_t event)
 {
-  int result;
   test_definition_t test;
 
   check_legend_rule(player, card, event);
@@ -1006,17 +980,16 @@ int card_krrik_son_of_yawgmoth(int player, int card, event_t event)
   phyrexian_casting_costs(player, card, event, 4, 3, 0, 0, 0, 0, 0);
   if (event == EVENT_STATIC_EFFECTS)
   {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_STATIC))
     {
-      card_flags[player] = card_flags[player] | 2;
+      card_flags[player] = card_flags[player] | CFLAGS_KRRIK;
     }
-    if (trigger_condition != 0xd3)
+    if (trigger_condition != TRIGGER_SPELL_CAST)
     {
       return 0;
     }
   }
-  if (trigger_condition == 0xd3 && card == affected_card && player == affected_card_controller)
+  if (trigger_condition == TRIGGER_SPELL_CAST && card == affected_card && player == affected_card_controller)
   {
     default_test_definition(&test, 0xff);
     test.color = get_sleighted_color_test(player, card, 2);
@@ -1153,32 +1126,25 @@ static int chainers_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23b26b0; original cards/commander_2019.c:329. */
 int card_chainer_nightmare_adept(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  test_definition_t test;
   check_legend_rule(player, card, event);
-  if ((((trigger_condition == TRIGGER_COMES_INTO_PLAY) &&
-        (result = not_played_from_hand(trigger_cause_controller, trigger_cause), result != 0)) &&
-       (card == affected_card)) &&
-      ((player == affected_card_controller && (reason_for_trigger_controller == player))))
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY &&
+      not_played_from_hand(trigger_cause_controller, trigger_cause) && card == affected_card &&
+      player == affected_card_controller && reason_for_trigger_controller == player)
   {
-    new_default_test_definition(&test, 2, "");
+    test_definition_t test;
+    new_default_test_definition(&test, TYPE_CREATURE, "");
     test.type_flag = 3;
     etb_ability_global(player, event, 2, TYPE_NONE, &test, player, card);
   }
   if (event == EVENT_ETB)
   {
-    result = pump_ability_until_eot_no_repeat(player, card, trigger_cause_controller, trigger_cause,
-                                              0, 4);
+    int leg = pump_ability_until_eot_no_repeat(player, card, trigger_cause_controller,
+                                               trigger_cause, 0, 4);
     if (current_turn == player)
-    {
-      instance = get_card_instance(player, result);
-      instance->targets[7].player = 1;
-    }
+      get_card_instance(player, leg)->targets[7].player = 1;
     return 0;
   }
-  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
-      event != EVENT_CLEANUP)
+  if (!IS_GAA_EVENT(event))
     return 0;
   if (event == EVENT_RESOLVE_ACTIVATION)
     create_legacy_activate(player, card, chainers_legacy);

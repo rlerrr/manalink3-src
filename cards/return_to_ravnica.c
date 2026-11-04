@@ -1,4 +1,5 @@
 #include "manalink.h"
+#include <stddef.h>
 
 /* Canonical recovered helper declarations. */
 int overload(int player, int card, event_t event, int colorless, int black, int blue,
@@ -140,7 +141,7 @@ int pay_overload(int player, int card, int colorless, int black, int blue, int g
   instance->info_slot = 0;
   normal_cast_available = call_card_function(player, card, EVENT_CAN_CAST);
   instance->info_slot = old_info_slot;
-  choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014", "\001\016",
+  choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE, DLG_AUTOCHOOSE_IF_1,
                        "Pay Overload cost", 1, 10, "Play the spell normally", normal_cast_available,
                        3, 0, 0, 0, 0);
   if (choice == 1)
@@ -337,7 +338,7 @@ int card_angel_of_serenity(int player, int card, event_t event)
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 2);
-    td.special = 0x4000;
+    td.special = TARGET_SPECIAL_NOT_ME;
     instance = get_card_instance(player, card);
     exiles_remaining = 3;
     while ((selection_or_opponent = can_target(&td),
@@ -756,7 +757,7 @@ int card_security_blockade(int player, int card, event_t event)
   int enchanted_card_or_result;
   int activation_flags;
   card_instance_t *instance;
-  int player_00;
+  int target_player;
   event_t event_00;
   target_definition_t *ptd;
   const char *prompt;
@@ -766,7 +767,7 @@ int card_security_blockade(int player, int card, event_t event)
   if (event == EVENT_ETB)
   {
     token_generation_t token;
-    default_token_definition(player, card, 0x4958, &token);
+    default_token_definition(player, card, CARD_ID_KNIGHT, &token);
     token.s_key_plus = 8;
     token.tou = 2;
     token.pow = 2;
@@ -789,18 +790,18 @@ int card_security_blockade(int player, int card, event_t event)
         (instance = get_card_instance(player, card), instance->damage_target_player >= 0))
     {
       instance = get_card_instance(player, card);
-      player_00 = (int)instance->damage_target_player;
+      target_player = (int)instance->damage_target_player;
       enchanted_card_or_result = instance->damage_target_card;
-      default_target_definition(player_00, enchanted_card_or_result, &td1, 0);
+      default_target_definition(target_player, enchanted_card_or_result, &td1, 0);
       td1.extra = damage_card;
-      td1.special = 0x20;
+      td1.special = TARGET_SPECIAL_DAMAGE_PLAYER;
       ptd = &td1;
       if (event == EVENT_CAN_ACTIVATE)
       {
         prompt = "TARGET_DAMAGE";
         activation_flags = 0x1000005;
         event_00 = EVENT_CAN_ACTIVATE;
-        return granted_generic_activated_ability(player, card, player_00, enchanted_card_or_result,
+        return granted_generic_activated_ability(player, card, target_player, enchanted_card_or_result,
                                                  event_00, activation_flags, 0, 0, 0, 0, 0, 0, 0,
                                                  ptd, prompt);
       }
@@ -814,15 +815,15 @@ int card_security_blockade(int player, int card, event_t event)
           activation_flags = 1;
           event_00 = EVENT_ACTIVATE;
           return granted_generic_activated_ability(
-              player, card, player_00, enchanted_card_or_result, event_00, activation_flags, 0, 0,
+              player, card, target_player, enchanted_card_or_result, event_00, activation_flags, 0, 0,
               0, 0, 0, 0, 0, ptd, prompt);
         }
       }
       else if (event == EVENT_RESOLVE_ACTIVATION)
       {
-        if (validate_target(player_00, enchanted_card_or_result, ptd, 0) != 0)
+        if (validate_target(target_player, enchanted_card_or_result, ptd, 0) != 0)
         {
-          instance = get_card_instance(player_00, enchanted_card_or_result);
+          instance = get_card_instance(target_player, enchanted_card_or_result);
           prevent_damage(instance->targets[0].player, instance->targets[0].card, 1);
         }
       }
@@ -2129,54 +2130,39 @@ int card_grim_roustabout(int player, int card, event_t event){
 
 int card_necropolis_regent(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  card_instance_t *damage;
-  int result;
-  target_t *packed_damage_cursor;
-
-  instance = get_card_instance(player, card);
-  damage = combat_damage_being_dealt(event);
-  if ((((damage != NULL) && (damage->damage_source_player == player)) &&
-       ((damage->targets[3].player & 2) != 0)) &&
-      (damage->damage_target_card == -1))
+  card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *damage = combat_damage_being_dealt(event);
+  uint8_t *records = (uint8_t *)instance + offsetof(card_instance_t, targets);
+  if (damage && damage->damage_source_player == player && (damage->targets[3].player & 2) &&
+      damage->damage_target_card == -1 &&
+      !check_special_flags(player, damage->damage_source_card, 0x40) && instance->info_slot < 26)
   {
-    result = check_special_flags(player, damage->damage_source_card, 0x40);
-    if ((result == 0) && (instance->info_slot < 0x1a))
-    {
-      *(int8_t *)((int)&instance->targets[0].player + instance->info_slot * 3) =
-          damage->damage_source_player;
-      *(char *)((int)&instance->targets[0].player + instance->info_slot * 3 + 1) =
-          (char)damage->damage_source_card;
-      result = damage->info_slot;
-      if (0xff < result)
-      {
-        result = 0xff;
-      }
-      *(char *)((int)&instance->targets[0].player + instance->info_slot * 3 + 2) = (char)result;
-      instance->info_slot = instance->info_slot + 1;
-    }
+    // Three bytes per hit: source player, source card, saturated damage amount.
+    // Recompute the offset for each write, including the release's negative-count behavior.
+    records[instance->info_slot * 3] = damage->damage_source_player;
+    records[instance->info_slot * 3 + 1] = (uint8_t)damage->damage_source_card;
+    int amount = damage->info_slot;
+    if (amount > 255)
+      amount = 255;
+    records[instance->info_slot * 3 + 2] = (uint8_t)amount;
+    ++instance->info_slot;
   }
-  if (((trigger_condition == 0xd7) && (card == affected_card)) &&
-      ((player == affected_card_controller &&
-        ((reason_for_trigger_controller == player && (0 < instance->info_slot))))))
+  if (trigger_condition == TRIGGER_DEAL_DAMAGE && card == affected_card &&
+      player == affected_card_controller && reason_for_trigger_controller == player &&
+      instance->info_slot > 0)
   {
     if (event == EVENT_TRIGGER)
-    {
-      event_result = event_result | 2;
-    }
+      event_result |= RESOLVE_TRIGGER_MANDATORY;
     else if (event == EVENT_RESOLVE_TRIGGER)
     {
-      packed_damage_cursor = instance->targets;
-      result = 0;
+      uint8_t *record = records;
+      int resolved = 0;
       do
       {
-        result = result + 1;
-        add_counters(player, card, (unsigned int)(unsigned char)packed_damage_cursor->player,
-                     (unsigned int)*(unsigned char *)((int)&packed_damage_cursor->player + 1),
-                     COUNTER_P1_P1,
-                     (unsigned int)*(unsigned char *)((int)&packed_damage_cursor->player + 2));
-        packed_damage_cursor = (target_t *)((int)&packed_damage_cursor->player + 3);
-      } while (result < instance->info_slot);
+        ++resolved;
+        add_counters(player, card, record[0], record[1], COUNTER_P1_P1, record[2]);
+        record += 3;
+      } while (resolved < instance->info_slot);
       instance->info_slot = 0;
     }
   }
@@ -2662,8 +2648,11 @@ int card_pursuit_of_flight(int player, int card, event_t event){
 	}
 	if (in_play(player, card)){
 		card_instance_t* instance = get_card_instance(player, card);
-		if (instance->damage_target_player != -1 && (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE)){
-			return granted_generic_activated_ability(player, card, instance->damage_target_player, instance->damage_target_card, event, 0, MANACOST_U(1), 0, NULL, NULL);
+		if (instance->damage_target_player != -1){
+			instance = get_card_instance(player, card);
+			if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE){
+				return granted_generic_activated_ability(player, card, instance->damage_target_player, instance->damage_target_card, event, 0, MANACOST_U(1), 0, NULL, NULL);
+			}
 		}
 	}
 	if (event == EVENT_RESOLVE_ACTIVATION){
@@ -3092,7 +3081,7 @@ static int deaths_presence_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 1) = 1;
+        SET_BYTE1(instance->targets[0xb].player) = 1;
       }
       if ((((player == affected_card_controller) &&
             (stored_index_or_result = is_what(player, affected_card, 2),
@@ -3103,7 +3092,7 @@ static int deaths_presence_effect(int player, int card, event_t event)
                check_for_death_trigger_removal(affected_card_controller, affected_card),
            stored_index_or_result == 0))
       {
-        i = card_counts[player][5] + 1;
+        i = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
         do
         {
           pow = get_power(affected_card_controller, affected_card);
@@ -3257,7 +3246,7 @@ int card_deaths_presence(int player, int card, event_t event)
                             affected_card_controller, affected_card),
                         stored_index_or_result == 0))))))
   {
-    stored_index_or_result = card_counts[player][5] + 1;
+    stored_index_or_result = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
     do
     {
       pow = get_power(affected_card_controller, affected_card);
@@ -4027,8 +4016,8 @@ int card_detention_sphere(int player, int card, event_t event)
     return global_enchantment(player, card, event);
   }
   default_target_definition(player, card, &td, 0x47);
-  td.illegal_type = 1;
-  td.special = 0x4000;
+  td.illegal_type = TYPE_LAND;
+  td.special = TARGET_SPECIAL_NOT_ME;
   td.allow_cancel = 0;
   instance = get_card_instance(player, card);
   scan_card_or_data_offset = can_target(&td);
@@ -6318,54 +6307,35 @@ int card_wayfaring_temple(int player, int card, event_t event)
 // Hybrid
 int card_azors_elocutors(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-
   hybrid(player, card, event);
   upkeep_trigger_ability(player, card, event, player);
-  if ((event == EVENT_UPKEEP_TRIGGER_ABILITY) || (event == EVENT_SHOULD_AI_PLAY))
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY || event == EVENT_SHOULD_AI_PLAY)
   {
     add_counters(player, card, player, card, COUNTER_FILIBUSTER, 1);
-    result = count_counters(player, card, COUNTER_FILIBUSTER);
-    if (4 < result)
-    {
+    if (count_counters(player, card, COUNTER_FILIBUSTER) > 4)
       lose_the_game(1 - player);
-    }
     if (event == EVENT_SHOULD_AI_PLAY)
     {
-      result = count_counters(player, card, COUNTER_FILIBUSTER);
-      result = result * result * result;
+      int counters = count_counters(player, card, COUNTER_FILIBUSTER);
+      int bonus = counters * counters * counters;
       if (player == 1)
-      {
-        ai_modifier = ai_modifier + result * 8;
-      }
+        ai_modifier += bonus * 8;
       else
-      {
-        ai_modifier = ai_modifier + result * -8;
-      }
+        ai_modifier += bonus * -8;
     }
   }
-  instance = damage_being_dealt(event);
-  if (((instance != NULL) && (instance->damage_target_card == -1)) &&
-      (instance->damage_target_player == player))
+  card_instance_t *damage = damage_being_dealt(event);
+  if (damage && damage->damage_target_card == -1 && damage->damage_target_player == player &&
+      !damage_is_to_planeswalker(damage))
+    ++get_card_instance(player, card)->info_slot;
+  if (trigger_condition == TRIGGER_DEAL_DAMAGE && card == affected_card &&
+      player == affected_card_controller && reason_for_trigger_controller == player)
   {
-    result = damage_is_to_planeswalker(instance);
-    if (result == 0)
-    {
-      instance = get_card_instance(player, card);
-      instance->info_slot = instance->info_slot + 1;
-    }
-  }
-  if (((trigger_condition == 0xd7) && (card == affected_card)) &&
-      ((player == affected_card_controller && (reason_for_trigger_controller == player))))
-  {
-    instance = get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
     if (event == EVENT_TRIGGER)
     {
-      if (0 < instance->info_slot)
-      {
-        event_result = event_result | 2;
-      }
+      if (instance->info_slot > 0)
+        event_result |= 2;
     }
     else if (event == EVENT_RESOLVE_TRIGGER)
     {

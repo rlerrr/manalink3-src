@@ -1,13 +1,5 @@
 #include "manalink.h"
 
-/* Canonical recovered helper declarations. */
-const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,
-                                               int targeting_player, int targeting_card);
-const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,
-                                                                      int card,
-                                                                      int targeting_player,
-                                                                      int targeting_card);
-
 // Functions
 int generic_suspend_legacy(int player, int card, event_t event)
 {
@@ -138,7 +130,7 @@ int generic_suspend_legacy(int player, int card, event_t event)
     }
     enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_MILLED;
     milled_trigger = trigger_condition;
-    if (trigger_condition == 0xe5)
+    if (trigger_condition == TRIGGER_XTRIGGER)
     {
       milled_trigger = xtrigger_impl_value_dont_use_directly;
     }
@@ -200,7 +192,7 @@ int generic_suspend_legacy(int player, int card, event_t event)
       }
       if (instance->targets[9].card == 0x2285)
       {
-        default_token_definition(player, card, 0x4958, &token);
+        default_token_definition(player, card, CARD_ID_KNIGHT, &token);
         token.key_plus = get_sleighted_protection(player, card, 0x8000);
         token.s_key_plus = 0x2004;
         token.color_forced = '\x02';
@@ -249,7 +241,7 @@ int suspend_a_card(int player, int card, int t_player, int t_card, int turns)
   }
   else
   {
-    result = get_internal_card_id_from_csv_id(0x2178);
+    result = get_internal_card_id_from_csv_id(CARD_ID_GREATER_GARGADON_SUSPENDED);
     result = add_card_to_hand(player, result);
     add_counters(player, card, player, result, COUNTER_TIME, turns);
     put_into_play(player, result);
@@ -1167,6 +1159,26 @@ int card_chronosavant(int player, int card, event_t event){
 }
 
 
+static const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,
+                                               int targeting_player, int targeting_card)
+{
+  int result;
+  card_instance_t *instance;
+
+  result = is_what(player, card, 0x47);
+  if (result == 0)
+  {
+    instance = get_card_instance(player, card);
+    if (((instance->internal_card_id != LEGACY_EFFECT_CUSTOM) ||
+         (instance->info_slot_fn != generic_suspend_legacy)) &&
+        (cards_data[instance->internal_card_id].id != CARD_ID_GREATER_GARGADON_SUSPENDED))
+    {
+      return (char *)EXE_STR(0x728f6c);
+    }
+  }
+  return NULL;
+}
+
 static const char* target_must_be_permanent_or_suspend_and_have_counters(int who_chooses, int player, int card, int targeting_player, int targeting_card)
 {
   const char* perm_or_susp = target_must_be_permanent_or_suspend(who_chooses, player, card, targeting_player, targeting_card);
@@ -1201,11 +1213,11 @@ int card_clockspinning(int player, int card, event_t event)
                            : target_must_be_permanent_or_suspend);
   if (event == EVENT_CAN_CAST)
   {
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.preferred_controller = 2;
     return generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
   }
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   td.preferred_controller = 2;
   if (event == EVENT_CAST_SPELL)
   {
@@ -1236,9 +1248,9 @@ int card_clockspinning(int player, int card, event_t event)
             count_counters(instance->targets[0].player, instance->targets[0].card, type);
         scnprintf(prompt, 100, "%s: %d", counter_names[type], count_card_or_buyback);
         counter_action =
-            dialog_impl(player, card, EVENT_CAST_SPELL, "\001\006", instance->targets[0].player,
-                        instance->targets[0].card, "\001\011", prompt, "\001\010", player,
-                        "\001\014", "\001\002", "\001\003", "Add counter", 1, 3, "Remove counter",
+            dialog_impl(player, card, EVENT_CAST_SPELL, DLG_FULLCARD(instance->targets[0].player,
+                        instance->targets[0].card), DLG_HEADER(prompt), DLG_WHO_CHOOSES(player),
+                        DLG_NO_STORAGE, DLG_RANDOM, DLG_NO_CANCEL, "Add counter", 1, 3, "Remove counter",
                         1, remove_priority, 0, 0, 0, 0);
         count_card_or_buyback = instance->targets[0].card;
         t_player = instance->targets[0].player;
@@ -2396,8 +2408,9 @@ As long as ~ is a creature, it can block an additional creature each combat. */
 			int legacy = artifact_animation(instance->parent_controller, instance->parent_card,
 											instance->parent_controller, instance->parent_card, 1, 4, 4, 0, 0);
 			card_instance_t *leg = get_card_instance(instance->parent_controller, legacy);
+			int color = get_sleighted_color_test(player, card, COLOR_TEST_RED);
+			leg->targets[6].player = color;
 			leg->targets[9].card = SUBTYPE_GIANT;
-			leg->targets[6].player = get_sleighted_color_test(player, card, COLOR_TEST_RED);
 			get_card_instance(instance->parent_controller, instance->parent_card)->targets[1].player = 66;
 		}
 	}
@@ -2787,7 +2800,7 @@ int card_greater_gargadon(int player, int card, event_t event)
             spell_instance = get_card_instance(player, card);
             result =
                 has_mana_to_cast_iid(player, EVENT_CAST_SPELL, spell_instance->internal_card_id);
-            result = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\016", "\001\014",
+            result = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, DLG_NO_STORAGE,
                                  "Play normally", result, 5, "Suspend", 1, 1, 0, 0, 0, 0);
             if (result == 0)
             {
@@ -2802,7 +2815,7 @@ int card_greater_gargadon(int player, int card, event_t event)
               charge_mana(player, COLOR_RED, 1);
               if (spell_fizzled != 1)
               {
-                result = get_internal_card_id_from_csv_id(0x2178);
+                result = get_internal_card_id_from_csv_id(CARD_ID_GREATER_GARGADON_SUSPENDED);
                 result = add_card_to_hand(player, result);
                 add_counters(player, card, player, result, COUNTER_TIME, 10);
                 put_into_play(player, result);
@@ -2877,9 +2890,9 @@ int card_ground_rift(int player, int card, event_t event){
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.illegal_abilities |= KEYWORD_FLYING;
+	card_instance_t* instance = get_card_instance(player, card);
 	if (event == EVENT_RESOLVE_SPELL){
 		if (valid_target(&td)){
-			card_instance_t* instance = get_card_instance(player, card);
 			pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -3130,7 +3143,7 @@ int card_ib_halfheart_goblin_tactician(int player, int card, event_t event)
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
       instance = get_card_instance(player, card);
-      generate_tokens_by_id(instance->parent_controller, instance->parent_card, 0x493a, 2);
+      generate_tokens_by_id(instance->parent_controller, instance->parent_card, CARD_ID_GOBLIN, 2);
     }
   }
   return 0;
@@ -3214,7 +3227,7 @@ int card_ixidron(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     player_00 = 0;
-    face_down_iid = get_internal_card_id_from_csv_id(0x33c4);
+    face_down_iid = get_internal_card_id_from_csv_id(CARD_ID_FACE_DOWN_CREATURE);
     do
     {
       card_00 = active_cards_count[player_00] + -1;
@@ -3251,7 +3264,7 @@ int card_ixidron(int player, int card, event_t event)
   if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    count = count_cards_by_id(2, 0x33c4);
+    count = count_cards_by_id(2, CARD_ID_FACE_DOWN_CREATURE);
     set_characteristic_pt(count);
   }
   return 0;
@@ -3360,6 +3373,18 @@ When ~ enters the battlefield, you gain 4 life. */
 }
 
 
+static const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,
+                                                                       int card,
+                                                                       int targeting_player,
+                                                                       int targeting_card)
+{
+  const char *perm_or_susp = target_must_be_permanent_or_suspend(
+      who_chooses, player, card, targeting_player, targeting_card);
+  if (!perm_or_susp && !count_counters(player, card, COUNTER_TIME))
+    return "must have counters";
+  return perm_or_susp;
+}
+
 int card_jhoiras_timebug(int player, int card, event_t event)
 {
   int t_player;
@@ -3377,7 +3402,7 @@ int card_jhoiras_timebug(int player, int card, event_t event)
   default_target_definition(player, card, &td, 199);
   td.allowed_controller = player;
   td.preferred_controller = player;
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
   {
     target_requirement = target_must_be_permanent_or_suspend_and_have_time_counters;
@@ -3693,7 +3718,7 @@ static int lim_dul_the_necromancer_effect(int player, int card, event_t event)
           }
         }
         count_for_gfp_ability_and_store_values(player, card, event, 1 - player, TYPE_CREATURE, NULL,
-                                               GFPC_TRACK_DEAD_CREATURES, 1);
+                                               GFPC_TRACK_DEAD_CREATURES | GFPC_STORE_OWNER, 1);
       }
     }
   }
@@ -4101,8 +4126,9 @@ int mindlash_sliver_shared_ability(int player, int card, event_t event)
     return 0;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    discard(current_turn, 0, player);
-    discard(current_turn ^ 1, 0, player);
+    APNAP(p1, {
+      discard(p1, 0, player);
+    });
   }
   return shared_sliver_activated_ability(player, card, event, 8, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
@@ -4665,8 +4691,9 @@ Whenever ~ is dealt damage, if it's a creature, sacrifice that many permanents. 
 			int legacy = artifact_animation(instance->parent_controller, instance->parent_card,
 											instance->parent_controller, instance->parent_card, 1, 5, 5, KEYWORD_TRAMPLE, 0);
 			card_instance_t *leg = get_card_instance(instance->parent_controller, legacy);
+			int color = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
 			leg->targets[9].card = SUBTYPE_HORROR;
-			leg->targets[6].player = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
+			leg->targets[6].player = color;
 		}
 	}
 
@@ -4778,9 +4805,10 @@ Artifact
 	        choice = choose_a_color_exe(player, "What kind of mana?", 1, COLOR_COLORLESS, mana_colors_added[player] | COLOR_TEST_COLORLESS);
 	    }
 	    if (choice == -1){ spell_fizzled = 1; return 0; }
+	    int chosen_color_mask = color_to_color_test(choice);
 	    int free_colors = COLOR_TEST_COLORLESS;
 	    if (is_what(player, card, TYPE_LAND)){ free_colors |= mana_colors_added[player]; }
-	    if (!(color_to_color_test(choice) & free_colors)){
+	    if (!(chosen_color_mask & free_colors)){
 	        get_card_instance(player, card)->targets[1].player = 66;
 	        charge_mana(player, COLOR_COLORLESS, 1);
 	        get_card_instance(player, card)->targets[1].player = 0;
@@ -4827,7 +4855,7 @@ int psionic_sliver_shared_ability(int player, int card, event_t event)
       event != EVENT_CLEANUP)
     return 0;
   default_target_definition(player, card, &td2, 0x102);
-  td2.zone = 0x1200;
+  td2.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   if ((event == EVENT_RESOLVE_ACTIVATION) &&
       (status_or_source_card = would_validate_arbitrary_target(&td2, instance->targets[2].player,
                                                                instance->targets[2].card),
@@ -5108,7 +5136,7 @@ int quilled_sliver_shared_ability(int player, int card, event_t event)
       event != EVENT_CLEANUP)
     return 0;
   default_target_definition(player, card, &td2, 2);
-  td2.required_state = 0x20;
+  td2.required_state = TARGET_STATE_IN_COMBAT;
   if ((event == EVENT_RESOLVE_ACTIVATION) &&
       (result = would_validate_arbitrary_target(&td2, instance->targets[2].player,
                                                 instance->targets[2].card),
@@ -5635,7 +5663,7 @@ int screeching_sliver_shared_ability(int player, int card, event_t event)
       event != EVENT_CLEANUP)
     return 0;
   default_target_definition(player, card, &td2, 0);
-  td2.zone = 0x1000;
+  td2.zone = TARGET_ZONE_PLAYERS;
   if ((event == EVENT_RESOLVE_ACTIVATION) &&
       (result = would_validate_arbitrary_target(&td2, instance->targets[2].player,
                                                 instance->targets[2].card),
@@ -5744,10 +5772,10 @@ int sedge_sliver_shared_ability(int player, int card, event_t event)
       {
         default_target_definition(player, card, &td, 2);
         td.preferred_controller = player;
-        td.required_state = 0x4000;
+        td.required_state = TARGET_STATE_DESTROYED;
         td.required_subtype = 0xb1;
         td.extra = (int32_t)sliver_to_regenerate;
-        td.special = 0x8000;
+        td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
         td.illegal_abilities = 0;
         if (event == EVENT_CAN_ACTIVATE)
         {
@@ -5801,8 +5829,8 @@ int sedge_sliver_shared_ability(int player, int card, event_t event)
         default_target_definition(player, card, &td, 2);
       }
       td.preferred_controller = player;
-      td.required_state = 0x4000;
-      td.special = 0x8000;
+      td.required_state = TARGET_STATE_DESTROYED;
+      td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
       td.required_subtype = 0xb1;
       td.extra = (int32_t)sliver_to_regenerate;
       td.illegal_abilities = 0;
@@ -7303,7 +7331,7 @@ static int vampiric_sliver_legacy(int player, int card, event_t event)
                                          instance->damage_target_card))
     {
       instance->damage_target_player = instance->damage_target_card = -1;
-      instance->targets[11].player = card_counts[player][5] + 1;
+      instance->targets[11].player = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
     }
   }
 
@@ -7457,8 +7485,8 @@ int card_volcanic_awakening(int player, int card, event_t event){
 	if (!IS_GS_EVENT(player, card, event)){ return 0; }
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_LAND);
+	card_instance_t* instance = get_card_instance(player, card);
 	if (event == EVENT_RESOLVE_SPELL){
-		card_instance_t* instance = get_card_instance(player, card);
 		if (valid_target(&td)){ kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY); }
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -7657,8 +7685,9 @@ When ~ is put into a graveyard from the battlefield, if it was a creature, retur
 			int legacy = artifact_animation(instance->parent_controller, instance->parent_card,
 											instance->parent_controller, instance->parent_card, 1, 5, 3, KEYWORD_TRAMPLE, 0);
 			card_instance_t *leg = get_card_instance(instance->parent_controller, legacy);
+			int color = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
 			leg->targets[9].card = SUBTYPE_TREEFOLK;
-			leg->targets[6].player = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
+			leg->targets[6].player = color;
 		}
 	}
 
@@ -7969,19 +7998,13 @@ int glass_asp_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x20f1d10; original cards/time_spiral.c:2569. */
 int card_glass_asp(int player, int card, event_t event)
 {
-  int32_t packed_damage_flag;
-  card_instance_t *instance;
-
-  if (damage_dealt_by_me(player, card, event,
-                         DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER) == 0)
-  {
+  if (!damage_dealt_by_me(player, card, event,
+                           DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER))
     return 0;
-  }
-
-  instance = get_card_instance(player, card);
-  packed_damage_flag = instance->targets[1].player;
-  instance = get_card_instance(player, create_legacy_effect(player, card, glass_asp_legacy));
-  instance->targets[0].player = (unsigned int)((char)packed_damage_flag == '\0');
+  int32_t value = get_card_instance(player, card)->targets[1].player;
+  int legacy = create_legacy_effect(player, card, glass_asp_legacy);
+  card_instance_t *instance = get_card_instance(player, legacy);
+  instance->targets[0].player = (unsigned int)((char)value == 0);
   return 0;
 }
 
@@ -8167,50 +8190,11 @@ int card_moonlace(int player, int card, event_t event)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x20e7ea0; original cards/time_spiral.c:1026. */
-const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,
-                                               int targeting_player, int targeting_card)
-{
-  int result;
-  card_instance_t *instance;
-
-  result = is_what(player, card, 0x47);
-  if (result == 0)
-  {
-    instance = get_card_instance(player, card);
-    if (((instance->internal_card_id != LEGACY_EFFECT_CUSTOM) ||
-         (instance->info_slot_fn != generic_suspend_legacy)) &&
-        (cards_data[instance->internal_card_id].id != 0x2178))
-    {
-      return (char *)EXE_STR(0x728f6c);
-    }
-  }
-  return NULL;
-}
 
 #endif
 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x20ea700; original cards/time_spiral.c:3214. */
-const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,
-                                                                       int card,
-                                                                       int targeting_player,
-                                                                       int targeting_card)
-{
-  const char *requirement_error;
-  int result;
-
-  requirement_error = target_must_be_permanent_or_suspend(who_chooses, player, card,
-                                                          targeting_player, targeting_card);
-  if (requirement_error == NULL)
-  {
-    result = count_counters(player, card, COUNTER_TIME);
-    if (result == 0)
-    {
-      return "must have counters";
-    }
-  }
-  return requirement_error;
-}
 
 #endif

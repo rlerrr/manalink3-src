@@ -43,7 +43,7 @@ int true_verify_legend_rule(int player, int card, int id)
 {
   if (id == -1)
     return 0;
-  uint32_t sakashima = get_internal_card_id_from_csv_id(0x56b3); /* Sakashima of a Thousand Faces */
+  uint32_t sakashima = get_internal_card_id_from_csv_id(CARD_ID_SAKASHIMA_OF_A_THOUSAND_FACES); /* Sakashima of a Thousand Faces */
   card_instance_t *inst = get_card_instance(player, card);
   if (inst && inst->original_internal_card_id == sakashima &&
       !is_humiliated(player, card, AL_STATIC))
@@ -306,7 +306,7 @@ static int generic_control_legacy(int player, int card, event_t event)
   if (event != EVENT_CARDCONTROLLED && event != EVENT_STATIC_EFFECTS &&
       event != EVENT_LEAVES_PLAY_ABILITY)
   {
-    if (trigger_condition != 0xd4 || card != affected_card || player != affected_card_controller)
+    if (trigger_condition != TRIGGER_LEAVE_PLAY || card != affected_card || player != affected_card_controller)
       return 0;
     if (instance->targets[5].player != -1)
       other_leaves_play(player, card, source_player_or_check, source_card, event, 0, 0);

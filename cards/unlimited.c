@@ -1007,7 +1007,7 @@ If ~ turns over completely at least once during the flip, destroy all nontoken p
 	    td.allow_cancel = 3;
 	    get_card_instance(player, card)->number_of_targets = 0;
 	    generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(1), 0, NULL, NULL);
-	    if (spell_fizzled != 1){ new_pick_target(&td, "Aim Chaos Orb at which card?", 0, 0); }
+	    if (spell_fizzled != 1){ select_target(player, card, &td, "Aim Chaos Orb at which card?", NULL); }
 	    return 0;
 	}
 	if (event == EVENT_RESOLVE_ACTIVATION){
@@ -1379,10 +1379,9 @@ When enchanted creature dies, ~ deals damage equal to that creature's toughness 
 	}
 
 	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		int amount = card_counts[player][5] + 1;
+		int amount = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
 		do {
-			instance = get_card_instance(player, card);
+			card_instance_t *instance = get_card_instance(player, card);
 			damage_player(instance->targets[0].player, 2, player, card);
 		} while (--amount);
 		kill_card(player, card, KILL_STATE_BASED_ACTION);
@@ -1465,7 +1464,7 @@ int cyclopean_tomb_legacy(int player, int card, event_t event)
       (upkeeps_remaining = upkeep_trigger(player, card, event), upkeeps_remaining != 0))
   {
     default_target_definition(player, card, &td, 0x47);
-    td.special = 0x40000;
+    td.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td.extra = 0x4a;
     td.illegal_abilities = 0;
     td.allow_cancel = 0;
@@ -2502,7 +2501,7 @@ int card_fungusaur(int player, int card, event_t event)
     instance->info_slot = 1;
   }
   instance = get_card_instance(player, card);
-  if ((((trigger_condition == 0xd7) && (card == affected_card)) &&
+  if ((((trigger_condition == TRIGGER_DEAL_DAMAGE) && (card == affected_card)) &&
        ((player == affected_card_controller &&
          ((reason_for_trigger_controller == player && (instance->info_slot != 0)))))) &&
       (instance->eot_toughness == 0))
@@ -3376,9 +3375,9 @@ int card_island_sanctuary(int player, int card, event_t event)
     }
   }
   controller_or_result = is_humiliated(player, card, AL_STATIC);
-  if (event == EVENT_CAST_SPELL && (controller_or_result != 0 || trigger_condition != 0xcf))
+  if (event == EVENT_CAST_SPELL && (controller_or_result != 0 || trigger_condition != TRIGGER_REPLACE_CARD_DRAW))
     return 0;
-  if (controller_or_result == 0 && trigger_condition == 0xcf)
+  if (controller_or_result == 0 && trigger_condition == TRIGGER_REPLACE_CARD_DRAW)
   {
     controller_or_result = affected_card_controller;
     if (reason_for_trigger_controller == player && card == affected_card &&
@@ -4466,32 +4465,32 @@ At the beginning of your upkeep, if ~ is in your graveyard with three or more cr
 
 int effect_nettling_imp(int player, int card, event_t event)
 {
-  int card_00;
+  int target_card;
   unsigned char attachment_sign_bits;
   card_instance_t *instance;
-  int player_00;
+  int target_player;
 
   instance = get_card_instance(player, card);
-  player_00 = (int)instance->damage_target_player;
-  card_00 = instance->damage_target_card;
+  target_player = (int)instance->damage_target_player;
+  target_card = instance->damage_target_card;
   attachment_sign_bits = (instance->damage_target_player >> 7 ^ 0xffU) &
-                         ((unsigned char)((unsigned int)card_00 >> 0x18) ^ 0xff);
+                         ((unsigned char)((unsigned int)target_card >> 0x18) ^ 0xff);
   if ((char)attachment_sign_bits < '\0')
   {
-    attack_if_able(player_00, card_00, event);
+    attack_if_able(target_player, target_card, event);
   }
   if ((((event == EVENT_CLEANUP) || (event == EVENT_SHOULD_AI_PLAY)) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     if ((char)attachment_sign_bits < '\0')
     {
-      instance = in_play(player_00, card_00);
+      instance = in_play(target_player, target_card);
       if (instance != NULL)
       {
-        instance = get_card_instance(player_00, card_00);
+        instance = get_card_instance(target_player, target_card);
         if ((instance->state & (STATE_SUMMON_SICK | STATE_ATTACKED)) == 0)
         {
-          kill_card(player_00, card_00, KILL_DESTROY);
+          kill_card(target_player, target_card, KILL_DESTROY);
         }
       }
     }
@@ -4820,9 +4819,7 @@ int card_phantasmal_terrain(int player, int card, event_t event)
     return result;
   }
   instance = get_card_instance(player, card);
-  result =
-      enchanted_land_is_basic_land_type(player, card, event, instance->targets[1].player, 0, NULL);
-  return result;
+  return enchanted_land_is_basic_land_type(player, card, event, instance->targets[1].player, 0, NULL);
 }
 
 // phantom monster --> vanilla
@@ -4843,7 +4840,7 @@ int card_plague_rats(int player, int card, event_t event)
   if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    newval = count_cards_by_id(2, 0xbb);
+    newval = count_cards_by_id(2, CARD_ID_PLAGUE_RATS);
     set_characteristic_pt(newval);
   }
   return 0;
@@ -5088,7 +5085,9 @@ Return target creature card from your graveyard to your hand. */
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &this_test);
 		if( spell_fizzled != 1 ){
-			int iid = get_grave(player)[validate_target_from_grave_source(player, card, player, 0)];
+			const int *grave = get_grave(player);
+			int selected = validate_target_from_grave_source(player, card, player, 0);
+			int iid = grave[selected];
 			ai_modifier += cards_ptr[iid]->ai_base_value;
 		}
 		return 0;
@@ -5571,7 +5570,7 @@ Flying (This creature can't be blocked except by creatures with flying or reach.
 Whenever a creature dealt damage by ~ this turn dies, put a +1/+1 counter on ~. */
 
   if (sengir_vampire_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-    add_counters(player, card, player, card, COUNTER_P1_P1, card_counts[player][5] + 1);
+    add_counters(player, card, player, card, COUNTER_P1_P1, card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1);
   return 0;
 }
 
@@ -6927,10 +6926,10 @@ int zombie_master_shared_ability(int player, int card, event_t event)
     }
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
-    td.required_state = 0x4000;
+    td.required_state = TARGET_STATE_DESTROYED;
     td.required_subtype = 0xde;
     td.extra = (int32_t)zombie_to_regenerate;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.illegal_abilities = 0;
     if (event == EVENT_CAN_ACTIVATE)
     {
@@ -7004,8 +7003,8 @@ int zombie_master_shared_ability(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
   }
   td.preferred_controller = player;
-  td.required_state = 0x4000;
-  td.special = 0x8000;
+  td.required_state = TARGET_STATE_DESTROYED;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   td.required_subtype = 0xde;
   td.extra = (int32_t)zombie_to_regenerate;
   td.illegal_abilities = 0;
@@ -7522,7 +7521,7 @@ int effect_personal_incarnation(int player, int card, event_t event)
       card_instance_t *instance = get_card_instance(player, card);
       if (instance->targets[9].player >= 0)
       {
-        if (get_id(instance->targets[9].player, instance->targets[9].card) != 0xb5)
+        if (get_id(instance->targets[9].player, instance->targets[9].card) != CARD_ID_PERSONAL_INCARNATION)
           kill_card(player, card, KILL_EXILE);
         if (!in_play(instance->targets[9].player, instance->targets[9].card))
           kill_card(player, card, KILL_EXILE);
@@ -7538,7 +7537,7 @@ int effect_personal_incarnation(int player, int card, event_t event)
       int p = instance->targets[9].player, c = instance->targets[9].card;
       target_definition_t td;
       default_target_definition(player, card, &td, 0x80);
-      td.special = 0x8000;
+      td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
       td.extra = (int32_t)(intptr_t)is_damaging_stored_creature;
       aff_card = c;
       aff_player = p;
@@ -7618,7 +7617,7 @@ int card_personal_incarnation(int player, int card, event_t event)
   {
     target_definition_t td;
     default_target_definition(player, card, &td, 0x80);
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)(intptr_t)is_damaging_attached_creature;
     td.illegal_abilities = 0;
     card_instance_t *instance = get_card_instance(player, card);

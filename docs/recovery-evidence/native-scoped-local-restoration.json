@@ -1,0 +1,1233 @@
+{
+  "format": 1,
+  "status": "Seven source definitions updated; build and 15,169 fixed entry slots pass. Harvester Troll has complete entry-reachable strict CFG correspondence.",
+  "files": [
+    {
+      "source": "cards/m20.c",
+      "before_bytes_sha256": "588af06dfaf30b14136b5c71fb5ea5067bcca1423e365fc85a9586d364b80ef6",
+      "after_bytes_sha256": "5237483cc872d2344da1e6b0a35401ffa32c30fa9b6476dcbed5db8405dbb013",
+      "before_sha256": "3b53c3217a2f0e32954b95dc71ab2da3a011d7da9d2c99e077fe695f23220ee2",
+      "after_sha256": "44c468916e46ec62b1a8ef7eb13b09d278dff9e9c916711bc309719c46a407c3"
+    },
+    {
+      "source": "cards/ixalan.c",
+      "before_bytes_sha256": "7a4e1b63fc13569c34ee02dadcf3714dda958b65e3d6fd7019044cc52a262b97",
+      "after_bytes_sha256": "b403a1c6cde5a14e0e99b1724d964a1e9d355e70ea7b76d6cd3012a8f64b95ca",
+      "before_sha256": "b57bc25da75b51e74e7880510bbec0d670d3c81c50e77a70d90365d0176217dc",
+      "after_sha256": "1cc8cf4fff1a04503aee042219adab82914e6adb40df2f02011ba79d3ac11355"
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "before_bytes_sha256": "f78057459730eedf3a737e1e7492406d94862e868b9767390fff17ef8c523f58",
+      "after_bytes_sha256": "83a064741aac1bc47ba272ae7c1a8fea8ed90f89f301e675db0e75aa0d792422",
+      "before_sha256": "2db1cdec7bb59f0eb4062992a1928e6259271eabfc26345087143ed45cab5b61",
+      "after_sha256": "03fbe27439b7717621c2be1f60b0f8d0eb80663a022b08f0f3e32abcb77699ba"
+    },
+    {
+      "source": "cards/dominaria.c",
+      "before_bytes_sha256": "c0e800e5e734d3acf21d6e0bd8afccc2bd45122a863614d8ebba88ae25919340",
+      "after_bytes_sha256": "dd675495971fc21af43e36ef30118ab45240b5e0a4397280ff2dc473e93e8cbd",
+      "before_sha256": "476a3b917705867ba7a1e3c2183119b248acb1c9ac71666960b77db0d04fe4d9",
+      "after_sha256": "1c6ae5a22ae6931684f51e38df85652de15f62ba4cad30cca29a046dcbc1a855"
+    },
+    {
+      "source": "functions/functions.c",
+      "before_bytes_sha256": "061c04ade476b9a3e205b5fca298154caba6d0de1613bf94a85ef067d866e057",
+      "after_bytes_sha256": "8b76c00a83fc007fea0c99d93aedea94bcde74fad0142f3ce29d694156064d4a",
+      "before_sha256": "b28f452179f172bca7d955d4cae5d1a229044608e722f01da347e630e8569543",
+      "after_sha256": "425909d345f2e1ab7d555372e5e9064533cb5eeabc8efb9ab54b62d41e9b9f38"
+    },
+    {
+      "source": "cards/commander_2016.c",
+      "before_bytes_sha256": "cf3cc11f2db1a0a88123a83198db39d3fcf9b5b471cc548b692a873b829ec906",
+      "after_bytes_sha256": "a5aef89f1f0dec90157a3ed9eb81b2d82403fd6e5a2f479836e53f1b5e22282a",
+      "before_sha256": "25b8f7bbe42808a916b02df346a816c69203f2f348b2532537e221d3011ac96c",
+      "after_sha256": "6947d269d0d82e74b483241f8e208e918d3f61efd9face1a838ce318a3ce88ab"
+    },
+    {
+      "source": "cards/oath_of_the_gatewatch.c",
+      "before_bytes_sha256": "ce04ab1f5e72b1845b49f920b11d0d8dd5595cfea4c3bc08a5d6edc44aa9ca43",
+      "after_bytes_sha256": "023fa92d2f538af15dd3dd093e8ae4da12a9bb4fe1f31da106214a731ecff70f",
+      "before_sha256": "34249e4e5df2a4678261062fcdc34b2e6cd49e50e6199b826fd734ab048f84b6",
+      "after_sha256": "9e25cff5d460ce26e7ae5bee631322c3117afdc29f1fcf80d0712cb1a0ecc981"
+    }
+  ],
+  "source_reviews": [
+    {
+      "name": "card_agent_of_treachery",
+      "source": "cards/m20.c",
+      "address": "0x2394af0",
+      "size": 389,
+      "bytes_hex": "5589e557565383ec688b75108b5d088b7d0cc744240c0200000089742408897c2404891c24e85608310081fe00510000742e89742408897c2404891c24e88ee32e0085c0740c391d708662000f84ae00000083c46831c05b5e5f5dc38d7426008d45a0c744240c4700000089442408897c2404891c24e8d5b62c00b80100000029d8c745e4000000008945a88d45a0890424e839b92c0085c074978d45a0c744240c00000000c744240800000000c74424040a487402890424e802c22c0085c00f846cffffff897c2404891c24e8eede31008b5078897c2404891c2489559ce8dcde31008b559c895424088b4074891c2489442404e8a6fa2c00e933ffffff908b349d20f54e004e0f8844ffffff31ffeb0e8db6000000004e784583ff027f5089742404891c24e8b4e6310085c074e8c74424084700000089742404891c24e86cd02e0085c074d089742404891c24e85cd92f0083f80183dfffebbc8d74260083ff020f8ee9feffff8db42600000000c744240403000000891c24e8e0f33100e9cdfeffff",
+      "native_bytes_sha256": "653b2e9aaeb94530d8dc85cb61bc9567a5fdb542df04635e0829ebd0a4b09ea2",
+      "native_decomp_path": ".recovery/decompiled-abi/2394af0.c",
+      "native_decomp_sha256": "875f9a6618f738ec76a754bce5b679cfe39c7c3c356d2855c07433a754b1a9a2",
+      "reason": "Restore native DWARF amount/count scan locals and separate picker results/selected coordinates from the scan index. Keep the first getter/target-card snapshot before the second getter/target-player read, live current_turn after eot_trigger, reverse count snapshot and early stop after three stolen permanents. The boolean stolen increment preserves the native CMP/SBB-style normalized result.",
+      "before_sha256": "cf503db95e1c5eac2acb6ba7034f2854a6387e9197d376556481d8c5a1c3151d",
+      "after_sha256": "ac5baffb0c68f8f15a0ae4bab0bd57960aae422373b859923c16bf318a080aa5",
+      "restored_dwarf_local_names": [
+        "amount",
+        "count"
+      ]
+    },
+    {
+      "name": "card_ixalans_binding",
+      "source": "cards/ixalan.c",
+      "address": "0x2212cc0",
+      "size": 617,
+      "bytes_hex": "5589e557565383ec6c8b5d108b75088b7d0c83fb740f841d01000081fba2000000744dc744240c02000000895c2408897c2404893424e875264900895c2408897c2404893424e825f6480081fb00510000746d895c2408897c2404893424e8fd94460083c46c5b5e5f5dc38d74260090c744240804000000897c2404893424e8eca64c0085c00f84cc000000c744240c02000000c7442408a2000000897c2404893424e808264900c7442408a2000000897c2404893424e8b4f54800eb9566908d45a0c744240c4700000089442408897c2404893424e8a5d44400b80100000029f0897c2404893424c745b4010000008945a88945a4c745e400000000e8eefc490089459c8d45a0890424e8f0d6440085c00f85c800000083fe010f8532ffffffa1a8317a0083e830a3a8317a00e920ffffff8d74260090897c2404893424c744240874000000e8c4ed480083c46c5b5e5f5dc38d742600897c2404893424e88cfc490089c1837838010f8e1cffffffba010000008d76008b44d178894d9889042489559ce8c6054a00c7442408ffffffff8944240ca18c397a0089442404a1848c7300890424e8f4cb48008b559c85c08b4d9874193935848c73007411895598894d9ce8a7e347008b55988b4d9c423951387fa3e9b2feffff8db6000000008d45a0c744240c80000000c744240800000000c7442404745d7302890424e8edde440085c00f8448feffff8b459c8b403889459885c07f07c74598010000008b4d9c8b4178894424048b4174890424e83cca48008b4d9c8b55988944d1788b41788944240c8b4174897c240489442408893424e8c80d48008b55988b4d9c8d4201894138e9eafdffff",
+      "native_bytes_sha256": "4da713d4f8118071a8fc59a8167d885d55b8a07f6f6f3393c24c04d4004d4af3",
+      "native_decomp_path": ".recovery/decompiled-abi/2212cc0.c",
+      "native_decomp_sha256": "8a2eaac43fcfe23d26fab73114cf3d1a33693445dcb1cee54a23c2c3c84942dd",
+      "reason": "Restore separate native instance/i/td/pos scopes, split name/IID/result temporaries and share the same ETB/oblivion continuation across event arms. Keep humiliation before getter, live info_slot bound after name checks, fresh affected controller after has_same_name, saved pos before get_card_name, live selected target after that callback and count store after obliviation. Event is by value, so moving common setup does not merge dynamic calls.",
+      "before_sha256": "e0da382f0ae83cd27dea08c552fded2348deac6d7f5ca56c3249d91605a9be06",
+      "after_sha256": "c0bc54bd225661042ad20115973e973061e2ee3ad8c03925a57200578900de88",
+      "restored_dwarf_local_names": [
+        "instance",
+        "i",
+        "td",
+        "pos"
+      ]
+    },
+    {
+      "name": "card_bravado",
+      "source": "cards/urza_saga.c",
+      "address": "0x2054c20",
+      "size": 250,
+      "bytes_hex": "5589e557565383ec148b5d088b750c89742404891c24e895e6650085c0741ac74424080400000089742404891c24e8dd87680089c785c0742f8b451089742404891c24c744241000000000c744240c0000000089442408e82438690083c4145b5e5f5dc38d74260089742404891c24e81cde65000fbe485085c978bd8b551083ea3283fa0177b28b40043b058c397a0075a73b0d848c7300759f8b149d20f54e0085d27e9489750c89fe89c78d74260089742404891c24e8f4e5650039f7742885c07424c74424080200000089742404891c24e8a8cf620085c0740ca1b405620040a3b4056200904639349d20f54e007fbe8b750ce93fffffff",
+      "native_bytes_sha256": "973561080ef507de4d49f7c8b276d4863f758dbaddb2a93daecfcfc1d668da32",
+      "native_decomp_path": ".recovery/decompiled-abi/2054c20.c",
+      "native_decomp_sha256": "4cb2dd701f593a44ddcb2672efeee323176dd9100bf8478047b7cd90fa224e12",
+      "reason": "Restore native instance/enchanted/c names and separate the humiliation result from the attached-card snapshot. Preserve the getter after humiliation, attachment guards, in_play query even for the enchanted index, conditional creature query and live active-card bound after callbacks. The final aura continuation remains unconditional.",
+      "before_sha256": "249179c49efa0db50c1450bb9db26b2d5565d83299def9e54a51c05234a0e2d0",
+      "after_sha256": "4f5e168f8cc5ef0ea5c013b2712a8734ffefdfdec0b8bc867cff431dd65f7f32",
+      "restored_dwarf_local_names": [
+        "instance",
+        "enchanted",
+        "c"
+      ]
+    },
+    {
+      "name": "memorial_to_unity_impl",
+      "source": "cards/dominaria.c",
+      "address": "0x22c94f0",
+      "size": 210,
+      "bytes_hex": "5589e557565381ecf40000008b5d08891c24e869c8410085c0750d81c4f40000005b5e5f5dc3669089c683f8057f798dbd1cffffffc7442408c0cc7302c744240402000000893c24e823553f00897c2418c744241401000000c744241000000000c744240c01000000c744240801000000895c2404891c24668975de66c745dc0100e81984380085c0792585f67e8c89742404891c24e8e5b6380081c4f40000005b5e5f5dc36690be05000000eb80908944240c8b450c895c240889442404891c244ee888813c0085f60f8e4bffffffebbd",
+      "native_bytes_sha256": "68202e844f9c06d7d00e2e79dbbad5f001338f27de1231f7574427fbd70212c9",
+      "native_decomp_path": ".recovery/decompiled-abi/22c94f0.c",
+      "native_decomp_sha256": "7b7ad89de0dd1bc0830f8ba1dc9617dc6c6f9e9837438ef65a7ce307c01002a4",
+      "reason": "Restore the native DWARF selected local name. Keep amount/count-deck snapshot, five-card cap, tutor before decrement/reveal and the saved remaining amount passed to bottom-of-deck afterward. No callback, bound or return behavior changes.",
+      "before_sha256": "79fcc5a88e04fded02f60fc4e1be49196fedd8e91e0f08d0f04d506aec383053",
+      "after_sha256": "135048d0ea3f617e2fb2923d4486169f5bec97490f2d68761f4cd8c93ff1ede6",
+      "restored_dwarf_local_names": [
+        "amount",
+        "this_test",
+        "selected"
+      ]
+    },
+    {
+      "name": "effect_unearth",
+      "source": "functions/functions.c",
+      "address": "0x26a2d40",
+      "size": 336,
+      "bytes_hex": "5589e557565383ec188b450c894424048b4508890424e855fd000089c38b70748b78788b4510897c240489442408893424e86aba03008b437c85c00f889f0000008b4510c744241000000000c744240c0000000089442408897c2404893424e8dcf2ffff817d10005f00000f84a700000083bb8000000042750e83c41831c05b5e5f5dc38d7426008b4510894424088b450c894424048b4508890424e8df00feff85c074d5c7838000000042000000897c2404893424e8b5fc0000f6400a8075b9897c2404893424c744240804000000e8eb2b010083c4185b31c05e5f5dc390897c2404893424e8a404010085c00f844dffffffc7437c00000000c744240800400000897c2404893424e8b16ffdffe92dffffff8d742600897c2404893424e8fc070100897c24048934248945f0e83dfc00008b55f0895424048b4008c1e80c83e001890424e835400100e921ffffff",
+      "native_bytes_sha256": "f0efb9fa82034f125d296aa7d42f5d35227299c3764a81047ebbc829e0b1c97d",
+      "native_decomp_path": ".recovery/decompiled-abi/26a2d40.c",
+      "native_decomp_sha256": "024cc0f821d20af3bc8e6e9ad208be3d8cd42382afb3c0734d874806c2dbcdd5",
+      "reason": "Restore native p/c coordinates and keep legacy versus reanimated instance pointers separate. Preserve coordinates captured before haste, live legacy fields after callbacks, original IID snapshot before the later getter/owner-state read, and the EOT marker store before reanimated getter/exile. The original IID and upkeep boolean no longer share one result local.",
+      "before_sha256": "a9ef3fdafde99493503e7713e571e907493058346f7461bc4208e45f9c31d23a",
+      "after_sha256": "e8ab30bc25c1f3859fba4c4402b7f85f9341014f3d84d8d58ad4af548cd59f07",
+      "restored_dwarf_local_names": [
+        "instance",
+        "p",
+        "c"
+      ]
+    },
+    {
+      "name": "reyhan_last_of_the_abzan_effect",
+      "source": "cards/commander_2016.c",
+      "address": "0x23e6150",
+      "size": 1550,
+      "bytes_hex": "5589e557565381ece8000000817d10004700000f841f0300008b450c894424048b4508890424e835c92c00807850007947837d10777464c744240c020000008b4510894424088b450c894424048b4508890424e898322a0089c385c00f85b1000000837d10220f84240300008d65f431c05b5e5f5dc366908b4510894424088b450c894424048b4508890424e8ef54290085c075d7837d1077759c8b450c894424048b4508890424e8b3c82c0089c3a18c397a0089442404a1848c7300890424e8bbd02c0085c0741ea18c397a0089442404a1848c7300890424e8f1bd290085c00f8456030000c744240c02000000c7442408770000008b450c894424048b4508890424e8e7312a0089c385c00f8459ffffffc7442408000001008b450c894424048b4508890424e8d35c2a0089852cffffff85c00f8527ffffff8b450c89a528ffffff8944240489df8b450881e7ff000000890424e805c82c008b750889c1898524ffffff8b450831d2c1e00389bd34ffffff29f08a90057279028d0492c1e004e8f95e310029c481e3fe0000008d7424180f84af0300008d420131db898530ffffffc78538ffffff010000008d417c8db426000000008b9530ffffffeb29890c9e8b4804c700ffffffff8d7b0183f9ff0f84b0010000894c9e0483c3024ac74004ffffffff74078b0883f9ff75d08b9538ffffff83c00842899538ffffff8b9538ffffff3b9534ffffff7d0583fa0a7ea58d853cffffffc744240c02000000894424088b450c894424048b4508890424e8b99e27008b4508898544ffffff85db0f8ec7000000899d34ffffff8bbd24ffffff8b9d2cffffff89b538ffffffeb6b8db6000000008d4590c744240c80000000894424048d853cffffffc744240801000000890424e8d3a9270085c0747e89742414c7442410000000008b8780000000438944240c8b477c894424088b450c894424048b4508890424e82fe42e00399d34ffffffc647360174428b8538ffffff8b34988d4590897424108974240cc744240810867402c744240464000000890424e837862e008d853cffffff890424e869a0270085c00f8559ffffffc7442408040000008b450c894424048b4508890424e887f52c008ba528ffffffe92efdffff8d742600a18c397a0039450c0f84920000008b450c894424048b4508890424e808c62c00807850000f88d5fcffff8b4510894424088b450c894424048b4508890424e80552290085c00f84b4fcffffe9e4fcffff89fbe961feffff90c7442408000001008b450c894424048b4508890424e8565a2a0085c00f85bafcffffc7442408040000008b450c894424048b4508890424e8e4f42c00e99bfcffff8db42600000000a1848c73003945080f8560ffffff8b450c894424048b4508890424e868c52c000fbe505084d20f8842ffffff8b400489142489442404e83dd02c003df04000000f8428ffffffc7442408040000008b450c894424048b4508890424e878f42c00e909ffffffa18c397a0089442404a1848c7300890424e80dc52c00807868000f848afcffff0fbe43508b0d8c397a008b15848c730084c07809394b040f8400010000894c2404891424e83aba2b0085c00f8459fcffffc744240802000000a18c397a0089442404a1848c7300890424e8a4b6290085c00f8433fcffffc744240800000000a18c397a0089442404a1848c7300890424e80eb12e0085c00f840dfcffff8b83cc00000085c00f88eb00000025ff00000089c67f05be0100000083f80a7e16eb3d8d7600837cf378ff0f84dc0000004683fe0a7f29837cf374ff75e8c744240800000000a18c397a0089442404a1848c7300890424e8aab02e008944f37489f08883cc000000e9a0fbffff908d853cffffffc744240c02000000894424088b450c894424048b4508890424e8849b27008b4508898544ffffffe995fdffff39d00f85f8feffffc74304ffffffffc64350ffc7442408000001008b450c894424048b4508890424e879162a008bbbcc00000085ff790ac783cc00000000000000c683ce000000018b0d8c397a008b15848c7300e9a7feffffc783cc00000000000000be01000000e92affffffc744240800000000a18c397a0089442404a1848c7300890424e8dbaf2e008944f378e92cffffff",
+      "native_bytes_sha256": "87d4a608ecd4d4e239c0a90484f492df1fc62c7a33694c522a61352e7efe6e19",
+      "native_decomp_path": ".recovery/decompiled-death-tribal-return/23e6150.c",
+      "native_decomp_sha256": "388d58ae17d014f6e9b961b66ceca5930c8b1bd493d3c9d63a0cc160d0268c54",
+      "reason": "Restore native DWARF iterations name for the inner extraction loop; result, instance, recorded, stored, sc, i, td, amount and msg are already retained. Keep native VLA extent, per-field extraction/reset order, count rereads and callbacks, including existing native zero-extent/duplicate-counter quirks. No buffer-size or rules changes.",
+      "before_sha256": "fe74630327aea2dbcdc8296954c7ade16ee1f3981c59ac683c6ff823bc590235",
+      "after_sha256": "4a9deb245ebbf7125219e455297b5dc8270c449fa99b54f8605efec3eec24142",
+      "restored_dwarf_local_names": [
+        "iterations"
+      ]
+    },
+    {
+      "name": "card_harvester_troll",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "address": "0x2268470",
+      "size": 249,
+      "bytes_hex": "5589e557565381ec540100008b75108b5d088b450cc744240c020000008974240889442404891c24e8d3ce430081fe00510000741381c45401000031c05b5e5f5dc38db600000000b80a0000008dbdb8feffff89c1be28917302f3a58dbde0feffff89c8b90f0000008db51cfffffff3ab8d85b8feffffc74424040300000089442408893424e8656545008b450c8974240c895c240889442404891c24e87eb7470085c0748f8b450c89742410c744240c00000000895c240889442404891c24e8fbc8470085c00f8468ffffff8b450cc744241402000000c7442410000000008944240c895c240889442404891c24e8dcc24600e93cffffff",
+      "native_bytes_sha256": "2112ec9137afa3bf3c30ce4944ffef164a135ed3f76d776fa7a108f62d13e9fd",
+      "native_decomp_path": ".recovery/decompiled-inline-counter-callers/2268470.c",
+      "native_decomp_sha256": "c5913d5cd40191512e58b358e2d5553843bca12d8e944cfd66bfa0a0f58a9474",
+      "reason": "Reconstruct the native block-scoped100-byte zero-filled string initializer instead of a full memset followed by a40-byte memcpy and dead result assignment. The native literal at0x2739128 is exactly39 text bytes plus NUL; native instructions copy40 then zero60 bytes before test initialization. The C initializer has identical contents and lifetime across the same calls, without forcing stack layout.",
+      "before_sha256": "62455367e68d3878d84e00ed25c84d76209b83d7e3e6dc62691e6652d50e0768",
+      "after_sha256": "2e6457b0c1ce2f3c89423c705dbec3e34c9ab75afd771bbb99aa5a883764c6d0",
+      "native_initializer": {
+        "address": "0x2739128",
+        "bytes_hex": "53656c6563742061206372656174757265206f72206c616e6420746f207361637269666963652e00",
+        "zero_tail_bytes": 60,
+        "total_bytes": 100
+      }
+    }
+  ],
+  "native_local_dies": [
+    {
+      "name": "card_bravado",
+      "source": "cards/urza_saga.c",
+      "address": "0x2054c20",
+      "locals": [
+        {
+          "name": "player",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x3c3f77",
+          "scope": []
+        },
+        {
+          "name": "card",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x3c3f87",
+          "scope": []
+        },
+        {
+          "name": "event",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x3c3f9c",
+          "scope": []
+        },
+        {
+          "name": "instance",
+          "tag": "DW_TAG_variable",
+          "die": "0x3c3fb9",
+          "scope": [
+            "0x3c3fac"
+          ]
+        },
+        {
+          "name": "p",
+          "tag": "DW_TAG_variable",
+          "die": "0x3c3fce",
+          "scope": [
+            "0x3c3fac"
+          ]
+        },
+        {
+          "name": "enchanted",
+          "tag": "DW_TAG_variable",
+          "die": "0x3c3fe1",
+          "scope": [
+            "0x3c3fac"
+          ]
+        },
+        {
+          "name": "c",
+          "tag": "DW_TAG_variable",
+          "die": "0x3c4009",
+          "scope": [
+            "0x3c3fac",
+            "0x3c3ffc"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "card_ixalans_binding",
+      "source": "cards/ixalan.c",
+      "address": "0x2212cc0",
+      "locals": [
+        {
+          "name": "player",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x1de53d4",
+          "scope": []
+        },
+        {
+          "name": "card",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x1de53e3",
+          "scope": []
+        },
+        {
+          "name": "event",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x1de53f2",
+          "scope": []
+        },
+        {
+          "name": "instance",
+          "tag": "DW_TAG_variable",
+          "die": "0x1de540e",
+          "scope": [
+            "0x1de5401"
+          ]
+        },
+        {
+          "name": "i",
+          "tag": "DW_TAG_variable",
+          "die": "0x1de5422",
+          "scope": [
+            "0x1de5401"
+          ]
+        },
+        {
+          "name": "td",
+          "tag": "DW_TAG_variable",
+          "die": "0x1de5481",
+          "scope": [
+            "0x1de5478"
+          ]
+        },
+        {
+          "name": "instance",
+          "tag": "DW_TAG_variable",
+          "die": "0x1de5490",
+          "scope": [
+            "0x1de5478"
+          ]
+        },
+        {
+          "name": "pos",
+          "tag": "DW_TAG_variable",
+          "die": "0x1de54b1",
+          "scope": [
+            "0x1de5478",
+            "0x1de54a4"
+          ]
+        },
+        {
+          "name": "macro_compare_a",
+          "tag": "DW_TAG_variable",
+          "die": "0x1de54d2",
+          "scope": [
+            "0x1de5478",
+            "0x1de54a4",
+            "0x1de54c5"
+          ]
+        },
+        {
+          "name": "macro_compare_b",
+          "tag": "DW_TAG_variable",
+          "die": "0x1de54df",
+          "scope": [
+            "0x1de5478",
+            "0x1de54a4",
+            "0x1de54c5"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "memorial_to_unity_impl",
+      "source": "cards/dominaria.c",
+      "address": "0x22c94f0",
+      "locals": [
+        {
+          "name": "player",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x294d6f6",
+          "scope": []
+        },
+        {
+          "name": "card",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x294d706",
+          "scope": []
+        },
+        {
+          "name": "td",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x294d716",
+          "scope": []
+        },
+        {
+          "name": "amount",
+          "tag": "DW_TAG_variable",
+          "die": "0x294d725",
+          "scope": []
+        },
+        {
+          "name": "macro_compare_a",
+          "tag": "DW_TAG_variable",
+          "die": "0x294d743",
+          "scope": [
+            "0x294d73a"
+          ]
+        },
+        {
+          "name": "macro_compare_b",
+          "tag": "DW_TAG_variable",
+          "die": "0x294d751",
+          "scope": [
+            "0x294d73a"
+          ]
+        },
+        {
+          "name": "this_test",
+          "tag": "DW_TAG_variable",
+          "die": "0x294d77d",
+          "scope": [
+            "0x294d778"
+          ]
+        },
+        {
+          "name": "selected",
+          "tag": "DW_TAG_variable",
+          "die": "0x294d78e",
+          "scope": [
+            "0x294d778"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "card_agent_of_treachery",
+      "source": "cards/m20.c",
+      "address": "0x2394af0",
+      "locals": [
+        {
+          "name": "player",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x358857b",
+          "scope": []
+        },
+        {
+          "name": "card",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x358858a",
+          "scope": []
+        },
+        {
+          "name": "event",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x3588599",
+          "scope": []
+        },
+        {
+          "name": "td",
+          "tag": "DW_TAG_variable",
+          "die": "0x35885b5",
+          "scope": [
+            "0x35885a8"
+          ]
+        },
+        {
+          "name": "amount",
+          "tag": "DW_TAG_variable",
+          "die": "0x3588691",
+          "scope": [
+            "0x3588684"
+          ]
+        },
+        {
+          "name": "count",
+          "tag": "DW_TAG_variable",
+          "die": "0x35886a5",
+          "scope": [
+            "0x3588684"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "reyhan_last_of_the_abzan_effect",
+      "source": "cards/commander_2016.c",
+      "address": "0x23e6150",
+      "locals": [
+        {
+          "name": "player",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x3ace897",
+          "scope": []
+        },
+        {
+          "name": "card",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x3ace8ac",
+          "scope": []
+        },
+        {
+          "name": "event",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x3ace8c1",
+          "scope": []
+        },
+        {
+          "name": "result",
+          "tag": "DW_TAG_variable",
+          "die": "0x3ace8d6",
+          "scope": []
+        },
+        {
+          "name": "instance",
+          "tag": "DW_TAG_variable",
+          "die": "0x3ace8f8",
+          "scope": [
+            "0x3ace8eb"
+          ]
+        },
+        {
+          "name": "instance",
+          "tag": "DW_TAG_variable",
+          "die": "0x3ace95e",
+          "scope": [
+            "0x3ace955"
+          ]
+        },
+        {
+          "name": "kill_code",
+          "tag": "DW_TAG_variable",
+          "die": "0x3ace97c",
+          "scope": [
+            "0x3ace955",
+            "0x3ace973"
+          ]
+        },
+        {
+          "name": "p",
+          "tag": "DW_TAG_variable",
+          "die": "0x3ace99a",
+          "scope": [
+            "0x3ace955",
+            "0x3ace973",
+            "0x3ace991"
+          ]
+        },
+        {
+          "name": "c",
+          "tag": "DW_TAG_variable",
+          "die": "0x3ace9ad",
+          "scope": [
+            "0x3ace955",
+            "0x3ace973",
+            "0x3ace991"
+          ]
+        },
+        {
+          "name": "pos",
+          "tag": "DW_TAG_variable",
+          "die": "0x3acea1d",
+          "scope": [
+            "0x3ace955",
+            "0x3ace973",
+            "0x3acea14"
+          ]
+        },
+        {
+          "name": "macro_compare_a",
+          "tag": "DW_TAG_variable",
+          "die": "0x3acea3b",
+          "scope": [
+            "0x3ace955",
+            "0x3ace973",
+            "0x3acea14",
+            "0x3acea32"
+          ]
+        },
+        {
+          "name": "macro_compare_b",
+          "tag": "DW_TAG_variable",
+          "die": "0x3acea50",
+          "scope": [
+            "0x3ace955",
+            "0x3ace973",
+            "0x3acea14",
+            "0x3acea32"
+          ]
+        },
+        {
+          "name": "instance",
+          "tag": "DW_TAG_variable",
+          "die": "0x3aceb5f",
+          "scope": [
+            "0x3aceb56"
+          ]
+        },
+        {
+          "name": "recorded",
+          "tag": "DW_TAG_variable",
+          "die": "0x3aceb74",
+          "scope": [
+            "0x3aceb56"
+          ]
+        },
+        {
+          "name": "stored",
+          "tag": "DW_TAG_variable",
+          "die": "0x3aceb89",
+          "scope": [
+            "0x3aceb56"
+          ]
+        },
+        {
+          "name": "sc",
+          "tag": "DW_TAG_variable",
+          "die": "0x3aceba1",
+          "scope": [
+            "0x3aceb56"
+          ]
+        },
+        {
+          "name": "i",
+          "tag": "DW_TAG_variable",
+          "die": "0x3acebb5",
+          "scope": [
+            "0x3aceb56"
+          ]
+        },
+        {
+          "name": "td",
+          "tag": "DW_TAG_variable",
+          "die": "0x3acebc8",
+          "scope": [
+            "0x3aceb56"
+          ]
+        },
+        {
+          "name": "iterations",
+          "tag": "DW_TAG_variable",
+          "die": "0x3acebe1",
+          "scope": [
+            "0x3aceb56",
+            "0x3acebd8"
+          ]
+        },
+        {
+          "name": "amount",
+          "tag": "DW_TAG_variable",
+          "die": "0x3acebfb",
+          "scope": [
+            "0x3aceb56",
+            "0x3acebd8",
+            "0x3acebf6"
+          ]
+        },
+        {
+          "name": "msg",
+          "tag": "DW_TAG_variable",
+          "die": "0x3acec1b",
+          "scope": [
+            "0x3aceb56",
+            "0x3acec12"
+          ]
+        },
+        {
+          "name": null,
+          "tag": "DW_TAG_variable",
+          "die": "0x3aced75",
+          "scope": []
+        }
+      ]
+    },
+    {
+      "name": "effect_unearth",
+      "source": "functions/functions.c",
+      "address": "0x26a2d40",
+      "locals": [
+        {
+          "name": "player",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x65a69f0",
+          "scope": []
+        },
+        {
+          "name": "card",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x65a6a00",
+          "scope": []
+        },
+        {
+          "name": "event",
+          "tag": "DW_TAG_formal_parameter",
+          "die": "0x65a6a10",
+          "scope": []
+        },
+        {
+          "name": "instance",
+          "tag": "DW_TAG_variable",
+          "die": "0x65a6a20",
+          "scope": []
+        },
+        {
+          "name": "p",
+          "tag": "DW_TAG_variable",
+          "die": "0x65a6a35",
+          "scope": []
+        },
+        {
+          "name": "c",
+          "tag": "DW_TAG_variable",
+          "die": "0x65a6a48",
+          "scope": []
+        }
+      ]
+    }
+  ],
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "staged_diff_sha256": "365ee6cd7b44fbac2e4d753edaa9c1d8419e6b2fd17844a371e021b58d1ed3d8",
+  "prior_build": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "source_definitions": 7,
+    "exact_file_projections": 7,
+    "dll_sha256": "b504b24fcc2de011965c4f727eb1d3855ed7a600636fe50c06c1fa53895afea7",
+    "debug_sha256": "139a9af2f7ed86495518eadec4a582018d8b7fe3da92e4ec5144a6eba81751b9",
+    "build_log_sha256": "2103fc884419a0fba653729b964f0f8fe0fe631ce14418f4bd23bb8cfbf47eda",
+    "complete_cfg_matches": [
+      "card_narcissism",
+      "gift_of_immortality_legacy",
+      "card_erg_raiders"
+    ],
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "b504b24fcc2de011965c4f727eb1d3855ed7a600636fe50c06c1fa53895afea7",
+        "ManalinkEh.dbg": "139a9af2f7ed86495518eadec4a582018d8b7fe3da92e4ec5144a6eba81751b9"
+      },
+      "results": [
+        {
+          "name": "card_narcissism",
+          "matched": true,
+          "proof": {
+            "cfg_states": 205,
+            "reached_instruction_counts": [
+              205,
+              205
+            ],
+            "terminals": 2,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x49d510",
+                "rebuilt": "0x49d510",
+                "identity": "fixed:0x49d510"
+              },
+              {
+                "native": "0x2316980",
+                "rebuilt": "0x25a7bb0",
+                "identity": "_card_narcissism"
+              },
+              {
+                "native": "0x2660240",
+                "rebuilt": "0x26dab70",
+                "identity": "_default_target_definition"
+              },
+              {
+                "native": "0x2661750",
+                "rebuilt": "0x26db4d0",
+                "identity": "_valid_target"
+              },
+              {
+                "native": "0x267ad30",
+                "rebuilt": "0x268ecb0",
+                "identity": "_pump_until_eot_merge_previous"
+              },
+              {
+                "native": "0x267c220",
+                "rebuilt": "0x2686970",
+                "identity": "_global_enchantment"
+              },
+              {
+                "native": "0x269a440",
+                "rebuilt": "0x26a48b0",
+                "identity": "_discard"
+              },
+              {
+                "native": "0x269db00",
+                "rebuilt": "0x26b1570",
+                "identity": "_generic_activated_ability"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266ae90",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b5a00",
+                "rebuilt": "0x266d920",
+                "identity": "_kill_card"
+              },
+              {
+                "native": "0x26e3af0",
+                "rebuilt": "0x26d50f0",
+                "identity": "_can_sacrifice_this_as_cost"
+              },
+              {
+                "native": "0x26e9c50",
+                "rebuilt": "0x2672a70",
+                "identity": "_dialog_impl"
+              },
+              {
+                "native": "0x273fbe0",
+                "rebuilt": "0x27581f8",
+                "identity": "readonly-C-string:3ba43e8291ee474b85b74ceeff733d3ed99ef9bb060faaec4c6ad52bf06df0aa"
+              },
+              {
+                "native": "0x273fc13",
+                "rebuilt": "0x275822b",
+                "identity": "readonly-DIALOG-token:a12871fee210fb8619291eaea194581cbd2531e4b23759d225f6806923f63222"
+              },
+              {
+                "native": "0x273fddb",
+                "rebuilt": "0x27583f3",
+                "identity": "readonly-C-string:17ba6a8c8fde15496d7277ab4db7abd0dc151879bbc7b231484a32257860388b"
+              },
+              {
+                "native": "0x273fdf6",
+                "rebuilt": "0x275840e",
+                "identity": "readonly-C-string:9ddfba80a5595d73e2e3ef7185a7196e41b15330cbc249d14ab000c98173339b"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x2316980",
+              "size": 937,
+              "sha256": "aee1fb1e5d34269e1af11b9fe5df99bd8afdd88406e1ab21bc02e72440d5c768",
+              "bytes_hex": "5589e557565381ec8c0000008b5d108b750881fb8c0000000f841a01000083fb73745583fb6d745083fb72740983fb220f850e0100008b450c8d7da0c744240c02000000897c240889442404893424e86c9834008975a883fb6d0f846801000083fb720f84ff00000031db81c48c00000089d85b5e5f5dc38b450c8d7da0c744240c02000000897c240889442404893424e82a9834008975a883fb7375b98b450cc744243000000000897c242cc744242800000000c744242400000000c744242000000000c744241c01000000c744241800000000c744241400000000c744241000000000c744240c04000000c74424087300000089442404893424e87f70380089c385c00f845effffff8b14b5c4f14e0085d20f8551ffffff8b450c89342489442404e847d03c0085c00f8438ffffffe935ffffff66903935848c73000f84c40100008b450c895c240889342489442404e84957360081c48c00000089c389d85b5e5f5dc36690893c24e860ac340085c00f84f1feffff8b450c8934248944240431dbe8a7bf3900c744241402000000c7442410020000008b50788954240c8b5074895424088b9010010000895424048b800c010000890424e8f1413600e9a7feffff8d7426008b04b5c4f14e0031db85c08b450c894424048934240f95c3e88bcf3c00895c2414894424208b450cc744243400000000c744243000000000c744242c00000000c744242800000000c744242401000000c744241cdbfd7302c744241805000000c7442410f6fd7302c744240c13fc7302c74424086d00000089442404893424e884303d0089c385c07516c70594f14e0001000000e90afeffff8db426000000008b450cc7442430e0fb7302897c242cc744242800000000c744242400000000c744242000000000c744241c01000000c744241800000000c744241400000000c744241000000000c744240c04000000c74424086d00000089442404893424e8b56e3800833d94f14e00010f8491fdffff83fb010f84af00000083fb020f857ffdffff8b450cc74424080300000089442404893424e87fed3900e963fdffff66908b450cc74424087300000089442404893424e8e1fcffff85c00f841dfeffffc744240801000000c744240403000000893424e8516818fe89342489c78b450c89442404e820ce3c008b14b5c4f14e0085c00f95c025ff00000001d039f87e0289f801c08b0d509b73008b3d1c377a0001c101c7890d509b7300893d1c377a00e9b8fdffff8d74260089742408c744240400000000893424e81c373800e9c0fcffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25a7bb0",
+              "size": 944,
+              "sha256": "b14ffb0dc25dcdbd873bec726b3664d9ebb50f1c3c5265953145857fd7ac415e",
+              "bytes_hex": "5589e557565381ec8c0000008b5d108b750881fb8c0000000f841a01000083fb73745583fb6d745083fb72740983fb220f850e0100008b450c8d7da0c744240c02000000897c240889442404893424e86c2f13008975a883fb6d0f846801000083fb720f84ff00000031db81c48c00000089d85b5e5f5dc38b450c8d7da0c744240c02000000897c240889442404893424e82a2f13008975a883fb7375b98b450cc744243000000000897c242cc744242800000000c744242400000000c744242000000000c744241c01000000c744241800000000c744241400000000c744241000000000c744240c04000000c74424087300000089442404893424e8bf98100089c385c00f845effffff8b14b5c4f14e0085d20f8551ffffff8b450c89342489442404e817d4120085c00f8438ffffffe935ffffff66903935848c73000f84c40100008b450c895c240889342489442404e869ec0d0081c48c00000089c389d85b5e5f5dc36690893c24e8b037130085c00f84f1feffff8b450c8934248944240431dbe857310c00c744241402000000c7442410020000008b50788954240c8b5074895424088b9010010000895424048b800c010000890424e8416f0e00e9a7feffff8d7426008b04b5c4f14e0031db85c08b450c894424048934240f95c3e85bd31200895c2414894424208b450cc744243400000000c744243000000000c744242c00000000c744242800000000c744242401000000c744241cf3837502c744241805000000c74424100e847502c744240c2b827502c74424086d00000089442404893424e874ac0c0089c385c07516c70594f14e0001000000e90afeffff8db426000000008b450cc7442430f8817502897c242cc744242800000000c744242400000000c744242000000000c744241c01000000c744241800000000c744241400000000c744241000000000c744240c04000000c74424086d00000089442404893424e8f5961000833d94f14e00010f8491fdffff83fb010f84af00000083fb020f857ffdffff8b450cc74424080300000089442404893424e86f5a0c00e963fdffff66908b450cc74424087300000089442404893424e8e1fcffff85c00f841dfeffffc744240801000000c744240403000000893424e82156effd89342489c78b450c89442404e8f0d112008b14b5c4f14e0085c00f95c025ff00000001d039f87e0289f801c08b0d509b73008b3d1c377a0001c101c7890d509b7300893d1c377a00e9b8fdffff8d74260089742408c744240400000000893424e85cc90f00e9c0fcffff8db42600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "gift_of_immortality_legacy",
+          "matched": true,
+          "proof": {
+            "cfg_states": 88,
+            "reached_instruction_counts": [
+              88,
+              88
+            ],
+            "terminals": 2,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2682ec0",
+                "rebuilt": "0x2695160",
+                "identity": "_eot_trigger"
+              },
+              {
+                "native": "0x2689440",
+                "rebuilt": "0x268f8c0",
+                "identity": "_resolve_gfp_ability"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266ae90",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b32d0",
+                "rebuilt": "0x266b660",
+                "identity": "_in_play"
+              },
+              {
+                "native": "0x26b5a00",
+                "rebuilt": "0x266d920",
+                "identity": "_kill_card"
+              },
+              {
+                "native": "0x26b9770",
+                "rebuilt": "0x266f510",
+                "identity": "_seek_grave_for_id_to_reanimate"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x262f450",
+              "size": 312,
+              "sha256": "2c8f3ae92e6f6484c8778e5f910fd2fba10237cf5ec001ea2c75907bc74f1902",
+              "bytes_hex": "5589e557565383ec188b5d088b750c8b4510c744240c020000008944240889742404891c24e8c69f050085c0745e89742404891c24e82636080031d289c78b4874c7442410000000008b4078894c2408890c24c7442404ffffffff8d04c0894df0668b14c534707e0089d08944240ce8aca208008b4df083f8ff0f849a000000898f840000008987880000008b45108974240489442408891c24e8d139050085c0750d83c41831c05b5e5f5dc38d760089742404891c24e8a435080089c78b8088000000894424048b8784000000890424e8aa3d080085c07440c74424100001000031d28b87800000008d04c0668b14c534707e0089d08944240c8b477c894424088b8788000000894424048b8784000000890424e806a2080089742404891c24c744240804000000e88264080083c4185b31c05e5f5dc3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x255c7e0",
+              "size": 320,
+              "sha256": "a9c86ddbbcdfa8b4e7503e54a99f26cd749bd771a77af137ba768ee7d5b83ce0",
+              "bytes_hex": "5589e557565383ec188b5d088b750c8b4510c744240c020000008944240889742404891c24e8b630130085c0745e89742404891c24e876e6100031d289c78b4874c7442410000000008b4078894c2408890c24c7442404ffffffff8d04c0894df0668b14c534707e0089d08944240ce8bc2c11008b4df083f8ff0f849a000000898f840000008987880000008b45108974240489442408891c24e8e188130085c0750d83c41831c05b5e5f5dc38d760089742404891c24e8f4e5100089c78b8088000000894424048b8784000000890424e8aaed100085c07440c74424100001000031d28b87800000008d04c0668b14c534707e0089d08944240c8b477c894424088b8788000000894424048b8784000000890424e8162c110089742404891c24c744240804000000e81210110083c4185b31c05e5f5dc38db4260000000090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_erg_raiders",
+          "matched": true,
+          "proof": {
+            "cfg_states": 58,
+            "reached_instruction_counts": [
+              58,
+              58
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x4a68a0",
+                "rebuilt": "0x4a68a0",
+                "identity": "fixed:0x4a68a0"
+              },
+              {
+                "native": "0x26812d0",
+                "rebuilt": "0x26a9e70",
+                "identity": "_is_attacking"
+              },
+              {
+                "native": "0x2682ec0",
+                "rebuilt": "0x2695160",
+                "identity": "_eot_trigger"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266ae90",
+                "identity": "_get_card_instance"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x22be9e0",
+              "size": 197,
+              "sha256": "1a77480f3d69365c7c353235e4490f37d0dccf8b909d251ad67dd0f203ab03fe",
+              "bytes_hex": "5589e5565383ec108b5d108b750883fb71743083fb157418393570866200744183c41031c05b5e5dc38db426000000008b450c89342489442404e8b1283c0085c074d58b450c89342489442404e87e403f00393570866200c740384200000075bf8b450c895c240889442404893424e86c443c0085c074a88b450c89342489442404e849403f0083783842751b8b450c89342489442404e834403f00c7403800000000e978ffffff8b450c897424088944240cc744240402000000893424e8fd7d1efeebc8",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x206bf50",
+              "size": 208,
+              "sha256": "d4783150d34dcc7bc70ee3f84886741ce3cc45a9094555b07522c531aa8a4071",
+              "bytes_hex": "5589e5565383ec108b5d108b750883fb71743083fb157418393570866200744183c41031c05b5e5dc38db426000000008b450c89342489442404e8e1de630085c074d58b450c89342489442404e8eeee5f00393570866200c740384200000075bf8b450c895c240889442404893424e89c91620085c074a88b450c89342489442404e8b9ee5f0083783842751b8b450c89342489442404e8a4ee5f00c7403800000000e978ffffff8b450c897424088944240cc744240402000000893424e88da843feebc88db426000000008d742600",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_hungering_hydra",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x2208d20",
+              "size": 632,
+              "sha256": "483aeeac4f7040502959f89fd10ebc7e9c67f87c25296e23fc25a3382449eb11",
+              "bytes_hex": "5589e557565383ec48a1a0f14e008b75088b5d0c894424108b4510c744240c0000000089442408895c2404893424e80d894700837d101a0f84e3000000c744240802000000895c2404893424e8bf464d0085c0740b83c44831c05b5e5f5dc3908b4510890424e8d5a64d0089c785c074093958040f84ae010000813d782d7a00d700000075cf3b1d8c397a0075c73b35848c730075bf39351c7e730075b7895c2404893424e8e69c4a0089c28b483883f9017ea1837d107d0f84ae010000837d107e7591b8010000008b7cc274897c85cc4039c175f38d448dccc74238010000008d7dd08945c88955c48b45c48b1783c704c640360089542414c744241000000000895c240c89742408895c2404893424e80aba4c003b7dc875cfe935ffffff895c2404893424e884a44a0085c00f8409ffffffc744240804000000895c2404893424e8c8454d008945c485c00f85eafeffffbf0100000029f78b04bd20f54e0085c00f8ed4feffff31d2897508c745c80000000089d69089742404893c24e82ca44a0085c0742589742404893c24e8fc9b4a0031d28b4dc88a502489d039d80f94c025ff00000001c1894dc8468b04bd20f54e0039f07fbf837dc8018b75080f8e77feffff85c00f8e6ffeffff8b75c48db4260000000089742404893c24e8cca34a0085c0742889742404893c24e89c9b4a0031c98a482439d975138b5008c64024ff81e2f7bfffff8950088d7600463934bd20f54e007fbe8b7508e91bfeffff8db6000000000fbe405039f00f8546feffff895c2404893424e8509b4a008b503883fa090f8f2efeffff8d4a0185d27f0ab902000000ba010000008948388b4f38894cd074e90efeffff830db405620002e9ddfdffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2328af0",
+              "size": 640,
+              "sha256": "35eaffe13e5119ec94a19c07b466974a7c32b4239a47ff2ec76c7736a8b5a5e7",
+              "bytes_hex": "5589e557565383ec48a1a0f14e008b75088b5d0c894424108b4510c744240c0000000089442408895c2404893424e83de63500837d101a0f84e3000000c744240802000000895c2404893424e87fa9320085c0740b83c44831c05b5e5f5dc3908b4510890424e8b511340089c785c074093958040f84ae010000813d782d7a00d700000075cf3b1d8c397a0075c73b35848c730075bf39351c7e730075b7895c2404893424e8f62234008b483883f9017ea3837d107d0f84b0010000837d107e7593ba010000008b7cd074897c95cc4239d175f38d548dccc74038010000008d7dd08955c48b17c640360083c70489542414c744241000000000895c240c89742408895c24048934248945c8e8afdc3300397dc48b45c875cce937ffffff6690895c2404893424e8442a340085c00f8409ffffffc744240804000000895c2404893424e888a832008945c485c00f85eafeffffbf0100000029f78b04bd20f54e0085c00f8ed4feffff31d2897508c745c80000000089d69089742404893c24e8ec29340085c0742589742404893c24e80c22340031d28b4dc88a502489d039d80f94c025ff00000001c1894dc8468b04bd20f54e0039f07fbf837dc8018b75080f8e77feffff85c00f8e6ffeffff8b75c48db4260000000089742404893c24e88c29340085c0742889742404893c24e8ac21340031c98a482439d975138b5008c64024ff81e2f7bfffff8950088d7600463934bd20f54e007fbe8b7508e91bfeffff8db6000000000fbe405039f00f8546feffff895c2404893424e8602134008b503883fa090f8f2efeffff8d4a0185d27f0ab902000000ba010000008948388b4f38894cd074e90efeffff830db405620002e9ddfdffff8db4260000000090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_symmetry_sage",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x23dd240",
+              "size": 381,
+              "sha256": "b1529e83b1b5f8611858625615efe2deeb754aaf9279b6f8d3c9203b82e2132c",
+              "bytes_hex": "5589e557565383ec7c8b5d088b7d108b750c895c241489742418c744241000000000c744240c38000000c744240802000000897c2404891c24e8e2ae2c0081ff001e0000740a83c47c31c05b5e5f5dc389742404891c24e814582d008d7da0c744240c02000000897c240889742404891c2489459ce8862f2800893c24c745e400000000e8f731280085c074b9c744240c00000000c744240800000000c74424046f6e7402893c24e8c33a280085c074958b7d9cc744242008000000c744241c00000000c744241800000000c7442414ffffffffc7442410020000008b47788944240c8b47748974240489442408891c24e84a0330008b577439da7417b80100000029d839d074418b459cc6403600e932ffffff8b759c8b467889142489442404e8da962b008b0da8317a00488b56740f9ec025ff0000004883e0a083c03001c1890da8317a00ebb48b459c8b407889142489442404e8a5962b008b15a8317a0083f8020f9fc025ff0000004883e0a083c03001c28915a8317a00eb8b",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2521100",
+              "size": 384,
+              "sha256": "ea8edb5396cdd1470997134708d38168cbb0333a5a0b405fdfdeb4dc6e49383d",
+              "bytes_hex": "5589e557565383ec7c8b5d088b7d108b750c895c241489742418c744241000000000c744240c38000000c744240802000000897c2404891c24e8b297170081ff001e0000740a83c47c31c05b5e5f5dc389742404891c24e8349d14008d7da0c744240c02000000897c240889742404891c2489459ce8f6991b00893c24c745e400000000e8979f1b0085c074b9c744240c00000000c744240800000000c74424048f2e7502893c24e8d3ab1b0085c074958b7d9cc744242008000000c744241c00000000c744241800000000c7442414ffffffffc7442410020000008b47788944240c8b47748974240489442408891c24e83a2413008b577439d37417b80100000029d839d0743f8b459cc6403600e932ffffff8b759c8b4678891c2489442404e86a8b16008b0da8317a00488b56740f9ec025ff0000004883e0a08d440830a3a8317a00ebb68b459c8b407889142489442404e8378b16008b15a8317a0083f8020f9fc025ff0000004883e0a08d441030a3a8317a00eb8f8db42600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "effect_soul_echo",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x2376dd0",
+              "size": 284,
+              "sha256": "cb84877fdab335422482e54c79e9ac8981ee39b6e4ecfda8c7b50b9e9e6ad2b8",
+              "bytes_hex": "5589e557565383ec248b5d088b450c89442404891c24e8c5bc330089c78b70748b40788945f08b4510890424e85fc6360085c0740a89c10fbe405039f07429391d708662000f848d000000837d10227507c7477c0100000083c42431c05b5e5f5dc38db600000000837904ff75d18b45f0c74424082400000089442404893424894dece8d8a835008b4dec8b513839c27e0289c2894dec85d27ea48b45f0895424148944240c89442404c744241024000000897424088934248955e8e87fdd35008b4dec8b55e88b413829d0894138e96bffffff8d7426008b4510891c24894424088b450c89442404e8b2ce300085c00f8455ffffff837f7c010f854bffffff8b450cc74424080400000089442404891c24e819eb3300e92fffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x234c7f0",
+              "size": 288,
+              "sha256": "0e8b4a88025f0ce8854cda6025f469bf48d590a843617c67c8523522c0fa5c13",
+              "bytes_hex": "5589e557565383ec248b5d088b450c89442404891c24e885e6310089c78b70748b40788945f08b4510890424e8efd4310085c0740a89c10fbe405039f07429391d708662000f848d000000837d10227507c7477c0100000083c42431c05b5e5f5dc38db600000000837904ff75d18b45f0c74424082400000089442404893424894dece8786e31008b4dec8b513839d07e0289d0894dec85c07ea4894424148945e88b45f0c7442410240000008944240c8944240489742408893424e82fa431008b4dec8b45e88b513829c2895138e96bffffff8d7426008b4510891c24894424088b450c89442404e89206350085c00f8455ffffff837f7c010f854bffffff8b450cc74424080400000089442404891c24e819103200e92fffffff8d742600",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_throne_warden",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x220ed00",
+              "size": 140,
+              "sha256": "34e74f29d5ff62a52dd307a93ccbe37263f94c330e87f6268c59500499209fe6",
+              "bytes_hex": "5589e5565383ec188b5d08391d70866200740d83c41831c05b5e5dc38d742600813d782d7a00cd00000075e7a18c397a0039450c75dd3b1d848c730075d5e80de7ffff89c639d875ca8b4510893424894424088b450c89442404e86141470085c074b08b450cc744241401000000c7442410000000008944240c8974240889442404893424e8b65a4c00eb87",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2117ac0",
+              "size": 144,
+              "sha256": "652ddc04db54ee6a8f84e5bc99bec24579203f49b0540da351398cd0b00e48c4",
+              "bytes_hex": "5589e55383ec188b5d08391d70866200740e83c41831c05b5dc38db600000000813d782d7a00cd00000075e68b450c39058c397a0075db391d848c730075d3e85ce3ffff39c375ca8b4510891c24894424088b450c89442404e842d6570085c074b08b450cc744241401000000c7442410000000008944240c895c240889442404891c24e867ed5400eb878d74260090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "894d2784da9160c772f86eaf5c06f02cc0c053a991a177451428cba2fba0a865",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "scope": "One incremental build after all seven source edits, then existing strict CFG comparison of all seven. Three matches retain exact operands/unique known symbol, engine-address and read-only-string identities. Callee behavior/valid ordinary C memory remain assumptions. Four other instruction differences remain; no full reccmp refresh or gameplay tests after this source batch."
+  },
+  "scope": "Recover scoped native local names and separate compiler-reused temporaries/control flow without local unions, fixed stack slots or forced code generation. Ordinary C/ABI, nonvolatile valid records/globals and established callee contracts remain assumptions. Native quirks/callback ordering are retained; gameplay/whole-function equivalence is not inferred from names.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "source_definitions": 7,
+    "exact_file_projections": 7,
+    "dll_sha256": "64dd8fa8f259ee7ccbb84e1310b091736fc71b7bbfdf0de000b6596ccda1260a",
+    "debug_sha256": "d6bf18f202ea40f749e523848d4fd49ec4058b9567fd8dda2064dab4ebea4d5b",
+    "build_log_sha256": "b9aa3d618c2bc1c04ddbdb15b22075009b5537390e8f0b215ed060c1c124e86c",
+    "complete_cfg_matches": [
+      "card_harvester_troll"
+    ],
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "64dd8fa8f259ee7ccbb84e1310b091736fc71b7bbfdf0de000b6596ccda1260a",
+        "ManalinkEh.dbg": "d6bf18f202ea40f749e523848d4fd49ec4058b9567fd8dda2064dab4ebea4d5b"
+      },
+      "results": [
+        {
+          "name": "card_agent_of_treachery",
+          "matched": false,
+          "reason": "('Operation changed', 'cmp', 'test')",
+          "ranges": [
+            {
+              "address": "0x2394af0",
+              "size": 389,
+              "sha256": "653b2e9aaeb94530d8dc85cb61bc9567a5fdb542df04635e0829ebd0a4b09ea2",
+              "bytes_hex": "5589e557565383ec688b75108b5d088b7d0cc744240c0200000089742408897c2404891c24e85608310081fe00510000742e89742408897c2404891c24e88ee32e0085c0740c391d708662000f84ae00000083c46831c05b5e5f5dc38d7426008d45a0c744240c4700000089442408897c2404891c24e8d5b62c00b80100000029d8c745e4000000008945a88d45a0890424e839b92c0085c074978d45a0c744240c00000000c744240800000000c74424040a487402890424e802c22c0085c00f846cffffff897c2404891c24e8eede31008b5078897c2404891c2489559ce8dcde31008b559c895424088b4074891c2489442404e8a6fa2c00e933ffffff908b349d20f54e004e0f8844ffffff31ffeb0e8db6000000004e784583ff027f5089742404891c24e8b4e6310085c074e8c74424084700000089742404891c24e86cd02e0085c074d089742404891c24e85cd92f0083f80183dfffebbc8d74260083ff020f8ee9feffff8db42600000000c744240403000000891c24e8e0f33100e9cdfeffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x232c4c0",
+              "size": 400,
+              "sha256": "6b3458c76891ff46b3254d32fdeb121865c51f24a4a9e8f59d5dc1212b6e490f",
+              "bytes_hex": "5589e557565383ec688b75108b5d088b7d0cc744240c0200000089742408897c2404891c24e8a6fc360081fe00510000742e89742408897c2404891c24e85e8c360085c0740c391d708662000f84ae00000083c46831c05b5e5f5dc38d7426008d45a0c744240c4700000089442408897c2404891c24e835e63a00b80100000029d8c745e4000000008945a88d45a0890424e8c9eb3a0085c074978d45a0c744240c00000000c744240800000000c7442404cd1d7402890424e802f83a0085c00f846cffffff897c2404891c24e8fee833008b5078897c2404891c2489559ce8ece833008b559c895424088b4074891c2489442404e8d69a3800e933ffffff908b349d20f54e004e0f8844ffffff31ffeb0e8db6000000004e784d83ff027f5889742404891c24e874f0330085c074e8c74424084700000089742404891c24e8ec85360085c074d089742404891c24e8dccc370085c00f95c025ff00000001c7ebb68db60000000083ff020f8ee1feffff8db42600000000c744240403000000891c24e888f93300e9c5feffff8d7600",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_ixalans_binding",
+          "matched": false,
+          "reason": "('Unbound operand', '0xffffffb4', '0xffffffa4')",
+          "ranges": [
+            {
+              "address": "0x2212cc0",
+              "size": 617,
+              "sha256": "4da713d4f8118071a8fc59a8167d885d55b8a07f6f6f3393c24c04d4004d4af3",
+              "bytes_hex": "5589e557565383ec6c8b5d108b75088b7d0c83fb740f841d01000081fba2000000744dc744240c02000000895c2408897c2404893424e875264900895c2408897c2404893424e825f6480081fb00510000746d895c2408897c2404893424e8fd94460083c46c5b5e5f5dc38d74260090c744240804000000897c2404893424e8eca64c0085c00f84cc000000c744240c02000000c7442408a2000000897c2404893424e808264900c7442408a2000000897c2404893424e8b4f54800eb9566908d45a0c744240c4700000089442408897c2404893424e8a5d44400b80100000029f0897c2404893424c745b4010000008945a88945a4c745e400000000e8eefc490089459c8d45a0890424e8f0d6440085c00f85c800000083fe010f8532ffffffa1a8317a0083e830a3a8317a00e920ffffff8d74260090897c2404893424c744240874000000e8c4ed480083c46c5b5e5f5dc38d742600897c2404893424e88cfc490089c1837838010f8e1cffffffba010000008d76008b44d178894d9889042489559ce8c6054a00c7442408ffffffff8944240ca18c397a0089442404a1848c7300890424e8f4cb48008b559c85c08b4d9874193935848c73007411895598894d9ce8a7e347008b55988b4d9c423951387fa3e9b2feffff8db6000000008d45a0c744240c80000000c744240800000000c7442404745d7302890424e8edde440085c00f8448feffff8b459c8b403889459885c07f07c74598010000008b4d9c8b4178894424048b4174890424e83cca48008b4d9c8b55988944d1788b41788944240c8b4174897c240489442408893424e8c80d48008b55988b4d9c8d4201894138e9eafdffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2276570",
+              "size": 624,
+              "sha256": "fddca3c8155f5696aa6562abe0d32fae7f147fc40a3c0befe65c9b6d7c845def",
+              "bytes_hex": "5589e557565383ec6c8b5d108b75088b7d0c83fb740f841d01000081fba2000000744dc744240c02000000895c2408897c2404893424e8e55b4200895c2408897c2404893424e86546420081fb00510000746d895c2408897c2404893424e89d03410083c46c5b5e5f5dc38d74260090c744240804000000897c2404893424e8ccce3d0085c00f84cc000000c744240c02000000c7442408a2000000897c2404893424e8785b4200c7442408a2000000897c2404893424e8f4454200eb9566908d45a0c744240c4700000089442408897c2404893424e825454600b80100000029f0897c24048934248945a4c745b401000000c745e4000000008945a8e81e483f0089459c8d45a0890424e8a04a460085c00f85c800000083fe010f8532ffffffa1a8317a0083e830a3a8317a00e920ffffff8d74260090897c2404893424c744240874000000e81456430083c46c5b5e5f5dc38d742600897c2404893424e8bc473f0089c1837838010f8e1cffffffba010000008d76008b44d178894d9889042489559ce866503f00c7442408ffffffff8944240ca18c397a0089442404a1848c7300890424e894cd41008b559c85c08b4d9874193935848c73007411895598894d9ce8172b41008b55988b4d9c423951387fa3e9b2feffff8db6000000008d45a0c744240c80000000c744240800000000c744240444b27302890424e80d56460085c00f8448feffff8b459c8b403889459885c07f07c74598010000008b4d9c8b4178894424048b4174890424e8dccb41008b4d9c8b55988944d1788b41788944240c8b4174897c240489442408893424e8780d43008b55988b4d9c8d4201894138e9eafdffff8db42600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_bravado",
+          "matched": false,
+          "reason": "Operand type or width changed",
+          "ranges": [
+            {
+              "address": "0x2054c20",
+              "size": 250,
+              "sha256": "973561080ef507de4d49f7c8b276d4863f758dbaddb2a93daecfcfc1d668da32",
+              "bytes_hex": "5589e557565383ec148b5d088b750c89742404891c24e895e6650085c0741ac74424080400000089742404891c24e8dd87680089c785c0742f8b451089742404891c24c744241000000000c744240c0000000089442408e82438690083c4145b5e5f5dc38d74260089742404891c24e81cde65000fbe485085c978bd8b551083ea3283fa0177b28b40043b058c397a0075a73b0d848c7300759f8b149d20f54e0085d27e9489750c89fe89c78d74260089742404891c24e8f4e5650039f7742885c07424c74424080200000089742404891c24e8a8cf620085c0740ca1b405620040a3b4056200904639349d20f54e007fbe8b750ce93fffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25f0960",
+              "size": 256,
+              "sha256": "ddd6f552822b0038baaa7ddeaa599183fee0d2b912190fd3cea9f8aa7f00ed73",
+              "bytes_hex": "5589e557565383ec148b5d088b750c89742404891c24e8e5ac070085c0741ac74424080400000089742404891c24e82d2b060089c785c0742f8b451089742404891c24c744241000000000c744240c0000000089442408e8c496060083c4145b5e5f5dc38d74260089742404891c24e8bca407000fbe485084c978bd8b551083ea3283fa0177b28b400439058c397a0075a73b0d848c7300759f8b149d20f54e0085d27e9489750c89fe89c78d74260089742404891c24e844ac070039f7742885c07424c74424080200000089742404891c24e8b8410a0085c0740ca1b405620040a3b4056200904639349d20f54e007fbe8b750ce93fffffff8db600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "memorial_to_unity_impl",
+          "matched": false,
+          "reason": "('Operation changed', 'mov', 'dec')",
+          "ranges": [
+            {
+              "address": "0x22c94f0",
+              "size": 210,
+              "sha256": "68202e844f9c06d7d00e2e79dbbad5f001338f27de1231f7574427fbd70212c9",
+              "bytes_hex": "5589e557565381ecf40000008b5d08891c24e869c8410085c0750d81c4f40000005b5e5f5dc3669089c683f8057f798dbd1cffffffc7442408c0cc7302c744240402000000893c24e823553f00897c2418c744241401000000c744241000000000c744240c01000000c744240801000000895c2404891c24668975de66c745dc0100e81984380085c0792585f67e8c89742404891c24e8e5b6380081c4f40000005b5e5f5dc36690be05000000eb80908944240c8b450c895c240889442404891c244ee888813c0085f60f8e4bffffffebbd",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x214d4c0",
+              "size": 208,
+              "sha256": "f25b84d2d665138fb2399677fe6d90f5a552c288d3c835d4ebc647dd44d8d26e",
+              "bytes_hex": "5589e557565381ecf40000008b5d08891c24e8292e510085c0750d81c4f40000005b5e5f5dc3669089c683f8057f718dbd1cffffffc7442408b80d7302c744240402000000893c24e893965600897c2418c744241401000000c744241000000000c744240c01000000c744240801000000895c2404891c24668975de66c745dc0100e87940590085c0791d85f67e8c89742404891c24e8f51e5900e97bffffffbe05000000eb88908944240c8b450c4e895c240889442404891c24e8b0bf530085f60f8e53ffffffebc58db600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "effect_unearth",
+          "matched": false,
+          "reason": "('Unbound operand', '0x4', '0x8')",
+          "ranges": [
+            {
+              "address": "0x26a2d40",
+              "size": 336,
+              "sha256": "f0efb9fa82034f125d296aa7d42f5d35227299c3764a81047ebbc829e0b1c97d",
+              "bytes_hex": "5589e557565383ec188b450c894424048b4508890424e855fd000089c38b70748b78788b4510897c240489442408893424e86aba03008b437c85c00f889f0000008b4510c744241000000000c744240c0000000089442408897c2404893424e8dcf2ffff817d10005f00000f84a700000083bb8000000042750e83c41831c05b5e5f5dc38d7426008b4510894424088b450c894424048b4508890424e8df00feff85c074d5c7838000000042000000897c2404893424e8b5fc0000f6400a8075b9897c2404893424c744240804000000e8eb2b010083c4185b31c05e5f5dc390897c2404893424e8a404010085c00f844dffffffc7437c00000000c744240800400000897c2404893424e8b16ffdffe92dffffff8d742600897c2404893424e8fc070100897c24048934248945f0e83dfc00008b55f0895424048b4008c1e80c83e001890424e835400100e921ffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x269b740",
+              "size": 336,
+              "sha256": "557cd5901f90fdd175631595bc19c1ec330a5ec9808b216168cd48de4032d437",
+              "bytes_hex": "5589e557565383ec188b450c894424048b4508890424e835f7fcff89c38b70748b78788b4510897c240489442408893424e82a8efbff8b437c85c00f88970000008b4510c744241000000000c744240c0000000089442408897c2404893424e8ccf1ffff817d10005f00000f849f00000083bb8000000042750e83c41831c05b5e5f5dc38d7426008b4510894424088b450c894424048b4508890424e87f99ffff85c074d5c7838000000042000000897c2404893424e895f6fcfff6400a8075b9c744240804000000897c2404893424e80b21fdffeba390897c2404893424e83cfefcff85c00f8455ffffffc7437c00000000c744240800400000897c2404893424e8f91dffffe935ffffff8d742600897c2404893424e85401fdff897c24048934248945f0e825f6fcff8b55f0895424048b4008c1e80c83e001890424e88d2ffdffe929ffffff8db4260000000090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "reyhan_last_of_the_abzan_effect",
+          "matched": false,
+          "reason": "('Unbound operand', '0x2797205', '0x27b96e9')",
+          "ranges": [
+            {
+              "address": "0x23e6150",
+              "size": 1550,
+              "sha256": "87d4a608ecd4d4e239c0a90484f492df1fc62c7a33694c522a61352e7efe6e19",
+              "bytes_hex": "5589e557565381ece8000000817d10004700000f841f0300008b450c894424048b4508890424e835c92c00807850007947837d10777464c744240c020000008b4510894424088b450c894424048b4508890424e898322a0089c385c00f85b1000000837d10220f84240300008d65f431c05b5e5f5dc366908b4510894424088b450c894424048b4508890424e8ef54290085c075d7837d1077759c8b450c894424048b4508890424e8b3c82c0089c3a18c397a0089442404a1848c7300890424e8bbd02c0085c0741ea18c397a0089442404a1848c7300890424e8f1bd290085c00f8456030000c744240c02000000c7442408770000008b450c894424048b4508890424e8e7312a0089c385c00f8459ffffffc7442408000001008b450c894424048b4508890424e8d35c2a0089852cffffff85c00f8527ffffff8b450c89a528ffffff8944240489df8b450881e7ff000000890424e805c82c008b750889c1898524ffffff8b450831d2c1e00389bd34ffffff29f08a90057279028d0492c1e004e8f95e310029c481e3fe0000008d7424180f84af0300008d420131db898530ffffffc78538ffffff010000008d417c8db426000000008b9530ffffffeb29890c9e8b4804c700ffffffff8d7b0183f9ff0f84b0010000894c9e0483c3024ac74004ffffffff74078b0883f9ff75d08b9538ffffff83c00842899538ffffff8b9538ffffff3b9534ffffff7d0583fa0a7ea58d853cffffffc744240c02000000894424088b450c894424048b4508890424e8b99e27008b4508898544ffffff85db0f8ec7000000899d34ffffff8bbd24ffffff8b9d2cffffff89b538ffffffeb6b8db6000000008d4590c744240c80000000894424048d853cffffffc744240801000000890424e8d3a9270085c0747e89742414c7442410000000008b8780000000438944240c8b477c894424088b450c894424048b4508890424e82fe42e00399d34ffffffc647360174428b8538ffffff8b34988d4590897424108974240cc744240810867402c744240464000000890424e837862e008d853cffffff890424e869a0270085c00f8559ffffffc7442408040000008b450c894424048b4508890424e887f52c008ba528ffffffe92efdffff8d742600a18c397a0039450c0f84920000008b450c894424048b4508890424e808c62c00807850000f88d5fcffff8b4510894424088b450c894424048b4508890424e80552290085c00f84b4fcffffe9e4fcffff89fbe961feffff90c7442408000001008b450c894424048b4508890424e8565a2a0085c00f85bafcffffc7442408040000008b450c894424048b4508890424e8e4f42c00e99bfcffff8db42600000000a1848c73003945080f8560ffffff8b450c894424048b4508890424e868c52c000fbe505084d20f8842ffffff8b400489142489442404e83dd02c003df04000000f8428ffffffc7442408040000008b450c894424048b4508890424e878f42c00e909ffffffa18c397a0089442404a1848c7300890424e80dc52c00807868000f848afcffff0fbe43508b0d8c397a008b15848c730084c07809394b040f8400010000894c2404891424e83aba2b0085c00f8459fcffffc744240802000000a18c397a0089442404a1848c7300890424e8a4b6290085c00f8433fcffffc744240800000000a18c397a0089442404a1848c7300890424e80eb12e0085c00f840dfcffff8b83cc00000085c00f88eb00000025ff00000089c67f05be0100000083f80a7e16eb3d8d7600837cf378ff0f84dc0000004683fe0a7f29837cf374ff75e8c744240800000000a18c397a0089442404a1848c7300890424e8aab02e008944f37489f08883cc000000e9a0fbffff908d853cffffffc744240c02000000894424088b450c894424048b4508890424e8849b27008b4508898544ffffffe995fdffff39d00f85f8feffffc74304ffffffffc64350ffc7442408000001008b450c894424048b4508890424e879162a008bbbcc00000085ff790ac783cc00000000000000c683ce000000018b0d8c397a008b15848c7300e9a7feffffc783cc00000000000000be01000000e92affffffc744240800000000a18c397a0089442404a1848c7300890424e8dbaf2e008944f378e92cffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x20e8dc0",
+              "size": 1552,
+              "sha256": "6514905350ed89e113089805a8b718b8d8e5cbb09ae49124cba8d6eafe0fc292",
+              "bytes_hex": "5589e557565381ece8000000817d10004700000f841f0300008b450c894424048b4508890424e8a5205800807850007947837d10777464c744240c020000008b4510894424088b450c894424048b4508890424e8a86a5a0089c385c00f85b1000000837d10220f84240300008d65f431c05b5e5f5dc366908b4510894424088b450c894424048b4508890424e8afd6590085c075d7837d1077759c8b450c894424048b4508890424e82320580089c3a18c397a0089442404a1848c7300890424e8db27580085c0741ea18c397a0089442404a1848c7300890424e8e1045b0085c00f8456030000c744240c02000000c7442408770000008b450c894424048b4508890424e8f7695a0089c385c00f8459ffffffc7442408000001008b450c894424048b4508890424e813105c0089852cffffff85c00f8527ffffff8b450c89a528ffffff8944240489df8b450881e7ff000000890424e8751f58008b750889c1898524ffffff8b450831d2c1e00389bd34ffffff29f08a90e9967b028d0492c1e004e86906610029c481e3fe0000008d7424180f84af0300008d420131db898530ffffffc78538ffffff010000008d417c8db426000000008b8d30ffffffeb2989149e8b50048d7b01c700ffffffff83faff0f84b001000083c30249c74004ffffffff89549efc74078b1083faff75d08b9538ffffff83c00842899538ffffff8b8d38ffffff3b8d34ffffff7d0583f90a7ea58d853cffffffc744240c02000000894424088b450c894424048b4508890424e8791b5f008b4508898544ffffff85db0f8ec7000000899d34ffffff8bbd24ffffff8b9d2cffffff89b538ffffffeb6b8db6000000008d4590c744240c80000000894424048d853cffffffc744240801000000890424e8332d5f0085c0747e89742414c7442410000000008b8780000000438944240c8b477c894424088b450c894424048b4508890424e82fd85700399d34ffffffc647360174428b8538ffffff8b34988d4590897424108974240cc7442408e4c57202c744240464000000890424e8573e5d008d853cffffff890424e859205f0085c00f8559ffffffc7442408040000008b450c894424048b4508890424e8374858008ba528ffffffe92efdffff8d742600a18c397a0039450c0f84920000008b450c894424048b4508890424e8781d5800807850000f88d5fcffff8b4510894424088b450c894424048b4508890424e8c5d3590085c00f84b4fcffffe9e4fcffff89fbe961feffff90c7442408000001008b450c894424048b4508890424e8960d5c0085c00f85bafcffffc7442408040000008b450c894424048b4508890424e894475800e99bfcffff8db42600000000a1848c73003945080f8560ffffff8b450c894424048b4508890424e8d81c58000fbe505084d20f8842ffffff8b400489142489442404e81d2758003df04000000f8428ffffffc7442408040000008b450c894424048b4508890424e828475800e909ffffffa18c397a0089442404a1848c7300890424e87d1c5800807868000f848afcffff0fbe43508b0d8c397a008b15848c730084c07809394b040f8400010000894c2404891424e85a115a0085c00f8459fcffffc744240802000000a18c397a0089442404a1848c7300890424e884b95a0085c00f8433fcffffc744240800000000a18c397a0089442404a1848c7300890424e85ea4570085c00f840dfcffff8b83cc00000085c00f88eb00000025ff00000089c67f05be0100000083f80a7e16eb3d8d7600837cf378ff0f84dc0000004683fe0a7f29837cf374ff75e8c744240800000000a18c397a0089442404a1848c7300890424e8faa357008944f37489f08883cc000000e9a0fbffff908d853cffffffc744240c02000000894424088b450c894424048b4508890424e844185f008b4508898544ffffffe995fdffff39d00f85f8feffffc74304ffffffffc64350ffc7442408000001008b450c894424048b4508890424e8d9375c008bbbcc00000085ff790ac783cc00000000000000c683ce000000018b0d8c397a008b15848c7300e9a7feffffc783cc00000000000000be01000000e92affffffc744240800000000a18c397a0089442404a1848c7300890424e82ba357008944f378e92cffffff6690",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_harvester_troll",
+          "matched": true,
+          "proof": {
+            "cfg_states": 64,
+            "reached_instruction_counts": [
+              64,
+              64
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x26a5370",
+                "rebuilt": "0x269c190",
+                "identity": "_etb_ability"
+              },
+              {
+                "native": "0x26bea60",
+                "rebuilt": "0x26b6ba0",
+                "identity": "_new_default_test_definition"
+              },
+              {
+                "native": "0x26d4840",
+                "rebuilt": "0x26668b0",
+                "identity": "_add_counters"
+              },
+              {
+                "native": "0x26e3c90",
+                "rebuilt": "0x26d5290",
+                "identity": "_new_can_sacrifice"
+              },
+              {
+                "native": "0x26e4e30",
+                "rebuilt": "0x26d64c0",
+                "identity": "_new_sacrifice"
+              },
+              {
+                "native": "0x2739128",
+                "rebuilt": "0x27487fc",
+                "identity": "readonly-C-string:fe06a99fa9a58446f43e37c570df8ef37c55c9ca8db06a432df72dfd2d139c6b"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x2268470",
+              "size": 249,
+              "sha256": "2112ec9137afa3bf3c30ce4944ffef164a135ed3f76d776fa7a108f62d13e9fd",
+              "bytes_hex": "5589e557565381ec540100008b75108b5d088b450cc744240c020000008974240889442404891c24e8d3ce430081fe00510000741381c45401000031c05b5e5f5dc38db600000000b80a0000008dbdb8feffff89c1be28917302f3a58dbde0feffff89c8b90f0000008db51cfffffff3ab8d85b8feffffc74424040300000089442408893424e8656545008b450c8974240c895c240889442404891c24e87eb7470085c0748f8b450c89742410c744240c00000000895c240889442404891c24e8fbc8470085c00f8468ffffff8b450cc744241402000000c7442410000000008944240c895c240889442404891c24e8dcc24600e93cffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x23e15e0",
+              "size": 256,
+              "sha256": "ef5d350c4f69a60aac92496c98087d9667e361d93a1aa7acc64c0a0cede2f9cd",
+              "bytes_hex": "5589e557565381ec540100008b75108b5d088b450cc744240c020000008974240889442404891c24e883ab2b0081fe00510000741381c45401000031c05b5e5f5dc38db600000000b80a0000008dbdb8feffff89c1befc877402f3a58dbde0feffff89c8b90f0000008db51cfffffff3ab8d85b8feffffc74424040300000089442408893424e835552d008b450c8974240c895c240889442404891c24e80e3c2f0085c0748f8b450c89742410c744240c00000000895c240889442404891c24e81b4e2f0085c00f8468ffffff8b450cc744241402000000c7442410000000008944240c895c240889442404891c24e8dc512800e93cffffff8db42600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "408ef2ce56a5cfe497738eba5ef31bb1898cd26d42bf3e4d6f3a5d49fc829e62",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "scope": "One incremental build after all seven edits; existing strict CFG comparison of all seven. Harvester Troll matches through 64 states under known callee/global/string identities. Six other bodies retain instruction differences; no new matching rules, full comparison refresh or gameplay tests."
+  }
+}

@@ -1,0 +1,1516 @@
+{
+  "format": 1,
+  "status": "Four counterspell caller bodies reconstructed (122 to 66 lines); combined build, 15,169 fixed slots, four canonical/raw source projections and 655,360 native/rebuilt bounded observations pass before and after the restructuring.",
+  "files": [
+    {
+      "source": "cards/urza_legacy.c",
+      "before_bytes_sha256": "4cf3382cbfcebff0a2f3335068166776eb93d2c213009767c234e36a781f990c",
+      "after_bytes_sha256": "0f056d204093fb06354b4a9133fc77d61ea84c04c0f341323bf70b5851897088",
+      "before_sha256": "4b63455ec7c7013358917f85e4268ee3066d50ce3381a66f8f654276bc229bc3",
+      "after_sha256": "b109f92a6ae4ebf21213d99af86f33461d89fe8d1ce30b3fd0919fa582513b5c"
+    },
+    {
+      "source": "cards/future_sight.c",
+      "before_bytes_sha256": "a2e192dce431f4a80a743b9c9e0a51b11c71d6cb05d82c3c5c0dc22a357e0267",
+      "after_bytes_sha256": "7b0da0cfdfaed1db819c915a9991b185709897708b57b841f35823f480efac19",
+      "before_sha256": "2e22d296625aa38001d90da3fd381c8704127ed5de3e46504adb6f9573ae74b8",
+      "after_sha256": "cd058c4c8dc348bdf236a33fdc2f224662802990e5f27c09182737901ca2b71d"
+    },
+    {
+      "source": "cards/homelands.c",
+      "before_bytes_sha256": "851f18abe837ab24d5646c53ebfab4d37248322bd29c0650339aefea687d5c93",
+      "after_bytes_sha256": "c76f924318da20f79ae20fb451ba3ec56a2d8385029a6c45ca42cb00d4206853",
+      "before_sha256": "e3d2748c0323055d32ce390b3c5323c3379fd50ef05f3bab8c5dbbafeb6ab223",
+      "after_sha256": "ae791bfdba93380757230e8ed59d81c936c7dff8b69f08a91951f614c28aa29b"
+    },
+    {
+      "source": "cards/ixalan.c",
+      "before_bytes_sha256": "ceede547519ff779fcf6385491e01530efb60dc436c259857d4f3f3856c8c714",
+      "after_bytes_sha256": "7a4e1b63fc13569c34ee02dadcf3714dda958b65e3d6fd7019044cc52a262b97",
+      "before_sha256": "d3327d9e507effcbfd4797d802a448a6069a5ddb97af21b9b702e8ea02389feb",
+      "after_sha256": "b57bc25da75b51e74e7880510bbec0d670d3c81c50e77a70d90365d0176217dc"
+    }
+  ],
+  "functions": [
+    {
+      "source": "cards/urza_legacy.c",
+      "name": "card_intervene",
+      "before_definition_sha256": "23433854f42c5bb055c325861ee70331e9d4b484435866c6069268d459baa2be",
+      "after_definition_sha256": "a8f6b7758eae2ab11efe3943513a4016702e414b5df9f461f7fb6b907a13b736",
+      "before_lines": 42,
+      "after_lines": 16,
+      "native_range": {
+        "address": "0x25b9f70",
+        "size": 210,
+        "sha256": "436fef5ac3e62d10833593dd83168766ffc9e5dde1d8d202d845f79c44d092bb"
+      },
+      "rebuilt_range": {
+        "address": "0x25da8e0",
+        "size": 224,
+        "sha256": "dbab3216e95735379d70b3904e4716debb80b0fec7bc251f60144a0d533299f5"
+      }
+    },
+    {
+      "source": "cards/future_sight.c",
+      "name": "card_delay",
+      "before_definition_sha256": "9f4346c4eace440b019d9a8e4c5d0d41904499c5e8a82ac295e8b69f8c74264e",
+      "after_definition_sha256": "4fda240b7c4f458d7510cc0fa35a2d390484eef4a98e21870d94363f82d13b91",
+      "before_lines": 24,
+      "after_lines": 14,
+      "native_range": {
+        "address": "0x2574770",
+        "size": 258,
+        "sha256": "4e3e9b36b1803bb4ea28e539cedcdf67bac3620c77fceab08504f4345b92c664"
+      },
+      "rebuilt_range": {
+        "address": "0x21d2570",
+        "size": 272,
+        "sha256": "bde1359222bb0a40522952625ce646b12651deb2f8bbc10becf2030607ca5491"
+      }
+    },
+    {
+      "source": "cards/homelands.c",
+      "name": "card_memory_lapse",
+      "before_definition_sha256": "e1fbf8067d1b2ecebb41d50ce5da32f8954cc638c301533d91e2bf12d177378e",
+      "after_definition_sha256": "e13b8b504bd7af8e666b44a2e1f75ef41cbf7cd00fd503b30cc24c3dba15541d",
+      "before_lines": 24,
+      "after_lines": 16,
+      "native_range": {
+        "address": "0x2127430",
+        "size": 260,
+        "sha256": "1410a99ba9ef39a9d17e6d70a78fb47c754c2aa2ab0ec813d5f0d8d9f622eae5"
+      },
+      "rebuilt_range": {
+        "address": "0x220ec10",
+        "size": 272,
+        "sha256": "0ca772e85c62600eef3fb9dd11c6d2ce3ab01535821535bc0ebc66f22b1c7108"
+      }
+    },
+    {
+      "source": "cards/ixalan.c",
+      "name": "card_spell_swindle",
+      "before_definition_sha256": "8ba2600e401c6ced24322cfe0ac16a669e8a3036b72441d8fb82c9bcffcb76c7",
+      "after_definition_sha256": "0a5a9778c01b4c7971e05f39d717cb7c2bb7d1825b1a5f0041080ce3b58efb6c",
+      "before_lines": 32,
+      "after_lines": 20,
+      "native_range": {
+        "address": "0x2214270",
+        "size": 315,
+        "sha256": "eee3a9d436758832270b0ec1bbc729950a1fb38fdc26b38318577751f52631e0"
+      },
+      "rebuilt_range": {
+        "address": "0x2275c70",
+        "size": 320,
+        "sha256": "8720c84daf3ccf27ca35235526f1f687528a4c1c89109f52b8908c46bea174ac"
+      }
+    }
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "before_dll_sha256": "2585213b72d50889e0c2412a5264aa21606d0268d458f721f01493a0c53fffd8",
+  "before_debug_sha256": "8881863cb5cc07d80462577c51a319bbbef4143b49e28c95dda19ac7f1c7819e",
+  "baseline_fixture": {
+    "cases": 655360,
+    "mismatches": 0,
+    "plan": {
+      "entries": [
+        {
+          "side": 0,
+          "index": 0,
+          "name": "card_intervene",
+          "address": "0x25b9f70",
+          "size": 210,
+          "sha256": "436fef5ac3e62d10833593dd83168766ffc9e5dde1d8d202d845f79c44d092bb"
+        },
+        {
+          "side": 0,
+          "index": 1,
+          "name": "card_delay",
+          "address": "0x2574770",
+          "size": 258,
+          "sha256": "4e3e9b36b1803bb4ea28e539cedcdf67bac3620c77fceab08504f4345b92c664"
+        },
+        {
+          "side": 0,
+          "index": 2,
+          "name": "card_memory_lapse",
+          "address": "0x2127430",
+          "size": 260,
+          "sha256": "1410a99ba9ef39a9d17e6d70a78fb47c754c2aa2ab0ec813d5f0d8d9f622eae5"
+        },
+        {
+          "side": 0,
+          "index": 3,
+          "name": "card_spell_swindle",
+          "address": "0x2214270",
+          "size": 315,
+          "sha256": "eee3a9d436758832270b0ec1bbc729950a1fb38fdc26b38318577751f52631e0"
+        },
+        {
+          "side": 1,
+          "index": 0,
+          "name": "card_intervene",
+          "address": "0x25da950",
+          "size": 208,
+          "sha256": "9baac98c933615405a71946be7b47e8482739261c00fe00a0df5c727e42f913d"
+        },
+        {
+          "side": 1,
+          "index": 1,
+          "name": "card_delay",
+          "address": "0x21d2570",
+          "size": 304,
+          "sha256": "d41a0a0afae0f39082a51e5f3e0b79e99ebcd0497dba7a3362394c6dd6be173b"
+        },
+        {
+          "side": 1,
+          "index": 2,
+          "name": "card_memory_lapse",
+          "address": "0x220ec30",
+          "size": 304,
+          "sha256": "1125c7fcec96cb9ee6faa604c02c3433bb4ed088c8a5b15e696fd56fb7b39c04"
+        },
+        {
+          "side": 1,
+          "index": 3,
+          "name": "card_spell_swindle",
+          "address": "0x2275cb0",
+          "size": 368,
+          "sha256": "72d48ecf18e1dfd069b928744cd73c1f8ccdf974802bc11b3e87e91465b6fedc"
+        }
+      ],
+      "patches": [
+        {
+          "side": 0,
+          "function_address": "0x25b9f70",
+          "offset": 29,
+          "kind": "call",
+          "target": "card_counterspell",
+          "instruction": "0x25b9f8c",
+          "original": "0x24c1280"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b9f70",
+          "offset": 56,
+          "kind": "call",
+          "target": "card_counterspell",
+          "instruction": "0x25b9fa7",
+          "original": "0x24c1280"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b9f70",
+          "offset": 68,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x25b9fb3",
+          "original": "0x739190"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b9f70",
+          "offset": 77,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x25b9fbc",
+          "original": "0x739194"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b9f70",
+          "offset": 85,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x25b9fc4",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b9f70",
+          "offset": 137,
+          "kind": "call",
+          "target": "in_play",
+          "instruction": "0x25b9ff8",
+          "original": "0x26b32d0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b9f70",
+          "offset": 169,
+          "kind": "call",
+          "target": "is_what",
+          "instruction": "0x25ba018",
+          "original": "0x2681ca0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2574770",
+          "offset": 23,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2574786",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2574770",
+          "offset": 68,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x25747b2",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2574770",
+          "offset": 76,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x25747ba",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2574770",
+          "offset": 113,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x25747e0",
+          "original": "0x2692b30"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2574770",
+          "offset": 152,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x2574807",
+          "original": "0x2692a40"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2574770",
+          "offset": 176,
+          "kind": "call",
+          "target": "kill_card",
+          "instruction": "0x257481f",
+          "original": "0x26b5a00"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2574770",
+          "offset": 214,
+          "kind": "call",
+          "target": "pre_counterspell",
+          "instruction": "0x2574845",
+          "original": "0x26b5e90"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2574770",
+          "offset": 252,
+          "kind": "call",
+          "target": "suspend_a_card",
+          "instruction": "0x257486b",
+          "original": "0x20eaaf0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2127430",
+          "offset": 42,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x2127458",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2127430",
+          "offset": 53,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x2127463",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2127430",
+          "offset": 96,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x212748f",
+          "original": "0x2692b30"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2127430",
+          "offset": 142,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x21274bd",
+          "original": "0x2692a40"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2127430",
+          "offset": 172,
+          "kind": "call",
+          "target": "kill_card",
+          "instruction": "0x21274db",
+          "original": "0x26b5a00"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2127430",
+          "offset": 198,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21274f5",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2127430",
+          "offset": 232,
+          "kind": "call",
+          "target": "pre_counterspell",
+          "instruction": "0x2127517",
+          "original": "0x26b5e90"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2127430",
+          "offset": 254,
+          "kind": "call",
+          "target": "put_on_top_of_deck",
+          "instruction": "0x212752d",
+          "original": "0x26b4310"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2214270",
+          "offset": 42,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x2214298",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2214270",
+          "offset": 53,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x22142a3",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2214270",
+          "offset": 96,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x22142cf",
+          "original": "0x2692b30"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2214270",
+          "offset": 142,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x22142fd",
+          "original": "0x2692a40"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2214270",
+          "offset": 172,
+          "kind": "call",
+          "target": "kill_card",
+          "instruction": "0x221431b",
+          "original": "0x26b5a00"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2214270",
+          "offset": 206,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x221433d",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2214270",
+          "offset": 226,
+          "kind": "call",
+          "target": "get_cmc",
+          "instruction": "0x2214351",
+          "original": "0x2694100"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2214270",
+          "offset": 263,
+          "kind": "call",
+          "target": "real_counter_a_spell",
+          "instruction": "0x2214376",
+          "original": "0x26b64a0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2214270",
+          "offset": 293,
+          "kind": "call",
+          "target": "default_token_definition",
+          "instruction": "0x2214394",
+          "original": "0x2665470"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2214270",
+          "offset": 306,
+          "kind": "call",
+          "target": "generate_token",
+          "instruction": "0x22143a1",
+          "original": "0x26659d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25da950",
+          "offset": 29,
+          "kind": "call",
+          "target": "card_counterspell",
+          "instruction": "0x25da96c",
+          "original": "0x25b4cb0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25da950",
+          "offset": 56,
+          "kind": "call",
+          "target": "card_counterspell",
+          "instruction": "0x25da987",
+          "original": "0x25b4cb0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25da950",
+          "offset": 89,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x25da9a8",
+          "original": "0x739190"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25da950",
+          "offset": 98,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x25da9b1",
+          "original": "0x739194"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25da950",
+          "offset": 106,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x25da9b9",
+          "original": "0x266af20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25da950",
+          "offset": 161,
+          "kind": "call",
+          "target": "in_play",
+          "instruction": "0x25da9f0",
+          "original": "0x266b6f0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x25da950",
+          "offset": 193,
+          "kind": "call",
+          "target": "is_what",
+          "instruction": "0x25daa10",
+          "original": "0x2694c70"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21d2570",
+          "offset": 23,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21d2586",
+          "original": "0x266af20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21d2570",
+          "offset": 68,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x21d25b2",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21d2570",
+          "offset": 76,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x21d25ba",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21d2570",
+          "offset": 114,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x21d25e1",
+          "original": "0x268e1d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21d2570",
+          "offset": 152,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x21d2607",
+          "original": "0x268e1d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21d2570",
+          "offset": 192,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x21d262f",
+          "original": "0x268e0e0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21d2570",
+          "offset": 216,
+          "kind": "call",
+          "target": "kill_card",
+          "instruction": "0x21d2647",
+          "original": "0x266d9b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21d2570",
+          "offset": 254,
+          "kind": "call",
+          "target": "pre_counterspell",
+          "instruction": "0x21d266d",
+          "original": "0x26721b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21d2570",
+          "offset": 292,
+          "kind": "call",
+          "target": "suspend_a_card",
+          "instruction": "0x21d2693",
+          "original": "0x2589d20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x220ec30",
+          "offset": 45,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x220ec5b",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x220ec30",
+          "offset": 56,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x220ec66",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x220ec30",
+          "offset": 94,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x220ec8d",
+          "original": "0x268e1d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x220ec30",
+          "offset": 142,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x220ecbd",
+          "original": "0x268e1d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x220ec30",
+          "offset": 182,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x220ece5",
+          "original": "0x268e0e0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x220ec30",
+          "offset": 212,
+          "kind": "call",
+          "target": "kill_card",
+          "instruction": "0x220ed03",
+          "original": "0x266d9b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x220ec30",
+          "offset": 238,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x220ed1d",
+          "original": "0x266af20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x220ec30",
+          "offset": 272,
+          "kind": "call",
+          "target": "pre_counterspell",
+          "instruction": "0x220ed3f",
+          "original": "0x26721b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x220ec30",
+          "offset": 294,
+          "kind": "call",
+          "target": "put_on_top_of_deck",
+          "instruction": "0x220ed55",
+          "original": "0x266c300"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2275cb0",
+          "offset": 45,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x2275cdb",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2275cb0",
+          "offset": 56,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x2275ce6",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2275cb0",
+          "offset": 94,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x2275d0d",
+          "original": "0x268e1d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2275cb0",
+          "offset": 142,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x2275d3d",
+          "original": "0x268e1d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2275cb0",
+          "offset": 190,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x2275d6d",
+          "original": "0x268e0e0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2275cb0",
+          "offset": 220,
+          "kind": "call",
+          "target": "kill_card",
+          "instruction": "0x2275d8b",
+          "original": "0x266d9b0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2275cb0",
+          "offset": 254,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2275dad",
+          "original": "0x266af20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2275cb0",
+          "offset": 274,
+          "kind": "call",
+          "target": "get_cmc",
+          "instruction": "0x2275dc1",
+          "original": "0x26a7810"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2275cb0",
+          "offset": 311,
+          "kind": "call",
+          "target": "real_counter_a_spell",
+          "instruction": "0x2275de6",
+          "original": "0x2672570"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2275cb0",
+          "offset": 341,
+          "kind": "call",
+          "target": "default_token_definition",
+          "instruction": "0x2275e04",
+          "original": "0x26dcf40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2275cb0",
+          "offset": 354,
+          "kind": "call",
+          "target": "generate_token",
+          "instruction": "0x2275e11",
+          "original": "0x26dd050"
+        }
+      ],
+      "supporting_workers": [],
+      "indirect_constant_calls": [],
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "2585213b72d50889e0c2412a5264aa21606d0268d458f721f01493a0c53fffd8",
+        "ManalinkEh.dbg": "8881863cb5cc07d80462577c51a319bbbef4143b49e28c95dda19ac7f1c7819e"
+      },
+      "base_sha256": "fb924fa64413dbdb0d8408dbc1212ce01e516359fd299f728447b7e587d91d54",
+      "builder_sha256": "33cc160f3c25db190971e5e6b82bac5135fdd58f298f80b39b5ed2cc2d4f13f4",
+      "scope": "Actual native/rebuilt four counterspell caller bodies with fourteen opaque leaves and four globals. Ordered calls, full card records, token records, raw returns and globals over 8,192 environments, ten events and both players. Mutating leaves exercise live stack-target counts/pairs, resolution validation and post-CMC target rereads. No helper-leaf or whole-game proof."
+    },
+    "plan_sha256": "71405cfb5900554775ea0d343e5ac379c2e7c75fc515cf764c1f70a4f36c70a5",
+    "log_sha256": "c947a6fbfa0d74f82b581f89e6dd2fb0a68c219ed68b761c2940f4670d9ba3e8"
+  },
+  "scope": "Readability/control-flow restoration of four existing already-agreeing callers, not new handlers or a claimed gameplay bug fix. Intervene uses a live-count target loop, accepts only positive counterspell availability and returns it unchanged. Delay retrieves its instance on every event; Memory Lapse and Spell Swindle retrieve it only after successful resolution validation. Resolution re-reads target pairs after opaque pre-counter/CMC calls. Swindle caches mana value and truncates quantity to eight bits. The latter three delegate only CAN_CAST and affected CAST_SPELL to counterspell; their retarget events still return zero. No public signature or helper implementation changes.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "a7a44916bb971da1ca5dc0dec935108c5e42594d976fb2cfc05e62a920690e97",
+    "debug_sha256": "f3f295b0854e896e6d23f61d24d15f85ea2f60abb59ac46e527e566faed3ce95",
+    "build_log_sha256": "bdd4b0bcb1b6bd8c4ea1b3f3b4ab6098af2f0b025b3e8c2bd6b2612654f9201b",
+    "source_definitions": 4,
+    "full_file_projections": 4,
+    "raw_file_projections": 4,
+    "counterspell_fixture": {
+      "cases": 655360,
+      "mismatches": 0,
+      "plan": {
+        "entries": [
+          {
+            "side": 0,
+            "index": 0,
+            "name": "card_intervene",
+            "address": "0x25b9f70",
+            "size": 210,
+            "sha256": "436fef5ac3e62d10833593dd83168766ffc9e5dde1d8d202d845f79c44d092bb"
+          },
+          {
+            "side": 0,
+            "index": 1,
+            "name": "card_delay",
+            "address": "0x2574770",
+            "size": 258,
+            "sha256": "4e3e9b36b1803bb4ea28e539cedcdf67bac3620c77fceab08504f4345b92c664"
+          },
+          {
+            "side": 0,
+            "index": 2,
+            "name": "card_memory_lapse",
+            "address": "0x2127430",
+            "size": 260,
+            "sha256": "1410a99ba9ef39a9d17e6d70a78fb47c754c2aa2ab0ec813d5f0d8d9f622eae5"
+          },
+          {
+            "side": 0,
+            "index": 3,
+            "name": "card_spell_swindle",
+            "address": "0x2214270",
+            "size": 315,
+            "sha256": "eee3a9d436758832270b0ec1bbc729950a1fb38fdc26b38318577751f52631e0"
+          },
+          {
+            "side": 1,
+            "index": 0,
+            "name": "card_intervene",
+            "address": "0x25da8e0",
+            "size": 224,
+            "sha256": "dbab3216e95735379d70b3904e4716debb80b0fec7bc251f60144a0d533299f5"
+          },
+          {
+            "side": 1,
+            "index": 1,
+            "name": "card_delay",
+            "address": "0x21d2570",
+            "size": 272,
+            "sha256": "bde1359222bb0a40522952625ce646b12651deb2f8bbc10becf2030607ca5491"
+          },
+          {
+            "side": 1,
+            "index": 2,
+            "name": "card_memory_lapse",
+            "address": "0x220ec10",
+            "size": 272,
+            "sha256": "0ca772e85c62600eef3fb9dd11c6d2ce3ab01535821535bc0ebc66f22b1c7108"
+          },
+          {
+            "side": 1,
+            "index": 3,
+            "name": "card_spell_swindle",
+            "address": "0x2275c70",
+            "size": 320,
+            "sha256": "8720c84daf3ccf27ca35235526f1f687528a4c1c89109f52b8908c46bea174ac"
+          }
+        ],
+        "patches": [
+          {
+            "side": 0,
+            "function_address": "0x25b9f70",
+            "offset": 29,
+            "kind": "call",
+            "target": "card_counterspell",
+            "instruction": "0x25b9f8c",
+            "original": "0x24c1280"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b9f70",
+            "offset": 56,
+            "kind": "call",
+            "target": "card_counterspell",
+            "instruction": "0x25b9fa7",
+            "original": "0x24c1280"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b9f70",
+            "offset": 68,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x25b9fb3",
+            "original": "0x739190"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b9f70",
+            "offset": 77,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x25b9fbc",
+            "original": "0x739194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b9f70",
+            "offset": 85,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x25b9fc4",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b9f70",
+            "offset": 137,
+            "kind": "call",
+            "target": "in_play",
+            "instruction": "0x25b9ff8",
+            "original": "0x26b32d0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b9f70",
+            "offset": 169,
+            "kind": "call",
+            "target": "is_what",
+            "instruction": "0x25ba018",
+            "original": "0x2681ca0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2574770",
+            "offset": 23,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2574786",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2574770",
+            "offset": 68,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x25747b2",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2574770",
+            "offset": 76,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x25747ba",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2574770",
+            "offset": 113,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x25747e0",
+            "original": "0x2692b30"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2574770",
+            "offset": 152,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x2574807",
+            "original": "0x2692a40"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2574770",
+            "offset": 176,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x257481f",
+            "original": "0x26b5a00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2574770",
+            "offset": 214,
+            "kind": "call",
+            "target": "pre_counterspell",
+            "instruction": "0x2574845",
+            "original": "0x26b5e90"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2574770",
+            "offset": 252,
+            "kind": "call",
+            "target": "suspend_a_card",
+            "instruction": "0x257486b",
+            "original": "0x20eaaf0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2127430",
+            "offset": 42,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x2127458",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2127430",
+            "offset": 53,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x2127463",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2127430",
+            "offset": 96,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x212748f",
+            "original": "0x2692b30"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2127430",
+            "offset": 142,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x21274bd",
+            "original": "0x2692a40"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2127430",
+            "offset": 172,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x21274db",
+            "original": "0x26b5a00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2127430",
+            "offset": 198,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21274f5",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2127430",
+            "offset": 232,
+            "kind": "call",
+            "target": "pre_counterspell",
+            "instruction": "0x2127517",
+            "original": "0x26b5e90"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2127430",
+            "offset": 254,
+            "kind": "call",
+            "target": "put_on_top_of_deck",
+            "instruction": "0x212752d",
+            "original": "0x26b4310"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2214270",
+            "offset": 42,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x2214298",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2214270",
+            "offset": 53,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x22142a3",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2214270",
+            "offset": 96,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x22142cf",
+            "original": "0x2692b30"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2214270",
+            "offset": 142,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x22142fd",
+            "original": "0x2692a40"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2214270",
+            "offset": 172,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x221431b",
+            "original": "0x26b5a00"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2214270",
+            "offset": 206,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x221433d",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2214270",
+            "offset": 226,
+            "kind": "call",
+            "target": "get_cmc",
+            "instruction": "0x2214351",
+            "original": "0x2694100"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2214270",
+            "offset": 263,
+            "kind": "call",
+            "target": "real_counter_a_spell",
+            "instruction": "0x2214376",
+            "original": "0x26b64a0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2214270",
+            "offset": 293,
+            "kind": "call",
+            "target": "default_token_definition",
+            "instruction": "0x2214394",
+            "original": "0x2665470"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2214270",
+            "offset": 306,
+            "kind": "call",
+            "target": "generate_token",
+            "instruction": "0x22143a1",
+            "original": "0x26659d0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25da8e0",
+            "offset": 29,
+            "kind": "call",
+            "target": "card_counterspell",
+            "instruction": "0x25da8fc",
+            "original": "0x25b4c40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25da8e0",
+            "offset": 56,
+            "kind": "call",
+            "target": "card_counterspell",
+            "instruction": "0x25da917",
+            "original": "0x25b4c40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25da8e0",
+            "offset": 68,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x25da923",
+            "original": "0x739190"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25da8e0",
+            "offset": 77,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x25da92c",
+            "original": "0x739194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25da8e0",
+            "offset": 85,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x25da934",
+            "original": "0x266aec0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25da8e0",
+            "offset": 137,
+            "kind": "call",
+            "target": "in_play",
+            "instruction": "0x25da968",
+            "original": "0x266b690"
+          },
+          {
+            "side": 1,
+            "function_address": "0x25da8e0",
+            "offset": 169,
+            "kind": "call",
+            "target": "is_what",
+            "instruction": "0x25da988",
+            "original": "0x2694c10"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21d2570",
+            "offset": 23,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21d2586",
+            "original": "0x266aec0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21d2570",
+            "offset": 68,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x21d25b2",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21d2570",
+            "offset": 76,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x21d25ba",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21d2570",
+            "offset": 113,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x21d25e0",
+            "original": "0x268e170"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21d2570",
+            "offset": 152,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x21d2607",
+            "original": "0x268e080"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21d2570",
+            "offset": 176,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x21d261f",
+            "original": "0x266d950"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21d2570",
+            "offset": 214,
+            "kind": "call",
+            "target": "pre_counterspell",
+            "instruction": "0x21d2645",
+            "original": "0x2672150"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21d2570",
+            "offset": 252,
+            "kind": "call",
+            "target": "suspend_a_card",
+            "instruction": "0x21d266b",
+            "original": "0x2589cb0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x220ec10",
+            "offset": 42,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x220ec38",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x220ec10",
+            "offset": 53,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x220ec43",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x220ec10",
+            "offset": 96,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x220ec6f",
+            "original": "0x268e170"
+          },
+          {
+            "side": 1,
+            "function_address": "0x220ec10",
+            "offset": 142,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x220ec9d",
+            "original": "0x268e080"
+          },
+          {
+            "side": 1,
+            "function_address": "0x220ec10",
+            "offset": 172,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x220ecbb",
+            "original": "0x266d950"
+          },
+          {
+            "side": 1,
+            "function_address": "0x220ec10",
+            "offset": 198,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x220ecd5",
+            "original": "0x266aec0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x220ec10",
+            "offset": 232,
+            "kind": "call",
+            "target": "pre_counterspell",
+            "instruction": "0x220ecf7",
+            "original": "0x2672150"
+          },
+          {
+            "side": 1,
+            "function_address": "0x220ec10",
+            "offset": 254,
+            "kind": "call",
+            "target": "put_on_top_of_deck",
+            "instruction": "0x220ed0d",
+            "original": "0x266c2a0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2275c70",
+            "offset": 42,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x2275c98",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2275c70",
+            "offset": 53,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x2275ca3",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2275c70",
+            "offset": 96,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x2275ccf",
+            "original": "0x268e170"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2275c70",
+            "offset": 142,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x2275cfd",
+            "original": "0x268e080"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2275c70",
+            "offset": 172,
+            "kind": "call",
+            "target": "kill_card",
+            "instruction": "0x2275d1b",
+            "original": "0x266d950"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2275c70",
+            "offset": 206,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2275d3d",
+            "original": "0x266aec0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2275c70",
+            "offset": 226,
+            "kind": "call",
+            "target": "get_cmc",
+            "instruction": "0x2275d51",
+            "original": "0x26a77b0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2275c70",
+            "offset": 263,
+            "kind": "call",
+            "target": "real_counter_a_spell",
+            "instruction": "0x2275d76",
+            "original": "0x2672510"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2275c70",
+            "offset": 293,
+            "kind": "call",
+            "target": "default_token_definition",
+            "instruction": "0x2275d94",
+            "original": "0x26dcee0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2275c70",
+            "offset": 306,
+            "kind": "call",
+            "target": "generate_token",
+            "instruction": "0x2275da1",
+            "original": "0x26dcff0"
+          }
+        ],
+        "supporting_workers": [],
+        "indirect_constant_calls": [],
+        "inputs": {
+          ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+          "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+          "ManalinkEh.dll": "a7a44916bb971da1ca5dc0dec935108c5e42594d976fb2cfc05e62a920690e97",
+          "ManalinkEh.dbg": "f3f295b0854e896e6d23f61d24d15f85ea2f60abb59ac46e527e566faed3ce95"
+        },
+        "base_sha256": "fb924fa64413dbdb0d8408dbc1212ce01e516359fd299f728447b7e587d91d54",
+        "builder_sha256": "33cc160f3c25db190971e5e6b82bac5135fdd58f298f80b39b5ed2cc2d4f13f4",
+        "scope": "Actual native/rebuilt four counterspell caller bodies with fourteen opaque leaves and four globals. Ordered calls, full card records, token records, raw returns and globals over 8,192 environments, ten events and both players. Mutating leaves exercise live stack-target counts/pairs, resolution validation and post-CMC target rereads. No helper-leaf or whole-game proof."
+      },
+      "plan_sha256": "822ec83ec512f80a8c2e6b4110e96e45edc3857df546a7c2adac25b6c6038afd",
+      "log_sha256": "c947a6fbfa0d74f82b581f89e6dd2fb0a68c219ed68b761c2940f4670d9ba3e8",
+      "compiler_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "generated_source_sha256": "9a822bc64742ddc600d0559f8112cddfe558734ec2844595e104201333e0e628"
+    },
+    "checker_sha256": "b72f62be4d0e10da693ab1554b2f8ab67d87479ad671befcdd12fb3ed04f6b40",
+    "staging": "preserved",
+    "scope": "Four canonical/raw source projections and actual native/rebuilt callers under fourteen opaque leaf bindings and four globals. Both baseline and restructured callers agree across the bounded environments. This does not claim helper-leaf, arbitrary-alias, exception or whole-game equivalence; no full comparison rerun."
+  }
+}

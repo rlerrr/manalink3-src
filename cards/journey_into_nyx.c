@@ -252,27 +252,21 @@ int card_dawnbringer_charioteers(int player, int card, event_t event){
 
 int card_deicide(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  target_definition_t td;
   if (!IS_GS_EVENT(player, card, event))
-  {
     return 0;
-  }
-  default_target_definition(player, card, &td, 4);
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_ENCHANTMENT);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
-      instance = get_card_instance(player, card);
-      result =
-          has_subtype(instance->targets[0].player, instance->targets[0].card, SUBTYPE_GOD);
+      card_instance_t *instance = get_card_instance(player, card);
+      int find_more = has_subtype(instance->targets[0].player, instance->targets[0].card, SUBTYPE_GOD);
       kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
-      if (result != 0)
+      if (find_more)
       {
-        result = get_id(instance->targets[0].player, instance->targets[0].card);
-        lobotomy_effect(player, instance->targets[0].player, result, -1, 0);
+        int id = get_id(instance->targets[0].player, instance->targets[0].card);
+        lobotomy_effect(player, instance->targets[0].player, id, -1, 0);
       }
     }
     kill_card(player, card, KILL_DESTROY);
@@ -651,9 +645,9 @@ int card_oppressive_rays(int player, int card, event_t event)
       instance->targets[1].card = instance->damage_target_card;
     }
   }
-  bool tax_context = trigger_condition == 0xdc
+  bool tax_context = trigger_condition == TRIGGER_PAY_TO_ATTACK
                          ? current_phase == 0x15 && reason_for_trigger_controller == current_turn
-                         : trigger_condition == 0xdd && current_phase == 0x17 &&
+                         : trigger_condition == TRIGGER_PAY_TO_BLOCK && current_phase == 0x17 &&
                                reason_for_trigger_controller != current_turn;
   if (tax_context && card == affected_card && player == affected_card_controller &&
       (instance = in_play(player, card), instance != NULL) && instance->info_slot == 0 &&
@@ -1752,47 +1746,30 @@ int card_aspect_of_gorgon(int player, int card, event_t event)
 
 static void bloodcrazed_hoplite_effect(int player, int card, int n)
 {
-  int opponent;
-  card_instance_t *instance;
-  int target_available;
-
-  int counters_remaining;
-  target_definition_t td;
-  if (0 < n)
+  if (n <= 0)
+    return;
+  int opponent = 1 - player;
+  for (int remaining = n; remaining > 0; --remaining)
   {
-    opponent = 1 - player;
-    counters_remaining = n;
-    do
+    card_instance_t *instance = get_card_instance(player, card);
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    td.allow_cancel = 0;
+    td.allowed_controller = td.preferred_controller = opponent;
+    if (IS_AI(player))
     {
-      instance = get_card_instance(player, card);
-      default_target_definition(player, card, &td, 2);
-      td.allow_cancel = 0;
-      td.allowed_controller = opponent;
-      td.preferred_controller = opponent;
-      if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
-      {
-        td.special = 0x40000;
-        td.extra = 0;
-        target_available = can_target(&td);
-      }
-      else
-      {
-        target_available = can_target(&td);
-      }
-      if (target_available == 0)
-      {
-        return;
-      }
-      if (pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS") != 0)
-      {
-        instance->number_of_targets = '\0';
-        remove_counters(player, card, instance->targets[0].player, instance->targets[0].card,
-                        COUNTER_P1_P1, 1);
-      }
-      counters_remaining = counters_remaining + -1;
-    } while (counters_remaining != 0);
+      td.special = TARGET_SPECIAL_REQUIRES_COUNTER;
+      td.extra = 0;
+    }
+    if (!can_target(&td))
+      return;
+    if (pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS"))
+    {
+      instance->number_of_targets = 0;
+      remove_counters(player, card, instance->targets[0].player,
+                      instance->targets[0].card, COUNTER_P1_P1, 1);
+    }
   }
-  return;
 }
 int card_bloodcrazed_hoplite(int player, int card, event_t event)
 {
@@ -1807,7 +1784,7 @@ int card_bloodcrazed_hoplite(int player, int card, event_t event)
     add_counters(player, card, player, card, COUNTER_P1_P1, 1);
   }
   current_trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     current_trigger = xtrigger_impl_value_dont_use_directly;
   }
@@ -3179,7 +3156,7 @@ int card_goldenhide_ox(int player, int card, event_t event)
 
 int card_heroes_bane(int player, int card, event_t event)
 {
-  int card_00;
+  int pc;
   int result;
   card_instance_t *instance;
   int num;
@@ -3188,12 +3165,12 @@ int card_heroes_bane(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     result = instance->parent_controller;
-    card_00 = instance->parent_card;
-    instance = in_play(result, card_00);
+    pc = instance->parent_card;
+    instance = in_play(result, pc);
     if (instance != NULL)
     {
-      num = get_power(result, card_00);
-      add_counters(player, card, result, card_00, COUNTER_P1_P1, num);
+      num = get_power(result, pc);
+      add_counters(player, card, result, pc, COUNTER_P1_P1, num);
     }
   }
   else if (event - EVENT_POW_BOOST < 2)
@@ -3201,8 +3178,7 @@ int card_heroes_bane(int player, int card, event_t event)
     result = card_yew_spirit(player, card, event);
     return result;
   }
-  result = generic_activated_ability(player, card, event, 0, 2, 0, 0, 2, 0, 0, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 0, 2, 0, 0, 2, 0, 0, 0, NULL, NULL);
 }
 
 int card_humbler_of_mortals(int player, int card, event_t event)
@@ -3560,7 +3536,7 @@ int card_solidarity_of_heroes(int player, int card, event_t event)
       ((ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0)) &&
        (event - EVENT_CAST_SPELL & 0xfffffff7) == 0))
   {
-    td.special = 0x40000;
+    td.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td.extra = 0;
   }
   if (event == EVENT_CAN_CAST)
@@ -3701,21 +3677,11 @@ int card_swarmborn_giant(int player, int card, event_t event)
 
 static int is_creature_planeswalker_aura(int iid, int unused, int player, int card)
 {
-  int aura_or_type_match;
-  int matches;
-  aura_or_type_match = is_what(-1, iid, 0x102);
-  matches = 1;
-  if (aura_or_type_match == 0)
-  {
-    aura_or_type_match = is_what(-1, iid, 4);
-    matches = 0;
-    if (aura_or_type_match != 0)
-    {
-      matches = has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_AURA);
-      return (unsigned int)(matches != 0);
-    }
-  }
-  return matches;
+  if (is_what(-1, iid, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER))
+    return 1;
+  if (!is_what(-1, iid, TYPE_ENCHANTMENT))
+    return 0;
+  return has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_AURA) != 0;
 }
 
 int card_ajani_mentor_of_heroes(int player, int card, event_t event)

@@ -1,0 +1,227 @@
+{
+  "format": 1,
+  "status": "Nine residual pack/ward/mana choices reconstructed; one build, 15,169 fixed slots, 18 typed outcomes, 9 scope contracts and 5 full-file projections pass.",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "before_rebuilt_sha256": "85499e10ed5e9fbd683ec1fd5dac729e62969aefe9389ae1a20b9b3006e705ab",
+  "before_debug_sha256": "f9213310f08e7a9886619662cad35b91c6862386bc34905c792fd225bd19b014",
+  "files": [
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "before_sha256": "b401717c38e072edf16b0bf51b9ea539d6cd2aa323f8524d327ab92ee442fc9e",
+      "after_sha256": "ba46030859a9879c70f6f82cdefdfa4f4714b83eef4476ec6c4459792508822a",
+      "line_count": 3719
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "before_sha256": "9a68179f03191027e337847fe929ad136b3a4135cb4d15b3e12ad0bcada0934b",
+      "after_sha256": "1e01f20b3c10b2956cb9e1e376d825620087d76bc2605f7981e8bd0775d36172",
+      "line_count": 10235
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "before_sha256": "fc9b9b32aa0a1aa033dd49f0b3fedcfe40c72dec1e13f7b6ba2ec576e2144fd5",
+      "after_sha256": "af879e7cc9a7a020f677f19e8f0d4b0a9750963658acc6eeef61b73f206c9a73",
+      "line_count": 5643
+    },
+    {
+      "source": "functions/packs.c",
+      "before_sha256": "a9cc89866b54b2796b9adb93e0559ce3a118672a1fbd4a1aae28a9ccfc3231c8",
+      "after_sha256": "1c55cf5000e27c65b33ccd12e34d156b39e5c98dcc6798213582c9aab8e1f1a4",
+      "line_count": 2877
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "before_sha256": "884b4be6f13b90d528b9a68fb928879556db83bd58328805f3689687e87a9b67",
+      "after_sha256": "f37e2aa2cd57a2d28f27a311c2cfafe71080371b758550c004337dc86536ab2b",
+      "line_count": 1183
+    }
+  ],
+  "functions": [
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "card_crush_contraband",
+      "before_definition_sha256": "94778055d34121b94832815bf393693db30c1d26a6adc2836eeb2f736fe79327",
+      "after_definition_sha256": "222f576c93f21b55d300ed0db368526f450f64557a09414cb007194f57348494"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "ward_action",
+      "before_definition_sha256": "1ba4f38fef538c8537b7c6f6d721731a7e361d93501bb320a2a0cf2542140d46",
+      "after_definition_sha256": "8d2f599496c30a58f00c61a3f150ed1370c2eb9f35f6c16690b3f3d0495152a3"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "charge_phyrexian_mana_impl",
+      "before_definition_sha256": "aa220a3a33d95c20151b5fc76084bd1936cf53b22f7f69cd2a90058450fa5bea",
+      "after_definition_sha256": "5cc3522e3b70f1c56fd3472013c77036a65b6b4b69a78e4e3066d9452a94b355"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "has_phyrexian_mana",
+      "before_definition_sha256": "d72d7e1855a642d8d16ea27559b040725c9721876f0067aecb532ece870eb010",
+      "after_definition_sha256": "287ac1e9e908c8aa6ef36f87c9d26acaa76436ef6a56a1880af237021162333c"
+    },
+    {
+      "source": "functions/packs.c",
+      "name": "get_csvid_choices",
+      "before_definition_sha256": "34167bad8f13b289cd106fda3a10d0ad39eb4187d86d2a2d311fa94fce0e2607",
+      "after_definition_sha256": "9d55c2e6948c3314b1f427e3b8b1e16c2066abd4babf5005da3e984867bb8990"
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "name": "effect_may_play_card_from_exile",
+      "before_definition_sha256": "537916c659d4ea78a29350cbc0f941af69bb61eda5cd055e230dc2b1ca35f984",
+      "after_definition_sha256": "b6927d41ce093e73cf4a1a03da185679f37dc493dfca34a59d44291c0a5657b1"
+    }
+  ],
+  "references": [
+    {
+      "source": "functions/packs.c",
+      "function": "get_csvid_choices",
+      "before": "((pool_value != 2) - 1 & 0xffffffac) + 0x77",
+      "after": "(pool_value == 2 ? 35U : 119U)",
+      "old_kernel": "((b) - 1 & 0xffffffac) + 0x77",
+      "new_kernel": "(b ? 119U : 35U)",
+      "reason": "Recover the native rarity-dependent pool weight.",
+      "offset": 61214,
+      "end": 61257,
+      "line": 2643
+    },
+    {
+      "source": "functions/packs.c",
+      "function": "get_csvid_choices",
+      "before": "(rarities->rarity_in_expansion[expansion] != '\\x01') - 1 & 0xe",
+      "after": "(rarities->rarity_in_expansion[expansion] == '\\x01' ? 14 : 0)",
+      "old_kernel": "(b) - 1 & 0xe",
+      "new_kernel": "(b ? 0 : 14)",
+      "reason": "Recover the Shadows over Innistrad copy weight.",
+      "offset": 61631,
+      "end": 61693,
+      "line": 2657
+    },
+    {
+      "source": "functions/packs.c",
+      "function": "get_csvid_choices",
+      "before": "(pool_value - 1 & 0xfffffff3) + 0xe",
+      "after": "(pool_value ? 14U : 1U)",
+      "old_kernel": "(b - 1 & 0xfffffff3) + 0xe",
+      "new_kernel": "(b ? 14U : 1U)",
+      "reason": "The preceding assignment restricts pool_value to the Boolean rarity comparison result.",
+      "offset": 61936,
+      "end": 61971,
+      "line": 2664
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "function": "card_crush_contraband",
+      "before": "(-(unsigned int)!opponent_artifact & 0xfffffffc) + 5",
+      "after": "(opponent_artifact ? 5U : 1U)",
+      "old_kernel": "(-(unsigned int)!b & 0xfffffffc) + 5",
+      "new_kernel": "(b ? 5U : 1U)",
+      "reason": "Expose the opponent-artifact AI priority.",
+      "offset": 53924,
+      "end": 53976,
+      "line": 1747
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "function": "ward_action",
+      "before": "((5 < life[tcp] - life_to_pay) - 1 & 0xfffffff1) + 0x14",
+      "after": "(5 < life[tcp] - life_to_pay ? 20U : 5U)",
+      "old_kernel": "((b) - 1 & 0xfffffff1) + 0x14",
+      "new_kernel": "(b ? 20U : 5U)",
+      "reason": "Expose the life-payment AI priority without changing its subtraction/comparison.",
+      "offset": 320711,
+      "end": 320766,
+      "line": 10217
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "function": "charge_phyrexian_mana_impl",
+      "before": "(-(unsigned int)(clred_artifact == 0) ^ 0xffffffff) & 6",
+      "after": "(unsigned int)(clred_artifact == 0 ? COLOR_COLORLESS : COLOR_ARTIFACT)",
+      "old_kernel": "(-(unsigned int)b ^ 0xffffffff) & 6",
+      "new_kernel": "(unsigned int)(b ? COLOR_COLORLESS : COLOR_ARTIFACT)",
+      "reason": "Recover the artifact-versus-colorless mana selector.",
+      "offset": 173916,
+      "end": 173971,
+      "line": 5289
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "function": "has_phyrexian_mana",
+      "before": "(-(unsigned int)(clred_artifact == 0) ^ 0xffffffff) & 6",
+      "after": "(unsigned int)(clred_artifact == 0 ? COLOR_COLORLESS : COLOR_ARTIFACT)",
+      "old_kernel": "(-(unsigned int)b ^ 0xffffffff) & 6",
+      "new_kernel": "(unsigned int)(b ? COLOR_COLORLESS : COLOR_ARTIFACT)",
+      "reason": "Recover the artifact-versus-colorless mana selector.",
+      "offset": 176824,
+      "end": 176879,
+      "line": 5386
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "function": "effect_may_play_card_from_exile",
+      "before": "(-(unsigned int)(play_check_or_choice == 0) ^ 0xffffffff) & 6",
+      "after": "(unsigned int)(play_check_or_choice == 0 ? COLOR_COLORLESS : COLOR_ARTIFACT)",
+      "old_kernel": "(-(unsigned int)b ^ 0xffffffff) & 6",
+      "new_kernel": "(unsigned int)(b ? COLOR_COLORLESS : COLOR_ARTIFACT)",
+      "reason": "Recover the same mana-color selection for availability checks.",
+      "offset": 33554,
+      "end": 33615,
+      "line": 1002
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "function": "effect_may_play_card_from_exile",
+      "before": "(-(unsigned int)(play_check_or_choice == 0) ^ ~COLOR_COLORLESS) & COLOR_ARTIFACT",
+      "after": "(unsigned int)(play_check_or_choice == 0 ? COLOR_COLORLESS : COLOR_ARTIFACT)",
+      "old_kernel": "(-(unsigned int)b ^ ~COLOR_COLORLESS) & COLOR_ARTIFACT",
+      "new_kernel": "(unsigned int)(b ? COLOR_COLORLESS : COLOR_ARTIFACT)",
+      "reason": "Keep the payment selector consistent with the availability selector.",
+      "offset": 34773,
+      "end": 34853,
+      "line": 1038
+    }
+  ],
+  "native_color_enumerators": {
+    "COLOR_COLORLESS": 0,
+    "COLOR_ARTIFACT": 6
+  },
+  "pool_boolean_flow": {
+    "source": "functions/packs.c",
+    "before_context": "pool_value = (unsigned int)(rarities->rarity_in_expansion[expansion] == '\\x01');\n              if (expansion == EXPANSION_ELDRITCH_MOON)\n              {\n                pool_value = (pool_value - 1 & 0xfffffff3) + 0xe;",
+    "context_sha256": "a8ae15cce5e36a6326367ef13073de016eee05daad5308c5915dd62468b5ef71",
+    "property": "The unsigned pool_value assignment is exactly a comparison converted to unsigned int; only the named expansion test occurs before its use, so values are 0 or 1."
+  },
+  "typed_outcomes": 18,
+  "context_type_contracts": 9,
+  "contract_plan": {
+    "path": ".recovery/reccmp/residual-choice-plan-c641.json",
+    "sha256": "9924478a00b92321e8ee13e8e00bf34f216870c9c222ece7a565f486de1b4585",
+    "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+    "kernel_source_sha256": "61361efc0ddf2e7f38d5c50ee461df33ee36299391039812caef861e445b0745",
+    "kernel_executable_sha256": "7f4fca4638ff28f0b238810d928401d30468ec433849748a1747b721a9ea4297",
+    "kernel_log_sha256": "b8803f3e09a3f82cfa10791c72516980cb87ab8956061f395934b630c86a7426"
+  },
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "scope": "Nine expression reconstructions, not native whole-function equivalence. Both Boolean outcomes and exact int/unsigned-int types agree; one pack expression additionally uses the recorded dominating Boolean assignment. Original conditions are evaluated once, and all source line counts remain unchanged.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "d7f067ed03fa3db885444bd17a418bb32add89694ec86436ca50531b8821bedd",
+    "dbg_sha256": "8126dd0c96fdb19f48cdb10a750e47acbf1d17a8f61bf418a835f540afa33b09",
+    "expressions": 9,
+    "functions": 6,
+    "source_files": 5,
+    "typed_outcomes": 18,
+    "original_scope_type_contracts": 9,
+    "full_file_projections": 5,
+    "independent_expression_range_projections": 5,
+    "unchanged_line_counts": 5,
+    "pool_boolean_dominating_assignment": "preserved",
+    "staging": "preserved",
+    "scope": "Nine expression reconstructions, not native whole-function equivalence. Both Boolean outcomes and exact int/unsigned-int types agree; one pack expression additionally uses the recorded dominating Boolean assignment. Original conditions are evaluated once, and all source line counts remain unchanged."
+  }
+}

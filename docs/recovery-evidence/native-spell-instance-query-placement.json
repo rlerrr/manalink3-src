@@ -1,0 +1,2076 @@
+{
+  "format": 1,
+  "status": "Six existing handlers across four units restore native query placement: five storm spell-prefix getters and Lobotomy final target-player reload after selection callbacks. One grouped build passes all 15,169 entry slots; twelve native and twelve rebuilt getter sites and final getter-to-effect loads are recorded. Eleven additional leads have scoped read-only observations; no new bodies or whole-gameplay proof.",
+  "files": [
+    {
+      "source": "cards/future_sight.c",
+      "before_bytes_sha256": "df1fa8b9e20b68b050889026c2673f7243baa470fc794c844048b78b255ef16d",
+      "after_bytes_sha256": "c9e909a25ce3033520ca7cd6f952f306047d416fbc475c944fbe7cc98924260c",
+      "before_sha256": "ff8a46bca67ae02b840ba3bae2da147b20cd95ccd66fa1af90eef0c8c299bda0",
+      "after_sha256": "f3ecf022085c6fa14d2b76f931a52304f20030ec9f4741016d5dd1e4a5c0a3fa"
+    },
+    {
+      "source": "cards/scourge.c",
+      "before_bytes_sha256": "7140de4df79b2f3d16314e52c64839bdbacd68ebb35bd926ff729b46c5e2de08",
+      "after_bytes_sha256": "9f1ed3b16ff1da242a34dd2dd3b1158385935bc64efacaf9dbb9e73d65fb2705",
+      "before_sha256": "648fa36d2865c8a06a0dfe58251f303fef17037cd5ee815e7e2bfae4a19f6ed9",
+      "after_sha256": "9b8d6efecf496361d924e1c602db3da50b2e2791323dec80256c07600ef327c3"
+    },
+    {
+      "source": "cards/tempest.c",
+      "before_bytes_sha256": "c1a809b3222682f9111922e204691a836e3f71220a3aa4e0765f01a04d536b91",
+      "after_bytes_sha256": "304da4ba1b71a3de17a1595659da786f6481eaa52802e03c74bb583447d68f4e",
+      "before_sha256": "a78f3ec154ffd71b40e25337162d7e28370742b865fbeea4a3fa2bb936acd741",
+      "after_sha256": "68391836f0e58bcc701fceef859b9533afe1bde023a2401fa05b954feaf4767c"
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "before_bytes_sha256": "5f73763156ad6b4edd68bc164c51fd14f1379203bf13fe858577b97033a53602",
+      "after_bytes_sha256": "c554c1a226b9e284494e31fb8b81604c768df3220aacb122b6b5ed49ab0f14f7",
+      "before_sha256": "b21023acf5a004bf9a558f34866f2640fc03c28db6d5b6485b7f0f41f5c2fe73",
+      "after_sha256": "2d8e9ad00133993f1f71960fe9dffdbd2a00fc32ccf6ede9010380151f7af099"
+    }
+  ],
+  "source_reviews": [
+    {
+      "name": "card_volcanic_awakening",
+      "source": "cards/time_spiral.c",
+      "address": "0x20ff0b0",
+      "before_sha256": "c75036d749e3ebbff3511fc93b8714e72ad1b1bd569939e2f991f5841da9b088",
+      "after_sha256": "95100b0d00e875677135473b7dcffab1a8f482b41a901acf14b79691bfbc485b",
+      "kind": "native_spell_prefix_instance_query",
+      "reason": "Restore one get_card_instance after target setup on every accepted GS event, before resolution dispatch and target validation. Keep EVENT_QUERY early return and unaffected-cast guards. Native duplicated prefixes perform this query even where its result is unused; the resolution path retains the same saved instance pointer and live target-field reads after callbacks. No card-rule change or whole-function/gameplay equivalence claim.",
+      "native_range": {
+        "address": "0x20ff0b0",
+        "size": 371,
+        "sha256": "2875e72b4dae5d039adccbd05e597d5dd49b17602ca0a694942329605814d36f",
+        "bytes_hex": "5589e557565383ec788b5d108b750c81fb005d00000f841d01000083fb74742083fb6c0f858700000031c03b358c397a0075718b0d848c7300394d08756666908b45088d7da0890424c744240c01000000897c240889742404e8321156008b450889742404890424e893395b008b4508c744241c00000000c744241801000000c744241420b47202897c2410c744240c01000000895c240889742404890424e8fc105a0083c4785b5e5f5dc38d74260083fb710f95c281fb000400000f95c084c2740c81fb005400000f859d0000008b45088d7da0890424c744240c01000000897c240889742404e8a31056008b450889742404890424e804395b0083fb710f8568ffffff893c2489459ce8902556008b4d9c85c075398b4508c74424080200000089742404890424e822685b00e93affffff8d7426009031c0833d98917300040f94c083c4785b5e5f5dc38d742600c7442408020000008b4178894424048b4174890424e8e6675b00ebab31c0e931ffffff"
+      },
+      "native_decomp": "/* October 2022 ManalinkEh.dll: card_volcanic_awakening @ 0x20ff0b0; DWARF unit cards/time_spiral.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int card_volcanic_awakening(int player, int card, event_t event) */\n\nint card_volcanic_awakening(int player,int card,event_t event)\n\n{\n  int iVar1;\n  card_instance_t *pcVar2;\n  target_definition_t td;\n  \n                    /* Unresolved local var: card_instance_t * instance@[???] */\n  if (event == EVENT_QUERY) {\n    return (uint)(attacking_card == 4);\n  }\n  if (event != EVENT_CAN_CAST) {\n    if (event != EVENT_CAST_SPELL) {\n      if ((event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET) &&\n         (event != EVENT_CHANGE_TARGET)) {\n        return 0;\n      }\n      default_target_definition(player,card,&td,1);\n      pcVar2 = get_card_instance(player,card);\n      if (event == EVENT_RESOLVE_SPELL) {\n        iVar1 = valid_target(&td);\n        if (iVar1 != 0) {\n          kill_card(pcVar2->targets[0].player,pcVar2->targets[0].card,KILL_DESTROY);\n        }\n        kill_card(player,card,KILL_DESTROY);\n      }\n      goto LAB_020ff11d;\n    }\n    if (card != affected_card) {\n      return 0;\n    }\n    if (player != affected_card_controller) {\n      return 0;\n    }\n  }\n  default_target_definition(player,card,&td,1);\n  get_card_instance(player,card);\nLAB_020ff11d:\n  iVar1 = generic_spell(player,card,event,1,&td,\"TARGET_LAND\",1,(test_definition_t *)0x0);\n  return iVar1;\n}\n\n",
+      "native_decomp_sha256": "29b9ec17e2da4c791059140d202dee97c6ed2896aee12158dfa9412097a2a109"
+    },
+    {
+      "name": "card_tendrils_of_agony",
+      "source": "cards/scourge.c",
+      "address": "0x24fdc80",
+      "before_sha256": "da821b2391c7c892f51d63b7ff347659e7fe72ace0f845b39da0378722f19cd8",
+      "after_sha256": "2fc6606a447604fd07aef428455b5509410890ad61818d1b957af4c5017e03be",
+      "kind": "native_spell_prefix_instance_query",
+      "reason": "Restore one get_card_instance after target setup on every accepted GS event, before resolution dispatch and target validation. Keep EVENT_QUERY early return and unaffected-cast guards. Native duplicated prefixes perform this query even where its result is unused; the resolution path retains the same saved instance pointer and live target-field reads after callbacks. No card-rule change or whole-function/gameplay equivalence claim.",
+      "native_range": {
+        "address": "0x24fdc80",
+        "size": 381,
+        "sha256": "7808346c683f345f3d5491b217dbb0fb2d50c25fb9e666ea3eb264c6b274ad0d",
+        "bytes_hex": "5589e557565383ec78817d10005d00008b7d088b750c0f8424010000837d1074741e837d106c0f858400000031c03b358c397a00756f3b3d848c7300756766908d5da0c744240c02000000895c240889742404893c24e86525160089742404893c24c745ac00100000e8c24d1b008b4510c744241c00000000c744241801000000c744241491087502895c2410c744240c010000008944240889742404893c24e82b251a0083c4785b5e5f5dc38d7600837d10717409817d100004000075698d5da0c744240c02000000895c240889742404893c24e8e624160089742404893c24c745ac00100000e8434d1b00837d107189459c0f8574ffffff891c24e8ce3916008b4d9c85c0754fc74424080200000089742404893c24e8637c1b00e94cffffff8db600000000817d10005400000f840bffffff31c0e969ffffff8d74260031c0833d98917300040f94c083c4785b5e5f5dc38d742600c7442404020000008b4174890424e8c5131900c744240402000000893c24e8051b1900eb8c"
+      },
+      "native_decomp": "/* October 2022 ManalinkEh.dll: card_tendrils_of_agony @ 0x24fdc80; DWARF unit cards/scourge.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int card_tendrils_of_agony(int player, int card, event_t event) */\n\nint card_tendrils_of_agony(int player,int card,event_t event)\n\n{\n  int iVar1;\n  card_instance_t *pcVar2;\n  target_definition_t td;\n  \n                    /* Unresolved local var: card_instance_t * instance@[???] */\n  if (event == EVENT_QUERY) {\n    return (uint)(attacking_card == 4);\n  }\n  if (event != EVENT_CAN_CAST) {\n    if (event == EVENT_CAST_SPELL) {\n      if (card != affected_card) {\n        return 0;\n      }\n      if (player != affected_card_controller) {\n        return 0;\n      }\n    }\n    else {\n      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) {\n        default_target_definition(player,card,&td,2);\n        td.zone = 0x1000;\n        pcVar2 = get_card_instance(player,card);\n        if (event == EVENT_RESOLVE_SPELL) {\n          iVar1 = valid_target(&td);\n          if (iVar1 != 0) {\n            lose_life(pcVar2->targets[0].player,2);\n            gain_life(player,2);\n          }\n          kill_card(player,card,KILL_DESTROY);\n        }\n        goto LAB_024fdcee;\n      }\n      if (event != EVENT_CHANGE_TARGET) {\n        return 0;\n      }\n    }\n  }\n  default_target_definition(player,card,&td,2);\n  td.zone = 0x1000;\n  get_card_instance(player,card);\nLAB_024fdcee:\n  iVar1 = generic_spell(player,card,event,1,&td,\"TARGET_PLAYER\",1,(test_definition_t *)0x0);\n  return iVar1;\n}\n\n",
+      "native_decomp_sha256": "4b0192af4888e993eed173d09a75bcf80f410765e71c95c771917f62bea9bdff"
+    },
+    {
+      "name": "card_astral_steel",
+      "source": "cards/scourge.c",
+      "address": "0x24f74e0",
+      "before_sha256": "92054ca5363ace68c08752c2748042275cf3b9a9582e28e4a6c7c7976da4c30a",
+      "after_sha256": "7c1b031e3831e3323b434ed99b6eb7ec6fb54c1f52144ab9add25ebda0850a4f",
+      "kind": "native_spell_prefix_instance_query",
+      "reason": "Restore one get_card_instance after target setup on every accepted GS event, before resolution dispatch and target validation. Keep EVENT_QUERY early return and unaffected-cast guards. Native duplicated prefixes perform this query even where its result is unused; the resolution path retains the same saved instance pointer and live target-field reads after callbacks. No card-rule change or whole-function/gameplay equivalence claim.",
+      "native_range": {
+        "address": "0x24f74e0",
+        "size": 390,
+        "sha256": "b2fb3f72a58bea8ae165fa95ed50893c61b6303fd74d4d972b6307efddda5b2f",
+        "bytes_hex": "5589e557565383ec788b5d108b750881fb005d00000f841d01000083fb74742083fb6c0f85870000008b0d8c397a0031c0394d0c75713b35848c7300756966908b450c8d7da089442404c744240c02000000897c2408893424e8028d16008b450c894424048934248975a8e860b51b008b450cc744241c00000000c744241801000000c744241450087502897c2410c744240c01000000895c240889442404893424e8c98c1a0083c4785b5e5f5dc39083fb710f95c281fb000400000f95c084c2740c81fb005400000f85b00000008b450c8d7da089442404c744240c02000000897c2408893424e8738c16008b450c894424048934248975a8e8d1b41b0083fb710f8568ffffff893c2489459ce85da116008b4d9c85c075368b450cc74424080200000089442404893424e8efe31b00e93affffff669031c0833d98917300040f94c083c4785b5e5f5dc38d742600c744241402000000c7442410010000008b41788944240c8b4174893424894424088b450c89442404e803351800eb9b31c0e921ffffff"
+      },
+      "native_decomp": "/* October 2022 ManalinkEh.dll: card_astral_steel @ 0x24f74e0; DWARF unit cards/scourge.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int card_astral_steel(int player, int card, event_t event) */\n\nint card_astral_steel(int player,int card,event_t event)\n\n{\n  int iVar1;\n  card_instance_t *pcVar2;\n  target_definition_t td;\n  \n                    /* Unresolved local var: card_instance_t * instance@[???] */\n  if (event == EVENT_QUERY) {\n    return (uint)(attacking_card == 4);\n  }\n  if (event != EVENT_CAN_CAST) {\n    if (event != EVENT_CAST_SPELL) {\n      if ((event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET) &&\n         (event != EVENT_CHANGE_TARGET)) {\n        return 0;\n      }\n      default_target_definition(player,card,&td,2);\n      td.preferred_controller = player;\n      pcVar2 = get_card_instance(player,card);\n      if (event == EVENT_RESOLVE_SPELL) {\n        iVar1 = valid_target(&td);\n        if (iVar1 != 0) {\n          pump_until_eot(player,card,pcVar2->targets[0].player,pcVar2->targets[0].card,1,2);\n        }\n        kill_card(player,card,KILL_DESTROY);\n      }\n      goto LAB_024f7550;\n    }\n    if (card != affected_card) {\n      return 0;\n    }\n    if (player != affected_card_controller) {\n      return 0;\n    }\n  }\n  default_target_definition(player,card,&td,2);\n  td.preferred_controller = player;\n  get_card_instance(player,card);\nLAB_024f7550:\n  iVar1 = generic_spell(player,card,event,1,&td,\"TARGET_CREATURE\",1,(test_definition_t *)0x0);\n  return iVar1;\n}\n\n",
+      "native_decomp_sha256": "b1dc4001a468ad53ab43bf9106e0817b6338a61d7db87fa90d38a11efbded81e"
+    },
+    {
+      "name": "card_ground_rift",
+      "source": "cards/time_spiral.c",
+      "address": "0x20f26e0",
+      "before_sha256": "fb17cf81bac47e0eaf1ea5db7e78a167f8c4173279f5de6260e642bf489fd123",
+      "after_sha256": "ca122ec16cc8ca0135e39f32852f97a7e93f1747c5e673a3976c2b2cd41165a3",
+      "kind": "native_spell_prefix_instance_query",
+      "reason": "Restore one get_card_instance after target setup on every accepted GS event, before resolution dispatch and target validation. Keep EVENT_QUERY early return and unaffected-cast guards. Native duplicated prefixes perform this query even where its result is unused; the resolution path retains the same saved instance pointer and live target-field reads after callbacks. No card-rule change or whole-function/gameplay equivalence claim.",
+      "native_range": {
+        "address": "0x20f26e0",
+        "size": 407,
+        "sha256": "e4744fc4420fef3cf7343472e894ef5599f132fa1b169a9f65c42769cd728544",
+        "bytes_hex": "5589e557565383ec78817d10005d00008b7d088b750c0f8424010000837d1074741e837d106c0f858400000031c03b358c397a0075713b3d848c7300756966908d5da0c744240c02000000895c240889742404893c24e805db56008b45bc83c82089742404893c248945bce860035c008b4510c744241c00000000c744241801000000c744241400000000895c2410c744240c010000008944240889742404893c24e8c9da5a0083c4785b5e5f5dc390837d10717409817d100004000075698d5da0c744240c02000000895c240889742404893c24e886da56008b55bc83ca2089742404893c248955bce8e1025c00837d107189459c0f8574ffffff891c24e86cef56008b4d9c85c0754dc74424080200000089742404893c24e801325c00e94cffffff8d742600817d10005400000f840bffffff31c0e96bffffff8d74260031c0833d98917300040f94c083c4785b5e5f5dc38d742600c744241c20000000c744241800000000c744241400000000c7442410000000008b41788944240c8b41748974240489442408893c24e88e865800e974ffffff"
+      },
+      "native_decomp": "/* October 2022 ManalinkEh.dll: card_ground_rift @ 0x20f26e0; DWARF unit cards/time_spiral.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* WARNING: Enum \"subtype_t\": Some values do not have unique names */\n/* DWARF original prototype: int card_ground_rift(int player, int card, event_t event) */\n\nint card_ground_rift(int player,int card,event_t event)\n\n{\n  int iVar1;\n  card_instance_t *pcVar2;\n  target_definition_t td;\n  \n                    /* Unresolved local var: card_instance_t * instance@[???] */\n  if (event == EVENT_QUERY) {\n    return (uint)(attacking_card == 4);\n  }\n  if (event != EVENT_CAN_CAST) {\n    if (event == EVENT_CAST_SPELL) {\n      if (card != affected_card) {\n        return 0;\n      }\n      if (player != affected_card_controller) {\n        return 0;\n      }\n    }\n    else {\n      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) {\n        default_target_definition(player,card,&td,2);\n        td.illegal_abilities = td.illegal_abilities | 0x20;\n        pcVar2 = get_card_instance(player,card);\n        if (event == EVENT_RESOLVE_SPELL) {\n          iVar1 = valid_target(&td);\n          if (iVar1 != 0) {\n            pump_ability_until_eot\n                      (player,card,pcVar2->targets[0].player,pcVar2->targets[0].card,0,0,0,0x20);\n          }\n          kill_card(player,card,KILL_DESTROY);\n        }\n        goto LAB_020f2750;\n      }\n      if (event != EVENT_CHANGE_TARGET) {\n        return 0;\n      }\n    }\n  }\n  default_target_definition(player,card,&td,2);\n  td.illegal_abilities = td.illegal_abilities | 0x20;\n  get_card_instance(player,card);\nLAB_020f2750:\n  iVar1 = generic_spell(player,card,event,1,&td,(char *)0x0,1,(test_definition_t *)0x0);\n  return iVar1;\n}\n\n",
+      "native_decomp_sha256": "baba5ae6b471bfde1ddfac335c8aec023d6fe46bcce35ece0ad78a11184ce6d0"
+    },
+    {
+      "name": "card_bitter_ordeal",
+      "source": "cards/future_sight.c",
+      "address": "0x2573600",
+      "before_sha256": "abcc001c762eaa85850d6ddc4e6e0f87d391c4a060394ae0963b2352d8dae960",
+      "after_sha256": "a638613f22e17d1b6c00f95c6cf870ece9b657881d055ebb8e097e8c127b481f",
+      "kind": "native_spell_prefix_instance_query",
+      "reason": "Restore one get_card_instance after target setup on every accepted GS event, before resolution dispatch and target validation. Keep EVENT_QUERY early return and unaffected-cast guards. Native duplicated prefixes perform this query even where its result is unused; the resolution path retains the same saved instance pointer and live target-field reads after callbacks. No card-rule change or whole-function/gameplay equivalence claim.",
+      "native_range": {
+        "address": "0x2573600",
+        "size": 482,
+        "sha256": "dd4471c130acb532537f6059cf2a91c1a1c2488d068208d8fac6d9156205cb30",
+        "bytes_hex": "5589e557565381ec50010000817d10005d00008b7d088b750c0f8451010000837d10747423837d106c0f859100000031c03b358c397a00757a3b3d848c730075728db426000000008d9dc8feffffc744240c00000000895c240889742404893c24e8dacb0e0089742404893c24c785d4feffff00100000e834f413008b4510c744241c00000000c744241801000000c7442414434a7502895c2410c744240c010000008944240889742404893c24e89dcb120081c4500100005b5e5f5dc36690837d1071740d817d10000400000f85850000008d9dc8feffffc744240c00000000895c240889742404893c24e84fcb0e0089742404893c24c785d4feffff00100000e8a9f31300837d10718985c4feffff0f8565ffffff891c24e831e00e0085c074158b8dc4feffff8b41748b048530704d008338ff7550c74424080200000089742404893c24e8b4221400e92bffffff8db42600000000817d10005400000f84e3feffff31c0e947ffffff8d74260031c0833d98917300050f94c081c4500100005b5e5f5dc3908d851cffffffc7442404ff000000890424e812b414008d851cffffff8b8dc4feffff89442418c744241401000000c744241000000000c744240c06000000c7442408010000008b4174893c2489442404e8b3e10d00e956ffffff"
+      },
+      "native_decomp": "/* October 2022 ManalinkEh.dll: card_bitter_ordeal @ 0x2573600; DWARF unit cards/future_sight.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int card_bitter_ordeal(int player, int card, event_t event) */\n\nint card_bitter_ordeal(int player,int card,event_t event)\n\n{\n  int iVar1;\n  card_instance_t *pcVar2;\n  target_definition_t td;\n  test_definition_t this_test;\n  \n                    /* Unresolved local var: card_instance_t * instance@[???] */\n  if (event == EVENT_QUERY) {\n    return (uint)(attacking_card == 5);\n  }\n  if (event != EVENT_CAN_CAST) {\n    if (event == EVENT_CAST_SPELL) {\n      if (card != affected_card) {\n        return 0;\n      }\n      if (player != affected_card_controller) {\n        return 0;\n      }\n    }\n    else {\n      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) {\n        default_target_definition(player,card,&td,0);\n        td.zone = 0x1000;\n        pcVar2 = get_card_instance(player,card);\n        if (event == EVENT_RESOLVE_SPELL) {\n          iVar1 = valid_target(&td);\n          if ((iVar1 != 0) && (*deck_ptr[pcVar2->targets[0].player] != -1)) {\n            default_test_definition(&this_test,0xff);\n            new_global_tutor(player,pcVar2->targets[0].player,1,6,0,1,&this_test);\n          }\n          kill_card(player,card,KILL_DESTROY);\n        }\n        goto LAB_0257367c;\n      }\n      if (event != EVENT_CHANGE_TARGET) {\n        return 0;\n      }\n    }\n  }\n  default_target_definition(player,card,&td,0);\n  td.zone = 0x1000;\n  get_card_instance(player,card);\nLAB_0257367c:\n  iVar1 = generic_spell(player,card,event,1,&td,\"TARGET_PLAYER\",1,(test_definition_t *)0x0);\n  return iVar1;\n}\n\n",
+      "native_decomp_sha256": "89d313bbdd8338ec5eac2bfe2e066d494c3b201b79c415e7bd1cb4fc6fa66f6d"
+    },
+    {
+      "name": "card_lobotomy",
+      "source": "cards/tempest.c",
+      "address": "0x2152180",
+      "before_sha256": "833ed4ca9715fb57ddc90d7c753b32db053e325165a2a68c21dd5ee1ebad6313",
+      "after_sha256": "4f494d67775bd4e6af7aa758f93e83d256a817cf2594868b6fd3a22bc0d92419",
+      "kind": "native_post_selection_target_reload",
+      "reason": "Restore native fresh get_card_instance/target-player read immediately before lobotomy_effect, after hand enumeration, ID/basic-land queries and any show_deck callbacks. Initial hand scan still uses its original saved target; the final effect uses the live target field. Keep validation and choice/fallback logic unchanged. No broad gameplay proof.",
+      "native_range": {
+        "address": "0x2152180",
+        "size": 889,
+        "sha256": "901bf98b66f1dfe25b1e6cb8f82756f8b255e5ee539d20c4e11434360e0595ce",
+        "bytes_hex": "5589e557565381ec580800008b751083fe740f84a400000083fe6c0f84cf00000083fe71740c81fe000400000f857e0000008b450c8d9dd0f7ffff894424048b4508c744240c00000000895c2408890424e86ae05000c785dcf7ffff0010000083fe710f84a70000008b450cc744241c00000000894424048b4508c744241801000000c74424143ce07202895c2410c744240c0100000089742408890424e82de0540081c4580800005b5e5f5dc3669081fe005400000f85b60200008b450c8d9dd0f7ffff894424048b4508c744240c00000000895c2408890424e8e0df5000c785dcf7ffff00100000e97affffff908b158c397a0031c039550c75a68b15848c7300395508759bebb28db600000000891c24e8b8f4500085c075248b450cc744240802000000894424048b4508890424e84a375600e92effffff8d742600908b450c894424048b4508890424e8de0756008b40748b3c85c4f14e0085ff7ebc8b0c8520f54e00c785c0f7ffffffffffff85c90f8ee0010000897510c785c8f7ffff00000000c785c4f7ffffffffffffc785ccf7ffff0000000031ff89c6899dbcf7ffffeb0c669047393cb520f54e007e5e897c2404893424e86210560089c385c074e4897c2404893424e8c09d520085c075d4897c2404893424e8401256008b048500bb73000fbf48583b8dc8f7ffff0f8fc10000008b8dccf7ffff8b436c89848d24f8ffff41898dccf7ffffeb988b75108b9dbcf7ffff8b550885d20f85bd0000008bbdccf7ffff897510899dccf7ffff8bb5c4f7ffff8db4260000000031c083feff0f95c0894424108d8524f8ffffc7442414b0757300c744240c44e37202897c240889442404c7042400000000e84ae84f0089c383f8ff74268b848524f8ffff31c98d04c0668b0cc534707e0089c8890424e8a59c520085c00f848f00000083feff75988b75108b9dccf7ffffe966feffff6690897c2404893424898dc8f7ffffe8561156008985c0f7ffff8b85ccf7ffff8985c4f7ffffe916ffffff8b85c0f7ffff85c00f882dfeffff8b450c894424048b4508890424e82f0656008b95c0f7ffffc744241001000000c744240cffffffff895424088b4074894424048b4508890424e8338e5400e9eafdffff89df31d28b75108b9dccf7ffff8b84bd24f8ffff8d04c0668b14c534707e008995c0f7ffffeb96c785c4f7ffffffffffffc785ccf7ffff00000000e9a7feffff31c0e92afdffff"
+      },
+      "native_decomp": "/* October 2022 ManalinkEh.dll: card_lobotomy @ 0x2152180; DWARF unit cards/tempest.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int card_lobotomy(int player, int card, event_t event) */\n\nint card_lobotomy(int player,int card,event_t event)\n\n{\n  short sVar1;\n  short sVar2;\n  int iVar3;\n  card_instance_t *pcVar4;\n  int iVar5;\n  int iVar6;\n  uint uStack_844;\n  int iStack_840;\n  int iStack_838;\n  target_definition_t td;\n  int cards_array [500];\n  \n  if (event != EVENT_CAN_CAST) {\n    if (event == EVENT_CAST_SPELL) {\n      if (card != affected_card) {\n        return 0;\n      }\n      if (player != affected_card_controller) {\n        return 0;\n      }\n    }\n    else {\n      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) {\n        default_target_definition(player,card,&td,0);\n        td.zone = 0x1000;\n        if (event == EVENT_RESOLVE_SPELL) {\n          iVar3 = valid_target(&td);\n          if (iVar3 != 0) {\n                    /* Unresolved local var: int opponent@[???] */\n            pcVar4 = get_card_instance(player,card);\n            iVar3 = pcVar4->targets[0].player;\n            if (0 < hand_count[iVar3]) {\n                    /* Unresolved local var: int i@[???]\n                       Unresolved local var: int hand_index@[???]\n                       Unresolved local var: int AI_pick@[???]\n                       Unresolved local var: int min_value@[???]\n                       Unresolved local var: int id@[???]\n                       Unresolved local var: int selected@[???]\n                       Unresolved local var: int valid_choice@[???] */\n              uStack_844 = 0xffffffff;\n              if (active_cards_count[iVar3] < 1) {\n                iStack_840 = -1;\n                iStack_838 = 0;\n              }\n              else {\n                sVar2 = 0;\n                iStack_840 = -1;\n                iStack_838 = 0;\n                iVar6 = 0;\n                do {\n                    /* Unresolved local var: card_instance_t * instance@[???] */\n                  pcVar4 = in_hand(iVar3,iVar6);\n                  if ((pcVar4 != (card_instance_t *)0x0) &&\n                     (iVar5 = is_basic_land(iVar3,iVar6), iVar5 == 0)) {\n                    /* Unresolved local var: card_ptr_t * c@[???] */\n                    iVar5 = get_id(iVar3,iVar6);\n                    sVar1 = cards_ptr[iVar5]->ai_base_value;\n                    if (sVar2 < sVar1) {\n                      uStack_844 = get_id(iVar3,iVar6);\n                      iStack_840 = iStack_838;\n                      sVar2 = sVar1;\n                    }\n                    cards_array[iStack_838] = pcVar4->internal_card_id;\n                    iStack_838 = iStack_838 + 1;\n                  }\n                  iVar6 = iVar6 + 1;\n                } while (iVar6 < active_cards_count[iVar3]);\n              }\n              if (player == 0) {\n                do {\n                  iVar3 = show_deck(0,cards_array,iStack_838,\"Pick a card\",(uint)(iStack_840 != -1),\n                                    str_Done);\n                  if ((iVar3 != -1) &&\n                     (iVar6 = is_basic_land_by_id((uint)cards_data[cards_array[iVar3]].id),\n                     iVar6 == 0)) {\n                    uStack_844 = (uint)cards_data[cards_array[iVar3]].id;\n                    goto LAB_0215246f;\n                  }\n                } while (iStack_840 != -1);\n              }\n              else if (-1 < (int)uStack_844) {\nLAB_0215246f:\n                pcVar4 = get_card_instance(player,card);\n                lobotomy_effect_2022(player,pcVar4->targets[0].player,uStack_844,-1,1);\n              }\n            }\n          }\n          kill_card(player,card,KILL_DESTROY);\n        }\n        goto LAB_021521e9;\n      }\n      if (event != EVENT_CHANGE_TARGET) {\n        return 0;\n      }\n    }\n  }\n  default_target_definition(player,card,&td,0);\n  td.zone = 0x1000;\nLAB_021521e9:\n  iVar3 = generic_spell(player,card,event,1,&td,\"TARGET_PLAYER\",1,(test_definition_t *)0x0);\n  return iVar3;\n}\n\n",
+      "native_decomp_sha256": "15a6000f11198a77a930100a2c78d9e16ac20c050eccbe0948ddcbaac00d5930"
+    }
+  ],
+  "native_query_sites": {
+    "stage": "native",
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85"
+    },
+    "script_sha256": "b585e5af5588f3bbd2586f8ccf2e2bde9d2838b245762ec76b6c88490ec66e71",
+    "getter_address": "0x26b2ab0",
+    "functions": [
+      {
+        "name": "card_volcanic_awakening",
+        "address": "0x20ff0b0",
+        "size": 371,
+        "sha256": "2875e72b4dae5d039adccbd05e597d5dd49b17602ca0a694942329605814d36f",
+        "bytes_hex": "5589e557565383ec788b5d108b750c81fb005d00000f841d01000083fb74742083fb6c0f858700000031c03b358c397a0075718b0d848c7300394d08756666908b45088d7da0890424c744240c01000000897c240889742404e8321156008b450889742404890424e893395b008b4508c744241c00000000c744241801000000c744241420b47202897c2410c744240c01000000895c240889742404890424e8fc105a0083c4785b5e5f5dc38d74260083fb710f95c281fb000400000f95c084c2740c81fb005400000f859d0000008b45088d7da0890424c744240c01000000897c240889742404e8a31056008b450889742404890424e804395b0083fb710f8568ffffff893c2489459ce8902556008b4d9c85c075398b4508c74424080200000089742404890424e822685b00e93affffff8d7426009031c0833d98917300040f94c083c4785b5e5f5dc38d742600c7442408020000008b4178894424048b4174890424e8e6675b00ebab31c0e931ffffff",
+        "getter_sites": [
+          {
+            "call": "0x20ff118",
+            "instructions": [
+              {
+                "address": "0x20ff101",
+                "instruction": "mov dword ptr [esp + 8], edi"
+              },
+              {
+                "address": "0x20ff105",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20ff109",
+                "instruction": "call 0x2660240"
+              },
+              {
+                "address": "0x20ff10e",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20ff111",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20ff115",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20ff118",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x20ff11d",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20ff120",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x20ff128",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              },
+              {
+                "address": "0x20ff130",
+                "instruction": "mov dword ptr [esp + 0x14], 0x272b420"
+              },
+              {
+                "address": "0x20ff138",
+                "instruction": "mov dword ptr [esp + 0x10], edi"
+              },
+              {
+                "address": "0x20ff13c",
+                "instruction": "mov dword ptr [esp + 0xc], 1"
+              },
+              {
+                "address": "0x20ff144",
+                "instruction": "mov dword ptr [esp + 8], ebx"
+              }
+            ]
+          },
+          {
+            "call": "0x20ff1a7",
+            "instructions": [
+              {
+                "address": "0x20ff190",
+                "instruction": "mov dword ptr [esp + 8], edi"
+              },
+              {
+                "address": "0x20ff194",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20ff198",
+                "instruction": "call 0x2660240"
+              },
+              {
+                "address": "0x20ff19d",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20ff1a0",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20ff1a4",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20ff1a7",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x20ff1ac",
+                "instruction": "cmp ebx, 0x71"
+              },
+              {
+                "address": "0x20ff1af",
+                "instruction": "jne 0x20ff11d"
+              },
+              {
+                "address": "0x20ff1b5",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x20ff1b8",
+                "instruction": "mov dword ptr [ebp - 0x64], eax"
+              },
+              {
+                "address": "0x20ff1bb",
+                "instruction": "call 0x2661750"
+              },
+              {
+                "address": "0x20ff1c0",
+                "instruction": "mov ecx, dword ptr [ebp - 0x64]"
+              },
+              {
+                "address": "0x20ff1c3",
+                "instruction": "test eax, eax"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      },
+      {
+        "name": "card_tendrils_of_agony",
+        "address": "0x24fdc80",
+        "size": 381,
+        "sha256": "7808346c683f345f3d5491b217dbb0fb2d50c25fb9e666ea3eb264c6b274ad0d",
+        "bytes_hex": "5589e557565383ec78817d10005d00008b7d088b750c0f8424010000837d1074741e837d106c0f858400000031c03b358c397a00756f3b3d848c7300756766908d5da0c744240c02000000895c240889742404893c24e86525160089742404893c24c745ac00100000e8c24d1b008b4510c744241c00000000c744241801000000c744241491087502895c2410c744240c010000008944240889742404893c24e82b251a0083c4785b5e5f5dc38d7600837d10717409817d100004000075698d5da0c744240c02000000895c240889742404893c24e8e624160089742404893c24c745ac00100000e8434d1b00837d107189459c0f8574ffffff891c24e8ce3916008b4d9c85c0754fc74424080200000089742404893c24e8637c1b00e94cffffff8db600000000817d10005400000f840bffffff31c0e969ffffff8d74260031c0833d98917300040f94c083c4785b5e5f5dc38d742600c7442404020000008b4174890424e8c5131900c744240402000000893c24e8051b1900eb8c",
+        "getter_sites": [
+          {
+            "call": "0x24fdce9",
+            "instructions": [
+              {
+                "address": "0x24fdccf",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x24fdcd3",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x24fdcd6",
+                "instruction": "call 0x2660240"
+              },
+              {
+                "address": "0x24fdcdb",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x24fdcdf",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x24fdce2",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x1000"
+              },
+              {
+                "address": "0x24fdce9",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x24fdcee",
+                "instruction": "mov eax, dword ptr [ebp + 0x10]"
+              },
+              {
+                "address": "0x24fdcf1",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x24fdcf9",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              },
+              {
+                "address": "0x24fdd01",
+                "instruction": "mov dword ptr [esp + 0x14], 0x2750891"
+              },
+              {
+                "address": "0x24fdd09",
+                "instruction": "mov dword ptr [esp + 0x10], ebx"
+              },
+              {
+                "address": "0x24fdd0d",
+                "instruction": "mov dword ptr [esp + 0xc], 1"
+              },
+              {
+                "address": "0x24fdd15",
+                "instruction": "mov dword ptr [esp + 8], eax"
+              }
+            ]
+          },
+          {
+            "call": "0x24fdd68",
+            "instructions": [
+              {
+                "address": "0x24fdd4e",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x24fdd52",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x24fdd55",
+                "instruction": "call 0x2660240"
+              },
+              {
+                "address": "0x24fdd5a",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x24fdd5e",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x24fdd61",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x1000"
+              },
+              {
+                "address": "0x24fdd68",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x24fdd6d",
+                "instruction": "cmp dword ptr [ebp + 0x10], 0x71"
+              },
+              {
+                "address": "0x24fdd71",
+                "instruction": "mov dword ptr [ebp - 0x64], eax"
+              },
+              {
+                "address": "0x24fdd74",
+                "instruction": "jne 0x24fdcee"
+              },
+              {
+                "address": "0x24fdd7a",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x24fdd7d",
+                "instruction": "call 0x2661750"
+              },
+              {
+                "address": "0x24fdd82",
+                "instruction": "mov ecx, dword ptr [ebp - 0x64]"
+              },
+              {
+                "address": "0x24fdd85",
+                "instruction": "test eax, eax"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      },
+      {
+        "name": "card_astral_steel",
+        "address": "0x24f74e0",
+        "size": 390,
+        "sha256": "b2fb3f72a58bea8ae165fa95ed50893c61b6303fd74d4d972b6307efddda5b2f",
+        "bytes_hex": "5589e557565383ec788b5d108b750881fb005d00000f841d01000083fb74742083fb6c0f85870000008b0d8c397a0031c0394d0c75713b35848c7300756966908b450c8d7da089442404c744240c02000000897c2408893424e8028d16008b450c894424048934248975a8e860b51b008b450cc744241c00000000c744241801000000c744241450087502897c2410c744240c01000000895c240889442404893424e8c98c1a0083c4785b5e5f5dc39083fb710f95c281fb000400000f95c084c2740c81fb005400000f85b00000008b450c8d7da089442404c744240c02000000897c2408893424e8738c16008b450c894424048934248975a8e8d1b41b0083fb710f8568ffffff893c2489459ce85da116008b4d9c85c075368b450cc74424080200000089442404893424e8efe31b00e93affffff669031c0833d98917300040f94c083c4785b5e5f5dc38d742600c744241402000000c7442410010000008b41788944240c8b4174893424894424088b450c89442404e803351800eb9b31c0e921ffffff",
+        "getter_sites": [
+          {
+            "call": "0x24f754b",
+            "instructions": [
+              {
+                "address": "0x24f7536",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24f7539",
+                "instruction": "call 0x2660240"
+              },
+              {
+                "address": "0x24f753e",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x24f7541",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x24f7545",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24f7548",
+                "instruction": "mov dword ptr [ebp - 0x58], esi"
+              },
+              {
+                "address": "0x24f754b",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x24f7550",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x24f7553",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x24f755b",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              },
+              {
+                "address": "0x24f7563",
+                "instruction": "mov dword ptr [esp + 0x14], 0x2750850"
+              },
+              {
+                "address": "0x24f756b",
+                "instruction": "mov dword ptr [esp + 0x10], edi"
+              },
+              {
+                "address": "0x24f756f",
+                "instruction": "mov dword ptr [esp + 0xc], 1"
+              },
+              {
+                "address": "0x24f7577",
+                "instruction": "mov dword ptr [esp + 8], ebx"
+              }
+            ]
+          },
+          {
+            "call": "0x24f75da",
+            "instructions": [
+              {
+                "address": "0x24f75c5",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24f75c8",
+                "instruction": "call 0x2660240"
+              },
+              {
+                "address": "0x24f75cd",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x24f75d0",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x24f75d4",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24f75d7",
+                "instruction": "mov dword ptr [ebp - 0x58], esi"
+              },
+              {
+                "address": "0x24f75da",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x24f75df",
+                "instruction": "cmp ebx, 0x71"
+              },
+              {
+                "address": "0x24f75e2",
+                "instruction": "jne 0x24f7550"
+              },
+              {
+                "address": "0x24f75e8",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x24f75eb",
+                "instruction": "mov dword ptr [ebp - 0x64], eax"
+              },
+              {
+                "address": "0x24f75ee",
+                "instruction": "call 0x2661750"
+              },
+              {
+                "address": "0x24f75f3",
+                "instruction": "mov ecx, dword ptr [ebp - 0x64]"
+              },
+              {
+                "address": "0x24f75f6",
+                "instruction": "test eax, eax"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      },
+      {
+        "name": "card_ground_rift",
+        "address": "0x20f26e0",
+        "size": 407,
+        "sha256": "e4744fc4420fef3cf7343472e894ef5599f132fa1b169a9f65c42769cd728544",
+        "bytes_hex": "5589e557565383ec78817d10005d00008b7d088b750c0f8424010000837d1074741e837d106c0f858400000031c03b358c397a0075713b3d848c7300756966908d5da0c744240c02000000895c240889742404893c24e805db56008b45bc83c82089742404893c248945bce860035c008b4510c744241c00000000c744241801000000c744241400000000895c2410c744240c010000008944240889742404893c24e8c9da5a0083c4785b5e5f5dc390837d10717409817d100004000075698d5da0c744240c02000000895c240889742404893c24e886da56008b55bc83ca2089742404893c248955bce8e1025c00837d107189459c0f8574ffffff891c24e86cef56008b4d9c85c0754dc74424080200000089742404893c24e801325c00e94cffffff8d742600817d10005400000f840bffffff31c0e96bffffff8d74260031c0833d98917300040f94c083c4785b5e5f5dc38d742600c744241c20000000c744241800000000c744241400000000c7442410000000008b41788944240c8b41748974240489442408893c24e88e865800e974ffffff",
+        "getter_sites": [
+          {
+            "call": "0x20f274b",
+            "instructions": [
+              {
+                "address": "0x20f2736",
+                "instruction": "call 0x2660240"
+              },
+              {
+                "address": "0x20f273b",
+                "instruction": "mov eax, dword ptr [ebp - 0x44]"
+              },
+              {
+                "address": "0x20f273e",
+                "instruction": "or eax, 0x20"
+              },
+              {
+                "address": "0x20f2741",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20f2745",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x20f2748",
+                "instruction": "mov dword ptr [ebp - 0x44], eax"
+              },
+              {
+                "address": "0x20f274b",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x20f2750",
+                "instruction": "mov eax, dword ptr [ebp + 0x10]"
+              },
+              {
+                "address": "0x20f2753",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x20f275b",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              },
+              {
+                "address": "0x20f2763",
+                "instruction": "mov dword ptr [esp + 0x14], 0"
+              },
+              {
+                "address": "0x20f276b",
+                "instruction": "mov dword ptr [esp + 0x10], ebx"
+              },
+              {
+                "address": "0x20f276f",
+                "instruction": "mov dword ptr [esp + 0xc], 1"
+              },
+              {
+                "address": "0x20f2777",
+                "instruction": "mov dword ptr [esp + 8], eax"
+              }
+            ]
+          },
+          {
+            "call": "0x20f27ca",
+            "instructions": [
+              {
+                "address": "0x20f27b5",
+                "instruction": "call 0x2660240"
+              },
+              {
+                "address": "0x20f27ba",
+                "instruction": "mov edx, dword ptr [ebp - 0x44]"
+              },
+              {
+                "address": "0x20f27bd",
+                "instruction": "or edx, 0x20"
+              },
+              {
+                "address": "0x20f27c0",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20f27c4",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x20f27c7",
+                "instruction": "mov dword ptr [ebp - 0x44], edx"
+              },
+              {
+                "address": "0x20f27ca",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x20f27cf",
+                "instruction": "cmp dword ptr [ebp + 0x10], 0x71"
+              },
+              {
+                "address": "0x20f27d3",
+                "instruction": "mov dword ptr [ebp - 0x64], eax"
+              },
+              {
+                "address": "0x20f27d6",
+                "instruction": "jne 0x20f2750"
+              },
+              {
+                "address": "0x20f27dc",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x20f27df",
+                "instruction": "call 0x2661750"
+              },
+              {
+                "address": "0x20f27e4",
+                "instruction": "mov ecx, dword ptr [ebp - 0x64]"
+              },
+              {
+                "address": "0x20f27e7",
+                "instruction": "test eax, eax"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      },
+      {
+        "name": "card_bitter_ordeal",
+        "address": "0x2573600",
+        "size": 482,
+        "sha256": "dd4471c130acb532537f6059cf2a91c1a1c2488d068208d8fac6d9156205cb30",
+        "bytes_hex": "5589e557565381ec50010000817d10005d00008b7d088b750c0f8451010000837d10747423837d106c0f859100000031c03b358c397a00757a3b3d848c730075728db426000000008d9dc8feffffc744240c00000000895c240889742404893c24e8dacb0e0089742404893c24c785d4feffff00100000e834f413008b4510c744241c00000000c744241801000000c7442414434a7502895c2410c744240c010000008944240889742404893c24e89dcb120081c4500100005b5e5f5dc36690837d1071740d817d10000400000f85850000008d9dc8feffffc744240c00000000895c240889742404893c24e84fcb0e0089742404893c24c785d4feffff00100000e8a9f31300837d10718985c4feffff0f8565ffffff891c24e831e00e0085c074158b8dc4feffff8b41748b048530704d008338ff7550c74424080200000089742404893c24e8b4221400e92bffffff8db42600000000817d10005400000f84e3feffff31c0e947ffffff8d74260031c0833d98917300050f94c081c4500100005b5e5f5dc3908d851cffffffc7442404ff000000890424e812b414008d851cffffff8b8dc4feffff89442418c744241401000000c744241000000000c744240c06000000c7442408010000008b4174893c2489442404e8b3e10d00e956ffffff",
+        "getter_sites": [
+          {
+            "call": "0x2573677",
+            "instructions": [
+              {
+                "address": "0x257365a",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x257365e",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x2573661",
+                "instruction": "call 0x2660240"
+              },
+              {
+                "address": "0x2573666",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x257366a",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x257366d",
+                "instruction": "mov dword ptr [ebp - 0x12c], 0x1000"
+              },
+              {
+                "address": "0x2573677",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x257367c",
+                "instruction": "mov eax, dword ptr [ebp + 0x10]"
+              },
+              {
+                "address": "0x257367f",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x2573687",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              },
+              {
+                "address": "0x257368f",
+                "instruction": "mov dword ptr [esp + 0x14], 0x2754a43"
+              },
+              {
+                "address": "0x2573697",
+                "instruction": "mov dword ptr [esp + 0x10], ebx"
+              },
+              {
+                "address": "0x257369b",
+                "instruction": "mov dword ptr [esp + 0xc], 1"
+              },
+              {
+                "address": "0x25736a3",
+                "instruction": "mov dword ptr [esp + 8], eax"
+              }
+            ]
+          },
+          {
+            "call": "0x2573702",
+            "instructions": [
+              {
+                "address": "0x25736e5",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x25736e9",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x25736ec",
+                "instruction": "call 0x2660240"
+              },
+              {
+                "address": "0x25736f1",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x25736f5",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x25736f8",
+                "instruction": "mov dword ptr [ebp - 0x12c], 0x1000"
+              },
+              {
+                "address": "0x2573702",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x2573707",
+                "instruction": "cmp dword ptr [ebp + 0x10], 0x71"
+              },
+              {
+                "address": "0x257370b",
+                "instruction": "mov dword ptr [ebp - 0x13c], eax"
+              },
+              {
+                "address": "0x2573711",
+                "instruction": "jne 0x257367c"
+              },
+              {
+                "address": "0x2573717",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x257371a",
+                "instruction": "call 0x2661750"
+              },
+              {
+                "address": "0x257371f",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2573721",
+                "instruction": "je 0x2573738"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      },
+      {
+        "name": "card_lobotomy",
+        "address": "0x2152180",
+        "size": 889,
+        "sha256": "901bf98b66f1dfe25b1e6cb8f82756f8b255e5ee539d20c4e11434360e0595ce",
+        "bytes_hex": "5589e557565381ec580800008b751083fe740f84a400000083fe6c0f84cf00000083fe71740c81fe000400000f857e0000008b450c8d9dd0f7ffff894424048b4508c744240c00000000895c2408890424e86ae05000c785dcf7ffff0010000083fe710f84a70000008b450cc744241c00000000894424048b4508c744241801000000c74424143ce07202895c2410c744240c0100000089742408890424e82de0540081c4580800005b5e5f5dc3669081fe005400000f85b60200008b450c8d9dd0f7ffff894424048b4508c744240c00000000895c2408890424e8e0df5000c785dcf7ffff00100000e97affffff908b158c397a0031c039550c75a68b15848c7300395508759bebb28db600000000891c24e8b8f4500085c075248b450cc744240802000000894424048b4508890424e84a375600e92effffff8d742600908b450c894424048b4508890424e8de0756008b40748b3c85c4f14e0085ff7ebc8b0c8520f54e00c785c0f7ffffffffffff85c90f8ee0010000897510c785c8f7ffff00000000c785c4f7ffffffffffffc785ccf7ffff0000000031ff89c6899dbcf7ffffeb0c669047393cb520f54e007e5e897c2404893424e86210560089c385c074e4897c2404893424e8c09d520085c075d4897c2404893424e8401256008b048500bb73000fbf48583b8dc8f7ffff0f8fc10000008b8dccf7ffff8b436c89848d24f8ffff41898dccf7ffffeb988b75108b9dbcf7ffff8b550885d20f85bd0000008bbdccf7ffff897510899dccf7ffff8bb5c4f7ffff8db4260000000031c083feff0f95c0894424108d8524f8ffffc7442414b0757300c744240c44e37202897c240889442404c7042400000000e84ae84f0089c383f8ff74268b848524f8ffff31c98d04c0668b0cc534707e0089c8890424e8a59c520085c00f848f00000083feff75988b75108b9dccf7ffffe966feffff6690897c2404893424898dc8f7ffffe8561156008985c0f7ffff8b85ccf7ffff8985c4f7ffffe916ffffff8b85c0f7ffff85c00f882dfeffff8b450c894424048b4508890424e82f0656008b95c0f7ffffc744241001000000c744240cffffffff895424088b4074894424048b4508890424e8338e5400e9eafdffff89df31d28b75108b9dccf7ffff8b84bd24f8ffff8d04c0668b14c534707e008995c0f7ffffeb96c785c4f7ffffffffffffc785ccf7ffff00000000e9a7feffff31c0e92afdffff",
+        "getter_sites": [
+          {
+            "call": "0x21522cd",
+            "instructions": [
+              {
+                "address": "0x21522bb",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x21522bf",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x21522c0",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x21522c3",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x21522c7",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x21522ca",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x21522cd",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x21522d2",
+                "instruction": "mov eax, dword ptr [eax + 0x74]"
+              },
+              {
+                "address": "0x21522d5",
+                "instruction": "mov edi, dword ptr [eax*4 + 0x4ef1c4]"
+              },
+              {
+                "address": "0x21522dc",
+                "instruction": "test edi, edi"
+              },
+              {
+                "address": "0x21522de",
+                "instruction": "jle 0x215229c"
+              },
+              {
+                "address": "0x21522e0",
+                "instruction": "mov ecx, dword ptr [eax*4 + 0x4ef520]"
+              },
+              {
+                "address": "0x21522e7",
+                "instruction": "mov dword ptr [ebp - 0x840], 0xffffffff"
+              },
+              {
+                "address": "0x21522f1",
+                "instruction": "test ecx, ecx"
+              }
+            ]
+          },
+          {
+            "call": "0x215247c",
+            "instructions": [
+              {
+                "address": "0x2152467",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2152469",
+                "instruction": "js 0x215229c"
+              },
+              {
+                "address": "0x215246f",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2152472",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2152476",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2152479",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x215247c",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x2152481",
+                "instruction": "mov edx, dword ptr [ebp - 0x840]"
+              },
+              {
+                "address": "0x2152487",
+                "instruction": "mov dword ptr [esp + 0x10], 1"
+              },
+              {
+                "address": "0x215248f",
+                "instruction": "mov dword ptr [esp + 0xc], 0xffffffff"
+              },
+              {
+                "address": "0x2152497",
+                "instruction": "mov dword ptr [esp + 8], edx"
+              },
+              {
+                "address": "0x215249b",
+                "instruction": "mov eax, dword ptr [eax + 0x74]"
+              },
+              {
+                "address": "0x215249e",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x21524a2",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      }
+    ],
+    "network_store_observation": {
+      "name": "get_random_card_in_hand",
+      "address": "0x2691cf0",
+      "function_size": 287,
+      "function_sha256": "ca986fd013620751816800eef8294f2d226dc0eb84d63bde74c2970c47d7a6e1",
+      "payload_store": "0x2691db0",
+      "kind_store": "0x2691db6",
+      "site_bytes_hex": "891d108c6200c6050c8c620018",
+      "instructions": [
+        {
+          "address": "0x2691db0",
+          "instruction": "mov dword ptr [0x628c10], ebx"
+        },
+        {
+          "address": "0x2691db6",
+          "instruction": "mov byte ptr [0x628c0c], 0x18"
+        }
+      ],
+      "scope": "Payload word is written before packet-kind byte in actual instructions, matching unchanged source. Cached Ghidra statements reverse these independent stores. No network I/O is executed and no whole-function/asynchronous protocol proof is inferred."
+    }
+  },
+  "site_collector_source": "import collections,csv,json,sys\nfrom pathlib import Path\nsys.path.insert(0,'tools/recovery')\nfrom canonicalize_helpers import sha,read,span\nfrom inspect_release import Image\nfrom capstone import Cs,CS_ARCH_X86,CS_MODE_32\nfrom capstone.x86_const import X86_OP_IMM,X86_OP_MEM\nstage=sys.argv[1];assert stage in ['native','rebuilt']\npaths=['.recovery/2022-ManalinkEh.dll','G:/Manalink/ManalinkEh_10_22_Hotfix.dbg'] if stage=='native' else ['ManalinkEh.dll','ManalinkEh.dbg']\nim=Image(Path(paths[0]).read_bytes());dbg=Image(Path(paths[1]).read_bytes());symbols=collections.defaultdict(set)\nfor n,o,s,k,t in dbg.symbols:\n if s>0 and k==32:symbols[n].add(0x2000000+dbg.pe.sections[s-1].VirtualAddress+o)\nstarts=sorted({a for values in symbols.values() for a in values})\nfor n in ['_get_card_instance','_lobotomy_effect']:assert len(symbols[n])==1,n\ngetter=next(iter(symbols['_get_card_instance']));lobotomy=next(iter(symbols['_lobotomy_effect']))\nmeta=list(csv.DictReader(Path('.recovery/reccmp/current-refresh-c725.metadata.csv').open()));md=Cs(CS_ARCH_X86,CS_MODE_32);md.detail=True\nrows=json.loads(Path('.recovery/reccmp/spell-query-plan-c726.json').read_bytes());results=[]\nfor r in rows:\n if stage=='native':base=int(r['address'],0);size=int(next(m['size'] for m in meta if m['address']==r['address']))\n else:\n  assert len(symbols['_'+r['name']])==1;base=next(iter(symbols['_'+r['name']]));size=next(a for a in starts if a>base)-base\n raw=im.pe.get_data(base-0x2000000,size);code=list(md.disasm(raw,base));assert sum(i.size for i in code)==size\n call_indices=[j for j,i in enumerate(code) if i.mnemonic=='call' and i.operands[0].type==X86_OP_IMM and i.operands[0].imm==getter]\n assert len(call_indices)==2,(stage,r['name'],len(call_indices))\n sites=[]\n for j in call_indices:\n  part=code[max(0,j-6):min(len(code),j+8)]\n  sites.append(dict(call=hex(code[j].address),instructions=[dict(address=hex(i.address),instruction=i.mnemonic+' '+i.op_str) for i in part]))\n if r['name']=='card_lobotomy':\n  j=call_indices[-1];next_call=next(i for i in code[j+1:] if i.mnemonic=='call')\n  assert next_call.operands[0].type==X86_OP_IMM and next_call.operands[0].imm==lobotomy\n  between=[i for i in code[j+1:] if i.address<next_call.address]\n  assert any(i.mnemonic=='mov' and len(i.operands)==2 and i.operands[1].type==X86_OP_MEM and i.operands[1].mem.disp==0x74 for i in between),'Final target player is not re-read after getter'\n results.append(dict(name=r['name'],address=hex(base),size=size,sha256=sha(raw),bytes_hex=raw.hex(),getter_sites=sites,scope='Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof.'))\nname='get_random_card_in_hand';row=next(m for m in meta if m['name']==name)\nif stage=='native':base=int(row['address'],0);size=int(row['size'])\nelse:\n assert len(symbols['_'+name])==1;base=next(iter(symbols['_'+name]));size=next(a for a in starts if a>base)-base\nraw=im.pe.get_data(base-0x2000000,size);code=list(md.disasm(raw,base));stores={}\nfor i in code:\n if i.mnemonic=='mov' and i.operands[0].type==X86_OP_MEM:\n  op=i.operands[0]\n  if not op.mem.base and not op.mem.index and op.mem.disp in [0x628c10,0x628c0c]:\n   assert op.mem.disp not in stores;stores[op.mem.disp]=i\nassert set(stores)=={0x628c10,0x628c0c} and stores[0x628c10].address<stores[0x628c0c].address\nassert stores[0x628c10].operands[0].size==4 and stores[0x628c0c].operands[0].size==1\na=stores[0x628c10].address;b=stores[0x628c0c].address+stores[0x628c0c].size\nnetwork=dict(name=name,address=hex(base),function_size=size,function_sha256=sha(raw),payload_store=hex(a),kind_store=hex(stores[0x628c0c].address),site_bytes_hex=raw[a-base:b-base].hex(),instructions=[dict(address=hex(i.address),instruction=i.mnemonic+' '+i.op_str) for i in code if a<=i.address<b],scope='Payload word is written before packet-kind byte in actual instructions, matching unchanged source. Cached Ghidra statements reverse these independent stores. No network I/O is executed and no whole-function/asynchronous protocol proof is inferred.')\nout=dict(stage=stage,inputs={p:sha(Path(p).read_bytes()) for p in paths},script_sha256=sha(Path(__file__).read_bytes()),getter_address=hex(getter),functions=results,network_store_observation=network)\nPath(f'.recovery/reccmp/spell-query-sites-{stage}-c726.json').write_text(json.dumps(out,indent=2)+'\\n')\nprint(stage,': twelve getter sites, Lobotomy fresh target load and payload-before-kind packet stores verified.')\n",
+  "planner_source": "import json,re,sys\nfrom pathlib import Path\nsys.path.insert(0,'tools/recovery')\nfrom canonicalize_helpers import read,span,mask,sha\npacket=json.loads(Path('.recovery/reccmp/semantic-call-leads-c725.json').read_bytes())['functions'];rows=[]\nfor index in [10,12,20,25,117]:\n r=packet[index];source=r['source'];name=r['name'];s=read(source);before=s[slice(*span(s,name))];assert before==r['body']\n code=mask(before);declaration=re.search(r'(?m)^[ \\t]*card_instance_t\\s*\\*\\s*(\\w+)\\s*=\\s*get_card_instance\\(player, card\\);[ \\t]*\\n',code)\n assert len(re.findall(r'\\bget_card_instance\\s*\\(',code))==1\n if declaration:\n  variable=declaration[1];after=before[:declaration.start()]+before[declaration.end():]\n else:\n  assert name=='card_tendrils_of_agony' and not re.search(r'\\binstance\\b',code)\n  variable='instance';assert before.count('get_card_instance(player, card)')==1\n  after=before.replace('get_card_instance(player, card)',variable,1)\n point=re.search(r'(?m)^([ \\t]*)if \\(event == EVENT_RESOLVE_SPELL\\)',mask(after));assert point\n prefix=mask(after[:point.start()]);assert prefix.count('{')-prefix.count('}')==1\n assert 'IS_GS_EVENT' in prefix and prefix.rfind('default_target_definition')>prefix.rfind('IS_GS_EVENT')\n after=after[:point.start()]+point[1]+'card_instance_t* '+variable+' = get_card_instance(player, card);\\n'+after[point.start():]\n assert span(after,name)==(0,len(after))\n rows.append(dict(name=name,source=source,address=r['address'],before=before,after=after,kind='native_spell_prefix_instance_query',reason='Restore one get_card_instance after target setup on every accepted GS event, before resolution dispatch and target validation. Keep EVENT_QUERY early return and unaffected-cast guards. Native duplicated prefixes perform this query even where its result is unused; the resolution path retains the same saved instance pointer and live target-field reads after callbacks. No card-rule change or whole-function/gameplay equivalence claim.',native=r['native'],native_path=r['native_path']))\nr=packet[576];assert r['name']=='card_lobotomy';s=read(r['source']);before=s[slice(*span(s,r['name']))];assert before==r['body']\nold='lobotomy_effect(player, target, id, -1, 1);';new='lobotomy_effect(player, get_card_instance(player, card)->targets[0].player, id, -1, 1);'\nassert before.count(old)==1;after=before.replace(old,new,1)\nrows.append(dict(name=r['name'],source=r['source'],address=r['address'],before=before,after=after,kind='native_post_selection_target_reload',reason='Restore native fresh get_card_instance/target-player read immediately before lobotomy_effect, after hand enumeration, ID/basic-land queries and any show_deck callbacks. Initial hand scan still uses its original saved target; the final effect uses the live target field. Keep validation and choice/fallback logic unchanged. No broad gameplay proof.',native=r['native'],native_path=r['native_path']))\nfor r in rows:\n assert r['before']!=r['after'];assert span(r['after'],r['name'])==(0,len(r['after']))\n r['before_sha256']=sha(r['before'].encode());r['after_sha256']=sha(r['after'].encode())\nPath('.recovery/reccmp/spell-query-plan-c726.json').write_text(json.dumps(rows,indent=2)+'\\n')\nprint('Planned five native spell-prefix queries and Lobotomy post-selection target reload.')\n",
+  "planner_sha256": "86115322f467ad413294b073e55666d2eab5dd12bb1e8c2942df17d4f3832a40",
+  "header_inputs": {
+    "manalink.h": "5a4226316a3813cbccdeeaefde9cd687fe426d0f0e9b4bc0ec24971318b703f3",
+    "defs.h": "73298bdd1a5286ae955523adbc020e985e6d40d844c3e3c2097b648ba2195774"
+  },
+  "read_only_observations": [
+    {
+      "name": "increment_data",
+      "source": "functions/deck.c",
+      "address": "0x26b37f0",
+      "source_definition": "int increment_data(card_instance_t *inst, int cid)\n{\n  inst_info_t initial = inst_info(inst, cid);\n  inst_info_t second = inst_info(inst, cid);\n  return set_inst_info(inst, cid, initial.data + 1u, second.data2);\n}",
+      "source_definition_sha256": "0c696af716b957f820292681ca43988541720b21a018a56f16bb40017638df1e",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: increment_data @ 0x26b37f0; DWARF unit functions/deck.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int increment_data(card_instance_t * inst, int cid) */\n\nint increment_data(card_instance_t *inst,int cid)\n\n{\n  card_ext_t *pcVar1;\n  int iVar2;\n  inst_info_t iVar3;\n  inst_info_t iVar4;\n  \n                    /* Unresolved local var: int init@[???]\n                       Unresolved local var: int init2@[???] */\n  iVar3 = inst_info(inst,cid);\n  iVar4 = inst_info(inst,cid);\n                    /* Unresolved local var: int i@[???]\n                       Unresolved local var: card_ext_t * ext@[???] */\n  pcVar1 = (inst->field_21).ext;\n  iVar2 = 0;\n  do {\n    if (cid == (uint)pcVar1->inst_info_data[iVar2].id) goto LAB_026b3850;\n    iVar2 = iVar2 + 1;\n  } while (iVar2 != 6);\n  iVar2 = 0;\n  while (pcVar1->inst_info_data[iVar2].id != 0) {\n    iVar2 = iVar2 + 1;\n    if (iVar2 == 6) {\n      return 0;\n    }\n  }\nLAB_026b3850:\n  pcVar1->inst_info_data[iVar2].data2 = iVar4.data2;\n  pcVar1->inst_info_data[iVar2].id = (uint16_t)cid;\n  pcVar1->inst_info_data[iVar2].data = iVar3.data + 1;\n  return 1;\n}\n\n",
+      "native_decomp_sha256": "c1ef75a38ff519adcebc70303c629a5770a839e652501b163ea58723931dc0df",
+      "reason": "Two inst_info snapshots and shared setter body explain native inline stores versus rebuilt set_inst_info call.",
+      "scope": "Read-only selected source/native topology or data/call-order observation. No new body, strict full-function or gameplay-equivalence claim."
+    },
+    {
+      "name": "increment_data2",
+      "source": "functions/deck.c",
+      "address": "0x26b3870",
+      "source_definition": "int increment_data2(card_instance_t *inst, int cid)\n{\n  inst_info_t initial = inst_info(inst, cid);\n  inst_info_t second = inst_info(inst, cid);\n  return set_inst_info(inst, cid, initial.data, (uint16_t)(second.data2 + 1));\n}",
+      "source_definition_sha256": "758ba1a41aa9f17e487d0a91e67ae6ca6171993789e41a867db0591c7db4e702",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: increment_data2 @ 0x26b3870; DWARF unit functions/deck.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int increment_data2(card_instance_t * inst, int cid) */\n\nint increment_data2(card_instance_t *inst,int cid)\n\n{\n  card_ext_t *pcVar1;\n  int iVar2;\n  inst_info_t iVar3;\n  inst_info_t iVar4;\n  \n                    /* Unresolved local var: int init@[???]\n                       Unresolved local var: int init2@[???] */\n  iVar3 = inst_info(inst,cid);\n  iVar4 = inst_info(inst,cid);\n                    /* Unresolved local var: int i@[???]\n                       Unresolved local var: card_ext_t * ext@[???] */\n  pcVar1 = (inst->field_21).ext;\n  iVar2 = 0;\n  do {\n    if (cid == (uint)pcVar1->inst_info_data[iVar2].id) goto LAB_026b38d0;\n    iVar2 = iVar2 + 1;\n  } while (iVar2 != 6);\n  iVar2 = 0;\n  while (pcVar1->inst_info_data[iVar2].id != 0) {\n    iVar2 = iVar2 + 1;\n    if (iVar2 == 6) {\n      return 0;\n    }\n  }\nLAB_026b38d0:\n  pcVar1->inst_info_data[iVar2].id = (uint16_t)cid;\n  pcVar1->inst_info_data[iVar2].data = iVar3.data;\n  pcVar1->inst_info_data[iVar2].data2 = iVar4.data2 + 1;\n  return 1;\n}\n\n",
+      "native_decomp_sha256": "9ec58250095ec20c1d89247f637a378176842846a3195855cb54925df71197df",
+      "reason": "Two inst_info snapshots and low-16-bit increment match shared setter route; named-call delta is inlining.",
+      "scope": "Read-only selected source/native topology or data/call-order observation. No new body, strict full-function or gameplay-equivalence claim."
+    },
+    {
+      "name": "check_for_special_ability",
+      "source": "functions/abilities.c",
+      "address": "0x26df890",
+      "source_definition": "int check_for_special_ability(int player, int card, int keyword)\n{\n  card_instance_t *instance;\n  unsigned int special_keywords;\n  if (player == -1)\n  {\n    return has_sp_key_by_csvid_impl((unsigned int)cards_data[card].id, keyword);\n  }\n  instance = get_card_instance(player, card);\n  special_keywords = get_special_abilities_by_instance(instance);\n  return special_keywords & keyword;\n}",
+      "source_definition_sha256": "ccd83b25c6c1039c73826db2c678e5dddc0bdb49a090cf4b0f1683974ef64caa",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: check_for_special_ability @ 0x26df890; DWARF unit functions/abilities.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int check_for_special_ability(int player, int card, int keyword) */\n\nint check_for_special_ability(int player,int card,int keyword)\n\n{\n  int iVar1;\n  card_instance_t *instance;\n  uint uVar2;\n  \n  if (player == -1) {\n    iVar1 = has_sp_key_by_csvid((uint)cards_data[card].id,keyword);\n    return iVar1;\n  }\n  instance = get_card_instance(player,card);\n  uVar2 = get_special_abilities_by_instance(instance);\n  return uVar2 & keyword;\n}\n\n",
+      "native_decomp_sha256": "89de7244c7e20a2df1e5976eee5e3da47d4848c8ce8e232cb4dfc0a6bc537c65",
+      "reason": "Same source split between CSV-ID static lookup and live instance keyword mask; helper inlining creates the call delta.",
+      "scope": "Read-only selected source/native topology or data/call-order observation. No new body, strict full-function or gameplay-equivalence claim."
+    },
+    {
+      "name": "adventure",
+      "source": "cards/throne_of_eldraine.c",
+      "address": "0x25ca280",
+      "source_definition": "int adventure(int player, int card, event_t event, int csvid_creature)\n{\n  if (event == EVENT_COUNTERSPELL)\n  {\n    if (card == affected_card && player == affected_card_controller && !is_token(player, card))\n      adventure_transform(player, card, csvid_creature);\n    return 0;\n  }\n  if (event != EVENT_RESOLVE_SPELL || is_token(player, card))\n    return 0;\n  return resolve_an_adventure(player, card, csvid_creature);\n}",
+      "source_definition_sha256": "879bd5814fac54b279f56ee1719cf14fdde4290188832d05266394d50beb65eb",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: adventure @ 0x25ca280; DWARF unit cards/throne_of_eldraine.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int adventure(int player, int card, event_t event, int csvid_creature)\n    */\n\nint adventure(int player,int card,event_t event,int csvid_creature)\n\n{\n  int iVar1;\n  int iVar2;\n  card_instance_t *pcVar3;\n  \n  if (event == EVENT_COUNTERSPELL) {\n    if (card != affected_card) {\n      return 0;\n    }\n    if (player != affected_card_controller) {\n      return 0;\n    }\n    iVar1 = is_token(player,card);\n    if (iVar1 != 0) {\n      return 0;\n    }\n    adventure_transform(player,card,csvid_creature);\n    return 0;\n  }\n  if (event != EVENT_RESOLVE_SPELL) {\n    return 0;\n  }\n  iVar1 = is_token(player,card);\n  if (iVar1 != 0) {\n    return 0;\n  }\n                    /* Unresolved local var: card_instance_t * inst@[???]\n                       Unresolved local var: int eff@[???]\n                       Unresolved local var: int c@[???] */\n  iVar1 = 0;\n  if (0 < active_cards_count[player]) {\n    do {\n      pcVar3 = in_play(player,iVar1);\n      if ((((pcVar3 != (card_instance_t *)0x0) && (iVar2 = is_what(player,iVar1,0x80), iVar2 != 0))\n          && ((code *)(pcVar3->field_26).info_slot == adventure_effect)) &&\n         ((pcVar3->targets[0xf].player == -1 && (pcVar3->targets[0xf].card == -1)))) {\n        if (iVar1 != -1) {\n                    /* Unresolved local var: int i@[???] */\n          pcVar3 = get_card_instance(player,iVar1);\n          iVar1 = 1;\n          goto LAB_025ca35a;\n        }\n        break;\n      }\n      iVar1 = iVar1 + 1;\n    } while (iVar1 < active_cards_count[player]);\n  }\n                    /* Unresolved local var: int legacy@[???] */\n  iVar1 = create_legacy_activate(player,card,adventure_effect);\n  pcVar3 = get_card_instance(player,iVar1);\n  pcVar3->display_pic_csv_id = 0x616c;\n  pcVar3->display_pic_num = 0;\n  iVar1 = get_owner(player,card);\nLAB_025ca40b:\n  pcVar3->targets[0].player = iVar1;\n  iVar1 = get_original_internal_card_id(player,card);\n  pcVar3->targets[0].card = iVar1;\n  goto LAB_025ca420;\n  while (iVar1 = iVar1 + 1, iVar1 != 0x10) {\nLAB_025ca35a:\n    if ((pcVar3->targets[iVar1].player == -1) && (pcVar3->targets[iVar1].card == -1)) {\n      pcVar3 = (card_instance_t *)(pcVar3->color_id + iVar1 * 8 + -0x40);\n      iVar1 = get_owner(player,card);\n      goto LAB_025ca40b;\n    }\n  }\nLAB_025ca420:\n  obliterate_card(player,card);\n  iVar1 = get_owner(player,card);\n  add_csvid_to_rfg(iVar1,csvid_creature);\n  return 0;\n}\n\n",
+      "native_decomp_sha256": "5dc20b480ee7971015324efd64792b29a8e0a865899c329e9b7f6edba0f035a0",
+      "reason": "Outlined resolve_an_adventure retains both owner queries, including the fresh post-obliterate owner, and native legacy slot search/creation.",
+      "scope": "Read-only selected source/native topology or data/call-order observation. No new body, strict full-function or gameplay-equivalence claim."
+    },
+    {
+      "name": "memcpy_displayed_inst_and_ext",
+      "source": "functions/windows.c",
+      "address": "0x2657690",
+      "source_definition": "int memcpy_displayed_inst_and_ext(inst_and_ext_t *dest, int player, int card)\n{\n  if (!dest || (unsigned)player >= 2 || (unsigned)card >= 150)\n    return 0;\n  card_instance_t *src = get_displayed_card_instance(player, card);\n  EnterCriticalSection(critical_section_for_display);\n  memcpy(&dest->ext, src->ext, sizeof(dest->ext));\n  memcpy(&dest->inst, src, sizeof(dest->inst));\n  LeaveCriticalSection(critical_section_for_display);\n  dest->inst.ext = &dest->ext;\n  return 1;\n}",
+      "source_definition_sha256": "befb3022b4dcd1fc457658267e5237800ec81b5381cdc90c12febb2227c3db25",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: memcpy_displayed_inst_and_ext @ 0x2657690; DWARF unit functions/windows.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int memcpy_displayed_inst_and_ext(inst_and_ext_t * dest, int player,\n   int card) */\n\nint memcpy_displayed_inst_and_ext(inst_and_ext_t *dest,int player,int card)\n\n{\n  card_ext_t *pcVar1;\n  card_instance_t *argument2;\n  uint uVar2;\n  int iVar3;\n  uint uVar4;\n  card_ext_t *pcVar5;\n  card_ext_t *pcVar6;\n  card_ext_t *pcVar7;\n  bool bVar8;\n  byte bVar9;\n  \n                    /* Unresolved local var: card_instance_t * src@[???] */\n  bVar9 = 0;\n  if (((dest != (inst_and_ext_t *)0x0) && ((uint)player < 2)) && ((uint)card < 0x96)) {\n                    /* Unresolved local var: card_instance_t * src@[???] */\n    argument2 = get_displayed_card_instance(player,card);\n    EnterCriticalSection(0x620288);\n    pcVar1 = &dest->ext;\n    pcVar5 = (argument2->field_21).ext;\n    uVar4 = 0xc0;\n    bVar8 = ((uint)pcVar1 & 1) != 0;\n    pcVar6 = pcVar1;\n    if (bVar8) {\n      pcVar6 = (card_ext_t *)((int)&(dest->ext).sp_keywords + 1);\n      *(char *)&(dest->ext).sp_keywords = (char)pcVar5->sp_keywords;\n      pcVar5 = (card_ext_t *)((int)&pcVar5->sp_keywords + 1);\n      uVar4 = 0xbf;\n    }\n    pcVar7 = pcVar6;\n    if (((uint)pcVar6 & 2) != 0) {\n      pcVar7 = (card_ext_t *)((int)&pcVar6->sp_keywords + 2);\n      *(short *)&pcVar6->sp_keywords = (short)pcVar5->sp_keywords;\n      pcVar5 = (card_ext_t *)((int)&pcVar5->sp_keywords + 2);\n      uVar4 = uVar4 - 2;\n    }\n    for (uVar2 = uVar4 >> 2; uVar2 != 0; uVar2 = uVar2 - 1) {\n      pcVar7->sp_keywords = pcVar5->sp_keywords;\n      pcVar5 = (card_ext_t *)((int)pcVar5 + (uint)bVar9 * -8 + 4);\n      pcVar7 = (card_ext_t *)((int)pcVar7 + (uint)bVar9 * -8 + 4);\n    }\n    if ((uVar4 & 2) == 0) {\n      iVar3 = 0;\n    }\n    else {\n      *(short *)&pcVar7->sp_keywords = (short)pcVar5->sp_keywords;\n      iVar3 = 2;\n    }\n    if (bVar8) {\n      *(undefined1 *)((int)pcVar7->subtype + iVar3 + -8) =\n           *(undefined1 *)((int)pcVar5->subtype + iVar3 + -8);\n    }\n    memcpy(dest,argument2,300);\n    LeaveCriticalSection(0x620288);\n    (dest->inst).field_21.ext = pcVar1;\n    return 1;\n  }\n  return 0;\n}\n\n",
+      "native_decomp_sha256": "e57841c9c6e8a814058c8f0c93597934006275c0dc3d7cec8e2d195f1913e022",
+      "reason": "Displayed getter precedes lock; ext copy 192 bytes then instance copy 300, unlock then repoint destination ext. Getter/memcpy inlining is not a missing operation; ordinary nonoverlapping-copy assumptions remain.",
+      "scope": "Read-only selected source/native topology or data/call-order observation. No new body, strict full-function or gameplay-equivalence claim."
+    },
+    {
+      "name": "copy_all_tokens",
+      "source": "functions/token_generation.c",
+      "address": "0x26667f0",
+      "source_definition": "void copy_all_tokens(int player, int card, int type, test_definition_t *test)\n{\n  int c, marked[151] = {0};\n  for (c = 0; c < active_cards_count[player]; ++c)\n  {\n    if (in_play(player, c) && is_token(player, c))\n    {\n      if ((type && is_what(player, c, type)) ||\n          (test != NULL && new_make_test_in_play(player, c, -1, test)))\n      {\n        marked[c] = 1;\n      }\n    }\n  }\n\n  for (c = active_cards_count[player] - 1; c > -1; c--)\n  {\n    if (marked[c] && player >= 0)\n    {\n      copy_token_part(player, card, player, c);\n    }\n  }\n}",
+      "source_definition_sha256": "7b2355a39a5b4f5480e574743f983016615524cbc94c35dd871cb2111670b9d9",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: copy_all_tokens @ 0x26667f0; DWARF unit functions/token_generation.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: void copy_all_tokens(int player, int card, int type, test_definition_t\n   * test) */\n\nvoid copy_all_tokens(int player,int card,int type,test_definition_t *test)\n\n{\n  card_instance_t *pcVar1;\n  int iVar2;\n  int *piVar3;\n  int card_00;\n  int marked [151];\n  \n  piVar3 = marked;\n                    /* Unresolved local var: int c@[???] */\n  for (iVar2 = 0x97; iVar2 != 0; iVar2 = iVar2 + -1) {\n    *piVar3 = 0;\n    piVar3 = piVar3 + 1;\n  }\n  iVar2 = active_cards_count[player];\n  if (0 < iVar2) {\n    card_00 = 0;\n    do {\n      pcVar1 = in_play(player,card_00);\n      if ((pcVar1 != (card_instance_t *)0x0) && (iVar2 = is_token(player,card_00), iVar2 != 0)) {\n        if ((type == 0) || (iVar2 = is_what(player,card_00,type), iVar2 == 0)) {\n          if ((test != (test_definition_t *)0x0) &&\n             (iVar2 = new_make_test_in_play(player,card_00,-1,test), iVar2 != 0)) {\n            marked[card_00] = 1;\n          }\n        }\n        else {\n          marked[card_00] = 1;\n        }\n      }\n      card_00 = card_00 + 1;\n      iVar2 = active_cards_count[player];\n    } while (card_00 < iVar2);\n  }\n  iVar2 = iVar2 + -1;\n  if (-1 < iVar2) {\n    do {\n                    /* Unresolved local var: token_generation_t token@[???] */\n      if ((marked[iVar2] != 0) && (-1 < player)) {\n        copy_token(player,card,player,iVar2);\n      }\n      iVar2 = iVar2 + -1;\n    } while (iVar2 != -1);\n  }\n  return;\n}\n\n",
+      "native_decomp_sha256": "cc295258064e465476294ceab27b55be0e12083fcf44593cdcae4e1c61fa6873",
+      "reason": "Mark with live bounds then reverse-copy through worker. The loop c>=0 and existing player>=0 gates supply both public copy_token target preconditions; predicate ordering is unchanged.",
+      "scope": "Read-only selected source/native topology or data/call-order observation. No new body, strict full-function or gameplay-equivalence claim."
+    },
+    {
+      "name": "copy_all_tokens_both_players",
+      "source": "functions/token_generation.c",
+      "address": "0x26668f0",
+      "source_definition": "void copy_all_tokens_both_players(int player, int card, int type, test_definition_t *test)\n{\n  for (int pass = 0; pass < 2; ++pass)\n  {\n    int p = pass ? 1 - current_turn : current_turn;\n    int limit = active_cards_count[p];\n    if (limit > 0)\n    {\n      int marked[151] = {0};\n      for (int c = 0; c < limit; ++c)\n      {\n        card_instance_t *instance = in_play(p, c);\n        if (instance && is_token(p, c) &&\n            ((type && is_what(p, c, type)) || (test && new_make_test_in_play(p, c, -1, test))))\n          marked[c] = 1;\n        limit = active_cards_count[p];\n      }\n      for (int c = limit - 1; c >= 0; --c)\n        if (marked[c] && p >= 0)\n          copy_token_part(p, c, p, c);\n    }\n  }\n}",
+      "source_definition_sha256": "53bba82313491f87e827093116b288772423be51fff778ff5418889b18801c18",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: copy_all_tokens_both_players @ 0x26668f0; DWARF unit functions/token_generation.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: void copy_all_tokens_both_players(int player, int card, int type,\n   test_definition_t * test) */\n\nvoid copy_all_tokens_both_players(int player,int card,int type,test_definition_t *test)\n\n{\n  card_instance_t *pcVar1;\n  int iVar2;\n  int iVar3;\n  int iVar4;\n  int *piVar5;\n  byte bVar6;\n  int marked [151];\n  \n  iVar3 = current_turn;\n                    /* Unresolved local var: int p@[???]\n                       Unresolved local var: int c@[???] */\n  bVar6 = 0;\n  iVar2 = active_cards_count[current_turn];\n  if (0 < iVar2) {\n    piVar5 = marked;\n    for (iVar4 = 0x97; iVar4 != 0; iVar4 = iVar4 + -1) {\n      *piVar5 = 0;\n      piVar5 = piVar5 + 1;\n    }\n    if (0 < iVar2) {\n      iVar4 = 0;\n      do {\n        pcVar1 = in_play(iVar3,iVar4);\n        if (((pcVar1 != (card_instance_t *)0x0) && (iVar2 = is_token(iVar3,iVar4), iVar2 != 0)) &&\n           (((type != 0 && (iVar2 = is_what(iVar3,iVar4,type), iVar2 != 0)) ||\n            ((test != (test_definition_t *)0x0 &&\n             (iVar2 = new_make_test_in_play(iVar3,iVar4,-1,test), iVar2 != 0)))))) {\n          marked[iVar4] = 1;\n        }\n        iVar4 = iVar4 + 1;\n        iVar2 = active_cards_count[iVar3];\n      } while (iVar4 < iVar2);\n    }\n    iVar2 = iVar2 + -1;\n    if (-1 < iVar2) {\n      do {\n                    /* Unresolved local var: token_generation_t token@[???] */\n        if ((marked[iVar2] != 0) && (-1 < iVar3)) {\n          copy_token(iVar3,iVar2,iVar3,iVar2);\n        }\n        iVar2 = iVar2 + -1;\n      } while (iVar2 != -1);\n    }\n  }\n  iVar3 = 1 - current_turn;\n  iVar2 = active_cards_count[iVar3];\n  if (0 < iVar2) {\n    piVar5 = marked;\n    for (iVar4 = 0x97; iVar4 != 0; iVar4 = iVar4 + -1) {\n      *piVar5 = 0;\n      piVar5 = piVar5 + (uint)bVar6 * -2 + 1;\n    }\n    if (0 < iVar2) {\n      iVar4 = 0;\n      do {\n        pcVar1 = in_play(iVar3,iVar4);\n        if (((pcVar1 != (card_instance_t *)0x0) && (iVar2 = is_token(iVar3,iVar4), iVar2 != 0)) &&\n           (((type != 0 && (iVar2 = is_what(iVar3,iVar4,type), iVar2 != 0)) ||\n            ((test != (test_definition_t *)0x0 &&\n             (iVar2 = new_make_test_in_play(iVar3,iVar4,-1,test), iVar2 != 0)))))) {\n          marked[iVar4] = 1;\n        }\n        iVar4 = iVar4 + 1;\n        iVar2 = active_cards_count[iVar3];\n      } while (iVar4 < iVar2);\n    }\n    iVar2 = iVar2 + -1;\n    if (-1 < iVar2) {\n      do {\n                    /* Unresolved local var: token_generation_t token@[???] */\n        if ((marked[iVar2] != 0) && (-1 < iVar3)) {\n          copy_token(iVar3,iVar2,iVar3,iVar2);\n        }\n        iVar2 = iVar2 + -1;\n      } while (iVar2 != -1);\n    }\n  }\n  return;\n}\n\n",
+      "native_decomp_sha256": "dc20760e3dae4fdf1d3981ca7e2b16e3c9cd806a4f21c04c9e137941b88761a8",
+      "reason": "Duplicated native player phases correspond to source loop with fresh second-phase current_turn and final saved live bound. Preserve copying from each marked token itself.",
+      "scope": "Read-only selected source/native topology or data/call-order observation. No new body, strict full-function or gameplay-equivalence claim."
+    },
+    {
+      "name": "get_updated_counters_number_as_cost",
+      "source": "functions/counters.c",
+      "address": "0x26d4540",
+      "source_definition": "static int get_updated_counters_number_as_cost(int player, int card, counter_t type, int number)\n{\n  if (!can_have_counters_placed_on_it(player, card))\n    return 0;\n  if (type != COUNTER_M1_M1 && type != COUNTER_P1_P1)\n    return number;\n  if (card >= 0 && !is_what(player, card, TYPE_CREATURE))\n    return number;\n  int blocker_controller = type == COUNTER_M1_M1 ? player : 1 - player;\n  int blocker_id = type == COUNTER_M1_M1 ? CARD_ID_MELIRA_SYLVOK_OUTCAST : CARD_ID_BLIGHTBEETLE;\n  return check_battlefield_for_id(blocker_controller, blocker_id) ? 0 : number;\n}",
+      "source_definition_sha256": "e274893916a9868eeaa4158c9c5c9b8bd581a6068c188a08be24e81960da9adb",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: get_updated_counters_number_as_cost @ 0x26d4540; DWARF unit functions/counters.c. Raw analysis output. */\n\n/* DWARF original prototype: int get_updated_counters_number_as_cost(int player, int card, counter_t\n   type, int number) */\n\nint __regparm3 get_updated_counters_number_as_cost(int player,int card,counter_t type,int number)\n\n{\n  int iVar1;\n  \n  iVar1 = can_have_counters_placed_on_it(player,card);\n  if (iVar1 != 0) {\n    if (type == COUNTER_M1_M1) {\n      if ((-1 < card) && (iVar1 = is_what(player,card,2), iVar1 == 0)) {\n        return number;\n      }\n      iVar1 = check_battlefield_for_id(player,0x2d73);\n    }\n    else {\n      if (type != COUNTER_P1_P1) {\n        return number;\n      }\n      if ((-1 < card) && (iVar1 = is_what(player,card,2), iVar1 == 0)) {\n        return number;\n      }\n      iVar1 = check_battlefield_for_id(1 - player,0x4f3c);\n    }\n    if (iVar1 == 0) {\n      return number;\n    }\n  }\n  return 0;\n}\n\n",
+      "native_decomp_sha256": "1a82130c867b274c5a1b976a99ee362ecf6a31c090326af9c0892c9fc5742622",
+      "reason": "Duplicated native +/- counter branches map to one source creature test and selected blocker query, after unconditional can_have_counters_placed_on_it.",
+      "scope": "Read-only selected source/native topology or data/call-order observation. No new body, strict full-function or gameplay-equivalence claim."
+    },
+    {
+      "name": "card_foresight",
+      "source": "cards/alliances.c",
+      "address": "0x20aa310",
+      "source_definition": "int card_foresight(int player, int card, event_t event)\n{\n  test_definition_t test;\n  if (event != EVENT_RESOLVE_SPELL)\n    return basic_spell(player, card, event);\n  bool ai = ai_is_speculating == 1 || (player == 1 && (((unsigned char)trace_mode & 2) == 0));\n  bool exile_land = ai && count_subtype(player, 1, -1) > 4 && count_deck_by_type(player, 1) > 0;\n  new_default_test_definition(&test, exile_land ? 1 : 0xff, \"Select a card to exile.\");\n  if (ai)\n    ai_modifier += exile_land ? 0x40 : 0x20;\n  test.qty = 3;\n  new_global_tutor(player, player, 1, 6, 0, 3, &test);\n  cantrip(player, card, 1);\n  kill_card(player, card, KILL_DESTROY);\n  return basic_spell(player, card, event);\n}",
+      "source_definition_sha256": "ffef6bdb4d101fb8a95254aaf62c9957ec95417538f2357ec9569bd0ae8249d5",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: card_foresight @ 0x20aa310; DWARF unit cards/alliances.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int card_foresight(int player, int card, event_t event) */\n\nint card_foresight(int player,int card,event_t event)\n\n{\n  int iVar1;\n  test_definition_t test;\n  \n  if (event != EVENT_RESOLVE_SPELL) goto LAB_020aa328;\n  if ((ai_is_speculating == 1) || ((player == 1 && (((byte)trace_mode & 2) == 0)))) {\n    iVar1 = count_subtype(player,1,-1);\n    if (4 < iVar1) {\n      iVar1 = count_deck_by_type(player,1);\n      if (0 < iVar1) {\n        new_default_test_definition(&test,1,\"Select a card to exile.\");\n        ai_modifier = ai_modifier + 0x40;\n        goto LAB_020aa3e6;\n      }\n    }\n    new_default_test_definition(&test,0xff,\"Select a card to exile.\");\n    ai_modifier = ai_modifier + 0x20;\n  }\n  else {\n    new_default_test_definition(&test,0xff,\"Select a card to exile.\");\n  }\nLAB_020aa3e6:\n  test.qty = 3;\n  new_global_tutor(player,player,1,6,0,3,&test);\n  cantrip(player,card,1);\n  kill_card(player,card,KILL_DESTROY);\nLAB_020aa328:\n  iVar1 = basic_spell(player,card,event);\n  return iVar1;\n}\n\n",
+      "native_decomp_sha256": "bfca6d1928c7d2a441cecc98b1a00cc31a028010ecebf311b283bfb2e931f0be",
+      "reason": "AI branch and land checks are snapshots before test construction; basic_spell lexical duplication executes once per path.",
+      "scope": "Read-only selected source/native topology or data/call-order observation. No new body, strict full-function or gameplay-equivalence claim."
+    },
+    {
+      "name": "card_renegades_getaway",
+      "source": "cards/aether_revolt.c",
+      "address": "0x20c8020",
+      "source_definition": "int card_renegades_getaway(int player, int card, event_t event)\n{\n  card_instance_t *instance;\n  target_definition_t td;\n\n  if (!IS_GS_EVENT(player, card, event))\n  {\n    return 0;\n  }\n  default_target_definition(player, card, &td, 0x47);\n  td.preferred_controller = player;\n  instance = get_card_instance(player, card);\n  if (event == EVENT_RESOLVE_SPELL)\n  {\n    if (valid_target(&td))\n    {\n      pump_ability_until_eot(player, card, instance->targets[0].player,\n                             instance->targets[0].card, 0, 0, 0, 0x800);\n      make_servo(player, card, 1);\n    }\n    kill_card(player, card, KILL_DESTROY);\n  }\n  return generic_spell(player, card, event, 1, &td, \"TARGET_PERMANENT\", 1, NULL);\n}",
+      "source_definition_sha256": "9f4ad513bb2b4a59848571a9e418a68debfff0e66e4e137b3413782bf5822af7",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: card_renegades_getaway @ 0x20c8020; DWARF unit cards/aether_revolt.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* WARNING: Enum \"subtype_t\": Some values do not have unique names */\n/* DWARF original prototype: int card_renegades_getaway(int player, int card, event_t event) */\n\nint card_renegades_getaway(int player,int card,event_t event)\n\n{\n  card_instance_t *pcVar1;\n  int iVar2;\n  target_definition_t td;\n  \n                    /* Unresolved local var: card_instance_t * instance@[???] */\n  if (event != EVENT_CAN_CAST) {\n    if (event == EVENT_CAST_SPELL) {\n      if (card != affected_card) {\n        return 0;\n      }\n      if (player != affected_card_controller) {\n        return 0;\n      }\n      default_target_definition(player,card,&td,0x47);\n      td.preferred_controller = player;\n      get_card_instance(player,card);\n      goto LAB_020c80e7;\n    }\n    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) {\n      default_target_definition(player,card,&td,0x47);\n      td.preferred_controller = player;\n      pcVar1 = get_card_instance(player,card);\n      if (event == EVENT_RESOLVE_SPELL) {\n        iVar2 = valid_target(&td);\n        if (iVar2 != 0) {\n          pump_ability_until_eot\n                    (player,card,pcVar1->targets[0].player,pcVar1->targets[0].card,0,0,0,0x800);\n          make_servo(player,card,1);\n        }\n        kill_card(player,card,KILL_DESTROY);\n      }\n      goto LAB_020c80e7;\n    }\n    if (event != EVENT_CHANGE_TARGET) {\n      return 0;\n    }\n  }\n  default_target_definition(player,card,&td,0x47);\n  td.preferred_controller = player;\n  get_card_instance(player,card);\nLAB_020c80e7:\n  iVar2 = generic_spell(player,card,event,1,&td,\"TARGET_PERMANENT\",1,(test_definition_t *)0x0);\n  return iVar2;\n}\n\n",
+      "native_decomp_sha256": "a0fa03c562811a8a0cf26d454efb07fba2deb709c7b2a5eebb72032a2fdc7a71",
+      "reason": "Source already queries the instance on all accepted GS events; duplicated native target/getter prefixes need no additional source query.",
+      "scope": "Read-only selected source/native topology or data/call-order observation. No new body, strict full-function or gameplay-equivalence claim."
+    },
+    {
+      "name": "get_random_card_in_hand",
+      "source": "functions/functions.c",
+      "address": "0x2691cf0",
+      "source_definition": "int get_random_card_in_hand(int player){\n\tif( hand_count[player] <= 0 ){\n\t\treturn -1;\n\t}\n\n\tif ((trace_mode & 2) && current_turn == 1){\n\t\tEXE_FN(int, 0x4A70C0, int, int)(1, 24);\t// receive_network_packet(1, 24)\n\t\treturn EXE_DWORD(0x628C10);\n\t}\n\n\tint hnd[151], hnd_count = 0, c;\n\thnd[0] = -1;\t// in case hand_count[] is wrong and none are found\n\tfor (c = 0; c < active_cards_count[player]; ++c){\n\t\tif (in_hand(player, c)){\n\t\t\thnd[hnd_count++] = c;\n\t\t}\n\t}\n\n\tint rnd = hnd_count > 1 ? internal_rand(hnd_count) : 0;\n\n\tif (trace_mode & 2){\t// current_turn will be 0\n\t\tEXE_DWORD(0x628C10) = hnd[rnd];\n\t\tEXE_BYTE(0x628C0C) = 24;\n\t\tEXE_FN(int, 0x4A6BC0, int, int)(0, 24);\t// send_network_packet(0, 24);\n\t}\n\n\treturn hnd[rnd];\n}",
+      "source_definition_sha256": "00ae1936f728ae5455e25363f8785c512e12106b21a1d053882887ea5b1536de",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: get_random_card_in_hand @ 0x2691cf0; DWARF unit functions/functions.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* DWARF original prototype: int get_random_card_in_hand(int player) */\n\nint get_random_card_in_hand(int player)\n\n{\n  card_instance_t *pcVar1;\n  int iVar2;\n  long lVar3;\n  int argument1;\n  int hnd [151];\n  \n                    /* Unresolved local var: int hnd_count@[???]\n                       Unresolved local var: int c@[???]\n                       Unresolved local var: int rnd@[???] */\n  if (hand_count[player] < 1) {\nLAB_02691deb:\n    lVar3 = -1;\n  }\n  else {\n    if ((trace_mode & 2U) == 0) {\n      if (active_cards_count[player] < 1) goto LAB_02691deb;\n    }\n    else {\n      if (current_turn == 1) {\n        receive_network_packet();\n        return dword_628C10;\n      }\n      lVar3 = -1;\n      hnd[0] = -1;\n      if (active_cards_count[player] < 1) goto LAB_02691da1;\n    }\n    hnd[0] = -1;\n    iVar2 = 0;\n    argument1 = 0;\n    do {\n      pcVar1 = in_hand(player,iVar2);\n      if (pcVar1 != (card_instance_t *)0x0) {\n        hnd[argument1] = iVar2;\n        argument1 = argument1 + 1;\n      }\n      iVar2 = iVar2 + 1;\n    } while (iVar2 < active_cards_count[player]);\n    lVar3 = hnd[0];\n    if (1 < argument1) {\n      iVar2 = internal_rand(argument1);\n      lVar3 = hnd[iVar2];\n    }\n    if ((trace_mode & 2U) != 0) {\nLAB_02691da1:\n      byte_628C0C = '\\x18';\n      dword_628C10 = lVar3;\n      send_network_packet();\n      return lVar3;\n    }\n  }\n  return lVar3;\n}\n\n",
+      "native_decomp_sha256": "f229085445f73a09a50f4c5bb8f981d21e4ccfc06c61a77ab6b6d876c47891f9",
+      "reason": "Actual native payload store 0x2691db0 precedes kind store 0x2691db6, matching source; cached decompiler statements reverse the order. Named network calls versus fixed-address EXE_FN calls explain a mapping lead. Private hnd array never escapes; cached selected return versus reread is scoped to ordinary memory/ABI without stack introspection or asynchronous mutation.",
+      "scope": "Read-only selected source/native topology or data/call-order observation. No new body, strict full-function or gameplay-equivalence claim."
+    }
+  ],
+  "staged_diff_sha256": "365ee6cd7b44fbac2e4d753edaa9c1d8419e6b2fd17844a371e021b58d1ed3d8",
+  "prior_build": {
+    "evidence": "docs/recovery-evidence/native-type-worker-and-color-query-order.json",
+    "sha256": "9167d8bbef44b74a6dbd1df96005ac7fba2b163acf6396124785e21452fd03b5",
+    "dll_sha256": "c8e938d6fe36cd6fc34b31d65fa062777f3b8e65da1ea45fe834dace5400df01",
+    "debug_sha256": "1430c0e7b2735ba4c9e122122c44440539ae6e740c6bc8f919c3529b49634b8d"
+  },
+  "last_full_comparison": {
+    "evidence": "docs/recovery-evidence/reccmp-indexed-arrays-and-public-call-refresh.json.gz",
+    "compiled_build": "C724"
+  },
+  "scope": "Five storm spell handlers restore native instance queries before event-specific resolution/validation on all accepted GS events, preserving early query and unaffected-cast gates. Lobotomy restores the fresh final target-player load after selection callbacks. Six complete cached native bodies and selected raw sites reviewed; eleven additional leads have scoped read-only explanations. No new decompiled bodies or broad gameplay/whole-CFG proof. Ghidra packet-store scheduling is explicitly corrected by actual instructions, without changing already faithful network source. C725 remains a C724 comparison snapshot.",
+  "rebuilt_query_sites": {
+    "stage": "rebuilt",
+    "inputs": {
+      "ManalinkEh.dll": "9c33080f0e1c771991955eb5d6d8d3850ef36ba0360563d7d82c1ae65a5eaf19",
+      "ManalinkEh.dbg": "97526a6a9217b4cbb843bb8982bbd1e492af4eda3c10c34e160d2e80ecfbf31c"
+    },
+    "script_sha256": "b585e5af5588f3bbd2586f8ccf2e2bde9d2838b245762ec76b6c88490ec66e71",
+    "getter_address": "0x266a910",
+    "functions": [
+      {
+        "name": "card_volcanic_awakening",
+        "address": "0x259d4f0",
+        "size": 400,
+        "sha256": "3b00688e180aac633e0433dd15a2fb8ed56489ef6f964018c74c33baa5d58952",
+        "bytes_hex": "5589e557565383ec788b5d108b750c81fb005d00000f84fd00000083fb740f84bc00000083fb6c0f849b00000083fb710f95c281fb005400000f95c084c2740c81fb000400000f85300100008b45088d7da0890424c744240c01000000897c240889742404e806cf13008b450889742404890424e8a7d30c0083fb710f84ae0000008b4508c744241c00000000c744241801000000c74424143c6d7502897c2410c744240c01000000895c240889742404890424e897ce100083c4785b5e5f5dc38db4260000000031c03b358c397a0075e78b0d848c7300394d0875dc8d76008b45088d7da0890424c744240c01000000897c240889742404e872ce13008b450889742404890424e813d30c00e970ffffff8db60000000031c0833d98917300040f94c083c4785b5e5f5dc38d742600893c2489459ce895d713008b4d9c85c0751e8b4508c74424080200000089742404890424e807fd0c00e924ffffff6690c7442408020000008b4178894424048b4174890424e8e6fc0c00ebc631c0e936ffffff8db426000000008db600000000",
+        "getter_sites": [
+          {
+            "call": "0x259d564",
+            "instructions": [
+              {
+                "address": "0x259d54d",
+                "instruction": "mov dword ptr [esp + 8], edi"
+              },
+              {
+                "address": "0x259d551",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x259d555",
+                "instruction": "call 0x26da460"
+              },
+              {
+                "address": "0x259d55a",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x259d55d",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x259d561",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x259d564",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x259d569",
+                "instruction": "cmp ebx, 0x71"
+              },
+              {
+                "address": "0x259d56c",
+                "instruction": "je 0x259d620"
+              },
+              {
+                "address": "0x259d572",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x259d575",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x259d57d",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              },
+              {
+                "address": "0x259d585",
+                "instruction": "mov dword ptr [esp + 0x14], 0x2756d3c"
+              },
+              {
+                "address": "0x259d58d",
+                "instruction": "mov dword ptr [esp + 0x10], edi"
+              }
+            ]
+          },
+          {
+            "call": "0x259d5f8",
+            "instructions": [
+              {
+                "address": "0x259d5e1",
+                "instruction": "mov dword ptr [esp + 8], edi"
+              },
+              {
+                "address": "0x259d5e5",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x259d5e9",
+                "instruction": "call 0x26da460"
+              },
+              {
+                "address": "0x259d5ee",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x259d5f1",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x259d5f5",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x259d5f8",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x259d5fd",
+                "instruction": "jmp 0x259d572"
+              },
+              {
+                "address": "0x259d602",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x259d608",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x259d60a",
+                "instruction": "cmp dword ptr [0x739198], 4"
+              },
+              {
+                "address": "0x259d611",
+                "instruction": "sete al"
+              },
+              {
+                "address": "0x259d614",
+                "instruction": "add esp, 0x78"
+              },
+              {
+                "address": "0x259d617",
+                "instruction": "pop ebx"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      },
+      {
+        "name": "card_tendrils_of_agony",
+        "address": "0x24d2a70",
+        "size": 416,
+        "sha256": "99bdec8006f07c134e03408ec470e5fc1a463852d27ecde86efb2b85251db275",
+        "bytes_hex": "5589e557565383ec788b5d108b750c81fb005d00000f840501000083fb740f84bc00000083fb6c0f849b00000083fb710f95c281fb005400000f95c084c2740c81fb000400000f85440100008b45088d7da0890424c744240c02000000897c240889742404e8867920008b450889742404890424c745ac00100000e8207e190083fb710f84af0000008b4508c744241c00000000c744241801000000c7442414ddf87402897c2410c744240c01000000895c240889742404890424e810791d0083c4785b5e5f5dc331c03b358c397a0075ee8b0d848c7300394d0875e38d76008b45088d7da0890424c744240c02000000897c240889742404e8f27820008b450889742404890424c745ac00100000e88c7d1900e970ffffff8db4260000000031c0833d98917300040f94c083c4785b5e5f5dc38d742600893c2489459ce80d8220008b4d9c85c0751e8b4508c74424080200000089742404890424e87fa71900e923ffffff6690c7442404020000008b4174890424e835471c008b4508c744240402000000890424e8524e1c00ebba31c0e929ffffff8db426000000006690",
+        "getter_sites": [
+          {
+            "call": "0x24d2aeb",
+            "instructions": [
+              {
+                "address": "0x24d2ad1",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x24d2ad5",
+                "instruction": "call 0x26da460"
+              },
+              {
+                "address": "0x24d2ada",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x24d2add",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x24d2ae1",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x24d2ae4",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x1000"
+              },
+              {
+                "address": "0x24d2aeb",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x24d2af0",
+                "instruction": "cmp ebx, 0x71"
+              },
+              {
+                "address": "0x24d2af3",
+                "instruction": "je 0x24d2ba8"
+              },
+              {
+                "address": "0x24d2af9",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x24d2afc",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x24d2b04",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              },
+              {
+                "address": "0x24d2b0c",
+                "instruction": "mov dword ptr [esp + 0x14], 0x274f8dd"
+              },
+              {
+                "address": "0x24d2b14",
+                "instruction": "mov dword ptr [esp + 0x10], edi"
+              }
+            ]
+          },
+          {
+            "call": "0x24d2b7f",
+            "instructions": [
+              {
+                "address": "0x24d2b65",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x24d2b69",
+                "instruction": "call 0x26da460"
+              },
+              {
+                "address": "0x24d2b6e",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x24d2b71",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x24d2b75",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x24d2b78",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x1000"
+              },
+              {
+                "address": "0x24d2b7f",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x24d2b84",
+                "instruction": "jmp 0x24d2af9"
+              },
+              {
+                "address": "0x24d2b89",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x24d2b90",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x24d2b92",
+                "instruction": "cmp dword ptr [0x739198], 4"
+              },
+              {
+                "address": "0x24d2b99",
+                "instruction": "sete al"
+              },
+              {
+                "address": "0x24d2b9c",
+                "instruction": "add esp, 0x78"
+              },
+              {
+                "address": "0x24d2b9f",
+                "instruction": "pop ebx"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      },
+      {
+        "name": "card_astral_steel",
+        "address": "0x24cc680",
+        "size": 416,
+        "sha256": "17d414492a8071ab2a325306e373ecc3da1ed12a4b87760ff5e6b32b7e30b820",
+        "bytes_hex": "5589e557565383ec788b5d108b750881fb005d00000f84fd00000083fb740f84bc00000083fb6c0f849b00000083fb710f95c281fb005400000f95c084c2740c81fb000400000f85430100008b450c8d7da089442404c744240c02000000897c2408893424e876dd20008b450c894424048934248975a8e814e2190083fb710f84ab0000008b450cc744241c00000000c744241801000000c74424149cf87402897c2410c744240c01000000895c240889442404893424e804dd1d0083c4785b5e5f5dc38d7426008b0d8c397a0031c0394d0c75e73b35848c730075df8d76008b450c8d7da089442404c744240c02000000897c2408893424e8e2dc20008b450c894424048934248975a8e880e11900e970ffffff8d760031c0833d98917300040f94c083c4785b5e5f5dc38d742600893c2489459ce805e620008b4d9c85c0751e8b450cc74424080200000089442404893424e8770b1a00e927ffffff6690c744241402000000c7442410010000008b41788944240c8b4174893424894424088b450c89442404e8131d1c00ebb331c0e926ffffff8db426000000008d7600",
+        "getter_sites": [
+          {
+            "call": "0x24cc6f7",
+            "instructions": [
+              {
+                "address": "0x24cc6e2",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24cc6e5",
+                "instruction": "call 0x26da460"
+              },
+              {
+                "address": "0x24cc6ea",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x24cc6ed",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x24cc6f1",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24cc6f4",
+                "instruction": "mov dword ptr [ebp - 0x58], esi"
+              },
+              {
+                "address": "0x24cc6f7",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x24cc6fc",
+                "instruction": "cmp ebx, 0x71"
+              },
+              {
+                "address": "0x24cc6ff",
+                "instruction": "je 0x24cc7b0"
+              },
+              {
+                "address": "0x24cc705",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x24cc708",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x24cc710",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              },
+              {
+                "address": "0x24cc718",
+                "instruction": "mov dword ptr [esp + 0x14], 0x274f89c"
+              },
+              {
+                "address": "0x24cc720",
+                "instruction": "mov dword ptr [esp + 0x10], edi"
+              }
+            ]
+          },
+          {
+            "call": "0x24cc78b",
+            "instructions": [
+              {
+                "address": "0x24cc776",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24cc779",
+                "instruction": "call 0x26da460"
+              },
+              {
+                "address": "0x24cc77e",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x24cc781",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x24cc785",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24cc788",
+                "instruction": "mov dword ptr [ebp - 0x58], esi"
+              },
+              {
+                "address": "0x24cc78b",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x24cc790",
+                "instruction": "jmp 0x24cc705"
+              },
+              {
+                "address": "0x24cc795",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x24cc798",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x24cc79a",
+                "instruction": "cmp dword ptr [0x739198], 4"
+              },
+              {
+                "address": "0x24cc7a1",
+                "instruction": "sete al"
+              },
+              {
+                "address": "0x24cc7a4",
+                "instruction": "add esp, 0x78"
+              },
+              {
+                "address": "0x24cc7a7",
+                "instruction": "pop ebx"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      },
+      {
+        "name": "card_ground_rift",
+        "address": "0x25911f0",
+        "size": 448,
+        "sha256": "5ada3fed19a9ee7ac185a8ce45eff2a5e1468d838bf444df5bb60deeca16119a",
+        "bytes_hex": "5589e557565383ec788b5d108b750c81fb005d00000f840d01000083fb740f84c400000083fb6c0f84a300000083fb710f95c281fb005400000f95c084c2740c81fb000400000f85630100008b45088d7da0890424c744240c02000000897c240889742404e8069214008b55bc8b450883ca20897424048904248955bce89e960d0083fb710f84b50000008b4508c744241c00000000c744241801000000c744241400000000897c2410c744240c01000000895c240889742404890424e88e91110083c4785b5e5f5dc38db60000000031c03b358c397a0075e88b0d848c7300394d0875dd8d76008b45088d7da0890424c744240c02000000897c240889742404e86a9114008b45bc83c820897424048945bc8b4508890424e802960d00e968ffffff8d7426009031c0833d98917300040f94c083c4785b5e5f5dc38d742600893c2489459ce8859a14008b4d9c85c0751e8b4508c74424080200000089742404890424e8f7bf0d00e91dffffff6690c744241c20000000c744241800000000c744241400000000c7442410000000008b41788944240c8b417489742404894424088b4508890424e803be1100eba331c0e90cffffff8db426000000008d7600",
+        "getter_sites": [
+          {
+            "call": "0x259126d",
+            "instructions": [
+              {
+                "address": "0x259125a",
+                "instruction": "mov edx, dword ptr [ebp - 0x44]"
+              },
+              {
+                "address": "0x259125d",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2591260",
+                "instruction": "or edx, 0x20"
+              },
+              {
+                "address": "0x2591263",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2591267",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x259126a",
+                "instruction": "mov dword ptr [ebp - 0x44], edx"
+              },
+              {
+                "address": "0x259126d",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x2591272",
+                "instruction": "cmp ebx, 0x71"
+              },
+              {
+                "address": "0x2591275",
+                "instruction": "je 0x2591330"
+              },
+              {
+                "address": "0x259127b",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x259127e",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x2591286",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              },
+              {
+                "address": "0x259128e",
+                "instruction": "mov dword ptr [esp + 0x14], 0"
+              },
+              {
+                "address": "0x2591296",
+                "instruction": "mov dword ptr [esp + 0x10], edi"
+              }
+            ]
+          },
+          {
+            "call": "0x2591309",
+            "instructions": [
+              {
+                "address": "0x25912f6",
+                "instruction": "mov eax, dword ptr [ebp - 0x44]"
+              },
+              {
+                "address": "0x25912f9",
+                "instruction": "or eax, 0x20"
+              },
+              {
+                "address": "0x25912fc",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2591300",
+                "instruction": "mov dword ptr [ebp - 0x44], eax"
+              },
+              {
+                "address": "0x2591303",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2591306",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2591309",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x259130e",
+                "instruction": "jmp 0x259127b"
+              },
+              {
+                "address": "0x2591313",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x2591317",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x2591318",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x259131a",
+                "instruction": "cmp dword ptr [0x739198], 4"
+              },
+              {
+                "address": "0x2591321",
+                "instruction": "sete al"
+              },
+              {
+                "address": "0x2591324",
+                "instruction": "add esp, 0x78"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      },
+      {
+        "name": "card_bitter_ordeal",
+        "address": "0x21d14f0",
+        "size": 512,
+        "sha256": "e63542a2ba480a69a4dc1386df3a5e5398a5310347ba31d43761c355503ddf22",
+        "bytes_hex": "5589e557565381ec500100008b5d108b750c81fb005d00000f841201000083fb740f84c900000083fb6c0f84a800000083fb710f95c281fb005400000f95c084c2740c81fb000400000f859b0100008b45088dbdc8feffff890424c744240c00000000897c240889742404e8008f50008b450889742404890424c785d4feffff00100000e89793490083fb710f84b60000008b4508c744241c00000000c744241801000000c7442414234e7302897c2410c744240c01000000895c240889742404890424e8878e4d0081c4500100005b5e5f5dc38d74260031c03b358c397a0075e78b0d848c7300394d0875dc8d76008b45088dbdc8feffff890424c744240c00000000897c240889742404e85f8e50008b450889742404890424c785d4feffff00100000e8f6924900e963ffffff9031c0833d98917300050f94c081c4500100005b5e5f5dc390893c248985c4feffffe87a97500085c074158b8dc4feffff8b41748b048530704d008338ff75218b4508c74424080200000089742404890424e8dabc4900e907ffffff8d742600908d851cffffffc7442404ff000000890424e85a504e008d851cffffff8b8dc4feffff89442418c744241401000000c744241000000000c744240c06000000c7442408010000008b4174894424048b4508890424e8d8f75000eb8531c0e9d8feffff8db426000000008db4260000000090",
+        "getter_sites": [
+          {
+            "call": "0x21d1574",
+            "instructions": [
+              {
+                "address": "0x21d1557",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x21d155b",
+                "instruction": "call 0x26da460"
+              },
+              {
+                "address": "0x21d1560",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x21d1563",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x21d1567",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x21d156a",
+                "instruction": "mov dword ptr [ebp - 0x12c], 0x1000"
+              },
+              {
+                "address": "0x21d1574",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x21d1579",
+                "instruction": "cmp ebx, 0x71"
+              },
+              {
+                "address": "0x21d157c",
+                "instruction": "je 0x21d1638"
+              },
+              {
+                "address": "0x21d1582",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x21d1585",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x21d158d",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              },
+              {
+                "address": "0x21d1595",
+                "instruction": "mov dword ptr [esp + 0x14], 0x2734e23"
+              },
+              {
+                "address": "0x21d159d",
+                "instruction": "mov dword ptr [esp + 0x10], edi"
+              }
+            ]
+          },
+          {
+            "call": "0x21d1615",
+            "instructions": [
+              {
+                "address": "0x21d15f8",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x21d15fc",
+                "instruction": "call 0x26da460"
+              },
+              {
+                "address": "0x21d1601",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x21d1604",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x21d1608",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x21d160b",
+                "instruction": "mov dword ptr [ebp - 0x12c], 0x1000"
+              },
+              {
+                "address": "0x21d1615",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x21d161a",
+                "instruction": "jmp 0x21d1582"
+              },
+              {
+                "address": "0x21d161f",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x21d1620",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x21d1622",
+                "instruction": "cmp dword ptr [0x739198], 5"
+              },
+              {
+                "address": "0x21d1629",
+                "instruction": "sete al"
+              },
+              {
+                "address": "0x21d162c",
+                "instruction": "add esp, 0x150"
+              },
+              {
+                "address": "0x21d1632",
+                "instruction": "pop ebx"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      },
+      {
+        "name": "card_lobotomy",
+        "address": "0x2541ad0",
+        "size": 928,
+        "sha256": "3c711f4e6eb7dfd2c1c0f713107b60b3d930582e266955b125805810650f77f5",
+        "bytes_hex": "5589e557565381ec580800008b5d1083fb740f84c800000083fb6c0f84a700000083fb710f95c081fb005400000f95c221d081fb000400000f95c220d08885ccf7ffff0f854c0300008b450c8db5d0f7ffff894424048b4508c744240c0000000089742408890424e823891900c785dcf7ffff0010000083fb710f84980000008b450cc744241c00000000894424048b4508c744241801000000c7442414f43b750289742410c744240c01000000895c2408890424e8b688160081c4580800005b5e5f5dc38d76008b0d8c397a0031c0394d0c75e58b0d848c7300394d0875da8b450c8db5d0f7ffff894424048b4508c744240c0000000089742408890424e88c881900c785dcf7ffff00100000e96dffffff8d74260090893424e8d091190085c075248b450cc744240802000000894424048b4508890424e842b71200e93dffffff8d742600908b450c894424048b4508890424e8e68c12008b40748b3c85c4f14e0085ff7ebc8b0c8520f54e0085c90f8e02020000895d1031ffc785c4f7ffff00000000c785ccf7ffffffffffffc785c0f7ffffffffffffc785c8f7ffff0000000089c389b5bcf7ffffeb0c669047393c9d20f54e007e66897c2404891c24e81a95120089c685c074e4897c2404891c24e8b81c170085c075d4897c2404891c24e8b89612008b048500bb73000fbf48583b8dc4f7ffff0f8f510100008b8dc8f7ffff8b466c89848d24f8ffff8d41018985c8f7ffffeb968db6000000008b45088b5d108bb5bcf7ffff85c00f85ab00000083bdc0f7ffffff0f9585ccf7ffff0f95c025ff00000089b5c4f7ffff8dbd24f8ffff895d1089c68d742600908b85c8f7ffffc7442414b0757300894424088b450889742410c744240cd83e7502897c2404890424e883ea190089c383f8ff0f84980000008b848524f8ffff31c98d04c0668b0cc534707e0089c8890424e87a1b170085c0757689da31ff8b5d108bb5c4f7ffff8b849524f8ffff8d04c0668b3cc534707e0089bdccf7ffff8bbdccf7ffff85ff0f8837feffff8b450c894424048b4508890424e8418b1200c744241001000000c744240cffffffff897c24088b4074894424048b4508890424e8fb2e1600e9fafdffff8db60000000080bdccf7ffff000f8523ffffff8b5d108bb5c4f7ffffe9d9fdffff8d74260090897c2404891c24898dc4f7ffffe83e9512008985ccf7ffff8b85c8f7ffff8985c0f7ffffe986feffff8b550885d20f85a0fdffff31c0c785c8f7ffff00000000e9b5feffff31c0e91efdffff8d742600",
+        "getter_sites": [
+          {
+            "call": "0x2541c25",
+            "instructions": [
+              {
+                "address": "0x2541c13",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x2541c17",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x2541c18",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2541c1b",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2541c1f",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2541c22",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2541c25",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x2541c2a",
+                "instruction": "mov eax, dword ptr [eax + 0x74]"
+              },
+              {
+                "address": "0x2541c2d",
+                "instruction": "mov edi, dword ptr [eax*4 + 0x4ef1c4]"
+              },
+              {
+                "address": "0x2541c34",
+                "instruction": "test edi, edi"
+              },
+              {
+                "address": "0x2541c36",
+                "instruction": "jle 0x2541bf4"
+              },
+              {
+                "address": "0x2541c38",
+                "instruction": "mov ecx, dword ptr [eax*4 + 0x4ef520]"
+              },
+              {
+                "address": "0x2541c3f",
+                "instruction": "test ecx, ecx"
+              },
+              {
+                "address": "0x2541c41",
+                "instruction": "jle 0x2541e49"
+              }
+            ]
+          },
+          {
+            "call": "0x2541dca",
+            "instructions": [
+              {
+                "address": "0x2541db5",
+                "instruction": "test edi, edi"
+              },
+              {
+                "address": "0x2541db7",
+                "instruction": "js 0x2541bf4"
+              },
+              {
+                "address": "0x2541dbd",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2541dc0",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2541dc4",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2541dc7",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2541dca",
+                "instruction": "call 0x266a910"
+              },
+              {
+                "address": "0x2541dcf",
+                "instruction": "mov dword ptr [esp + 0x10], 1"
+              },
+              {
+                "address": "0x2541dd7",
+                "instruction": "mov dword ptr [esp + 0xc], 0xffffffff"
+              },
+              {
+                "address": "0x2541ddf",
+                "instruction": "mov dword ptr [esp + 8], edi"
+              },
+              {
+                "address": "0x2541de3",
+                "instruction": "mov eax, dword ptr [eax + 0x74]"
+              },
+              {
+                "address": "0x2541de6",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2541dea",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2541ded",
+                "instruction": "mov dword ptr [esp], eax"
+              }
+            ]
+          }
+        ],
+        "scope": "Selected direct getter sites and final Lobotomy getter-to-effect path only. Full event reachability/order is reviewed against the native decompilation; this site inventory is not a full CFG proof."
+      }
+    ],
+    "network_store_observation": {
+      "name": "get_random_card_in_hand",
+      "address": "0x2689230",
+      "function_size": 320,
+      "function_sha256": "429f76d949d050c1355b236c5c8a4df25c2669e7fd7e513a252104bc4d10c2fd",
+      "payload_store": "0x26892b4",
+      "kind_store": "0x26892b9",
+      "site_bytes_hex": "a3108c6200c6050c8c620018",
+      "instructions": [
+        {
+          "address": "0x26892b4",
+          "instruction": "mov dword ptr [0x628c10], eax"
+        },
+        {
+          "address": "0x26892b9",
+          "instruction": "mov byte ptr [0x628c0c], 0x18"
+        }
+      ],
+      "scope": "Payload word is written before packet-kind byte in actual instructions, matching unchanged source. Cached Ghidra statements reverse these independent stores. No network I/O is executed and no whole-function/asynchronous protocol proof is inferred."
+    }
+  },
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "source_definitions": 6,
+    "exact_file_projections": 4,
+    "dll_sha256": "9c33080f0e1c771991955eb5d6d8d3850ef36ba0360563d7d82c1ae65a5eaf19",
+    "debug_sha256": "97526a6a9217b4cbb843bb8982bbd1e492af4eda3c10c34e160d2e80ecfbf31c",
+    "build_log_sha256": "7a9db601e20eb805b77340dd89a80f85235641448adc1ee6ce2e68c007e9c665",
+    "complete_cfg_matches": [],
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "9c33080f0e1c771991955eb5d6d8d3850ef36ba0360563d7d82c1ae65a5eaf19",
+        "ManalinkEh.dbg": "97526a6a9217b4cbb843bb8982bbd1e492af4eda3c10c34e160d2e80ecfbf31c"
+      },
+      "results": [
+        {
+          "name": "card_volcanic_awakening",
+          "matched": false,
+          "reason": "('Unbound operand', '0x400', '0x5400')",
+          "ranges": [
+            {
+              "address": "0x20ff0b0",
+              "size": 371,
+              "sha256": "2875e72b4dae5d039adccbd05e597d5dd49b17602ca0a694942329605814d36f",
+              "bytes_hex": "5589e557565383ec788b5d108b750c81fb005d00000f841d01000083fb74742083fb6c0f858700000031c03b358c397a0075718b0d848c7300394d08756666908b45088d7da0890424c744240c01000000897c240889742404e8321156008b450889742404890424e893395b008b4508c744241c00000000c744241801000000c744241420b47202897c2410c744240c01000000895c240889742404890424e8fc105a0083c4785b5e5f5dc38d74260083fb710f95c281fb000400000f95c084c2740c81fb005400000f859d0000008b45088d7da0890424c744240c01000000897c240889742404e8a31056008b450889742404890424e804395b0083fb710f8568ffffff893c2489459ce8902556008b4d9c85c075398b4508c74424080200000089742404890424e822685b00e93affffff8d7426009031c0833d98917300040f94c083c4785b5e5f5dc38d742600c7442408020000008b4178894424048b4174890424e8e6675b00ebab31c0e931ffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x259d4f0",
+              "size": 400,
+              "sha256": "3b00688e180aac633e0433dd15a2fb8ed56489ef6f964018c74c33baa5d58952",
+              "bytes_hex": "5589e557565383ec788b5d108b750c81fb005d00000f84fd00000083fb740f84bc00000083fb6c0f849b00000083fb710f95c281fb005400000f95c084c2740c81fb000400000f85300100008b45088d7da0890424c744240c01000000897c240889742404e806cf13008b450889742404890424e8a7d30c0083fb710f84ae0000008b4508c744241c00000000c744241801000000c74424143c6d7502897c2410c744240c01000000895c240889742404890424e897ce100083c4785b5e5f5dc38db4260000000031c03b358c397a0075e78b0d848c7300394d0875dc8d76008b45088d7da0890424c744240c01000000897c240889742404e872ce13008b450889742404890424e813d30c00e970ffffff8db60000000031c0833d98917300040f94c083c4785b5e5f5dc38d742600893c2489459ce895d713008b4d9c85c0751e8b4508c74424080200000089742404890424e807fd0c00e924ffffff6690c7442408020000008b4178894424048b4174890424e8e6fc0c00ebc631c0e936ffffff8db426000000008db600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_tendrils_of_agony",
+          "matched": false,
+          "reason": "('Operation changed', 'cmp', 'mov')",
+          "ranges": [
+            {
+              "address": "0x24fdc80",
+              "size": 381,
+              "sha256": "7808346c683f345f3d5491b217dbb0fb2d50c25fb9e666ea3eb264c6b274ad0d",
+              "bytes_hex": "5589e557565383ec78817d10005d00008b7d088b750c0f8424010000837d1074741e837d106c0f858400000031c03b358c397a00756f3b3d848c7300756766908d5da0c744240c02000000895c240889742404893c24e86525160089742404893c24c745ac00100000e8c24d1b008b4510c744241c00000000c744241801000000c744241491087502895c2410c744240c010000008944240889742404893c24e82b251a0083c4785b5e5f5dc38d7600837d10717409817d100004000075698d5da0c744240c02000000895c240889742404893c24e8e624160089742404893c24c745ac00100000e8434d1b00837d107189459c0f8574ffffff891c24e8ce3916008b4d9c85c0754fc74424080200000089742404893c24e8637c1b00e94cffffff8db600000000817d10005400000f840bffffff31c0e969ffffff8d74260031c0833d98917300040f94c083c4785b5e5f5dc38d742600c7442404020000008b4174890424e8c5131900c744240402000000893c24e8051b1900eb8c",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24d2a70",
+              "size": 416,
+              "sha256": "99bdec8006f07c134e03408ec470e5fc1a463852d27ecde86efb2b85251db275",
+              "bytes_hex": "5589e557565383ec788b5d108b750c81fb005d00000f840501000083fb740f84bc00000083fb6c0f849b00000083fb710f95c281fb005400000f95c084c2740c81fb000400000f85440100008b45088d7da0890424c744240c02000000897c240889742404e8867920008b450889742404890424c745ac00100000e8207e190083fb710f84af0000008b4508c744241c00000000c744241801000000c7442414ddf87402897c2410c744240c01000000895c240889742404890424e810791d0083c4785b5e5f5dc331c03b358c397a0075ee8b0d848c7300394d0875e38d76008b45088d7da0890424c744240c02000000897c240889742404e8f27820008b450889742404890424c745ac00100000e88c7d1900e970ffffff8db4260000000031c0833d98917300040f94c083c4785b5e5f5dc38d742600893c2489459ce80d8220008b4d9c85c0751e8b4508c74424080200000089742404890424e87fa71900e923ffffff6690c7442404020000008b4174890424e835471c008b4508c744240402000000890424e8524e1c00ebba31c0e929ffffff8db426000000006690",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_astral_steel",
+          "matched": false,
+          "reason": "('Unbound operand', '0x400', '0x5400')",
+          "ranges": [
+            {
+              "address": "0x24f74e0",
+              "size": 390,
+              "sha256": "b2fb3f72a58bea8ae165fa95ed50893c61b6303fd74d4d972b6307efddda5b2f",
+              "bytes_hex": "5589e557565383ec788b5d108b750881fb005d00000f841d01000083fb74742083fb6c0f85870000008b0d8c397a0031c0394d0c75713b35848c7300756966908b450c8d7da089442404c744240c02000000897c2408893424e8028d16008b450c894424048934248975a8e860b51b008b450cc744241c00000000c744241801000000c744241450087502897c2410c744240c01000000895c240889442404893424e8c98c1a0083c4785b5e5f5dc39083fb710f95c281fb000400000f95c084c2740c81fb005400000f85b00000008b450c8d7da089442404c744240c02000000897c2408893424e8738c16008b450c894424048934248975a8e8d1b41b0083fb710f8568ffffff893c2489459ce85da116008b4d9c85c075368b450cc74424080200000089442404893424e8efe31b00e93affffff669031c0833d98917300040f94c083c4785b5e5f5dc38d742600c744241402000000c7442410010000008b41788944240c8b4174893424894424088b450c89442404e803351800eb9b31c0e921ffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24cc680",
+              "size": 416,
+              "sha256": "17d414492a8071ab2a325306e373ecc3da1ed12a4b87760ff5e6b32b7e30b820",
+              "bytes_hex": "5589e557565383ec788b5d108b750881fb005d00000f84fd00000083fb740f84bc00000083fb6c0f849b00000083fb710f95c281fb005400000f95c084c2740c81fb000400000f85430100008b450c8d7da089442404c744240c02000000897c2408893424e876dd20008b450c894424048934248975a8e814e2190083fb710f84ab0000008b450cc744241c00000000c744241801000000c74424149cf87402897c2410c744240c01000000895c240889442404893424e804dd1d0083c4785b5e5f5dc38d7426008b0d8c397a0031c0394d0c75e73b35848c730075df8d76008b450c8d7da089442404c744240c02000000897c2408893424e8e2dc20008b450c894424048934248975a8e880e11900e970ffffff8d760031c0833d98917300040f94c083c4785b5e5f5dc38d742600893c2489459ce805e620008b4d9c85c0751e8b450cc74424080200000089442404893424e8770b1a00e927ffffff6690c744241402000000c7442410010000008b41788944240c8b4174893424894424088b450c89442404e8131d1c00ebb331c0e926ffffff8db426000000008d7600",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_ground_rift",
+          "matched": false,
+          "reason": "('Operation changed', 'cmp', 'mov')",
+          "ranges": [
+            {
+              "address": "0x20f26e0",
+              "size": 407,
+              "sha256": "e4744fc4420fef3cf7343472e894ef5599f132fa1b169a9f65c42769cd728544",
+              "bytes_hex": "5589e557565383ec78817d10005d00008b7d088b750c0f8424010000837d1074741e837d106c0f858400000031c03b358c397a0075713b3d848c7300756966908d5da0c744240c02000000895c240889742404893c24e805db56008b45bc83c82089742404893c248945bce860035c008b4510c744241c00000000c744241801000000c744241400000000895c2410c744240c010000008944240889742404893c24e8c9da5a0083c4785b5e5f5dc390837d10717409817d100004000075698d5da0c744240c02000000895c240889742404893c24e886da56008b55bc83ca2089742404893c248955bce8e1025c00837d107189459c0f8574ffffff891c24e86cef56008b4d9c85c0754dc74424080200000089742404893c24e801325c00e94cffffff8d742600817d10005400000f840bffffff31c0e96bffffff8d74260031c0833d98917300040f94c083c4785b5e5f5dc38d742600c744241c20000000c744241800000000c744241400000000c7442410000000008b41788944240c8b41748974240489442408893c24e88e865800e974ffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25911f0",
+              "size": 448,
+              "sha256": "5ada3fed19a9ee7ac185a8ce45eff2a5e1468d838bf444df5bb60deeca16119a",
+              "bytes_hex": "5589e557565383ec788b5d108b750c81fb005d00000f840d01000083fb740f84c400000083fb6c0f84a300000083fb710f95c281fb005400000f95c084c2740c81fb000400000f85630100008b45088d7da0890424c744240c02000000897c240889742404e8069214008b55bc8b450883ca20897424048904248955bce89e960d0083fb710f84b50000008b4508c744241c00000000c744241801000000c744241400000000897c2410c744240c01000000895c240889742404890424e88e91110083c4785b5e5f5dc38db60000000031c03b358c397a0075e88b0d848c7300394d0875dd8d76008b45088d7da0890424c744240c02000000897c240889742404e86a9114008b45bc83c820897424048945bc8b4508890424e802960d00e968ffffff8d7426009031c0833d98917300040f94c083c4785b5e5f5dc38d742600893c2489459ce8859a14008b4d9c85c0751e8b4508c74424080200000089742404890424e8f7bf0d00e91dffffff6690c744241c20000000c744241800000000c744241400000000c7442410000000008b41788944240c8b417489742404894424088b4508890424e803be1100eba331c0e90cffffff8db426000000008d7600",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_bitter_ordeal",
+          "matched": false,
+          "reason": "('Operation changed', 'cmp', 'mov')",
+          "ranges": [
+            {
+              "address": "0x2573600",
+              "size": 482,
+              "sha256": "dd4471c130acb532537f6059cf2a91c1a1c2488d068208d8fac6d9156205cb30",
+              "bytes_hex": "5589e557565381ec50010000817d10005d00008b7d088b750c0f8451010000837d10747423837d106c0f859100000031c03b358c397a00757a3b3d848c730075728db426000000008d9dc8feffffc744240c00000000895c240889742404893c24e8dacb0e0089742404893c24c785d4feffff00100000e834f413008b4510c744241c00000000c744241801000000c7442414434a7502895c2410c744240c010000008944240889742404893c24e89dcb120081c4500100005b5e5f5dc36690837d1071740d817d10000400000f85850000008d9dc8feffffc744240c00000000895c240889742404893c24e84fcb0e0089742404893c24c785d4feffff00100000e8a9f31300837d10718985c4feffff0f8565ffffff891c24e831e00e0085c074158b8dc4feffff8b41748b048530704d008338ff7550c74424080200000089742404893c24e8b4221400e92bffffff8db42600000000817d10005400000f84e3feffff31c0e947ffffff8d74260031c0833d98917300050f94c081c4500100005b5e5f5dc3908d851cffffffc7442404ff000000890424e812b414008d851cffffff8b8dc4feffff89442418c744241401000000c744241000000000c744240c06000000c7442408010000008b4174893c2489442404e8b3e10d00e956ffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x21d14f0",
+              "size": 512,
+              "sha256": "e63542a2ba480a69a4dc1386df3a5e5398a5310347ba31d43761c355503ddf22",
+              "bytes_hex": "5589e557565381ec500100008b5d108b750c81fb005d00000f841201000083fb740f84c900000083fb6c0f84a800000083fb710f95c281fb005400000f95c084c2740c81fb000400000f859b0100008b45088dbdc8feffff890424c744240c00000000897c240889742404e8008f50008b450889742404890424c785d4feffff00100000e89793490083fb710f84b60000008b4508c744241c00000000c744241801000000c7442414234e7302897c2410c744240c01000000895c240889742404890424e8878e4d0081c4500100005b5e5f5dc38d74260031c03b358c397a0075e78b0d848c7300394d0875dc8d76008b45088dbdc8feffff890424c744240c00000000897c240889742404e85f8e50008b450889742404890424c785d4feffff00100000e8f6924900e963ffffff9031c0833d98917300050f94c081c4500100005b5e5f5dc390893c248985c4feffffe87a97500085c074158b8dc4feffff8b41748b048530704d008338ff75218b4508c74424080200000089742404890424e8dabc4900e907ffffff8d742600908d851cffffffc7442404ff000000890424e85a504e008d851cffffff8b8dc4feffff89442418c744241401000000c744241000000000c744240c06000000c7442408010000008b4174894424048b4508890424e8d8f75000eb8531c0e9d8feffff8db426000000008db4260000000090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_lobotomy",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x2152180",
+              "size": 889,
+              "sha256": "901bf98b66f1dfe25b1e6cb8f82756f8b255e5ee539d20c4e11434360e0595ce",
+              "bytes_hex": "5589e557565381ec580800008b751083fe740f84a400000083fe6c0f84cf00000083fe71740c81fe000400000f857e0000008b450c8d9dd0f7ffff894424048b4508c744240c00000000895c2408890424e86ae05000c785dcf7ffff0010000083fe710f84a70000008b450cc744241c00000000894424048b4508c744241801000000c74424143ce07202895c2410c744240c0100000089742408890424e82de0540081c4580800005b5e5f5dc3669081fe005400000f85b60200008b450c8d9dd0f7ffff894424048b4508c744240c00000000895c2408890424e8e0df5000c785dcf7ffff00100000e97affffff908b158c397a0031c039550c75a68b15848c7300395508759bebb28db600000000891c24e8b8f4500085c075248b450cc744240802000000894424048b4508890424e84a375600e92effffff8d742600908b450c894424048b4508890424e8de0756008b40748b3c85c4f14e0085ff7ebc8b0c8520f54e00c785c0f7ffffffffffff85c90f8ee0010000897510c785c8f7ffff00000000c785c4f7ffffffffffffc785ccf7ffff0000000031ff89c6899dbcf7ffffeb0c669047393cb520f54e007e5e897c2404893424e86210560089c385c074e4897c2404893424e8c09d520085c075d4897c2404893424e8401256008b048500bb73000fbf48583b8dc8f7ffff0f8fc10000008b8dccf7ffff8b436c89848d24f8ffff41898dccf7ffffeb988b75108b9dbcf7ffff8b550885d20f85bd0000008bbdccf7ffff897510899dccf7ffff8bb5c4f7ffff8db4260000000031c083feff0f95c0894424108d8524f8ffffc7442414b0757300c744240c44e37202897c240889442404c7042400000000e84ae84f0089c383f8ff74268b848524f8ffff31c98d04c0668b0cc534707e0089c8890424e8a59c520085c00f848f00000083feff75988b75108b9dccf7ffffe966feffff6690897c2404893424898dc8f7ffffe8561156008985c0f7ffff8b85ccf7ffff8985c4f7ffffe916ffffff8b85c0f7ffff85c00f882dfeffff8b450c894424048b4508890424e82f0656008b95c0f7ffffc744241001000000c744240cffffffff895424088b4074894424048b4508890424e8338e5400e9eafdffff89df31d28b75108b9dccf7ffff8b84bd24f8ffff8d04c0668b14c534707e008995c0f7ffffeb96c785c4f7ffffffffffffc785ccf7ffff00000000e9a7feffff31c0e92afdffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2541ad0",
+              "size": 928,
+              "sha256": "3c711f4e6eb7dfd2c1c0f713107b60b3d930582e266955b125805810650f77f5",
+              "bytes_hex": "5589e557565381ec580800008b5d1083fb740f84c800000083fb6c0f84a700000083fb710f95c081fb005400000f95c221d081fb000400000f95c220d08885ccf7ffff0f854c0300008b450c8db5d0f7ffff894424048b4508c744240c0000000089742408890424e823891900c785dcf7ffff0010000083fb710f84980000008b450cc744241c00000000894424048b4508c744241801000000c7442414f43b750289742410c744240c01000000895c2408890424e8b688160081c4580800005b5e5f5dc38d76008b0d8c397a0031c0394d0c75e58b0d848c7300394d0875da8b450c8db5d0f7ffff894424048b4508c744240c0000000089742408890424e88c881900c785dcf7ffff00100000e96dffffff8d74260090893424e8d091190085c075248b450cc744240802000000894424048b4508890424e842b71200e93dffffff8d742600908b450c894424048b4508890424e8e68c12008b40748b3c85c4f14e0085ff7ebc8b0c8520f54e0085c90f8e02020000895d1031ffc785c4f7ffff00000000c785ccf7ffffffffffffc785c0f7ffffffffffffc785c8f7ffff0000000089c389b5bcf7ffffeb0c669047393c9d20f54e007e66897c2404891c24e81a95120089c685c074e4897c2404891c24e8b81c170085c075d4897c2404891c24e8b89612008b048500bb73000fbf48583b8dc4f7ffff0f8f510100008b8dc8f7ffff8b466c89848d24f8ffff8d41018985c8f7ffffeb968db6000000008b45088b5d108bb5bcf7ffff85c00f85ab00000083bdc0f7ffffff0f9585ccf7ffff0f95c025ff00000089b5c4f7ffff8dbd24f8ffff895d1089c68d742600908b85c8f7ffffc7442414b0757300894424088b450889742410c744240cd83e7502897c2404890424e883ea190089c383f8ff0f84980000008b848524f8ffff31c98d04c0668b0cc534707e0089c8890424e87a1b170085c0757689da31ff8b5d108bb5c4f7ffff8b849524f8ffff8d04c0668b3cc534707e0089bdccf7ffff8bbdccf7ffff85ff0f8837feffff8b450c894424048b4508890424e8418b1200c744241001000000c744240cffffffff897c24088b4074894424048b4508890424e8fb2e1600e9fafdffff8db60000000080bdccf7ffff000f8523ffffff8b5d108bb5c4f7ffffe9d9fdffff8d74260090897c2404891c24898dc4f7ffffe83e9512008985ccf7ffff8b85c8f7ffff8985c0f7ffffe986feffff8b550885d20f85a0fdffff31c0c785c8f7ffff00000000e9b5feffff31c0e91efdffff8d742600",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "13adbfec1346f7c4629611a1a28dc47ebcd7ee3c1df670d011232b8a29c27b74",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "scope": "One grouped incremental build, four exact file projections and selected native/rebuilt getter and target-field sites. All six strict checks retain event/operation/register differences; no forced matching or broad gameplay/callee equivalence. Read-only network observation confirms actual payload-before-kind stores and corrects cached decompiler scheduling without source edits. Full C725 report remains a C724 snapshot."
+  }
+}

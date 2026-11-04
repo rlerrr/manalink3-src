@@ -1,0 +1,1250 @@
+{
+  "format": 1,
+  "status": "Nineteen candidate difference sets contain only assertion source-line text changes at 28 verified local sites.",
+  "review": {
+    "format": 1,
+    "reviewed": [
+      {
+        "name": "card_whims_of_the_fates",
+        "address": "0x203e2f0",
+        "source": "cards/born_of_the_gods.c",
+        "coff_identity": "card_whims_of_the_fates",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x203e49a",
+                "mov dword ptr [esp], \"cards/born_of_the_gods.c:3165\\nmarked[tgt.player][tgt.card] == 0 || marked[tgt.player][tgt.card] == pile\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x20ae09a",
+                "mov dword ptr [esp], \"cards/born_of_the_gods.c:3160\\nmarked[tgt.player][tgt.card] == 0 || marked[tgt.player][tgt.card] == pile\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "cards/born_of_the_gods.c",
+            "native_line": 3165,
+            "rebuilt_line": 3160,
+            "expression": "marked[tgt.player][tgt.card] == 0 || marked[tgt.player][tgt.card] == pile",
+            "native": {
+              "instruction": "0x203e49a",
+              "instruction_bytes": "c704244c497202",
+              "string_address": "0x272494c",
+              "string_sha256": "77fe02efd9fc3b1ed6c744f1f856a364f0cce7dc1163ceb0b4a1caa8928ad7ec"
+            },
+            "rebuilt": {
+              "instruction": "0x20ae09a",
+              "instruction_bytes": "c7042408a67202",
+              "string_address": "0x272a608",
+              "string_sha256": "5259a2bd5d6658a55aa0e455260f681fa7cc3ef7cb434f5fa6ddbcf757a430a9"
+            }
+          }
+        ]
+      },
+      {
+        "name": "card_athreos_god_of_passage",
+        "address": "0x24dab10",
+        "source": "cards/journey_into_nyx.c",
+        "coff_identity": "card_athreos_god_of_passage",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x24dacc0",
+                "mov dword ptr [esp], \"cards/journey_into_nyx.c:3701\\nowner == player\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2286180",
+                "mov dword ptr [esp], \"cards/journey_into_nyx.c:3888\\nowner == player\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "cards/journey_into_nyx.c",
+            "native_line": 3701,
+            "rebuilt_line": 3888,
+            "expression": "owner == player",
+            "native": {
+              "instruction": "0x24dacc0",
+              "instruction_bytes": "c7042494fa7402",
+              "string_address": "0x274fa94",
+              "string_sha256": "6abfe1f98cecdaffe986fd0f39cb11389a9275491280eb1d16c238f95897ba85"
+            },
+            "rebuilt": {
+              "instruction": "0x2286170",
+              "instruction_bytes": "c704247cbb7302",
+              "string_address": "0x273bb7c",
+              "string_sha256": "6b85dfdc94bcabcf723accc7beedacad5f6e5be66fd1f13daf872d1558b4be22"
+            }
+          }
+        ]
+      },
+      {
+        "name": "card_archenemy",
+        "address": "0x25810f0",
+        "source": "cards/archenemy.c",
+        "coff_identity": "card_archenemy",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x2581428",
+                "mov dword ptr [esp], \"cards/archenemy.c:1474\\nschemes != NULL\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2074108",
+                "mov dword ptr [esp], \"cards/archenemy.c:1465\\nschemes != NULL\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "cards/archenemy.c",
+            "native_line": 1474,
+            "rebuilt_line": 1465,
+            "expression": "schemes != NULL",
+            "native": {
+              "instruction": "0x2581428",
+              "instruction_bytes": "c7042460527502",
+              "string_address": "0x2755260",
+              "string_sha256": "ca3f34ac4766524670ecb72b5c499619ce69a1a5b757692f32a6f9929833849c"
+            },
+            "rebuilt": {
+              "instruction": "0x2074108",
+              "instruction_bytes": "c7042430897202",
+              "string_address": "0x2728930",
+              "string_sha256": "4496bce66a13ee7703c585d4be836b16cbb4686b704c728e364d0f43d8d4f535"
+            }
+          }
+        ]
+      },
+      {
+        "name": "card_ichorid",
+        "address": "0x2314f20",
+        "source": "cards/torment.c",
+        "coff_identity": "card_ichorid",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x231519b",
+                "mov dword ptr [esp], \"cards/torment.c:1386\\niid != -1\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x25a654b",
+                "mov dword ptr [esp], \"cards/torment.c:1366\\niid != -1\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "cards/torment.c",
+            "native_line": 1386,
+            "rebuilt_line": 1366,
+            "expression": "iid != -1",
+            "native": {
+              "instruction": "0x231519b",
+              "instruction_bytes": "c704241cfd7302",
+              "string_address": "0x273fd1c",
+              "string_sha256": "0b0943014e8636780ae9b9ab84f44f1b1751591e45cf7e76d80facf1428a5c78"
+            },
+            "rebuilt": {
+              "instruction": "0x25a654b",
+              "instruction_bytes": "c7042414837502",
+              "string_address": "0x2758314",
+              "string_sha256": "019cf587fd19e13bf7153fb9f9765fdc6b048f00b2f0ab6569e263958d02cc62"
+            }
+          }
+        ]
+      },
+      {
+        "name": "effect_fof",
+        "address": "0x2654640",
+        "source": "functions/tutors.c",
+        "coff_identity": "effect_fof",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x2654678",
+                "mov dword ptr [esp], \"functions/tutors.c:1624\\n(put_rest_where == TUTOR_GRAVE || put_rest_where == TUTOR_BOTTOM_OF_DECK) && \\\"others unimplemented\\\"\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x26df4b8",
+                "mov dword ptr [esp], \"functions/tutors.c:486\\n(put_rest_where == TUTOR_GRAVE || put_rest_where == TUTOR_BOTTOM_OF_DECK) && \\\"others unimplemented\\\"\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "functions/tutors.c",
+            "native_line": 1624,
+            "rebuilt_line": 486,
+            "expression": "(put_rest_where == TUTOR_GRAVE || put_rest_where == TUTOR_BOTTOM_OF_DECK) && \"others unimplemented\"",
+            "native": {
+              "instruction": "0x2654678",
+              "instruction_bytes": "c7042484cf7502",
+              "string_address": "0x275cf84",
+              "string_sha256": "e5eecd9133856324ac1db9a753a6d4348b1a9a3d7fa9933944d3c60d0a77f13d"
+            },
+            "rebuilt": {
+              "instruction": "0x26df4b8",
+              "instruction_bytes": "c70424e4567702",
+              "string_address": "0x27756e4",
+              "string_sha256": "dc8ed3753f4826488b8117f0f8424ddf2b49e5b3bac566591661e08cd17b9fc3"
+            }
+          }
+        ]
+      },
+      {
+        "name": "card_cyclone",
+        "address": "0x22bd080",
+        "source": "cards/arabian_nights.c",
+        "coff_identity": "card_cyclone",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x22bd260",
+                "mov dword ptr [esp], \"cards/arabian_nights.c:420\\ncounters > 0\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x206a8c0",
+                "mov dword ptr [esp], \"cards/arabian_nights.c:388\\ncounters > 0\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "cards/arabian_nights.c",
+            "native_line": 420,
+            "rebuilt_line": 388,
+            "expression": "counters > 0",
+            "native": {
+              "instruction": "0x22bd260",
+              "instruction_bytes": "c70424c0c17302",
+              "string_address": "0x273c1c0",
+              "string_sha256": "321dc02b535734b3a883145b7db959488dc79d35d48dfad1771f6a34f3f782d9"
+            },
+            "rebuilt": {
+              "instruction": "0x206a8c0",
+              "instruction_bytes": "c7042468857202",
+              "string_address": "0x2728568",
+              "string_sha256": "9ceef9f221e04d2d21b6a34a0714f7ae3987c586b7d0bec34b28c2e0ea989353"
+            }
+          }
+        ]
+      },
+      {
+        "name": "fill_arr",
+        "address": "0x265d3b0",
+        "source": "functions/targets.c",
+        "coff_identity": "fill_arr.constprop.0",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x265d508",
+                "mov dword ptr [esp], \"functions/targets.c:2167\\ninstance->number_of_targets < 20\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x26d7c28",
+                "mov dword ptr [esp], \"functions/targets.c:365\\ninstance->number_of_targets < 20\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "functions/targets.c",
+            "native_line": 2167,
+            "rebuilt_line": 365,
+            "expression": "instance->number_of_targets < 20",
+            "native": {
+              "instruction": "0x265d508",
+              "instruction_bytes": "c70424e0dc7502",
+              "string_address": "0x275dce0",
+              "string_sha256": "37a1aa94d2df825ccb559bf6191c6f32b95cefe164458d3b8ea40ae1d940cb75"
+            },
+            "rebuilt": {
+              "instruction": "0x26d7c28",
+              "instruction_bytes": "c70424884f7702",
+              "string_address": "0x2774f88",
+              "string_sha256": "495b9d5b2eb24af775bcc8a3fd3cc1b8d9cf4fb91a5503f69e4717d48ba273fb"
+            }
+          }
+        ]
+      },
+      {
+        "name": "choose_between_two_piles",
+        "address": "0x2653870",
+        "source": "functions/tutors.c",
+        "coff_identity": "choose_between_two_piles",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x26539c8",
+                "mov dword ptr [esp], \"functions/tutors.c:1575\\nai_selection_mode == AI_MIN_VALUE || ai_selection_mode == AI_MAX_VALUE\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x26df078",
+                "mov dword ptr [esp], \"functions/tutors.c:437\\nai_selection_mode == AI_MIN_VALUE || ai_selection_mode == AI_MAX_VALUE\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "functions/tutors.c",
+            "native_line": 1575,
+            "rebuilt_line": 437,
+            "expression": "ai_selection_mode == AI_MIN_VALUE || ai_selection_mode == AI_MAX_VALUE",
+            "native": {
+              "instruction": "0x26539c8",
+              "instruction_bytes": "c7042454ce7502",
+              "string_address": "0x275ce54",
+              "string_sha256": "080d536a0916e6365996718704bb4371705c232f41aebdffadab939a9fd28f3f"
+            },
+            "rebuilt": {
+              "instruction": "0x26df078",
+              "instruction_bytes": "c7042414567702",
+              "string_address": "0x2775614",
+              "string_sha256": "5b36d7c35153c9796a92fa37b9667a2225ae1724332b8cc2b98df0f3e7d21c78"
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_legacy_effect_for_opponent",
+        "address": "0x267b470",
+        "source": "functions/functions.c",
+        "coff_identity": "create_legacy_effect_for_opponent",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x267b588",
+                "mov dword ptr [esp], \"functions/functions.c:2098\\ncard_added != -1\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2686808",
+                "mov dword ptr [esp], \"functions/functions.c:1500\\ncard_added != -1\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "functions/functions.c",
+            "native_line": 2098,
+            "rebuilt_line": 1500,
+            "expression": "card_added != -1",
+            "native": {
+              "instruction": "0x267b588",
+              "instruction_bytes": "c70424a8fa7502",
+              "string_address": "0x275faa8",
+              "string_sha256": "1e50443ae813b1a1bcad4664dcc84da3eb969b9a8b473e75826a6e13d10cce19"
+            },
+            "rebuilt": {
+              "instruction": "0x2686808",
+              "instruction_bytes": "c7042428af7602",
+              "string_address": "0x276af28",
+              "string_sha256": "f02df14009d8c49377121b9d475a69cf524446f154d9b347930f9702b1010935"
+            }
+          }
+        ]
+      },
+      {
+        "name": "initialize_ability_tooltip_names",
+        "address": "0x2657560",
+        "source": "functions/windows.c",
+        "coff_identity": "initialize_ability_tooltip_names",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x26575dd",
+                "mov dword ptr [esp], \"functions/windows.c:599\\nstrlen(ability_tooltip_names[i]) <= 49 && \\\"initialize_ability_tooltip_names(): ability name too long; must be 49 characters or less\\\"\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x26e622d",
+                "mov dword ptr [esp], \"functions/windows.c:602\\nstrlen(ability_tooltip_names[i]) <= 49 && \\\"initialize_ability_tooltip_names(): ability name too long; must be 49 characters or less\\\"\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "functions/windows.c",
+            "native_line": 599,
+            "rebuilt_line": 602,
+            "expression": "strlen(ability_tooltip_names[i]) <= 49 && \"initialize_ability_tooltip_names(): ability name too long; must be 49 characters or less\"",
+            "native": {
+              "instruction": "0x26575dd",
+              "instruction_bytes": "c7042484d27502",
+              "string_address": "0x275d284",
+              "string_sha256": "ec08a3ea9eaf34440510249d7b0ccdf556e8dbcca607d5878d0cd8820265e328"
+            },
+            "rebuilt": {
+              "instruction": "0x26e622d",
+              "instruction_bytes": "c70424245d7702",
+              "string_address": "0x2775d24",
+              "string_sha256": "52b5844fc254c4b44bd9c0071b01cac2f5e90b33c6099ea3133e58f482043620"
+            }
+          }
+        ]
+      },
+      {
+        "name": "add_player_counters",
+        "address": "0x26d43d0",
+        "source": "functions/counters.c",
+        "coff_identity": "add_player_counters",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x26d4428",
+                "mov dword ptr [ebp + 8], \"functions/counters.c:2669\\n0 && \\\"PCOUNTER_invalid not handled by 'add_player_counters'.\\\"\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2666828",
+                "mov dword ptr [ebp + 8], \"functions/counters.c:3035\\n0 && \\\"PCOUNTER_invalid not handled by 'add_player_counters'.\\\"\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "functions/counters.c",
+            "native_line": 2669,
+            "rebuilt_line": 3035,
+            "expression": "0 && \"PCOUNTER_invalid not handled by 'add_player_counters'.\"",
+            "native": {
+              "instruction": "0x26d4428",
+              "instruction_bytes": "c745080cb07602",
+              "string_address": "0x276b00c",
+              "string_sha256": "0dbe3463ae71233926a686b590b6cdc69cd4b6f9c3a92382d5f71c183d38c1d7"
+            },
+            "rebuilt": {
+              "instruction": "0x2666828",
+              "instruction_bytes": "c745083c9a7602",
+              "string_address": "0x2769a3c",
+              "string_sha256": "355440e80a190efee51434bc54f403be528698e2d0529a4e8e682b7301dcd73f"
+            }
+          }
+        ]
+      },
+      {
+        "name": "action_on_target",
+        "address": "0x2667050",
+        "source": "functions/manipulate_and_damage_all.c",
+        "coff_identity": "action_on_target",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x26670a8",
+                "mov dword ptr [esp], \"functions/manipulate_and_damage_all.c:174\\n(instance->targets[target_number].player & ~1) == 0\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x26be398",
+                "mov dword ptr [esp], \"functions/manipulate_and_damage_all.c:26\\n(instance->targets[target_number].player & ~1) == 0\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 1,
+        "sites": [
+          {
+            "source": "functions/manipulate_and_damage_all.c",
+            "native_line": 174,
+            "rebuilt_line": 26,
+            "expression": "(instance->targets[target_number].player & ~1) == 0",
+            "native": {
+              "instruction": "0x26670a8",
+              "instruction_bytes": "c7042470e77502",
+              "string_address": "0x275e770",
+              "string_sha256": "916ce15ff38e5ff3d2d9495c0ed9754c9489b4a59ccbf8849dcb4b99e74a03fa"
+            },
+            "rebuilt": {
+              "instruction": "0x26be398",
+              "instruction_bytes": "c70424c0097702",
+              "string_address": "0x27709c0",
+              "string_sha256": "f2ae7480b1cb57ae9c9f9034b25c95196097eaae675cb9930da7b9701c4cccfd"
+            }
+          }
+        ]
+      },
+      {
+        "name": "set_scheme_in_motion",
+        "address": "0x257e760",
+        "source": "cards/archenemy.c",
+        "coff_identity": "set_scheme_in_motion",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x257e9c1",
+                "mov dword ptr [esp], \"cards/archenemy.c:1308\\nfn && fn != (CardFunction)0x401000 && \\\"invalid scheme function\\\"\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2071691",
+                "mov dword ptr [esp], \"cards/archenemy.c:1299\\nfn && fn != (CardFunction)0x401000 && \\\"invalid scheme function\\\"\" (STRING)"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x257e9d2",
+                "mov dword ptr [esp], \"cards/archenemy.c:1306\\niid > 0 && \\\"invalid scheme csvid\\\"\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x20716a2",
+                "mov dword ptr [esp], \"cards/archenemy.c:1297\\niid > 0 && \\\"invalid scheme csvid\\\"\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 2,
+        "sites": [
+          {
+            "source": "cards/archenemy.c",
+            "native_line": 1308,
+            "rebuilt_line": 1299,
+            "expression": "fn && fn != (CardFunction)0x401000 && \"invalid scheme function\"",
+            "native": {
+              "instruction": "0x257e9c1",
+              "instruction_bytes": "c7042478507502",
+              "string_address": "0x2755078",
+              "string_sha256": "e2a5fecf90b2061b01735d95427ba2f3f0d3d6a4c24e525bdd3cbbbc6ff47207"
+            },
+            "rebuilt": {
+              "instruction": "0x2071691",
+              "instruction_bytes": "c7042448877202",
+              "string_address": "0x2728748",
+              "string_sha256": "07a0f6c0d8ccc875431e653a5b3aeca1091b39acfd8d1ad35c26a12881d22bec"
+            }
+          },
+          {
+            "source": "cards/archenemy.c",
+            "native_line": 1306,
+            "rebuilt_line": 1297,
+            "expression": "iid > 0 && \"invalid scheme csvid\"",
+            "native": {
+              "instruction": "0x257e9d2",
+              "instruction_bytes": "c704243c507502",
+              "string_address": "0x275503c",
+              "string_sha256": "5888253c4076aa9a67ff93f484d18ee6d69148ab37f860d460210c84688b26ca"
+            },
+            "rebuilt": {
+              "instruction": "0x20716a2",
+              "instruction_bytes": "c704240c877202",
+              "string_address": "0x272870c",
+              "string_sha256": "ea3f691857fe5ff99e3f60d7a126fd3a95ba1b33ac74e9f88865016e8764927a"
+            }
+          }
+        ]
+      },
+      {
+        "name": "put_top_x_on_bottom_in_random_order",
+        "address": "0x2654c70",
+        "source": "functions/tutors.c",
+        "coff_identity": "put_top_x_on_bottom_in_random_order",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x2654d12",
+                "mov dword ptr [esp], \"functions/tutors.c:2078\\ndeck[pos] == -1\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x26df782",
+                "mov dword ptr [esp], \"functions/tutors.c:951\\ndeck[pos] == -1\" (STRING)"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x2654d32",
+                "mov dword ptr [esp], \"functions/tutors.c:2079\\npos == 0 || deck[pos - 1] != -1\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x26df7a2",
+                "mov dword ptr [esp], \"functions/tutors.c:952\\npos == 0 || deck[pos - 1] != -1\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 2,
+        "sites": [
+          {
+            "source": "functions/tutors.c",
+            "native_line": 2078,
+            "rebuilt_line": 951,
+            "expression": "deck[pos] == -1",
+            "native": {
+              "instruction": "0x2654d12",
+              "instruction_bytes": "c70424acd07502",
+              "string_address": "0x275d0ac",
+              "string_sha256": "1d31e5d4eab6a5405a84e02b650ac46b863d9c348483411adeffd8e8eff2b700"
+            },
+            "rebuilt": {
+              "instruction": "0x26df782",
+              "instruction_bytes": "c704246c577702",
+              "string_address": "0x277576c",
+              "string_sha256": "871fd8257839eeec8860cd55bf6b93e62e448a1d99e15360c584683957602bc1"
+            }
+          },
+          {
+            "source": "functions/tutors.c",
+            "native_line": 2079,
+            "rebuilt_line": 952,
+            "expression": "pos == 0 || deck[pos - 1] != -1",
+            "native": {
+              "instruction": "0x2654d32",
+              "instruction_bytes": "c70424d4d07502",
+              "string_address": "0x275d0d4",
+              "string_sha256": "e4b1e9a3c2c9da84cc784dde82c47a512ef5449448e6170510e04e5d749535d6"
+            },
+            "rebuilt": {
+              "instruction": "0x26df7a2",
+              "instruction_bytes": "c7042494577702",
+              "string_address": "0x2775794",
+              "string_sha256": "aa94088ba10033c81a878ffdb480e38ea45c60d03dd9bfb7987304068762791f"
+            }
+          }
+        ]
+      },
+      {
+        "name": "turn_card_in_grave_face_down",
+        "address": "0x26b4fd0",
+        "source": "functions/deck.c",
+        "coff_identity": "turn_card_in_grave_face_down",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x26b4feb",
+                "mov dword ptr [esp], \"functions/deck.c:1884\\nposition >= 0 && position < 500 && player >= 0 && player <= 1\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x266d2cb",
+                "mov dword ptr [esp], \"functions/deck.c:1642\\nposition >= 0 && position < 500 && player >= 0 && player <= 1\" (STRING)"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x26b5020",
+                "mov dword ptr [esp], \"functions/deck.c:1886\\nprevious != -1 && previous != iid_draw_a_card\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x266d300",
+                "mov dword ptr [esp], \"functions/deck.c:1644\\nprevious != -1 && previous != iid_draw_a_card\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 2,
+        "sites": [
+          {
+            "source": "functions/deck.c",
+            "native_line": 1884,
+            "rebuilt_line": 1642,
+            "expression": "position >= 0 && position < 500 && player >= 0 && player <= 1",
+            "native": {
+              "instruction": "0x26b4feb",
+              "instruction_bytes": "c70424284d7602",
+              "string_address": "0x2764d28",
+              "string_sha256": "f8ab0adaa54de388eec28cb67a3e8714e1787aff88a189eab71cbc8e1c032c52"
+            },
+            "rebuilt": {
+              "instruction": "0x266d2cb",
+              "instruction_bytes": "c70424889e7602",
+              "string_address": "0x2769e88",
+              "string_sha256": "16a99e8b74e6d0bb942eb6c6980834505b17df23c12a6995a9c985c187879df6"
+            }
+          },
+          {
+            "source": "functions/deck.c",
+            "native_line": 1886,
+            "rebuilt_line": 1644,
+            "expression": "previous != -1 && previous != iid_draw_a_card",
+            "native": {
+              "instruction": "0x26b5020",
+              "instruction_bytes": "c704247c4d7602",
+              "string_address": "0x2764d7c",
+              "string_sha256": "4b8b8c8060362853d2faaeea0e74f3617427d9427a420dafac76b21f2c31b8d5"
+            },
+            "rebuilt": {
+              "instruction": "0x266d300",
+              "instruction_bytes": "c70424dc9e7602",
+              "string_address": "0x2769edc",
+              "string_sha256": "6167874aa0b023f3676f6a78a2331e5ae451db08a30c2b5f060e8bcb0cee4f4e"
+            }
+          }
+        ]
+      },
+      {
+        "name": "from_exile_to_graveyard",
+        "address": "0x26b4f40",
+        "source": "functions/deck.c",
+        "coff_identity": "from_exile_to_graveyard",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x26b4f5c",
+                "mov dword ptr [esp], \"functions/deck.c:1872\\nposition_in_exile >= 0 && position_in_exile < 500 && player >= 0 && player <= 1\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x266d23c",
+                "mov dword ptr [esp], \"functions/deck.c:1630\\nposition_in_exile >= 0 && position_in_exile < 500 && player >= 0 && player <= 1\" (STRING)"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x26b4fa8",
+                "mov dword ptr [esp], \"functions/deck.c:1874\\niid != -1\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x266d288",
+                "mov dword ptr [esp], \"functions/deck.c:1632\\niid != -1\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 2,
+        "sites": [
+          {
+            "source": "functions/deck.c",
+            "native_line": 1872,
+            "rebuilt_line": 1630,
+            "expression": "position_in_exile >= 0 && position_in_exile < 500 && player >= 0 && player <= 1",
+            "native": {
+              "instruction": "0x26b4f5c",
+              "instruction_bytes": "c70424a04c7602",
+              "string_address": "0x2764ca0",
+              "string_sha256": "2cb0c4ff5c5b559a4983a49a894850a8082fd984b4a23aa7dbe553c3e9525c1d"
+            },
+            "rebuilt": {
+              "instruction": "0x266d23c",
+              "instruction_bytes": "c70424009e7602",
+              "string_address": "0x2769e00",
+              "string_sha256": "29b06f0e301ecae0cfaa00ac0c9249434cb5610a1354e843e337bf4fe48428e8"
+            }
+          },
+          {
+            "source": "functions/deck.c",
+            "native_line": 1874,
+            "rebuilt_line": 1632,
+            "expression": "iid != -1",
+            "native": {
+              "instruction": "0x26b4fa8",
+              "instruction_bytes": "c70424084d7602",
+              "string_address": "0x2764d08",
+              "string_sha256": "fc56d5373e0f0ccc973512c9baeb8fde44e41c3d4b31a94295983e7f509e35a1"
+            },
+            "rebuilt": {
+              "instruction": "0x266d288",
+              "instruction_bytes": "c70424689e7602",
+              "string_address": "0x2769e68",
+              "string_sha256": "b4a505f88a52ea7d36ceb0369b6d732791ffe8bb63e572552f7f0b54d026dfeb"
+            }
+          }
+        ]
+      },
+      {
+        "name": "turn_card_in_grave_face_up",
+        "address": "0x26b5050",
+        "source": "functions/deck.c",
+        "coff_identity": "turn_card_in_grave_face_up",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x26b5083",
+                "mov dword ptr [esp], \"functions/deck.c:1896\\ngraveyard_ptr_mutable[player][position] == iid_draw_a_card\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x266d363",
+                "mov dword ptr [esp], \"functions/deck.c:1654\\ngraveyard_ptr_mutable[player][position] == iid_draw_a_card\" (STRING)"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x26b50c0",
+                "mov dword ptr [esp], \"functions/deck.c:1895\\niid != -1 && iid != iid_draw_a_card\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x266d3a0",
+                "mov dword ptr [esp], \"functions/deck.c:1653\\niid != -1 && iid != iid_draw_a_card\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 2,
+        "sites": [
+          {
+            "source": "functions/deck.c",
+            "native_line": 1896,
+            "rebuilt_line": 1654,
+            "expression": "graveyard_ptr_mutable[player][position] == iid_draw_a_card",
+            "native": {
+              "instruction": "0x26b5083",
+              "instruction_bytes": "c70424fc4d7602",
+              "string_address": "0x2764dfc",
+              "string_sha256": "8fd75ca7e05c4917c53ffe4662b0a6453cd4aaca0034cfb8283303f05fdcdb55"
+            },
+            "rebuilt": {
+              "instruction": "0x266d363",
+              "instruction_bytes": "c704245c9f7602",
+              "string_address": "0x2769f5c",
+              "string_sha256": "dbba6fa088e24160eabba5e823d1b3705bb9d1c1a62add50dd216754054d65f3"
+            }
+          },
+          {
+            "source": "functions/deck.c",
+            "native_line": 1895,
+            "rebuilt_line": 1653,
+            "expression": "iid != -1 && iid != iid_draw_a_card",
+            "native": {
+              "instruction": "0x26b50c0",
+              "instruction_bytes": "c70424c04d7602",
+              "string_address": "0x2764dc0",
+              "string_sha256": "f5c69039d50bbf473746535eb7dd0a167569e5833fff8029e76017e83f3856e2"
+            },
+            "rebuilt": {
+              "instruction": "0x266d3a0",
+              "instruction_bytes": "c70424209f7602",
+              "string_address": "0x2769f20",
+              "string_sha256": "58b984bdf46942897c0b9097dd313f70049cf15bc6fb3a7d30ad99d1190e4a56"
+            }
+          }
+        ]
+      },
+      {
+        "name": "card_chandra_roaring_flame",
+        "address": "0x20e1fc0",
+        "source": "cards/origins.c",
+        "coff_identity": "card_chandra_roaring_flame",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x20e21e3",
+                "mov dword ptr [esp], \"cards/origins.c:3353\\ndmg->damage_source_player == inst->parent_controller\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2414153",
+                "mov dword ptr [esp], \"cards/origins.c:3254\\ndmg->damage_source_player == inst->parent_controller\" (STRING)"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x20e2212",
+                "mov dword ptr [esp], \"cards/origins.c:3354\\ndmg->damage_source_card == inst->parent_card\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2414182",
+                "mov dword ptr [esp], \"cards/origins.c:3255\\ndmg->damage_source_card == inst->parent_card\" (STRING)"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x20e2235",
+                "mov dword ptr [esp], \"cards/origins.c:3355\\ndmg->internal_card_id == damage_card\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x24141a5",
+                "mov dword ptr [esp], \"cards/origins.c:3256\\ndmg->internal_card_id == damage_card\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 3,
+        "sites": [
+          {
+            "source": "cards/origins.c",
+            "native_line": 3353,
+            "rebuilt_line": 3254,
+            "expression": "dmg->damage_source_player == inst->parent_controller",
+            "native": {
+              "instruction": "0x20e21e3",
+              "instruction_bytes": "c704249ca97202",
+              "string_address": "0x272a99c",
+              "string_sha256": "119fa57ebade776c4f67584e8dc9097e9c7a1e319e1eb63c83b104e12ed2547b"
+            },
+            "rebuilt": {
+              "instruction": "0x2414153",
+              "instruction_bytes": "c7042460a47402",
+              "string_address": "0x274a460",
+              "string_sha256": "5b1e66180cbca0673c372479daf31d745f2403c22aaa0fee29f546833651cc14"
+            }
+          },
+          {
+            "source": "cards/origins.c",
+            "native_line": 3354,
+            "rebuilt_line": 3255,
+            "expression": "dmg->damage_source_card == inst->parent_card",
+            "native": {
+              "instruction": "0x20e2212",
+              "instruction_bytes": "c70424e8a97202",
+              "string_address": "0x272a9e8",
+              "string_sha256": "07e9dfffaeebeab16754886c8446068353e195474f91d0750413af6dc34c5882"
+            },
+            "rebuilt": {
+              "instruction": "0x2414182",
+              "instruction_bytes": "c70424aca47402",
+              "string_address": "0x274a4ac",
+              "string_sha256": "969ce8477636364b251317b0acc160bcbbd66c36afb883fe0faa4f1dce470e99"
+            }
+          },
+          {
+            "source": "cards/origins.c",
+            "native_line": 3355,
+            "rebuilt_line": 3256,
+            "expression": "dmg->internal_card_id == damage_card",
+            "native": {
+              "instruction": "0x20e2235",
+              "instruction_bytes": "c704242caa7202",
+              "string_address": "0x272aa2c",
+              "string_sha256": "6e2c0748d1a521f51e4aca68a9cb62657651ddbb929d13d5473fe2812cd33553"
+            },
+            "rebuilt": {
+              "instruction": "0x24141a5",
+              "instruction_bytes": "c70424f0a47402",
+              "string_address": "0x274a4f0",
+              "string_sha256": "2dfad01d76db0b9d4a9a29319a66d2153bb74c88eb24cd10ab58138d87c12aa5"
+            }
+          }
+        ]
+      },
+      {
+        "name": "exiledby_remember(1)",
+        "address": "0x26d6ac0",
+        "source": "functions/exiledby.c",
+        "coff_identity": "exiledby_remember.part.0",
+        "discovery_changes": [
+          {
+            "original": [
+              [
+                "0x26d6b43",
+                "mov dword ptr [esp], \"functions/exiledby.c:394\\niid != -1\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2683593",
+                "mov dword ptr [esp], \"functions/exiledby.c:361\\niid != -1\" (STRING)"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x26d6bb0",
+                "mov dword ptr [esp], \"functions/exiledby.c:390\\n!(iid & 0x80000000)\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2683600",
+                "mov dword ptr [esp], \"functions/exiledby.c:357\\n!(iid & 0x80000000)\" (STRING)"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x26d6c38",
+                "mov dword ptr [esp], \"functions/exiledby.c:365\\nplayer >= 0 && \\\"exiledby_remember() cannot be called on detached effects\\\"\" (STRING)"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2683688",
+                "mov dword ptr [esp], \"functions/exiledby.c:329\\nplayer >= 0 && \\\"exiledby_remember() cannot be called on detached effects\\\"\" (STRING)"
+              ]
+            ]
+          }
+        ],
+        "diagnostic_sites": 3,
+        "sites": [
+          {
+            "source": "functions/exiledby.c",
+            "native_line": 394,
+            "rebuilt_line": 361,
+            "expression": "iid != -1",
+            "native": {
+              "instruction": "0x26d6b43",
+              "instruction_bytes": "c70424f4b27602",
+              "string_address": "0x276b2f4",
+              "string_sha256": "793c54ee8d377694101f95f3183637947ba879c70fe523f915d4b29c9ef93f9b"
+            },
+            "rebuilt": {
+              "instruction": "0x2683593",
+              "instruction_bytes": "c70424c0ac7602",
+              "string_address": "0x276acc0",
+              "string_sha256": "c45f8b17d491cea4b5e5f6dea290d8270f9aafaa91f7b7d33fee05ad3a45025a"
+            }
+          },
+          {
+            "source": "functions/exiledby.c",
+            "native_line": 390,
+            "rebuilt_line": 357,
+            "expression": "!(iid & 0x80000000)",
+            "native": {
+              "instruction": "0x26d6bb0",
+              "instruction_bytes": "c70424c4b27602",
+              "string_address": "0x276b2c4",
+              "string_sha256": "054b6e51bd8795c2025520bc9aead555432d31e25921bc6f293148d462bf2a43"
+            },
+            "rebuilt": {
+              "instruction": "0x2683600",
+              "instruction_bytes": "c7042490ac7602",
+              "string_address": "0x276ac90",
+              "string_sha256": "cc64f3719a9c5d78fe5c021d734f2f094ed03fda77fccd7df1705d82b4bf869c"
+            }
+          },
+          {
+            "source": "functions/exiledby.c",
+            "native_line": 365,
+            "rebuilt_line": 329,
+            "expression": "player >= 0 && \"exiledby_remember() cannot be called on detached effects\"",
+            "native": {
+              "instruction": "0x26d6c38",
+              "instruction_bytes": "c7042460b27602",
+              "string_address": "0x276b260",
+              "string_sha256": "1c4098aec37d79594d31cf2c67a16943b948825eac59214b6a7b2b6d02c76533"
+            },
+            "rebuilt": {
+              "instruction": "0x2683688",
+              "instruction_bytes": "c704242cac7602",
+              "string_address": "0x276ac2c",
+              "string_sha256": "488e748709071b54f3f48d28b5e193bd41216c435d49b5465326c5ada6499988"
+            }
+          }
+        ]
+      }
+    ],
+    "unresolved": [],
+    "inputs": {
+      ".recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "ManalinkEh.dll": "0762e15c6c11bc905b2651cfccb62d84ed5f971da30d4690d48ae19009ed5598",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dbg": "982a5886d62600c9e9a062ba99f3e4599311f67b1046eeedf065c2eaaf1af7ab",
+      ".recovery\\reccmp\\site-reviewed-all-scores-c646.json": "0048c8fac9e907f5d4e4f66d97915070e69af4c7ee5a09230c4cb84d005e9a29",
+      ".recovery\\reccmp\\external-refresh-c642.json": "67291126c1471b66d7623caf0acdd303b6a549c38b928d8f8275aea74e1c69f0",
+      ".recovery\\reccmp\\external-refresh-c642.inputs.json": "860b79b65e5a27d651a1a0461f62b0d48f09c65b1247fa4e3e85ecb8341843c7",
+      ".recovery\\reccmp\\external-refresh-c642.metadata.csv": "fbfd21cba133c7a2bb84bf2624afe02591c123763b8229da83977fed02c7cb73",
+      "docs\\recovery-evidence\\native-target-masks.json": "d06f4fdec0fb5e221536a485ec09b410733455747963e2beb8295352d1d00000",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\review_diagnostic_lines.py": "6f603237a6b7543162d567dd44f2ccbb5f5a69010110c50f362af8ac0e7216ea",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\inspect_release.py": "68d82cb0052718b1b16c25b3773aeb9fca29749b6944bb855809b67441f45dc4",
+      "C:\\Users\\rler\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\capstone\\__init__.py": "94571d1314355e261aff0ddfc94985fe8761232ddff6874181fd21efa9fab47f",
+      "C:\\Users\\rler\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\capstone\\lib\\capstone.dll": "76958e18380023a68fd1714fa2e01c594cc6db1955a07ad6937b66e66dc5d6c3",
+      "cards\\born_of_the_gods.c": "cec2c35d5d57fbbdbac2365a35912afa0f1fd86ba929d8e1d005056581c853a6",
+      "cards\\journey_into_nyx.c": "7064b888391b014a7986215ac90e2bd72cfcd419c01f446271b6fbb558fec616",
+      "cards\\archenemy.c": "5d33c522e9bcef71eca4ec9bf8369f342b6fde27b2033622b9fa410c38362d52",
+      "cards\\torment.c": "8227ae61ca3f8367411954e230b4705e3313671329c100fc3b5ea0d9d61f9702",
+      "functions\\tutors.c": "ccbd6cb5b734f4773854d1bdb959351f2247413120d7856c72fbf0e6723fd53e",
+      "cards\\arabian_nights.c": "196c896db3a5da562aa0334e7db6f9a17e736e56a8aca58fdd4bc9874a0e42b2",
+      "functions\\targets.c": "5e5e3c7aed80e6996b4417983aef75024c99f1c1c9d05034c462cbd4f505cfb7",
+      "functions\\functions.c": "be12dbdc6e183302f6dd3ed229e281666598c06f1f6f8afe01972e85918db4d4",
+      "functions\\windows.c": "ecc6c9f00a3b2be33cc68d6629fcd0a8edc6d775858fa4e0f74d62efeb580f14",
+      "functions\\counters.c": "21f5c9da5b7ac9d79708ccd023498ccf2cc3efff464630469690a09a04c41b40",
+      "functions\\manipulate_and_damage_all.c": "a34cd2add59ff869cfd100b8192e594ca4a0fcebde13b1b76b0fe9d487166d99",
+      "functions\\deck.c": "f32f8def5d4b205326423d62433447ca7d5ff4e32cda28d39f467405a419e0ac",
+      "cards\\origins.c": "7ae2f04dc2a1bca010166e5002c07f862c6582afbf02b1847a1ba9ef5f7e9963",
+      "functions\\exiledby.c": "3631d6e0fa6dde7b1af2b3092b87d778a87cd7c0f4c16f820334f8571342461e"
+    },
+    "discovery_report_sha256": "67291126c1471b66d7623caf0acdd303b6a549c38b928d8f8275aea74e1c69f0",
+    "script_sha256": "6f603237a6b7543162d567dd44f2ccbb5f5a69010110c50f362af8ac0e7216ea",
+    "decoder_version": "5.0.7",
+    "scope": "Only the listed assertion-location strings and pointer-store instructions. Paths and complete assertion expressions agree; decimal source lines differ. Diagnostic output on the assertion path therefore differs intentionally. No claim about other instructions, whole handlers, gameplay, or byte identity. Source, binary, debug and successful-build inputs are pinned; stale sites remain unresolved."
+  },
+  "controls": {
+    "positive_controls": [
+      "ordinary",
+      "quoted",
+      "digits_in_expression",
+      "actual_native_store"
+    ],
+    "negative_controls": [
+      "path",
+      "expression",
+      "same_line",
+      "line_zero",
+      "embedded_null",
+      "missing_expression",
+      "not_assertion",
+      "changed_opcode",
+      "changed_destination",
+      "word_store",
+      "interior_pointer",
+      "altered_discovery",
+      "register_destination"
+    ],
+    "queue_negative_controls": [
+      "stale_input",
+      "duplicate_identity",
+      "changed_site",
+      "missing_inputs",
+      "wrong_report",
+      "overlap"
+    ],
+    "actual_candidate_sets": 19,
+    "actual_sites": 28,
+    "queues_checked": 2,
+    "retained_candidates": [
+      590,
+      374
+    ],
+    "combined_site_reviews": 79,
+    "scores_order_groups_changes_unchanged": true,
+    "checker_sha256": "40bc1dbf1b07971381fe837af52d7d973cb6f385d45227eef11a22f78130e116",
+    "reviewer_sha256": "6f603237a6b7543162d567dd44f2ccbb5f5a69010110c50f362af8ac0e7216ea",
+    "queue_tool_sha256": "d0124af40887ad9e7ca6867b16430386c9765b5b5b58abeb2785e07e5c928f84"
+  },
+  "annotated_queues": [
+    {
+      "path": ".recovery/reccmp/site-reviewed-queue-c647.json",
+      "sha256": "648bdd84d42d1df4cb64e7fb02447e27e2e116b22b4d9dc4675e6447addfb01e",
+      "candidates": 374,
+      "groups": 299,
+      "report_inputs_current": false,
+      "site_review_summary": {
+        "annotated_change_sites": 79,
+        "candidates_without_site_review": 295
+      },
+      "diagnostic_review": {
+        "path": ".recovery\\reccmp\\diagnostic-review-c647.json",
+        "sha256": "7bf86eae060989fd9bda4b044c69d8f719eb82c4636a2f074606c49b9fbd0e7c",
+        "current": true,
+        "annotated_change_sites": 19,
+        "candidates_without_site_review": 355,
+        "scope": "Annotations only. All candidates, scores and original changes are retained."
+      }
+    },
+    {
+      "path": ".recovery/reccmp/site-reviewed-all-scores-c647.json",
+      "sha256": "83e7963f241dab59ea3c6a2d61978028e02f154413055ac88cf2403b60001d1c",
+      "candidates": 590,
+      "groups": 435,
+      "report_inputs_current": false,
+      "site_review_summary": {
+        "annotated_change_sites": 79,
+        "candidates_without_site_review": 511
+      },
+      "diagnostic_review": {
+        "path": ".recovery\\reccmp\\diagnostic-review-c647.json",
+        "sha256": "7bf86eae060989fd9bda4b044c69d8f719eb82c4636a2f074606c49b9fbd0e7c",
+        "current": true,
+        "annotated_change_sites": 19,
+        "candidates_without_site_review": 571,
+        "scope": "Annotations only. All candidates, scores and original changes are retained."
+      }
+    }
+  ],
+  "prior_supporting_tool_pins": [
+    {
+      "path": "tools/recovery/small_diff_queue.py",
+      "sha256": "e03b41b1e3a0c3103ad50dd143ff4fadbeada996ea2acaba488d44e4f59bec66"
+    }
+  ],
+  "implementation_inputs": {
+    "tools/recovery/review_diagnostic_lines.py": "6f603237a6b7543162d567dd44f2ccbb5f5a69010110c50f362af8ac0e7216ea",
+    "tools/recovery/small_diff_queue.py": "d0124af40887ad9e7ca6867b16430386c9765b5b5b58abeb2785e07e5c928f84"
+  },
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "build": "Reused the successful target-mask DLL/debug receipt. No game-source or binary edits, no rebuild or full reccmp rerun.",
+  "scope": "Only the listed assertion-location strings and pointer-store instructions. Paths and complete assertion expressions agree; decimal source lines differ. Diagnostic output on the assertion path therefore differs intentionally. No claim about other instructions, whole handlers, gameplay, or byte identity. Source, binary, debug and successful-build inputs are pinned; stale sites remain unresolved.",
+  "triage_notes": [
+    "The discovery report remains historical. Every annotated pointer store was rebound through its native exact COFF entry and the unique same COFF identity in the current successful build.",
+    "Native fill_arr.constprop.0 and exiledby_remember.part.0 require actual clone names, not reccmp display suffixes. No clone name is guessed from a display number.",
+    "The existing 60 event/address annotations, every candidate, original diff, score, ordering and textual group remain unchanged.",
+    "Read-only inspection also resolved the unknown call labels in time_in_ms and draw_abilities to native/current COFF __divdi3 and __ffsdi2; these observations are not additional queue annotations or whole-callee equivalence claims."
+  ]
+}

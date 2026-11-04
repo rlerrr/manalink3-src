@@ -454,7 +454,7 @@ static const rarity_num_t booster_kamigawa_neo[8] = {
   {0, 0},
 };
 
-static booster_t pack_contents[198] = {
+booster_t pack_contents[198] = {
   {0, no_boosters, no_starters},
   {1, no_boosters, no_starters},
   {2, booster_alpha, starter_alpha},
@@ -732,7 +732,7 @@ static int add_card_to_pack(int *out_csvids, int pos, csvid_choices_t *choice, i
     int selected = internal_rand(remaining);
     unsigned int csvid = local_choices[selected];
     bool basic_land =
-        csvid == 0xef || csvid == 0xa4 || csvid == 0x5b || csvid == 0x7e || csvid == 0xbc;
+        csvid == CARD_ID_SWAMP || csvid == CARD_ID_MOUNTAIN || csvid == CARD_ID_FOREST || csvid == CARD_ID_ISLAND || csvid == CARD_ID_PLAINS;
     if (basic_land)
     {
       out_csvids[pos++] = csvid;
@@ -879,8 +879,8 @@ void announce_expansion_choice(int player, int card, EXPANSION_t expansion)
     expansion_names = load_text_nocopy_from_file("Menus.txt", "EXPANSIONNAMES", &num_textlines);
     if ((int)(expansion + EXPANSION_ANTIQUITIES) < num_textlines)
     {
-      dialog_impl(player, card, EVENT_ACTIVATE, "\001\011",
-                  expansion_names[expansion + EXPANSION_REVISED_EDITION], "\001\014", "\001\003", 0,
+      dialog_impl(player, card, EVENT_ACTIVATE, DLG_HEADER(
+                  expansion_names[expansion + EXPANSION_REVISED_EDITION]), DLG_NO_STORAGE, DLG_NO_CANCEL, 0,
                   0, 0, 0);
       return;
     }
@@ -892,7 +892,7 @@ void announce_expansion_choice(int player, int card, EXPANSION_t expansion)
 
 
 #ifndef SHANDALAR
-typedef struct count_and_card_t { int count; int csvid; } count_and_card_t;
+typedef struct count_and_card_t { int count; card_id_t csvid; } count_and_card_t;
 typedef struct varying_copies_entry_t { draftrarity_t rarity; const count_and_card_t *counts_and_cards; } varying_copies_entry_t;
 _Static_assert(sizeof(count_and_card_t)==8 && sizeof(varying_copies_entry_t)==8, "native collation record widths");
 
@@ -1870,7 +1870,7 @@ static int make_pack_normal(EXPANSION_t expansion, int booster, int *out_csvids,
   }
   get_csvid_choices(expansion, choices);
   bool no_late_duplicates = true;
-  int attempts_left = (-(unsigned int)(testing_mode == 0) & 0x1863c) + 100;
+  int attempts_left = ((testing_mode == 0) ? 100000U : 100U);
   unsigned int skip_dfc_check = expansion - EXPANSION_INNISTRAD_MIDNIGHT_HUNT & 0xfffffffd;
   bool accepted = false;
   do
@@ -1946,7 +1946,7 @@ static int make_pack_normal(EXPANSION_t expansion, int booster, int *out_csvids,
       for (int index = 0; index < (int)rarity_or_count - 1 && !duplicate; ++index)
       {
         int csvid = out_csvids[index];
-        if (csvid == 0xef || csvid == 0xa4 || csvid == 0x5b || csvid == 0x7e || csvid == 0xbc ||
+        if (csvid == CARD_ID_SWAMP || csvid == CARD_ID_MOUNTAIN || csvid == CARD_ID_FOREST || csvid == CARD_ID_ISLAND || csvid == CARD_ID_PLAINS ||
             ((unsigned int)csvid - 0x834 < 5 && expansion == EXPANSION_ICE_AGE))
           continue;
         for (int other = index + 1; other < (int)rarity_or_count; ++other)
@@ -2640,7 +2640,7 @@ static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices)
             }
             else
             {
-              value = ((pool_value != 2) - 1 & 0xffffffac) + 0x77;
+              value = (pool_value == 2 ? 35U : 119U);
             }
             do
             {
@@ -2654,14 +2654,14 @@ static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices)
           {
             if (expansion == EXPANSION_SHADOWS_OVER_INNISTRAD)
             {
-              pool_value = (rarities->rarity_in_expansion[expansion] != '\x01') - 1 & 0xe;
+              pool_value = (rarities->rarity_in_expansion[expansion] == '\x01' ? 14 : 0);
             }
             else
             {
               pool_value = (unsigned int)(rarities->rarity_in_expansion[expansion] == '\x01');
               if (expansion == EXPANSION_ELDRITCH_MOON)
               {
-                pool_value = (pool_value - 1 & 0xfffffff3) + 0xe;
+                pool_value = (pool_value ? 14U : 1U);
               }
               else
               {

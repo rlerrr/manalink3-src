@@ -1,0 +1,1210 @@
+{
+  "format": 1,
+  "status": "Five native buffer initializers reconstructed; build, 1,053 buffer bytes, sixteen bounded clear executions, 15,169 fixed slots, source projections and staging checks passed.",
+  "before_inputs": {
+    "native": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "native_debug": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+    "rebuilt": "1e1f044ec31f76d7c73aae7ddcc72efa2da748242a515c5741d8cfbb07f7a124",
+    "rebuilt_debug": "abc66053ccd08d937f81823d0dfd5b0451019654027ca869b0459a8b0f8616f6"
+  },
+  "native_snapshot_sha256": "07af27ad771f17cdbf7ec8593931d36d5fe00de52eda8120e9683f395a62b4bd",
+  "functions": [
+    {
+      "source": "cards/conspiracy-take-the-crown.c",
+      "name": "card_liutenants_of_the_guard",
+      "native_view": {
+        "address": "0x220e570",
+        "end": "0x220e6c3",
+        "bytes_sha256": "7be5f0ea2ade1ee908f8558e9758dccc701baca66df36d5a09baf4c1dbc0caf3"
+      },
+      "native_variables": [
+        {
+          "name": "pos1",
+          "die_offset": "0x1d27c32",
+          "frame_offset": -220,
+          "shape": {
+            "kind": "DW_TAG_array_type",
+            "size": 100,
+            "dimensions": [
+              100
+            ],
+            "element_size": 1,
+            "element_encoding": 6
+          },
+          "scope_ranges": [
+            [
+              35710392,
+              35710646
+            ]
+          ]
+        },
+        {
+          "name": "pos2",
+          "die_offset": "0x1d27c43",
+          "frame_offset": -120,
+          "shape": {
+            "kind": "DW_TAG_array_type",
+            "size": 100,
+            "dimensions": [
+              100
+            ],
+            "element_size": 1,
+            "element_encoding": 6
+          },
+          "scope_ranges": [
+            [
+              35710392,
+              35710646
+            ]
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "7e7720d07eadf6ac98aa978459e1d0bbdbfaf28cc283e77618c316f818d03431",
+      "source_after_definition_sha256": "6a5daa75637d164b71d23582624bc1b2221d9aeacc9185daec3e3005f3a0f938",
+      "contract": {
+        "kind": "vote_text_initializers",
+        "payloads": {
+          "pos1": {
+            "bytes": "537472656e67687420282b312f2b3120636f756e74657273206f6e20746869732900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "sha256": "616a80628e92af435de79e98b449740b1a2af0a32e549c04663863bb8202fc6b",
+            "native_variable": {
+              "name": "pos1",
+              "die_offset": "0x1d27c32",
+              "frame_offset": -220,
+              "shape": {
+                "kind": "DW_TAG_array_type",
+                "size": 100,
+                "dimensions": [
+                  100
+                ],
+                "element_size": 1,
+                "element_encoding": 6
+              },
+              "scope_ranges": [
+                [
+                  35710392,
+                  35710646
+                ]
+              ]
+            }
+          },
+          "pos2": {
+            "bytes": "4e756d6265722028312f3120736f6c6469657220746f6b656e732900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "sha256": "ab8a1e1523db20ceb01ddf917a1fd05e17346e97ca11d18f764410b809453b2b",
+            "native_variable": {
+              "name": "pos2",
+              "die_offset": "0x1d27c43",
+              "frame_offset": -120,
+              "shape": {
+                "kind": "DW_TAG_array_type",
+                "size": 100,
+                "dimensions": [
+                  100
+                ],
+                "element_size": 1,
+                "element_encoding": 6
+              },
+              "scope_ranges": [
+                [
+                  35710392,
+                  35710646
+                ]
+              ]
+            }
+          }
+        },
+        "reason": "Recover ordinary 100-byte C string array initializers at the existing initialization point. Preserve all 600 native text/padding bytes, including the native Strenght spelling; remove only redundant zero stores."
+      }
+    },
+    {
+      "source": "cards/conspiracy-take-the-crown.c",
+      "name": "card_messenger_jays",
+      "native_view": {
+        "address": "0x220f260",
+        "end": "0x220f3a9",
+        "bytes_sha256": "3180e04ea5e613935873815f8d322a3a9deaea561f1fe23ae3587c51c9dbe3a1"
+      },
+      "native_variables": [
+        {
+          "name": "pos1",
+          "die_offset": "0x1d26aef",
+          "frame_offset": -220,
+          "shape": {
+            "kind": "DW_TAG_array_type",
+            "size": 100,
+            "dimensions": [
+              100
+            ],
+            "element_size": 1,
+            "element_encoding": 6
+          },
+          "scope_ranges": [
+            [
+              35713704,
+              35713948
+            ]
+          ]
+        },
+        {
+          "name": "pos2",
+          "die_offset": "0x1d26b00",
+          "frame_offset": -120,
+          "shape": {
+            "kind": "DW_TAG_array_type",
+            "size": 100,
+            "dimensions": [
+              100
+            ],
+            "element_size": 1,
+            "element_encoding": 6
+          },
+          "scope_ranges": [
+            [
+              35713704,
+              35713948
+            ]
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "786015967834ca1e9ee7cc3cee9a4c45c7f7f1d222410c2e674ee1c2d28bb8b9",
+      "source_after_definition_sha256": "70c42386e8337bef86971878e59eb7fc3131609d2b9185be8d9c94fbd4a4a378",
+      "contract": {
+        "kind": "vote_text_initializers",
+        "payloads": {
+          "pos1": {
+            "bytes": "4665617468657220282b312f2b3120636f756e74657273206f6e2074686973290000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "sha256": "a8e22c9f8122a7bde78dbed6455979138095d9ae2989ed4d7c1a0590c5eebe42",
+            "native_variable": {
+              "name": "pos1",
+              "die_offset": "0x1d26aef",
+              "frame_offset": -220,
+              "shape": {
+                "kind": "DW_TAG_array_type",
+                "size": 100,
+                "dimensions": [
+                  100
+                ],
+                "element_size": 1,
+                "element_encoding": 6
+              },
+              "scope_ranges": [
+                [
+                  35713704,
+                  35713948
+                ]
+              ]
+            }
+          },
+          "pos2": {
+            "bytes": "5175696c6c2028447261772026206469736361726429000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "sha256": "5f5d47b84f84e5ab5a63cdd7433886af278b46b9808d4c5fdb331297f3382d30",
+            "native_variable": {
+              "name": "pos2",
+              "die_offset": "0x1d26b00",
+              "frame_offset": -120,
+              "shape": {
+                "kind": "DW_TAG_array_type",
+                "size": 100,
+                "dimensions": [
+                  100
+                ],
+                "element_size": 1,
+                "element_encoding": 6
+              },
+              "scope_ranges": [
+                [
+                  35713704,
+                  35713948
+                ]
+              ]
+            }
+          }
+        },
+        "reason": "Recover ordinary 100-byte C string array initializers at the existing initialization point. Preserve all 600 native text/padding bytes, including the native Strenght spelling; remove only redundant zero stores."
+      }
+    },
+    {
+      "source": "cards/conspiracy-take-the-crown.c",
+      "name": "card_orchard_elemental",
+      "native_view": {
+        "address": "0x22105b0",
+        "end": "0x22106f4",
+        "bytes_sha256": "a4ae19555655b06415405abd5d02cbf8319fcfd41e9b830700ccdffc64b966c8"
+      },
+      "native_variables": [
+        {
+          "name": "pos1",
+          "die_offset": "0x1d24c16",
+          "frame_offset": -220,
+          "shape": {
+            "kind": "DW_TAG_array_type",
+            "size": 100,
+            "dimensions": [
+              100
+            ],
+            "element_size": 1,
+            "element_encoding": 6
+          },
+          "scope_ranges": [
+            [
+              35718648,
+              35718887
+            ]
+          ]
+        },
+        {
+          "name": "pos2",
+          "die_offset": "0x1d24c27",
+          "frame_offset": -120,
+          "shape": {
+            "kind": "DW_TAG_array_type",
+            "size": 100,
+            "dimensions": [
+              100
+            ],
+            "element_size": 1,
+            "element_encoding": 6
+          },
+          "scope_ranges": [
+            [
+              35718648,
+              35718887
+            ]
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "84958db2db1d71fad9ea7829ce5b525189dfb21822e1aff906f7694283ece7d9",
+      "source_after_definition_sha256": "58b110f2f12f5ce00caef4d09914b883aa1539bf47fb0dcabaed80209f787cc6",
+      "contract": {
+        "kind": "vote_text_initializers",
+        "payloads": {
+          "pos1": {
+            "bytes": "5370726f7574202832202b312f2b3120636f756e74657273206f6e20746869732900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "sha256": "2f3e38e94deee6a0c313eb00c145b68587f9ccd436c97d6db780b58783f2bffc",
+            "native_variable": {
+              "name": "pos1",
+              "die_offset": "0x1d24c16",
+              "frame_offset": -220,
+              "shape": {
+                "kind": "DW_TAG_array_type",
+                "size": 100,
+                "dimensions": [
+                  100
+                ],
+                "element_size": 1,
+                "element_encoding": 6
+              },
+              "scope_ranges": [
+                [
+                  35718648,
+                  35718887
+                ]
+              ]
+            }
+          },
+          "pos2": {
+            "bytes": "48617276657374202833206c69666529000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "sha256": "8b04f959cbdf5adfeb02c056245eb48ae19aeda9ce0baf856c738d6ed9ddb268",
+            "native_variable": {
+              "name": "pos2",
+              "die_offset": "0x1d24c27",
+              "frame_offset": -120,
+              "shape": {
+                "kind": "DW_TAG_array_type",
+                "size": 100,
+                "dimensions": [
+                  100
+                ],
+                "element_size": 1,
+                "element_encoding": 6
+              },
+              "scope_ranges": [
+                [
+                  35718648,
+                  35718887
+                ]
+              ]
+            }
+          }
+        },
+        "reason": "Recover ordinary 100-byte C string array initializers at the existing initialization point. Preserve all 600 native text/padding bytes, including the native Strenght spelling; remove only redundant zero stores."
+      }
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "name": "card_quagmire_lamprey",
+      "native_view": {
+        "address": "0x2182280",
+        "end": "0x21823cb",
+        "bytes_sha256": "170c01fdaf03e8edfd63143ec372f8a4e53e62a0f98c9340e83dfa9e31320f5e"
+      },
+      "native_variables": [
+        {
+          "name": "marked",
+          "die_offset": "0x14a3a04",
+          "frame_offset": -322,
+          "shape": {
+            "kind": "DW_TAG_array_type",
+            "size": 302,
+            "dimensions": [
+              2,
+              151
+            ],
+            "element_size": 1,
+            "element_encoding": 6
+          },
+          "scope_ranges": [
+            [
+              35136214,
+              35136459
+            ]
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "8e9e1f4d8c4b407ac5944ac4f611e3ab75da7d0343e19ab518591fa258f6b5c8",
+      "source_after_definition_sha256": "a2b85dbc8c5fd436bd642d96e845fc9a8851aef769f688a1beaecfc82d09001a",
+      "contract": {
+        "kind": "marked_array_clear",
+        "size": 302,
+        "dimensions": [
+          2,
+          151
+        ],
+        "alignment_cases": [
+          {
+            "unaligned": false,
+            "zeroed_ranges": [
+              [
+                0,
+                300
+              ],
+              [
+                300,
+                2
+              ]
+            ],
+            "exactly_covers": 302
+          },
+          {
+            "unaligned": true,
+            "zeroed_ranges": [
+              [
+                0,
+                2
+              ],
+              [
+                2,
+                300
+              ]
+            ],
+            "exactly_covers": 302
+          }
+        ],
+        "reason": "Recover the native whole-array zero initialization as memset. Remove the expanded alignment peel, word loop and tail plus three compiler-bookkeeping locals; retain trigger, payment and creature iteration logic."
+      }
+    },
+    {
+      "source": "cards/ice_age.c",
+      "name": "card_breath_of_dreams",
+      "native_view": {
+        "address": "0x23f1bf0",
+        "end": "0x23f2080",
+        "bytes_sha256": "9d5fdf6a57afbbeb87e3ec72279fcbcc2803f12b55f81b00b45741a56ab37f40"
+      },
+      "native_variables": [
+        {
+          "name": "marked",
+          "die_offset": "0x3ba7f0b",
+          "frame_offset": -387,
+          "shape": {
+            "kind": "DW_TAG_array_type",
+            "size": 151,
+            "dimensions": [
+              151
+            ],
+            "element_size": 1,
+            "element_encoding": 6
+          },
+          "scope_ranges": [
+            [
+              37690840,
+              37691248
+            ],
+            [
+              37691296,
+              37691328
+            ],
+            [
+              37691504,
+              37691520
+            ]
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "40f148a462ff4e6c58463e62ceb9af21c67d4aeb769c2c56e0f6bce925fb8474",
+      "source_after_definition_sha256": "5e3aa8396bc2f10204d0927aa5fdfcaa1525a8576246f60bf92db172a0a087fe",
+      "contract": {
+        "kind": "marked_array_clear",
+        "size": 151,
+        "dimensions": [
+          151
+        ],
+        "alignment_cases": [
+          {
+            "unaligned": false,
+            "zeroed_ranges": [
+              [
+                0,
+                5
+              ],
+              [
+                5,
+                144
+              ],
+              [
+                149,
+                2
+              ]
+            ],
+            "exactly_covers": 151
+          },
+          {
+            "unaligned": true,
+            "zeroed_ranges": [
+              [
+                0,
+                5
+              ],
+              [
+                5,
+                2
+              ],
+              [
+                7,
+                144
+              ]
+            ],
+            "exactly_covers": 151
+          }
+        ],
+        "reason": "Recover the native whole-array zero initialization as memset. Remove the expanded alignment peel, word loop and tail plus three compiler-bookkeeping locals; retain trigger, payment and creature iteration logic."
+      }
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/conspiracy-take-the-crown.c",
+      "before_source_sha256": "4d2486f648efb51402a898b522521441359810af0bb544b74a698b9aadacd0a6",
+      "after_source_sha256": "eeb01f6417971d70dfdb384144a6b1c26cb287ed8e2d693dcfd1713043f6b424",
+      "before_bytes_sha256": "8f5255c1c9a0228e24384ef63a4cc188577b71c86290719d1a29122e5c09180e"
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "before_source_sha256": "a7572b18e40995fafe8751066cff43c6bfcd4e580fe355a7b3cc5aeb9a800688",
+      "after_source_sha256": "b4134723464d94dbf9ca785d5a8d166ae440ce4d7e095c2c60d1eab2f3e092fe",
+      "before_bytes_sha256": "6cd0de0e4bd101bb5f61958cc120e267d64c97b271ca7242154ed2655270cca1"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "before_source_sha256": "d2f4a5d1c8d3782e0866aeb109de20f80ef42e3a7ece18a2443e45f7fe16b21e",
+      "after_source_sha256": "51264b4c19c299356f8865daef02771c28c836db416d19f3ce52aeb764bd97f8",
+      "before_bytes_sha256": "dd9e4420ea4065e3b7c188e7693197fc49f63d5b0a3fed43885bf5971892ffa1"
+    }
+  ],
+  "discovery": {
+    "constants": {
+      "path": ".recovery/reccmp/constant-inventory-c628.json",
+      "sha256": "1e622fff28de4b26496fce886878feb2c4b8b717fc095e0db37f3f18f48310a3",
+      "screened": 6349,
+      "candidates": 625,
+      "scope": "Discovery from current raw whole-function constants; old C626 scores are ranking only. Register allocation, private ABI, equivalent predicates and inlining require manual inspection."
+    },
+    "register_arguments": {
+      "path": ".recovery/reccmp/register-arguments-c628.json",
+      "sha256": "4463678f9060f963472ca461e452ac26807e97ca1501553c181bab41944fc97d",
+      "screened": 6349,
+      "candidates": 0,
+      "scope": "Discovery only; straight-line constant propagation resets at every incoming branch, fallthrough leader and call. Public callee identities only; inferred header argument counts require prototype inspection before edits."
+    },
+    "call_counts": {
+      "path": ".recovery/reccmp/call-counts-c628.json",
+      "sha256": "ecfedf642eaa683c288b2b812a5ed0e0cc20a59bdcc3d4af8bd967763dbc9230",
+      "screened": 6349,
+      "candidates": 1129,
+      "scope": "Discovery only: whole-function public cross-unit direct calls and tail jumps. Wrapper substitution, template expansion, partial matching and branch structure require native inspection."
+    }
+  },
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "scope": "Native local array geometry and explicit buffer contents/clear extents. Source reconstruction of compiler-expanded initialization; no new gameplay correction or full-function similarity claim.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "functions": [
+      {
+        "source": "cards/conspiracy-take-the-crown.c",
+        "name": "card_liutenants_of_the_guard",
+        "view": {
+          "address": "0x2117720",
+          "end": "0x2117873",
+          "bytes_sha256": "e0ab17b3ac18dc91d161726d5200794c343c3730e64bfd7cbbea910a7e09be82"
+        },
+        "buffers": [
+          {
+            "name": "pos1",
+            "size": 100,
+            "frame_offset": -220,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 100,
+              "dimensions": [
+                100
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "bytes_sha256": "616a80628e92af435de79e98b449740b1a2af0a32e549c04663863bb8202fc6b",
+            "known_bytes": 100
+          },
+          {
+            "name": "pos2",
+            "size": 100,
+            "frame_offset": -120,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 100,
+              "dimensions": [
+                100
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "bytes_sha256": "ab8a1e1523db20ceb01ddf917a1fd05e17346e97ca11d18f764410b809453b2b",
+            "known_bytes": 100
+          }
+        ],
+        "before_consumer": "0x21177eb",
+        "consumer": "_will_of_the_council"
+      },
+      {
+        "source": "cards/conspiracy-take-the-crown.c",
+        "name": "card_messenger_jays",
+        "view": {
+          "address": "0x2118400",
+          "end": "0x2118549",
+          "bytes_sha256": "63e995279579bbc5be372c5b14a27f55f5b0739aa75981d65214f90b589a533f"
+        },
+        "buffers": [
+          {
+            "name": "pos1",
+            "size": 100,
+            "frame_offset": -220,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 100,
+              "dimensions": [
+                100
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "bytes_sha256": "a8e22c9f8122a7bde78dbed6455979138095d9ae2989ed4d7c1a0590c5eebe42",
+            "known_bytes": 100
+          },
+          {
+            "name": "pos2",
+            "size": 100,
+            "frame_offset": -120,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 100,
+              "dimensions": [
+                100
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "bytes_sha256": "5f5d47b84f84e5ab5a63cdd7433886af278b46b9808d4c5fdb331297f3382d30",
+            "known_bytes": 100
+          }
+        ],
+        "before_consumer": "0x21184e4",
+        "consumer": "_will_of_the_council"
+      },
+      {
+        "source": "cards/conspiracy-take-the-crown.c",
+        "name": "card_orchard_elemental",
+        "view": {
+          "address": "0x2119750",
+          "end": "0x2119894",
+          "bytes_sha256": "d86209f10c071c531fcb98ff170c7b47eebd52bfb3326d891fabe236a33e8142"
+        },
+        "buffers": [
+          {
+            "name": "pos1",
+            "size": 100,
+            "frame_offset": -220,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 100,
+              "dimensions": [
+                100
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "bytes_sha256": "2f3e38e94deee6a0c313eb00c145b68587f9ccd436c97d6db780b58783f2bffc",
+            "known_bytes": 100
+          },
+          {
+            "name": "pos2",
+            "size": 100,
+            "frame_offset": -120,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 100,
+              "dimensions": [
+                100
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "bytes_sha256": "8b04f959cbdf5adfeb02c056245eb48ae19aeda9ce0baf856c738d6ed9ddb268",
+            "known_bytes": 100
+          }
+        ],
+        "before_consumer": "0x2119842",
+        "consumer": "_will_of_the_council"
+      },
+      {
+        "source": "cards/mercadian_masques.c",
+        "name": "card_quagmire_lamprey",
+        "view": {
+          "address": "0x234a160",
+          "end": "0x234a2ab",
+          "bytes_sha256": "b72298b6e09683b244dcb52227fcdfc1803121be088654c2047e475089a4b2b1"
+        },
+        "buffers": [
+          {
+            "name": "marked",
+            "size": 302,
+            "frame_offset": -322,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 302,
+              "dimensions": [
+                2,
+                151
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "native": {
+              "entry": "0x21822d6",
+              "exit": "0x21822ff",
+              "cases": [
+                {
+                  "frame_residue_mod_4": 0,
+                  "initialized_bytes": 302,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x21822ff",
+                  "instructions": [
+                    "0x21822d6",
+                    "0x21822dc",
+                    "0x21822e1",
+                    "0x21822e3",
+                    "0x21822e6",
+                    "0x21823b2",
+                    "0x21823bb",
+                    "0x21823c1",
+                    "0x21823c6",
+                    "0x21822ec",
+                    "0x21822ee",
+                    "0x21822f0",
+                    "0x21822f3",
+                    "0x21822f6",
+                    "0x21822f8"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 1,
+                  "initialized_bytes": 302,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x21822ff",
+                  "instructions": [
+                    "0x21822d6",
+                    "0x21822dc",
+                    "0x21822e1",
+                    "0x21822e3",
+                    "0x21822e6",
+                    "0x21823b2",
+                    "0x21823bb",
+                    "0x21823c1",
+                    "0x21823c6",
+                    "0x21822ec",
+                    "0x21822ee",
+                    "0x21822f0",
+                    "0x21822f3",
+                    "0x21822f6",
+                    "0x21822f8"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 2,
+                  "initialized_bytes": 302,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x21822ff",
+                  "instructions": [
+                    "0x21822d6",
+                    "0x21822dc",
+                    "0x21822e1",
+                    "0x21822e3",
+                    "0x21822e6",
+                    "0x21822ec",
+                    "0x21822ee",
+                    "0x21822f0",
+                    "0x21822f3",
+                    "0x21822f6",
+                    "0x21822f8",
+                    "0x21822fa"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 3,
+                  "initialized_bytes": 302,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x21822ff",
+                  "instructions": [
+                    "0x21822d6",
+                    "0x21822dc",
+                    "0x21822e1",
+                    "0x21822e3",
+                    "0x21822e6",
+                    "0x21822ec",
+                    "0x21822ee",
+                    "0x21822f0",
+                    "0x21822f3",
+                    "0x21822f6",
+                    "0x21822f8",
+                    "0x21822fa"
+                  ]
+                }
+              ],
+              "scope": "Call-free emitted clear code only. All four low address-bit combinations, exact byte coverage, zero values and neighboring sentinels; no gameplay or callback simulation."
+            },
+            "rebuilt": {
+              "entry": "0x234a1b6",
+              "exit": "0x234a1df",
+              "cases": [
+                {
+                  "frame_residue_mod_4": 0,
+                  "initialized_bytes": 302,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x234a1df",
+                  "instructions": [
+                    "0x234a1b6",
+                    "0x234a1bc",
+                    "0x234a1c1",
+                    "0x234a1c3",
+                    "0x234a1c6",
+                    "0x234a292",
+                    "0x234a29b",
+                    "0x234a2a1",
+                    "0x234a2a6",
+                    "0x234a1cc",
+                    "0x234a1ce",
+                    "0x234a1d0",
+                    "0x234a1d3",
+                    "0x234a1d6",
+                    "0x234a1d8"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 1,
+                  "initialized_bytes": 302,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x234a1df",
+                  "instructions": [
+                    "0x234a1b6",
+                    "0x234a1bc",
+                    "0x234a1c1",
+                    "0x234a1c3",
+                    "0x234a1c6",
+                    "0x234a292",
+                    "0x234a29b",
+                    "0x234a2a1",
+                    "0x234a2a6",
+                    "0x234a1cc",
+                    "0x234a1ce",
+                    "0x234a1d0",
+                    "0x234a1d3",
+                    "0x234a1d6",
+                    "0x234a1d8"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 2,
+                  "initialized_bytes": 302,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x234a1df",
+                  "instructions": [
+                    "0x234a1b6",
+                    "0x234a1bc",
+                    "0x234a1c1",
+                    "0x234a1c3",
+                    "0x234a1c6",
+                    "0x234a1cc",
+                    "0x234a1ce",
+                    "0x234a1d0",
+                    "0x234a1d3",
+                    "0x234a1d6",
+                    "0x234a1d8",
+                    "0x234a1da"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 3,
+                  "initialized_bytes": 302,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x234a1df",
+                  "instructions": [
+                    "0x234a1b6",
+                    "0x234a1bc",
+                    "0x234a1c1",
+                    "0x234a1c3",
+                    "0x234a1c6",
+                    "0x234a1cc",
+                    "0x234a1ce",
+                    "0x234a1d0",
+                    "0x234a1d3",
+                    "0x234a1d6",
+                    "0x234a1d8",
+                    "0x234a1da"
+                  ]
+                }
+              ],
+              "scope": "Call-free emitted clear code only. All four low address-bit combinations, exact byte coverage, zero values and neighboring sentinels; no gameplay or callback simulation."
+            }
+          }
+        ],
+        "before_consumer": "0x234a1f0",
+        "consumer": "_mark_each_creature_blocking_me"
+      },
+      {
+        "source": "cards/ice_age.c",
+        "name": "card_breath_of_dreams",
+        "view": {
+          "address": "0x223dcb0",
+          "end": "0x223e17f",
+          "bytes_sha256": "d045e4497e21bb8b4d84b27e9ced26b431aed631d64d8d89b7b91849e5316efd"
+        },
+        "buffers": [
+          {
+            "name": "marked",
+            "size": 151,
+            "frame_offset": -387,
+            "shape": {
+              "kind": "DW_TAG_array_type",
+              "size": 151,
+              "dimensions": [
+                151
+              ],
+              "element_size": 1,
+              "element_encoding": 6
+            },
+            "native": {
+              "entry": "0x23f1dd8",
+              "exit": "0x23f1e1b",
+              "cases": [
+                {
+                  "frame_residue_mod_4": 0,
+                  "initialized_bytes": 151,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x23f1e1b",
+                  "instructions": [
+                    "0x23f1dd8",
+                    "0x23f1dde",
+                    "0x23f1de8",
+                    "0x23f1def",
+                    "0x23f1df4",
+                    "0x23f1dfa",
+                    "0x23f2070",
+                    "0x23f2075",
+                    "0x23f2078",
+                    "0x23f207b",
+                    "0x23f1e00",
+                    "0x23f1e02",
+                    "0x23f1e04",
+                    "0x23f1e07",
+                    "0x23f1e09",
+                    "0x23f1e0c",
+                    "0x23f1e12",
+                    "0x23f1e15"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 1,
+                  "initialized_bytes": 151,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x23f1e1b",
+                  "instructions": [
+                    "0x23f1dd8",
+                    "0x23f1dde",
+                    "0x23f1de8",
+                    "0x23f1def",
+                    "0x23f1df4",
+                    "0x23f1dfa",
+                    "0x23f2070",
+                    "0x23f2075",
+                    "0x23f2078",
+                    "0x23f207b",
+                    "0x23f1e00",
+                    "0x23f1e02",
+                    "0x23f1e04",
+                    "0x23f1e07",
+                    "0x23f1e09",
+                    "0x23f1e0c",
+                    "0x23f1e12",
+                    "0x23f1e15"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 2,
+                  "initialized_bytes": 151,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x23f1e1b",
+                  "instructions": [
+                    "0x23f1dd8",
+                    "0x23f1dde",
+                    "0x23f1de8",
+                    "0x23f1def",
+                    "0x23f1df4",
+                    "0x23f1dfa",
+                    "0x23f1e00",
+                    "0x23f1e02",
+                    "0x23f1e04",
+                    "0x23f1e07",
+                    "0x23f1e09",
+                    "0x23f1e0c",
+                    "0x23f1fa8",
+                    "0x23f1fad",
+                    "0x23f1fb0",
+                    "0x23f1fb3"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 3,
+                  "initialized_bytes": 151,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x23f1e1b",
+                  "instructions": [
+                    "0x23f1dd8",
+                    "0x23f1dde",
+                    "0x23f1de8",
+                    "0x23f1def",
+                    "0x23f1df4",
+                    "0x23f1dfa",
+                    "0x23f1e00",
+                    "0x23f1e02",
+                    "0x23f1e04",
+                    "0x23f1e07",
+                    "0x23f1e09",
+                    "0x23f1e0c",
+                    "0x23f1fa8",
+                    "0x23f1fad",
+                    "0x23f1fb0",
+                    "0x23f1fb3"
+                  ]
+                }
+              ],
+              "scope": "Call-free emitted clear code only. All four low address-bit combinations, exact byte coverage, zero values and neighboring sentinels; no gameplay or callback simulation."
+            },
+            "rebuilt": {
+              "entry": "0x223dd26",
+              "exit": "0x223dd62",
+              "cases": [
+                {
+                  "frame_residue_mod_4": 0,
+                  "initialized_bytes": 151,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x223dd62",
+                  "instructions": [
+                    "0x223dd26",
+                    "0x223dd2c",
+                    "0x223dd31",
+                    "0x223dd33",
+                    "0x223dd35",
+                    "0x223e168",
+                    "0x223e16f",
+                    "0x223e175",
+                    "0x223e17a",
+                    "0x223dd3b",
+                    "0x223dd41",
+                    "0x223e158",
+                    "0x223e15d",
+                    "0x223e160",
+                    "0x223e163",
+                    "0x223dd47",
+                    "0x223dd49",
+                    "0x223dd4b",
+                    "0x223dd4e",
+                    "0x223dd50",
+                    "0x223dd53",
+                    "0x223dd59",
+                    "0x223dd5c"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 1,
+                  "initialized_bytes": 151,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x223dec5",
+                  "instructions": [
+                    "0x223dd26",
+                    "0x223dd2c",
+                    "0x223dd31",
+                    "0x223dd33",
+                    "0x223dd35",
+                    "0x223dd3b",
+                    "0x223dd41",
+                    "0x223e158",
+                    "0x223e15d",
+                    "0x223e160",
+                    "0x223e163",
+                    "0x223dd47",
+                    "0x223dd49",
+                    "0x223dd4b",
+                    "0x223dd4e",
+                    "0x223dd50",
+                    "0x223dd53",
+                    "0x223dd59",
+                    "0x223dd5c",
+                    "0x223dec0",
+                    "0x223dec3"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 2,
+                  "initialized_bytes": 151,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x223dd62",
+                  "instructions": [
+                    "0x223dd26",
+                    "0x223dd2c",
+                    "0x223dd31",
+                    "0x223dd33",
+                    "0x223dd35",
+                    "0x223e168",
+                    "0x223e16f",
+                    "0x223e175",
+                    "0x223e17a",
+                    "0x223dd3b",
+                    "0x223dd41",
+                    "0x223dd47",
+                    "0x223dd49",
+                    "0x223dd4b",
+                    "0x223dd4e",
+                    "0x223dd50",
+                    "0x223dd53",
+                    "0x223dee0",
+                    "0x223dee5",
+                    "0x223dee8",
+                    "0x223deeb"
+                  ]
+                },
+                {
+                  "frame_residue_mod_4": 3,
+                  "initialized_bytes": 151,
+                  "guard_bytes_preserved": 32,
+                  "exit": "0x223dec5",
+                  "instructions": [
+                    "0x223dd26",
+                    "0x223dd2c",
+                    "0x223dd31",
+                    "0x223dd33",
+                    "0x223dd35",
+                    "0x223dd3b",
+                    "0x223dd41",
+                    "0x223dd47",
+                    "0x223dd49",
+                    "0x223dd4b",
+                    "0x223dd4e",
+                    "0x223dd50",
+                    "0x223dd53",
+                    "0x223dee0",
+                    "0x223dee5",
+                    "0x223dee8",
+                    "0x223deeb",
+                    "0x223def1",
+                    "0x223dec0",
+                    "0x223dec3"
+                  ]
+                }
+              ],
+              "scope": "Call-free emitted clear code only. All four low address-bit combinations, exact byte coverage, zero values and neighboring sentinels; no gameplay or callback simulation."
+            }
+          }
+        ],
+        "before_consumer": "0x223dd77",
+        "consumer": "_in_play"
+      }
+    ],
+    "validated_buffers": 8,
+    "validated_bytes": 1053,
+    "dll_sha256": "386a000560e746cf66508a1ea1fe48c7ba7970f69b1716132978eed49eff9702",
+    "dbg_sha256": "e20786b5f05978db6408b002eb31d0fd832a733011833b60bf0df6bf925e7ca7",
+    "full_file_projections": 3,
+    "staging": "preserved",
+    "scope": "Fresh native/rebuilt DWARF array geometry, all 600 native vote-text/padding bytes, and direct execution of the native/rebuilt 151/302-byte clear regions for all four low address-bit combinations, with neighboring guards. These bounded clear/frame checks and source projections do not assert arbitrary indexed values or whole-gameplay equivalence."
+  },
+  "build_log_sha256": "6038d7cdd59a56b93c095d04b3e20d76c52b1f1d37e71c8d5610d26e45bcec54",
+  "current_source_check": {
+    "canonical_functions": 738,
+    "accepted_function_names": 735,
+    "auxiliary_functions": [
+      {
+        "recovery_name": "exile_at_end_of_combat_2022",
+        "canonical_name": "innistrad_exile_at_end_of_combat_legacy",
+        "kind": "retained_public_native_helper",
+        "native_ranges": 1
+      },
+      {
+        "recovery_name": "reset_storm_count_2022",
+        "canonical_name": "reset_storm_count",
+        "kind": "native_inline_fragment",
+        "native_ranges": 14
+      },
+      {
+        "recovery_name": "keep_storm_count_2022",
+        "canonical_name": "keep_storm_count",
+        "kind": "native_inline_fragment",
+        "native_ranges": 21
+      }
+    ],
+    "changed_files": 171,
+    "verification": "current source hashes and canonical name/ledger references",
+    "historical_provenance_replayed": false,
+    "historical_artifacts_retired": true,
+    "scope": "Current configuration inputs only. Historical source-edit replay, archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json."
+  },
+  "focused_check_implementation": {
+    ".recovery/check_buffer_initializers_c628.py": "2a005b254202b6d40f5fa1e7e96d4a8a6007e9bad82c519be88001e80160b706",
+    ".recovery/emulate_buffer_clears_c628.py": "2710851ab330b1cdae30d54d861182c407b661ca12c4f0238ec4c12ea6489e90",
+    "tools/recovery/array_role_analysis.py": "17a952cdba5ba854a9a3e434764c7303629d6dcea0b5442d73b5e926fb1c1d86"
+  },
+  "clear_execution_assumptions": [
+    "Only the four call-free native/rebuilt clear regions are executed, with the C ABI direction flag clear. Unsupported instructions abort verification.",
+    "Each region runs with all four frame-address residues modulo four and nonzero initial scratch-register/memory values. Every byte in the typed object must be written zero, and 16 sentinel bytes on either side must remain untouched.",
+    "GCC duplicates the first post-clear creature-count load after a byte-tail path in Breath of Dreams; execution stops before either first consumer, rather than fabricating its global inputs."
+  ],
+  "review": [
+    "The preceding goal turn restored fourteen native caller sites in seven cards and one helper and verified the combined build; that was progress. This pass reconstructs five compiler-expanded buffer initializers and records broader discovery screens.",
+    "The setup and scans use the then-current C627 DLL/debug hashes and newly parsed rebuilt bounds. C626 reccmp scores are historical ranking hints only. No stale rebuilt addresses are used for operand or frame checks.",
+    "The whole-function constant inventory screens 6,349 ranges and yields 625 candidates. Leading Aura event masks regroup the same events; Imprisoned in the Moon and get_type_with_iid clear bits subsequently forced by OR; shift/mask forms and pack index arithmetic also need expression-level review. Those observations do not close the entire candidate list.",
+    "The broader public-callee argument screen follows definite register constants within basic blocks and respects incoming branch/call boundaries. It finds no further complete constant-argument multiset discrepancies under that conservative model. Header-derived argument limits and unresolved/private callee layouts constrain this screen; zero findings do not prove general caller equivalence.",
+    "The public cross-unit call-count inventory produces 1,129 discovery signals. For example, default-target initialization and counterspell calls appear in duplicated versus shared branches; occurrence counts do not establish how often a runtime path executes them. Remaining signals require path-sensitive review.",
+    "Lieutenants of the Guard, Messenger Jays and Orchard Elemental now declare their two 100-byte text arrays with ordinary string initializers at the original initialization point. All 600 native bytes, including zero padding and the original Strenght spelling, are reproduced in the fresh emitted frame writes before will_of_the_council.",
+    "Breath of Dreams and Quagmire Lamprey now use memset for their 151-byte and 2x151-byte marked arrays. The expanded prefix/alignment peel, word loop, suffix and six bookkeeping locals are removed. Native/rebuilt DWARF dimensions agree, and all sixteen bounded native/current clear executions produce exactly the complete zeroed objects with intact neighboring guards.",
+    "The generic frame-effects analyzer cannot resolve alignment-dependent clear paths; it reported missing coverage rather than accepting an assumed clear. A restricted instruction executor then checked the actual native and rebuilt clear regions. No source code was changed to satisfy the analyzer.",
+    "One combined build and three complete source-file projections pass. Other trigger/payment/vote/iteration statements and existing staging remain unchanged. No new full reccmp comparison or whole-gameplay equivalence is claimed."
+  ]
+}

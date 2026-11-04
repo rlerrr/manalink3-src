@@ -988,7 +988,7 @@ int card_hellion_crucible(int player, int card, event_t event)
           hellion_priority = 0xf;
         }
         chosen_mode =
-            dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Produce mana", 1, 8,
+            dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, "Produce mana", 1, 8,
                         "Add Pressure counter", pressure_available_or_mode, 10,
                         "Generate an Hellion", hellion_available, hellion_priority, 0, 0, 0, 0);
         if (chosen_mode == 0)
@@ -1041,7 +1041,7 @@ int card_hellion_crucible(int player, int card, event_t event)
         }
         if (pressure_available_or_mode == 3)
         {
-          default_token_definition(player, card, 0x4945, &token);
+          default_token_definition(player, card, CARD_ID_HELLION, &token);
           token.color_forced = '\x10';
           token.tou = 4;
           token.pow = 4;
@@ -1933,7 +1933,7 @@ int card_thragtusk(int player, int card, event_t event)
   {
     return 0;
   }
-  default_token_definition(player, card, 0x4907, &token);
+  default_token_definition(player, card, CARD_ID_BEAST, &token);
   token.tou = 3;
   token.pow = 3;
   token.color_forced = '\b';
@@ -2397,11 +2397,10 @@ int card_rhox_faithmender(int player, int card, event_t event)
   };
 
   xtrigger_t current_xtrigger;
-  int result;
 
   lifelink(player, card, event);
   current_xtrigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     current_xtrigger = xtrigger_impl_value_dont_use_directly;
   }
@@ -2410,8 +2409,7 @@ int card_rhox_faithmender(int player, int card, event_t event)
       (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
         (0 < life_gained))))
   {
-    result = is_humiliated(player, card, AL_TRIG);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_TRIG))
     {
       if (event == EVENT_TRIGGER)
       {

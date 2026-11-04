@@ -1,0 +1,3923 @@
+{
+  "format": 1,
+  "status": "Six existing native spell/trigger handlers flattened from 320 to 202 lines. Combined build, 15,169 fixed slots, five raw/canonical source projections and 786,432 bounded native/rebuilt observations pass before and after the reconstruction.",
+  "files": [
+    {
+      "source": "cards/commander_legends.c",
+      "before_bytes_sha256": "091e3bf516a20ba4739db48ac150e62e69710750972fa4dec9c909b73fefb2b0",
+      "after_bytes_sha256": "a1fefade2e7d68ea69d2ddda06847a85f909cbd762e7e84e49411aac4d9200a9",
+      "before_sha256": "db13df1c45a3ab1d38483a4ae2ed97d536be0d11e064e2d462570b0af153fa89",
+      "after_sha256": "ee0e0f0b07f3a0f4ace2ffbf30c3d3bc9a917cf235c1468c6c2d20aa6f5fa115"
+    },
+    {
+      "source": "cards/zendikar.c",
+      "before_bytes_sha256": "d99b421f578273b7ea22deeea18cacfc1985672cb79f4a51c62806e5ec4c7ded",
+      "after_bytes_sha256": "d80cba21b9f79da1e92dba16b3c4c6451a9093829d9304fc24327d88864eb34b",
+      "before_sha256": "683947bafe82ff1155f25b2b621b32940080b11e852f6e89137e78c0ec7cf3c7",
+      "after_sha256": "4801b3575ebeaf18c5cfd4e89ee120796653a72ee9d554cb06599e45ccc71e4d"
+    },
+    {
+      "source": "cards/gargaroz.c",
+      "before_bytes_sha256": "ba53cafef4e3aa72287f34fb1855c7c19b454378dc61a1018e174b00fc34cbef",
+      "after_bytes_sha256": "3cad04c2e6e811932618c056d26fcf1732b839460f5005a9108c0bd017178edb",
+      "before_sha256": "689e69b0323bc190b62f9bbc691efba1fcd645e57cd142b40ace56361d65ef5b",
+      "after_sha256": "bd6f05a3954b86262622f708abe95ff55934a07a327052a007d03153cc87169f"
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "before_bytes_sha256": "f3013b81d2d886dfb8b597378172a9961097caf9ca7a4290e6727ab941e95418",
+      "after_bytes_sha256": "e673ea3b1d4d7ef1dd1451ac5344ee6874f50a3123a5b50dc875abccbdedf5f8",
+      "before_sha256": "1f988291c9859260205e0d19ef90d70fa6eb8481a677b473b47742ae10a2ed6a",
+      "after_sha256": "29edbd8da71644432727d6bea83d3366286f30cd425dbd6dc6020d88bc0a9305"
+    },
+    {
+      "source": "cards/dominaria.c",
+      "before_bytes_sha256": "4f81d5314a3e56308e2ec61e6c8de4d7ff7aa607658039df0830db6e1e62bb10",
+      "after_bytes_sha256": "7e3375fb019fa4a036374a4f3862a47b428e7e54e247731adc65d2698b1938ee",
+      "before_sha256": "1f62e8b7b895df80d1dad94880a9e351aac3b208ca490e08519ccf75f16df6c2",
+      "after_sha256": "85f3fb2842b49c6a4b1b412aa4a675a910609766ce35ab54bb0d84eeda9bf799"
+    }
+  ],
+  "names": [
+    "card_sweet_gum_recluse",
+    "card_quest_for_ancient_secrets",
+    "card_mizzium_meddler",
+    "card_frilled_mystic",
+    "card_muck_drubb",
+    "card_naru_meha_master_wizard"
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "counts": {
+    "definitions": 6,
+    "source_files": 5,
+    "before_lines": 320,
+    "after_lines": 202
+  },
+  "baseline_fixture": {
+    "plan": {
+      "entries": [
+        {
+          "side": 0,
+          "index": 0,
+          "name": "card_sweet_gum_recluse",
+          "address": "0x25b06b0",
+          "size": 390,
+          "sha256": "cac71993b9212bf17907f31ef70e45398de534449684dd129ef8826da42b3d3e"
+        },
+        {
+          "side": 0,
+          "index": 1,
+          "name": "card_quest_for_ancient_secrets",
+          "address": "0x25e52a0",
+          "size": 596,
+          "sha256": "51c95ea0c95ef465a17cece2ba1e2e88160e562efbb3b5f97c8ca1b8c03c394e"
+        },
+        {
+          "side": 0,
+          "index": 2,
+          "name": "card_mizzium_meddler",
+          "address": "0x2428df0",
+          "size": 484,
+          "sha256": "bf84a132e87b6c6fb4868cbb4e725b0bd6a74c941f25756831ecb86e424c5478"
+        },
+        {
+          "side": 0,
+          "index": 3,
+          "name": "card_frilled_mystic",
+          "address": "0x25bf090",
+          "size": 401,
+          "sha256": "bd763dfbc823bc01d959b24c2af7e30c92ff08a3a1ae1dabfd37894375b2ab15"
+        },
+        {
+          "side": 0,
+          "index": 4,
+          "name": "card_muck_drubb",
+          "address": "0x2428fe0",
+          "size": 468,
+          "sha256": "a0d39d7a8f92571d81608b602561b27d7857a927ceec1b6baf85770c2041beb3"
+        },
+        {
+          "side": 0,
+          "index": 5,
+          "name": "card_naru_meha_master_wizard",
+          "address": "0x22d16e0",
+          "size": 406,
+          "sha256": "d63ab144ad2406fe6cd73a931455acf72fd9b035fe0520030f777c657ec21b83"
+        },
+        {
+          "side": 1,
+          "index": 0,
+          "name": "card_sweet_gum_recluse",
+          "address": "0x2109010",
+          "size": 400,
+          "sha256": "53b83238753f185ac48a9c7d5176668981ef066cd6e88331dc63cb4a4d03a50d"
+        },
+        {
+          "side": 1,
+          "index": 1,
+          "name": "card_quest_for_ancient_secrets",
+          "address": "0x2644b10",
+          "size": 560,
+          "sha256": "8b87f456fe37ff3697e6d1a51660ffa6c7493f3d1cbecda7b7e1976854497cc3"
+        },
+        {
+          "side": 1,
+          "index": 2,
+          "name": "card_mizzium_meddler",
+          "address": "0x21dd730",
+          "size": 512,
+          "sha256": "d4db89a47058686b74e47acbc3a24902e4a7dde560672be21bdc68493de4295d"
+        },
+        {
+          "side": 1,
+          "index": 3,
+          "name": "card_frilled_mystic",
+          "address": "0x24788c0",
+          "size": 416,
+          "sha256": "933f13558250a0ff7722f46cc5f6467d44c082f8b15b7c3488b554e7ae32fc82"
+        },
+        {
+          "side": 1,
+          "index": 4,
+          "name": "card_muck_drubb",
+          "address": "0x21dce70",
+          "size": 480,
+          "sha256": "108fb4ff26e47df9987524e51996f8988aa13075cf1764df485c082e74db9153"
+        },
+        {
+          "side": 1,
+          "index": 5,
+          "name": "card_naru_meha_master_wizard",
+          "address": "0x2151380",
+          "size": 416,
+          "sha256": "060bcae81cb502c67b70f4449c0c86ce269d18c932e8fc3a092530f620ae87bb"
+        }
+      ],
+      "patches": [
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 30,
+          "kind": "call",
+          "target": "cascade",
+          "instruction": "0x25b06cd",
+          "original": "0x22fabf0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 60,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x25b06eb",
+          "original": "0x26a5370"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 91,
+          "kind": "call",
+          "target": "flash",
+          "instruction": "0x25b070a",
+          "original": "0x26df260"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 130,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x25b0731",
+          "original": "0x2660240"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 157,
+          "kind": "callback",
+          "target": "is_entered_the_battlefield_this_turn",
+          "instruction": "0x25b074a",
+          "original": "0x259ff70"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 162,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x25b0751",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 179,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x25b0762",
+          "original": "0x26604c0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 220,
+          "kind": "call",
+          "target": "new_pick_target",
+          "instruction": "0x25b078b",
+          "original": "0x2660db0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 258,
+          "kind": "call",
+          "target": "state_untargettable",
+          "instruction": "0x25b07b1",
+          "original": "0x2687da0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 272,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x25b07bf",
+          "original": "0x26604c0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 320,
+          "kind": "call",
+          "target": "state_untargettable",
+          "instruction": "0x25b07ef",
+          "original": "0x2687da0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25b06b0",
+          "offset": 367,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x25b081e",
+          "original": "0x26d4840"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 10,
+          "kind": "data",
+          "target": "enable_xtrigger_flags",
+          "instruction": "0x25e52a9",
+          "original": "0x2795280"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 24,
+          "kind": "data",
+          "target": "enable_xtrigger_flags",
+          "instruction": "0x25e52b7",
+          "original": "0x2795280"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 29,
+          "kind": "data",
+          "target": "trigger_condition",
+          "instruction": "0x25e52bc",
+          "original": "0x7a2d78"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 41,
+          "kind": "data",
+          "target": "xtrigger_impl_value_dont_use_directly",
+          "instruction": "0x25e52c8",
+          "original": "0x2795284"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 91,
+          "kind": "call",
+          "target": "when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something",
+          "instruction": "0x25e52fa",
+          "original": "0x26a3de0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 154,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x25e5339",
+          "original": "0x2660240"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 202,
+          "kind": "call",
+          "target": "quest",
+          "instruction": "0x25e5369",
+          "original": "0x25d6b10"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 218,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x25e5378",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 230,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x25e5384",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 242,
+          "kind": "data",
+          "target": "reason_for_trigger_controller",
+          "instruction": "0x25e5390",
+          "original": "0x737e1c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 254,
+          "kind": "data",
+          "target": "trigger_cause_controller",
+          "instruction": "0x25e539c",
+          "original": "0x62c17c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 280,
+          "kind": "call",
+          "target": "is_humiliated",
+          "instruction": "0x25e53b7",
+          "original": "0x26dd430"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 309,
+          "kind": "data",
+          "target": "num_cards_milled",
+          "instruction": "0x25e53d4",
+          "original": "0x2794000"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 341,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x25e53f4",
+          "original": "0x26d4840"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 381,
+          "kind": "call",
+          "target": "when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something",
+          "instruction": "0x25e541c",
+          "original": "0x26a3de0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 404,
+          "kind": "call",
+          "target": "global_enchantment",
+          "instruction": "0x25e5433",
+          "original": "0x267c220"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 420,
+          "kind": "call",
+          "target": "duh_mode",
+          "instruction": "0x25e5443",
+          "original": "0x26795b0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 472,
+          "kind": "data",
+          "target": "event_result",
+          "instruction": "0x25e5476",
+          "original": "0x6205b4"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 477,
+          "kind": "call",
+          "target": "when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something",
+          "instruction": "0x25e547c",
+          "original": "0x26a3de0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 528,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x25e54af",
+          "original": "0x26d4840"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 548,
+          "kind": "call",
+          "target": "valid_target",
+          "instruction": "0x25e54c3",
+          "original": "0x2661750"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 568,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x25e54d7",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25e52a0",
+          "offset": 587,
+          "kind": "call",
+          "target": "reshuffle_grave_into_deck",
+          "instruction": "0x25e54ea",
+          "original": "0x26b4dc0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 38,
+          "kind": "call",
+          "target": "counterspell_target_definition",
+          "instruction": "0x2428e15",
+          "original": "0x2660340"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 61,
+          "kind": "callback",
+          "target": "can_legally_change_target_to_me",
+          "instruction": "0x2428e2a",
+          "original": "0x24276f0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 66,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2428e31",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 76,
+          "kind": "call",
+          "target": "duh_mode",
+          "instruction": "0x2428e3b",
+          "original": "0x26795b0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 110,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x2428e5d",
+          "original": "0x26a5370"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 162,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x2428e90",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 170,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x2428e98",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 178,
+          "kind": "data",
+          "target": "current_turn",
+          "instruction": "0x2428ea0",
+          "original": "0x628670"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 185,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2428ea8",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 193,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2428eb0",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 231,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x2428ed6",
+          "original": "0x2692b30"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 290,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x2428f10",
+          "original": "0x739190"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 295,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x2428f16",
+          "original": "0x739194"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 325,
+          "kind": "call",
+          "target": "set_special_flags2",
+          "instruction": "0x2428f34",
+          "original": "0x267a160"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 351,
+          "kind": "call",
+          "target": "call_card_function",
+          "instruction": "0x2428f4e",
+          "original": "0x26caff0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 380,
+          "kind": "call",
+          "target": "remove_special_flags2",
+          "instruction": "0x2428f6b",
+          "original": "0x267a210"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 418,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x2428f91",
+          "original": "0x2692a40"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 444,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2428fab",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428df0",
+          "offset": 474,
+          "kind": "data",
+          "target": "spell_fizzled",
+          "instruction": "0x2428fc8",
+          "original": "0x4ef194"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 25,
+          "kind": "call",
+          "target": "duh_mode",
+          "instruction": "0x25bf0a8",
+          "original": "0x26795b0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 56,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x25bf0c7",
+          "original": "0x26a5370"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 68,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x25bf0d3",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 106,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x25bf0f8",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 114,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x25bf100",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 122,
+          "kind": "data",
+          "target": "current_turn",
+          "instruction": "0x25bf108",
+          "original": "0x628670"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 129,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x25bf110",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 137,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x25bf118",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 163,
+          "kind": "call",
+          "target": "card_counterspell",
+          "instruction": "0x25bf132",
+          "original": "0x24c1280"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 212,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x25bf163",
+          "original": "0x739190"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 221,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x25bf16c",
+          "original": "0x739194"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 232,
+          "kind": "call",
+          "target": "get_id",
+          "instruction": "0x25bf177",
+          "original": "0x26b35a0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 240,
+          "kind": "call",
+          "target": "get_card_name_by_id",
+          "instruction": "0x25bf17f",
+          "original": "0x26798f0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 268,
+          "kind": "call",
+          "target": "scnprintf",
+          "instruction": "0x25bf19b",
+          "original": "0x26cea80"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 286,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x25bf1ad",
+          "original": "0x739194"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 307,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x25bf1c1",
+          "original": "0x739190"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 331,
+          "kind": "call",
+          "target": "do_dialog",
+          "instruction": "0x25bf1da",
+          "original": "0x471eb0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 344,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x25bf1e7",
+          "original": "0x739190"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 357,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x25bf1f4",
+          "original": "0x739194"
+        },
+        {
+          "side": 0,
+          "function_address": "0x25bf090",
+          "offset": 369,
+          "kind": "call",
+          "target": "real_counter_a_spell",
+          "instruction": "0x25bf200",
+          "original": "0x26b64a0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 38,
+          "kind": "call",
+          "target": "counterspell_target_definition",
+          "instruction": "0x2429005",
+          "original": "0x2660340"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 58,
+          "kind": "callback",
+          "target": "has_only_1_target_and_targets_a_creature_and_can_legally_change_target_to_me",
+          "instruction": "0x2429017",
+          "original": "0x24278a0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 66,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2429021",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 116,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x2429053",
+          "original": "0x26a5370"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 205,
+          "kind": "call",
+          "target": "madness",
+          "instruction": "0x24290ac",
+          "original": "0x2698b20"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 226,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x24290c0",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 256,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x24290df",
+          "original": "0x26a5370"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 295,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x2429106",
+          "original": "0x2692b30"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 330,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x2429128",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 338,
+          "kind": "data",
+          "target": "current_turn",
+          "instruction": "0x2429130",
+          "original": "0x628670"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 345,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2429138",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 353,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2429140",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 385,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x2429160",
+          "original": "0x739194"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 397,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x242916c",
+          "original": "0x739190"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 424,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x2429187",
+          "original": "0x2692a40"
+        },
+        {
+          "side": 0,
+          "function_address": "0x2428fe0",
+          "offset": 453,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x24291a4",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x22d16e0",
+          "offset": 33,
+          "kind": "call",
+          "target": "check_legend_rule",
+          "instruction": "0x22d1700",
+          "original": "0x2663890"
+        },
+        {
+          "side": 0,
+          "function_address": "0x22d16e0",
+          "offset": 45,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x22d170c",
+          "original": "0x26b2ab0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x22d16e0",
+          "offset": 72,
+          "kind": "call",
+          "target": "counterspell_target_definition",
+          "instruction": "0x22d1727",
+          "original": "0x2660340"
+        },
+        {
+          "side": 0,
+          "function_address": "0x22d16e0",
+          "offset": 97,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x22d173f",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 0,
+          "function_address": "0x22d16e0",
+          "offset": 131,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x22d1762",
+          "original": "0x26a5370"
+        },
+        {
+          "side": 0,
+          "function_address": "0x22d16e0",
+          "offset": 175,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x22d178e",
+          "original": "0x26a5370"
+        },
+        {
+          "side": 0,
+          "function_address": "0x22d16e0",
+          "offset": 208,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x22d17af",
+          "original": "0x2692a40"
+        },
+        {
+          "side": 0,
+          "function_address": "0x22d16e0",
+          "offset": 245,
+          "kind": "call",
+          "target": "copy_spell_from_stack",
+          "instruction": "0x22d17d4",
+          "original": "0x26686d0"
+        },
+        {
+          "side": 0,
+          "function_address": "0x22d16e0",
+          "offset": 284,
+          "kind": "call",
+          "target": "twincast",
+          "instruction": "0x22d17fb",
+          "original": "0x2693340"
+        },
+        {
+          "side": 0,
+          "function_address": "0x22d16e0",
+          "offset": 346,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x22d1838",
+          "original": "0x738c84"
+        },
+        {
+          "side": 0,
+          "function_address": "0x22d16e0",
+          "offset": 397,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x22d186c",
+          "original": "0x2692b30"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2109010",
+          "offset": 30,
+          "kind": "call",
+          "target": "cascade",
+          "instruction": "0x210902d",
+          "original": "0x202f320"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2109010",
+          "offset": 60,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x210904b",
+          "original": "0x269c140"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2109010",
+          "offset": 91,
+          "kind": "call",
+          "target": "flash",
+          "instruction": "0x210906a",
+          "original": "0x26544e0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2109010",
+          "offset": 130,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x2109091",
+          "original": "0x26dab20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2109010",
+          "offset": 157,
+          "kind": "callback",
+          "target": "is_entered_the_battlefield_this_turn",
+          "instruction": "0x21090aa",
+          "original": "0x20fc2a0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2109010",
+          "offset": 162,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21090b1",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2109010",
+          "offset": 220,
+          "kind": "call",
+          "target": "new_pick_target",
+          "instruction": "0x21090eb",
+          "original": "0x26dbd30"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2109010",
+          "offset": 258,
+          "kind": "call",
+          "target": "state_untargettable",
+          "instruction": "0x2109111",
+          "original": "0x26acb20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2109010",
+          "offset": 272,
+          "kind": "call",
+          "target": "can_target",
+          "instruction": "0x210911f",
+          "original": "0x26db0d0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2109010",
+          "offset": 320,
+          "kind": "call",
+          "target": "state_untargettable",
+          "instruction": "0x210914f",
+          "original": "0x26acb20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2109010",
+          "offset": 367,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x210917e",
+          "original": "0x2666880"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 10,
+          "kind": "data",
+          "target": "enable_xtrigger_flags",
+          "instruction": "0x2644b19",
+          "original": "0x279a7e0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 24,
+          "kind": "data",
+          "target": "enable_xtrigger_flags",
+          "instruction": "0x2644b27",
+          "original": "0x279a7e0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 29,
+          "kind": "data",
+          "target": "trigger_condition",
+          "instruction": "0x2644b2c",
+          "original": "0x7a2d78"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 41,
+          "kind": "data",
+          "target": "xtrigger_impl_value_dont_use_directly",
+          "instruction": "0x2644b38",
+          "original": "0x279a7e4"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 91,
+          "kind": "call",
+          "target": "when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something",
+          "instruction": "0x2644b6a",
+          "original": "0x2699a50"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 154,
+          "kind": "call",
+          "target": "default_target_definition",
+          "instruction": "0x2644ba9",
+          "original": "0x26dab20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 202,
+          "kind": "call",
+          "target": "quest",
+          "instruction": "0x2644bd9",
+          "original": "0x2636670"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 218,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x2644be8",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 230,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x2644bf4",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 242,
+          "kind": "data",
+          "target": "reason_for_trigger_controller",
+          "instruction": "0x2644c00",
+          "original": "0x737e1c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 254,
+          "kind": "data",
+          "target": "trigger_cause_controller",
+          "instruction": "0x2644c0c",
+          "original": "0x62c17c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 280,
+          "kind": "call",
+          "target": "is_humiliated",
+          "instruction": "0x2644c27",
+          "original": "0x2653590"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 313,
+          "kind": "data",
+          "target": "num_cards_milled",
+          "instruction": "0x2644c48",
+          "original": "0x2799700"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 345,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x2644c68",
+          "original": "0x2666880"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 386,
+          "kind": "call",
+          "target": "when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something",
+          "instruction": "0x2644c91",
+          "original": "0x2699a50"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 409,
+          "kind": "call",
+          "target": "global_enchantment",
+          "instruction": "0x2644ca8",
+          "original": "0x2686920"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 456,
+          "kind": "call",
+          "target": "add_counters",
+          "instruction": "0x2644cd7",
+          "original": "0x2666880"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 476,
+          "kind": "call",
+          "target": "valid_target",
+          "instruction": "0x2644ceb",
+          "original": "0x26db480"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 496,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2644cff",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 515,
+          "kind": "call",
+          "target": "reshuffle_grave_into_deck",
+          "instruction": "0x2644d12",
+          "original": "0x266cc80"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 528,
+          "kind": "call",
+          "target": "duh_mode",
+          "instruction": "0x2644d1f",
+          "original": "0x2685d00"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2644b10",
+          "offset": 545,
+          "kind": "data",
+          "target": "event_result",
+          "instruction": "0x2644d2f",
+          "original": "0x6205b4"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 38,
+          "kind": "call",
+          "target": "counterspell_target_definition",
+          "instruction": "0x21dd755",
+          "original": "0x26dac20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 61,
+          "kind": "callback",
+          "target": "can_legally_change_target_to_me",
+          "instruction": "0x21dd76a",
+          "original": "0x21db6a0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 66,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21dd771",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 77,
+          "kind": "call",
+          "target": "duh_mode",
+          "instruction": "0x21dd77c",
+          "original": "0x2685d00"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 111,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x21dd79e",
+          "original": "0x269c140"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 154,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x21dd7c8",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 162,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x21dd7d0",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 170,
+          "kind": "data",
+          "target": "current_turn",
+          "instruction": "0x21dd7d8",
+          "original": "0x628670"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 177,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x21dd7e0",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 185,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x21dd7e8",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 228,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x21dd813",
+          "original": "0x268e100"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 282,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x21dd848",
+          "original": "0x739190"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 287,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x21dd84e",
+          "original": "0x739194"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 317,
+          "kind": "call",
+          "target": "set_special_flags2",
+          "instruction": "0x21dd86c",
+          "original": "0x268d950"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 346,
+          "kind": "call",
+          "target": "call_card_function",
+          "instruction": "0x21dd889",
+          "original": "0x267fb70"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 378,
+          "kind": "call",
+          "target": "remove_special_flags2",
+          "instruction": "0x21dd8a9",
+          "original": "0x268da80"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 416,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x21dd8cf",
+          "original": "0x268e010"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 445,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21dd8ec",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dd730",
+          "offset": 498,
+          "kind": "data",
+          "target": "spell_fizzled",
+          "instruction": "0x21dd920",
+          "original": "0x4ef194"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 25,
+          "kind": "call",
+          "target": "duh_mode",
+          "instruction": "0x24788d8",
+          "original": "0x2685d00"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 56,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x24788f7",
+          "original": "0x269c140"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 68,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x2478903",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 106,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x2478928",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 114,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x2478930",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 122,
+          "kind": "data",
+          "target": "current_turn",
+          "instruction": "0x2478938",
+          "original": "0x628670"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 129,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2478940",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 137,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x2478948",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 163,
+          "kind": "call",
+          "target": "card_counterspell",
+          "instruction": "0x2478962",
+          "original": "0x25b4bc0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 212,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x2478993",
+          "original": "0x739190"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 221,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x247899c",
+          "original": "0x739194"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 232,
+          "kind": "call",
+          "target": "get_id",
+          "instruction": "0x24789a7",
+          "original": "0x266b8a0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 240,
+          "kind": "call",
+          "target": "get_card_name_by_id",
+          "instruction": "0x24789af",
+          "original": "0x2692ee0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 268,
+          "kind": "call",
+          "target": "scnprintf",
+          "instruction": "0x24789cb",
+          "original": "0x26bcec0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 286,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x24789dd",
+          "original": "0x739194"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 307,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x24789f1",
+          "original": "0x739190"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 331,
+          "kind": "call",
+          "target": "do_dialog",
+          "instruction": "0x2478a0a",
+          "original": "0x471eb0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 345,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x2478a17",
+          "original": "0x739190"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 359,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x2478a25",
+          "original": "0x739194"
+        },
+        {
+          "side": 1,
+          "function_address": "0x24788c0",
+          "offset": 374,
+          "kind": "call",
+          "target": "real_counter_a_spell",
+          "instruction": "0x2478a35",
+          "original": "0x2672490"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 38,
+          "kind": "call",
+          "target": "counterspell_target_definition",
+          "instruction": "0x21dce95",
+          "original": "0x26dac20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 61,
+          "kind": "callback",
+          "target": "has_only_1_target_and_targets_a_creature_and_can_legally_change_target_to_me",
+          "instruction": "0x21dceaa",
+          "original": "0x21db760"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 66,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21dceb1",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 88,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x21dcec6",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 122,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x21dcee9",
+          "original": "0x269c140"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 189,
+          "kind": "call",
+          "target": "madness",
+          "instruction": "0x21dcf2c",
+          "original": "0x26a2be0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 234,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x21dcf59",
+          "original": "0x269c140"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 261,
+          "kind": "data",
+          "target": "card_on_stack_controller",
+          "instruction": "0x21dcf74",
+          "original": "0x739194"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 273,
+          "kind": "data",
+          "target": "card_on_stack",
+          "instruction": "0x21dcf80",
+          "original": "0x739190"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 300,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x21dcf9b",
+          "original": "0x268e010"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 329,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21dcfb8",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 375,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x21dcfe6",
+          "original": "0x268e100"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 434,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x21dd020",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 446,
+          "kind": "data",
+          "target": "current_turn",
+          "instruction": "0x21dd02c",
+          "original": "0x628670"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 457,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x21dd038",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x21dce70",
+          "offset": 465,
+          "kind": "data",
+          "target": "ai_modifier",
+          "instruction": "0x21dd040",
+          "original": "0x7a31a8"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2151380",
+          "offset": 33,
+          "kind": "call",
+          "target": "check_legend_rule",
+          "instruction": "0x21513a0",
+          "original": "0x26b5280"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2151380",
+          "offset": 45,
+          "kind": "call",
+          "target": "get_card_instance",
+          "instruction": "0x21513ac",
+          "original": "0x266ae40"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2151380",
+          "offset": 72,
+          "kind": "call",
+          "target": "counterspell_target_definition",
+          "instruction": "0x21513c7",
+          "original": "0x26dac20"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2151380",
+          "offset": 93,
+          "kind": "data",
+          "target": "affected_card",
+          "instruction": "0x21513db",
+          "original": "0x7a398c"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2151380",
+          "offset": 101,
+          "kind": "data",
+          "target": "affected_card_controller",
+          "instruction": "0x21513e3",
+          "original": "0x738c84"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2151380",
+          "offset": 135,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x2151406",
+          "original": "0x269c140"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2151380",
+          "offset": 175,
+          "kind": "call",
+          "target": "etb_ability",
+          "instruction": "0x215142e",
+          "original": "0x269c140"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2151380",
+          "offset": 228,
+          "kind": "call",
+          "target": "twincast",
+          "instruction": "0x2151463",
+          "original": "0x268e3a0"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2151380",
+          "offset": 300,
+          "kind": "call",
+          "target": "counterspell_validate",
+          "instruction": "0x21514ab",
+          "original": "0x268e010"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2151380",
+          "offset": 341,
+          "kind": "call",
+          "target": "copy_spell_from_stack",
+          "instruction": "0x21514d4",
+          "original": "0x26c3a30"
+        },
+        {
+          "side": 1,
+          "function_address": "0x2151380",
+          "offset": 393,
+          "kind": "call",
+          "target": "counterspell",
+          "instruction": "0x2151508",
+          "original": "0x268e100"
+        }
+      ],
+      "supporting_workers": [],
+      "indirect_constant_calls": [],
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "1b342c261dc08bf0f798b8df29b059e55a125842cf4500811a3a35943683462e",
+        "ManalinkEh.dbg": "317704450399bb5dd9d5d91de25faa6080341ae5aa6d14062e2a754475011279"
+      },
+      "base_sha256": "965fed95dc2fe1d6776a2d74dd6d0258082c558755a986cb8a945ae3aded853c",
+      "builder_sha256": "574e924e817d4c933e7d9ea7ff889deb7bf297b11ab3884c3de9f5e4fb6733e5",
+      "scope": "Six actual native/rebuilt handlers with 35 opaque helper/callback bindings and fourteen globals. Ordered arguments, full records and returns over 4,096 environments, sixteen events and both players, including target/stack mutation at calls, existing targets, pick limits, negative/large nonzero helper returns and cast priority returns. No helper-leaf or whole-game proof."
+    },
+    "plan_sha256": "320e21e2f401e3c3e99ee523bbb2973a8443b6b14ded7256603f4990c612d475",
+    "log_sha256": "684ea5a672cbc11aba2957fd0959c9e12abe5513cdb4e4292be30a06bd2d615d"
+  },
+  "scope": "Six existing native handlers: four spell-interaction creatures plus Sweet-Gum Recluse and Quest for Ancient Secrets. Reconstruct ordinary event branches and loops, preserving 1/99 cast priorities, nonzero helper handling, madness/flash/global-enchantment returns, source-instance timing, live target/index rereads, countering/copying dialog order, target-count limits and both graveyard trigger paths. Readability reconstruction, not a new gameplay-bug claim or a new handler recovery count.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "c6a9095e6cd22d1a208eb7a76e1b17709887be1beb541abc245f7e06a3e2cbc1",
+    "debug_sha256": "f2b67457989b986eb876ce65c7f94cef4000d2283589cb61d93bff0a60b0ab1c",
+    "build_log_sha256": "5ee6b94adf350ddb9580a31c036a6d6429fae9523059ca8250d8e2cd6ec275b8",
+    "source_definitions": 6,
+    "canonical_and_raw_file_projections": 5,
+    "spell_creature_fixture": {
+      "cases": 786432,
+      "mismatches": 0,
+      "plan": {
+        "entries": [
+          {
+            "side": 0,
+            "index": 0,
+            "name": "card_sweet_gum_recluse",
+            "address": "0x25b06b0",
+            "size": 390,
+            "sha256": "cac71993b9212bf17907f31ef70e45398de534449684dd129ef8826da42b3d3e"
+          },
+          {
+            "side": 0,
+            "index": 1,
+            "name": "card_quest_for_ancient_secrets",
+            "address": "0x25e52a0",
+            "size": 596,
+            "sha256": "51c95ea0c95ef465a17cece2ba1e2e88160e562efbb3b5f97c8ca1b8c03c394e"
+          },
+          {
+            "side": 0,
+            "index": 2,
+            "name": "card_mizzium_meddler",
+            "address": "0x2428df0",
+            "size": 484,
+            "sha256": "bf84a132e87b6c6fb4868cbb4e725b0bd6a74c941f25756831ecb86e424c5478"
+          },
+          {
+            "side": 0,
+            "index": 3,
+            "name": "card_frilled_mystic",
+            "address": "0x25bf090",
+            "size": 401,
+            "sha256": "bd763dfbc823bc01d959b24c2af7e30c92ff08a3a1ae1dabfd37894375b2ab15"
+          },
+          {
+            "side": 0,
+            "index": 4,
+            "name": "card_muck_drubb",
+            "address": "0x2428fe0",
+            "size": 468,
+            "sha256": "a0d39d7a8f92571d81608b602561b27d7857a927ceec1b6baf85770c2041beb3"
+          },
+          {
+            "side": 0,
+            "index": 5,
+            "name": "card_naru_meha_master_wizard",
+            "address": "0x22d16e0",
+            "size": 406,
+            "sha256": "d63ab144ad2406fe6cd73a931455acf72fd9b035fe0520030f777c657ec21b83"
+          },
+          {
+            "side": 1,
+            "index": 0,
+            "name": "card_sweet_gum_recluse",
+            "address": "0x2109010",
+            "size": 400,
+            "sha256": "6e20924e14f062d0a84a8c7e4f053572440e73a31f0dea7fca24915c394c637e"
+          },
+          {
+            "side": 1,
+            "index": 1,
+            "name": "card_quest_for_ancient_secrets",
+            "address": "0x2644b10",
+            "size": 560,
+            "sha256": "df2667de4d8138c7138ea6ddd810a0484a6f2552300c6f8a6e3d9dd43d43e982"
+          },
+          {
+            "side": 1,
+            "index": 2,
+            "name": "card_mizzium_meddler",
+            "address": "0x21dd730",
+            "size": 512,
+            "sha256": "ad82a92cc201c909c4098a155b1accb01dd89de989e1ed6fdfaa53421013521c"
+          },
+          {
+            "side": 1,
+            "index": 3,
+            "name": "card_frilled_mystic",
+            "address": "0x24788c0",
+            "size": 416,
+            "sha256": "1ac0e57b718da2719d9278468446201f73ef735d177680a924d61400028bf957"
+          },
+          {
+            "side": 1,
+            "index": 4,
+            "name": "card_muck_drubb",
+            "address": "0x21dce70",
+            "size": 480,
+            "sha256": "f089a0609fe57a230f5a1baec03aaf95643bb43c09dc7231776aa86eca7c5a38"
+          },
+          {
+            "side": 1,
+            "index": 5,
+            "name": "card_naru_meha_master_wizard",
+            "address": "0x2151380",
+            "size": 416,
+            "sha256": "c50119349d29c7c2f161e58fdd1ca921fceeb46fdd4ee3d83e3deabd186522b1"
+          }
+        ],
+        "patches": [
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 30,
+            "kind": "call",
+            "target": "cascade",
+            "instruction": "0x25b06cd",
+            "original": "0x22fabf0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 60,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x25b06eb",
+            "original": "0x26a5370"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 91,
+            "kind": "call",
+            "target": "flash",
+            "instruction": "0x25b070a",
+            "original": "0x26df260"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 130,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x25b0731",
+            "original": "0x2660240"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 157,
+            "kind": "callback",
+            "target": "is_entered_the_battlefield_this_turn",
+            "instruction": "0x25b074a",
+            "original": "0x259ff70"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 162,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x25b0751",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 179,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x25b0762",
+            "original": "0x26604c0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 220,
+            "kind": "call",
+            "target": "new_pick_target",
+            "instruction": "0x25b078b",
+            "original": "0x2660db0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 258,
+            "kind": "call",
+            "target": "state_untargettable",
+            "instruction": "0x25b07b1",
+            "original": "0x2687da0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 272,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x25b07bf",
+            "original": "0x26604c0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 320,
+            "kind": "call",
+            "target": "state_untargettable",
+            "instruction": "0x25b07ef",
+            "original": "0x2687da0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25b06b0",
+            "offset": 367,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x25b081e",
+            "original": "0x26d4840"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 10,
+            "kind": "data",
+            "target": "enable_xtrigger_flags",
+            "instruction": "0x25e52a9",
+            "original": "0x2795280"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 24,
+            "kind": "data",
+            "target": "enable_xtrigger_flags",
+            "instruction": "0x25e52b7",
+            "original": "0x2795280"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 29,
+            "kind": "data",
+            "target": "trigger_condition",
+            "instruction": "0x25e52bc",
+            "original": "0x7a2d78"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 41,
+            "kind": "data",
+            "target": "xtrigger_impl_value_dont_use_directly",
+            "instruction": "0x25e52c8",
+            "original": "0x2795284"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 91,
+            "kind": "call",
+            "target": "when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something",
+            "instruction": "0x25e52fa",
+            "original": "0x26a3de0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 154,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x25e5339",
+            "original": "0x2660240"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 202,
+            "kind": "call",
+            "target": "quest",
+            "instruction": "0x25e5369",
+            "original": "0x25d6b10"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 218,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x25e5378",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 230,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x25e5384",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 242,
+            "kind": "data",
+            "target": "reason_for_trigger_controller",
+            "instruction": "0x25e5390",
+            "original": "0x737e1c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 254,
+            "kind": "data",
+            "target": "trigger_cause_controller",
+            "instruction": "0x25e539c",
+            "original": "0x62c17c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 280,
+            "kind": "call",
+            "target": "is_humiliated",
+            "instruction": "0x25e53b7",
+            "original": "0x26dd430"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 309,
+            "kind": "data",
+            "target": "num_cards_milled",
+            "instruction": "0x25e53d4",
+            "original": "0x2794000"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 341,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x25e53f4",
+            "original": "0x26d4840"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 381,
+            "kind": "call",
+            "target": "when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something",
+            "instruction": "0x25e541c",
+            "original": "0x26a3de0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 404,
+            "kind": "call",
+            "target": "global_enchantment",
+            "instruction": "0x25e5433",
+            "original": "0x267c220"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 420,
+            "kind": "call",
+            "target": "duh_mode",
+            "instruction": "0x25e5443",
+            "original": "0x26795b0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 472,
+            "kind": "data",
+            "target": "event_result",
+            "instruction": "0x25e5476",
+            "original": "0x6205b4"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 477,
+            "kind": "call",
+            "target": "when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something",
+            "instruction": "0x25e547c",
+            "original": "0x26a3de0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 528,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x25e54af",
+            "original": "0x26d4840"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 548,
+            "kind": "call",
+            "target": "valid_target",
+            "instruction": "0x25e54c3",
+            "original": "0x2661750"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 568,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x25e54d7",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25e52a0",
+            "offset": 587,
+            "kind": "call",
+            "target": "reshuffle_grave_into_deck",
+            "instruction": "0x25e54ea",
+            "original": "0x26b4dc0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 38,
+            "kind": "call",
+            "target": "counterspell_target_definition",
+            "instruction": "0x2428e15",
+            "original": "0x2660340"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 61,
+            "kind": "callback",
+            "target": "can_legally_change_target_to_me",
+            "instruction": "0x2428e2a",
+            "original": "0x24276f0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 66,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2428e31",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 76,
+            "kind": "call",
+            "target": "duh_mode",
+            "instruction": "0x2428e3b",
+            "original": "0x26795b0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 110,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x2428e5d",
+            "original": "0x26a5370"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 162,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x2428e90",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 170,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x2428e98",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 178,
+            "kind": "data",
+            "target": "current_turn",
+            "instruction": "0x2428ea0",
+            "original": "0x628670"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 185,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2428ea8",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 193,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2428eb0",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 231,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x2428ed6",
+            "original": "0x2692b30"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 290,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x2428f10",
+            "original": "0x739190"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 295,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x2428f16",
+            "original": "0x739194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 325,
+            "kind": "call",
+            "target": "set_special_flags2",
+            "instruction": "0x2428f34",
+            "original": "0x267a160"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 351,
+            "kind": "call",
+            "target": "call_card_function",
+            "instruction": "0x2428f4e",
+            "original": "0x26caff0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 380,
+            "kind": "call",
+            "target": "remove_special_flags2",
+            "instruction": "0x2428f6b",
+            "original": "0x267a210"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 418,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x2428f91",
+            "original": "0x2692a40"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 444,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2428fab",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428df0",
+            "offset": 474,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x2428fc8",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 25,
+            "kind": "call",
+            "target": "duh_mode",
+            "instruction": "0x25bf0a8",
+            "original": "0x26795b0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 56,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x25bf0c7",
+            "original": "0x26a5370"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 68,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x25bf0d3",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 106,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x25bf0f8",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 114,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x25bf100",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 122,
+            "kind": "data",
+            "target": "current_turn",
+            "instruction": "0x25bf108",
+            "original": "0x628670"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 129,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x25bf110",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 137,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x25bf118",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 163,
+            "kind": "call",
+            "target": "card_counterspell",
+            "instruction": "0x25bf132",
+            "original": "0x24c1280"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 212,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x25bf163",
+            "original": "0x739190"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 221,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x25bf16c",
+            "original": "0x739194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 232,
+            "kind": "call",
+            "target": "get_id",
+            "instruction": "0x25bf177",
+            "original": "0x26b35a0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 240,
+            "kind": "call",
+            "target": "get_card_name_by_id",
+            "instruction": "0x25bf17f",
+            "original": "0x26798f0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 268,
+            "kind": "call",
+            "target": "scnprintf",
+            "instruction": "0x25bf19b",
+            "original": "0x26cea80"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 286,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x25bf1ad",
+            "original": "0x739194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 307,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x25bf1c1",
+            "original": "0x739190"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 331,
+            "kind": "call",
+            "target": "do_dialog",
+            "instruction": "0x25bf1da",
+            "original": "0x471eb0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 344,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x25bf1e7",
+            "original": "0x739190"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 357,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x25bf1f4",
+            "original": "0x739194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x25bf090",
+            "offset": 369,
+            "kind": "call",
+            "target": "real_counter_a_spell",
+            "instruction": "0x25bf200",
+            "original": "0x26b64a0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 38,
+            "kind": "call",
+            "target": "counterspell_target_definition",
+            "instruction": "0x2429005",
+            "original": "0x2660340"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 58,
+            "kind": "callback",
+            "target": "has_only_1_target_and_targets_a_creature_and_can_legally_change_target_to_me",
+            "instruction": "0x2429017",
+            "original": "0x24278a0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 66,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2429021",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 116,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x2429053",
+            "original": "0x26a5370"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 205,
+            "kind": "call",
+            "target": "madness",
+            "instruction": "0x24290ac",
+            "original": "0x2698b20"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 226,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x24290c0",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 256,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x24290df",
+            "original": "0x26a5370"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 295,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x2429106",
+            "original": "0x2692b30"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 330,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x2429128",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 338,
+            "kind": "data",
+            "target": "current_turn",
+            "instruction": "0x2429130",
+            "original": "0x628670"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 345,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2429138",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 353,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2429140",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 385,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x2429160",
+            "original": "0x739194"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 397,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x242916c",
+            "original": "0x739190"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 424,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x2429187",
+            "original": "0x2692a40"
+          },
+          {
+            "side": 0,
+            "function_address": "0x2428fe0",
+            "offset": 453,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x24291a4",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22d16e0",
+            "offset": 33,
+            "kind": "call",
+            "target": "check_legend_rule",
+            "instruction": "0x22d1700",
+            "original": "0x2663890"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22d16e0",
+            "offset": 45,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x22d170c",
+            "original": "0x26b2ab0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22d16e0",
+            "offset": 72,
+            "kind": "call",
+            "target": "counterspell_target_definition",
+            "instruction": "0x22d1727",
+            "original": "0x2660340"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22d16e0",
+            "offset": 97,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x22d173f",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22d16e0",
+            "offset": 131,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x22d1762",
+            "original": "0x26a5370"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22d16e0",
+            "offset": 175,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x22d178e",
+            "original": "0x26a5370"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22d16e0",
+            "offset": 208,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x22d17af",
+            "original": "0x2692a40"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22d16e0",
+            "offset": 245,
+            "kind": "call",
+            "target": "copy_spell_from_stack",
+            "instruction": "0x22d17d4",
+            "original": "0x26686d0"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22d16e0",
+            "offset": 284,
+            "kind": "call",
+            "target": "twincast",
+            "instruction": "0x22d17fb",
+            "original": "0x2693340"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22d16e0",
+            "offset": 346,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x22d1838",
+            "original": "0x738c84"
+          },
+          {
+            "side": 0,
+            "function_address": "0x22d16e0",
+            "offset": 397,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x22d186c",
+            "original": "0x2692b30"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 30,
+            "kind": "call",
+            "target": "cascade",
+            "instruction": "0x210902d",
+            "original": "0x202f320"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 60,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x210904b",
+            "original": "0x269c140"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 91,
+            "kind": "call",
+            "target": "flash",
+            "instruction": "0x210906a",
+            "original": "0x26544e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 130,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x2109091",
+            "original": "0x26dab20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 157,
+            "kind": "callback",
+            "target": "is_entered_the_battlefield_this_turn",
+            "instruction": "0x21090aa",
+            "original": "0x20fc2a0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 162,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21090b1",
+            "original": "0x266ae40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 179,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x21090c2",
+            "original": "0x26db0d0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 220,
+            "kind": "call",
+            "target": "new_pick_target",
+            "instruction": "0x21090eb",
+            "original": "0x26dbd30"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 258,
+            "kind": "call",
+            "target": "state_untargettable",
+            "instruction": "0x2109111",
+            "original": "0x26acb20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 272,
+            "kind": "call",
+            "target": "can_target",
+            "instruction": "0x210911f",
+            "original": "0x26db0d0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 320,
+            "kind": "call",
+            "target": "state_untargettable",
+            "instruction": "0x210914f",
+            "original": "0x26acb20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2109010",
+            "offset": 367,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x210917e",
+            "original": "0x2666880"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 10,
+            "kind": "data",
+            "target": "enable_xtrigger_flags",
+            "instruction": "0x2644b19",
+            "original": "0x279a7e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 24,
+            "kind": "data",
+            "target": "enable_xtrigger_flags",
+            "instruction": "0x2644b27",
+            "original": "0x279a7e0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 29,
+            "kind": "data",
+            "target": "trigger_condition",
+            "instruction": "0x2644b2c",
+            "original": "0x7a2d78"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 41,
+            "kind": "data",
+            "target": "xtrigger_impl_value_dont_use_directly",
+            "instruction": "0x2644b38",
+            "original": "0x279a7e4"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 91,
+            "kind": "call",
+            "target": "when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something",
+            "instruction": "0x2644b6a",
+            "original": "0x2699a50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 154,
+            "kind": "call",
+            "target": "default_target_definition",
+            "instruction": "0x2644ba9",
+            "original": "0x26dab20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 202,
+            "kind": "call",
+            "target": "quest",
+            "instruction": "0x2644bd9",
+            "original": "0x2636670"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 218,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x2644be8",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 230,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x2644bf4",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 242,
+            "kind": "data",
+            "target": "reason_for_trigger_controller",
+            "instruction": "0x2644c00",
+            "original": "0x737e1c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 254,
+            "kind": "data",
+            "target": "trigger_cause_controller",
+            "instruction": "0x2644c0c",
+            "original": "0x62c17c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 280,
+            "kind": "call",
+            "target": "is_humiliated",
+            "instruction": "0x2644c27",
+            "original": "0x2653590"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 313,
+            "kind": "data",
+            "target": "num_cards_milled",
+            "instruction": "0x2644c48",
+            "original": "0x2799700"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 345,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x2644c68",
+            "original": "0x2666880"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 384,
+            "kind": "call",
+            "target": "when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something",
+            "instruction": "0x2644c8f",
+            "original": "0x2699a50"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 407,
+            "kind": "call",
+            "target": "global_enchantment",
+            "instruction": "0x2644ca6",
+            "original": "0x2686920"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 456,
+            "kind": "call",
+            "target": "add_counters",
+            "instruction": "0x2644cd7",
+            "original": "0x2666880"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 476,
+            "kind": "call",
+            "target": "valid_target",
+            "instruction": "0x2644ceb",
+            "original": "0x26db480"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 496,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2644cff",
+            "original": "0x266ae40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 515,
+            "kind": "call",
+            "target": "reshuffle_grave_into_deck",
+            "instruction": "0x2644d12",
+            "original": "0x266cc80"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 528,
+            "kind": "call",
+            "target": "duh_mode",
+            "instruction": "0x2644d1f",
+            "original": "0x2685d00"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2644b10",
+            "offset": 545,
+            "kind": "data",
+            "target": "event_result",
+            "instruction": "0x2644d2f",
+            "original": "0x6205b4"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 38,
+            "kind": "call",
+            "target": "counterspell_target_definition",
+            "instruction": "0x21dd755",
+            "original": "0x26dac20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 61,
+            "kind": "callback",
+            "target": "can_legally_change_target_to_me",
+            "instruction": "0x21dd76a",
+            "original": "0x21db6a0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 66,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21dd771",
+            "original": "0x266ae40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 77,
+            "kind": "call",
+            "target": "duh_mode",
+            "instruction": "0x21dd77c",
+            "original": "0x2685d00"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 111,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x21dd79e",
+            "original": "0x269c140"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 154,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x21dd7c8",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 162,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x21dd7d0",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 170,
+            "kind": "data",
+            "target": "current_turn",
+            "instruction": "0x21dd7d8",
+            "original": "0x628670"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 177,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x21dd7e0",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 185,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x21dd7e8",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 228,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x21dd813",
+            "original": "0x268e100"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 282,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x21dd848",
+            "original": "0x739190"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 287,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x21dd84e",
+            "original": "0x739194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 317,
+            "kind": "call",
+            "target": "set_special_flags2",
+            "instruction": "0x21dd86c",
+            "original": "0x268d950"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 346,
+            "kind": "call",
+            "target": "call_card_function",
+            "instruction": "0x21dd889",
+            "original": "0x267fb70"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 378,
+            "kind": "call",
+            "target": "remove_special_flags2",
+            "instruction": "0x21dd8a9",
+            "original": "0x268da80"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 416,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x21dd8cf",
+            "original": "0x268e010"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 445,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21dd8ec",
+            "original": "0x266ae40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dd730",
+            "offset": 498,
+            "kind": "data",
+            "target": "spell_fizzled",
+            "instruction": "0x21dd920",
+            "original": "0x4ef194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 25,
+            "kind": "call",
+            "target": "duh_mode",
+            "instruction": "0x24788d8",
+            "original": "0x2685d00"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 56,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x24788f7",
+            "original": "0x269c140"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 68,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x2478903",
+            "original": "0x266ae40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 114,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x2478930",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 122,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x2478938",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 130,
+            "kind": "data",
+            "target": "current_turn",
+            "instruction": "0x2478940",
+            "original": "0x628670"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 138,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2478948",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 147,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x2478951",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 179,
+            "kind": "call",
+            "target": "card_counterspell",
+            "instruction": "0x2478972",
+            "original": "0x25b4bc0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 217,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x2478998",
+            "original": "0x739190"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 229,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x24789a4",
+            "original": "0x739194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 240,
+            "kind": "call",
+            "target": "get_id",
+            "instruction": "0x24789af",
+            "original": "0x266b8a0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 248,
+            "kind": "call",
+            "target": "get_card_name_by_id",
+            "instruction": "0x24789b7",
+            "original": "0x2692ee0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 276,
+            "kind": "call",
+            "target": "scnprintf",
+            "instruction": "0x24789d3",
+            "original": "0x26bcec0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 329,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x2478a08",
+            "original": "0x739194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 350,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x2478a1c",
+            "original": "0x739190"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 374,
+            "kind": "call",
+            "target": "do_dialog",
+            "instruction": "0x2478a35",
+            "original": "0x471eb0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 383,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x2478a3e",
+            "original": "0x739190"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 396,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x2478a4b",
+            "original": "0x739194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x24788c0",
+            "offset": 408,
+            "kind": "call",
+            "target": "real_counter_a_spell",
+            "instruction": "0x2478a57",
+            "original": "0x2672490"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 38,
+            "kind": "call",
+            "target": "counterspell_target_definition",
+            "instruction": "0x21dce95",
+            "original": "0x26dac20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 61,
+            "kind": "callback",
+            "target": "has_only_1_target_and_targets_a_creature_and_can_legally_change_target_to_me",
+            "instruction": "0x21dceaa",
+            "original": "0x21db760"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 66,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21dceb1",
+            "original": "0x266ae40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 116,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x21dcee3",
+            "original": "0x269c140"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 205,
+            "kind": "call",
+            "target": "madness",
+            "instruction": "0x21dcf3c",
+            "original": "0x26a2be0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 226,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x21dcf50",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 256,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x21dcf6f",
+            "original": "0x269c140"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 295,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x21dcf96",
+            "original": "0x268e100"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 330,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x21dcfb8",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 338,
+            "kind": "data",
+            "target": "current_turn",
+            "instruction": "0x21dcfc0",
+            "original": "0x628670"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 345,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x21dcfc8",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 353,
+            "kind": "data",
+            "target": "ai_modifier",
+            "instruction": "0x21dcfd0",
+            "original": "0x7a31a8"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 385,
+            "kind": "data",
+            "target": "card_on_stack_controller",
+            "instruction": "0x21dcff0",
+            "original": "0x739194"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 397,
+            "kind": "data",
+            "target": "card_on_stack",
+            "instruction": "0x21dcffc",
+            "original": "0x739190"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 424,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x21dd017",
+            "original": "0x268e010"
+          },
+          {
+            "side": 1,
+            "function_address": "0x21dce70",
+            "offset": 453,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21dd034",
+            "original": "0x266ae40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2151380",
+            "offset": 33,
+            "kind": "call",
+            "target": "check_legend_rule",
+            "instruction": "0x21513a0",
+            "original": "0x26b5280"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2151380",
+            "offset": 45,
+            "kind": "call",
+            "target": "get_card_instance",
+            "instruction": "0x21513ac",
+            "original": "0x266ae40"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2151380",
+            "offset": 72,
+            "kind": "call",
+            "target": "counterspell_target_definition",
+            "instruction": "0x21513c7",
+            "original": "0x26dac20"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2151380",
+            "offset": 97,
+            "kind": "data",
+            "target": "affected_card",
+            "instruction": "0x21513df",
+            "original": "0x7a398c"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2151380",
+            "offset": 131,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x2151402",
+            "original": "0x269c140"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2151380",
+            "offset": 175,
+            "kind": "call",
+            "target": "etb_ability",
+            "instruction": "0x215142e",
+            "original": "0x269c140"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2151380",
+            "offset": 208,
+            "kind": "call",
+            "target": "counterspell_validate",
+            "instruction": "0x215144f",
+            "original": "0x268e010"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2151380",
+            "offset": 245,
+            "kind": "call",
+            "target": "copy_spell_from_stack",
+            "instruction": "0x2151474",
+            "original": "0x26c3a30"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2151380",
+            "offset": 284,
+            "kind": "call",
+            "target": "twincast",
+            "instruction": "0x215149b",
+            "original": "0x268e3a0"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2151380",
+            "offset": 346,
+            "kind": "data",
+            "target": "affected_card_controller",
+            "instruction": "0x21514d8",
+            "original": "0x738c84"
+          },
+          {
+            "side": 1,
+            "function_address": "0x2151380",
+            "offset": 397,
+            "kind": "call",
+            "target": "counterspell",
+            "instruction": "0x215150c",
+            "original": "0x268e100"
+          }
+        ],
+        "supporting_workers": [],
+        "indirect_constant_calls": [],
+        "inputs": {
+          ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+          "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+          "ManalinkEh.dll": "c6a9095e6cd22d1a208eb7a76e1b17709887be1beb541abc245f7e06a3e2cbc1",
+          "ManalinkEh.dbg": "f2b67457989b986eb876ce65c7f94cef4000d2283589cb61d93bff0a60b0ab1c"
+        },
+        "base_sha256": "965fed95dc2fe1d6776a2d74dd6d0258082c558755a986cb8a945ae3aded853c",
+        "builder_sha256": "574e924e817d4c933e7d9ea7ff889deb7bf297b11ab3884c3de9f5e4fb6733e5",
+        "scope": "Six actual native/rebuilt handlers with 35 opaque helper/callback bindings and fourteen globals. Ordered arguments, full records and returns over 4,096 environments, sixteen events and both players, including target/stack mutation at calls, existing targets, pick limits, negative/large nonzero helper returns and cast priority returns. No helper-leaf or whole-game proof."
+      },
+      "plan_sha256": "0dbd1445b5dcd6bd9c7cd4d90cf9ad96d8c643adf0028bce7676fbc1aaf7e93e",
+      "log_sha256": "684ea5a672cbc11aba2957fd0959c9e12abe5513cdb4e4292be30a06bd2d615d",
+      "compiler_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "generated_source_sha256": "ca727363fa0c85513ce6ed42a2f3bfa2079488ceca24882b94462450d0514140"
+    },
+    "checker_sha256": "75c656e29ee3226cde96fccb9d3ba1cc0f9b4f2dd007f1ab9af5643daad7ddc5",
+    "staging": "preserved",
+    "scope": "Six actual release/rebuilt function bodies under 35 opaque helper/callback bindings and fourteen globals. Compare ordered call arguments, complete four-card records, returns and all bound globals for 4,096 environments, sixteen events and both players. Callback identities embedded in target definitions are normalized to opaque bindings, including duplicate static callback symbol spellings. Both predecessor and rewritten callers agree within this bounded fixture. Helper behavior, unrestricted aliasing/memory mutation, UI, exceptions and whole-game equivalence are not proved. Full comparison JSON not regenerated."
+  },
+  "native_flow_notes": [
+    "Sweet-Gum preserves live target counts, the ten-target selection cutoff, preexisting targets, the untargettable/unmark/counter order and the flash return.",
+    "Quest enables the milled trigger flag first, preserves humiliation checks before event dispatch, always calls the non-library graveyard helper, and retains both its optional/mandatory event bits and quest/global-enchantment return paths.",
+    "All four spell-interaction creatures return 99 for any nonzero spell availability and 1 otherwise while storing an exact 1/0 info slot; helper return magnitudes are not propagated on that path.",
+    "Mizzium retains failed-retarget validation and fresh target pair/index reads after callbacks. Muck retains mandatory ETB calls and the raw madness return outside CAN_CAST.",
+    "Frilled formats its prompt even when the info slot prevents the dialog, then reads the stack globals again after the dialog for countering. Naru validates the spell before checking the saved info slot, and preserves its raw counterspell return for the affected CAST path."
+  ]
+}

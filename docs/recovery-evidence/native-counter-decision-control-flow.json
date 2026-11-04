@@ -1,0 +1,1045 @@
+{
+  "format": 1,
+  "status": "Five counter-card decisions, 36 Boolean priority expressions, 18 commander exceptions and named enum checks reconstructed. One build, 15,169 fixed slots, 14,290,240 release/actual-rebuilt/old/new fixtures and full source projections pass.",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "before_rebuilt_sha256": "c27ebb076acb2ed2e20d14e3d9c30b896ea9116f855e2002cf5e118823d36ad9",
+  "before_debug_sha256": "4747383899b4a3eb36ffa4b503951fc6423fca663a5e16c2d6c8ff8569d97383",
+  "files": [
+    {
+      "source": "functions/counters.c",
+      "before_sha256": "1fc788f209cae4e6e97e5b4dea09b90ea5b25ed07987fa6eb6b6577fe20130e4",
+      "after_sha256": "3470fa6dcb0eac6aff393b8301823e4428e2b406cdbe945c55ff5fa2c73f059b"
+    },
+    {
+      "source": "cards/vanguard.c",
+      "before_sha256": "aa982448a6ce43be264b68f1c2d1385086547fadad67ab2457dbffac2a35300f",
+      "after_sha256": "3db83224b72eccb0f5a9cbc28c99d9f8201a9d5469448ca02e167ebb1ab7916e"
+    }
+  ],
+  "functions": [
+    {
+      "source": "functions/counters.c",
+      "name": "raw_counter_value",
+      "before_definition_sha256": "25645f905e3b28bd47c6f486a8dc9957987695960ede97373979d935e8e0c9d3",
+      "after_definition_sha256": "612ee29648a3dba2f7bb4413a990d5dec67226d32e4d9e6e7b1acc446e458ba4",
+      "before_bytes": 37488,
+      "after_bytes": 34047,
+      "before_lines": 1827,
+      "after_lines": 1602
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "is_legal_general",
+      "before_definition_sha256": "afade9ebc04491f082b614b3970349d277164519608eeda53ffe62fd7fed1912",
+      "after_definition_sha256": "6bc3bb605bec8fcd82df231f8731705ab8603170cdb02d01a4c6fbc0ce070977",
+      "before_bytes": 1194,
+      "after_bytes": 941,
+      "before_lines": 33,
+      "after_lines": 31
+    }
+  ],
+  "native_enumerators": {
+    "CARD_ID_TETRAVUS": 534,
+    "CARD_ID_TRISKELION": 538,
+    "CARD_ID_SPIKE_FEEDER": 3430,
+    "CARD_ID_SPIKE_WEAVER": 3570,
+    "CARD_ID_WORKHORSE": 3586,
+    "CARD_ID_MOLTEN_HYDRA": 4021,
+    "CARD_ID_CANOPY_CRAWLER": 6347,
+    "CARD_ID_PENTAVUS": 6755,
+    "CARD_ID_ETCHED_ORACLE": 7049,
+    "CARD_ID_TWILIGHT_DROVER": 7993,
+    "CARD_ID_ULASHT_THE_HATE_SEED": 8153,
+    "CARD_ID_TRISKELAVUS": 8710,
+    "CARD_ID_ASHLING_THE_PILGRIM": 9063,
+    "CARD_ID_FERTILID": 9353,
+    "CARD_ID_FESTERCREEP": 9354,
+    "CARD_ID_SHINEWEND": 9431,
+    "CARD_ID_MYCOLOTH": 10018,
+    "CARD_ID_APOCALYPSE_HYDRA": 10108,
+    "CARD_ID_DEATHBRINGER_THOCTAR": 10256,
+    "CARD_ID_JORAGA_WARCALLER": 10783,
+    "CARD_ID_THOUGHT_GORGER": 11062,
+    "CARD_ID_ANIMAR_SOUL_OF_ELEMENTS": 11751,
+    "CARD_ID_VISH_KAL_BLOOD_ARBITER": 11765,
+    "CARD_ID_MIKAEUS_THE_LUNARCH": 12022,
+    "CARD_ID_HERALD_OF_WAR": 12396,
+    "CARD_ID_GYRE_SAGE": 12970,
+    "CARD_ID_HICKORY_WOODLOT": 4488,
+    "CARD_ID_PEAT_BOG": 4550,
+    "CARD_ID_REMOTE_FARM": 4568,
+    "CARD_ID_SANDSTONE_NEEDLE": 4590,
+    "CARD_ID_SAPRAZZAN_SKERRY": 4598,
+    "CARD_ID_DECREE_OF_SILENCE": 6506,
+    "CARD_ID_FORCE_BUBBLE": 6529,
+    "CARD_ID_CHRONOZOA": 8755,
+    "CARD_ID_DEADLY_GRUB": 8764,
+    "CARD_ID_REALITY_ACID": 8830,
+    "CARD_ID_LOST_AURAMANCERS": 8964,
+    "CARD_ID_MIDSUMMER_REVEL": 3827,
+    "CARD_ID_RECANTATION": 3866,
+    "CARD_ID_SERRAS_LITURGY": 3893,
+    "CARD_ID_VILE_REQUIEM": 3950,
+    "CARD_ID_MAGISTRATES_SCEPTER": 4527,
+    "CARD_ID_RIPTIDE_REPLICATOR": 6240,
+    "CARD_ID_OROCHI_HATCHERY": 7336,
+    "CARD_ID_UMEZAWAS_JITTE": 7587,
+    "CARD_ID_DOOR_OF_DESTINIES": 9347,
+    "CARD_ID_LIGHTNING_REAVER": 10304,
+    "CARD_ID_SPHINX_BONE_WAND": 11049,
+    "CARD_ID_CULLING_DAIS": 11232,
+    "CARD_ID_GOLEM_FOUNDRY": 11270,
+    "CARD_ID_LUX_CANNON": 11301,
+    "CARD_ID_TITAN_FORGE": 11543,
+    "CARD_ID_CONVERSION_CHAMBER": 11583,
+    "CARD_ID_SHRINE_OF_LOYAL_LEGIONS": 11682,
+    "CARD_ID_OTHERWORLD_ATLAS": 12437,
+    "CARD_ID_DARKSTEEL_REACTOR": 6875,
+    "COUNTER_ACORN": 160,
+    "COUNTER_INCARNATION": 158,
+    "COUNTER_FORESHADOW": 157,
+    "COUNTER_TASK": 143,
+    "COUNTER_KNOWLEDGE": 141,
+    "COUNTER_SLUMBER": 137,
+    "COUNTER_LANDMARK": 135,
+    "COUNTER_BRICK": 132,
+    "COUNTER_UNITY": 131,
+    "COUNTER_SPITE": 130,
+    "COUNTER_FURY": 129,
+    "COUNTER_HOUR": 128,
+    "COUNTER_PLOT": 127,
+    "COUNTER_GEM": 125,
+    "COUNTER_CRYSTAL": 124,
+    "COUNTER_WISH": 122,
+    "COUNTER_WINCH": 120,
+    "COUNTER_WAGE": 119,
+    "COUNTER_VITALITY": 118,
+    "COUNTER_TREASURE": 115,
+    "COUNTER_TOWER": 112,
+    "COUNTER_TIDE": 110,
+    "COUNTER_THEFT": 108,
+    "COUNTER_STUDY": 107,
+    "COUNTER_STRIFE": 106,
+    "COUNTER_STORAGE": 105,
+    "COUNTER_SPORE": 104,
+    "COUNTER_SOOT": 103,
+    "COUNTER_SLIME": 102,
+    "COUNTER_SLEIGHT": 101,
+    "COUNTER_SHRED": 99,
+    "COUNTER_SHOE": 98,
+    "COUNTER_PALLIATION": 97,
+    "COUNTER_SHELL": 96,
+    "COUNTER_PUPA": 91,
+    "COUNTER_PRESSURE": 90,
+    "COUNTER_POP": 89,
+    "COUNTER_POLYP": 88,
+    "COUNTER_PLAGUE": 87,
+    "COUNTER_PIN": 86,
+    "COUNTER_PETAL": 83,
+    "COUNTER_PAIN": 81,
+    "COUNTER_PAGE": 80,
+    "COUNTER_ORE": 79,
+    "COUNTER_MUSTER": 76,
+    "COUNTER_MINING": 73,
+    "COUNTER_LUCK": 67,
+    "COUNTER_LORE": 65,
+    "COUNTER_KI": 63,
+    "COUNTER_JAVELIN": 62,
+    "COUNTER_INTERVENTION": 61,
+    "COUNTER_INFECTION": 60,
+    "COUNTER_HUSK": 58,
+    "COUNTER_HUNGER": 57,
+    "COUNTER_HOOFPRINT": 55,
+    "COUNTER_HEALING": 54,
+    "COUNTER_HATCHLING": 53,
+    "COUNTER_GROWTH": 52,
+    "COUNTER_FUSE": 49,
+    "COUNTER_FUNK": 48,
+    "COUNTER_FLAME": 45,
+    "COUNTER_FILIBUSTER": 44,
+    "COUNTER_FEATHER": 43,
+    "COUNTER_FADE": 41,
+    "COUNTER_EYEBALL": 40,
+    "COUNTER_EON": 39,
+    "COUNTER_VORTEX": 38,
+    "COUNTER_ELIXIR": 37,
+    "COUNTER_ECHO": 36,
+    "COUNTER_DREAM": 35,
+    "COUNTER_DIVINITY": 33,
+    "COUNTER_DEVOTION": 32,
+    "COUNTER_DESPAIR": 31,
+    "COUNTER_DEATH": 28,
+    "COUNTER_CURRENCY": 27,
+    "COUNTER_CUBE": 26,
+    "COUNTER_CREDIT": 25,
+    "COUNTER_CORPSE": 24,
+    "COUNTER_CHIP": 23,
+    "COUNTER_CARRION": 22,
+    "COUNTER_BLAZE": 18,
+    "COUNTER_ARROWHEAD": 16,
+    "COUNTER_ARROW": 15,
+    "COUNTER_AIM": 14,
+    "COUNTER_AGE": 13,
+    "TYPE_CREATURE": 2,
+    "TYPE_LAND": 1,
+    "TARGET_TYPE_PLANESWALKER": 256,
+    "TYPE_ARTIFACT": 64,
+    "CARD_ID_ERTAIS_MEDDLING": 3137,
+    "CARD_ID_ALL_HALLOWS_EVE": 562,
+    "CARD_ID_DUNE_BROOD_NEPHILIM": 8047,
+    "CARD_ID_GLINT_EYE_NEPHILIM": 8061,
+    "CARD_ID_INK_TREADER_NEPHILIM": 8075,
+    "CARD_ID_WITCH_MAW_NEPHILIM": 8160,
+    "CARD_ID_YORE_TILLER_NEPHILIM": 8164,
+    "CARD_ID_DARETTI_SCRAP_SAVANT": 14451,
+    "CARD_ID_FREYALISE_LLANOWARS_FURY": 14462,
+    "CARD_ID_NAHIRI_THE_LITHOMANCER": 14476,
+    "CARD_ID_OB_NIXILIS_OF_THE_BLACK_OATH": 14478,
+    "CARD_ID_TEFERI_TEMPORAL_ARCHMAGE": 14490,
+    "CARD_ID_ROWAN_KENRITH": 18626,
+    "CARD_ID_WILL_KENRITH": 18653,
+    "CARD_ID_AMINATOU_THE_FATESHIFTER": 19076,
+    "CARD_ID_ESTRID_THE_MASKED": 19091,
+    "CARD_ID_LORD_WINDGRACE": 19101,
+    "CARD_ID_SAHEELI_THE_GIFTED": 19119,
+    "CARD_ID_JESKA_THRICE_REBORN": 22142,
+    "CARD_ID_TEVESH_SZAT_DOOM_OF_FOOLS": 22212
+  },
+  "card_id_header_sha256": "3b41032de788e7a7058fee28ffcd15bf3b3a5e55e8402ee1cc6436f3b9ac73a4",
+  "maps": {
+    "p1": {
+      "7300": [
+        534,
+        538,
+        3430,
+        3570,
+        3586,
+        4021,
+        6347,
+        6755,
+        7049,
+        7993,
+        8153,
+        8710,
+        9063,
+        9353,
+        9354,
+        9431,
+        10018,
+        10108,
+        10256,
+        10783,
+        11062,
+        11751,
+        11765,
+        12022,
+        12396,
+        12970
+      ]
+    },
+    "charge": {
+      "6500": [
+        4527,
+        6240,
+        7336,
+        7587,
+        9347,
+        10304,
+        11049,
+        11232,
+        11270,
+        11301,
+        11543,
+        11583,
+        11682,
+        12437
+      ],
+      "9999": [
+        6875
+      ]
+    },
+    "depletion": {
+      "480": [
+        4488,
+        4550,
+        4568,
+        4590,
+        4598
+      ],
+      "-9999": [
+        6506
+      ],
+      "-540": [
+        6529
+      ]
+    },
+    "time": {
+      "-150": [
+        8755,
+        8764,
+        8830,
+        8964
+      ]
+    },
+    "verse": {
+      "7000": [
+        3827,
+        3866,
+        3893,
+        3950
+      ]
+    },
+    "legal": {
+      "1": [
+        8047,
+        8061,
+        8075,
+        8160,
+        8164,
+        14451,
+        14462,
+        14476,
+        14478,
+        14490,
+        18626,
+        18653,
+        19076,
+        19091,
+        19101,
+        19119,
+        22142,
+        22212
+      ]
+    }
+  },
+  "boolean_arithmetic": [
+    {
+      "before": "(-(unsigned int)(adding == 0) & 100) + 1",
+      "after": "(adding == 0) ? 101 : 1",
+      "true_value": 101,
+      "false_value": 1
+    },
+    {
+      "before": "(-(unsigned int)(result == 0) & 0x148) - 300",
+      "after": "(result == 0) ? 28 : -300",
+      "true_value": 28,
+      "false_value": -300
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 7999) + 2",
+      "after": "(adding == 0) ? 8001 : 2",
+      "true_value": 8001,
+      "false_value": 2
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0xffffff9c) - 1",
+      "after": "(adding == 0) ? -101 : -1",
+      "true_value": -101,
+      "false_value": -1
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0xffffe4b2) - 0xc",
+      "after": "(adding == 0) ? -7002 : -12",
+      "true_value": -7002,
+      "false_value": -12
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0xffffe4b2) - 0xb",
+      "after": "(adding == 0) ? -7001 : -11",
+      "true_value": -7001,
+      "false_value": -11
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0xfffffc21) - 10",
+      "after": "(adding == 0) ? -1001 : -10",
+      "true_value": -1001,
+      "false_value": -10
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0x12a) + 3",
+      "after": "(adding == 0) ? 301 : 3",
+      "true_value": 301,
+      "false_value": 3
+    },
+    {
+      "before": "(-(unsigned int)(result == 0) & 0x7c8) - 0x7d1",
+      "after": "(result == 0) ? -9 : -2001",
+      "true_value": -9,
+      "false_value": -2001
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0xffffe892) - 3",
+      "after": "(adding == 0) ? -6001 : -3",
+      "true_value": -6001,
+      "false_value": -3
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0x2b6) + 7",
+      "after": "(adding == 0) ? 701 : 7",
+      "true_value": 701,
+      "false_value": 7
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0x2325) + 4",
+      "after": "(adding == 0) ? 9001 : 4",
+      "true_value": 9001,
+      "false_value": 4
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0xfffffce7) - 8",
+      "after": "(adding == 0) ? -801 : -8",
+      "true_value": -801,
+      "false_value": -8
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0x1f3c) + 5",
+      "after": "(adding == 0) ? 8001 : 5",
+      "true_value": 8001,
+      "false_value": 5
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0xffffec7c) - 5",
+      "after": "(adding == 0) ? -5001 : -5",
+      "true_value": -5001,
+      "false_value": -5
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0xfffffd4a) - 7",
+      "after": "(adding == 0) ? -701 : -7",
+      "true_value": -701,
+      "false_value": -7
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0xfffffdad) - 6",
+      "after": "(adding == 0) ? -601 : -6",
+      "true_value": -601,
+      "false_value": -6
+    },
+    {
+      "before": "(-(unsigned int)(adding == 0) & 0xfffffe73) - 4",
+      "after": "(adding == 0) ? -401 : -4",
+      "true_value": -401,
+      "false_value": -4
+    },
+    {
+      "before": "(-(unsigned int)(result == 0) & 0xffffe82c) + 0x1c84",
+      "after": "(result == 0) ? 1200 : 7300",
+      "true_value": 1200,
+      "false_value": 7300
+    },
+    {
+      "before": "((t_player != player) - 1 & 0xffffffe6) + 0xd",
+      "after": "(t_player != player) ? 13 : -13",
+      "true_value": 13,
+      "false_value": -13
+    },
+    {
+      "before": "((t_player == player) - 1 & 0xffffffe8) + 0xc",
+      "after": "(t_player == player) ? 12 : -12",
+      "true_value": 12,
+      "false_value": -12
+    },
+    {
+      "before": "((t_player == player) - 1 & 0xffffffbc) + 0x22",
+      "after": "(t_player == player) ? 34 : -34",
+      "true_value": 34,
+      "false_value": -34
+    },
+    {
+      "before": "((t_player != player) - 1 & 0xffffff10) + 0x78",
+      "after": "(t_player != player) ? 120 : -120",
+      "true_value": 120,
+      "false_value": -120
+    },
+    {
+      "before": "((t_player == player) - 1 & 0xffffff10) + 0x78",
+      "after": "(t_player == player) ? 120 : -120",
+      "true_value": 120,
+      "false_value": -120
+    },
+    {
+      "before": "((t_player == player) - 1 & 0xfffffd30) + 0x168",
+      "after": "(t_player == player) ? 360 : -360",
+      "true_value": 360,
+      "false_value": -360
+    },
+    {
+      "before": "((t_player != player) - 1 & 0xffffff38) + 100",
+      "after": "(t_player != player) ? 100 : -100",
+      "true_value": 100,
+      "false_value": -100
+    },
+    {
+      "before": "((t_player != player) - 1 & 0xffffb1e0) + 10000",
+      "after": "(t_player != player) ? 10000 : -10000",
+      "true_value": 10000,
+      "false_value": -10000
+    },
+    {
+      "before": "((t_player == player) - 1 & 0xffffb1e6) + 0x270d",
+      "after": "(t_player == player) ? 9997 : -9997",
+      "true_value": 9997,
+      "false_value": -9997
+    },
+    {
+      "before": "((t_player != player) - 1 & 0xfffffce0) + 400",
+      "after": "(t_player != player) ? 400 : -400",
+      "true_value": 400,
+      "false_value": -400
+    },
+    {
+      "before": "((t_player == player) - 1 & 0xfffffff0) + 8",
+      "after": "(t_player == player) ? 8 : -8",
+      "true_value": 8,
+      "false_value": -8
+    },
+    {
+      "before": "((csvid == CARD_ID_ICEBERG) - 1 & 0xffffffae) + 0x50",
+      "after": "(csvid == CARD_ID_ICEBERG) ? 80 : -2",
+      "true_value": 80,
+      "false_value": -2
+    },
+    {
+      "before": "((csvid == CARD_ID_MOMENTUM) - 1 & 0xfffffe2f) + 0x1e0",
+      "after": "(csvid == CARD_ID_MOMENTUM) ? 480 : 15",
+      "true_value": 480,
+      "false_value": 15
+    },
+    {
+      "before": "((t_player != player) - 1 & 0xfffffaec) + 0x28a",
+      "after": "(t_player != player) ? 650 : -650",
+      "true_value": 650,
+      "false_value": -650
+    },
+    {
+      "before": "((t_player != player) - 1 & 0xffffb1e6) + 0x270d",
+      "after": "(t_player != player) ? 9997 : -9997",
+      "true_value": 9997,
+      "false_value": -9997
+    },
+    {
+      "before": "(csvid != CARD_ID_MALEFIC_SCYTHE) - 1 & 0x517",
+      "after": "(csvid != CARD_ID_MALEFIC_SCYTHE) ? 0 : 1303",
+      "true_value": 0,
+      "false_value": 1303
+    },
+    {
+      "before": "(csvid != CARD_ID_RAKDOS_RITEKNIFE) - 1 & 0x2260",
+      "after": "(csvid != CARD_ID_RAKDOS_RITEKNIFE) ? 0 : 8800",
+      "true_value": 0,
+      "false_value": 8800
+    }
+  ],
+  "enum_renames": [
+    {
+      "before": "result != 0xa0",
+      "after": "result != COUNTER_ACORN"
+    },
+    {
+      "before": "result != 0x9e",
+      "after": "result != COUNTER_INCARNATION"
+    },
+    {
+      "before": "result != 0x9d",
+      "after": "result != COUNTER_FORESHADOW"
+    },
+    {
+      "before": "result != 0x8f",
+      "after": "result != COUNTER_TASK"
+    },
+    {
+      "before": "result != 0x8d",
+      "after": "result != COUNTER_KNOWLEDGE"
+    },
+    {
+      "before": "result != 0x89",
+      "after": "result != COUNTER_SLUMBER"
+    },
+    {
+      "before": "result != 0x87",
+      "after": "result != COUNTER_LANDMARK"
+    },
+    {
+      "before": "result != 0x84",
+      "after": "result != COUNTER_BRICK"
+    },
+    {
+      "before": "result != 0x83",
+      "after": "result != COUNTER_UNITY"
+    },
+    {
+      "before": "result != 0x82",
+      "after": "result != COUNTER_SPITE"
+    },
+    {
+      "before": "result != 0x81",
+      "after": "result != COUNTER_FURY"
+    },
+    {
+      "before": "result != 0x80",
+      "after": "result != COUNTER_HOUR"
+    },
+    {
+      "before": "result != 0x7f",
+      "after": "result != COUNTER_PLOT"
+    },
+    {
+      "before": "result != 0x7d",
+      "after": "result != COUNTER_GEM"
+    },
+    {
+      "before": "result != 0x7c",
+      "after": "result != COUNTER_CRYSTAL"
+    },
+    {
+      "before": "result != 0x7a",
+      "after": "result != COUNTER_WISH"
+    },
+    {
+      "before": "result != 0x78",
+      "after": "result != COUNTER_WINCH"
+    },
+    {
+      "before": "result != 0x77",
+      "after": "result != COUNTER_WAGE"
+    },
+    {
+      "before": "result != 0x76",
+      "after": "result != COUNTER_VITALITY"
+    },
+    {
+      "before": "result != 0x73",
+      "after": "result != COUNTER_TREASURE"
+    },
+    {
+      "before": "result != 0x70",
+      "after": "result != COUNTER_TOWER"
+    },
+    {
+      "before": "result == 0x6e",
+      "after": "result == COUNTER_TIDE"
+    },
+    {
+      "before": "result != 0x6c",
+      "after": "result != COUNTER_THEFT"
+    },
+    {
+      "before": "result != 0x6b",
+      "after": "result != COUNTER_STUDY"
+    },
+    {
+      "before": "result != 0x6a",
+      "after": "result != COUNTER_STRIFE"
+    },
+    {
+      "before": "result != 0x69",
+      "after": "result != COUNTER_STORAGE"
+    },
+    {
+      "before": "result != 0x68",
+      "after": "result != COUNTER_SPORE"
+    },
+    {
+      "before": "result != 0x67",
+      "after": "result != COUNTER_SOOT"
+    },
+    {
+      "before": "result != 0x66",
+      "after": "result != COUNTER_SLIME"
+    },
+    {
+      "before": "result != 0x65",
+      "after": "result != COUNTER_SLEIGHT"
+    },
+    {
+      "before": "result != 99",
+      "after": "result != COUNTER_SHRED"
+    },
+    {
+      "before": "result != 0x62",
+      "after": "result != COUNTER_SHOE"
+    },
+    {
+      "before": "result != 0x61",
+      "after": "result != COUNTER_PALLIATION"
+    },
+    {
+      "before": "result != 0x60",
+      "after": "result != COUNTER_SHELL"
+    },
+    {
+      "before": "result != 0x5b",
+      "after": "result != COUNTER_PUPA"
+    },
+    {
+      "before": "result != 0x5a",
+      "after": "result != COUNTER_PRESSURE"
+    },
+    {
+      "before": "result != 0x59",
+      "after": "result != COUNTER_POP"
+    },
+    {
+      "before": "result != 0x58",
+      "after": "result != COUNTER_POLYP"
+    },
+    {
+      "before": "result != 0x57",
+      "after": "result != COUNTER_PLAGUE"
+    },
+    {
+      "before": "result != 0x56",
+      "after": "result != COUNTER_PIN"
+    },
+    {
+      "before": "result != 0x53",
+      "after": "result != COUNTER_PETAL"
+    },
+    {
+      "before": "result != 0x51",
+      "after": "result != COUNTER_PAIN"
+    },
+    {
+      "before": "result != 0x50",
+      "after": "result != COUNTER_PAGE"
+    },
+    {
+      "before": "result != 0x4f",
+      "after": "result != COUNTER_ORE"
+    },
+    {
+      "before": "result != 0x4c",
+      "after": "result != COUNTER_MUSTER"
+    },
+    {
+      "before": "result != 0x49",
+      "after": "result != COUNTER_MINING"
+    },
+    {
+      "before": "result != 0x43",
+      "after": "result != COUNTER_LUCK"
+    },
+    {
+      "before": "result != 0x41",
+      "after": "result != COUNTER_LORE"
+    },
+    {
+      "before": "result != 0x3f",
+      "after": "result != COUNTER_KI"
+    },
+    {
+      "before": "result != 0x3e",
+      "after": "result != COUNTER_JAVELIN"
+    },
+    {
+      "before": "result != 0x3d",
+      "after": "result != COUNTER_INTERVENTION"
+    },
+    {
+      "before": "result != 0x3c",
+      "after": "result != COUNTER_INFECTION"
+    },
+    {
+      "before": "result != 0x3a",
+      "after": "result != COUNTER_HUSK"
+    },
+    {
+      "before": "result != 0x39",
+      "after": "result != COUNTER_HUNGER"
+    },
+    {
+      "before": "result != 0x37",
+      "after": "result != COUNTER_HOOFPRINT"
+    },
+    {
+      "before": "result != 0x36",
+      "after": "result != COUNTER_HEALING"
+    },
+    {
+      "before": "result != 0x35",
+      "after": "result != COUNTER_HATCHLING"
+    },
+    {
+      "before": "result == 0x34",
+      "after": "result == COUNTER_GROWTH"
+    },
+    {
+      "before": "result == 0x31",
+      "after": "result == COUNTER_FUSE"
+    },
+    {
+      "before": "result != 0x30",
+      "after": "result != COUNTER_FUNK"
+    },
+    {
+      "before": "result != 0x2d",
+      "after": "result != COUNTER_FLAME"
+    },
+    {
+      "before": "result != 0x2c",
+      "after": "result != COUNTER_FILIBUSTER"
+    },
+    {
+      "before": "result == 0x2b",
+      "after": "result == COUNTER_FEATHER"
+    },
+    {
+      "before": "result != 0x29",
+      "after": "result != COUNTER_FADE"
+    },
+    {
+      "before": "result != 0x28",
+      "after": "result != COUNTER_EYEBALL"
+    },
+    {
+      "before": "result != 0x27",
+      "after": "result != COUNTER_EON"
+    },
+    {
+      "before": "result != 0x26",
+      "after": "result != COUNTER_VORTEX"
+    },
+    {
+      "before": "result != 0x25",
+      "after": "result != COUNTER_ELIXIR"
+    },
+    {
+      "before": "result != 0x24",
+      "after": "result != COUNTER_ECHO"
+    },
+    {
+      "before": "result != 0x23",
+      "after": "result != COUNTER_DREAM"
+    },
+    {
+      "before": "result == 0x21",
+      "after": "result == COUNTER_DIVINITY"
+    },
+    {
+      "before": "result != 0x20",
+      "after": "result != COUNTER_DEVOTION"
+    },
+    {
+      "before": "result != 0x1f",
+      "after": "result != COUNTER_DESPAIR"
+    },
+    {
+      "before": "result != 0x1c",
+      "after": "result != COUNTER_DEATH"
+    },
+    {
+      "before": "result != 0x1b",
+      "after": "result != COUNTER_CURRENCY"
+    },
+    {
+      "before": "result != 0x1a",
+      "after": "result != COUNTER_CUBE"
+    },
+    {
+      "before": "result != 0x19",
+      "after": "result != COUNTER_CREDIT"
+    },
+    {
+      "before": "result != 0x18",
+      "after": "result != COUNTER_CORPSE"
+    },
+    {
+      "before": "result != 0x17",
+      "after": "result != COUNTER_CHIP"
+    },
+    {
+      "before": "result != 0x16",
+      "after": "result != COUNTER_CARRION"
+    },
+    {
+      "before": "result == 0x12",
+      "after": "result == COUNTER_BLAZE"
+    },
+    {
+      "before": "result != 0x10",
+      "after": "result != COUNTER_ARROWHEAD"
+    },
+    {
+      "before": "result != 0xf",
+      "after": "result != COUNTER_ARROW"
+    },
+    {
+      "before": "result != 0xe",
+      "after": "result != COUNTER_AIM"
+    },
+    {
+      "before": "result != 0xd",
+      "after": "result != COUNTER_AGE"
+    },
+    {
+      "before": "is_what(t_player, t_card, 2)",
+      "after": "is_what(t_player, t_card, TYPE_CREATURE)",
+      "count": 27
+    },
+    {
+      "before": "is_what(t_player, t_card, 1)",
+      "after": "is_what(t_player, t_card, TYPE_LAND)",
+      "count": 5
+    },
+    {
+      "before": "is_what(t_player, t_card, 0x100)",
+      "after": "is_what(t_player, t_card, TARGET_TYPE_PLANESWALKER)",
+      "count": 1
+    },
+    {
+      "before": "is_what(t_player, t_card, 0x40)",
+      "after": "is_what(t_player, t_card, TYPE_ARTIFACT)",
+      "count": 1
+    },
+    {
+      "before": "instance->display_pic_csv_id != 0xc41",
+      "after": "instance->display_pic_csv_id != CARD_ID_ERTAIS_MEDDLING"
+    },
+    {
+      "before": "instance->display_pic_csv_id == 0x232",
+      "after": "instance->display_pic_csv_id == CARD_ID_ALL_HALLOWS_EVE"
+    }
+  ],
+  "native_map_execution": {
+    "cases": 458752,
+    "card_id_domain": [
+      0,
+      65535
+    ],
+    "columns": [
+      "p1",
+      "charge_same",
+      "charge_other",
+      "depletion",
+      "time",
+      "verse",
+      "legal"
+    ],
+    "csv_sha256": "a860700188433bc698550a281ec81f54b334cfc809944a0faa5c95a2b0cebc3a",
+    "harness_sha256": "07dbd264090da3c4ef86eb14a37641bd389a8ee18e63ad3d265a071df095041c"
+  },
+  "baseline_execution": {
+    "raw_counter_fixtures": 13241664,
+    "legal_commander_fixtures": 1048576,
+    "result_and_call_trace_mismatches": 0,
+    "checksum": "c43c2425",
+    "fixture_driver_sha256": "bc8f0d69d3b179de23e8aa16ffcaa356635e10fb2d0d443b541aa849804b6da0",
+    "fixture_generator_sha256": "66dad4d7bc348abf1f7c67694888de001bbce3a6ff4ac4434292f0992972853f",
+    "before_harness_sha256": "e2d4c2a089cdaef0aac7a6c98d2673fb2ae89c7f4418e88431b7285d692d7ca7",
+    "prospective_harness_sha256": "92137e4a6b5b43746e8320acae3b57bb88556684996505ee1116bcfb13716f9d",
+    "before_log_sha256": "d82061be43e8c648826704f542d5e7611ce5d9ac059d032e2a9ecc11ed525fcb",
+    "prospective_log_sha256": "d82061be43e8c648826704f542d5e7611ce5d9ac059d032e2a9ecc11ed525fcb",
+    "before_patch_receipt_sha256": "2e283cf43b241abe80946da72313c2afec593cd20494a03ac08ae856ad4b5e84",
+    "entries": [
+      {
+        "image": 0,
+        "name": "raw_counter_value",
+        "source": "functions/counters.c",
+        "address": "0x26d1950",
+        "size": 8103,
+        "body_sha256": "b195577559ce25554755bed8456f0fc7f8f25a3f06d7ee5e4259f5aaec254ba1"
+      },
+      {
+        "image": 0,
+        "name": "is_legal_general",
+        "source": "cards/vanguard.c",
+        "address": "0x22c3220",
+        "size": 290,
+        "body_sha256": "5ab8d906374b8114d9a45053642496e25752f6a899c6ab1db9ddf355f2155b40"
+      },
+      {
+        "image": 1,
+        "name": "raw_counter_value",
+        "source": "functions/counters.c",
+        "address": "0x2663ce0",
+        "size": 7859,
+        "body_sha256": "21ebfb0a4a602bf48a6a6750677e1af07bbf507e516a1bf9c30244e85bb32235"
+      },
+      {
+        "image": 1,
+        "name": "is_legal_general",
+        "source": "cards/vanguard.c",
+        "address": "0x25f2250",
+        "size": 283,
+        "body_sha256": "6e77d8126f73b783758cd57829f427f4911877da690ded7a96c51fb1c55d74d0"
+      }
+    ],
+    "calling_conventions": {
+      "native_raw_counter_value": "cdecl, five stack parameters",
+      "rebuilt_raw_counter_value": "private regparm(3), two remaining stack parameters",
+      "native_and_rebuilt_is_legal_general": "private regparm(1)"
+    },
+    "scope": "Original/rebuilt DLLs are mapped with imports and entry points disabled. Only decoded direct leaf-call operands, external fixture-data addresses and the suspend function-pointer comparison are patched in process memory. The tested function instructions and local branch/jump tables otherwise execute unchanged. Stubbed helper argument/order hashes and returned values are compared with independently compiled old/prospective source. This checks caller decisions over the recorded domain, not engine behavior or arbitrary game state."
+  },
+  "preserved_native_details": [
+    "Quest priority intentionally queries COUNTER_LEVEL, not COUNTER_QUEST.",
+    "Commander fallback reloads cards_data[iid].id after is_legendary/is_what; mutated-ID fixtures cover this ordering.",
+    "COUNTER_GROWTH rejects a matching natural counter type; its equality test remains unchanged.",
+    "Discordant Dirge reads opponent hand count before querying verse counters; its unsigned-add/cast boundary remains.",
+    "Charge priorities preserve owner-sensitive Kilnspire and its bypass of the natural-counter guard."
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "scope": "Readable reconstruction of two existing helper bodies. Five counter-card trees, 36 branchless Boolean arithmetic expressions and the 18 commander exceptions become explicit. Native identifiers and enum values are checked; no new handlers or gameplay fixes are claimed.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "da6b55253bf002c208cd114ca86106d28471e122c2fa0c3a7120f03559bf878d",
+    "dbg_sha256": "9b2692dd444b265c10aac51794010f090e3ae0555f6e3de878b2eabbf07c2fe7",
+    "functions": [
+      {
+        "image": 1,
+        "name": "raw_counter_value",
+        "source": "functions/counters.c",
+        "address": "0x2663d40",
+        "size": 7958,
+        "body_sha256": "022ac3a621d525ba7d59d2f85d68a6611a3905ad672d8786b281aeee777fb253"
+      },
+      {
+        "image": 1,
+        "name": "is_legal_general",
+        "source": "cards/vanguard.c",
+        "address": "0x25f2250",
+        "size": 381,
+        "body_sha256": "fc36290371c9f7988f4e1eb370bff1c4919f72ece73eac9507dc99fa4db830c2"
+      }
+    ],
+    "raw_counter_fixtures": 13241664,
+    "legal_commander_fixtures": 1048576,
+    "returned_value_and_helper_call_trace_mismatches": 0,
+    "checksum": "c43c2425",
+    "full_source_projections": 2,
+    "staging": "preserved",
+    "harness_sha256": "c8a8a7e3e6376ed023cd7a7d2fffa4dbfbf1d7b490fa1738588895e8f6eb993c",
+    "harness_executable_sha256": "cc7a8c1a14f71353f74c499a7d3967e7b9f07e3cf92b8c82f5d8699590db6588",
+    "execution_log_sha256": "d82061be43e8c648826704f542d5e7611ce5d9ac059d032e2a9ecc11ed525fcb",
+    "patch_receipt_sha256": "f0572de34fd3360e6d8ea000e9121cf28c870f9b6061e6f755d2ceab354eba3b",
+    "decoded_patch_fields": {
+      "call": 274,
+      "data": 25,
+      "pointer": 2
+    },
+    "domain": {
+      "raw_all_card_ids": [
+        0,
+        65535
+      ],
+      "raw_counter_types_full_id_domain": [
+        0,
+        186
+      ],
+      "selected_counter_types_all_ids_with_adding_minus1_through2": [
+        "COUNTER_P1_P1",
+        "COUNTER_CHARGE",
+        "COUNTER_DEPLETION"
+      ],
+      "additional_deterministic_boundary_random_fixtures": 200000,
+      "commander_all_card_ids": [
+        0,
+        65535
+      ],
+      "commander_flags": "All legendary/creature/God Boolean combinations, both with and without a stub that mutates the card ID after the initial read."
+    },
+    "scope": "Execute both actual DLL bodies and independently compiled old/new source with explicit engine-call/data fixtures. Compare return values plus ordered leaf-helper arguments. This does not emulate the engine helpers or prove every possible game state. The native/current private calling conventions differ and have separate harness adapters. No on-disk DLL instructions or branch conditions are changed."
+  }
+}

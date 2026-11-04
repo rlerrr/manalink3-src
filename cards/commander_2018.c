@@ -326,7 +326,7 @@ int card_ancient_stone_idol(int player, int card, event_t event)
   result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (result != 0)
   {
-    default_token_definition(player, card, 0x4918, &token);
+    default_token_definition(player, card, CARD_ID_CONSTRUCT, &token);
     token.pow = 6;
     token.tou = 0xc;
     token.key_plus = 0x80;
@@ -380,20 +380,20 @@ static int effect_estrids_invocation(int player, int card, event_t event)
   int attached_card;
   card_instance_t *instance;
   int upkeep_mode;
-  int player_00;
+  int target_player;
 
   if (effect_follows_control_of_attachment(player, card, event) == 0)
   {
     instance = get_card_instance(player, card);
     if (player == current_turn)
     {
-      player_00 = (int)instance->damage_target_player;
+      target_player = (int)instance->damage_target_player;
       attached_card = instance->damage_target_card;
-      upkeep_mode = duh_mode(player_00);
-      if (upkeep_trigger_mode(player_00, attached_card, event,
+      upkeep_mode = duh_mode(target_player);
+      if (upkeep_trigger_mode(target_player, attached_card, event,
                               (upkeep_mode != 0) + RESOLVE_TRIGGER_OPTIONAL) != 0)
       {
-        blink_effect(player_00, attached_card, NULL);
+        blink_effect(target_player, attached_card, NULL);
       }
     }
   }
@@ -433,7 +433,7 @@ int card_nesting_dragon(int player, int card, event_t event)
   {
     return 0;
   }
-  generate_token_by_id(player, card, 0x33e2);
+  generate_token_by_id(player, card, CARD_ID_DRAGON_EGG);
   return 0;
 }
 
@@ -444,10 +444,7 @@ static int amaug_leg_part(int player, int card, event_t event);
 /* ManalinkEh 2022: 0x2560360; original cards/commander_2018.c:3. */
 static int amaug_leg(int player, int card, event_t event)
 {
-  int result;
-
-  result = eot_trigger(player, card, event);
-  if (result != 0)
+  if (eot_trigger(player, card, event))
   {
     kill_card(player, card, KILL_DESTROY);
   }
@@ -456,8 +453,7 @@ static int amaug_leg(int player, int card, event_t event)
   {
     return 0;
   }
-  result = amaug_leg_part(player, card, event);
-  return result;
+  return amaug_leg_part(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -493,7 +489,7 @@ int card_aminatou_the_fateshifter(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     default_target_definition(player, card, &td, 0x47);
     td.allowed_controller = player | 4;
-    td.special = 0x4000;
+    td.special = TARGET_SPECIAL_NOT_ME;
     default_test_definition(&this_test, 0x47);
     this_test.type = 1;
     this_test.type_flag = 1;
@@ -506,7 +502,7 @@ int card_aminatou_the_fateshifter(int player, int card, event_t event)
       turn_or_result = check_battlefield_for_special_card(player, card, 1 - player, 4, &this_test);
       pass_or_marked_index =
           check_battlefield_for_special_card(player, card, player, 4, &this_test);
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_PLANESWALKER,
                            "Draw and put a card on your library", 1, 1, 1, "Blink", can_target(&td),
                            4, 0xffffffff, "Trade permanents", 1,
                            turn_or_result - pass_or_marked_index, 0xfffffffa, 0, 0, 0, 0);
@@ -529,7 +525,7 @@ int card_aminatou_the_fateshifter(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     default_target_definition(player, card, &td, 0x47);
     td.allowed_controller = player | 4;
-    td.special = 0x4000;
+    td.special = TARGET_SPECIAL_NOT_ME;
     default_test_definition(&this_test, 0x47);
     this_test.type = 1;
     this_test.type_flag = 1;
@@ -780,7 +776,7 @@ int card_estrid_the_masked(int player, int card, event_t event)
     permanent_count = check_battlefield_for_special_card(player, card, player, 4, &test2);
     mask_count = count_cards_by_id(player, 0x4aa4);
     grave_enchantment_count = count_graveyard_by_type(player, 4);
-    if (dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017",
+    if (dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_PLANESWALKER,
                     "Untap all enchanted permanents", 1, priority_mode_or_loyalty, 2,
                     "Create a Mask", 1, (permanent_count - mask_count) * 3, 0xffffffff,
                     "Replenish enchantments", 1, grave_enchantment_count * 5, 0xfffffff9, 0, 0, 0,
@@ -811,7 +807,7 @@ int card_estrid_the_masked(int player, int card, event_t event)
       }
       else if (priority_mode_or_loyalty == CHOICE_MASK)
       {
-        generate_token_by_id(player, card, 0x4aa4);
+        generate_token_by_id(player, card, CARD_ID_MASK);
       }
       else if (priority_mode_or_loyalty == CHOICE_REPLENISH)
       {
@@ -1122,7 +1118,7 @@ int card_treasure_nabber(int player, int card, event_t event)
 static int effect_xantcha(int player, int card, event_t event)
 {
   int p;
-  int card_00;
+  int target_card;
   card_instance_t *instance;
   int id_or_activation_cost;
 
@@ -1161,14 +1157,14 @@ static int effect_xantcha(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       p = instance->targets[0].player;
-      card_00 = instance->targets[0].card;
+      target_card = instance->targets[0].card;
       if (event == EVENT_CAN_ACTIVATE)
       {
-        if (can_use_activated_abilities(p, card_00) != 0)
+        if (can_use_activated_abilities(p, target_card) != 0)
         {
 
           id_or_activation_cost =
-              get_cost_mod_for_activated_abilities(p, card_00, 3, 0, 0, 0, 0, 0);
+              get_cost_mod_for_activated_abilities(p, target_card, 3, 0, 0, 0, 0, 0);
           if (has_mana_multi(player, id_or_activation_cost, 0, 0, 0, 0, 0) != 0)
           {
             return 1;
@@ -1181,7 +1177,7 @@ static int effect_xantcha(int player, int card, event_t event)
         {
 
           charge_mana_multi(player,
-                            get_cost_mod_for_activated_abilities(p, card_00, 3, 0, 0, 0, 0, 0), 0,
+                            get_cost_mod_for_activated_abilities(p, target_card, 3, 0, 0, 0, 0, 0), 0,
                             0, 0, 0, 0);
           return 0;
         }
@@ -1296,15 +1292,13 @@ int card_xantcha_sleeper_agent(int player, int card, event_t event)
 int card_thantis_the_warweaver(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
 
   check_legend_rule(player, card, event);
   vigilance(player, card, event);
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_STATIC))
     {
       all_must_attack_if_able(current_turn, event, -1);
     }
@@ -1436,35 +1430,35 @@ int card_aminatous_augury(int player, int card, event_t event)
 int card_mask(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int player_00;
+  int target_player;
   card_instance_t *attached_or_source;
   int was_tapped;
   int attached_card;
   target_definition_t td;
 
   instance = get_card_instance(player, card);
-  player_00 = (int)instance->damage_target_player;
+  target_player = (int)instance->damage_target_player;
   attached_card = instance->damage_target_card;
   attached_or_source = in_play(player, card);
-  if ((attached_or_source != NULL) && (player_00 != -1))
+  if ((attached_or_source != NULL) && (target_player != -1))
   {
     if (instance->targets[7].player == 1)
     {
       return 0;
     }
     instance->targets[7].player = 1;
-    if (is_this_dying(player_00, attached_card) != 0)
+    if (is_this_dying(target_player, attached_card) != 0)
     {
 
-      attached_or_source = get_card_instance(player_00, attached_card);
+      attached_or_source = get_card_instance(target_player, attached_card);
       if ((unsigned char)(attached_or_source->kill_code - 1) < 2)
       {
 
-        was_tapped = is_tapped(player_00, attached_card);
-        regenerate_target_exe(player_00, attached_card);
+        was_tapped = is_tapped(target_player, attached_card);
+        regenerate_target_exe(target_player, attached_card);
         if (was_tapped == 0)
         {
-          untap_card_no_event(player_00, attached_card);
+          untap_card_no_event(target_player, attached_card);
         }
         kill_card(player, card, KILL_SACRIFICE);
       }
@@ -1565,7 +1559,7 @@ int card_retrofitter_foundry(int player, int card, event_t event)
       {
         untap_priority = 0x14;
       }
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1,
                            "Untap Retrofitter Foundry", untap_available, untap_priority,
                            "Create a Servo", available_cost_or_token, 5, "Create a Thopter",
                            thopter_available, 10, "Create a Construct", construct_available, 0xf, 0,
@@ -1637,7 +1631,7 @@ int card_retrofitter_foundry(int player, int card, event_t event)
       {
         return 0;
       }
-      default_token_definition(instance->parent_controller, instance->parent_card, 0x4918, &token);
+      default_token_definition(instance->parent_controller, instance->parent_card, CARD_ID_CONSTRUCT, &token);
       token.tou = 4;
       token.pow = 4;
       generate_token(&token);
@@ -1780,7 +1774,7 @@ int card_arixmethes_slumbering_isle(int player, int card, event_t event)
       event_result = land_type_iid;
     }
   }
-  if (trigger_condition == 0xd3 && card == affected_card && player == affected_card_controller)
+  if (trigger_condition == TRIGGER_SPELL_CAST && card == affected_card && player == affected_card_controller)
   {
     if ((trigger_cause != card) &&
         (result = count_counters(player, card, COUNTER_SLUMBER), result != 0))
@@ -1895,38 +1889,23 @@ int card_echo_storm(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25619a0; original cards/commander_2018.c:518. */
 int card_empyrial_storm(int player, int card, event_t event)
 {
-  int i;
-  int storm_checked;
-  int commander_or_storm_count;
-
   if (event == EVENT_CAN_CAST)
-  {
     return basic_spell(player, card, EVENT_CAN_CAST);
-  }
   if (event == EVENT_CAST_SPELL)
   {
-    if ((((card == affected_card) && (player == affected_card_controller)) &&
-         (basic_spell(player, card, EVENT_CAST_SPELL), spell_fizzled != 1)) &&
-        (storm_checked = check_special_flags(player, card, 0x40000), storm_checked == 0))
+    if (card == affected_card && player == affected_card_controller)
     {
-      commander_or_storm_count = locate_edh_card(player);
-      i = 0;
-      if (-1 < commander_or_storm_count)
-      {
-        for (; commander_or_storm_count = get_commander_storm_count(player),
-               i < commander_or_storm_count;
-             i = i + 1)
-        {
-          generate_token_by_id(player, card, 0x48ff);
-        }
-      }
+      basic_spell(player, card, EVENT_CAST_SPELL);
+      if (spell_fizzled != 1 && !check_special_flags(player, card, 0x40000) &&
+          locate_edh_card(player) >= 0)
+        for (int i = 0; i < get_commander_storm_count(player); ++i)
+          generate_token_by_id(player, card, CARD_ID_ANGEL);
     }
   }
   else if (event == EVENT_RESOLVE_SPELL)
   {
-    generate_token_by_id(player, card, 0x48ff);
+    generate_token_by_id(player, card, CARD_ID_ANGEL);
     kill_card(player, card, KILL_DESTROY);
-    return 0;
   }
   return 0;
 }
@@ -2152,7 +2131,7 @@ int card_varchild_betrayer_of_kjeldor(int player, int card, event_t event)
     packed_damage = instance->targets[0x10].player;
     instance->targets[0x10].player = 0;
     survivor_count = (char)((unsigned int)packed_damage >> 8) + (char)packed_damage;
-    default_token_definition(instance->parent_controller, instance->parent_card, 0x4994, &token);
+    default_token_definition(instance->parent_controller, instance->parent_card, CARD_ID_SURVIVOR, &token);
     token.t_player = 1 - player;
     token.qty = survivor_count;
     generate_token(&token);
@@ -2210,7 +2189,7 @@ int card_brudiclad_telchor_engineer(int player, int card, event_t event)
   result = beginning_of_combat(player, card, event, player);
   if (result != 0)
   {
-    default_token_definition(player, card, 0x4968, &token);
+    default_token_definition(player, card, CARD_ID_MYR, &token);
     token.pow = 2;
     token.tou = 1;
     token.color_forced = '\x04';
@@ -2218,7 +2197,7 @@ int card_brudiclad_telchor_engineer(int player, int card, event_t event)
     default_target_definition(player, card, &td, 0x47);
     td.allowed_controller = player;
     td.illegal_abilities = 0;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)is_token_targ;
     result = can_target(&td);
     if (result != 0)
@@ -2250,7 +2229,7 @@ int card_loyal_apprentice(int player, int card, event_t event)
     result = liutenant(player);
     if (result != 0)
     {
-      default_token_definition(player, card, 0x4995, &token);
+      default_token_definition(player, card, CARD_ID_THOPTER, &token);
       token.action = TOKEN_ACTION_HASTE;
       generate_token(&token);
       return 0;
@@ -2363,7 +2342,6 @@ int card_saheeli_the_gifted(int player, int card, event_t event)
   int source_id_or_result;
   card_instance_t *instance;
   token_generation_t token;
-  char marked[151];
   test_definition_t test;
 
   check_legend_rule(player, card, event);
@@ -2378,7 +2356,7 @@ int card_saheeli_the_gifted(int player, int card, event_t event)
       instance->info_slot = 0;
       test.state = 0x10;
       mode_token_or_scan = check_battlefield_for_special_card(player, card, player, 4, &test);
-      if (dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Create a Servo", 1, 3,
+      if (dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_PLANESWALKER, "Create a Servo", 1, 3,
                       1, "Your next spell costs less", 1, mode_token_or_scan, 1,
                       "Copy your artifacts", 1, mode_token_or_scan * 2, 0xfffffff9, 0, 0, 0,
                       0) == 0)
@@ -2402,12 +2380,12 @@ int card_saheeli_the_gifted(int player, int card, event_t event)
     mode_token_or_scan = instance->info_slot;
     if (mode_token_or_scan == CHOICE_SERVO)
     {
-      generate_token_by_id(player, card, 0x4980);
+      generate_token_by_id(player, card, CARD_ID_SERVO);
     }
     else if (mode_token_or_scan == CHOICE_COST)
     {
 
-      mode_token_or_scan = generate_reserved_token_by_id(player, 0x6160);
+      mode_token_or_scan = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);
       scanned_or_token_instance = get_card_instance(player, mode_token_or_scan);
       scanned_or_token_instance->targets[0].player = player;
       scanned_or_token_instance->targets[0].card = 0x41;
@@ -2418,7 +2396,7 @@ int card_saheeli_the_gifted(int player, int card, event_t event)
     else if (mode_token_or_scan == CHOICE_COPIES)
     {
 
-      memset(marked, 0, sizeof(marked));
+      char marked[151] = {0};
       c = 0;
       if (0 < active_cards_count[player])
       {
@@ -2495,7 +2473,7 @@ int card_lord_windgrace(int player, int card, event_t event)
     memset(msg + 0x16, 0, sizeof(msg) - 0x16);
     new_default_test_definition(&land_test, 1, msg);
     default_target_definition(player, card, &td, 0xff);
-    td.illegal_type = 1;
+    td.illegal_type = TYPE_LAND;
     td.allow_cancel = 3;
     if (event == EVENT_ACTIVATE)
     {
@@ -2509,7 +2487,7 @@ int card_lord_windgrace(int player, int card, event_t event)
       {
         selection_or_quantity = (unsigned int)(1 < scan_or_result) * 5 + 5;
       }
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "\001\033",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_PLANESWALKER, DLG_MODE,
                            "Discard and Draw", (unsigned int)(0 < hand_count[player]), 1, 2,
                            "Reanimate lands", 1, selection_or_quantity, 0xfffffffd,
                            "Destroy and make cats", 1, 0xf, 0xfffffff5, 0, 0, 0, 0);
@@ -2574,7 +2552,7 @@ int card_lord_windgrace(int player, int card, event_t event)
     default_target_definition(player, card, &td, 0xff);
   }
   td.allow_cancel = 3;
-  td.illegal_type = 1;
+  td.illegal_type = TYPE_LAND;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
 
@@ -2662,7 +2640,7 @@ int card_lord_windgrace(int player, int card, event_t event)
           } while (i < (int)(unsigned int)instance->number_of_targets);
         }
         token_generation_t token;
-        default_token_definition(player, card, 0x4910, &token);
+        default_token_definition(player, card, CARD_ID_CAT, &token);
         token.qty = 6;
         token.color_forced = COLOR_TEST_GREEN;
         token.key_plus = get_hacked_walk(player, card, 4);
@@ -2813,7 +2791,7 @@ int card_varina_lich_queen(int player, int card, event_t event)
     return 0;
   }
   instance = get_card_instance(player, card);
-  default_token_definition(instance->parent_controller, instance->parent_card, 0x49ac,
+  default_token_definition(instance->parent_controller, instance->parent_card, CARD_ID_ZOMBIE,
                                 &token);
   token.action = TOKEN_ACTION_TAPPED;
   generate_token(&token);
@@ -2827,205 +2805,140 @@ int card_varina_lich_queen(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x255fd50; original cards/commander_2018.c:3. */
 static int amaug_leg_part(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int available_or_tribal;
-  type_t selected_or_allowed_types;
-  type_t raw_or_used_types;
-  unsigned int type_count_or_sorcery_available;
-  uint32_t tribal_available;
-  int iid_or_choice;
-  unsigned int creature_available;
-  int iid_or_selected_index;
-  int32_t *stored_iid_cursor;
-  unsigned int artifact_available;
-  type_t enchantment_available;
-  type_t allowed_types_or_instant_available;
-  type_t used_types_count_or_planeswalker_available;
-  int any_playable;
+  card_instance_t *leg = get_card_instance(player, card);
   int playable[2][8];
   test_definition_t this_test;
-
-  instance = get_card_instance(player, card);
   if (event == EVENT_CAN_ACTIVATE)
   {
-    used_types_count_or_planeswalker_available = instance->targets[0].player;
-    if (used_types_count_or_planeswalker_available == ~TYPE_NONE)
+    type_t used_types = leg->targets[0].player;
+    if (used_types == ~TYPE_NONE)
     {
-      instance->targets[0].player = 0;
-      used_types_count_or_planeswalker_available = TYPE_NONE;
+      leg->targets[0].player = 0;
+      used_types = TYPE_NONE;
     }
-    stored_iid_cursor = &instance->targets[0].card;
-    any_playable = 0;
-    do
+    int any_playable = 0;
+    for (int i = 0; i < 7; ++i)
     {
-      iid_or_selected_index = *stored_iid_cursor;
-      if (iid_or_selected_index != -1)
+      int iid = leg->targets[i].card;
+      if (iid != -1)
       {
-        raw_or_used_types = get_type_with_iid(-1, -1, iid_or_selected_index);
-        selected_or_allowed_types =
-            raw_or_used_types & (TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_SPELL |
-                                 TYPE_ENCHANTMENT | TYPE_CREATURE);
-        iid_or_choice = is_tribal(-1, iid_or_selected_index);
-        if (raw_or_used_types & TYPE_INTERRUPT)
-          selected_or_allowed_types |= TYPE_INSTANT;
-        if (iid_or_choice)
-          selected_or_allowed_types |= TYPE_EFFECT;
-        if (selected_or_allowed_types != TYPE_NONE)
+        type_t raw_types = get_type_with_iid(-1, -1, iid);
+        type_t types = raw_types & (TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_SPELL |
+                                   TYPE_ENCHANTMENT | TYPE_CREATURE);
+        int tribal = is_tribal(-1, iid);
+        if (raw_types & TYPE_INTERRUPT)
+          types |= TYPE_INSTANT;
+        if (tribal)
+          types |= TYPE_EFFECT;
+        if (types != TYPE_NONE && (types | used_types) != used_types)
         {
-          if (((selected_or_allowed_types | used_types_count_or_planeswalker_available) !=
-               used_types_count_or_planeswalker_available) &&
-              (iid_or_selected_index =
-                   can_legally_play_iid_now(player, iid_or_selected_index, EVENT_CAN_ACTIVATE),
-               iid_or_selected_index != 0))
-          {
-            if (iid_or_selected_index == 99)
-            {
-              return 99;
-            }
+          int available = can_legally_play_iid_now(player, iid, EVENT_CAN_ACTIVATE);
+          if (available == 99)
+            return 99;
+          if (available != 0)
             any_playable = 1;
-          }
         }
       }
-      stored_iid_cursor = stored_iid_cursor + 2;
-      if (&instance->targets[7].card == stored_iid_cursor)
-      {
-        return any_playable;
-      }
-    } while (true);
+    }
+    return any_playable;
   }
   if (event != EVENT_ACTIVATE)
-  {
     return 0;
-  }
-  raw_or_used_types = instance->targets[0].player;
-  used_types_count_or_planeswalker_available = 0;
-  iid_or_selected_index = 0;
-  do
+
+  type_t used_types = leg->targets[0].player;
+  int playable_count = 0;
+  for (int i = 0; i < 7; ++i)
   {
-    iid_or_choice = instance->targets[iid_or_selected_index].card;
-    if ((iid_or_choice != -1) &&
-        (available_or_tribal = check_rfg(player, (unsigned int)cards_data[iid_or_choice].id),
-         available_or_tribal != 0))
+    int iid = leg->targets[i].card;
+    if (iid != -1 && check_rfg(player, (unsigned int)cards_data[iid].id) != 0)
     {
-      selected_or_allowed_types = get_type_with_iid(-1, -1, iid_or_choice);
-      allowed_types_or_instant_available =
-          selected_or_allowed_types & (TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_SPELL |
-                                       TYPE_ENCHANTMENT | TYPE_CREATURE);
-      if (selected_or_allowed_types & TYPE_INTERRUPT)
-        allowed_types_or_instant_available |= TYPE_INSTANT;
-      available_or_tribal = is_tribal(-1, iid_or_choice);
-      if (available_or_tribal)
-        allowed_types_or_instant_available |= TYPE_EFFECT;
-      if (allowed_types_or_instant_available != TYPE_NONE)
+      type_t raw_types = get_type_with_iid(-1, -1, iid);
+      type_t allowed_types = raw_types & (TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_SPELL |
+                                        TYPE_ENCHANTMENT | TYPE_CREATURE);
+      if (raw_types & TYPE_INTERRUPT)
+        allowed_types |= TYPE_INSTANT;
+      int tribal = is_tribal(-1, iid);
+      if (tribal)
+        allowed_types |= TYPE_EFFECT;
+      if (allowed_types != TYPE_NONE && (allowed_types | used_types) != used_types &&
+          can_legally_play_iid_now(player, iid, EVENT_ACTIVATE) != 0)
       {
-        if ((raw_or_used_types != (allowed_types_or_instant_available | raw_or_used_types)) &&
-            (available_or_tribal = can_legally_play_iid_now(player, iid_or_choice, EVENT_ACTIVATE),
-             available_or_tribal != 0))
-        {
-          playable[0][used_types_count_or_planeswalker_available] = iid_or_choice;
-          playable[1][used_types_count_or_planeswalker_available] = iid_or_selected_index;
-          used_types_count_or_planeswalker_available =
-              used_types_count_or_planeswalker_available + 1;
-        }
+        playable[0][playable_count] = iid;
+        playable[1][playable_count] = i;
+        ++playable_count;
       }
     }
-    iid_or_selected_index = iid_or_selected_index + 1;
-  } while (iid_or_selected_index != 7);
+  }
   new_default_test_definition(&this_test, 0xff, "Select a card to cast.");
-  iid_or_selected_index =
-      select_card_from_zone(player, player, playable[0], used_types_count_or_planeswalker_available,
-                            0, 1, -1, &this_test);
-  if (iid_or_selected_index == -1)
+  int selected = select_card_from_zone(player, player, playable[0], playable_count,
+                                       0, 1, -1, &this_test);
+  if (selected == -1)
   {
     spell_fizzled = 1;
+    return 0;
   }
-  else
+  type_t types = get_type_with_iid(-1, -1, playable[0][selected]);
+  unsigned int type_count = num_bits_set(types);
+  bool choose_type = type_count >= 2;
+  if (!choose_type)
   {
-    selected_or_allowed_types = get_type_with_iid(-1, -1, playable[0][iid_or_selected_index]);
-    type_count_or_sorcery_available = num_bits_set(selected_or_allowed_types);
-    bool choose_type = type_count_or_sorcery_available >= 2;
+    int tribal = is_tribal(-1, playable[0][selected]);
+    choose_type = tribal != 0 && (used_types & TYPE_EFFECT) == TYPE_NONE;
     if (!choose_type)
-    {
-      iid_or_choice = is_tribal(-1, playable[0][iid_or_selected_index]);
-      choose_type = iid_or_choice != 0 && (raw_or_used_types & TYPE_EFFECT) == TYPE_NONE;
-      if (!choose_type)
-        instance->targets[0].player |= selected_or_allowed_types;
-    }
-    if (choose_type)
-    {
-      tribal_available = (selected_or_allowed_types & TYPE_EFFECT) != TYPE_NONE &&
-                         (raw_or_used_types & TYPE_EFFECT) == TYPE_NONE;
-      type_count_or_sorcery_available = 0;
-      if ((selected_or_allowed_types & TYPE_SORCERY) != TYPE_NONE)
-      {
-        type_count_or_sorcery_available =
-            (unsigned int)((raw_or_used_types & TYPE_SORCERY) == TYPE_NONE);
-      }
-      used_types_count_or_planeswalker_available =
-          selected_or_allowed_types & TARGET_TYPE_PLANESWALKER;
-      if (used_types_count_or_planeswalker_available != TYPE_NONE)
-      {
-        used_types_count_or_planeswalker_available =
-            (type_t)((raw_or_used_types & TARGET_TYPE_PLANESWALKER) == TYPE_NONE);
-      }
-      allowed_types_or_instant_available = selected_or_allowed_types & TYPE_INSTANT;
-      if (allowed_types_or_instant_available != TYPE_NONE)
-      {
-        allowed_types_or_instant_available =
-            (type_t)((raw_or_used_types & TYPE_INSTANT) == TYPE_NONE);
-      }
-      enchantment_available = selected_or_allowed_types & TYPE_ENCHANTMENT;
-      if (enchantment_available != TYPE_NONE)
-      {
-        enchantment_available = (type_t)((raw_or_used_types & TYPE_ENCHANTMENT) == TYPE_NONE);
-      }
-      creature_available = 0;
-      if ((selected_or_allowed_types & TYPE_CREATURE) != TYPE_NONE)
-      {
-        creature_available = (unsigned int)((raw_or_used_types & TYPE_CREATURE) == TYPE_NONE);
-      }
-      artifact_available = 0;
-      if ((selected_or_allowed_types & TYPE_ARTIFACT) != TYPE_NONE)
-      {
-        artifact_available = (unsigned int)((raw_or_used_types & TYPE_ARTIFACT) == TYPE_NONE);
-      }
-      iid_or_choice = dialog_impl(
-          player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\003", "\001\004", "\001\016",
-          "Artifact", artifact_available, 1, "Creature", creature_available, 1, "Enchantment",
-          enchantment_available, 1, "Instant", allowed_types_or_instant_available, 1,
-          "Planeswalker", used_types_count_or_planeswalker_available, 1, "Sorcery",
-          type_count_or_sorcery_available, 1, "Tribal", tribal_available, 1, 0, 0, 0, 0);
-      switch (iid_or_choice)
-      {
-      default:
-        spell_fizzled = 1;
-        return 0;
-      case 1:
-        instance->targets[0].player = instance->targets[0].player | 0x40;
-        break;
-      case 2:
-        instance->targets[0].player = instance->targets[0].player | 2;
-        break;
-      case 3:
-        instance->targets[0].player = instance->targets[0].player | 4;
-        break;
-      case 4:
-        instance->targets[0].player = instance->targets[0].player | 0x10;
-        break;
-      case 5:
-        instance->targets[0].player = instance->targets[0].player | 0x100;
-        break;
-      case 6:
-        instance->targets[0].player = instance->targets[0].player | 8;
-        break;
-      case 7:
-        instance->targets[0].player = instance->targets[0].player | 0x80;
-      }
-    }
-    play_card_in_exile_for_free(player, player,
-                                (unsigned int)cards_data[playable[0][iid_or_selected_index]].id);
-    cant_be_responded_to = 1;
+      leg->targets[0].player |= types;
   }
+  if (choose_type)
+  {
+    unsigned int tribal_available = (types & TYPE_EFFECT) != TYPE_NONE &&
+                                   (used_types & TYPE_EFFECT) == TYPE_NONE;
+    unsigned int sorcery_available = (types & TYPE_SORCERY) != TYPE_NONE &&
+                                    (used_types & TYPE_SORCERY) == TYPE_NONE;
+    type_t planeswalker_available = (type_t)((types & TARGET_TYPE_PLANESWALKER) != TYPE_NONE &&
+                                            (used_types & TARGET_TYPE_PLANESWALKER) == TYPE_NONE);
+    type_t instant_available = (type_t)((types & TYPE_INSTANT) != TYPE_NONE &&
+                                      (used_types & TYPE_INSTANT) == TYPE_NONE);
+    type_t enchantment_available = (type_t)((types & TYPE_ENCHANTMENT) != TYPE_NONE &&
+                                          (used_types & TYPE_ENCHANTMENT) == TYPE_NONE);
+    unsigned int creature_available = (types & TYPE_CREATURE) != TYPE_NONE &&
+                                     (used_types & TYPE_CREATURE) == TYPE_NONE;
+    unsigned int artifact_available = (types & TYPE_ARTIFACT) != TYPE_NONE &&
+                                     (used_types & TYPE_ARTIFACT) == TYPE_NONE;
+    int choice = dialog_impl(
+        player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
+        DLG_OMIT_ILLEGAL, DLG_AUTOCHOOSE_IF_1, "Artifact", artifact_available, 1,
+        "Creature", creature_available, 1, "Enchantment", enchantment_available, 1,
+        "Instant", instant_available, 1, "Planeswalker", planeswalker_available, 1,
+        "Sorcery", sorcery_available, 1, "Tribal", tribal_available, 1, 0, 0, 0, 0);
+    switch (choice)
+    {
+    default:
+      spell_fizzled = 1;
+      return 0;
+    case 1:
+      leg->targets[0].player |= TYPE_ARTIFACT;
+      break;
+    case 2:
+      leg->targets[0].player |= TYPE_CREATURE;
+      break;
+    case 3:
+      leg->targets[0].player |= TYPE_ENCHANTMENT;
+      break;
+    case 4:
+      leg->targets[0].player |= TYPE_INSTANT;
+      break;
+    case 5:
+      leg->targets[0].player |= TARGET_TYPE_PLANESWALKER;
+      break;
+    case 6:
+      leg->targets[0].player |= TYPE_SORCERY;
+      break;
+    case 7:
+      leg->targets[0].player |= TYPE_EFFECT;
+    }
+  }
+  play_card_in_exile_for_free(player, player,
+                              (unsigned int)cards_data[playable[0][selected]].id);
+  cant_be_responded_to = 1;
   return 0;
 }
 
@@ -3091,7 +3004,7 @@ int card_heavenly_blademaster(int player, int card, event_t event)
   default_target_definition(player, card, &td, 0x47);
   td.allowed_controller = player;
   td.illegal_abilities = 0;
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   td.extra = (int32_t)is_aura_or_equipment;
   td.allow_cancel = 2;
   i = 0;
@@ -3136,17 +3049,7 @@ int card_heavenly_blademaster(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x255f7c0; original cards/commander_2018.c:1033. */
 static int is_enchanted_or_enchantment_creature(int unused1, int unused2, int player, int card)
 {
-  int result;
-  unsigned int eligible;
-
-  result = is_enchanted(player, card);
-  eligible = 1;
-  if (result == 0)
-  {
-    result = is_what(player, card, 4);
-    eligible = (unsigned int)(result != 0);
-  }
-  return eligible;
+  return is_enchanted(player, card) || is_what(player, card, TYPE_ENCHANTMENT);
 }
 
 /* ManalinkEh 2022: 0x2563140; original cards/commander_2018.c:1041. */
@@ -3350,7 +3253,7 @@ int card_tuvasa_the_sunlit(int player, int card, event_t event)
 {
   int result;
   check_legend_rule(player, card, event);
-  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_SPELL_CAST) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     result = get_stormenchantment_count(player);
@@ -3470,10 +3373,8 @@ native_improvise:
 /* ManalinkEh 2022: 0x2560470; original cards/commander_2018.c:906. */
 static int rfg_at_end_of_combat(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
-  result = end_of_combat_trigger(player, card, event, 2);
-  if (result == 0)
+  if (!end_of_combat_trigger(player, card, event, 2))
   {
     return 0;
   }

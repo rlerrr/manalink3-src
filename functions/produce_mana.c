@@ -662,40 +662,16 @@ int plain_mana_producer_tapped(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x266c040; original functions/produce_mana.c:2137. */
 int mana_doublers(int player, type_t type)
 {
-  card_instance_t *instance;
-  int result;
-  int card;
-  int multiplier;
-
-  if (active_cards_count[player] < 1)
-  {
-    return 1;
-  }
-  card = 0;
-  multiplier = 1;
-  do
-  {
-    instance = in_play(player, card);
-    if (((instance != NULL) &&
-         (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
-        ((type & TYPE_PERMANENT) != TYPE_NONE))
+  int multiplier = 1;
+  for (int card = 0; card < active_cards_count[player]; ++card)
+    if (in_play(player, card) && !is_humiliated(player, card, AL_STATIC) &&
+        (type & TYPE_PERMANENT) != TYPE_NONE)
     {
-      result = get_id(player, card);
-      if (result == CARD_ID_MANA_REFLECTION)
-      {
-        multiplier = multiplier * 2;
-      }
-      else
-      {
-        result = get_id(player, card);
-        if (result == CARD_ID_NYXBLOOM_ANCIENT)
-        {
-          multiplier = multiplier * 3;
-        }
-      }
+      if (get_id(player, card) == CARD_ID_MANA_REFLECTION)
+        multiplier *= 2;
+      else if (get_id(player, card) == CARD_ID_NYXBLOOM_ANCIENT)
+        multiplier *= 3;
     }
-    card = card + 1;
-  } while (card < active_cards_count[player]);
   return multiplier;
 }
 

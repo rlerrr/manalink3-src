@@ -506,7 +506,7 @@ int choose_player(int player, int card, int preferred_controller, int allow_canc
   instance = get_card_instance(player, card);
   default_target_definition(player, card, &td, 0);
   td.preferred_controller = preferred_controller;
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   td.allow_cancel = allow_cancel;
   td.illegal_abilities = 0;
   result = duh_mode(player);
@@ -1938,9 +1938,8 @@ static int select_target_maybe_force(
       illegal_state, flags, prompt, allow_cancel, ret_tgt);
   if ((result == 0) && ((allow_cancel & 1U) == 0))
   {
-    if (((who_chooses == 1) || (ai_is_speculating == 1)) &&
-        ((result = 0,
-          (allowed_controller & 2U) != 0 && (result = 0, (preferred_controller & 2U) == 0))))
+    if (((who_chooses == AI) || (ai_is_speculating == 1)) &&
+        (allowed_controller & 2U) && !(preferred_controller & 2U))
     {
       result = select_target_impl(
           player, card, who_chooses, allowed_controller, preferred_controller ^ 1, zone,
@@ -2362,7 +2361,7 @@ int pick_player_duh(int player, int card, int preferred_controller, int allow_ca
   instance = get_card_instance(player, card);
   default_target_definition(player, card, &td, 0);
   td.preferred_controller = preferred_controller;
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   td.allow_cancel = allow_cancel;
   result = duh_mode(player);
   if (result != 0)
@@ -2406,7 +2405,7 @@ int target_opponent(int player, int card)
   instance->number_of_targets = '\x01';
   instance->targets[0].player = td.preferred_controller;
   instance->targets[0].card = -1;
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   result = would_validate_target(td.player, td.card, &td, 0);
   if (result == 0)
   {
@@ -2480,10 +2479,6 @@ int autoselect_target(int player, int card, int i, int j, int k, int who_chooses
 #endif
 
 
-#ifndef SHANDALAR
-/* October 2022 private targeting result at 0x27748c8 (native function-local static). */
-static target_t targeted_subtype_spell_result;
-#endif
 
 
 #ifndef SHANDALAR
@@ -2493,6 +2488,7 @@ target_t *becomes_target_of_subtype_spell(int player, int card, event_t event, i
                                                resolve_trigger_t trigger_mode,
                                                int targeting_subtype)
 {
+  static target_t rval;
   int result;
   if (trigger_condition != TRIGGER_SPELL_CAST)
   {
@@ -2511,9 +2507,9 @@ target_t *becomes_target_of_subtype_spell(int player, int card, event_t event, i
   {
     if (event != EVENT_TRIGGER)
     {
-      targeted_subtype_spell_result.player = trigger_cause_controller;
-      targeted_subtype_spell_result.card = trigger_cause;
-      return &targeted_subtype_spell_result;
+      rval.player = trigger_cause_controller;
+      rval.card = trigger_cause;
+      return &rval;
     }
     if (trigger_mode == RESOLVE_TRIGGER_DUH)
     {

@@ -1,0 +1,1193 @@
+{
+  "format": 1,
+  "status": "Native external linkage restored for three helpers; combined build, 15,169 fixed slots, three exact file projections, external COFF/DWARF definitions and ten new strict complete CFG correspondences pass.",
+  "files": [
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "before_bytes_sha256": "ce60f5a10ea8afb38f2da79c9c843d794e6660d085fecf1d6f75db11ba9f6cb0",
+      "after_bytes_sha256": "aa731af5a459254d5c95a4c5d23282a8c7ec74e25250cba02e4dc0a6978b2d51",
+      "before_sha256": "81ee5d3f18cd0c8f4ace69f7b7e25e77aef2f3e7050319f687b871e50010855a",
+      "after_sha256": "4191cf09a275b5a7ac84c4571cfbbba70c1697727aabf0e79c500d45a89de185"
+    },
+    {
+      "source": "cards/m10.c",
+      "before_bytes_sha256": "4028a800253d4b0e380d15e273b6be8b8ca223ccf5e5af412ca2e3019d46d2e4",
+      "after_bytes_sha256": "16c48f82f553caa8fda84ca82b25127bb69ff815426e9f1b1ad56b9fe2a5d1f0",
+      "before_sha256": "638a6a16a7d75e3e1984b8c4eb8d301d221433f80cb9c3d7b2f8a75e1bccd53a",
+      "after_sha256": "bdffe678e5662e1c529211067638c4b6d3c76f474d90dad0ef928dca146cac60"
+    },
+    {
+      "source": "functions/counters.c",
+      "before_bytes_sha256": "21f5c9da5b7ac9d79708ccd023498ccf2cc3efff464630469690a09a04c41b40",
+      "after_bytes_sha256": "7edb2b70f8b93c02edbff39d82886623a17d5e229b42ee1b23f271eeedb658fa",
+      "before_sha256": "137eb11e761046f81bcc1a17eae9fcf51d9e85088b5e87fea2e593fea8bf5186",
+      "after_sha256": "cb126870bbe24c7ddc2a012e5825d60285ae4fb5db589dbd857e971e6ab8de76"
+    }
+  ],
+  "native_linkage_audit": {
+    "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+    "candidates": [
+      {
+        "name": "outlast",
+        "address": "0x21997c0",
+        "source": "cards/khans_of_tarkir.c",
+        "native_coff": [
+          "_outlast"
+        ],
+        "source_definition_sha256": "492a0f1a57c63e83799e20570a9ec8288183233330b19a5bb4fe7d02017ba814",
+        "declaration": "static int outlast(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white)",
+        "native_die_offset": "0x170c0b6",
+        "native_external": true,
+        "native_producer": "GNU C99 9.3-win32 20200320 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu99 -fno-omit-frame-pointer -fno-tree-vrp"
+      },
+      {
+        "name": "effect_must_attack",
+        "address": "0x24fe8c0",
+        "source": "cards/m10.c",
+        "native_coff": [
+          "_effect_must_attack"
+        ],
+        "source_definition_sha256": "73302e4bdbcb4582992a14e591bba512644b6aadbc3e16954439dbc42e04c614",
+        "declaration": "static int effect_must_attack(int player, int card, event_t event)",
+        "native_die_offset": "0x4980682",
+        "native_external": true,
+        "native_producer": "GNU C99 9.3-win32 20200320 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu99 -fno-omit-frame-pointer -fno-tree-vrp"
+      },
+      {
+        "name": "raw_counter_value",
+        "address": "0x26d1950",
+        "source": "functions/counters.c",
+        "native_coff": [
+          "_raw_counter_value"
+        ],
+        "source_definition_sha256": "612ee29648a3dba2f7bb4413a990d5dec67226d32e4d9e6e7b1acc446e458ba4",
+        "declaration": "static int raw_counter_value(int player, int t_player, int t_card, counter_t counter_type,\n                             int adding)",
+        "native_die_offset": "0x6a3fde4",
+        "native_external": true,
+        "native_producer": "GNU C99 9.3-win32 20200320 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu99 -fno-omit-frame-pointer -fno-tree-vrp"
+      }
+    ],
+    "scope": "Native COFF external symbols and native DWARF external definitions versus current static C source spelling. This is a linkage-recovery candidate audit, not a source edit or an export/whole-function equivalence claim. Neither native nor rebuilt DLL has named PE exports."
+  },
+  "baseline": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "fbcbdd8155c8886a845ef594fc37d05c041d4047fdec58aded3dd7c2ca133384",
+      "ManalinkEh.dbg": "74021ee7b71a098231676378587a5be03fc16e383c00032b0b1e7a79b6f4d720"
+    },
+    "results": [
+      {
+        "name": "outlast",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x21997c0",
+            "size": 193,
+            "sha256": "12f970ef62385e94d3204efa21ad4f0cbbe76a61711a7a12c867e410f7e13cae",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22aba50",
+            "size": 208,
+            "sha256": "2d3e84f06717d98b696eec0bb769c73dcd4f6a6dab96864f07159f2a10e81b63",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "effect_must_attack",
+        "matched": true,
+        "proof": {
+          "cfg_states": 43,
+          "reached_instruction_counts": [
+            43,
+            43
+          ],
+          "terminals": 2,
+          "equality_load_guards": [],
+          "zero_return_epilogues": [],
+          "pointer_return_tails": [],
+          "address_correspondences": [
+            {
+              "native": "0x26b2ab0",
+              "rebuilt": "0x266ace0",
+              "identity": "_get_card_instance"
+            },
+            {
+              "native": "0x26b5a00",
+              "rebuilt": "0x266d770",
+              "identity": "_kill_card"
+            },
+            {
+              "native": "0x26dedc0",
+              "rebuilt": "0x2655d10",
+              "identity": "_attack_if_able"
+            }
+          ]
+        },
+        "ranges": [
+          {
+            "address": "0x24fe8c0",
+            "size": 134,
+            "sha256": "78137f28da16281466165944b54208a9075ce11eba00fc7e0d97ab24612f109d",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22f1460",
+            "size": 144,
+            "sha256": "b2f1efaa3a86405f93555856dd781d0eb456c9e592ec5f778f3cdd7d647898a3",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "raw_counter_value",
+        "matched": false,
+        "reason": "('Operation changed', 'push', 'mov')",
+        "ranges": [
+          {
+            "address": "0x26d1950",
+            "size": 8103,
+            "sha256": "b195577559ce25554755bed8456f0fc7f8f25a3f06d7ee5e4259f5aaec254ba1",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x26636d0",
+            "size": 7968,
+            "sha256": "72a5f4c6fc6d370830fc9812319c586b255bda2d158a73969b0ddd30f0ced53f",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_abzan_battle_priest",
+        "matched": false,
+        "reason": "('Operation changed', 'push', 'sub')",
+        "ranges": [
+          {
+            "address": "0x2199cb0",
+            "size": 162,
+            "sha256": "dc87ae6204759bb7e4c3b1446e709010b33ace221187b7dcf48661613d2b7768",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22bb530",
+            "size": 144,
+            "sha256": "3d422dce3be9c1ef14df3203bf442c2202307d7fa10181adaa95fd4e282d226e",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_abzan_falconer",
+        "matched": false,
+        "reason": "('Operation changed', 'push', 'sub')",
+        "ranges": [
+          {
+            "address": "0x2199d60",
+            "size": 162,
+            "sha256": "e4257d8ae895d6fc044863ace60e98cff4871620b8886e20198e7a20155a3746",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22bb5c0",
+            "size": 144,
+            "sha256": "93d1b82773001a2c168e78a1751414a5ac26b5923903c7b3c2aa78bab3596175",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_ainok_bon_kin",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x2199e10",
+            "size": 200,
+            "sha256": "76aad1ab1214af6da2031469c39e7e1569a56cba039273942c2d2e31fdbf00ca",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22abdb0",
+            "size": 192,
+            "sha256": "8df19e3a538c03eb9cf6b0fa5aa321f52df2bcea54cb3ec3eadbe2617e2ee879",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_herald_of_anafenza",
+        "matched": false,
+        "reason": "('Unbound operand', '0x70', '0x64')",
+        "ranges": [
+          {
+            "address": "0x219a5d0",
+            "size": 277,
+            "sha256": "d1acbc0c7ba93d5556421cae1cc77cee579a1151ed44112650de8e4fdfff5475",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22ac560",
+            "size": 256,
+            "sha256": "a5684deb8f63fb8444d09a31d05c322f7366f62344c97196469d574f3ce6f14a",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_salt_road_patrol",
+        "matched": false,
+        "reason": "('Unbound operand', '0x24', '0x10')",
+        "ranges": [
+          {
+            "address": "0x219aba0",
+            "size": 81,
+            "sha256": "2813bc753302b06e8942e0a305eca2b0f3c226a0e641b8c56fa732bc3f1d1686",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22acb10",
+            "size": 64,
+            "sha256": "6ecb19c55216f69b30ff608abea1f7b94d72274b650ed50d725c9f7de8f60209",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_disowned_ancestor",
+        "matched": false,
+        "reason": "('Unbound operand', '0x24', '0x10')",
+        "ranges": [
+          {
+            "address": "0x219d7e0",
+            "size": 81,
+            "sha256": "b9cdf07fe65b9b193a6fcaf08136f868fec84a7bd73914fa647b1231ab915183",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22af660",
+            "size": 64,
+            "sha256": "9167288611ae63a9437f3ade231dd20864a253db6de2bcce6c50d56bff02a420",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_mer_ek_nightblade",
+        "matched": false,
+        "reason": "('Operation changed', 'push', 'sub')",
+        "ranges": [
+          {
+            "address": "0x219e4a0",
+            "size": 162,
+            "sha256": "27e485106a864b07712b39d10a66d0981675127f7b68cbee7b68fcf806d6ecf4",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22bb650",
+            "size": 144,
+            "sha256": "d3cef60440a8f561c996ae434d2db738ec06e80043af52eacc414783cbae6ad8",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_longshot_squad",
+        "matched": false,
+        "reason": "('Operation changed', 'push', 'sub')",
+        "ranges": [
+          {
+            "address": "0x21a1e10",
+            "size": 162,
+            "sha256": "c53ecb81c6be58228ac1a34602fc12198a3126521d33f7f56a58cc9415c0ac9f",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22bb6e0",
+            "size": 144,
+            "sha256": "8db39eaaea4228e9f3230b05ed5e4c4960f9dede54fce012aedc4d9df79aa19b",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_tuskguard_captain",
+        "matched": false,
+        "reason": "('Operation changed', 'push', 'sub')",
+        "ranges": [
+          {
+            "address": "0x21a2cd0",
+            "size": 162,
+            "sha256": "bd52da7c4081d24a8eebdaf3e2648cdd7906fb96f85edf1804fbe4573073f9da",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22bb770",
+            "size": 144,
+            "sha256": "27dec9e44d80119cb64b4e121a7308047847955b7e5874f1c91e44c5b0aa667c",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_alluring_siren",
+        "matched": true,
+        "proof": {
+          "cfg_states": 99,
+          "reached_instruction_counts": [
+            99,
+            99
+          ],
+          "terminals": 1,
+          "equality_load_guards": [],
+          "zero_return_epilogues": [],
+          "pointer_return_tails": [],
+          "address_correspondences": [
+            {
+              "native": "0x24fe8c0",
+              "rebuilt": "0x22f1460",
+              "identity": "_effect_must_attack"
+            },
+            {
+              "native": "0x2660240",
+              "rebuilt": "0x26da9c0",
+              "identity": "_default_target_definition"
+            },
+            {
+              "native": "0x2661750",
+              "rebuilt": "0x26db320",
+              "identity": "_valid_target"
+            },
+            {
+              "native": "0x267ab00",
+              "rebuilt": "0x26861c0",
+              "identity": "_create_targetted_legacy_effect"
+            },
+            {
+              "native": "0x269db00",
+              "rebuilt": "0x26b13c0",
+              "identity": "_generic_activated_ability"
+            },
+            {
+              "native": "0x26b2ab0",
+              "rebuilt": "0x266ace0",
+              "identity": "_get_card_instance"
+            },
+            {
+              "native": "0x2750b30",
+              "rebuilt": "0x273f9bc",
+              "identity": "readonly-C-string:1f5cc7ed894a6511ae9bed94979e1a9f273b8dcd69a4c7e53fba6abcfbb523b8"
+            }
+          ]
+        },
+        "ranges": [
+          {
+            "address": "0x24fef70",
+            "size": 417,
+            "sha256": "05dcc716268d4cc0bc7190605549fd5e5dce3964eed91c2df4ca503f6fab81ba",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x22f1a80",
+            "size": 432,
+            "sha256": "b963f156ea0cb28342b77ecabaa9219b079245478d13c65dee5670258f05755a",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "choose_existing_counter_type",
+        "matched": false,
+        "reason": "('Unbound operand', '0x276afbc', '0x27699ec')",
+        "ranges": [
+          {
+            "address": "0x26d3900",
+            "size": 2398,
+            "sha256": "ca0a271f7da519faf1242882c62eb51121bc54f7b9fd89f4e965786034779317",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2665790",
+            "size": 2384,
+            "sha256": "dffdf18b77a89af5f245e16062b818cbb105cc8774594a3390f3ff779eba259b",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "quarry_hauler_helper",
+        "matched": false,
+        "reason": "('Unbound operand', '0x494', '0x4c4')",
+        "ranges": [
+          {
+            "address": "0x26d51e0",
+            "size": 1825,
+            "sha256": "58ab2b68d3711c5e44526c2deb263e54876a8daa59a562f98a88307b7a16eccf",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2666be0",
+            "size": 1808,
+            "sha256": "a6010cfc33f532f0bbc0446db0c1b773b98a977bd0fafb60ed4b758fd6ed2f8e",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      }
+    ],
+    "checker_sha256": "c8222323321a877ee79c66a1e1f40888abeceeb255fa94dff40065e4ac5d8006",
+    "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+    "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+  },
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "scope": "Only the static storage-class specifier is removed from Outlast, effect_must_attack and raw_counter_value. Their native externally linked definitions are pinned by native COFF symbols, DWARF DIE offsets and external attributes. Function signatures and all bodies are byte-for-byte preserved. This restores original C linkage and permits the native externally callable convention rather than private-only specialization. Neither DLL has named PE exports; no new export API is introduced or claimed. No gameplay behavior fix or full-DLL equivalence claim.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "965dcdad387e4b4bf6f901120531f912756bffc1094ac70ca934b79e0d15d651",
+    "debug_sha256": "5a94fa370280f16e3983819576e7dfa8c2824b8cd43f1ee6a511776dc9096fb9",
+    "build_log_sha256": "171afaff78b1489f0330cbed03dca681f878c6c041554788d2feee30f88bfbcf",
+    "source_definitions": 3,
+    "canonical_and_raw_file_projections": 3,
+    "unchanged_caller_definitions": [
+      {
+        "name": "card_abzan_battle_priest",
+        "source": "cards/khans_of_tarkir.c",
+        "source_definition_sha256": "20dce7524336bf7c45dfd242054fc706bb1d761c35200aaef536a255995c652b"
+      },
+      {
+        "name": "card_abzan_falconer",
+        "source": "cards/khans_of_tarkir.c",
+        "source_definition_sha256": "2583994bd3f6cc15c6fbe95f3420d63869ef9cd69a0dbb0e4422768e2f763374"
+      },
+      {
+        "name": "card_ainok_bon_kin",
+        "source": "cards/khans_of_tarkir.c",
+        "source_definition_sha256": "3f9af7e9aeb9b9944cdbf07571916fa0d14747330acef945b1710ec87e56caab"
+      },
+      {
+        "name": "card_herald_of_anafenza",
+        "source": "cards/khans_of_tarkir.c",
+        "source_definition_sha256": "9b214dbee247f292d906d7f914d9a01a48a9851f3bb047a2d11fde8c0b5bf55e"
+      },
+      {
+        "name": "card_salt_road_patrol",
+        "source": "cards/khans_of_tarkir.c",
+        "source_definition_sha256": "c67d668d9bf5670a4da3d0dce59b18c5e81b365798b0f59c4af89c5b854db8a3"
+      },
+      {
+        "name": "card_disowned_ancestor",
+        "source": "cards/khans_of_tarkir.c",
+        "source_definition_sha256": "df632a86fea3e7c50aea0e7eaa74f81e485be0667514c6fd0f881f2784b70efd"
+      },
+      {
+        "name": "card_mer_ek_nightblade",
+        "source": "cards/khans_of_tarkir.c",
+        "source_definition_sha256": "ed812fcf9e88be935e585a2546ad953e5ace97b7ddce5f9d4d6bfaa3f9fa9baf"
+      },
+      {
+        "name": "card_longshot_squad",
+        "source": "cards/khans_of_tarkir.c",
+        "source_definition_sha256": "9510cf9c27bb020784a51b90202f64ad63b46be4c95a4404b246b32448a68f33"
+      },
+      {
+        "name": "card_tuskguard_captain",
+        "source": "cards/khans_of_tarkir.c",
+        "source_definition_sha256": "52c924b4d07dab8642ec44d882377d12f66687efbede0ccecbf6ac06510ab0f3"
+      },
+      {
+        "name": "card_alluring_siren",
+        "source": "cards/m10.c",
+        "source_definition_sha256": "ff7ec5e89ef304c0d45f245bab1233eadc0e4662a99f3a926c4aa049b9c3df38"
+      },
+      {
+        "name": "choose_existing_counter_type",
+        "source": "functions/counters.c",
+        "source_definition_sha256": "2995097f32e5055bca153b674c22eefbe8bf71cd63f37d85b7e0dbc7bdd83072"
+      },
+      {
+        "name": "quarry_hauler_helper",
+        "source": "functions/counters.c",
+        "source_definition_sha256": "ba77f8c1b9e28a417100f9390e361f7b42fe36a7917699b4f79b83aa998072e0"
+      }
+    ],
+    "coff_external_symbols": [
+      {
+        "name": "outlast",
+        "symbol": "_outlast",
+        "address": "0x22aba50",
+        "storage_class": 2
+      },
+      {
+        "name": "effect_must_attack",
+        "symbol": "_effect_must_attack",
+        "address": "0x22f1570",
+        "storage_class": 2
+      },
+      {
+        "name": "raw_counter_value",
+        "symbol": "_raw_counter_value",
+        "address": "0x2663980",
+        "storage_class": 2
+      }
+    ],
+    "dwarf_external_definitions": [
+      {
+        "name": "outlast",
+        "source": "cards/khans_of_tarkir.c",
+        "address": "0x22aba50",
+        "die_offset": "0x2b7b0f0",
+        "external": true,
+        "producer": "GNU C17 9.3.0 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp"
+      },
+      {
+        "name": "effect_must_attack",
+        "source": "cards/m10.c",
+        "address": "0x22f1570",
+        "die_offset": "0x2e9378e",
+        "external": true,
+        "producer": "GNU C17 9.3.0 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp"
+      },
+      {
+        "name": "raw_counter_value",
+        "source": "functions/counters.c",
+        "address": "0x2663980",
+        "die_offset": "0x60abd2d",
+        "external": true,
+        "producer": "GNU C17 9.3.0 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp"
+      }
+    ],
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "965dcdad387e4b4bf6f901120531f912756bffc1094ac70ca934b79e0d15d651",
+        "ManalinkEh.dbg": "5a94fa370280f16e3983819576e7dfa8c2824b8cd43f1ee6a511776dc9096fb9"
+      },
+      "results": [
+        {
+          "name": "outlast",
+          "matched": true,
+          "proof": {
+            "cfg_states": 50,
+            "reached_instruction_counts": [
+              50,
+              50
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x269db00",
+                "rebuilt": "0x26b15e0",
+                "identity": "_generic_activated_ability"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266af00",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26d4840",
+                "rebuilt": "0x2666920",
+                "identity": "_add_counters"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x21997c0",
+              "size": 193,
+              "sha256": "12f970ef62385e94d3204efa21ad4f0cbbe76a61711a7a12c867e410f7e13cae",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22aba50",
+              "size": 208,
+              "sha256": "8c099dad1e85f5f8f5d0c364122ec1237040e8ad38f27f56531b7d547e9d15b7",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "effect_must_attack",
+          "matched": true,
+          "proof": {
+            "cfg_states": 43,
+            "reached_instruction_counts": [
+              43,
+              43
+            ],
+            "terminals": 2,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266af00",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b5a00",
+                "rebuilt": "0x266d990",
+                "identity": "_kill_card"
+              },
+              {
+                "native": "0x26dedc0",
+                "rebuilt": "0x2655e20",
+                "identity": "_attack_if_able"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x24fe8c0",
+              "size": 134,
+              "sha256": "78137f28da16281466165944b54208a9075ce11eba00fc7e0d97ab24612f109d",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22f1570",
+              "size": 144,
+              "sha256": "62ca6e4ad59f9b830097e1498b21e17be456cf556e0188e6eca465bc8f3424b1",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "raw_counter_value",
+          "matched": false,
+          "reason": "Instruction prefix changed",
+          "ranges": [
+            {
+              "address": "0x26d1950",
+              "size": 8103,
+              "sha256": "b195577559ce25554755bed8456f0fc7f8f25a3f06d7ee5e4259f5aaec254ba1",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2663980",
+              "size": 8192,
+              "sha256": "2ee1bf7168bfed6a6a304f89ce72a0c6d65cdcd4ad52607b34520aad03310c1a",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_abzan_battle_priest",
+          "matched": true,
+          "proof": {
+            "cfg_states": 36,
+            "reached_instruction_counts": [
+              36,
+              36
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x21997c0",
+                "rebuilt": "0x22aba50",
+                "identity": "_outlast"
+              },
+              {
+                "native": "0x2199b20",
+                "rebuilt": "0x22bb440",
+                "identity": "_boost_creatures_by_counters"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x2199cb0",
+              "size": 162,
+              "sha256": "dc87ae6204759bb7e4c3b1446e709010b33ace221187b7dcf48661613d2b7768",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22bb5a0",
+              "size": 176,
+              "sha256": "d1e654b84a8b11178c749f7ae5b6990d4c2c5509ea79c5dc11532f17681c0b1f",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_abzan_falconer",
+          "matched": true,
+          "proof": {
+            "cfg_states": 36,
+            "reached_instruction_counts": [
+              36,
+              36
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x21997c0",
+                "rebuilt": "0x22aba50",
+                "identity": "_outlast"
+              },
+              {
+                "native": "0x2199b20",
+                "rebuilt": "0x22bb440",
+                "identity": "_boost_creatures_by_counters"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x2199d60",
+              "size": 162,
+              "sha256": "e4257d8ae895d6fc044863ace60e98cff4871620b8886e20198e7a20155a3746",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22bb650",
+              "size": 176,
+              "sha256": "129183143b78b5a9178241ffac70d15d931b44456e333d35ed60134e1f19df55",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_ainok_bon_kin",
+          "matched": true,
+          "proof": {
+            "cfg_states": 52,
+            "reached_instruction_counts": [
+              52,
+              52
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x21997c0",
+                "rebuilt": "0x22aba50",
+                "identity": "_outlast"
+              },
+              {
+                "native": "0x26b32d0",
+                "rebuilt": "0x266b6d0",
+                "identity": "_in_play"
+              },
+              {
+                "native": "0x26d1730",
+                "rebuilt": "0x2663760",
+                "identity": "_count_counters"
+              },
+              {
+                "native": "0x26dd430",
+                "rebuilt": "0x2653540",
+                "identity": "_is_humiliated"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x2199e10",
+              "size": 200,
+              "sha256": "76aad1ab1214af6da2031469c39e7e1569a56cba039273942c2d2e31fdbf00ca",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22abdb0",
+              "size": 208,
+              "sha256": "169d3428d7cc785db4841a6f5a09d1e369725afa2c916770768a0229ef8e974e",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_herald_of_anafenza",
+          "matched": true,
+          "proof": {
+            "cfg_states": 78,
+            "reached_instruction_counts": [
+              78,
+              78
+            ],
+            "terminals": 3,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x21997c0",
+                "rebuilt": "0x22aba50",
+                "identity": "_outlast"
+              },
+              {
+                "native": "0x2665470",
+                "rebuilt": "0x26dcf30",
+                "identity": "_default_token_definition"
+              },
+              {
+                "native": "0x26659d0",
+                "rebuilt": "0x26dd040",
+                "identity": "_generate_token"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266af00",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26d4840",
+                "rebuilt": "0x2666920",
+                "identity": "_add_counters"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x219a5d0",
+              "size": 277,
+              "sha256": "d1acbc0c7ba93d5556421cae1cc77cee579a1151ed44112650de8e4fdfff5475",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22ac570",
+              "size": 288,
+              "sha256": "e8e66828a1d5f41030c4c15de68bf82cf560ef27a08acd8c7a3d4d581e29077d",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_salt_road_patrol",
+          "matched": true,
+          "proof": {
+            "cfg_states": 18,
+            "reached_instruction_counts": [
+              18,
+              18
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x21997c0",
+                "rebuilt": "0x22aba50",
+                "identity": "_outlast"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x219aba0",
+              "size": 81,
+              "sha256": "2813bc753302b06e8942e0a305eca2b0f3c226a0e641b8c56fa732bc3f1d1686",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22acb40",
+              "size": 96,
+              "sha256": "c0149c39ebdb666b11ae6e16142047f5ab0f7b0ca03e965c175e26237f7a4581",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_disowned_ancestor",
+          "matched": true,
+          "proof": {
+            "cfg_states": 18,
+            "reached_instruction_counts": [
+              18,
+              18
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x21997c0",
+                "rebuilt": "0x22aba50",
+                "identity": "_outlast"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x219d7e0",
+              "size": 81,
+              "sha256": "b9cdf07fe65b9b193a6fcaf08136f868fec84a7bd73914fa647b1231ab915183",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22af6b0",
+              "size": 96,
+              "sha256": "47080d972c29f9c11d167ea6add8d77f8f47da5e3e2e94f453e4cfad80c6d6d5",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_mer_ek_nightblade",
+          "matched": true,
+          "proof": {
+            "cfg_states": 36,
+            "reached_instruction_counts": [
+              36,
+              36
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x21997c0",
+                "rebuilt": "0x22aba50",
+                "identity": "_outlast"
+              },
+              {
+                "native": "0x2199b20",
+                "rebuilt": "0x22bb440",
+                "identity": "_boost_creatures_by_counters"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x219e4a0",
+              "size": 162,
+              "sha256": "27e485106a864b07712b39d10a66d0981675127f7b68cbee7b68fcf806d6ecf4",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22bb700",
+              "size": 176,
+              "sha256": "aa2efb99ae2e603d936a5543d0b8f4640df6fdcb15bf5bdaa10f842b25efb380",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_longshot_squad",
+          "matched": true,
+          "proof": {
+            "cfg_states": 36,
+            "reached_instruction_counts": [
+              36,
+              36
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x21997c0",
+                "rebuilt": "0x22aba50",
+                "identity": "_outlast"
+              },
+              {
+                "native": "0x2199b20",
+                "rebuilt": "0x22bb440",
+                "identity": "_boost_creatures_by_counters"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x21a1e10",
+              "size": 162,
+              "sha256": "c53ecb81c6be58228ac1a34602fc12198a3126521d33f7f56a58cc9415c0ac9f",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22bb7b0",
+              "size": 176,
+              "sha256": "1dc01f629313c2e26aa0bacc555cdf7ced84d9bcf04447b6d917b2f4a8df5828",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_tuskguard_captain",
+          "matched": true,
+          "proof": {
+            "cfg_states": 36,
+            "reached_instruction_counts": [
+              36,
+              36
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x21997c0",
+                "rebuilt": "0x22aba50",
+                "identity": "_outlast"
+              },
+              {
+                "native": "0x2199b20",
+                "rebuilt": "0x22bb440",
+                "identity": "_boost_creatures_by_counters"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x21a2cd0",
+              "size": 162,
+              "sha256": "bd52da7c4081d24a8eebdaf3e2648cdd7906fb96f85edf1804fbe4573073f9da",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22bb860",
+              "size": 176,
+              "sha256": "9e388ac89644b129c7988af675c92dd17d2a39afc5e013f7f452b73cd272b712",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_alluring_siren",
+          "matched": true,
+          "proof": {
+            "cfg_states": 99,
+            "reached_instruction_counts": [
+              99,
+              99
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x24fe8c0",
+                "rebuilt": "0x22f1570",
+                "identity": "_effect_must_attack"
+              },
+              {
+                "native": "0x2660240",
+                "rebuilt": "0x26dabe0",
+                "identity": "_default_target_definition"
+              },
+              {
+                "native": "0x2661750",
+                "rebuilt": "0x26db540",
+                "identity": "_valid_target"
+              },
+              {
+                "native": "0x267ab00",
+                "rebuilt": "0x26863e0",
+                "identity": "_create_targetted_legacy_effect"
+              },
+              {
+                "native": "0x269db00",
+                "rebuilt": "0x26b15e0",
+                "identity": "_generic_activated_ability"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266af00",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x2750b30",
+                "rebuilt": "0x273f9bc",
+                "identity": "readonly-C-string:1f5cc7ed894a6511ae9bed94979e1a9f273b8dcd69a4c7e53fba6abcfbb523b8"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x24fef70",
+              "size": 417,
+              "sha256": "05dcc716268d4cc0bc7190605549fd5e5dce3964eed91c2df4ca503f6fab81ba",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22f1b90",
+              "size": 432,
+              "sha256": "a8577d1b0b4bb476b213741a9436035570bc31338a1fc6347b1a77f5a099e494",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "choose_existing_counter_type",
+          "matched": false,
+          "reason": "('Unbound operand', '0x276afbc', '0x27699ec')",
+          "ranges": [
+            {
+              "address": "0x26d3900",
+              "size": 2398,
+              "sha256": "ca0a271f7da519faf1242882c62eb51121bc54f7b9fd89f4e965786034779317",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2665980",
+              "size": 2400,
+              "sha256": "f90e5b304f6ced21e69368abb29d71de375950959d3fd9f0729a625a7f833c00",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "quarry_hauler_helper",
+          "matched": false,
+          "reason": "('Unbound operand', '0x494', '0x4c4')",
+          "ranges": [
+            {
+              "address": "0x26d51e0",
+              "size": 1825,
+              "sha256": "58ab2b68d3711c5e44526c2deb263e54876a8daa59a562f98a88307b7a16eccf",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2666de0",
+              "size": 1840,
+              "sha256": "91bd1b2544152a22f8f342053deb79490fc09d8263dad3aafad24386d622d207",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "c8222323321a877ee79c66a1e1f40888abeceeb255fa94dff40065e4ac5d8006",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "new_complete_cfg_matches": [
+      "card_abzan_battle_priest",
+      "card_abzan_falconer",
+      "card_ainok_bon_kin",
+      "card_disowned_ancestor",
+      "card_herald_of_anafenza",
+      "card_longshot_squad",
+      "card_mer_ek_nightblade",
+      "card_salt_road_patrol",
+      "card_tuskguard_captain",
+      "outlast"
+    ],
+    "retained_complete_cfg_matches": [
+      "card_alluring_siren",
+      "effect_must_attack"
+    ],
+    "staging": "preserved",
+    "scope": "All three rebuilt helpers now have native-style external C linkage in both COFF and DWARF, and Outlast no longer has a private constprop worker. The three edits remove only static; complete signatures/bodies and twelve caller definitions are unchanged. The same strict complete CFG checker gains ten native correspondences and retains two; unique symbol/engine/literal identities and normal callee behavior remain assumptions, with no predicate or return-tail relaxations. raw_counter_value and its two counter callers retain nonmatching instruction/width/layout or literal-binding differences, so no complete match is claimed for them. No gameplay fixture or full reccmp refresh was rerun; the C686 report remains a C685-build snapshot."
+  }
+}

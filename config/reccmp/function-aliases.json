@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "scope": "C helpers renamed in the recovered source. Each entry requires the exact native address/name/source and a unique rebuilt range in the same source unit. This records identity, not behavioral equivalence.",
+  "functions": [
+    {
+      "native_address": "0x21e27a0",
+      "native_name": "basic_landcycling",
+      "source": "cards/conflux.c",
+      "rebuilt_name": "conflux_basic_landcycling"
+    },
+    {
+      "native_address": "0x23e6840",
+      "native_name": "basic_landcycling",
+      "source": "cards/commander_2016.c",
+      "rebuilt_name": "commander_basic_landcycling"
+    },
+    {
+      "native_address": "0x212ace0",
+      "native_name": "bounce_at_end_of_combat",
+      "source": "cards/stronghold.c",
+      "rebuilt_name": "create_stronghold_end_combat_bounce"
+    }
+  ]
+}

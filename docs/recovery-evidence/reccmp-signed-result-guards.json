@@ -1,0 +1,291 @@
+{
+  "format": 1,
+  "status": "Two native nonnegative tutor-result guards restored; combined build, 15,169 fixed slots, exact source projections and both rebuilt sign-branch checks pass. Fresh full JSON and grouped tiny-diff reviews classify 224 of 581 tiny candidates; 357 remain unannotated.",
+  "discovery": {
+    "candidates": [
+      {
+        "source": "cards/new_phyrexia.c",
+        "name": "card_praetors_grasp",
+        "callee": "new_global_tutor",
+        "variable": "csvid",
+        "comparison_start": 832,
+        "comparison_end": 837,
+        "before": "!= -1",
+        "after": ">= 0",
+        "before_definition_sha256": "7d024a48f8112ee30b24bcc65823dc97c9b5217f895dd49e5606e4c711799061",
+        "native_guard": [
+          {
+            "address": "0x227b01c",
+            "mnemonic": "call",
+            "operands": "0x2651990",
+            "bytes": "e86f693d00"
+          },
+          {
+            "address": "0x227b021",
+            "mnemonic": "test",
+            "operands": "eax, eax",
+            "bytes": "85c0"
+          },
+          {
+            "address": "0x227b023",
+            "mnemonic": "js",
+            "operands": "0x227af9a",
+            "bytes": "0f8871ffffff"
+          }
+        ],
+        "current_guard": [
+          {
+            "address": "0x23cb98a",
+            "mnemonic": "call",
+            "operands": "0x26e1840",
+            "bytes": "e8b15e3100"
+          },
+          {
+            "address": "0x23cb98f",
+            "mnemonic": "cmp",
+            "operands": "eax, -1",
+            "bytes": "83f8ff"
+          },
+          {
+            "address": "0x23cb992",
+            "mnemonic": "je",
+            "operands": "0x23cb906",
+            "bytes": "0f846effffff"
+          }
+        ],
+        "ranges": [
+          {
+            "address": "0x227ae30",
+            "size": 554,
+            "sha256": "0e3c6725c3d24cd60aa52d70b000ef8a86ddf6dac796073b0cb25b32e17f7b1e"
+          },
+          {
+            "address": "0x23cb790",
+            "size": 576,
+            "sha256": "baa051ed308683435b30c44f89b301dd315ec90b4ea834db56fc4af391e2c3f8"
+          }
+        ]
+      },
+      {
+        "source": "cards/eventide.c",
+        "name": "card_nightmare_incursion",
+        "callee": "new_global_tutor",
+        "variable": "crd",
+        "comparison_start": 1057,
+        "comparison_end": 1062,
+        "before": "!= -1",
+        "after": ">= 0",
+        "before_definition_sha256": "c41eda10321b3c888f5804933dfb505080a41f4b114f9c9687b2fbd6fb28d513",
+        "native_guard": [
+          {
+            "address": "0x236bfcf",
+            "mnemonic": "call",
+            "operands": "0x2651990",
+            "bytes": "e8bc592e00"
+          },
+          {
+            "address": "0x236bfd4",
+            "mnemonic": "test",
+            "operands": "eax, eax",
+            "bytes": "85c0"
+          },
+          {
+            "address": "0x236bfd6",
+            "mnemonic": "js",
+            "operands": "0x236bff4",
+            "bytes": "781c"
+          }
+        ],
+        "current_guard": [
+          {
+            "address": "0x21956a7",
+            "mnemonic": "call",
+            "operands": "0x26e1840",
+            "bytes": "e894c15400"
+          },
+          {
+            "address": "0x21956ac",
+            "mnemonic": "cmp",
+            "operands": "eax, -1",
+            "bytes": "83f8ff"
+          },
+          {
+            "address": "0x21956af",
+            "mnemonic": "je",
+            "operands": "0x21956cd",
+            "bytes": "741c"
+          }
+        ],
+        "ranges": [
+          {
+            "address": "0x236bd80",
+            "size": 773,
+            "sha256": "53f88a79f10fa61d3662bdc9773312ad144cdf973f3931f9b367685e1b08a68b"
+          },
+          {
+            "address": "0x2195450",
+            "size": 784,
+            "sha256": "babc9a98404dcbcc4b6f864c9fec084365092ec645c1f0af3707a4064fb2d283"
+          }
+        ]
+      }
+    ],
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "5c6ea270e6bfc798b56ad1e233e9e2a0403dcf15d875aca72b723559482c2486",
+      "ManalinkEh.dbg": "af65d4f0b11ca03412ad3be293387207f287f16c92934a4eb1071969c22d946e"
+    },
+    "reader_sha256": "beb5c2ea5b732e4f6411b04dfd6d23bc982081850b6e66bdc5de2b5ff406e505",
+    "scope": "Discovery: one same-named callee call in each caller, immediate native sign-test branch versus rebuilt -1 equality branch, matching branch polarity, and one corresponding source comparison. Manual caller/helper-result review required before source edits."
+  },
+  "discovery_sha256": "0f88cff2b3d70bce1de0f4f6d63dd274e7ff0f81f9ceaf44834908b3a18ebb01",
+  "files": [
+    {
+      "source": "cards/new_phyrexia.c",
+      "before_bytes_sha256": "e794923d6e8d879a07276df6b7e590cbc69adfd4256a13b345694cf3120e523f",
+      "after_bytes_sha256": "da7bca0ae20abd8d663ddd7820b63d9ee4ed3c7fbd915c044e792a5c83ad6b3d",
+      "before_sha256": "31c9fceb42e498dafaada10eadaec3c73f3fa3d3ee8f11f97a04f3e0a21c1574",
+      "after_sha256": "6ff126ef1fc68b592a7660fe3820736a86e70aee7f7dc2f5ebe16a218ad98be8"
+    },
+    {
+      "source": "cards/eventide.c",
+      "before_bytes_sha256": "c48a65a2b6b6bae45ccd262ab5e1c4180d5fab4fb81e0c6c8555fb3072d626b9",
+      "after_bytes_sha256": "2661806d6d1890554762c0de753d1098eacc9560e19370eced32d0ad8141c3d5",
+      "before_sha256": "0d34683b0176a20d0d482260d93d7cc4d3e99c9228adc66a248d745a033763b9",
+      "after_sha256": "f0da0d5f17c0a3f1004157d97f138f057615bbc819f440f409579e0d539bafcd"
+    }
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "scope": "Two existing card definitions. Praetors Grasp skips creation of the exile-play effect for negative results; Nightmare Incursion skips conversion/storage for negative results and retains its existing counted-loop continuation. The recovered new_global_tutor explicitly returns -2 when cancelled. No broader gameplay or whole-handler equivalence claim.",
+  "functions": [
+    {
+      "name": "card_praetors_grasp",
+      "source": "cards/new_phyrexia.c",
+      "source_after_sha256": "1e302433958989599d51eefc0ae7af516cfdc4cc6a03b86ff131dba70a413cad",
+      "rebuilt_range": {
+        "address": "0x23cb790",
+        "size": 576,
+        "sha256": "6a8bafafa03811514401cbf38795d06ed0d91cca3b3efaaf0fe6f4445a1aa891"
+      },
+      "rebuilt_guard": [
+        {
+          "address": "0x23cb98a",
+          "mnemonic": "call",
+          "operands": "0x26e1840",
+          "bytes": "e8b15e3100"
+        },
+        {
+          "address": "0x23cb98f",
+          "mnemonic": "test",
+          "operands": "eax, eax",
+          "bytes": "85c0"
+        },
+        {
+          "address": "0x23cb991",
+          "mnemonic": "js",
+          "operands": "0x23cb906",
+          "bytes": "0f886fffffff"
+        }
+      ]
+    },
+    {
+      "name": "card_nightmare_incursion",
+      "source": "cards/eventide.c",
+      "source_after_sha256": "1efeae36b0772190e76ff6ce2709706bffd87696ab9d8e523a4cdcddde46594d",
+      "rebuilt_range": {
+        "address": "0x2195450",
+        "size": 784,
+        "sha256": "a8775300164d6e654db5983d08545c6a6d4376bc1cd1941bc09d3abf5a302585"
+      },
+      "rebuilt_guard": [
+        {
+          "address": "0x21956a7",
+          "mnemonic": "call",
+          "operands": "0x26e1840",
+          "bytes": "e894c15400"
+        },
+        {
+          "address": "0x21956ac",
+          "mnemonic": "test",
+          "operands": "eax, eax",
+          "bytes": "85c0"
+        },
+        {
+          "address": "0x21956ae",
+          "mnemonic": "js",
+          "operands": "0x21956cc",
+          "bytes": "781c"
+        }
+      ]
+    }
+  ],
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "282f80b6fe2b73b12b56fc497074e2561cc7d38117b22a3c0834df8530f7319f",
+    "debug_sha256": "93ed79fb65759df3636b1a88f4f95a20ad18eb2072d6502d272ad96e41f9958c",
+    "build_log_sha256": "9467c4f14403434dafd5739859d19b2efe41df4c4c37049ae3a96b3ffd3de76a",
+    "full_file_projections": 2,
+    "raw_file_projections": 2,
+    "preserved_line_counts_and_endings": 2,
+    "native_signed_return_guards": 2,
+    "checker_sha256": "acdc0c5ef1704a1b6699e5865c2070c1a94c679ad9b95b7b23060398edac143a",
+    "staging": "preserved; no agent staging commands",
+    "scope": "Actual rebuilt tutor calls followed by test eax,eax and js, matching the native negative-result decision. Source projections cover both whole files. No whole-handler or full-game execution proof."
+  },
+  "comparison_refresh": {
+    "report": ".recovery/reccmp/tiny-refresh-c659.json",
+    "report_sha256": "40097e9a039fff9f0655a982c6e292d247a6ae6fdb4b60bf92d287ed6d07c072",
+    "report_receipt_sha256": "8657c8e27614a066869dbe3d87583f121aa1c61fe8bb2bb7b79332d1610ce24c",
+    "summary": {
+      "exact": 12570,
+      "different": 5985,
+      "effective": 273
+    },
+    "ranges": 18828,
+    "tiny_candidates_at_90_percent": 365,
+    "tiny_candidates_all_scores": 581,
+    "change_groups": 425,
+    "review_summary": {
+      "annotated_change_sites": 224,
+      "candidates_without_site_review": 357
+    },
+    "baseline_cfg_reviewed": 121,
+    "cfg_reviewed": 144,
+    "additional_equality_functions": [
+      "archon_of_valors_reach_legacy",
+      "card_an_havva_constable",
+      "card_angry_mob",
+      "card_cairn_wanderer",
+      "card_coiling_woodworm",
+      "card_edgewall_innkeeper",
+      "card_gaeas_avenger",
+      "card_guardian_of_the_great_conduit",
+      "card_lucky_clover",
+      "card_maro",
+      "card_nightmare2",
+      "card_pallimud",
+      "card_people_of_the_woods",
+      "card_pestilence_rats",
+      "card_primalcrux",
+      "card_revenant",
+      "card_scion_of_the_wild",
+      "card_serra_avatar",
+      "card_sigil_captain",
+      "card_spellheart_chimera",
+      "card_tarmogoyf",
+      "card_zendikar_incarnate",
+      "store_num_colors_paid_in_eot_toughness0"
+    ],
+    "review_archive": {
+      "path": "docs/recovery-evidence/reccmp-tiny-equality-review.json.gz",
+      "sha256": "1327535b8308a5462fe94dfd686c81b145496c89c2181f662a5895585cce1c60"
+    },
+    "focused_equality_checker_cases": 8,
+    "queue": ".recovery\\reccmp\\tiny-reviewed-c659.json",
+    "queue_sha256": "1044fe39c7036b1258ca565f61bcdda4d4894a41b8fa46a3e6a37ffc561eab7b",
+    "scope": "Current post-correction binary snapshot. Eight changed instructions per side, all scores; textual groups are batching hints. The 224 reviewed candidates cover the stated event, address, diagnostic or structural observations, not gameplay equivalence. The 357 unannotated candidates are not a bug count. Larger diffs remain outside this tiny queue. Repeated equality load order is checked only with dead EAX and flags under the explicit stack/global/call ABI assumptions in the review archive.",
+    "review_input_checks": "All four reviewer input pins match final files; immutable build receipt is embedded in the archive to avoid a receipt/review hash cycle."
+  }
+}

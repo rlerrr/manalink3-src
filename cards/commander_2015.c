@@ -266,7 +266,16 @@ int card_shielded_by_faith(int player, int card, event_t event){
 	if (trigger_cause_controller != player || trigger_cause != card){
 		int mode = RESOLVE_TRIGGER_OPTIONAL;
 		if (player == AI){
-			mode = trigger_cause_controller == player && get_cmc(player, trigger_cause) > get_cmc(instance->damage_target_player, instance->damage_target_card) ? RESOLVE_TRIGGER_MANDATORY : 0;
+			mode = 0;
+			if (trigger_cause_controller == player){
+				int attached_player = instance->damage_target_player;
+				int attached_card = instance->damage_target_card;
+				int entering_cmc = get_cmc(player, trigger_cause);
+				int attached_cmc = get_cmc(attached_player, attached_card);
+				if (entering_cmc > attached_cmc){
+					mode = RESOLVE_TRIGGER_MANDATORY;
+				}
+			}
 		}
 		etb_ability_global(ANYBODY, event, mode, TYPE_CREATURE, NULL, player, card);
 	}
@@ -1579,9 +1588,9 @@ int card_verdant_confluence(int player, int card, event_t event)
           choice_cursor = choices;
           do
           {
-            mode_or_grave_priority = choices[0] == CHOICE_REGROWTH ? 0 : ((choices[1] == CHOICE_REGROWTH) - 1 & 0xf);
+            mode_or_grave_priority = choices[0] == CHOICE_REGROWTH ? 0 : ((choices[1] == CHOICE_REGROWTH) ? 0 : 15);
             choice =
-                dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002",
+                dialog_impl(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_RANDOM,
                             "2 +1/+1 counters on target creature", can_target(&td), 10,
                             "Return a permanent from grave to hand", choice_or_selection_result,
                             mode_or_grave_priority, "Tutor basic land tapped", 1, 5, 0, 0, 0, 0);
@@ -1600,9 +1609,9 @@ int card_verdant_confluence(int player, int card, event_t event)
             *choice_cursor = choice;
             choice_cursor = next_choice;
           } while (choice_cursor != choices + 3);
-          *(char *)((int)&instance->info_slot + 1) = (char)choices[1];
+          SET_BYTE1(instance->info_slot) = (char)choices[1];
           *(char *)&instance->info_slot = (char)choices[0];
-          *(char *)((int)&instance->info_slot + 2) = (char)choices[2];
+          SET_BYTE2(instance->info_slot) = (char)choices[2];
         }
         target_choice_cursor = choices;
         ret_location = 0;
@@ -1817,7 +1826,7 @@ int card_kalemne_disciple_of_iroas(int player, int card, event_t event)
   test_definition_t test;
   check_legend_rule(player, card, event);
   vigilance(player, card, event);
-  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_SPELL_CAST) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     default_test_definition(&test, 2);
@@ -2413,15 +2422,5 @@ int card_illusory_ambusher(int player, int card, event_t event)
     instance->targets[7].card = 0;
     instance->targets[7].player = 0;
   }
-  if (event != EVENT_CAN_CAST)
-  {
-    if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
-        (player == affected_card_controller))
-    {
-      ai_modifier = ai_modifier + -0x10;
-      return 0;
-    }
-    return 0;
-  }
-  return 1;
+  return flash(player, card, event);
 }

@@ -339,7 +339,7 @@ static void make_colorless_spirit(int player, int card, int amount)
 	token_generation_t token;
 	default_token_definition(player, card, CARD_ID_SPIRIT, &token);
 	token.pow = token.tou = 1;
-	token.color_forced = 0;
+	token.color_forced = COLOR_TEST_COLORLESS;
 	token.qty = amount;
 	generate_token(&token);
 }
@@ -384,7 +384,7 @@ int card_cunning_bandit(int player, int card, event_t event)
     add_counters(player, card, player, card, COUNTER_KI, 1);
   }
   result = count_counters(player, card, COUNTER_KI);
-  if ((((1 < result) && (trigger_condition == 0xcd)) && (card == affected_card)) &&
+  if ((((1 < result) && (trigger_condition == TRIGGER_EOT)) && (card == affected_card)) &&
       ((player == affected_card_controller && (player == reason_for_trigger_controller))))
   {
     if (event == EVENT_TRIGGER)
@@ -1414,7 +1414,7 @@ int card_kira_great_glass_spinner(int player, int card, event_t event)
   target_or_stack_index = is_humiliated(player, card, AL_STATIC);
   if (target_or_stack_index != 0)
     return 0;
-  if (((((trigger_condition == 0xd3) && (card == affected_card)) &&
+  if (((((trigger_condition == TRIGGER_SPELL_CAST) && (card == affected_card)) &&
         (player == affected_card_controller)) &&
        ((reason_for_trigger_controller == player &&
          (target_or_stack_index = is_what(trigger_cause_controller, trigger_cause, 1),
@@ -3059,7 +3059,7 @@ int card_that_which_was_taken(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 0x47);
     td.preferred_controller = player;
-    td.special = 0x4000;
+    td.special = TARGET_SPECIAL_NOT_ME;
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
       result = valid_target(&td);
@@ -3333,7 +3333,7 @@ int card_umezawas_jitte(int player, int card, event_t event)
     charged_abilities = (unsigned int)(0 < choice_or_power);
     if (choice_or_power < 1)
     {
-      return dialog_impl(player, card, EVENT_CAN_ACTIVATE, "\001\002", "Equip",
+      return dialog_impl(player, card, EVENT_CAN_ACTIVATE, DLG_RANDOM, "Equip",
                          can_activate_basic_equipment(player, card, EVENT_CAN_ACTIVATE, 2), 1,
                          "+2/+2", 0, 10, "-1/-1", 0, 10, "Gain 2 life", charged_abilities, 5, 0, 0,
                          0, 0);
@@ -3348,7 +3348,7 @@ int card_umezawas_jitte(int player, int card, event_t event)
     if (choice_or_power < 1)
     {
       choice_or_power =
-          dialog_impl(player, card, event, "\001\002", "Equip",
+          dialog_impl(player, card, event, DLG_RANDOM, "Equip",
                       can_activate_basic_equipment(player, card, event, 2), 1, "+2/+2", 0, 10,
                       "-1/-1", 0, 10, "Gain 2 life", charged_abilities, 5, 0, 0, 0, 0);
       charged_dialog_needed = false;
@@ -3360,7 +3360,7 @@ int card_umezawas_jitte(int player, int card, event_t event)
     choice_or_power = can_target(creature_target_definition);
     equipped_creature = is_equipping(player, card);
     choice_or_toughness = can_activate_basic_equipment(player, card, event, 2);
-    choice_or_power = dialog_impl(player, card, event, "\001\002", "Equip", choice_or_toughness, 1,
+    choice_or_power = dialog_impl(player, card, event, DLG_RANDOM, "Equip", choice_or_toughness, 1,
                                   "+2/+2", (unsigned int)(equipped_creature != NULL), 10, "-1/-1",
                                   (unsigned int)(choice_or_power != 0), 10, "Gain 2 life",
                                   charged_abilities, 5, 0, 0, 0, 0);
@@ -3954,7 +3954,7 @@ static int toshiro_effect(int player, int card, event_t event)
     {
       card_instance_t *instance = get_card_instance(player, card);
       if (instance->damage_target_player >= 0 &&
-          get_id(instance->damage_target_player, instance->damage_target_card) != 0x1da0)
+          get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_TOSHIRO_UMEZAWA)
         kill_card(player, card, KILL_EXILE);
     }
     card_instance_t *instance = get_card_instance(player, card);

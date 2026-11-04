@@ -244,8 +244,7 @@ if (event == EVENT_CAN_CAST)
     return 1;
   if (event == EVENT_RESOLVE_ACTIVATION)
     draw_cards(player, 1);
-  // Preserve the October 2022 binary's 3G activation cost.
-  return generic_activated_ability(player, card, event, 0, MANACOST_XG(3, 1), 0, NULL, NULL);
+  return generic_activated_ability(player, card, event, 0, MANACOST_XU(3, 1), 0, NULL, NULL);
 }
 
 int card_benalish_veteran(int player, int card, event_t event)
@@ -617,15 +616,12 @@ int card_garruk_primal_hunter(int player, int card, event_t event){
 
 int card_gideons_avenger(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   if ((event == EVENT_TAP_CARD) && (1 - player == affected_card_controller))
   {
-    result = is_humiliated(player, card, AL_TRIG);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_TRIG))
     {
-      result = is_what(affected_card_controller, affected_card, 2);
-      if (result != 0)
+      if (is_what(affected_card_controller, affected_card, 2))
       {
         instance = get_card_instance(player, card);
         instance->targets[1].card = 0x42;
@@ -887,8 +883,8 @@ int card_jade_mage(int player, int card, event_t event)
 
 if (event == EVENT_RESOLVE_ACTIVATION)
     generate_token_by_id(player, card, CARD_ID_SAPROLING);
-  // The October 2022 binary charges 3G here.
-  return generic_activated_ability(player, card, event, 0, MANACOST_XG(3, 1), 0, NULL, NULL);
+  // The October 2022 binary charges 3U here.
+  return generic_activated_ability(player, card, event, 0, MANACOST_XU(3, 1), 0, NULL, NULL);
 }
 
 int card_lord_of_the_unreal(int player, int card, event_t event)
@@ -1006,8 +1002,7 @@ int card_rites_of_flourishing(int player, int card, event_t event)
       event_result = event_result + 1;
     }
   }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 int card_rune_scarred_demon(int player, int card, event_t event){
@@ -1050,51 +1045,43 @@ int card_skinshifter(int player, int card, event_t event)
     }
     return (unsigned int)(event != EVENT_POW_BOOST) * 4 + 3;
   }
-  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_ACTIVATE)
   {
-    instance = get_card_instance(player, card);
-    if (event == EVENT_ACTIVATE)
+    your_turn = current_turn == player;
+    instance->info_slot = 0;
+    if (your_turn)
     {
-      your_turn = current_turn == player;
-      instance->info_slot = 0;
-      if (your_turn)
+      bird_priority = ((0x16 < current_phase) ? 0 : 10);
+      attacking = is_attacking(player, card);
+      plant_priority = 0;
+      rhino_priority = 0;
+      if (attacking != 0)
       {
-        bird_priority = (0x16 < current_phase) - 1 & 10;
-        attacking = is_attacking(player, card);
-        plant_priority = 0;
-        rhino_priority = 0;
-        if (attacking != 0)
-        {
-          rhino_priority = (current_phase != 0x18) - 1 & 10;
-        }
+        rhino_priority = ((current_phase != 0x18) ? 0 : 10);
       }
-      else
-      {
-        bird_priority = 0;
-        plant_priority = 10;
-        rhino_priority = 0;
-      }
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "4/4 Rhino", 1,
-                           rhino_priority, "2/2 Bird", 1, bird_priority, "0/8 Plant", 1,
-                           plant_priority, 0, 0, 0, 0);
-      if (choice == 0)
-      {
-        spell_fizzled = 1;
-        return 0;
-      }
-      instance->info_slot = choice;
-      return generic_activated_ability(player, card, event, 0x2000, 0, 0, 0, 1, 0, 0, 0, NULL,
-                                       NULL);
     }
-  }
-  else
-  {
-    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    else
     {
+      bird_priority = 0;
+      plant_priority = 10;
+      rhino_priority = 0;
+    }
+    choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, "4/4 Rhino", 1,
+                         rhino_priority, "2/2 Bird", 1, bird_priority, "0/8 Plant", 1,
+                         plant_priority, 0, 0, 0, 0);
+    if (choice == 0)
+    {
+      spell_fizzled = 1;
       return 0;
     }
-    instance = get_card_instance(player, card);
+    instance->info_slot = choice;
+    return generic_activated_ability(player, card, event, 0x2000, 0, 0, 0, 1, 0, 0, 0, NULL,
+                                     NULL);
   }
+
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
     resolved_mode = instance->info_slot;
@@ -2429,16 +2416,11 @@ int card_sundial_of_the_infinite(int player, int card, event_t event)
 {
   int result;
 
-  if (event != EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      end_the_turn(player, card, EVENT_RESOLVE_ACTIVATION);
-    }
+    end_the_turn(player, card, EVENT_RESOLVE_ACTIVATION);
   }
   result = generic_activated_ability(player, card, event, 0x10001, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;

@@ -109,7 +109,8 @@ Whenever enchanted player casts an instant or sorcery spell, each other player m
 
 	if (in_play(player, card) && !is_humiliated(player, card, AL_TRIG)){
 		card_instance_t* instance = get_card_instance(player, card);
-		sp_ability_trigger(instance->targets[0].player, event, RESOLVE_TRIGGER_AI(player), TYPE_SPELL, NULL, player, card);
+		int enchanted_player = instance->targets[0].player;
+		sp_ability_trigger(enchanted_player, event, RESOLVE_TRIGGER_AI(player), TYPE_SPELL, NULL, player, card);
 		if (event == EVENT_SPA){
 			copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
 		}
@@ -2061,7 +2062,7 @@ int card_mikaeus_the_unhallowed(int player, int card, event_t event)
       source_or_legacy->info_slot = legacy_or_target_index + 1;
     }
     instance = get_card_instance(player, card);
-    if (((0 < instance->info_slot) && (trigger_condition == 0xd7)) &&
+    if (((0 < instance->info_slot) && (trigger_condition == TRIGGER_DEAL_DAMAGE)) &&
         ((card == affected_card &&
           ((player == affected_card_controller && (reason_for_trigger_controller == player))))))
     {
@@ -2390,7 +2391,7 @@ static int effect_werewolf_ransacker(int player, int card, event_t event)
     card_instance_t *instance = get_card_instance(player, card);
     int amount =
         is_what(instance->damage_target_player, instance->damage_target_card, TYPE_CREATURE)
-            ? card_counts[player][5] + 1
+            ? card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1
             : 1;
     do
     {
@@ -3078,30 +3079,18 @@ int card_deranged_outcast(int player, int card, event_t event)
   target_definition_t td;
   test_definition_t test;
 
-  if (event == EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+  new_default_test_definition(&test, 0x47, "Select an Human to sacrifice.");
+  test.subtype = 0x5b;
+  instance = get_card_instance(player, card);
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
-    default_target_definition(player, card, &td, 2);
-    td.preferred_controller = player;
-    new_default_test_definition(&test, 0x47, "Select an Human to sacrifice.");
-    test.subtype = 0x5b;
-    get_card_instance(player, card);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 2);
-    td.preferred_controller = player;
-    new_default_test_definition(&test, 0x47, "Select an Human to sacrifice.");
-    test.subtype = 0x5b;
-    instance = get_card_instance(player, card);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-    {
-      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
-                               COUNTER_P1_P1, 2);
-    }
+    add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                             COUNTER_P1_P1, 2);
   }
   result = generic_activated_ability_with_sacrifice_as_cost(
       player, card, event, GAA_CAN_TARGET, 1, 0, 0, 1, 0, 0, 0, &td, "TARGET_CREATURE", TYPE_NONE,
@@ -3292,7 +3281,7 @@ int card_lost_in_the_woods(int player, int card, event_t event)
   if (event == EVENT_DAT_ABILITY)
   {
     instance = get_card_instance(player, card);
-    attacker_index = instance->info_slot - 1;
+    attacker_index = (int32_t)((uint32_t)instance->info_slot - 1U);
     attackers = (uint8_t *)&instance->targets[2].player;
     if (attacker_index >= 0)
     {
@@ -4717,48 +4706,23 @@ int card_increasing_vengeance(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x210a600; original cards/dark_ascension.c:3707. */
 static int havengul_lich_legacy(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-  if (event == EVENT_STATIC_EFFECTS)
+  if (event == EVENT_STATIC_EFFECTS && card == affected_card && player == affected_card_controller)
   {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-      instance = get_card_instance(player, card);
-      if (instance->damage_target_player < '\0')
-      {
-        kill_card(player, card, KILL_EXILE);
-      }
-      result = check_status(player, card, 0x10000);
-      if (result == 0)
-      {
-        add_status(player, card, 0x10000);
-      }
-    }
-    instance = get_card_instance(player, card);
-    if (instance->damage_target_player < '\0')
-    {
-      return 0;
-    }
-  }
-  else
-  {
-    instance = get_card_instance(player, card);
-    if (instance->damage_target_player < '\0')
-    {
-      if (event != EVENT_CLEANUP)
-      {
-        return 0;
-      }
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player < 0)
       kill_card(player, card, KILL_EXILE);
-      return 0;
-    }
+    if (!check_status(player, card, 0x10000))
+      add_status(player, card, 0x10000);
   }
-  result = effect_follows_control_of_attachment(player, card, event);
-  if ((result != 0) || (event != EVENT_CLEANUP))
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->damage_target_player < 0)
   {
+    if (event == EVENT_CLEANUP)
+      kill_card(player, card, KILL_EXILE);
     return 0;
   }
-  kill_card(player, card, KILL_EXILE);
+  if (!effect_follows_control_of_attachment(player, card, event) && event == EVENT_CLEANUP)
+    kill_card(player, card, KILL_EXILE);
   return 0;
 }
 

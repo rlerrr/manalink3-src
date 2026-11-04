@@ -689,49 +689,16 @@ int card_magosi_the_waterveil(int player, int card, event_t event){
 
 void activate_oran_rief_pump(int player, int card, int color)
 {
-  card_instance_t *instance;
-  int result;
-  unsigned int required_color;
-  unsigned int creature_color;
-  int card_00;
-  int player_00;
-
-  player_00 = 0;
-  do
-  {
-    card_00 = active_cards_count[player_00] + -1;
-    if (-1 < active_cards_count[player_00] + -1)
-    {
-      do
+  for (int p = 0; p < 2; ++p)
+    for (int c = active_cards_count[p] - 1; c >= 0; --c)
+      if (in_play(p, c) && is_what(p, c, TYPE_CREATURE) &&
+          check_special_flags(p, c, SF_JUST_CAME_INTO_PLAY))
       {
-        bool eligible = (instance = in_play(player_00, card_00), instance != NULL) &&
-                        (result = is_what(player_00, card_00, 2), result != 0) &&
-                        (result = check_special_flags(player_00, card_00, 0x1000), result != 0);
-        if (eligible)
-        {
-          required_color = get_sleighted_color_test(player, card, color);
-          creature_color = get_color(player_00, card_00);
-          eligible = (required_color & creature_color) != 0;
-        }
-        if (eligible)
-        {
-          result = card_00 - 1;
-          add_counters(player, card, player_00, card_00, COUNTER_P1_P1, 1);
-          card_00 = result;
-        }
-        else
-        {
-          card_00 = card_00 - 1;
-          result = card_00;
-        }
-      } while (result != -1);
-    }
-    player_00 = player_00 + 1;
-    if (player_00 == 2)
-    {
-      return;
-    }
-  } while (true);
+        unsigned int required_color = get_sleighted_color_test(player, card, color);
+        unsigned int creature_color = get_color(p, c);
+        if (required_color & creature_color)
+          add_counters(player, card, p, c, COUNTER_P1_P1, 1);
+      }
 }
 
 int card_oran_rief_the_vastwood(int player, int card, event_t event){
@@ -1275,7 +1242,7 @@ int card_nissa_revane(int player, int card, event_t event)
     }
     if (player != 1)
     {
-      dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Search for Nissa's Chosen",
+      dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_PLANESWALKER, "Search for Nissa's Chosen",
                   1, 10, 1, "Gain 2 life for each Elf", 1, life_priority, 1,
                   "Search for Elf creatures", 1, elf_tutor_priority, 0xfffffff9, 0, 0, 0, 0);
       return planeswalker(player, card, event, 2);
@@ -1290,7 +1257,7 @@ int card_nissa_revane(int player, int card, event_t event)
   if (player == 1)
     chosen_available = (instance->targets[1].player ^ 0xffffffffU) >> 0x1f;
   choice_or_result =
-      dialog_impl(player, card, event, "\001\002", "\001\017", "Search for Nissa's Chosen",
+      dialog_impl(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Search for Nissa's Chosen",
                   chosen_available, 10, 1, "Gain 2 life for each Elf", 1, life_priority, 1,
                   "Search for Elf creatures", 1, elf_tutor_priority, 0xfffffff9, 0, 0, 0, 0);
   if (event == EVENT_CAN_ACTIVATE)
@@ -1318,7 +1285,7 @@ int card_nissa_revane(int player, int card, event_t event)
     }
     else if (choice_or_result == CHOICE_NC)
     {
-      this_test.id = 0x297d;
+      this_test.id = CARD_ID_NISSAS_CHOSEN;
       choice_or_result = new_global_tutor(player, player, 1, 4, 0, 5, &this_test);
       instance = get_card_instance(instance->parent_controller, instance->parent_card);
       instance->targets[1].player = choice_or_result;
@@ -2445,7 +2412,7 @@ int card_quest_for_the_gravelord(int player, int card, event_t event)
 
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    default_token_definition(player, card, 0x49ad, &token);
+    default_token_definition(player, card, CARD_ID_ZOMBIE_GIANT, &token);
     token.pow = 5;
     token.tou = 5;
     generate_token(&token);
@@ -2714,7 +2681,6 @@ static const char* target_must_have_counters(int who_chooses, int player, int ca
 }
 int card_vampire_hexmage(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t td;
   if (event != EVENT_ACTIVATE && event - EVENT_RESOLVE_ACTIVATION > 1 && event != EVENT_CLEANUP)
@@ -2724,13 +2690,12 @@ int card_vampire_hexmage(int player, int card, event_t event)
   if (event != EVENT_RESOLVE_ACTIVATION &&
       (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0)))
   {
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_must_have_counters;
   }
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       instance = get_card_instance(player, card);
       remove_all_counters(player, card, instance->targets[0].player, instance->targets[0].card,
@@ -2894,11 +2859,11 @@ int card_chandra_ablaze(int player, int card, event_t event){
 			int c = 0;
 			const int *grave = get_grave(player);
 			while( grave[c] != -1 ){
-					if( is_what(-1, grave[c], TYPE_SPELL) &&
-						(get_color_by_internal_id(player, grave[c]) & get_sleighted_color_test(player, card, COLOR_TEST_RED)) &&
-						can_legally_play_iid(player, grave[c])
-					  ){
-						priorities[2]+=5;
+					if (is_what(-1, grave[c], TYPE_SPELL)){
+						int grave_color = get_color_by_internal_id(player, grave[c]);
+						int sleighted_red = get_sleighted_color_test(player, card, COLOR_TEST_RED);
+						if ((grave_color & sleighted_red) && can_legally_play_iid(player, grave[c]))
+							priorities[2] += 5;
 					}
 					c++;
 			}
@@ -2950,7 +2915,9 @@ int card_chandra_ablaze(int player, int card, event_t event){
 					int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 1, AI_MIN_VALUE, -1, &this_test);
 
 					// was a red card chosen?
-					int red_card = get_color(player, selected) & get_sleighted_color_test(instance->parent_controller, instance->parent_card, COLOR_TEST_RED);
+					int selected_color = get_color(player, selected);
+					int sleighted_red = get_sleighted_color_test(instance->parent_controller, instance->parent_card, COLOR_TEST_RED);
+					int red_card = selected_color & sleighted_red;
 
 					discard_card(player, selected);
 
@@ -3565,31 +3532,20 @@ int card_obsidian_fireheart(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
 
-  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  default_target_definition(player, card, &td, 1);
+  td.extra = (int32_t)doesnt_have_a_blaze_counter;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_ACTIVATE)
   {
-    default_target_definition(player, card, &td, 1);
-    td.extra = (int32_t)doesnt_have_a_blaze_counter;
-    td.special = 0x8000;
-    instance = get_card_instance(player, card);
-    if (event == EVENT_ACTIVATE)
+    if (1 - player == current_turn)
     {
-      if (1 - player == current_turn)
-      {
-        ai_modifier = ai_modifier + 0x18;
-      }
+      ai_modifier = ai_modifier + 0x18;
     }
   }
-  else
-  {
-    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 1);
-    td.extra = (int32_t)doesnt_have_a_blaze_counter;
-    td.special = 0x8000;
-    instance = get_card_instance(player, card);
-  }
+
   if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&td) != 0))
   {
     add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
@@ -4420,41 +4376,35 @@ int card_pitfall_trap(int player, int card, event_t event){
 
 int card_quest_for_the_holy_relic(int player, int card, event_t event)
 {
-  int equipment_card_or_duh;
-  int equipped_card;
-  card_instance_t *instance;
-  target_definition_t td;
-  test_definition_t test;
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
-      (player == affected_card_controller))
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY && card == affected_card &&
+      player == affected_card_controller)
   {
-    default_test_definition(&test, 2);
-    equipment_card_or_duh = duh_mode(player);
-    etb_ability_global(player, event, (equipment_card_or_duh != 0) + 1, TYPE_NONE, &test, player,
-                       card);
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    int optional = duh_mode(player);
+    etb_ability_global(player, event, (optional != 0) + 1, TYPE_NONE, &test, player, card);
   }
   if (event == EVENT_ETB)
-  {
     add_counters(player, card, player, card, COUNTER_QUEST, 1);
-  }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    new_default_test_definition(&test, 0, "Select an Equipment card.");
-    test.subtype = 0x3001;
-    equipment_card_or_duh = new_global_tutor(player, player, 1, 4, 0, 2, &test);
-    if (-1 < equipment_card_or_duh)
+    test_definition_t this_test;
+    new_default_test_definition(&this_test, 0, "Select an Equipment card.");
+    this_test.subtype = 0x3001;
+    int equipment = new_global_tutor(player, player, 1, 4, 0, 2, &this_test);
+    if (equipment >= 0)
     {
-      default_target_definition(player, card, &td, 2);
+      target_definition_t td;
+      default_target_definition(player, card, &td, TYPE_CREATURE);
       td.allowed_controller = player;
       td.preferred_controller = player;
       td.illegal_abilities = 0;
-      if (pick_target(&td, "TARGET_CREATURE") != 0)
+      if (pick_target(&td, "TARGET_CREATURE"))
       {
-        instance = get_card_instance(player, card);
-        equipped_card = instance->targets[0].card;
-        instance->number_of_targets = '\0';
-        equip_target_creature(player, equipment_card_or_duh, instance->targets[0].player,
-                              equipped_card);
+        card_instance_t *instance = get_card_instance(player, card);
+        int equipped_card = instance->targets[0].card;
+        instance->number_of_targets = 0;
+        equip_target_creature(player, equipment, instance->targets[0].player, equipped_card);
       }
     }
   }
@@ -5001,46 +4951,30 @@ Enchanted creature doesn't untap during its controller's untap step. */
 
 int card_quest_for_ancient_secrets(int player, int card, event_t event)
 {
-  xtrigger_t current_trigger;
-  int result;
-  event_t graveyard_event = event;
-  card_instance_t *instance;
-  target_definition_t td;
-  enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_MILLED;
-  current_trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
-  {
-    current_trigger = xtrigger_impl_value_dont_use_directly;
-  }
-  if (((((current_trigger == XTRIGGER_MILLED) && (card == affected_card)) &&
-        (player == affected_card_controller)) &&
-       ((reason_for_trigger_controller == player && (trigger_cause_controller == player)))) &&
-      (result = is_humiliated(player, card, AL_TRIG), result == 0))
+  enable_xtrigger_flags |= ENABLE_XTRIGGER_MILLED;
+  if (xtrigger_condition() == XTRIGGER_MILLED && affect_me(player, card) &&
+      reason_for_trigger_controller == player && trigger_cause_controller == player &&
+      !is_humiliated(player, card, AL_TRIG))
   {
     if (event == EVENT_TRIGGER)
-    {
-      result = duh_mode(player);
-      event_result = event_result | (result != 0) + 1;
-      graveyard_event = 0x7d;
-    }
+      event_result |= RESOLVE_TRIGGER_AI(player);
     else if (event == EVENT_RESOLVE_TRIGGER)
-    {
       add_counters(player, card, player, card, COUNTER_QUEST, num_cards_milled);
-      graveyard_event = 0x7e;
-    }
   }
-  result = when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(
-      player, card, graveyard_event, player, RESOLVE_TRIGGER_DUH, NULL);
-  if (result != 0)
+
+  if (when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(
+          player, card, event, player, RESOLVE_TRIGGER_DUH, NULL))
     add_counters(player, card, player, card, COUNTER_QUEST, 1);
-  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
-      event != EVENT_CLEANUP)
+
+  if (!IS_GAA_EVENT(event))
     return global_enchantment(player, card, event);
-  default_target_definition(player, card, &td, 0);
-  td.zone = 0x1000;
-  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_NONE);
+  td.zone = TARGET_ZONE_PLAYERS;
+  if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
   {
-    instance = get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
     reshuffle_grave_into_deck(instance->targets[0].player, 0);
   }
   return quest(player, card, event, 5, &td, "TARGET_PLAYER");
@@ -5485,7 +5419,7 @@ static int blade_of_the_bloodchief_effect(int player, int card, event_t event)
   int equipped_card_or_result;
   int vampire_match;
   unsigned int num;
-  int player_00;
+  int target_player;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -5528,7 +5462,7 @@ static int blade_of_the_bloodchief_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }
@@ -5545,22 +5479,22 @@ static int blade_of_the_bloodchief_effect(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       equipment_or_creature =
           get_card_instance(instance->targets[0].player, instance->targets[0].card);
-      player_00 = (int)equipment_or_creature->damage_target_player;
+      target_player = (int)equipment_or_creature->damage_target_player;
       equipped_card_or_result = equipment_or_creature->damage_target_card;
-      if (((-1 < player_00) && (-1 < equipped_card_or_result)) &&
-          (equipment_or_creature = in_play(player_00, equipped_card_or_result),
+      if (((-1 < target_player) && (-1 < equipped_card_or_result)) &&
+          (equipment_or_creature = in_play(target_player, equipped_card_or_result),
            equipment_or_creature != NULL))
       {
 
         for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
         {
-          vampire_match = has_subtype(player_00, equipped_card_or_result, SUBTYPE_VAMPIRE);
+          vampire_match = has_subtype(target_player, equipped_card_or_result, SUBTYPE_VAMPIRE);
           num = death_count;
           if (vampire_match != 0)
           {
             num = death_count * 2;
           }
-          add_counters(player, card, player_00, equipped_card_or_result, COUNTER_P1_P1, num);
+          add_counters(player, card, target_player, equipped_card_or_result, COUNTER_P1_P1, num);
         }
       }
       kill_card(player, card, KILL_EXILE);
@@ -5592,7 +5526,7 @@ int card_lullmage_mentor(int player, int card, event_t event)
       if (result == 0)
       {
         token_generation_t token;
-        default_token_definition(player, card, 0x4961, &token);
+        default_token_definition(player, card, CARD_ID_MERFOLK, &token);
         token.tou = 1;
         token.pow = 1;
         generate_token(&token);
@@ -5601,7 +5535,7 @@ int card_lullmage_mentor(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
     td.allowed_controller = player;
     td.preferred_controller = player;
-    td.illegal_state = 1;
+    td.illegal_state = TARGET_STATE_TAPPED;
     td.required_subtype = 0x74;
     td.illegal_abilities = 0;
     get_card_instance(player, card);
@@ -5611,7 +5545,7 @@ int card_lullmage_mentor(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
     td.allowed_controller = player;
     td.preferred_controller = player;
-    td.illegal_state = 1;
+    td.illegal_state = TARGET_STATE_TAPPED;
     td.required_subtype = 0x74;
     td.illegal_abilities = 0;
     instance = get_card_instance(player, card);
@@ -5624,10 +5558,9 @@ int card_lullmage_mentor(int player, int card, event_t event)
       }
     }
   }
-  result = generic_activated_ability_with_tapsubtype_as_cost(
+  return generic_activated_ability_with_tapsubtype_as_cost(
       player, card, event, GAA_SPELL_ON_STACK, 0, 0, 0, 0, 0, 0, 0, NULL, NULL,
       &td, 7);
-  return result;
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */

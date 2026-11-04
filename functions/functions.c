@@ -487,8 +487,6 @@ int other_leaves_play(int triggering_player, int triggering_card, int t_player, 
 int leaves_play(int player, int card, event_t event, int can_be_suppressed,
                      int can_be_duplicated);
 
-/* DLL-owned storage shared by C and C++; card_coded is an EXE symbol. */
-char *set_legacy_effect_name_addr = NULL;
 
 #include <windows.h>
 
@@ -534,7 +532,7 @@ int get_attack_power(int player, int card)
       case CARD_ID_THE_GREAT_FOREST:
       case CARD_ID_CONSPIRACY_WEIGHT_ADVANTAGE:
       case CARD_ID_HIGH_ALERT:
-      case 0x4dc2:
+      case CARD_ID_HUATLI_THE_SUNS_HEART:
         if (p != player)
           break;
         /* fall through */
@@ -842,7 +840,7 @@ void blink_effect(int t_player, int t_card, void (*before_etb)(int, int))
   int csvid = cards_data[iid].id;
   int csvids[2] = {-1, -1};
   int parts = 1;
-  if (csvid == 0x3eae || csvid == 0x3ef4 || csvid == 0x3efb)
+  if (csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || csvid == CARD_ID_CHITTERING_HOST || csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP)
   {
     unmeld(csvid, &csvids[0], &csvids[1]);
     iid = get_internal_card_id_from_csv_id(csvids[0]);
@@ -885,7 +883,7 @@ void blink_effect_controller(int player, int card, void (*before_etb)(int, int))
   int csvid = cards_data[iid].id;
   int csvids[2] = {-1, -1};
   int parts = 1;
-  if (csvid == 0x3eae || csvid == 0x3ef4 || csvid == 0x3efb)
+  if (csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || csvid == CARD_ID_CHITTERING_HOST || csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP)
   {
     unmeld(csvid, &csvids[0], &csvids[1]);
     iid = get_internal_card_id_from_csv_id(csvids[0]);
@@ -994,7 +992,7 @@ int remove_until_eot(int player, int card, int t_player, int t_card)
   int csvid = cards_data[iid].id;
   int csvids[2] = {-1, -1};
   int parts = 1;
-  if (csvid == 0x3eae || csvid == 0x3ef4 || csvid == 0x3efb)
+  if (csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || csvid == CARD_ID_CHITTERING_HOST || csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP)
   {
     unmeld(csvid, &csvids[0], &csvids[1]);
     iid = get_internal_card_id_from_csv_id(csvids[0]);
@@ -1019,7 +1017,7 @@ int remove_until_eot(int player, int card, int t_player, int t_card)
     case CARD_ID_OTHERWORLDLY_JOURNEY:
       leg->targets[1].player = 1;
       break;
-    case 0x590a:
+    case CARD_ID_SEMESTERS_END:
       leg->targets[1].player = 2;
       break;
     }
@@ -1098,7 +1096,7 @@ int check_for_cip_effects_removal(int player, int card)
         if (in_play(i, k) && !is_humiliated(i, k, AL_STATIC))
         {
           if (get_id(i, k) == CARD_ID_TORPOR_ORB || get_id(i, k) == CARD_ID_HUSHWING_GRYFF ||
-              get_id(i, k) == CARD_ID_TOCATLI_HONOR_GUARD || get_id(i, k) == 0x5097)
+              get_id(i, k) == CARD_ID_TOCATLI_HONOR_GUARD || get_id(i, k) == CARD_ID_HUSHBRINGER)
           {
             return 1;
           }
@@ -1139,7 +1137,7 @@ void comes_into_play_tapped(int player, int card, event_t event)
       affect_me(player, card))
   {
     card_instance_t *instance = get_card_instance(player, card);
-    if (!((card_flags[0] | card_flags[1]) & 8) &&
+    if (!((card_flags[0] | card_flags[1]) & CFLAGS_ARCHELOS) &&
         !(instance->ext->special_flags2 & SF2_FACE_DOWN_DUE_TO_MANIFEST) &&
         !is_humiliated(player, card, AL_TRIG))
       get_card_instance(player, card)->state |= STATE_TAPPED;
@@ -1748,10 +1746,10 @@ static int ability_doesnt_untap_while_has_a_counter_and_remove_a_counter_at_upke
   {
     if (count_counters(instance->damage_target_player, instance->damage_target_card, type))
       does_not_untap(instance->damage_target_player, instance->damage_target_card, EVENT_UNTAP);
-    if (trigger_condition != 0xc9)
+    if (trigger_condition != TRIGGER_UPKEEP)
       return 0;
   }
-  if (trigger_condition == 0xc9 && card == affected_card && player == affected_card_controller &&
+  if (trigger_condition == TRIGGER_UPKEEP && card == affected_card && player == affected_card_controller &&
       count_counters(instance->damage_target_player, instance->damage_target_card, type))
     upkeep_trigger_ability_mode(player, card, event, instance->damage_target_player,
                                 RESOLVE_TRIGGER_MANDATORY);
@@ -2351,6 +2349,7 @@ int graveyard_from_play(int player, int card, event_t event)
       card_instance_t *instance = get_card_instance(player, card);
       if (instance->kill_code != KILL_EXILE && instance->kill_code != 0)
       {
+        instance = get_card_instance(player, card);
         return !(instance->ext->special_flags2 & SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE);
       }
     }
@@ -3023,8 +3022,10 @@ int generic_painland(int player, int card, event_t event)
   {
     if (CAN_TAP_FOR_MANA(player, card))
     {
-      int colors = get_card_instance(player, card)->mana_color | mana_colors_added[player];
-      if (!check_special_flags2(player, card, SF2_CONTAMINATION))
+      int contaminated = check_special_flags2(player, card, SF2_CONTAMINATION);
+      card_instance_t *instance = get_card_instance(player, card);
+      int colors = instance->mana_color | mana_colors_added[player];
+      if (!contaminated)
       {
         if (IS_AI(player) && life[player] <= 1)
         {
@@ -3359,7 +3360,7 @@ int check_battlefield_for_targettable_id(int player, int card, int t_player, int
 		int count = 0;
 		while( count < active_cards_count[t_player] ){
 			   if( in_play(t_player, count) && get_id(t_player, count) == id ){
-					if( ! is_protected_from_me(player, card, t_player, count) ){
+					if( ! is_protected_from(t_player, count, player, card, IPF_TARGET) ){
 						if( mode == 0 ){
 							return 1;
 						}
@@ -3378,7 +3379,7 @@ int check_battlefield_for_targettable_id(int player, int card, int t_player, int
 				 int count = 0;
 				 while( count < active_cards_count[i] ){
 						if( in_play(i, count) && get_id(i, count) == id ){
-							if( ! is_protected_from_me(player, card, i, count) ){
+							if( ! is_protected_from(i, count, player, card, IPF_TARGET) ){
 								if( mode == 0 ){
 									return 1;
 								}
@@ -3555,7 +3556,7 @@ int pick_targets_for_multidamage(int player, int card, int max_targets, int dama
 		int count = 0;
 		while( count < active_cards_count[1-player] && trgts < max_targets ){
 				if( in_play(1-player, count) && is_what(1-player, count, TYPE_CREATURE) ){
-					if( ! is_protected_from_me(player, card, 1-player, count) &&
+					if( ! is_protected_from(1-player, count, player, card, IPF_TARGET) &&
 						get_toughness(1-player, count) <= damages
 					  ){
 						instance->targets[trgts].player = 1-player;
@@ -3570,7 +3571,7 @@ int pick_targets_for_multidamage(int player, int card, int max_targets, int dama
 			count = 0;
 			while( count < active_cards_count[1-player] && trgts < max_targets ){
 					if( in_play(1-player, count) && is_what(1-player, count, TYPE_CREATURE) ){
-						if( ! is_protected_from_me(player, card, 1-player, count) &&
+						if( ! is_protected_from(1-player, count, player, card, IPF_TARGET) &&
 							get_toughness(1-player, count) > damages
 						  ){
 							instance->targets[trgts].player = 1-player;
@@ -3586,7 +3587,7 @@ int pick_targets_for_multidamage(int player, int card, int max_targets, int dama
 			count = 0;
 			while( count < active_cards_count[player] && trgts < max_targets ){
 					if( in_play(player, count) && is_what(player, count, TYPE_CREATURE) ){
-						if( ! is_protected_from_me(player, card, player, count) &&
+						if( ! is_protected_from(player, count, player, card, IPF_TARGET) &&
 							get_toughness(player, count) > damages
 						  ){
 							instance->targets[trgts+1].player = player;
@@ -3602,7 +3603,7 @@ int pick_targets_for_multidamage(int player, int card, int max_targets, int dama
 			count = 0;
 			while( count < active_cards_count[player] && trgts < max_targets ){
 					if( in_play(player, count) && is_what(player, count, TYPE_CREATURE) ){
-						if( ! is_protected_from_me(player, card, player, count) ){
+						if( ! is_protected_from(player, count, player, card, IPF_TARGET) ){
 							instance->targets[trgts+1].player = player;
 							instance->targets[trgts+1].card = count;
 							trgts++;
@@ -3684,8 +3685,8 @@ static int effect_nobody_can_attack_until_eot(int player, int card, event_t even
     end_effect = 1;
 
   if (event == EVENT_BEGIN_TURN)
-    instance->targets[2].card = 66;
-  if (event == EVENT_CLEANUP && instance->targets[2].card == 66 && (instance->targets[1].card & 16))
+    get_card_instance(player, card)->targets[2].card = 66;
+  if (event == EVENT_CLEANUP && get_card_instance(player, card)->targets[2].card == 66 && (instance->targets[1].card & 16))
     kill_card(player, card, KILL_EXILE);
 
   if (end_effect)
@@ -4140,7 +4141,7 @@ int generic_shade(int player, int card, event_t event, int life_to_pay, int cles
                   int blue, int green, int red, int white, int p_pump, int t_pump, int k_pump,
                   int sp_key_pump)
 {
-  int card_00;
+  int parent_card;
   int result;
   card_instance_t *instance;
   int pump_amount;
@@ -4196,15 +4197,15 @@ int generic_shade(int player, int card, event_t event, int life_to_pay, int cles
     {
       instance = get_card_instance(player, card);
       result = instance->parent_controller;
-      card_00 = instance->parent_card;
-      instance = in_play(result, card_00);
+      parent_card = instance->parent_card;
+      instance = in_play(result, parent_card);
       if (instance == NULL)
       {
         return 0;
       }
       if (99 < p_pump)
       {
-        add_counters(player, card, result, card_00, COUNTER_P1_P1, p_pump + -100);
+        add_counters(player, card, result, parent_card, COUNTER_P1_P1, p_pump + -100);
         if (k_pump == 0 && sp_key_pump == 0)
         {
           return 0;
@@ -4212,7 +4213,7 @@ int generic_shade(int player, int card, event_t event, int life_to_pay, int cles
         t_pump = 0;
         p_pump = 0;
       }
-      pump_ability_until_eot(result, card_00, result, card_00, p_pump, t_pump, k_pump, sp_key_pump);
+      pump_ability_until_eot(result, parent_card, result, parent_card, p_pump, t_pump, k_pump, sp_key_pump);
       return 0;
     }
   }
@@ -4269,7 +4270,7 @@ int generic_shade_merge_pt(int player, int card, event_t event, int life_to_pay,
 int generic_husk(int player, int card, event_t event, int type, int p_pump, int t_pump, int k_pump,
                  int sp_key_pump)
 {
-  int card_00;
+  int parent_card;
   card_instance_t *instance;
   int result;
   unsigned int sacrifice_choice;
@@ -4328,8 +4329,8 @@ int generic_husk(int player, int card, event_t event, int type, int p_pump, int 
     {
       instance = get_card_instance(player, card);
       result = instance->parent_controller;
-      card_00 = instance->parent_card;
-      instance = in_play(result, card_00);
+      parent_card = instance->parent_card;
+      instance = in_play(result, parent_card);
       if (instance != NULL)
       {
         if (p_pump < 100)
@@ -4338,13 +4339,13 @@ int generic_husk(int player, int card, event_t event, int type, int p_pump, int 
               (((0 < p_pump || ((p_pump == 0 && (0 < t_pump)))) ||
                 ((p_pump < 0 && (t_pump == 0))))))
           {
-            pump_until_eot_merge_previous_alt(result, card_00, result, card_00, p_pump, t_pump, 0);
+            pump_until_eot_merge_previous_alt(result, parent_card, result, parent_card, p_pump, t_pump, 0);
             return 0;
           }
         }
         else
         {
-          add_counters(player, card, result, card_00, COUNTER_P1_P1, p_pump + -100);
+          add_counters(player, card, result, parent_card, COUNTER_P1_P1, p_pump + -100);
           if (k_pump == 0 && sp_key_pump == 0)
           {
             return 0;
@@ -4352,7 +4353,7 @@ int generic_husk(int player, int card, event_t event, int type, int p_pump, int 
           t_pump = 0;
           p_pump = 0;
         }
-        pump_ability_until_eot(result, card_00, result, card_00, p_pump, t_pump, k_pump,
+        pump_ability_until_eot(result, parent_card, result, parent_card, p_pump, t_pump, k_pump,
                                sp_key_pump);
         return 0;
       }
@@ -5465,7 +5466,7 @@ int is_phyrexian(int id)
       id == CARD_ID_SLASH_PANTHER || id == CARD_ID_SPINED_THOPTER ||
       id == CARD_ID_SURGICAL_EXTRACTION || id == CARD_ID_TEZZERETS_GAMBIT ||
       id == CARD_ID_THUNDERING_TANADON || id == CARD_ID_VAULT_SKIRGE ||
-      id == 0x4ffa /* Native CSV id; absent from the historical card_id.h enum. */
+      id == CARD_ID_KRRIK_SON_OF_YAWGMOTH
   )
   {
     return 1;
@@ -5940,9 +5941,9 @@ void shuffle(int player)
     {
       if (!in_play(p, card) || !is_what(p, card, 0x47))
         continue;
-      if (get_id(p, card) == 0x1a6b)
+      if (get_id(p, card) == CARD_ID_PSYCHOGENIC_PROBE)
         damage_player(player, 2, p, card);
-      if (get_id(p, card) == 0x3555 && hand_count[player] > 0)
+      if (get_id(p, card) == CARD_ID_WIDESPREAD_PANIC && hand_count[player] > 0)
       {
         char msg[100] = "Select a card to put on top.";
         test_definition_t test;
@@ -5950,7 +5951,7 @@ void shuffle(int player)
         int selected_card = new_select_a_card(player, player, 4, 1, 3, -1, &test);
         put_on_top_of_deck(player, selected_card);
       }
-      if (player != p && get_id(p, card) == 0x291c &&
+      if (player != p && get_id(p, card) == CARD_ID_COSIS_TRICKSTER &&
           (duh_mode(p) || do_dialog(p, p, card, -1, -1, " Add +1/+1 counter\n Pass", 0) == 0))
         add_counters(p, card, p, card, COUNTER_P1_P1, 1);
     }
@@ -6352,7 +6353,7 @@ int can_pay_life_impl(int player, int amount, int flags)
   if ((result != 0) &&
       (((flags & 1U) == 0 ||
         ((result = check_battlefield_for_id(2, 0x3010),
-          result == 0 && (result = check_battlefield_for_id(2, 0x5626), result == 0))))))
+          result == 0 && (result = check_battlefield_for_id(2, CARD_ID_YASHARN_IMPLACABLE_EARTH), result == 0))))))
   {
     return (unsigned int)(amount <= life[player]);
   }
@@ -6652,12 +6653,14 @@ int damage_dealt_by_me_arbitrary(int player, int card, event_t event, ddbm_flags
         for (int c = 0; c < active_cards_count[p]; ++c)
         {
           card_instance_t *current = get_card_instance(p, c);
-          if (current->internal_card_id == damage_card && current->damage_source_player == player &&
-              current->damage_source_card == card)
-            current->damage_source_card = dead;
+          if (current->internal_card_id == damage_card &&
+              get_card_instance(p, c)->damage_source_player == player &&
+              get_card_instance(p, c)->damage_source_card == card)
+            get_card_instance(p, c)->damage_source_card = dead;
           current = get_card_instance(p, c);
-          if (current->internal_card_id != damage_card && current->damage_target_player == player &&
-              current->damage_target_card == card)
+          if (current->internal_card_id != damage_card &&
+              get_card_instance(p, c)->damage_target_player == player &&
+              get_card_instance(p, c)->damage_target_card == card)
           {
             if (has_subtype(p, c, SUBTYPE_AURA))
               attach_aura_to_target(p, c, EVENT_GRAVEYARD_FROM_PLAY, player, dead);
@@ -8920,7 +8923,7 @@ void discard_card_impl(int player, int card, int player_who_controls_effect, int
 {
   if (player != player_who_controls_effect)
     for (int c = 0; c < active_cards_count[player]; ++c)
-      if (in_play(player, c) && get_id(player, c) == 0x4e30 && !is_humiliated(player, c, AL_STATIC))
+      if (in_play(player, c) && get_id(player, c) == CARD_ID_TAMIYO_COLLECTOR_OF_TALES && !is_humiliated(player, c, AL_STATIC))
         return;
 
   int v2; // ST14_4
@@ -9122,7 +9125,7 @@ void discard(int player, int flags, int player_who_controls_effect)
 {
   if (player != player_who_controls_effect)
     for (int c = 0; c < active_cards_count[player]; ++c)
-      if (in_play(player, c) && get_id(player, c) == 0x4e30 && !is_humiliated(player, c, AL_STATIC))
+      if (in_play(player, c) && get_id(player, c) == CARD_ID_TAMIYO_COLLECTOR_OF_TALES && !is_humiliated(player, c, AL_STATIC))
         return;
 
   if (hand_count[player] < 1 ||
@@ -9819,52 +9822,44 @@ int life_total_can_change(int player)
   return check_for_id_legacy(player, CARD_ID_TEFERIS_PROTECTION) < 0;
 }
 
+/* ManalinkEh 2022: 0x268fdf0; original functions/functions.c:12260. */
+/* Only the flags=1 specialization survives in the release. */
+static int how_much_life_can_i_pay_impl(int player, int flags)
+{
+  if (life_total_can_change(player) && !check_battlefield_for_id(2, CARD_ID_ANGEL_OF_JUBILATION))
+    return life[player];
+  return 0;
+}
+
 /* ManalinkEh 2022: 0x26910e0; original functions/functions.c:12271. */
 int how_much_life_can_i_pay(int player)
 {
-  int result;
-  result = life_total_can_change(player);
-  if (result != 0)
-  {
-    result = check_battlefield_for_id(2, 0x3010);
-    if (result == 0)
-    {
-      return life[player];
-    }
-  }
-  return 0;
+  return how_much_life_can_i_pay_impl(player, 1);
 }
 
 /* ManalinkEh 2022: 0x26930f0; original functions/functions.c:15061. */
 int cast_counter_triggered_ability(int player, int card, int target_pos)
 {
-  int stack_index;
-  int32_t target_card;
-  card_instance_t *instance;
-  card_instance_t *target_instance;
-  unsigned int target_iid;
   if (stack_size < 1)
   {
     spell_fizzled = 1;
     return 0;
   }
-  instance = get_card_instance(player, card);
-  stack_index = stack_size + -2;
-  target_card = stack_cards[stack_index].card;
+  card_instance_t *instance = get_card_instance(player, card);
+  int stack_index = stack_size - 2;
+  int target_card = stack_cards[stack_index].card;
   instance->targets[target_pos].player = stack_cards[stack_index].player;
   instance->targets[target_pos].card = target_card;
-  instance->number_of_targets = instance->number_of_targets + '\x01';
+  ++instance->number_of_targets;
   instance->targets[9].player = stack_phase[stack_index];
-  target_instance = get_card_instance(instance->targets[target_pos].player, instance->targets[target_pos].card);
-  target_iid = target_instance->internal_card_id;
-  if (target_iid == 0xffffffff)
-  {
-    target_instance =
-        get_card_instance(instance->targets[target_pos].player, instance->targets[target_pos].card);
-    target_iid = (unsigned int)target_instance->backup_internal_card_id;
-  }
-  instance->targets[9].card = target_iid;
-  ai_modifier = ai_modifier + 100;
+  card_instance_t *target = get_card_instance(instance->targets[target_pos].player,
+                                             instance->targets[target_pos].card);
+  int iid = target->internal_card_id;
+  if (iid == -1)
+    iid = get_card_instance(instance->targets[target_pos].player,
+                            instance->targets[target_pos].card)->backup_internal_card_id;
+  instance->targets[9].card = iid;
+  ai_modifier += 100;
   return 1;
 }
 
@@ -9903,7 +9898,6 @@ static int counter_triggered_ability_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x26835b0; original functions/functions.c:15649. */
 static int extra_combat_legacy(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   if (((event == EVENT_PHASE_CHANGED) && (0x1d < current_phase)) && (current_turn == player))
   {
@@ -9916,8 +9910,7 @@ static int extra_combat_legacy(int player, int card, event_t event)
       instance->targets[1].player = instance->targets[1].player + -1;
     }
   }
-  result = eot_trigger(player, card, event);
-  if (result == 0)
+  if (!eot_trigger(player, card, event))
   {
     return 0;
   }
@@ -10177,13 +10170,13 @@ int deflect_multi_targets(int player, int card, event_t event, target_definition
 /* ManalinkEh 2022: 0x2693e80; original functions/functions.c:15742. */
 int create_card_name_legacy_unattached(int player, int card, int id)
 {
-  int card_00;
+  int legacy_card;
   card_instance_t *instance;
 
-  card_00 = create_legacy_effect_exe(player, card, LEGACY_EFFECT_ASWAN, -1, -1);
-  instance = get_card_instance(player, card_00);
+  legacy_card = create_legacy_effect_exe(player, card, LEGACY_EFFECT_ASWAN, -1, -1);
+  instance = get_card_instance(player, legacy_card);
   instance->info_slot = id ^ 0xffffffff;
-  return card_00;
+  return legacy_card;
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -10352,22 +10345,19 @@ int extra_combat_effect(int player, int card, event_t event, int untap,
 /* ManalinkEh 2022: 0x269f000; original functions/functions.c:531. */
 static int remove_until_upkeep_legacy(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-
   upkeep_trigger_ability_mode(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
   {
     return 0;
   }
 
-  instance = in_play(player, card);
+  card_instance_t *instance = in_play(player, card);
   if (instance == NULL)
   {
     return 0;
   }
-  result = instance->targets[1].player;
-  if ((result != 2) && (result != current_turn))
+  int return_turn = instance->targets[1].player;
+  if (return_turn != 2 && return_turn != current_turn)
   {
     return 0;
   }
@@ -10375,24 +10365,24 @@ static int remove_until_upkeep_legacy(int player, int card, event_t event)
                 (unsigned int)cards_data[instance->targets[0].card].id) != 0)
   {
 
-    result = add_card_to_hand(instance->targets[0].player, instance->targets[0].card);
-    if (has_subtype(instance->targets[0].player, result, SUBTYPE_AURA) != 0)
+    int new_card = add_card_to_hand(instance->targets[0].player, instance->targets[0].card);
+    if (has_subtype(instance->targets[0].player, new_card, SUBTYPE_AURA) != 0)
     {
-      if (call_card_function(instance->targets[0].player, result, EVENT_CAN_CAST) == 0)
+      if (call_card_function(instance->targets[0].player, new_card, EVENT_CAN_CAST) == 0)
       {
-        obliterate_card(instance->targets[0].player, result);
+        obliterate_card(instance->targets[0].player, new_card);
         kill_card(player, card, KILL_EXILE);
         return 0;
       }
-      set_special_flags3(instance->targets[0].player, result, 0x40);
+      set_special_flags3(instance->targets[0].player, new_card, 0x40);
     }
     remove_card_from_rfg(instance->targets[0].player,
                          (unsigned int)cards_data[instance->targets[0].card].id);
-    put_into_play(instance->targets[0].player, result);
+    put_into_play(instance->targets[0].player, new_card);
     if (instance->targets[1].card == 0x42)
     {
       new_multidiscard(player,
-                       get_abilities(instance->targets[0].player, result, EVENT_TOUGHNESS, -1), 0,
+                       get_abilities(instance->targets[0].player, new_card, EVENT_TOUGHNESS, -1), 0,
                        player);
     }
   }
@@ -10403,36 +10393,19 @@ static int remove_until_upkeep_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2682020; original functions/functions.c:717. */
 int check_for_death_trigger_removal(int player, int card)
 {
-  int result;
-  card_instance_t *instance;
-  int card_00;
-
-  result = is_what(player, card, 2);
-  if ((result != 0) && ((instance = get_card_instance(player, card),
-                        instance->kill_code < 4 || (instance = get_card_instance(player, card),
-                                                    instance->kill_code == '\x11'))))
+  if (is_what(player, card, TYPE_CREATURE) &&
+      (get_card_instance(player, card)->kill_code < 4 ||
+       get_card_instance(player, card)->kill_code == '\x11'))
   {
-
-    result = 0;
-    do
+    for (int i = 0; i < 2; ++i)
     {
-      card_00 = 0;
-      if (0 < active_cards_count[result])
+      for (int k = 0; k < active_cards_count[i]; ++k)
       {
-        do
-        {
-          instance = in_play(result, card_00);
-          if (((instance != NULL) &&
-               (is_humiliated(result, card_00, AL_STATIC) == 0)) &&
-              (get_id(result, card_00) == 0x5097))
-          {
-            return 1;
-          }
-          card_00 = card_00 + 1;
-        } while (card_00 < active_cards_count[result]);
+        if (in_play(i, k) && !is_humiliated(i, k, AL_STATIC) &&
+            get_id(i, k) == CARD_ID_HUSHBRINGER)
+          return 1;
       }
-      result = result + 1;
-    } while (result != 2);
+    }
   }
   return 0;
 }
@@ -10440,2360 +10413,1396 @@ int check_for_death_trigger_removal(int player, int card)
 /* ManalinkEh 2022: 0x267c470; original functions/functions.c:3170. */
 int split_cards_id_table(int csvid, int half_played)
 {
-  int result;
-
   if (half_played == 0)
+    return -1;
+
+  switch (csvid)
   {
+  case CARD_ID_ASSAULT_BATTERY:
+    return (half_played & 1U) ? CARD_ID_ASSAULT : CARD_ID_BATTERY;
+  case CARD_ID_PAIN_SUFFERING:
+    return (half_played & 1U) ? CARD_ID_PAIN : CARD_ID_SUFFERING;
+  case CARD_ID_SPITE_MALICE:
+    return (half_played & 1U) ? CARD_ID_SPITE : CARD_ID_MALICE;
+  case CARD_ID_STAND_DELIVER:
+    return (half_played & 1U) ? CARD_ID_STAND : CARD_ID_DELIVER;
+  case CARD_ID_WAX_WANE:
+    return (half_played & 1U) ? CARD_ID_WAX : CARD_ID_WANE;
+  case CARD_ID_FIRE_ICE:
+    return (half_played & 1U) ? CARD_ID_FIRE : CARD_ID_ICE;
+  case CARD_ID_ILLUSION_REALITY:
+    return (half_played & 1U) ? CARD_ID_ILLUSION : CARD_ID_REALITY;
+  case CARD_ID_LIFE_DEATH:
+    return (half_played & 1U) ? CARD_ID_LIFE : CARD_ID_DEATH;
+  case CARD_ID_NIGHT_DAY:
+    return (half_played & 1U) ? CARD_ID_NIGHT : CARD_ID_DAY;
+  case CARD_ID_ORDER_CHAOS:
+    return (half_played & 1U) ? CARD_ID_ORDER : CARD_ID_CHAOS;
+  case CARD_ID_BOUND_DETERMINED:
+    return (half_played & 1U) ? CARD_ID_BOUND : CARD_ID_DETERMINED;
+  case CARD_ID_CRIME_PUNISHMENT:
+    return (half_played & 1U) ? CARD_ID_CRIME : CARD_ID_PUNISHMENT;
+  case CARD_ID_HIDE_SEEK:
+    return (half_played & 1U) ? CARD_ID_HIDE : CARD_ID_SEEK;
+  case CARD_ID_HIT_RUN:
+    return (half_played & 1U) ? CARD_ID_HIT : CARD_ID_RUN;
+  case CARD_ID_ODDS_ENDS:
+    return (half_played & 1U) ? CARD_ID_ODDS : CARD_ID_ENDS;
+  case CARD_ID_PURE_SIMPLE:
+    return (half_played & 1U) ? CARD_ID_PURE : CARD_ID_SIMPLE;
+  case CARD_ID_RESEARCH_DEVELOPMENT:
+    return (half_played & 1U) ? CARD_ID_RESEARCH : CARD_ID_DEVELOPMENT;
+  case CARD_ID_RISE_FALL:
+    return (half_played & 1U) ? CARD_ID_RISE : CARD_ID_FALL;
+  case CARD_ID_SUPPLY_DEMAND:
+    return (half_played & 1U) ? CARD_ID_SUPPLY : CARD_ID_DEMAND;
+  case CARD_ID_TRIAL_ERROR:
+    return (half_played & 1U) ? CARD_ID_TRIAL : CARD_ID_ERROR;
+  case CARD_ID_ALIVE_WELL:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_ALIVE : CARD_ID_WELL;
+  case CARD_ID_ARMED_DANGEROUS:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_ARMED : CARD_ID_DANGEROUS;
+  case CARD_ID_FAR_AWAY:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_FAR : CARD_ID_AWAY;
+  case CARD_ID_BECK_CALL:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_BECK : CARD_ID_CALL;
+  case CARD_ID_FLESH_BLOOD:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_FLESH : CARD_ID_BLOOD;
+  case CARD_ID_BREAKING_ENTERING:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_BREAKING : CARD_ID_ENTERING;
+  case CARD_ID_TURN_BURN:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_TURN : CARD_ID_BURN;
+  case CARD_ID_CATCH_RELEASE:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_CATCH : CARD_ID_RELEASE;
+  case CARD_ID_DOWN_DIRTY:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_DOWN : CARD_ID_DIRTY;
+  case CARD_ID_GIVE_TAKE:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_GIVE : CARD_ID_TAKE;
+  case CARD_ID_PROFIT_LOSS:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_PROFIT : CARD_ID_LOSS;
+  case CARD_ID_PROTECT_SERVE:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_PROTECT : CARD_ID_SERVE;
+  case CARD_ID_READY_WILLING:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_READY : CARD_ID_WILLING;
+  case CARD_ID_WEAR_TEAR:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_WEAR : CARD_ID_TEAR;
+  case CARD_ID_TOIL_TROUBLE:
+    if ((half_played & 3U) == 3U)
+      return csvid;
+    return (half_played & 1U) ? CARD_ID_TOIL : CARD_ID_TROUBLE;
+  case CARD_ID_CUT_RIBBONS:
+    return (half_played & 1U) ? CARD_ID_CUT : CARD_ID_RIBBONS;
+  case CARD_ID_DESTINED_LEAD:
+    return (half_played & 1U) ? CARD_ID_DESTINED : CARD_ID_LEAD;
+  case CARD_ID_FAILURE_COMPLY:
+    return (half_played & 1U) ? CARD_ID_FAILURE : CARD_ID_COMPLY;
+  case CARD_ID_HEAVEN_EARTH:
+    return (half_played & 1U) ? CARD_ID_HEAVEN : CARD_ID_EARTH;
+  case CARD_ID_ONWARD_VICTORY:
+    return (half_played & 1U) ? CARD_ID_ONWARD : CARD_ID_VICTORY;
+  case CARD_ID_PREPARE_FIGHT:
+    return (half_played & 1U) ? CARD_ID_PREPARE : CARD_ID_FIGHT;
+  case CARD_ID_RAGS_RICHES:
+    return (half_played & 1U) ? CARD_ID_RAGS : CARD_ID_RICHES;
+  case CARD_ID_REDUCE_RUBBLE:
+    return (half_played & 1U) ? CARD_ID_REDUCE : CARD_ID_RUBBLE;
+  case CARD_ID_SPRING_MIND:
+    return (half_played & 1U) ? CARD_ID_SPRING : CARD_ID_MIND;
+  case CARD_ID_START_FINISH:
+    return (half_played & 1U) ? CARD_ID_START : CARD_ID_FINISH;
+  case CARD_ID_APPEAL_AUTHORITY:
+    return (half_played & 1U) ? CARD_ID_APPEAL : CARD_ID_AUTHORITY;
+  case CARD_ID_CLAIM_FAME:
+    return (half_played & 1U) ? CARD_ID_CLAIM : CARD_ID_FAME;
+  case CARD_ID_CONSIGN_OBLIVION:
+    return (half_played & 1U) ? CARD_ID_CONSIGN : CARD_ID_OBLIVION;
+  case CARD_ID_DRIVEN_DESPAIR:
+    return (half_played & 1U) ? CARD_ID_DRIVEN : CARD_ID_DESPAIR;
+  case CARD_ID_FARM_MARKET:
+    return (half_played & 1U) ? CARD_ID_FARM : CARD_ID_MARKET;
+  case CARD_ID_GRIND_DUST:
+    return (half_played & 1U) ? CARD_ID_GRIND : CARD_ID_DUST;
+  case CARD_ID_LEAVE_CHANCE:
+    return (half_played & 1U) ? CARD_ID_LEAVE : CARD_ID_CHANCE;
+  case CARD_ID_REASON_BELIEVE:
+    return (half_played & 1U) ? CARD_ID_REASON : CARD_ID_BELIEVE;
+  case CARD_ID_REFUSE_COOPERATE:
+    return (half_played & 1U) ? CARD_ID_REFUSE : CARD_ID_COOPERATE;
+  case CARD_ID_STRUGGLE_SURVIVE:
+    return (half_played & 1U) ? CARD_ID_STRUGGLE : CARD_ID_SURVIVE;
+  case CARD_ID_ASSURE_ASSEMBLE:
+    return (half_played & 1U) ? CARD_ID_ASSURE : CARD_ID_ASSEMBLE;
+  case CARD_ID_CONNIVE_CONCOCT:
+    return (half_played & 1U) ? CARD_ID_CONNIVE : CARD_ID_CONCOCT;
+  case CARD_ID_DISCOVERY_DISPERSAL:
+    return (half_played & 1U) ? CARD_ID_DISCOVERY : CARD_ID_DISPERSAL;
+  case CARD_ID_EXPANSION_EXPLOSION:
+    return (half_played & 1U) ? CARD_ID_EXPANSION : CARD_ID_EXPLOSION;
+  case CARD_ID_FIND_FINALITY:
+    return (half_played & 1U) ? CARD_ID_FIND : CARD_ID_FINALITY;
+  case CARD_ID_FLOWER_FLOURISH:
+    return (half_played & 1U) ? CARD_ID_FLOWER : CARD_ID_FLOURISH;
+  case CARD_ID_INTEGRITY_INTERVENTION:
+    return (half_played & 1U) ? CARD_ID_INTEGRITY : CARD_ID_INTERVENTION;
+  case CARD_ID_INVERT_INVENT:
+    return (half_played & 1U) ? CARD_ID_INVERT : CARD_ID_INVENT;
+  case CARD_ID_RESPONSE_RESURGENCE:
+    return (half_played & 1U) ? CARD_ID_RESPONSE : CARD_ID_RESURGENCE;
+  case CARD_ID_STATUS_STATUE:
+    return (half_played & 1U) ? CARD_ID_STATUS : CARD_ID_STATUE;
+  case CARD_ID_BEDECK_BEDAZZLE:
+    return (half_played & 1U) ? CARD_ID_BEDECK : CARD_ID_BEDAZZLE;
+  case CARD_ID_CARNIVAL_CARNAGE:
+    return (half_played & 1U) ? CARD_ID_CARNIVAL : CARD_ID_CARNAGE;
+  case CARD_ID_COLLISION_COLOSSUS:
+    return (half_played & 1U) ? CARD_ID_COLLISION : CARD_ID_COLOSSUS;
+  case CARD_ID_CONSECRATE_CONSUME:
+    return (half_played & 1U) ? CARD_ID_CONSECRATE : CARD_ID_CONSUME;
+  case CARD_ID_DEPOSE_DEPLOY:
+    return (half_played & 1U) ? CARD_ID_DEPOSE : CARD_ID_DEPLOY;
+  case CARD_ID_INCUBATION_INCONGRUITY:
+    return (half_played & 1U) ? CARD_ID_INCUBATION : CARD_ID_INCONGRUITY;
+  case CARD_ID_REPUDIATE_REPLICATE:
+    return (half_played & 1U) ? CARD_ID_REPUDIATE : CARD_ID_REPLICATE;
+  case CARD_ID_REVIVAL_REVENGE:
+    return (half_played & 1U) ? CARD_ID_REVIVAL : CARD_ID_REVENGE;
+  case CARD_ID_THRASH_THREAT:
+    return (half_played & 1U) ? CARD_ID_THRASH : CARD_ID_THREAT;
+  case CARD_ID_WARRANT_WARDEN:
+    return (half_played & 1U) ? CARD_ID_WARRANT : CARD_ID_WARDEN;
+  default:
     return -1;
   }
-  if (csvid == 0x4208)
-  {
-    return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffe7) + 0x4af7;
-  }
-  if (0x4208 < csvid)
-  {
-    if (csvid == 0x4b79)
-    {
-      return (half_played & 1U) + 0x4b77;
-    }
-    if (0x4b79 < csvid)
-    {
-      if (csvid == 0x4c71)
-      {
-        return (half_played & 1U) + 0x4c6f;
-      }
-      if (csvid < 0x4c72)
-      {
-        if (csvid == 0x4bc9)
-        {
-          return (-(unsigned int)((half_played & 1U) == 0) & 2) + 0x4bc8;
-        }
-        if (csvid < 0x4bca)
-        {
-          if (csvid == 0x4ba2)
-          {
-            return (half_played & 1U) + 0x4ba0;
-          }
-          if (csvid < 0x4ba3)
-          {
-            if (csvid == 0x4b8b)
-            {
-              return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4b8a;
-            }
-            if (csvid != 0x4b9c)
-            {
-              return -1;
-            }
-            return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4b9b;
-          }
-          result = (half_played & 1U) + 0x4ba6;
-          if (csvid != 0x4ba8)
-          {
-            return -1;
-          }
-        }
-        else
-        {
-          if (csvid == 0x4c24)
-          {
-            return (half_played & 1U) + 0x4c22;
-          }
-          if (csvid < 0x4c25)
-          {
-            if (csvid == 0x4bce)
-            {
-              return (half_played & 1U) + 0x4bcc;
-            }
-            if (csvid != 0x4c0f)
-            {
-              return -1;
-            }
-            return (-(unsigned int)((half_played & 1U) == 0) & 2) + 0x4c0e;
-          }
-          result = (half_played & 1U) + 0x4c5f;
-          if (csvid != 0x4c61)
-          {
-            return -1;
-          }
-        }
-      }
-      else
-      {
-        if (csvid == 0x4cff)
-        {
-          return (half_played & 1U) + 0x4cfd;
-        }
-        if (csvid < 0x4d00)
-        {
-          if (csvid == 0x4c8f)
-          {
-            return (half_played & 1U) + 0x4c8d;
-          }
-          if (csvid < 0x4c90)
-          {
-            if (csvid == 0x4c7f)
-            {
-              return (-(unsigned int)((half_played & 1U) == 0) & 2) + 0x4c7e;
-            }
-            if (csvid != 0x4c83)
-            {
-              return -1;
-            }
-            return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4c82;
-          }
-          result = (half_played & 1U) + 0x4ccc;
-          if (csvid != 0x4cce)
-          {
-            return -1;
-          }
-        }
-        else
-        {
-          if (csvid == 0x4d3f)
-          {
-            return (-(unsigned int)((half_played & 1U) == 0) & 2) + 0x4d3e;
-          }
-          if (csvid != 0x4d50)
-          {
-            if (csvid != 0x4d03)
-            {
-              return -1;
-            }
-            return (half_played & 1U) + 0x4d01;
-          }
-          result = (half_played & 1U) + 0x4d4e;
-        }
-      }
-      return result;
-    }
-    if (csvid == 0x42ce)
-    {
-      return (-(unsigned int)((half_played & 1U) == 0) & 0x39) + 0x4adf;
-    }
-    if (csvid < 0x42cf)
-    {
-      if (0x4289 < csvid)
-      {
-        if (csvid == 0x42bd)
-        {
-          return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4aca;
-        }
-        if (csvid != 0x42cd)
-        {
-          return -1;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0x1d) + 0x4adc;
-      }
-      if (0x4262 < csvid)
-      {
-        switch (csvid)
-        {
-        case 0x4263:
-          return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffe0) + 0x4b1d;
-        default:
-          return -1;
-        case 0x426a:
-          return (-(unsigned int)((half_played & 1U) == 0) & 10) + 0x4b22;
-        case 0x426b:
-          return (-(unsigned int)((half_played & 1U) == 0) & 9) + 0x4b26;
-        case 0x4288:
-          return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffdd) + 0x4b35;
-        case 0x4289:
-          return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffc7) + 0x4b37;
-        }
-      }
-      if (csvid == 0x422b)
-      {
-        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffef) + 0x4b04;
-      }
-      if (csvid != 0x4259)
-      {
-        return -1;
-      }
-      return (-(unsigned int)((half_played & 1U) == 0) & 0x29) + 0x4b1a;
-    }
-    if (csvid == 0x4335)
-    {
-      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffac) + 0x4b25;
-    }
-    if (0x4335 < csvid)
-    {
-      if (csvid == 0x434e)
-      {
-        return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4b38;
-      }
-      if (csvid != 0x4b55)
-      {
-        if (csvid != 0x4336)
-        {
-          return -1;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffb9) + 0x4b27;
-      }
-      return (half_played & 1U) + 0x4b53;
-    }
-    if (csvid == 0x42f9)
-    {
-      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffef) + 0x4b03;
-    }
-    if (0x42f9 < csvid)
-    {
-      if (csvid != 0x430f)
-      {
-        return -1;
-      }
-      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffce) + 0x4b0c;
-    }
-    if (csvid == 0x42e4)
-    {
-      return (-(unsigned int)((half_played & 1U) == 0) & 0xfffffffa) + 0x4af0;
-    }
-    if (csvid != 0x42eb)
-    {
-      return -1;
-    }
-    return (-(unsigned int)((half_played & 1U) == 0) & 0x15) + 0x4afb;
-  }
-  if (csvid == 0x206d)
-  {
-    return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffaf) + 0x4b3a;
-  }
-  if (0x206d < csvid)
-  {
-    if (csvid < 0x3393)
-    {
-      if (csvid < 0x3337)
-      {
-        if (csvid != 0x2072)
-        {
-          return -1;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffb7) + 0x4b3f;
-      }
-      switch (csvid)
-      {
-      case 0x3337:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0x7e) + 0x4ac9;
-      case 0x3338:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0x18) + 0x4acb;
-      default:
-        return -1;
-      case 0x333b:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffd4) + 0x4afa;
-      case 0x3340:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 8) + 0x4ad0;
-      case 0x3344:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffd2) + 0x4b00;
-      case 0x334a:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0x20) + 0x4ad5;
-      case 0x334d:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffff94) + 0x4b42;
-      case 0x334f:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0x4f) + 0x4ad9;
-      case 0x3357:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (half_played & 1U) + 0x4aee;
-      case 0x335f:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0x3b) + 0x4b01;
-      case 0x3370:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0xfffffff0) + 0x4b1e;
-      case 0x338c:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0x13) + 0x4b1f;
-      case 0x3392:
-        if ((half_played & 3U) == 3)
-        {
-          return csvid;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0x2a) + 0x4b23;
-      }
-    }
-    if (csvid == 0x41f1)
-    {
-      return (-(unsigned int)((half_played & 1U) == 0) & 0x49) + 0x4ae2;
-    }
-    if (0x41f1 < csvid)
-    {
-      if (csvid != 0x41f8)
-      {
-        return -1;
-      }
-      return (-(unsigned int)((half_played & 1U) == 0) & 0x20) + 0x4aeb;
-    }
-    if (csvid != 0x33af)
-    {
-      if (csvid != 0x33b3)
-      {
-        return -1;
-      }
-      if ((half_played & 3U) == 3)
-      {
-        return 0x33b3;
-      }
-      return (-(unsigned int)((half_played & 1U) == 0) & 2) + 0x4b3e;
-    }
-    if ((half_played & 3U) == 3)
-    {
-      return 0x33af;
-    }
-    return (-(unsigned int)((half_played & 1U) == 0) & 0xfffffff7) + 0x4b46;
-  }
-  if (csvid == 0x1522)
-  {
-    return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffc0) + 0x4b1b;
-  }
-  if (0x1522 < csvid)
-  {
-    if (csvid == 0x2035)
-    {
-      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffdb) + 0x4b19;
-    }
-    if (0x2035 < csvid)
-    {
-      if (csvid == 0x2052)
-      {
-        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffc4) + 0x4b29;
-      }
-      if (csvid != 0x2054)
-      {
-        if (csvid != 0x2048)
-        {
-          return -1;
-        }
-        return (-(unsigned int)((half_played & 1U) == 0) & 0x12) + 0x4b21;
-      }
-      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffcb) + 0x4b2d;
-    }
-    if (csvid == 0x201e)
-    {
-      return (-(unsigned int)((half_played & 1U) == 0) & 0x2c) + 0x4b05;
-    }
-    if (0x201e < csvid)
-    {
-      if (csvid != 0x201f)
-      {
-        return -1;
-      }
-      return (-(unsigned int)((half_played & 1U) == 0) & 0x2a) + 0x4b06;
-    }
-    if (csvid == 0x1ff3)
-    {
-      return (-(unsigned int)((half_played & 1U) == 0) & 0x18) + 0x4ad4;
-    }
-    if (csvid != 0x1ffd)
-    {
-      return -1;
-    }
-    return (-(unsigned int)((half_played & 1U) == 0) & 0x3f) + 0x4ae1;
-  }
-  if (csvid == 0x1443)
-  {
-    return (half_played & 1U) + 0x4b44;
-  }
-  if (csvid < 0x1444)
-  {
-    if (csvid == 0x1407)
-    {
-      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffdb) + 0x4b34;
-    }
-    if (0x1407 < csvid)
-    {
-      if (csvid != 0x140a)
-      {
-        return -1;
-      }
-      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffb2) + 0x4b36;
-    }
-    if (csvid == 0x1348)
-    {
-      return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4acc;
-    }
-    if (csvid != 0x13c0)
-    {
-      return -1;
-    }
-    return (-(unsigned int)((half_played & 1U) == 0) & 0x1d) + 0x4b1c;
-  }
-  if (csvid == 0x1513)
-  {
-    return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffda) + 0x4b0d;
-  }
-  if (0x1513 < csvid)
-  {
-    if (csvid != 0x1521)
-    {
-      return -1;
-    }
-    return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffce) + 0x4b17;
-  }
-  if (csvid == 0x14f9)
-  {
-    return (-(unsigned int)((half_played & 1U) == 0) & 8) + 0x4aff;
-  }
-  if (csvid != 0x150a)
-  {
-    return -1;
-  }
-  return (-(unsigned int)((half_played & 1U) == 0) & 0x1c) + 0x4b08;
 }
 
 /* ManalinkEh 2022: 0x267cf50; original functions/functions.c:3417. */
 int dfc_front_to_back(int csvid)
 {
-  int result;
-
-  if (csvid == 0x5739)
+  switch (csvid)
   {
-    return 0x573a;
+  case CARD_ID_BLOODLINE_KEEPER:
+    return CARD_ID_LORD_OF_LINEAGE;
+  case CARD_ID_CIVILIZED_SCHOLAR:
+    return CARD_ID_HOMICIDAL_BRUTE;
+  case CARD_ID_CLOISTERED_YOUTH:
+    return CARD_ID_UNHOLY_FIEND;
+  case CARD_ID_DAYBREAK_RANGER:
+    return CARD_ID_NIGHTFALL_PREDATOR;
+  case CARD_ID_DELVER_OF_SECRETS:
+    return CARD_ID_INSECTILE_ABERRATION;
+  case CARD_ID_GARRUK_RELENTLESS:
+    return CARD_ID_GARRUK_THE_VEIL_CURSED;
+  case CARD_ID_GATSTAF_SHEPHERD:
+    return CARD_ID_GATSTAF_HOWLER;
+  case CARD_ID_GRIZZLED_OUTCASTS:
+    return CARD_ID_KRALLENHORDE_WANTONS;
+  case CARD_ID_HANWEIR_WATCHKEEP:
+    return CARD_ID_BANE_OF_HANWEIR;
+  case CARD_ID_INSTIGATOR_GANG:
+    return CARD_ID_WILDBLOOD_PACK;
+  case CARD_ID_KRUIN_OUTLAW:
+    return CARD_ID_TERROR_OF_KRUIN_PASS;
+  case CARD_ID_LUDEVICS_TEST_SUBJECT:
+    return CARD_ID_LUDEVICS_ABOMINATION;
+  case CARD_ID_MAYOR_OF_AVABRUCK:
+    return CARD_ID_HOWLPACK_ALPHA;
+  case CARD_ID_RECKLESS_WAIF:
+    return CARD_ID_MERCILESS_PREDATOR;
+  case CARD_ID_SCREECHING_BAT:
+    return CARD_ID_STALKING_VAMPIRE;
+  case CARD_ID_THRABEN_SENTRY:
+    return CARD_ID_THRABEN_MILITIA;
+  case CARD_ID_TORMENTED_PARIAH:
+    return CARD_ID_RAMPAGING_WEREWOLF;
+  case CARD_ID_ULVENWALD_MYSTICS:
+    return CARD_ID_ULVENWALD_PRIMORDIALS;
+  case CARD_ID_VILLAGE_IRONSMITH:
+    return CARD_ID_IRONFANG;
+  case CARD_ID_VILLAGERS_OF_ESTWALD:
+    return CARD_ID_HOWLPACK_OF_ESTWALD;
+  case CARD_ID_AFFLICTED_DESERTER:
+    return CARD_ID_WEREWOLF_RANSACKER;
+  case CARD_ID_CHALICE_OF_LIFE:
+    return CARD_ID_CHALICE_OF_DEATH;
+  case CARD_ID_CHOSEN_OF_MARKOV:
+    return CARD_ID_MARKOVS_SERVANT;
+  case CARD_ID_ELBRUS_THE_BINDING_BLADE:
+    return CARD_ID_WITHENGAR_UNBOUND;
+  case CARD_ID_HINTERLAND_HERMIT:
+    return CARD_ID_HINTERLAND_SCOURGE;
+  case CARD_ID_HUNTMASTER_OF_THE_FELLS:
+    return CARD_ID_RAVAGER_OF_THE_FELLS;
+  case CARD_ID_LAMBHOLT_ELDER:
+    return CARD_ID_SILVERPELT_WEREWOLF;
+  case CARD_ID_LOYAL_CATHAR:
+    return CARD_ID_UNHALLOWED_CATHAR;
+  case CARD_ID_MONDRONEN_SHAMAN:
+    return CARD_ID_TOVOLARS_MAGEHUNTER;
+  case CARD_ID_RAVENOUS_DEMON:
+    return CARD_ID_ARCHDEMON_OF_GREED;
+  case CARD_ID_SCORNED_VILLAGER:
+    return CARD_ID_MOONSCARRED_WEREWOLF;
+  case CARD_ID_SOUL_SEIZER:
+    return CARD_ID_GHASTLY_HAUNTING;
+  case CARD_ID_WOLFBITTEN_CAPTIVE:
+    return CARD_ID_KRALLENHORDE_KILLER;
+  case CARD_ID_CHANDRA_FIRE_OF_KALADESH:
+    return CARD_ID_CHANDRA_ROARING_FLAME;
+  case CARD_ID_JACE_VRYNS_PRODIGY:
+    return CARD_ID_JACE_TELEPATH_UNBOUND;
+  case CARD_ID_KYTHEON_HERO_OF_AKROS:
+    return CARD_ID_GIDEON_BATTLE_FORGED;
+  case CARD_ID_LILIANA_HERETICAL_HEALER:
+    return CARD_ID_LILIANA_DEFIANT_NECROMANCER;
+  case CARD_ID_NISSA_VASTWOOD_SEER:
+    return CARD_ID_NISSA_SAGE_ANIMIST;
+  case CARD_ID_ABERRANT_RESEARCHER:
+    return CARD_ID_PERFECTED_FORM;
+  case CARD_ID_ACCURSED_WITCH:
+    return CARD_ID_INFECTIOUS_CURSE;
+  case CARD_ID_ARCHANGEL_AVACYN:
+    return CARD_ID_AVACYN_THE_PURIFIER;
+  case CARD_ID_ARLINN_KORD:
+    return CARD_ID_ARLINN_EMBRACED_BY_THE_MOON;
+  case CARD_ID_AUTUMNAL_GLOOM:
+    return CARD_ID_ANCIENT_OF_THE_EQUINOX;
+  case CARD_ID_AVACYNIAN_MISSIONARIES:
+    return CARD_ID_LUNARCH_INQUISITORS;
+  case CARD_ID_BREAKNECK_RIDER:
+    return CARD_ID_NECK_BREAKER;
+  case CARD_ID_CONVICTED_KILLER:
+    return CARD_ID_BRANDED_HOWLER;
+  case CARD_ID_DARING_SLEUTH:
+    return CARD_ID_BEARER_OF_OVERWHELMING_TRUTHS;
+  case CARD_ID_DUSKWATCH_RECRUITER:
+    return CARD_ID_KRALLENHORDE_HOWLER;
+  case CARD_ID_ELUSIVE_TORMENTOR:
+    return CARD_ID_INSIDIOUS_MIST;
+  case CARD_ID_GATSTAF_ARSONISTS:
+    return CARD_ID_GATSTAF_RAVAGERS;
+  case CARD_ID_GEIER_REACH_BANDIT:
+    return CARD_ID_VILDIN_PACK_ALPHA;
+  case CARD_ID_HANWEIR_MILITIA_CAPTAIN:
+    return CARD_ID_WESTVALE_CULT_LEADER;
+  case CARD_ID_HARVEST_HAND:
+    return CARD_ID_SCROUNGED_SCYTHE;
+  case CARD_ID_HEIR_OF_FALKENRATH:
+    return CARD_ID_HEIR_TO_THE_NIGHT;
+  case CARD_ID_HERMIT_OF_THE_NATTERKNOLLS:
+    return CARD_ID_LONE_WOLF_OF_THE_NATTERKNOLLS;
+  case CARD_ID_HINTERLAND_LOGGER:
+    return CARD_ID_TIMBER_SHREDDER;
+  case CARD_ID_KESSIG_FORGEMASTER:
+    return CARD_ID_FLAMEHEART_WEREWOLF;
+  case CARD_ID_KINDLY_STRANGER:
+    return CARD_ID_DEMON_POSSESSED_WITCH;
+  case CARD_ID_LAMBHOLT_PACIFIST:
+    return CARD_ID_LAMBHOLT_BUTCHER;
+  case CARD_ID_NEGLECTED_HEIRLOOM:
+    return CARD_ID_ASHMOUTH_BLADE;
+  case CARD_ID_PIOUS_EVANGEL:
+    return CARD_ID_WAYWARD_DISCIPLE;
+  case CARD_ID_SAGE_OF_ANCIENT_LORE:
+    return CARD_ID_WEREWOLF_OF_ANCIENT_HUNGER;
+  case CARD_ID_SKIN_INVASION:
+    return CARD_ID_SKIN_SHEDDER;
+  case CARD_ID_SOLITARY_HUNTER:
+    return CARD_ID_ONE_OF_THE_PACK;
+  case CARD_ID_STARTLED_AWAKE:
+    return CARD_ID_PERSISTENT_NIGHTMARE;
+  case CARD_ID_THING_IN_THE_ICE:
+    return CARD_ID_AWOKEN_HORROR;
+  case CARD_ID_THRABEN_GARGOYLE:
+    return CARD_ID_STONEWING_ANTAGONIZER;
+  case CARD_ID_TOWN_GOSSIPMONGER:
+    return CARD_ID_INCITED_RABBLE;
+  case CARD_ID_UNINVITED_GEIST:
+    return CARD_ID_UNIMPEDED_TRESPASSER;
+  case CARD_ID_VILLAGE_MESSENGER:
+    return CARD_ID_MOONRISE_INTRUDER;
+  case CARD_ID_WESTVALE_ABBEY:
+    return CARD_ID_ORMENDAHL_PROFANE_PRINCE;
+  case CARD_ID_CONDUIT_OF_STORMS:
+    return CARD_ID_CONDUIT_OF_EMRAKUL;
+  case CARD_ID_CRYPTOLITH_FRAGMENT:
+    return CARD_ID_AURORA_OF_EMRAKUL;
+  case CARD_ID_CURIOUS_HOMUNCULUS:
+    return CARD_ID_VORACIOUS_READER;
+  case CARD_ID_DOCENT_OF_PERFECTION:
+    return CARD_ID_FINAL_ITERATION;
+  case CARD_ID_EXTRICATOR_OF_SIN:
+    return CARD_ID_EXTRICATOR_OF_FLESH;
+  case CARD_ID_GRIZZLED_ANGLER:
+    return CARD_ID_GRISLY_ANGLERFISH;
+  case CARD_ID_KESSIG_PROWLER:
+    return CARD_ID_SINUOUS_PREDATOR;
+  case CARD_ID_LONE_RIDER:
+    return CARD_ID_IT_THAT_RIDES_AS_ONE;
+  case CARD_ID_SHRILL_HOWLER:
+    return CARD_ID_HOWLING_CHORUS;
+  case CARD_ID_SMOLDERING_WEREWOLF:
+    return CARD_ID_ERUPTING_DREADWOLF;
+  case CARD_ID_TANGLECLAW_WEREWOLF:
+    return CARD_ID_FIBROUS_ENTANGLER;
+  case CARD_ID_ULRICH_OF_THE_KRALLENHORDE:
+    return CARD_ID_ULRICH_UNCONTESTED_ALPHA;
+  case CARD_ID_ULVENWALD_CAPTIVE:
+    return CARD_ID_ULVENWALD_ABOMINATION;
+  case CARD_ID_VILDIN_PACK_OUTCAST:
+    return CARD_ID_DRONEPACK_KINDRED;
+  case CARD_ID_VOLDAREN_PARIAH:
+    return CARD_ID_ABOLISHER_OF_BLOODLINES;
+  case CARD_ID_ARGUELS_BLOOD_FAST:
+    return CARD_ID_TEMPLE_OF_ACLAZOTZ;
+  case CARD_ID_CONQUERORS_GALLEON:
+    return CARD_ID_CONQUERORS_FOOTHOLD;
+  case CARD_ID_DOWSING_DAGGER:
+    return CARD_ID_LOST_VALE;
+  case CARD_ID_GROWING_RITES_OF_ITLIMOC:
+    return CARD_ID_ITLIMOC_CRADLE_OF_THE_SUN;
+  case CARD_ID_LEGIONS_LANDING:
+    return CARD_ID_ADANTO_THE_FIRST_FORT;
+  case CARD_ID_PRIMAL_AMULET:
+    return CARD_ID_PRIMAL_WELLSPRING;
+  case CARD_ID_SEARCH_FOR_AZCANTA:
+    return CARD_ID_AZCANTA_THE_SUNKEN_RUIN;
+  case CARD_ID_THAUMATIC_COMPASS:
+    return CARD_ID_SPIRES_OF_ORAZCA;
+  case CARD_ID_TREASURE_MAP:
+    return CARD_ID_TREASURE_COVE;
+  case CARD_ID_VANCES_BLASTING_CANNONS:
+    return CARD_ID_SPITFIRE_BASTION;
+  case CARD_ID_AZORS_GATEWAY:
+    return CARD_ID_SANCTUM_OF_THE_SUN;
+  case CARD_ID_GOLDEN_GUARDIAN:
+    return CARD_ID_GOLD_FORGE_GARRISON;
+  case CARD_ID_HADANAS_CLIMB:
+    return CARD_ID_WINGED_TEMPLE_OF_ORAZCA;
+  case CARD_ID_JOURNEY_TO_ETERNITY:
+    return CARD_ID_ATZAL_CAVE_OF_ETERNITY;
+  case CARD_ID_PATH_OF_METTLE:
+    return CARD_ID_METZALI_TOWER_OF_TRIUMPH;
+  case CARD_ID_PROFANE_PROCESSION:
+    return CARD_ID_TOMB_OF_THE_DUSK_ROSE;
+  case CARD_ID_STORM_THE_VAULT:
+    return CARD_ID_VAULT_OF_CATLACAN;
+  case CARD_ID_NICOL_BOLAS_THE_RAVAGER:
+    return CARD_ID_NICOL_BOLAS_THE_ARISEN;
+  case CARD_ID_GRIMLOCK_DINOBOT_LEADER:
+    return CARD_ID_GRIMLOCK_FEROCIOUS_KING;
+  case CARD_ID_AGADEEMS_AWAKENING:
+    return CARD_ID_AGADEEM_THE_UNDERCRYPT;
+  case CARD_ID_AKOUM_WARRIOR:
+    return CARD_ID_AKOUM_TEETH;
+  case CARD_ID_BALA_GED_RECOVERY:
+    return CARD_ID_BALA_GED_SANCTUARY;
+  case CARD_ID_BEYEEN_VEIL:
+    return CARD_ID_BEYEEN_COAST;
+  case CARD_ID_BLACKBLOOM_ROGUE:
+    return CARD_ID_BLACKBLOOM_BOG;
+  case CARD_ID_BRANCHLOFT_PATHWAY:
+    return CARD_ID_BOULDERLOFT_PATHWAY;
+  case CARD_ID_BRIGHTCLIMB_PATHWAY:
+    return CARD_ID_GRIMCLIMB_PATHWAY;
+  case CARD_ID_CLEARWATER_PATHWAY:
+    return CARD_ID_MURKWATER_PATHWAY;
+  case CARD_ID_CRAGCROWN_PATHWAY:
+    return CARD_ID_TIMBERCROWN_PATHWAY;
+  case CARD_ID_EMERIAS_CALL:
+    return CARD_ID_EMERIA_SHATTERED_SKYCLAVE;
+  case CARD_ID_GLASSPOOL_MIMIC:
+    return CARD_ID_GLASSPOOL_SHORE;
+  case CARD_ID_HAGRA_MAULING:
+    return CARD_ID_HAGRA_BROODPIT;
+  case CARD_ID_JWARI_DISRUPTION:
+    return CARD_ID_JWARI_RUINS;
+  case CARD_ID_KABIRA_TAKEDOWN:
+    return CARD_ID_KABIRA_PLATEAU;
+  case CARD_ID_KAZANDU_MAMMOTH:
+    return CARD_ID_KAZANDU_VALLEY;
+  case CARD_ID_KAZUULS_FURY:
+    return CARD_ID_KAZUULS_CLIFFS;
+  case CARD_ID_KHALNI_AMBUSH:
+    return CARD_ID_KHALNI_TERRITORY;
+  case CARD_ID_MAKINDI_STAMPEDE:
+    return CARD_ID_MAKINDI_MESAS;
+  case CARD_ID_MALAKIR_REBIRTH:
+    return CARD_ID_MALAKIR_MIRE;
+  case CARD_ID_NEEDLEVERGE_PATHWAY:
+    return CARD_ID_PILLARVERGE_PATHWAY;
+  case CARD_ID_ONDU_INVERSION:
+    return CARD_ID_ONDU_SKYRUINS;
+  case CARD_ID_PELAKKA_PREDATION:
+    return CARD_ID_PELAKKA_CAVERNS;
+  case CARD_ID_RIVERGLIDE_PATHWAY:
+    return CARD_ID_LAVAGLIDE_PATHWAY;
+  case CARD_ID_SEA_GATE_RESTORATION:
+    return CARD_ID_SEA_GATE_REBORN;
+  case CARD_ID_SEJIRI_SHELTER:
+    return CARD_ID_SEJIRI_GLACIER;
+  case CARD_ID_SHATTERSKULL_SMASHING:
+    return CARD_ID_SHATTERSKULL_THE_HAMMER_PASS;
+  case CARD_ID_SILUNDI_VISION:
+    return CARD_ID_SILUNDI_ISLE;
+  case CARD_ID_SKYCLAVE_CLERIC:
+    return CARD_ID_SKYCLAVE_BASILICA;
+  case CARD_ID_SONG_MAD_TREACHERY:
+    return CARD_ID_SONG_MAD_RUINS;
+  case CARD_ID_SPIKEFIELD_HAZARD:
+    return CARD_ID_SPIKEFIELD_CAVE;
+  case CARD_ID_TANGLED_FLORAHEDRON:
+    return CARD_ID_TANGLED_VALE;
+  case CARD_ID_TURNTIMBER_SYMBIOSIS:
+    return CARD_ID_TURNTIMBER_SERPENTINE_WOOD;
+  case CARD_ID_UMARA_WIZARD:
+    return CARD_ID_UMARA_SKYFALLS;
+  case CARD_ID_VALAKUT_AWAKENING:
+    return CARD_ID_VALAKUT_STONEFORGE;
+  case CARD_ID_VASTWOOD_FORTIFICATION:
+    return CARD_ID_VASTWOOD_THICKET;
+  case CARD_ID_ZOF_CONSUMPTION:
+    return CARD_ID_ZOF_BLOODBOG;
+  case CARD_ID_ALRUND_GOD_OF_THE_COSMOS:
+    return CARD_ID_HAKKA_WHISPERING_RAVEN;
+  case CARD_ID_BARKCHANNEL_PATHWAY:
+    return CARD_ID_TIDECHANNEL_PATHWAY;
+  case CARD_ID_BIRGI_GOD_OF_STORYTELLING:
+    return CARD_ID_HARNFEL_HORN_OF_BOUNTY;
+  case CARD_ID_BLIGHTSTEP_PATHWAY:
+    return CARD_ID_SEARSTEP_PATHWAY;
+  case CARD_ID_COSIMA_GOD_OF_THE_VOYAGE:
+    return CARD_ID_THE_OMENKEEL;
+  case CARD_ID_DARKBORE_PATHWAY:
+    return CARD_ID_SLITHERBORE_PATHWAY;
+  case CARD_ID_EGON_GOD_OF_DEATH:
+    return CARD_ID_THRONE_OF_DEATH;
+  case CARD_ID_ESIKA_GOD_OF_THE_TREE:
+    return CARD_ID_THE_PRISMATIC_BRIDGE;
+  case CARD_ID_HALVAR_GOD_OF_BATTLE:
+    return CARD_ID_SWORD_OF_THE_REALMS;
+  case CARD_ID_HENGEGATE_PATHWAY:
+    return CARD_ID_MISTGATE_PATHWAY;
+  case CARD_ID_JORN_GOD_OF_WINTER:
+    return CARD_ID_KALDRING_THE_RIMESTAFF;
+  case CARD_ID_KOLVORI_GOD_OF_KINSHIP:
+    return CARD_ID_THE_RINGHART_CREST;
+  case CARD_ID_REIDANE_GOD_OF_THE_WORTHY:
+    return CARD_ID_VALKMIRA_PROTECTORS_SHIELD;
+  case CARD_ID_TERGRID_GOD_OF_FRIGHT:
+    return CARD_ID_TERGRIDS_LANTERN;
+  case CARD_ID_TORALF_GOD_OF_FURY:
+    return CARD_ID_TORALFS_HAMMER;
+  case CARD_ID_VALKI_GOD_OF_LIES:
+    return CARD_ID_TIBALT_COSMIC_IMPOSTOR;
+  case CARD_ID_AUGMENTER_PUGILIST:
+    return CARD_ID_ECHOING_EQUATION;
+  case CARD_ID_BLEX_VEXING_PEST:
+    return CARD_ID_SEARCH_FOR_BLEX;
+  case CARD_ID_EXTUS_ORIQ_OVERLORD:
+    return CARD_ID_AWAKEN_THE_BLOOD_AVATAR;
+  case CARD_ID_FLAMESCROLL_CELEBRANT:
+    return CARD_ID_REVEL_IN_SILENCE;
+  case CARD_ID_JADZI_ORACLE_OF_ARCAVIOS:
+    return CARD_ID_JOURNEY_TO_THE_ORACLE;
+  case CARD_ID_KIANNE_DEAN_OF_SUBSTANCE:
+    return CARD_ID_IMBRAHAM_DEAN_OF_THEORY;
+  case CARD_ID_MILA_CRAFTY_COMPANION:
+    return CARD_ID_LUKKA_WAYWARD_BONDER;
+  case CARD_ID_PESTILENT_CAULDRON:
+    return CARD_ID_RESTORATIVE_BURST;
+  case CARD_ID_PLARGG_DEAN_OF_CHAOS:
+    return CARD_ID_AUGUSTA_DEAN_OF_ORDER;
+  case CARD_ID_ROWAN_SCHOLAR_OF_SPARKS:
+    return CARD_ID_WILL_SCHOLAR_OF_FROST;
+  case CARD_ID_SELFLESS_GLYPHWEAVER:
+    return CARD_ID_DEADLY_VANITY;
+  case CARD_ID_SHAILE_DEAN_OF_RADIANCE:
+    return CARD_ID_EMBROSE_DEAN_OF_SHADOW;
+  case CARD_ID_TORRENT_SCULPTOR:
+    return CARD_ID_FLAMETHROWER_SONATA;
+  case CARD_ID_UVILDA_DEAN_OF_PERFECTION:
+    return CARD_ID_NASSARI_DEAN_OF_EXPRESSION;
+  case CARD_ID_VALENTIN_DEAN_OF_THE_VEIN:
+    return CARD_ID_LISETTE_DEAN_OF_THE_ROOT;
+  case CARD_ID_WANDERING_ARCHAIC:
+    return CARD_ID_EXPLORE_THE_VASTLANDS;
+  case CARD_ID_AMBITIOUS_FARMHAND:
+    return CARD_ID_SEASONED_CATHAR;
+  case CARD_ID_ARLINN_THE_PACKS_HOPE:
+    return CARD_ID_ARLINN_THE_MOONS_FURY;
+  case CARD_ID_BAITHOOK_ANGLER:
+    return CARD_ID_HOOK_HAUNT_DRIFTER;
+  case CARD_ID_BANEBLADE_SCOUNDREL:
+    return CARD_ID_BANECLAW_MARAUDER;
+  case CARD_ID_BELOVED_BEGGAR:
+    return CARD_ID_GENEROUS_SOUL;
+  case CARD_ID_BEREAVED_SURVIVOR:
+    return CARD_ID_DAUNTLESS_AVENGER;
+  case CARD_ID_BIRD_ADMIRER:
+    return CARD_ID_WING_SHREDDER;
+  case CARD_ID_BRUTAL_CATHAR:
+    return CARD_ID_MOONRAGE_BRUTE;
+  case CARD_ID_BURLY_BREAKER:
+    return CARD_ID_DIRE_STRAIN_DEMOLISHER;
+  case CARD_ID_CHAPLAIN_OF_ALMS:
+    return CARD_ID_CHAPEL_SHIELDGEIST;
+  case CARD_ID_COVERT_CUTPURSE:
+    return CARD_ID_COVETOUS_GEIST;
+  case CARD_ID_COVETOUS_CASTAWAY:
+    return CARD_ID_GHOSTLY_CASTIGATOR;
+  case CARD_ID_CURSE_OF_LEECHES:
+    return CARD_ID_LEECHING_LURKER;
+  case CARD_ID_DAY_TOKEN:
+    return CARD_ID_NIGHT_TOKEN;
+  case CARD_ID_DEATHBONNET_SPROUT:
+    return CARD_ID_DEATHBONNET_HULK;
+  case CARD_ID_DENNICK_PIOUS_APPRENTICE:
+    return CARD_ID_DENNICK_PIOUS_APPARITION;
+  case CARD_ID_DEVOTED_GRAFKEEPER:
+    return CARD_ID_DEPARTED_SOULKEEPER;
+  case CARD_ID_ECSTATIC_AWAKENER:
+    return CARD_ID_AWOKEN_DEMON;
+  case CARD_ID_ENDURING_ANGEL:
+    return CARD_ID_ANGELIC_ENFORCER;
+  case CARD_ID_FANGBLADE_BRIGAND:
+    return CARD_ID_FANGBLADE_EVISCERATOR;
+  case CARD_ID_FLAME_CHANNELER:
+    return CARD_ID_EMBODIMENT_OF_FLAME;
+  case CARD_ID_GALEDRIFTER:
+    return CARD_ID_WAILDRIFTER;
+  case CARD_ID_GRAVEYARD_TRESPASSER:
+    return CARD_ID_GRAVEYARD_GLUTTON;
+  case CARD_ID_HARVESTTIDE_INFILTRATOR:
+    return CARD_ID_HARVESTTIDE_ASSAILANT;
+  case CARD_ID_HEIRLOOM_MIRROR:
+    return CARD_ID_INHERITED_FIEND;
+  case CARD_ID_HOSTILE_HOSTEL:
+    return CARD_ID_CREEPING_INN;
+  case CARD_ID_HOUND_TAMER:
+    return CARD_ID_UNTAMED_PUP;
+  case CARD_ID_JERREN_CORRUPTED_BISHOP:
+    return CARD_ID_ORMENDAHL_THE_CORRUPTER;
+  case CARD_ID_KESSIG_NATURALIST:
+    return CARD_ID_LORD_OF_THE_ULVENWALD;
+  case CARD_ID_LUDEVIC_NECROGENIUS:
+    return CARD_ID_OLAG_LUDEVICS_HUBRIS;
+  case CARD_ID_LUNARCH_VETERAN:
+    return CARD_ID_LUMINOUS_PHANTOM;
+  case CARD_ID_MALEVOLENT_HERMIT:
+    return CARD_ID_BENEVOLENT_GEIST;
+  case CARD_ID_MOURNING_PATROL:
+    return CARD_ID_MORNING_APPARITION;
+  case CARD_ID_MYSTERIOUS_TOME:
+    return CARD_ID_CHILLING_CHRONICLE;
+  case CARD_ID_MYSTIC_SKULL:
+    return CARD_ID_MYSTIC_MONSTROSITY;
+  case CARD_ID_OUTLAND_LIBERATOR:
+    return CARD_ID_FRENZIED_TRAPBREAKER;
+  case CARD_ID_OVERWHELMED_ARCHIVIST:
+    return CARD_ID_ARCHIVE_HAUNT;
+  case CARD_ID_POPPET_STITCHER:
+    return CARD_ID_POPPET_FACTORY;
+  case CARD_ID_RECKLESS_STORMSEEKER:
+    return CARD_ID_STORM_CHARGED_SLASHER;
+  case CARD_ID_SHADY_TRAVELER:
+    return CARD_ID_STALKING_PREDATOR;
+  case CARD_ID_SMOLDERING_EGG:
+    return CARD_ID_ASHMOUTH_DRAGON;
+  case CARD_ID_SPELLRUNE_PAINTER:
+    return CARD_ID_SPELLRUNE_HOWLER;
+  case CARD_ID_SUSPICIOUS_STOWAWAY:
+    return CARD_ID_SEAFARING_WEREWOLF;
+  case CARD_ID_TAVERN_RUFFIAN:
+    return CARD_ID_TAVERN_SMASHER;
+  case CARD_ID_TIRELESS_HAULER:
+    return CARD_ID_DIRE_STRAIN_BRAWLER;
+  case CARD_ID_TOVOLARS_HUNTMASTER:
+    return CARD_ID_TOVOLARS_PACKLEADER;
+  case CARD_ID_TOVOLAR_DIRE_OVERLORD:
+    return CARD_ID_TOVOLAR_THE_MIDNIGHT_SCOURGE;
+  case CARD_ID_VENGEFUL_STRANGLER:
+    return CARD_ID_STRANGLING_GRASP;
+  case CARD_ID_VILLAGE_WATCH:
+    return CARD_ID_VILLAGE_REAVERS;
+  case CARD_ID_ALLURING_SUITOR:
+    return CARD_ID_DEADLY_DANCER;
+  case CARD_ID_AVABRUCK_CARETAKER:
+    return CARD_ID_HOLLOWHENGE_HUNTMASTER;
+  case CARD_ID_BALLISTA_WATCHER:
+    return CARD_ID_BALLISTA_WIELDER;
+  case CARD_ID_BINDING_GEIST:
+    return CARD_ID_SPECTRAL_BINDING;
+  case CARD_ID_BIOLUME_EGG:
+    return CARD_ID_BIOLUME_SERPENT;
+  case CARD_ID_BLOODSWORN_SQUIRE:
+    return CARD_ID_BLOODSWORN_KNIGHT;
+  case CARD_ID_BRINE_COMBER:
+    return CARD_ID_BRINEBOUND_GIFT;
+  case CARD_ID_CATAPULT_FODDER:
+    return CARD_ID_CATAPULT_CAPTAIN;
+  case CARD_ID_CHILD_OF_THE_PACK:
+    return CARD_ID_SAVAGE_PACKMATE;
+  case CARD_ID_CONCEALING_CURTAINS:
+    return CARD_ID_REVEALING_EYE;
+  case CARD_ID_DESPERATE_FARMER:
+    return CARD_ID_DEPRAVED_HARVESTER;
+  case CARD_ID_DISTRACTING_GEIST:
+    return CARD_ID_CLEVER_DISTRACTION;
+  case CARD_ID_DORMANT_GROVE:
+    return CARD_ID_GNARLED_GROVESTRIDER;
+  case CARD_ID_DOROTHEA_VENGEFUL_VICTIM:
+    return CARD_ID_DOROTHEAS_RETRIBUTION;
+  case CARD_ID_DROGSKOL_INFANTRY:
+    return CARD_ID_DROGSKOL_ARMAMENTS;
+  case CARD_ID_EDGAR_CHARMED_GROOM:
+    return CARD_ID_EDGAR_MARKOVS_COFFIN;
+  case CARD_ID_FAITHBOUND_JUDGE:
+    return CARD_ID_SINNERS_JUDGMENT;
+  case CARD_ID_FEARFUL_VILLAGER:
+    return CARD_ID_FEARSOME_WEREWOLF;
+  case CARD_ID_FOREBODING_STATUE:
+    return CARD_ID_FORSAKEN_THRESHER;
+  case CARD_ID_GUTTER_SKULKER:
+    return CARD_ID_GUTTER_SHORTCUT;
+  case CARD_ID_HENRIKA_DOMNATHI:
+    return CARD_ID_HENRIKA_INFERNAL_SEER;
+  case CARD_ID_HOOKHAND_MARINER:
+    return CARD_ID_RIPHOOK_RAIDER;
+  case CARD_ID_HOWLPACK_PIPER:
+    return CARD_ID_WILDSONG_HOWLER;
+  case CARD_ID_ILL_TEMPERED_LONER:
+    return CARD_ID_HOWLPACK_AVENGER;
+  case CARD_ID_INFESTATION_EXPERT:
+    return CARD_ID_INFESTED_WEREWOLF;
+  case CARD_ID_INNOCENT_TRAVELER:
+    return CARD_ID_MALICIOUS_INVADER;
+  case CARD_ID_JACOB_HAUKEN_INSPECTOR:
+    return CARD_ID_HAUKENS_INSIGHT;
+  case CARD_ID_KATILDA_DAWNHART_MARTYR:
+    return CARD_ID_KATILDAS_RISING_DAWN;
+  case CARD_ID_KINDLY_ANCESTOR:
+    return CARD_ID_ANCESTORS_EMBRACE;
+  case CARD_ID_LAMBHOLT_RACONTEUR:
+    return CARD_ID_LAMBHOLT_RAVAGER;
+  case CARD_ID_LANTERN_BEARER:
+    return CARD_ID_LANTERNS_LIFT;
+  case CARD_ID_MIRRORHALL_MIMIC:
+    return CARD_ID_GHASTLY_MIMICRY;
+  case CARD_ID_MISCHIEVOUS_CATGEIST:
+    return CARD_ID_CATLIKE_CURIOSITY;
+  case CARD_ID_OAKSHADE_STALKER:
+    return CARD_ID_MOONLIT_AMBUSHER;
+  case CARD_ID_PANICKED_BYSTANDER:
+    return CARD_ID_CACKLING_CULPRIT;
+  case CARD_ID_RADIANT_GRACE:
+    return CARD_ID_RADIANT_RESTRAINTS;
+  case CARD_ID_RAGGED_RECLUSE:
+    return CARD_ID_ODIOUS_WITCH;
+  case CARD_ID_RESTLESS_BLOODSEEKER:
+    return CARD_ID_BLOODSOAKED_REVELER;
+  case CARD_ID_RUNO_STROMKIRK:
+    return CARD_ID_KROTHUSS_LORD_OF_THE_DEEP;
+  case CARD_ID_SOULCIPHER_BOARD:
+    return CARD_ID_CIPHERBOUND_SPIRIT;
+  case CARD_ID_TWINBLADE_GEIST:
+    return CARD_ID_TWINBLADE_INVOCATION;
+  case CARD_ID_ULVENWALD_ODDITY:
+    return CARD_ID_ULVENWALD_BEHEMOTH;
+  case CARD_ID_VOLATILE_ARSONIST:
+    return CARD_ID_DIRE_STRAIN_ANARCHIST;
+  case CARD_ID_VOLDAREN_BLOODCASTER:
+    return CARD_ID_BLOODBAT_SUMMONER;
+  case CARD_ID_VOLTAIC_VISIONARY:
+    return CARD_ID_VOLT_CHARGED_BERSERKER;
+  case CARD_ID_WEARY_PRISONER:
+    return CARD_ID_WRATHFUL_JAILBREAKER;
+  case CARD_ID_WEAVER_OF_BLOSSOMS:
+    return CARD_ID_BLOSSOM_CLAD_WEREWOLF;
+  case CARD_ID_WEDDING_ANNOUNCEMENT:
+    return CARD_ID_WEDDING_FESTIVITY;
+  case CARD_ID_WOLFKIN_OUTCAST:
+    return CARD_ID_WEDDING_CRASHER;
+  case CARD_ID_AZUSAS_MANY_JOURNEYS:
+    return CARD_ID_LIKENESS_OF_THE_SEEKER;
+  case CARD_ID_BEFRIENDING_THE_MOTHS:
+    return CARD_ID_IMPERIAL_MOTH;
+  case CARD_ID_BEHOLD_THE_UNSPEAKABLE:
+    return CARD_ID_VISION_OF_THE_UNSPEAKABLE;
+  case CARD_ID_BOSEIJU_REACHES_SKYWARD:
+    return CARD_ID_BRANCH_OF_BOSEIJU;
+  case CARD_ID_ERA_OF_ENLIGHTENMENT:
+    return CARD_ID_HAND_OF_ENLIGHTENMENT;
+  case CARD_ID_FABLE_OF_THE_MIRROR_BREAKER:
+    return CARD_ID_REFLECTION_OF_KIKI_JIKI;
+  case CARD_ID_HIDETSUGU_CONSUMES_ALL:
+    return CARD_ID_VESSEL_OF_THE_ALL_CONSUMING;
+  case CARD_ID_INVENTIVE_ITERATION:
+    return CARD_ID_LIVING_BREAKTHROUGH;
+  case CARD_ID_JUGAN_DEFENDS_THE_TEMPLE:
+    return CARD_ID_REMNANT_OF_THE_RISING_STAR;
+  case CARD_ID_KUMANO_FACES_KAKKAZAN:
+    return CARD_ID_ETCHING_OF_KUMANO;
+  case CARD_ID_LIFE_OF_TOSHIRO_UMEZAWA:
+    return CARD_ID_MEMORY_OF_TOSHIRO;
+  case CARD_ID_MICHIKOS_REIGN_OF_TRUTH:
+    return CARD_ID_PORTRAIT_OF_MICHIKO;
+  case CARD_ID_OKIBA_RECKONER_RAID:
+    return CARD_ID_NEZUMI_ROAD_CAPTAIN;
+  case CARD_ID_TALES_OF_MASTER_SESHIRO:
+    return CARD_ID_SESHIROS_LIVING_LEGACY;
+  case CARD_ID_TEACHINGS_OF_THE_KIRIN:
+    return CARD_ID_KIRIN_TOUCHED_OROCHI;
+  case CARD_ID_THE_DRAGON_KAMI_REBORN:
+    return CARD_ID_DRAGON_KAMIS_EGG;
+  case CARD_ID_THE_FALL_OF_LORD_KONDA:
+    return CARD_ID_FRAGMENT_OF_KONDA;
+  case CARD_ID_THE_KAMI_WAR:
+    return CARD_ID_O_KAGACHI_MADE_MANIFEST;
+  case CARD_ID_THE_LONG_REACH_OF_NIGHT:
+    return CARD_ID_ANIMUS_OF_NIGHTS_REACH;
+  case CARD_ID_THE_MODERN_AGE:
+    return CARD_ID_VECTOR_GLIDER;
+  case CARD_ID_THE_RESTORATION_OF_EIGANJO:
+    return CARD_ID_ARCHITECT_OF_RESTORATION;
+  case CARD_ID_THE_SHATTERED_STATES_ERA:
+    return CARD_ID_NAMELESS_CONQUEROR;
+  case CARD_ID_TRIBUTE_TO_HOROBI:
+    return CARD_ID_ECHO_OF_DEATHS_WAIL;
+  default:
+    return 0;
   }
-  if (csvid < 0x573a)
-  {
-    if (csvid < 0x3edd)
-    {
-      if (0x3eb9 < csvid)
-      {
-        switch (csvid)
-        {
-        case 0x3eba:
-          return 0x3ebb;
-        default:
-          return 0;
-        case 0x3ec1:
-          return 0x3ec2;
-        case 0x3ec4:
-          return 0x3ec5;
-        case 0x3ecf:
-          return 0x3ed0;
-        case 0x3edc:
-          return 0x3edd;
-        }
-      }
-      if (csvid == 0x3b40)
-      {
-        return 0x3b41;
-      }
-      if (csvid < 0x3b41)
-      {
-        if (0x2f77 < csvid)
-        {
-          if (csvid < 0x2fec)
-          {
-            if (0x2faf < csvid)
-            {
-              switch (csvid)
-              {
-              case 0x2fb0:
-                return 0x2fb1;
-              default:
-                return 0;
-              case 0x2fb5:
-                return 0x2fb6;
-              case 0x2fbf:
-                return 0x2fc0;
-              case 0x2fc3:
-                return 0x2fc4;
-              case 0x2fc9:
-                return 0x2fca;
-              case 0x2fd4:
-                return 0x2fd5;
-              case 0x2fdd:
-                return 0x2fde;
-              case 0x2feb:
-                return 0x2fec;
-              }
-            }
-            return (csvid != 0x2f89) - 1 & 0x2f8a;
-          }
-          if (csvid == 0x3af8)
-          {
-            return 0x3af9;
-          }
-          if (csvid == 0x3b37)
-          {
-            return 0x3b38;
-          }
-          return (csvid != 0x3004) - 1 & 0x3005;
-        }
-        if (0x2f3f < csvid)
-        {
-          switch (csvid)
-          {
-          case 0x2f40:
-            return 0x2f41;
-          default:
-            return 0;
-          case 0x2f42:
-            return 0x2f43;
-          case 0x2f4b:
-            return 0x2f4c;
-          case 0x2f57:
-            return 0x2f58;
-          case 0x2f59:
-            return 0x2f5a;
-          case 0x2f62:
-            return 0x2f63;
-          case 0x2f73:
-            return 0x2f74;
-          case 0x2f77:
-            return 0x2f78;
-          }
-        }
-        if (csvid < 0x2ef2)
-        {
-          if (0x2eb3 < csvid)
-          {
-            switch (csvid)
-            {
-            case 0x2eb4:
-              return 0x2eb5;
-            default:
-              return 0;
-            case 0x2eb6:
-              return 0x2eb7;
-            case 0x2ec7:
-              return 0x2ec8;
-            case 0x2ecc:
-              return 0x2ecd;
-            case 0x2ed6:
-              return 0x2ed7;
-            case 12000:
-              return 0x2ee1;
-            case 0x2ee6:
-              return 0x2ee7;
-            case 0x2ef1:
-              return 0x2ef2;
-            }
-          }
-          switch (csvid)
-          {
-          case 0x2e6f:
-            return 0x2e70;
-          case 0x2e70:
-          case 0x2e71:
-          case 0x2e72:
-          case 0x2e73:
-          case 0x2e74:
-          case 0x2e75:
-          case 0x2e76:
-          case 0x2e77:
-          case 0x2e78:
-          case 0x2e79:
-          case 0x2e7a:
-          case 0x2e7b:
-          case 0x2e7c:
-          case 0x2e7d:
-          case 0x2e7e:
-          case 0x2e80:
-          case 0x2e81:
-          case 0x2e82:
-          case 0x2e84:
-          case 0x2e85:
-          case 0x2e86:
-          case 0x2e87:
-          case 0x2e88:
-          case 0x2e89:
-          case 0x2e8a:
-          case 0x2e8b:
-          case 0x2e8c:
-          case 0x2e8d:
-          case 0x2e8e:
-          case 0x2e8f:
-          case 0x2e90:
-          case 0x2e92:
-          case 0x2e93:
-          case 0x2e94:
-            return 0;
-          case 0x2e7f:
-            return 0x2e80;
-          case 0x2e83:
-            return 0x2e84;
-          case 0x2e91:
-            return 0x2e92;
-          case 0x2e95:
-            return 0x2e96;
-          default:
-            return 0;
-          }
-        }
-        result = 0x2f16;
-        if (csvid != 0x2f15)
-        {
-          return (csvid != 0x2f1e) - 1 & 0x2f1f;
-        }
-      }
-      else
-      {
-        if (0x3e2e < csvid)
-        {
-          if (csvid == 0x3e42)
-          {
-            return 0x3e43;
-          }
-          switch (csvid)
-          {
-          case 0x3e55:
-            return 0x3e56;
-          case 0x3e56:
-          case 0x3e57:
-          case 0x3e58:
-          case 0x3e5a:
-          case 0x3e5b:
-          case 0x3e5c:
-          case 0x3e5d:
-          case 0x3e5e:
-          case 0x3e5f:
-          case 0x3e61:
-          case 0x3e62:
-          case 0x3e63:
-          case 0x3e64:
-          case 0x3e65:
-          case 0x3e66:
-          case 0x3e67:
-          case 0x3e68:
-          case 0x3e69:
-          case 0x3e6a:
-          case 0x3e6b:
-          case 0x3e6c:
-          case 0x3e6d:
-          case 0x3e6e:
-          case 0x3e6f:
-          case 0x3e70:
-          case 0x3e72:
-          case 0x3e73:
-          case 0x3e75:
-          case 0x3e76:
-          case 0x3e77:
-          case 0x3e78:
-          case 0x3e79:
-          case 0x3e7a:
-          case 0x3e7c:
-          case 0x3e7d:
-          case 0x3e7e:
-          case 15999:
-          case 16000:
-          case 0x3e81:
-          case 0x3e82:
-          case 0x3e83:
-          case 0x3e84:
-          case 0x3e85:
-          case 0x3e87:
-          case 0x3e88:
-          case 0x3e89:
-          case 0x3e8a:
-          case 0x3e8b:
-          case 0x3e8c:
-          case 0x3e8d:
-          case 0x3e8e:
-          case 0x3e90:
-          case 0x3e91:
-          case 0x3e92:
-          case 0x3e93:
-          case 0x3e94:
-          case 0x3e95:
-            return 0;
-          case 0x3e59:
-            return 0x3e5a;
-          case 0x3e60:
-            return 0x3e61;
-          case 0x3e71:
-            return 0x3e72;
-          case 0x3e74:
-            return 0x3e75;
-          case 0x3e7b:
-            return 0x3e7c;
-          case 0x3e86:
-            return 0x3e87;
-          case 0x3e8f:
-            return 0x3e90;
-          case 0x3e96:
-            return 0x3e97;
-          default:
-            return 0;
-          }
-        }
-        if (0x3dd1 < csvid)
-        {
-          switch (csvid)
-          {
-          case 0x3dd2:
-            return 0x3dd3;
-          default:
-            return 0;
-          case 0x3dd4:
-            return 0x3dd5;
-          case 0x3de1:
-            return 0x3de2;
-          case 0x3de4:
-            return 0x3de5;
-          case 0x3de7:
-            return 0x3de8;
-          case 0x3de9:
-            return 0x3dea;
-          case 0x3dec:
-            return 0x3ded;
-          case 0x3e03:
-            return 0x3e04;
-          case 0x3e05:
-            return 0x3e06;
-          case 0x3e07:
-            return 0x3e08;
-          case 0x3e1e:
-            return 0x3e1f;
-          case 0x3e2e:
-            return 0x3e2f;
-          }
-        }
-        if (0x3db6 < csvid)
-        {
-          return 0;
-        }
-        if (csvid < 0x3d6e)
-        {
-          result = 0x3b45;
-          if (csvid != 0x3b44)
-          {
-            return (csvid != 0x3b54) - 1 & 0x3b55;
-          }
-        }
-        else
-        {
-          switch (csvid)
-          {
-          case 0x3d6e:
-            return 0x3d6f;
-          default:
-            return 0;
-          case 0x3d70:
-            result = 0x3d71;
-            break;
-          case 0x3d7a:
-            return 0x3d7b;
-          case 0x3d7c:
-            return 0x3d7d;
-          case 0x3d80:
-            return 0x3d81;
-          case 0x3d83:
-            return 0x3d84;
-          case 0x3d8b:
-            return 0x3d8c;
-          case 0x3d9a:
-            return 0x3d9b;
-          case 0x3da3:
-            return 0x3da4;
-          case 0x3db3:
-            return 0x3db4;
-          case 0x3db6:
-            return 0x3db7;
-          }
-        }
-      }
-    }
-    else if (csvid < 0x5561)
-    {
-      if (0x5500 < csvid)
-      {
-        switch (csvid)
-        {
-        case 0x5501:
-          return 0x5502;
-        default:
-          return 0;
-        case 0x5505:
-          return 0x5506;
-        case 0x5513:
-          return 0x5514;
-        case 0x5516:
-          return 0x5517;
-        case 0x5518:
-          return 0x5519;
-        case 0x551d:
-          return 0x551e;
-        case 0x551f:
-          return 0x5520;
-        case 0x552c:
-          return 0x552d;
-        case 0x5536:
-          return 0x5537;
-        case 0x5544:
-          return 0x5545;
-        case 0x5556:
-          return 0x5557;
-        case 0x5560:
-          return 0x5561;
-        }
-      }
-      if (csvid == 0x4430)
-      {
-        return 0x4431;
-      }
-      if (csvid < 0x4431)
-      {
-        if (csvid < 0x3f69)
-        {
-          if (0x3f34 < csvid)
-          {
-            switch (csvid)
-            {
-            case 0x3f35:
-              return 0x3f36;
-            default:
-              return 0;
-            case 0x3f3b:
-              return 0x3f3c;
-            case 0x3f54:
-              return 0x3f55;
-            case 0x3f5e:
-              return 0x3f5f;
-            case 0x3f60:
-              return 0x3f61;
-            case 0x3f66:
-              return 0x3f67;
-            case 0x3f68:
-              return 0x3f69;
-            }
-          }
-          if (csvid != 0x3f0a)
-          {
-            if (csvid == 0x3f11)
-            {
-              return 0x3f12;
-            }
-            return (csvid != 0x3ef7) - 1 & 0x3ef8;
-          }
-          return 0x3f0b;
-        }
-        if (csvid == 0x43f5)
-        {
-          return 0x43f6;
-        }
-        if (0x43f5 < csvid)
-        {
-          return (csvid != 0x4412) - 1 & 0x4413;
-        }
-        result = 0x43c1;
-        if (csvid != 0x43c0)
-        {
-          return (csvid != 0x43dc) - 1 & 0x43dd;
-        }
-      }
-      else
-      {
-        if (csvid == 0x472b)
-        {
-          return 0x472c;
-        }
-        if (csvid < 0x472c)
-        {
-          if (csvid == 0x44a0)
-          {
-            return 0x44a1;
-          }
-          if (csvid < 0x44a1)
-          {
-            if (csvid == 0x446c)
-            {
-              return 0x446d;
-            }
-            if (csvid == 0x4497)
-            {
-              return 0x4498;
-            }
-            return (csvid != 0x444a) - 1 & 0x444b;
-          }
-          if (csvid == 0x46f0)
-          {
-            return 0x46f1;
-          }
-          if (csvid == 0x4727)
-          {
-            return 0x4728;
-          }
-          return (csvid != 0x44a6) - 1 & 0x44a7;
-        }
-        if (csvid == 0x477d)
-        {
-          return 0x477e;
-        }
-        if (csvid < 0x477e)
-        {
-          if (csvid == 0x4753)
-          {
-            return 0x4754;
-          }
-          if (csvid == 0x4759)
-          {
-            return 0x475a;
-          }
-          return (csvid != 0x4737) - 1 & 0x4738;
-        }
-        result = 0x4a1a;
-        if (csvid != 0x4a19)
-        {
-          return (csvid != 0x4a74) - 1 & 0x4a75;
-        }
-      }
-    }
-    else if (csvid < 0x562a)
-    {
-      result = 0;
-      if (0x556a < csvid)
-      {
-        switch (csvid)
-        {
-        case 0x556b:
-          return 0x556c;
-        default:
-          return 0;
-        case 0x556e:
-          return 0x556f;
-        case 0x5573:
-          return 0x5574;
-        case 0x5577:
-          return 0x5578;
-        case 0x5579:
-          return 0x557a;
-        case 0x558b:
-          return 0x558c;
-        case 0x558e:
-          return 0x558f;
-        case 0x55a3:
-          return 0x55a4;
-        case 0x55af:
-          return 0x55b0;
-        case 0x55b4:
-          return 0x55b5;
-        case 0x55c3:
-          return 0x55c4;
-        case 0x55d3:
-          return 0x55d4;
-        case 0x55d7:
-          return 0x55d8;
-        case 0x55dd:
-          return 0x55de;
-        case 0x55e1:
-          return 0x55e2;
-        case 0x55e5:
-          return 0x55e6;
-        case 0x55f1:
-          return 0x55f2;
-        case 0x55f5:
-          return 0x55f6;
-        case 0x5604:
-          return 0x5605;
-        case 0x5614:
-          return 0x5615;
-        case 0x5617:
-          return 0x5618;
-        case 0x561a:
-          return 0x561b;
-        case 0x561d:
-          return 0x561e;
-        case 0x5629:
-          return 0x562a;
-        }
-      }
-    }
-    else
-    {
-      if (csvid == 0x5706)
-      {
-        return 0x5707;
-      }
-      if (csvid < 0x5707)
-      {
-        if (csvid == 0x56f5)
-        {
-          return 0x56f6;
-        }
-        if (csvid == 0x5703)
-        {
-          return 0x5704;
-        }
-        return (csvid != 0x56e7) - 1 & 0x56e8;
-      }
-      result = 0x571a;
-      if (csvid != 0x5719)
-      {
-        return (csvid != 0x5721) - 1 & 0x5722;
-      }
-    }
-  }
-  else
-  {
-    if (0x5fc2 < csvid)
-    {
-      return 0;
-    }
-    if (0x5bfb < csvid)
-    {
-      switch (csvid)
-      {
-      case 0x5bfc:
-        return 0x5bfd;
-      default:
-        return 0;
-      case 0x5c01:
-        return 0x5c02;
-      case 0x5c05:
-        return 0x5c06;
-      case 0x5c07:
-        return 0x5c08;
-      case 0x5c0a:
-        return 0x5c0b;
-      case 0x5c0c:
-        return 0x5c0d;
-      case 0x5c0e:
-        return 0x5c0f;
-      case 0x5c1c:
-        return 0x5c1d;
-      case 0x5c1e:
-        return 0x5c1f;
-      case 0x5c2b:
-        return 0x5c2c;
-      case 0x5c33:
-        return 0x5c34;
-      case 0x5c35:
-        return 0x5c36;
-      case 0x5c3a:
-        return 0x5c3b;
-      case 0x5c42:
-        return 0x5c43;
-      case 0x5c44:
-        return 0x5c45;
-      case 0x5c48:
-        return 0x5c49;
-      case 0x5c4b:
-        return 0x5c4c;
-      case 0x5c57:
-        return 0x5c58;
-      case 0x5c5a:
-        return 0x5c5b;
-      case 0x5c62:
-        return 0x5c63;
-      case 0x5c67:
-        return 0x5c68;
-      case 0x5c6e:
-        return 0x5c6f;
-      case 0x5c7a:
-        return 0x5c7b;
-      case 0x5c7e:
-        return 0x5c7f;
-      case 0x5c83:
-        return 0x5c84;
-      case 0x5c87:
-        return 0x5c88;
-      case 0x5c89:
-        return 0x5c8a;
-      case 0x5c91:
-        return 0x5c92;
-      case 0x5c95:
-        return 0x5c96;
-      case 0x5c9f:
-        return 0x5ca0;
-      case 0x5ca2:
-        return 0x5ca3;
-      case 0x5ca4:
-        return 0x5ca5;
-      case 0x5caf:
-        return 0x5cb0;
-      case 0x5cb1:
-        return 0x5cb2;
-      case 0x5cb3:
-        return 0x5cb4;
-      case 0x5cc1:
-        return 0x5cc2;
-      case 0x5cc4:
-        return 0x5cc5;
-      case 0x5ccc:
-        return 0x5ccd;
-      case 0x5cd1:
-        return 0x5cd2;
-      case 0x5ce3:
-        return 0x5ce4;
-      case 0x5cf1:
-        return 0x5cf2;
-      case 0x5cf6:
-        return 0x5cf7;
-      case 0x5d03:
-        return 0x5d04;
-      case 0x5d07:
-        return 0x5d08;
-      case 0x5d0e:
-        return 0x5d0f;
-      case 0x5d10:
-        return 0x5d11;
-      case 0x5d12:
-        return 0x5d13;
-      case 0x5d1c:
-        return 0x5d1d;
-      case 0x5d1e:
-        return 0x5d1f;
-      case 0x5d50:
-        return 0x5d51;
-      case 0x5d5a:
-        return 0x5d5b;
-      case 0x5d5c:
-        return 0x5d5d;
-      case 0x5d5f:
-        return 0x5d60;
-      case 0x5d61:
-        return 0x5d62;
-      case 0x5d6a:
-        return 0x5d6b;
-      case 0x5d72:
-        return 0x5d73;
-      case 0x5d76:
-        return 0x5d77;
-      case 0x5d81:
-        return 0x5d82;
-      case 0x5d87:
-        return 0x5d88;
-      case 0x5d96:
-        return 0x5d97;
-      case 0x5d9a:
-        return 0x5d9b;
-      case 0x5d9f:
-        return 0x5da0;
-      case 0x5da1:
-        return 0x5da2;
-      case 0x5da9:
-        return 0x5daa;
-      case 0x5dad:
-        return 0x5dae;
-      case 0x5db2:
-        return 0x5db3;
-      case 0x5db7:
-        return 0x5db8;
-      case 0x5dbe:
-        return 23999;
-      case 0x5dcc:
-        return 0x5dcd;
-      case 0x5dd2:
-        return 0x5dd3;
-      case 0x5dd9:
-        return 0x5dda;
-      case 0x5ddd:
-        return 0x5dde;
-      case 0x5de1:
-        return 0x5de2;
-      case 0x5de3:
-        return 0x5de4;
-      case 0x5de5:
-        return 0x5de6;
-      case 0x5dea:
-        return 0x5deb;
-      case 0x5dec:
-        return 0x5ded;
-      case 0x5df1:
-        return 0x5df2;
-      case 0x5df5:
-        return 0x5df6;
-      case 0x5df7:
-        return 0x5df8;
-      case 0x5e05:
-        return 0x5e06;
-      case 0x5e07:
-        return 0x5e08;
-      case 0x5e0e:
-        return 0x5e0f;
-      case 0x5e17:
-        return 0x5e18;
-      case 0x5e21:
-        return 0x5e22;
-      case 0x5e23:
-        return 0x5e24;
-      case 0x5e2a:
-        return 0x5e2b;
-      case 0x5e2f:
-        return 0x5e30;
-      case 0x5e44:
-        return 0x5e45;
-      case 0x5e57:
-        return 0x5e58;
-      case 0x5e59:
-        return 0x5e5a;
-      case 0x5e64:
-        return 0x5e65;
-      case 0x5e66:
-        return 0x5e67;
-      case 0x5e6a:
-        return 0x5e6b;
-      case 0x5e6f:
-        return 0x5e70;
-      case 0x5e71:
-        return 0x5e72;
-      case 0x5e73:
-        return 0x5e74;
-      case 0x5e7d:
-        return 0x5e7e;
-      case 0x5eb4:
-        return 0x5eb5;
-      case 0x5eb9:
-        return 0x5eba;
-      case 0x5ebb:
-        return 0x5ebc;
-      case 0x5ec3:
-        return 0x5ec4;
-      case 0x5ee5:
-        return 0x5ee6;
-      case 0x5eea:
-        return 0x5eeb;
-      case 0x5f06:
-        return 0x5f07;
-      case 0x5f13:
-        return 0x5f14;
-      case 0x5f1f:
-        return 0x5f20;
-      case 0x5f33:
-        return 0x5f34;
-      case 0x5f39:
-        return 0x5f3a;
-      case 0x5f4a:
-        return 0x5f4b;
-      case 0x5f62:
-        return 0x5f63;
-      case 0x5f9f:
-        return 0x5fa0;
-      case 0x5fa7:
-        return 0x5fa8;
-      case 0x5fac:
-        return 0x5fad;
-      case 0x5fae:
-        return 0x5faf;
-      case 0x5fb0:
-        return 0x5fb1;
-      case 0x5fb2:
-        return 0x5fb3;
-      case 0x5fb4:
-        return 0x5fb5;
-      case 0x5fb7:
-        return 0x5fb8;
-      case 0x5fb9:
-        return 0x5fba;
-      case 0x5fc2:
-        return 0x5fc3;
-      }
-    }
-    if (csvid == 0x588a)
-    {
-      return 0x588b;
-    }
-    if (csvid < 0x588b)
-    {
-      if (csvid == 0x57f2)
-      {
-        return 0x57f3;
-      }
-      if (csvid < 0x57f3)
-      {
-        if (csvid == 0x5785)
-        {
-          return 0x5786;
-        }
-        if (csvid < 0x5786)
-        {
-          if (csvid == 0x576d)
-          {
-            return 0x576e;
-          }
-          if (csvid == 0x5772)
-          {
-            return 0x5773;
-          }
-          return (csvid != 0x5743) - 1 & 0x5744;
-        }
-        result = 0x5792;
-        if (csvid != 0x5791)
-        {
-          return (csvid != 0x57bb) - 1 & 0x57bc;
-        }
-      }
-      else
-      {
-        if (csvid == 0x5839)
-        {
-          return 0x583a;
-        }
-        if (csvid < 0x583a)
-        {
-          result = 0x57fe;
-          if (csvid != 0x57fd)
-          {
-            return (csvid != 0x5809) - 1 & 0x580a;
-          }
-        }
-        else
-        {
-          result = 0x5845;
-          if (csvid != 0x5844)
-          {
-            return (csvid != 0x5884) - 1 & 0x5885;
-          }
-        }
-      }
-    }
-    else
-    {
-      if (csvid == 0x5908)
-      {
-        return 0x5909;
-      }
-      if (csvid < 0x5909)
-      {
-        if (csvid == 0x58d9)
-        {
-          return 0x58da;
-        }
-        if (csvid < 0x58da)
-        {
-          if (csvid == 0x58b0)
-          {
-            return 0x58b1;
-          }
-          if (csvid == 0x58cb)
-          {
-            return 0x58cc;
-          }
-          return (csvid != 0x58ab) - 1 & 0x58ac;
-        }
-        result = 0x58e0;
-        if (csvid != 0x58df)
-        {
-          return (csvid != 0x5901) - 1 & 0x5902;
-        }
-      }
-      else
-      {
-        if (csvid == 0x5940)
-        {
-          return 0x5941;
-        }
-        if (csvid < 0x5941)
-        {
-          result = 0x590f;
-          if (csvid != 0x590e)
-          {
-            return (csvid != 0x593b) - 1 & 0x593c;
-          }
-        }
-        else
-        {
-          result = 0x5943;
-          if (csvid != 0x5942)
-          {
-            return (csvid != 0x594a) - 1 & 0x594b;
-          }
-        }
-      }
-    }
-  }
-  return result;
 }
 
 /* ManalinkEh 2022: 0x267dce0; original functions/functions.c:3759. */
 int dfc_back_to_front(int csvid)
 {
-  int result;
-
-  if (csvid == 0x573a)
+  switch (csvid)
   {
-    return 0x5739;
+  case CARD_ID_LORD_OF_LINEAGE:
+    return CARD_ID_BLOODLINE_KEEPER;
+  case CARD_ID_HOMICIDAL_BRUTE:
+    return CARD_ID_CIVILIZED_SCHOLAR;
+  case CARD_ID_UNHOLY_FIEND:
+    return CARD_ID_CLOISTERED_YOUTH;
+  case CARD_ID_NIGHTFALL_PREDATOR:
+    return CARD_ID_DAYBREAK_RANGER;
+  case CARD_ID_INSECTILE_ABERRATION:
+    return CARD_ID_DELVER_OF_SECRETS;
+  case CARD_ID_GARRUK_THE_VEIL_CURSED:
+    return CARD_ID_GARRUK_RELENTLESS;
+  case CARD_ID_GATSTAF_HOWLER:
+    return CARD_ID_GATSTAF_SHEPHERD;
+  case CARD_ID_KRALLENHORDE_WANTONS:
+    return CARD_ID_GRIZZLED_OUTCASTS;
+  case CARD_ID_BANE_OF_HANWEIR:
+    return CARD_ID_HANWEIR_WATCHKEEP;
+  case CARD_ID_WILDBLOOD_PACK:
+    return CARD_ID_INSTIGATOR_GANG;
+  case CARD_ID_TERROR_OF_KRUIN_PASS:
+    return CARD_ID_KRUIN_OUTLAW;
+  case CARD_ID_LUDEVICS_ABOMINATION:
+    return CARD_ID_LUDEVICS_TEST_SUBJECT;
+  case CARD_ID_HOWLPACK_ALPHA:
+    return CARD_ID_MAYOR_OF_AVABRUCK;
+  case CARD_ID_MERCILESS_PREDATOR:
+    return CARD_ID_RECKLESS_WAIF;
+  case CARD_ID_STALKING_VAMPIRE:
+    return CARD_ID_SCREECHING_BAT;
+  case CARD_ID_THRABEN_MILITIA:
+    return CARD_ID_THRABEN_SENTRY;
+  case CARD_ID_RAMPAGING_WEREWOLF:
+    return CARD_ID_TORMENTED_PARIAH;
+  case CARD_ID_ULVENWALD_PRIMORDIALS:
+    return CARD_ID_ULVENWALD_MYSTICS;
+  case CARD_ID_IRONFANG:
+    return CARD_ID_VILLAGE_IRONSMITH;
+  case CARD_ID_HOWLPACK_OF_ESTWALD:
+    return CARD_ID_VILLAGERS_OF_ESTWALD;
+  case CARD_ID_WEREWOLF_RANSACKER:
+    return CARD_ID_AFFLICTED_DESERTER;
+  case CARD_ID_CHALICE_OF_DEATH:
+    return CARD_ID_CHALICE_OF_LIFE;
+  case CARD_ID_MARKOVS_SERVANT:
+    return CARD_ID_CHOSEN_OF_MARKOV;
+  case CARD_ID_WITHENGAR_UNBOUND:
+    return CARD_ID_ELBRUS_THE_BINDING_BLADE;
+  case CARD_ID_HINTERLAND_SCOURGE:
+    return CARD_ID_HINTERLAND_HERMIT;
+  case CARD_ID_RAVAGER_OF_THE_FELLS:
+    return CARD_ID_HUNTMASTER_OF_THE_FELLS;
+  case CARD_ID_SILVERPELT_WEREWOLF:
+    return CARD_ID_LAMBHOLT_ELDER;
+  case CARD_ID_UNHALLOWED_CATHAR:
+    return CARD_ID_LOYAL_CATHAR;
+  case CARD_ID_TOVOLARS_MAGEHUNTER:
+    return CARD_ID_MONDRONEN_SHAMAN;
+  case CARD_ID_ARCHDEMON_OF_GREED:
+    return CARD_ID_RAVENOUS_DEMON;
+  case CARD_ID_MOONSCARRED_WEREWOLF:
+    return CARD_ID_SCORNED_VILLAGER;
+  case CARD_ID_GHASTLY_HAUNTING:
+    return CARD_ID_SOUL_SEIZER;
+  case CARD_ID_KRALLENHORDE_KILLER:
+    return CARD_ID_WOLFBITTEN_CAPTIVE;
+  case CARD_ID_CHANDRA_ROARING_FLAME:
+    return CARD_ID_CHANDRA_FIRE_OF_KALADESH;
+  case CARD_ID_JACE_TELEPATH_UNBOUND:
+    return CARD_ID_JACE_VRYNS_PRODIGY;
+  case CARD_ID_GIDEON_BATTLE_FORGED:
+    return CARD_ID_KYTHEON_HERO_OF_AKROS;
+  case CARD_ID_LILIANA_DEFIANT_NECROMANCER:
+    return CARD_ID_LILIANA_HERETICAL_HEALER;
+  case CARD_ID_NISSA_SAGE_ANIMIST:
+    return CARD_ID_NISSA_VASTWOOD_SEER;
+  case CARD_ID_PERFECTED_FORM:
+    return CARD_ID_ABERRANT_RESEARCHER;
+  case CARD_ID_INFECTIOUS_CURSE:
+    return CARD_ID_ACCURSED_WITCH;
+  case CARD_ID_AVACYN_THE_PURIFIER:
+    return CARD_ID_ARCHANGEL_AVACYN;
+  case CARD_ID_ARLINN_EMBRACED_BY_THE_MOON:
+    return CARD_ID_ARLINN_KORD;
+  case CARD_ID_ANCIENT_OF_THE_EQUINOX:
+    return CARD_ID_AUTUMNAL_GLOOM;
+  case CARD_ID_LUNARCH_INQUISITORS:
+    return CARD_ID_AVACYNIAN_MISSIONARIES;
+  case CARD_ID_NECK_BREAKER:
+    return CARD_ID_BREAKNECK_RIDER;
+  case CARD_ID_BRANDED_HOWLER:
+    return CARD_ID_CONVICTED_KILLER;
+  case CARD_ID_BEARER_OF_OVERWHELMING_TRUTHS:
+    return CARD_ID_DARING_SLEUTH;
+  case CARD_ID_KRALLENHORDE_HOWLER:
+    return CARD_ID_DUSKWATCH_RECRUITER;
+  case CARD_ID_INSIDIOUS_MIST:
+    return CARD_ID_ELUSIVE_TORMENTOR;
+  case CARD_ID_GATSTAF_RAVAGERS:
+    return CARD_ID_GATSTAF_ARSONISTS;
+  case CARD_ID_VILDIN_PACK_ALPHA:
+    return CARD_ID_GEIER_REACH_BANDIT;
+  case CARD_ID_WESTVALE_CULT_LEADER:
+    return CARD_ID_HANWEIR_MILITIA_CAPTAIN;
+  case CARD_ID_SCROUNGED_SCYTHE:
+    return CARD_ID_HARVEST_HAND;
+  case CARD_ID_HEIR_TO_THE_NIGHT:
+    return CARD_ID_HEIR_OF_FALKENRATH;
+  case CARD_ID_LONE_WOLF_OF_THE_NATTERKNOLLS:
+    return CARD_ID_HERMIT_OF_THE_NATTERKNOLLS;
+  case CARD_ID_TIMBER_SHREDDER:
+    return CARD_ID_HINTERLAND_LOGGER;
+  case CARD_ID_FLAMEHEART_WEREWOLF:
+    return CARD_ID_KESSIG_FORGEMASTER;
+  case CARD_ID_DEMON_POSSESSED_WITCH:
+    return CARD_ID_KINDLY_STRANGER;
+  case CARD_ID_LAMBHOLT_BUTCHER:
+    return CARD_ID_LAMBHOLT_PACIFIST;
+  case CARD_ID_ASHMOUTH_BLADE:
+    return CARD_ID_NEGLECTED_HEIRLOOM;
+  case CARD_ID_WAYWARD_DISCIPLE:
+    return CARD_ID_PIOUS_EVANGEL;
+  case CARD_ID_WEREWOLF_OF_ANCIENT_HUNGER:
+    return CARD_ID_SAGE_OF_ANCIENT_LORE;
+  case CARD_ID_SKIN_SHEDDER:
+    return CARD_ID_SKIN_INVASION;
+  case CARD_ID_ONE_OF_THE_PACK:
+    return CARD_ID_SOLITARY_HUNTER;
+  case CARD_ID_PERSISTENT_NIGHTMARE:
+    return CARD_ID_STARTLED_AWAKE;
+  case CARD_ID_AWOKEN_HORROR:
+    return CARD_ID_THING_IN_THE_ICE;
+  case CARD_ID_STONEWING_ANTAGONIZER:
+    return CARD_ID_THRABEN_GARGOYLE;
+  case CARD_ID_INCITED_RABBLE:
+    return CARD_ID_TOWN_GOSSIPMONGER;
+  case CARD_ID_UNIMPEDED_TRESPASSER:
+    return CARD_ID_UNINVITED_GEIST;
+  case CARD_ID_MOONRISE_INTRUDER:
+    return CARD_ID_VILLAGE_MESSENGER;
+  case CARD_ID_ORMENDAHL_PROFANE_PRINCE:
+    return CARD_ID_WESTVALE_ABBEY;
+  case CARD_ID_CONDUIT_OF_EMRAKUL:
+    return CARD_ID_CONDUIT_OF_STORMS;
+  case CARD_ID_AURORA_OF_EMRAKUL:
+    return CARD_ID_CRYPTOLITH_FRAGMENT;
+  case CARD_ID_VORACIOUS_READER:
+    return CARD_ID_CURIOUS_HOMUNCULUS;
+  case CARD_ID_FINAL_ITERATION:
+    return CARD_ID_DOCENT_OF_PERFECTION;
+  case CARD_ID_EXTRICATOR_OF_FLESH:
+    return CARD_ID_EXTRICATOR_OF_SIN;
+  case CARD_ID_GRISLY_ANGLERFISH:
+    return CARD_ID_GRIZZLED_ANGLER;
+  case CARD_ID_SINUOUS_PREDATOR:
+    return CARD_ID_KESSIG_PROWLER;
+  case CARD_ID_IT_THAT_RIDES_AS_ONE:
+    return CARD_ID_LONE_RIDER;
+  case CARD_ID_HOWLING_CHORUS:
+    return CARD_ID_SHRILL_HOWLER;
+  case CARD_ID_ERUPTING_DREADWOLF:
+    return CARD_ID_SMOLDERING_WEREWOLF;
+  case CARD_ID_FIBROUS_ENTANGLER:
+    return CARD_ID_TANGLECLAW_WEREWOLF;
+  case CARD_ID_ULRICH_UNCONTESTED_ALPHA:
+    return CARD_ID_ULRICH_OF_THE_KRALLENHORDE;
+  case CARD_ID_ULVENWALD_ABOMINATION:
+    return CARD_ID_ULVENWALD_CAPTIVE;
+  case CARD_ID_DRONEPACK_KINDRED:
+    return CARD_ID_VILDIN_PACK_OUTCAST;
+  case CARD_ID_ABOLISHER_OF_BLOODLINES:
+    return CARD_ID_VOLDAREN_PARIAH;
+  case CARD_ID_TEMPLE_OF_ACLAZOTZ:
+    return CARD_ID_ARGUELS_BLOOD_FAST;
+  case CARD_ID_CONQUERORS_FOOTHOLD:
+    return CARD_ID_CONQUERORS_GALLEON;
+  case CARD_ID_LOST_VALE:
+    return CARD_ID_DOWSING_DAGGER;
+  case CARD_ID_ITLIMOC_CRADLE_OF_THE_SUN:
+    return CARD_ID_GROWING_RITES_OF_ITLIMOC;
+  case CARD_ID_ADANTO_THE_FIRST_FORT:
+    return CARD_ID_LEGIONS_LANDING;
+  case CARD_ID_PRIMAL_WELLSPRING:
+    return CARD_ID_PRIMAL_AMULET;
+  case CARD_ID_AZCANTA_THE_SUNKEN_RUIN:
+    return CARD_ID_SEARCH_FOR_AZCANTA;
+  case CARD_ID_SPIRES_OF_ORAZCA:
+    return CARD_ID_THAUMATIC_COMPASS;
+  case CARD_ID_TREASURE_COVE:
+    return CARD_ID_TREASURE_MAP;
+  case CARD_ID_SPITFIRE_BASTION:
+    return CARD_ID_VANCES_BLASTING_CANNONS;
+  case CARD_ID_SANCTUM_OF_THE_SUN:
+    return CARD_ID_AZORS_GATEWAY;
+  case CARD_ID_GOLD_FORGE_GARRISON:
+    return CARD_ID_GOLDEN_GUARDIAN;
+  case CARD_ID_WINGED_TEMPLE_OF_ORAZCA:
+    return CARD_ID_HADANAS_CLIMB;
+  case CARD_ID_ATZAL_CAVE_OF_ETERNITY:
+    return CARD_ID_JOURNEY_TO_ETERNITY;
+  case CARD_ID_METZALI_TOWER_OF_TRIUMPH:
+    return CARD_ID_PATH_OF_METTLE;
+  case CARD_ID_TOMB_OF_THE_DUSK_ROSE:
+    return CARD_ID_PROFANE_PROCESSION;
+  case CARD_ID_VAULT_OF_CATLACAN:
+    return CARD_ID_STORM_THE_VAULT;
+  case CARD_ID_NICOL_BOLAS_THE_ARISEN:
+    return CARD_ID_NICOL_BOLAS_THE_RAVAGER;
+  case CARD_ID_GRIMLOCK_FEROCIOUS_KING:
+    return CARD_ID_GRIMLOCK_DINOBOT_LEADER;
+  case CARD_ID_AGADEEM_THE_UNDERCRYPT:
+    return CARD_ID_AGADEEMS_AWAKENING;
+  case CARD_ID_AKOUM_TEETH:
+    return CARD_ID_AKOUM_WARRIOR;
+  case CARD_ID_BALA_GED_SANCTUARY:
+    return CARD_ID_BALA_GED_RECOVERY;
+  case CARD_ID_BEYEEN_COAST:
+    return CARD_ID_BEYEEN_VEIL;
+  case CARD_ID_BLACKBLOOM_BOG:
+    return CARD_ID_BLACKBLOOM_ROGUE;
+  case CARD_ID_BOULDERLOFT_PATHWAY:
+    return CARD_ID_BRANCHLOFT_PATHWAY;
+  case CARD_ID_GRIMCLIMB_PATHWAY:
+    return CARD_ID_BRIGHTCLIMB_PATHWAY;
+  case CARD_ID_MURKWATER_PATHWAY:
+    return CARD_ID_CLEARWATER_PATHWAY;
+  case CARD_ID_TIMBERCROWN_PATHWAY:
+    return CARD_ID_CRAGCROWN_PATHWAY;
+  case CARD_ID_EMERIA_SHATTERED_SKYCLAVE:
+    return CARD_ID_EMERIAS_CALL;
+  case CARD_ID_GLASSPOOL_SHORE:
+    return CARD_ID_GLASSPOOL_MIMIC;
+  case CARD_ID_HAGRA_BROODPIT:
+    return CARD_ID_HAGRA_MAULING;
+  case CARD_ID_JWARI_RUINS:
+    return CARD_ID_JWARI_DISRUPTION;
+  case CARD_ID_KABIRA_PLATEAU:
+    return CARD_ID_KABIRA_TAKEDOWN;
+  case CARD_ID_KAZANDU_VALLEY:
+    return CARD_ID_KAZANDU_MAMMOTH;
+  case CARD_ID_KAZUULS_CLIFFS:
+    return CARD_ID_KAZUULS_FURY;
+  case CARD_ID_KHALNI_TERRITORY:
+    return CARD_ID_KHALNI_AMBUSH;
+  case CARD_ID_MAKINDI_MESAS:
+    return CARD_ID_MAKINDI_STAMPEDE;
+  case CARD_ID_MALAKIR_MIRE:
+    return CARD_ID_MALAKIR_REBIRTH;
+  case CARD_ID_PILLARVERGE_PATHWAY:
+    return CARD_ID_NEEDLEVERGE_PATHWAY;
+  case CARD_ID_ONDU_SKYRUINS:
+    return CARD_ID_ONDU_INVERSION;
+  case CARD_ID_PELAKKA_CAVERNS:
+    return CARD_ID_PELAKKA_PREDATION;
+  case CARD_ID_LAVAGLIDE_PATHWAY:
+    return CARD_ID_RIVERGLIDE_PATHWAY;
+  case CARD_ID_SEA_GATE_REBORN:
+    return CARD_ID_SEA_GATE_RESTORATION;
+  case CARD_ID_SEJIRI_GLACIER:
+    return CARD_ID_SEJIRI_SHELTER;
+  case CARD_ID_SHATTERSKULL_THE_HAMMER_PASS:
+    return CARD_ID_SHATTERSKULL_SMASHING;
+  case CARD_ID_SILUNDI_ISLE:
+    return CARD_ID_SILUNDI_VISION;
+  case CARD_ID_SKYCLAVE_BASILICA:
+    return CARD_ID_SKYCLAVE_CLERIC;
+  case CARD_ID_SONG_MAD_RUINS:
+    return CARD_ID_SONG_MAD_TREACHERY;
+  case CARD_ID_SPIKEFIELD_CAVE:
+    return CARD_ID_SPIKEFIELD_HAZARD;
+  case CARD_ID_TANGLED_VALE:
+    return CARD_ID_TANGLED_FLORAHEDRON;
+  case CARD_ID_TURNTIMBER_SERPENTINE_WOOD:
+    return CARD_ID_TURNTIMBER_SYMBIOSIS;
+  case CARD_ID_UMARA_SKYFALLS:
+    return CARD_ID_UMARA_WIZARD;
+  case CARD_ID_VALAKUT_STONEFORGE:
+    return CARD_ID_VALAKUT_AWAKENING;
+  case CARD_ID_VASTWOOD_THICKET:
+    return CARD_ID_VASTWOOD_FORTIFICATION;
+  case CARD_ID_ZOF_BLOODBOG:
+    return CARD_ID_ZOF_CONSUMPTION;
+  case CARD_ID_HAKKA_WHISPERING_RAVEN:
+    return CARD_ID_ALRUND_GOD_OF_THE_COSMOS;
+  case CARD_ID_TIDECHANNEL_PATHWAY:
+    return CARD_ID_BARKCHANNEL_PATHWAY;
+  case CARD_ID_HARNFEL_HORN_OF_BOUNTY:
+    return CARD_ID_BIRGI_GOD_OF_STORYTELLING;
+  case CARD_ID_SEARSTEP_PATHWAY:
+    return CARD_ID_BLIGHTSTEP_PATHWAY;
+  case CARD_ID_THE_OMENKEEL:
+    return CARD_ID_COSIMA_GOD_OF_THE_VOYAGE;
+  case CARD_ID_SLITHERBORE_PATHWAY:
+    return CARD_ID_DARKBORE_PATHWAY;
+  case CARD_ID_THRONE_OF_DEATH:
+    return CARD_ID_EGON_GOD_OF_DEATH;
+  case CARD_ID_THE_PRISMATIC_BRIDGE:
+    return CARD_ID_ESIKA_GOD_OF_THE_TREE;
+  case CARD_ID_SWORD_OF_THE_REALMS:
+    return CARD_ID_HALVAR_GOD_OF_BATTLE;
+  case CARD_ID_MISTGATE_PATHWAY:
+    return CARD_ID_HENGEGATE_PATHWAY;
+  case CARD_ID_KALDRING_THE_RIMESTAFF:
+    return CARD_ID_JORN_GOD_OF_WINTER;
+  case CARD_ID_THE_RINGHART_CREST:
+    return CARD_ID_KOLVORI_GOD_OF_KINSHIP;
+  case CARD_ID_VALKMIRA_PROTECTORS_SHIELD:
+    return CARD_ID_REIDANE_GOD_OF_THE_WORTHY;
+  case CARD_ID_TERGRIDS_LANTERN:
+    return CARD_ID_TERGRID_GOD_OF_FRIGHT;
+  case CARD_ID_TORALFS_HAMMER:
+    return CARD_ID_TORALF_GOD_OF_FURY;
+  case CARD_ID_TIBALT_COSMIC_IMPOSTOR:
+    return CARD_ID_VALKI_GOD_OF_LIES;
+  case CARD_ID_ECHOING_EQUATION:
+    return CARD_ID_AUGMENTER_PUGILIST;
+  case CARD_ID_SEARCH_FOR_BLEX:
+    return CARD_ID_BLEX_VEXING_PEST;
+  case CARD_ID_AWAKEN_THE_BLOOD_AVATAR:
+    return CARD_ID_EXTUS_ORIQ_OVERLORD;
+  case CARD_ID_REVEL_IN_SILENCE:
+    return CARD_ID_FLAMESCROLL_CELEBRANT;
+  case CARD_ID_JOURNEY_TO_THE_ORACLE:
+    return CARD_ID_JADZI_ORACLE_OF_ARCAVIOS;
+  case CARD_ID_IMBRAHAM_DEAN_OF_THEORY:
+    return CARD_ID_KIANNE_DEAN_OF_SUBSTANCE;
+  case CARD_ID_LUKKA_WAYWARD_BONDER:
+    return CARD_ID_MILA_CRAFTY_COMPANION;
+  case CARD_ID_RESTORATIVE_BURST:
+    return CARD_ID_PESTILENT_CAULDRON;
+  case CARD_ID_AUGUSTA_DEAN_OF_ORDER:
+    return CARD_ID_PLARGG_DEAN_OF_CHAOS;
+  case CARD_ID_WILL_SCHOLAR_OF_FROST:
+    return CARD_ID_ROWAN_SCHOLAR_OF_SPARKS;
+  case CARD_ID_DEADLY_VANITY:
+    return CARD_ID_SELFLESS_GLYPHWEAVER;
+  case CARD_ID_EMBROSE_DEAN_OF_SHADOW:
+    return CARD_ID_SHAILE_DEAN_OF_RADIANCE;
+  case CARD_ID_FLAMETHROWER_SONATA:
+    return CARD_ID_TORRENT_SCULPTOR;
+  case CARD_ID_NASSARI_DEAN_OF_EXPRESSION:
+    return CARD_ID_UVILDA_DEAN_OF_PERFECTION;
+  case CARD_ID_LISETTE_DEAN_OF_THE_ROOT:
+    return CARD_ID_VALENTIN_DEAN_OF_THE_VEIN;
+  case CARD_ID_EXPLORE_THE_VASTLANDS:
+    return CARD_ID_WANDERING_ARCHAIC;
+  case CARD_ID_SEASONED_CATHAR:
+    return CARD_ID_AMBITIOUS_FARMHAND;
+  case CARD_ID_ARLINN_THE_MOONS_FURY:
+    return CARD_ID_ARLINN_THE_PACKS_HOPE;
+  case CARD_ID_HOOK_HAUNT_DRIFTER:
+    return CARD_ID_BAITHOOK_ANGLER;
+  case CARD_ID_BANECLAW_MARAUDER:
+    return CARD_ID_BANEBLADE_SCOUNDREL;
+  case CARD_ID_GENEROUS_SOUL:
+    return CARD_ID_BELOVED_BEGGAR;
+  case CARD_ID_DAUNTLESS_AVENGER:
+    return CARD_ID_BEREAVED_SURVIVOR;
+  case CARD_ID_WING_SHREDDER:
+    return CARD_ID_BIRD_ADMIRER;
+  case CARD_ID_MOONRAGE_BRUTE:
+    return CARD_ID_BRUTAL_CATHAR;
+  case CARD_ID_DIRE_STRAIN_DEMOLISHER:
+    return CARD_ID_BURLY_BREAKER;
+  case CARD_ID_CHAPEL_SHIELDGEIST:
+    return CARD_ID_CHAPLAIN_OF_ALMS;
+  case CARD_ID_COVETOUS_GEIST:
+    return CARD_ID_COVERT_CUTPURSE;
+  case CARD_ID_GHOSTLY_CASTIGATOR:
+    return CARD_ID_COVETOUS_CASTAWAY;
+  case CARD_ID_LEECHING_LURKER:
+    return CARD_ID_CURSE_OF_LEECHES;
+  case CARD_ID_NIGHT_TOKEN:
+    return CARD_ID_DAY_TOKEN;
+  case CARD_ID_DEATHBONNET_HULK:
+    return CARD_ID_DEATHBONNET_SPROUT;
+  case CARD_ID_DENNICK_PIOUS_APPARITION:
+    return CARD_ID_DENNICK_PIOUS_APPRENTICE;
+  case CARD_ID_DEPARTED_SOULKEEPER:
+    return CARD_ID_DEVOTED_GRAFKEEPER;
+  case CARD_ID_AWOKEN_DEMON:
+    return CARD_ID_ECSTATIC_AWAKENER;
+  case CARD_ID_ANGELIC_ENFORCER:
+    return CARD_ID_ENDURING_ANGEL;
+  case CARD_ID_FANGBLADE_EVISCERATOR:
+    return CARD_ID_FANGBLADE_BRIGAND;
+  case CARD_ID_EMBODIMENT_OF_FLAME:
+    return CARD_ID_FLAME_CHANNELER;
+  case CARD_ID_WAILDRIFTER:
+    return CARD_ID_GALEDRIFTER;
+  case CARD_ID_GRAVEYARD_GLUTTON:
+    return CARD_ID_GRAVEYARD_TRESPASSER;
+  case CARD_ID_HARVESTTIDE_ASSAILANT:
+    return CARD_ID_HARVESTTIDE_INFILTRATOR;
+  case CARD_ID_INHERITED_FIEND:
+    return CARD_ID_HEIRLOOM_MIRROR;
+  case CARD_ID_CREEPING_INN:
+    return CARD_ID_HOSTILE_HOSTEL;
+  case CARD_ID_UNTAMED_PUP:
+    return CARD_ID_HOUND_TAMER;
+  case CARD_ID_ORMENDAHL_THE_CORRUPTER:
+    return CARD_ID_JERREN_CORRUPTED_BISHOP;
+  case CARD_ID_LORD_OF_THE_ULVENWALD:
+    return CARD_ID_KESSIG_NATURALIST;
+  case CARD_ID_OLAG_LUDEVICS_HUBRIS:
+    return CARD_ID_LUDEVIC_NECROGENIUS;
+  case CARD_ID_LUMINOUS_PHANTOM:
+    return CARD_ID_LUNARCH_VETERAN;
+  case CARD_ID_BENEVOLENT_GEIST:
+    return CARD_ID_MALEVOLENT_HERMIT;
+  case CARD_ID_MORNING_APPARITION:
+    return CARD_ID_MOURNING_PATROL;
+  case CARD_ID_CHILLING_CHRONICLE:
+    return CARD_ID_MYSTERIOUS_TOME;
+  case CARD_ID_MYSTIC_MONSTROSITY:
+    return CARD_ID_MYSTIC_SKULL;
+  case CARD_ID_FRENZIED_TRAPBREAKER:
+    return CARD_ID_OUTLAND_LIBERATOR;
+  case CARD_ID_ARCHIVE_HAUNT:
+    return CARD_ID_OVERWHELMED_ARCHIVIST;
+  case CARD_ID_POPPET_FACTORY:
+    return CARD_ID_POPPET_STITCHER;
+  case CARD_ID_STORM_CHARGED_SLASHER:
+    return CARD_ID_RECKLESS_STORMSEEKER;
+  case CARD_ID_STALKING_PREDATOR:
+    return CARD_ID_SHADY_TRAVELER;
+  case CARD_ID_ASHMOUTH_DRAGON:
+    return CARD_ID_SMOLDERING_EGG;
+  case CARD_ID_SPELLRUNE_HOWLER:
+    return CARD_ID_SPELLRUNE_PAINTER;
+  case CARD_ID_SEAFARING_WEREWOLF:
+    return CARD_ID_SUSPICIOUS_STOWAWAY;
+  case CARD_ID_TAVERN_SMASHER:
+    return CARD_ID_TAVERN_RUFFIAN;
+  case CARD_ID_DIRE_STRAIN_BRAWLER:
+    return CARD_ID_TIRELESS_HAULER;
+  case CARD_ID_TOVOLARS_PACKLEADER:
+    return CARD_ID_TOVOLARS_HUNTMASTER;
+  case CARD_ID_TOVOLAR_THE_MIDNIGHT_SCOURGE:
+    return CARD_ID_TOVOLAR_DIRE_OVERLORD;
+  case CARD_ID_STRANGLING_GRASP:
+    return CARD_ID_VENGEFUL_STRANGLER;
+  case CARD_ID_VILLAGE_REAVERS:
+    return CARD_ID_VILLAGE_WATCH;
+  case CARD_ID_DEADLY_DANCER:
+    return CARD_ID_ALLURING_SUITOR;
+  case CARD_ID_HOLLOWHENGE_HUNTMASTER:
+    return CARD_ID_AVABRUCK_CARETAKER;
+  case CARD_ID_BALLISTA_WIELDER:
+    return CARD_ID_BALLISTA_WATCHER;
+  case CARD_ID_SPECTRAL_BINDING:
+    return CARD_ID_BINDING_GEIST;
+  case CARD_ID_BIOLUME_SERPENT:
+    return CARD_ID_BIOLUME_EGG;
+  case CARD_ID_BLOODSWORN_KNIGHT:
+    return CARD_ID_BLOODSWORN_SQUIRE;
+  case CARD_ID_BRINEBOUND_GIFT:
+    return CARD_ID_BRINE_COMBER;
+  case CARD_ID_CATAPULT_CAPTAIN:
+    return CARD_ID_CATAPULT_FODDER;
+  case CARD_ID_SAVAGE_PACKMATE:
+    return CARD_ID_CHILD_OF_THE_PACK;
+  case CARD_ID_REVEALING_EYE:
+    return CARD_ID_CONCEALING_CURTAINS;
+  case CARD_ID_DEPRAVED_HARVESTER:
+    return CARD_ID_DESPERATE_FARMER;
+  case CARD_ID_CLEVER_DISTRACTION:
+    return CARD_ID_DISTRACTING_GEIST;
+  case CARD_ID_GNARLED_GROVESTRIDER:
+    return CARD_ID_DORMANT_GROVE;
+  case CARD_ID_DOROTHEAS_RETRIBUTION:
+    return CARD_ID_DOROTHEA_VENGEFUL_VICTIM;
+  case CARD_ID_DROGSKOL_ARMAMENTS:
+    return CARD_ID_DROGSKOL_INFANTRY;
+  case CARD_ID_EDGAR_MARKOVS_COFFIN:
+    return CARD_ID_EDGAR_CHARMED_GROOM;
+  case CARD_ID_SINNERS_JUDGMENT:
+    return CARD_ID_FAITHBOUND_JUDGE;
+  case CARD_ID_FEARSOME_WEREWOLF:
+    return CARD_ID_FEARFUL_VILLAGER;
+  case CARD_ID_FORSAKEN_THRESHER:
+    return CARD_ID_FOREBODING_STATUE;
+  case CARD_ID_GUTTER_SHORTCUT:
+    return CARD_ID_GUTTER_SKULKER;
+  case CARD_ID_HENRIKA_INFERNAL_SEER:
+    return CARD_ID_HENRIKA_DOMNATHI;
+  case CARD_ID_RIPHOOK_RAIDER:
+    return CARD_ID_HOOKHAND_MARINER;
+  case CARD_ID_WILDSONG_HOWLER:
+    return CARD_ID_HOWLPACK_PIPER;
+  case CARD_ID_HOWLPACK_AVENGER:
+    return CARD_ID_ILL_TEMPERED_LONER;
+  case CARD_ID_INFESTED_WEREWOLF:
+    return CARD_ID_INFESTATION_EXPERT;
+  case CARD_ID_MALICIOUS_INVADER:
+    return CARD_ID_INNOCENT_TRAVELER;
+  case CARD_ID_HAUKENS_INSIGHT:
+    return CARD_ID_JACOB_HAUKEN_INSPECTOR;
+  case CARD_ID_KATILDAS_RISING_DAWN:
+    return CARD_ID_KATILDA_DAWNHART_MARTYR;
+  case CARD_ID_ANCESTORS_EMBRACE:
+    return CARD_ID_KINDLY_ANCESTOR;
+  case CARD_ID_LAMBHOLT_RAVAGER:
+    return CARD_ID_LAMBHOLT_RACONTEUR;
+  case CARD_ID_LANTERNS_LIFT:
+    return CARD_ID_LANTERN_BEARER;
+  case CARD_ID_GHASTLY_MIMICRY:
+    return CARD_ID_MIRRORHALL_MIMIC;
+  case CARD_ID_CATLIKE_CURIOSITY:
+    return CARD_ID_MISCHIEVOUS_CATGEIST;
+  case CARD_ID_MOONLIT_AMBUSHER:
+    return CARD_ID_OAKSHADE_STALKER;
+  case CARD_ID_CACKLING_CULPRIT:
+    return CARD_ID_PANICKED_BYSTANDER;
+  case CARD_ID_RADIANT_RESTRAINTS:
+    return CARD_ID_RADIANT_GRACE;
+  case CARD_ID_ODIOUS_WITCH:
+    return CARD_ID_RAGGED_RECLUSE;
+  case CARD_ID_BLOODSOAKED_REVELER:
+    return CARD_ID_RESTLESS_BLOODSEEKER;
+  case CARD_ID_KROTHUSS_LORD_OF_THE_DEEP:
+    return CARD_ID_RUNO_STROMKIRK;
+  case CARD_ID_CIPHERBOUND_SPIRIT:
+    return CARD_ID_SOULCIPHER_BOARD;
+  case CARD_ID_TWINBLADE_INVOCATION:
+    return CARD_ID_TWINBLADE_GEIST;
+  case CARD_ID_ULVENWALD_BEHEMOTH:
+    return CARD_ID_ULVENWALD_ODDITY;
+  case CARD_ID_DIRE_STRAIN_ANARCHIST:
+    return CARD_ID_VOLATILE_ARSONIST;
+  case CARD_ID_BLOODBAT_SUMMONER:
+    return CARD_ID_VOLDAREN_BLOODCASTER;
+  case CARD_ID_VOLT_CHARGED_BERSERKER:
+    return CARD_ID_VOLTAIC_VISIONARY;
+  case CARD_ID_WRATHFUL_JAILBREAKER:
+    return CARD_ID_WEARY_PRISONER;
+  case CARD_ID_BLOSSOM_CLAD_WEREWOLF:
+    return CARD_ID_WEAVER_OF_BLOSSOMS;
+  case CARD_ID_WEDDING_FESTIVITY:
+    return CARD_ID_WEDDING_ANNOUNCEMENT;
+  case CARD_ID_WEDDING_CRASHER:
+    return CARD_ID_WOLFKIN_OUTCAST;
+  case CARD_ID_LIKENESS_OF_THE_SEEKER:
+    return CARD_ID_AZUSAS_MANY_JOURNEYS;
+  case CARD_ID_IMPERIAL_MOTH:
+    return CARD_ID_BEFRIENDING_THE_MOTHS;
+  case CARD_ID_VISION_OF_THE_UNSPEAKABLE:
+    return CARD_ID_BEHOLD_THE_UNSPEAKABLE;
+  case CARD_ID_BRANCH_OF_BOSEIJU:
+    return CARD_ID_BOSEIJU_REACHES_SKYWARD;
+  case CARD_ID_HAND_OF_ENLIGHTENMENT:
+    return CARD_ID_ERA_OF_ENLIGHTENMENT;
+  case CARD_ID_REFLECTION_OF_KIKI_JIKI:
+    return CARD_ID_FABLE_OF_THE_MIRROR_BREAKER;
+  case CARD_ID_VESSEL_OF_THE_ALL_CONSUMING:
+    return CARD_ID_HIDETSUGU_CONSUMES_ALL;
+  case CARD_ID_LIVING_BREAKTHROUGH:
+    return CARD_ID_INVENTIVE_ITERATION;
+  case CARD_ID_REMNANT_OF_THE_RISING_STAR:
+    return CARD_ID_JUGAN_DEFENDS_THE_TEMPLE;
+  case CARD_ID_ETCHING_OF_KUMANO:
+    return CARD_ID_KUMANO_FACES_KAKKAZAN;
+  case CARD_ID_MEMORY_OF_TOSHIRO:
+    return CARD_ID_LIFE_OF_TOSHIRO_UMEZAWA;
+  case CARD_ID_PORTRAIT_OF_MICHIKO:
+    return CARD_ID_MICHIKOS_REIGN_OF_TRUTH;
+  case CARD_ID_NEZUMI_ROAD_CAPTAIN:
+    return CARD_ID_OKIBA_RECKONER_RAID;
+  case CARD_ID_SESHIROS_LIVING_LEGACY:
+    return CARD_ID_TALES_OF_MASTER_SESHIRO;
+  case CARD_ID_KIRIN_TOUCHED_OROCHI:
+    return CARD_ID_TEACHINGS_OF_THE_KIRIN;
+  case CARD_ID_DRAGON_KAMIS_EGG:
+    return CARD_ID_THE_DRAGON_KAMI_REBORN;
+  case CARD_ID_FRAGMENT_OF_KONDA:
+    return CARD_ID_THE_FALL_OF_LORD_KONDA;
+  case CARD_ID_O_KAGACHI_MADE_MANIFEST:
+    return CARD_ID_THE_KAMI_WAR;
+  case CARD_ID_ANIMUS_OF_NIGHTS_REACH:
+    return CARD_ID_THE_LONG_REACH_OF_NIGHT;
+  case CARD_ID_VECTOR_GLIDER:
+    return CARD_ID_THE_MODERN_AGE;
+  case CARD_ID_ARCHITECT_OF_RESTORATION:
+    return CARD_ID_THE_RESTORATION_OF_EIGANJO;
+  case CARD_ID_NAMELESS_CONQUEROR:
+    return CARD_ID_THE_SHATTERED_STATES_ERA;
+  case CARD_ID_ECHO_OF_DEATHS_WAIL:
+    return CARD_ID_TRIBUTE_TO_HOROBI;
+  default:
+    return 0;
   }
-  if (csvid < 0x573b)
-  {
-    if (csvid < 0x3ede)
-    {
-      if (0x3eba < csvid)
-      {
-        switch (csvid)
-        {
-        case 0x3ebb:
-          return 0x3eba;
-        default:
-          return 0;
-        case 0x3ec2:
-          return 0x3ec1;
-        case 0x3ec5:
-          return 0x3ec4;
-        case 0x3ed0:
-          return 0x3ecf;
-        case 0x3edd:
-          return 0x3edc;
-        }
-      }
-      if (csvid == 0x3b41)
-      {
-        return 0x3b40;
-      }
-      if (csvid < 0x3b42)
-      {
-        if (0x2f78 < csvid)
-        {
-          if (csvid < 0x2fed)
-          {
-            if (0x2fb0 < csvid)
-            {
-              switch (csvid)
-              {
-              case 0x2fb1:
-                return 0x2fb0;
-              default:
-                return 0;
-              case 0x2fb6:
-                return 0x2fb5;
-              case 0x2fc0:
-                return 0x2fbf;
-              case 0x2fc4:
-                return 0x2fc3;
-              case 0x2fca:
-                return 0x2fc9;
-              case 0x2fd5:
-                return 0x2fd4;
-              case 0x2fde:
-                return 0x2fdd;
-              case 0x2fec:
-                return 0x2feb;
-              }
-            }
-            return (csvid != 0x2f8a) - 1 & 0x2f89;
-          }
-          if (csvid == 0x3af9)
-          {
-            return 0x3af8;
-          }
-          if (csvid == 0x3b38)
-          {
-            return 0x3b37;
-          }
-          return (csvid != 0x3005) - 1 & 0x3004;
-        }
-        if (0x2f40 < csvid)
-        {
-          switch (csvid)
-          {
-          case 0x2f41:
-            return 0x2f40;
-          default:
-            return 0;
-          case 0x2f43:
-            return 0x2f42;
-          case 0x2f4c:
-            return 0x2f4b;
-          case 0x2f58:
-            return 0x2f57;
-          case 0x2f5a:
-            return 0x2f59;
-          case 0x2f63:
-            return 0x2f62;
-          case 0x2f74:
-            return 0x2f73;
-          case 0x2f78:
-            return 0x2f77;
-          }
-        }
-        if (csvid < 0x2ef3)
-        {
-          if (0x2eb4 < csvid)
-          {
-            switch (csvid)
-            {
-            case 0x2eb5:
-              return 0x2eb4;
-            default:
-              return 0;
-            case 0x2eb7:
-              return 0x2eb6;
-            case 0x2ec8:
-              return 0x2ec7;
-            case 0x2ecd:
-              return 0x2ecc;
-            case 0x2ed7:
-              return 0x2ed6;
-            case 0x2ee1:
-              return 12000;
-            case 0x2ee7:
-              return 0x2ee6;
-            case 0x2ef2:
-              return 0x2ef1;
-            }
-          }
-          switch (csvid)
-          {
-          case 0x2e70:
-            return 0x2e6f;
-          case 0x2e71:
-          case 0x2e72:
-          case 0x2e73:
-          case 0x2e74:
-          case 0x2e75:
-          case 0x2e76:
-          case 0x2e77:
-          case 0x2e78:
-          case 0x2e79:
-          case 0x2e7a:
-          case 0x2e7b:
-          case 0x2e7c:
-          case 0x2e7d:
-          case 0x2e7e:
-          case 0x2e7f:
-          case 0x2e81:
-          case 0x2e82:
-          case 0x2e83:
-          case 0x2e85:
-          case 0x2e86:
-          case 0x2e87:
-          case 0x2e88:
-          case 0x2e89:
-          case 0x2e8a:
-          case 0x2e8b:
-          case 0x2e8c:
-          case 0x2e8d:
-          case 0x2e8e:
-          case 0x2e8f:
-          case 0x2e90:
-          case 0x2e91:
-          case 0x2e93:
-          case 0x2e94:
-          case 0x2e95:
-            return 0;
-          case 0x2e80:
-            return 0x2e7f;
-          case 0x2e84:
-            return 0x2e83;
-          case 0x2e92:
-            return 0x2e91;
-          case 0x2e96:
-            return 0x2e95;
-          default:
-            return 0;
-          }
-        }
-        result = 0x2f15;
-        if (csvid != 0x2f16)
-        {
-          return (csvid != 0x2f1f) - 1 & 0x2f1e;
-        }
-      }
-      else
-      {
-        if (0x3e2f < csvid)
-        {
-          if (csvid == 0x3e43)
-          {
-            return 0x3e42;
-          }
-          switch (csvid)
-          {
-          case 0x3e56:
-            return 0x3e55;
-          case 0x3e57:
-          case 0x3e58:
-          case 0x3e59:
-          case 0x3e5b:
-          case 0x3e5c:
-          case 0x3e5d:
-          case 0x3e5e:
-          case 0x3e5f:
-          case 0x3e60:
-          case 0x3e62:
-          case 0x3e63:
-          case 0x3e64:
-          case 0x3e65:
-          case 0x3e66:
-          case 0x3e67:
-          case 0x3e68:
-          case 0x3e69:
-          case 0x3e6a:
-          case 0x3e6b:
-          case 0x3e6c:
-          case 0x3e6d:
-          case 0x3e6e:
-          case 0x3e6f:
-          case 0x3e70:
-          case 0x3e71:
-          case 0x3e73:
-          case 0x3e74:
-          case 0x3e76:
-          case 0x3e77:
-          case 0x3e78:
-          case 0x3e79:
-          case 0x3e7a:
-          case 0x3e7b:
-          case 0x3e7d:
-          case 0x3e7e:
-          case 15999:
-          case 16000:
-          case 0x3e81:
-          case 0x3e82:
-          case 0x3e83:
-          case 0x3e84:
-          case 0x3e85:
-          case 0x3e86:
-          case 0x3e88:
-          case 0x3e89:
-          case 0x3e8a:
-          case 0x3e8b:
-          case 0x3e8c:
-          case 0x3e8d:
-          case 0x3e8e:
-          case 0x3e8f:
-          case 0x3e91:
-          case 0x3e92:
-          case 0x3e93:
-          case 0x3e94:
-          case 0x3e95:
-          case 0x3e96:
-            return 0;
-          case 0x3e5a:
-            return 0x3e59;
-          case 0x3e61:
-            return 0x3e60;
-          case 0x3e72:
-            return 0x3e71;
-          case 0x3e75:
-            return 0x3e74;
-          case 0x3e7c:
-            return 0x3e7b;
-          case 0x3e87:
-            return 0x3e86;
-          case 0x3e90:
-            return 0x3e8f;
-          case 0x3e97:
-            return 0x3e96;
-          default:
-            return 0;
-          }
-        }
-        if (0x3dd2 < csvid)
-        {
-          switch (csvid)
-          {
-          case 0x3dd3:
-            return 0x3dd2;
-          default:
-            return 0;
-          case 0x3dd5:
-            return 0x3dd4;
-          case 0x3de2:
-            return 0x3de1;
-          case 0x3de5:
-            return 0x3de4;
-          case 0x3de8:
-            return 0x3de7;
-          case 0x3dea:
-            return 0x3de9;
-          case 0x3ded:
-            return 0x3dec;
-          case 0x3e04:
-            return 0x3e03;
-          case 0x3e06:
-            return 0x3e05;
-          case 0x3e08:
-            return 0x3e07;
-          case 0x3e1f:
-            return 0x3e1e;
-          case 0x3e2f:
-            return 0x3e2e;
-          }
-        }
-        if (0x3db7 < csvid)
-        {
-          return 0;
-        }
-        if (csvid < 0x3d6f)
-        {
-          result = 0x3b44;
-          if (csvid != 0x3b45)
-          {
-            return (csvid != 0x3b55) - 1 & 0x3b54;
-          }
-        }
-        else
-        {
-          switch (csvid)
-          {
-          case 0x3d6f:
-            return 0x3d6e;
-          default:
-            return 0;
-          case 0x3d71:
-            result = 0x3d70;
-            break;
-          case 0x3d7b:
-            return 0x3d7a;
-          case 0x3d7d:
-            return 0x3d7c;
-          case 0x3d81:
-            return 0x3d80;
-          case 0x3d84:
-            return 0x3d83;
-          case 0x3d8c:
-            return 0x3d8b;
-          case 0x3d9b:
-            return 0x3d9a;
-          case 0x3da4:
-            return 0x3da3;
-          case 0x3db4:
-            return 0x3db3;
-          case 0x3db7:
-            return 0x3db6;
-          }
-        }
-      }
-    }
-    else if (csvid < 0x5562)
-    {
-      if (0x5501 < csvid)
-      {
-        switch (csvid)
-        {
-        case 0x5502:
-          return 0x5501;
-        default:
-          return 0;
-        case 0x5506:
-          return 0x5505;
-        case 0x5514:
-          return 0x5513;
-        case 0x5517:
-          return 0x5516;
-        case 0x5519:
-          return 0x5518;
-        case 0x551e:
-          return 0x551d;
-        case 0x5520:
-          return 0x551f;
-        case 0x552d:
-          return 0x552c;
-        case 0x5537:
-          return 0x5536;
-        case 0x5545:
-          return 0x5544;
-        case 0x5557:
-          return 0x5556;
-        case 0x5561:
-          return 0x5560;
-        }
-      }
-      if (csvid == 0x4431)
-      {
-        return 0x4430;
-      }
-      if (csvid < 0x4432)
-      {
-        if (csvid < 0x3f6a)
-        {
-          if (0x3f35 < csvid)
-          {
-            switch (csvid)
-            {
-            case 0x3f36:
-              return 0x3f35;
-            default:
-              return 0;
-            case 0x3f3c:
-              return 0x3f3b;
-            case 0x3f55:
-              return 0x3f54;
-            case 0x3f5f:
-              return 0x3f5e;
-            case 0x3f61:
-              return 0x3f60;
-            case 0x3f67:
-              return 0x3f66;
-            case 0x3f69:
-              return 0x3f68;
-            }
-          }
-          if (csvid != 0x3f0b)
-          {
-            if (csvid == 0x3f12)
-            {
-              return 0x3f11;
-            }
-            return (csvid != 0x3ef8) - 1 & 0x3ef7;
-          }
-          return 0x3f0a;
-        }
-        if (csvid == 0x43f6)
-        {
-          return 0x43f5;
-        }
-        if (0x43f6 < csvid)
-        {
-          return (csvid != 0x4413) - 1 & 0x4412;
-        }
-        result = 0x43c0;
-        if (csvid != 0x43c1)
-        {
-          return (csvid != 0x43dd) - 1 & 0x43dc;
-        }
-      }
-      else
-      {
-        if (csvid == 0x472c)
-        {
-          return 0x472b;
-        }
-        if (csvid < 0x472d)
-        {
-          if (csvid == 0x44a1)
-          {
-            return 0x44a0;
-          }
-          if (csvid < 0x44a2)
-          {
-            if (csvid == 0x446d)
-            {
-              return 0x446c;
-            }
-            if (csvid == 0x4498)
-            {
-              return 0x4497;
-            }
-            return (csvid != 0x444b) - 1 & 0x444a;
-          }
-          if (csvid == 0x46f1)
-          {
-            return 0x46f0;
-          }
-          if (csvid == 0x4728)
-          {
-            return 0x4727;
-          }
-          return (csvid != 0x44a7) - 1 & 0x44a6;
-        }
-        if (csvid == 0x477e)
-        {
-          return 0x477d;
-        }
-        if (csvid < 0x477f)
-        {
-          if (csvid == 0x4754)
-          {
-            return 0x4753;
-          }
-          if (csvid == 0x475a)
-          {
-            return 0x4759;
-          }
-          return (csvid != 0x4738) - 1 & 0x4737;
-        }
-        result = 0x4a19;
-        if (csvid != 0x4a1a)
-        {
-          return (csvid != 0x4a75) - 1 & 0x4a74;
-        }
-      }
-    }
-    else if (csvid < 0x562b)
-    {
-      result = 0;
-      if (0x556b < csvid)
-      {
-        switch (csvid)
-        {
-        case 0x556c:
-          return 0x556b;
-        default:
-          return 0;
-        case 0x556f:
-          return 0x556e;
-        case 0x5574:
-          return 0x5573;
-        case 0x5578:
-          return 0x5577;
-        case 0x557a:
-          return 0x5579;
-        case 0x558c:
-          return 0x558b;
-        case 0x558f:
-          return 0x558e;
-        case 0x55a4:
-          return 0x55a3;
-        case 0x55b0:
-          return 0x55af;
-        case 0x55b5:
-          return 0x55b4;
-        case 0x55c4:
-          return 0x55c3;
-        case 0x55d4:
-          return 0x55d3;
-        case 0x55d8:
-          return 0x55d7;
-        case 0x55de:
-          return 0x55dd;
-        case 0x55e2:
-          return 0x55e1;
-        case 0x55e6:
-          return 0x55e5;
-        case 0x55f2:
-          return 0x55f1;
-        case 0x55f6:
-          return 0x55f5;
-        case 0x5605:
-          return 0x5604;
-        case 0x5615:
-          return 0x5614;
-        case 0x5618:
-          return 0x5617;
-        case 0x561b:
-          return 0x561a;
-        case 0x561e:
-          return 0x561d;
-        case 0x562a:
-          return 0x5629;
-        }
-      }
-    }
-    else
-    {
-      if (csvid == 0x5707)
-      {
-        return 0x5706;
-      }
-      if (csvid < 0x5708)
-      {
-        if (csvid == 0x56f6)
-        {
-          return 0x56f5;
-        }
-        if (csvid == 0x5704)
-        {
-          return 0x5703;
-        }
-        return (csvid != 0x56e8) - 1 & 0x56e7;
-      }
-      result = 0x5719;
-      if (csvid != 0x571a)
-      {
-        return (csvid != 0x5722) - 1 & 0x5721;
-      }
-    }
-  }
-  else
-  {
-    if (0x5fc3 < csvid)
-    {
-      return 0;
-    }
-    if (0x5bfc < csvid)
-    {
-      switch (csvid)
-      {
-      case 0x5bfd:
-        return 0x5bfc;
-      default:
-        return 0;
-      case 0x5c02:
-        return 0x5c01;
-      case 0x5c06:
-        return 0x5c05;
-      case 0x5c08:
-        return 0x5c07;
-      case 0x5c0b:
-        return 0x5c0a;
-      case 0x5c0d:
-        return 0x5c0c;
-      case 0x5c0f:
-        return 0x5c0e;
-      case 0x5c1d:
-        return 0x5c1c;
-      case 0x5c1f:
-        return 0x5c1e;
-      case 0x5c2c:
-        return 0x5c2b;
-      case 0x5c34:
-        return 0x5c33;
-      case 0x5c36:
-        return 0x5c35;
-      case 0x5c3b:
-        return 0x5c3a;
-      case 0x5c43:
-        return 0x5c42;
-      case 0x5c45:
-        return 0x5c44;
-      case 0x5c49:
-        return 0x5c48;
-      case 0x5c4c:
-        return 0x5c4b;
-      case 0x5c58:
-        return 0x5c57;
-      case 0x5c5b:
-        return 0x5c5a;
-      case 0x5c63:
-        return 0x5c62;
-      case 0x5c68:
-        return 0x5c67;
-      case 0x5c6f:
-        return 0x5c6e;
-      case 0x5c7b:
-        return 0x5c7a;
-      case 0x5c7f:
-        return 0x5c7e;
-      case 0x5c84:
-        return 0x5c83;
-      case 0x5c88:
-        return 0x5c87;
-      case 0x5c8a:
-        return 0x5c89;
-      case 0x5c92:
-        return 0x5c91;
-      case 0x5c96:
-        return 0x5c95;
-      case 0x5ca0:
-        return 0x5c9f;
-      case 0x5ca3:
-        return 0x5ca2;
-      case 0x5ca5:
-        return 0x5ca4;
-      case 0x5cb0:
-        return 0x5caf;
-      case 0x5cb2:
-        return 0x5cb1;
-      case 0x5cb4:
-        return 0x5cb3;
-      case 0x5cc2:
-        return 0x5cc1;
-      case 0x5cc5:
-        return 0x5cc4;
-      case 0x5ccd:
-        return 0x5ccc;
-      case 0x5cd2:
-        return 0x5cd1;
-      case 0x5ce4:
-        return 0x5ce3;
-      case 0x5cf2:
-        return 0x5cf1;
-      case 0x5cf7:
-        return 0x5cf6;
-      case 0x5d04:
-        return 0x5d03;
-      case 0x5d08:
-        return 0x5d07;
-      case 0x5d0f:
-        return 0x5d0e;
-      case 0x5d11:
-        return 0x5d10;
-      case 0x5d13:
-        return 0x5d12;
-      case 0x5d1d:
-        return 0x5d1c;
-      case 0x5d1f:
-        return 0x5d1e;
-      case 0x5d51:
-        return 0x5d50;
-      case 0x5d5b:
-        return 0x5d5a;
-      case 0x5d5d:
-        return 0x5d5c;
-      case 0x5d60:
-        return 0x5d5f;
-      case 0x5d62:
-        return 0x5d61;
-      case 0x5d6b:
-        return 0x5d6a;
-      case 0x5d73:
-        return 0x5d72;
-      case 0x5d77:
-        return 0x5d76;
-      case 0x5d82:
-        return 0x5d81;
-      case 0x5d88:
-        return 0x5d87;
-      case 0x5d97:
-        return 0x5d96;
-      case 0x5d9b:
-        return 0x5d9a;
-      case 0x5da0:
-        return 0x5d9f;
-      case 0x5da2:
-        return 0x5da1;
-      case 0x5daa:
-        return 0x5da9;
-      case 0x5dae:
-        return 0x5dad;
-      case 0x5db3:
-        return 0x5db2;
-      case 0x5db8:
-        return 0x5db7;
-      case 23999:
-        return 0x5dbe;
-      case 0x5dcd:
-        return 0x5dcc;
-      case 0x5dd3:
-        return 0x5dd2;
-      case 0x5dda:
-        return 0x5dd9;
-      case 0x5dde:
-        return 0x5ddd;
-      case 0x5de2:
-        return 0x5de1;
-      case 0x5de4:
-        return 0x5de3;
-      case 0x5de6:
-        return 0x5de5;
-      case 0x5deb:
-        return 0x5dea;
-      case 0x5ded:
-        return 0x5dec;
-      case 0x5df2:
-        return 0x5df1;
-      case 0x5df6:
-        return 0x5df5;
-      case 0x5df8:
-        return 0x5df7;
-      case 0x5e06:
-        return 0x5e05;
-      case 0x5e08:
-        return 0x5e07;
-      case 0x5e0f:
-        return 0x5e0e;
-      case 0x5e18:
-        return 0x5e17;
-      case 0x5e22:
-        return 0x5e21;
-      case 0x5e24:
-        return 0x5e23;
-      case 0x5e2b:
-        return 0x5e2a;
-      case 0x5e30:
-        return 0x5e2f;
-      case 0x5e45:
-        return 0x5e44;
-      case 0x5e58:
-        return 0x5e57;
-      case 0x5e5a:
-        return 0x5e59;
-      case 0x5e65:
-        return 0x5e64;
-      case 0x5e67:
-        return 0x5e66;
-      case 0x5e6b:
-        return 0x5e6a;
-      case 0x5e70:
-        return 0x5e6f;
-      case 0x5e72:
-        return 0x5e71;
-      case 0x5e74:
-        return 0x5e73;
-      case 0x5e7e:
-        return 0x5e7d;
-      case 0x5eb5:
-        return 0x5eb4;
-      case 0x5eba:
-        return 0x5eb9;
-      case 0x5ebc:
-        return 0x5ebb;
-      case 0x5ec4:
-        return 0x5ec3;
-      case 0x5ee6:
-        return 0x5ee5;
-      case 0x5eeb:
-        return 0x5eea;
-      case 0x5f07:
-        return 0x5f06;
-      case 0x5f14:
-        return 0x5f13;
-      case 0x5f20:
-        return 0x5f1f;
-      case 0x5f34:
-        return 0x5f33;
-      case 0x5f3a:
-        return 0x5f39;
-      case 0x5f4b:
-        return 0x5f4a;
-      case 0x5f63:
-        return 0x5f62;
-      case 0x5fa0:
-        return 0x5f9f;
-      case 0x5fa8:
-        return 0x5fa7;
-      case 0x5fad:
-        return 0x5fac;
-      case 0x5faf:
-        return 0x5fae;
-      case 0x5fb1:
-        return 0x5fb0;
-      case 0x5fb3:
-        return 0x5fb2;
-      case 0x5fb5:
-        return 0x5fb4;
-      case 0x5fb8:
-        return 0x5fb7;
-      case 0x5fba:
-        return 0x5fb9;
-      case 0x5fc3:
-        return 0x5fc2;
-      }
-    }
-    if (csvid == 0x588b)
-    {
-      return 0x588a;
-    }
-    if (csvid < 0x588c)
-    {
-      if (csvid == 0x57f3)
-      {
-        return 0x57f2;
-      }
-      if (csvid < 0x57f4)
-      {
-        if (csvid == 0x5786)
-        {
-          return 0x5785;
-        }
-        if (csvid < 0x5787)
-        {
-          if (csvid == 0x576e)
-          {
-            return 0x576d;
-          }
-          if (csvid == 0x5773)
-          {
-            return 0x5772;
-          }
-          return (csvid != 0x5744) - 1 & 0x5743;
-        }
-        result = 0x5791;
-        if (csvid != 0x5792)
-        {
-          return (csvid != 0x57bc) - 1 & 0x57bb;
-        }
-      }
-      else
-      {
-        if (csvid == 0x583a)
-        {
-          return 0x5839;
-        }
-        if (csvid < 0x583b)
-        {
-          result = 0x57fd;
-          if (csvid != 0x57fe)
-          {
-            return (csvid != 0x580a) - 1 & 0x5809;
-          }
-        }
-        else
-        {
-          result = 0x5844;
-          if (csvid != 0x5845)
-          {
-            return (csvid != 0x5885) - 1 & 0x5884;
-          }
-        }
-      }
-    }
-    else
-    {
-      if (csvid == 0x5909)
-      {
-        return 0x5908;
-      }
-      if (csvid < 0x590a)
-      {
-        if (csvid == 0x58da)
-        {
-          return 0x58d9;
-        }
-        if (csvid < 0x58db)
-        {
-          if (csvid == 0x58b1)
-          {
-            return 0x58b0;
-          }
-          if (csvid == 0x58cc)
-          {
-            return 0x58cb;
-          }
-          return (csvid != 0x58ac) - 1 & 0x58ab;
-        }
-        result = 0x58df;
-        if (csvid != 0x58e0)
-        {
-          return (csvid != 0x5902) - 1 & 0x5901;
-        }
-      }
-      else
-      {
-        if (csvid == 0x5941)
-        {
-          return 0x5940;
-        }
-        if (csvid < 0x5942)
-        {
-          result = 0x590e;
-          if (csvid != 0x590f)
-          {
-            return (csvid != 0x593c) - 1 & 0x593b;
-          }
-        }
-        else
-        {
-          result = 0x5942;
-          if (csvid != 0x5943)
-          {
-            return (csvid != 0x594b) - 1 & 0x594a;
-          }
-        }
-      }
-    }
-  }
-  return result;
 }
 
 /* ManalinkEh 2022: 0x267eed0; original functions/functions.c:5054. */
 int grafdiggers_cages(int player, type_t type, tutor_from_t from)
 {
   card_instance_t *instance;
-  int result;
   int card;
   int player_00;
 
@@ -12808,12 +11817,12 @@ int grafdiggers_cages(int player, type_t type, tutor_from_t from)
       {
         if ((((player == 2 || player == player_00) &&
               (instance = in_play(player_00, card), instance != NULL)) &&
-             (result = is_humiliated(player_00, card, AL_STATIC), result == 0)) &&
+             (is_humiliated(player_00, card, AL_STATIC) == 0)) &&
             (((type & (TYPE_SPELL | TYPE_CREATURE)) != TYPE_NONE &&
               ((((from & TUTOR_FROM_RFG) != 0 &&
-                 (result = get_id(player_00, card), result == 0x2f9e)) ||
+                 (get_id(player_00, card) == 0x2f9e)) ||
                 (((from & TUTOR_FROM_GRAVE) != 0 &&
-                  (result = get_id(player_00, card), result == 0x523d))))))))
+                  (get_id(player_00, card) == 0x523d))))))))
         {
           return 1;
         }
@@ -12888,7 +11897,7 @@ void dat_ability(int player, int card, event_t event, declare_attackers_trigger_
         instance->targets[1].player = result;
       }
     }
-    result = count_cards_by_id(player, 0x5bf9);
+    result = count_cards_by_id(player, CARD_ID_WULFGAR_OF_ICEWIND_DALE);
     for (result = result + 1; result != 0; result = result + -1)
     {
       call_card_function(player, card, EVENT_DAT_ABILITY);
@@ -13132,25 +12141,25 @@ int create_legacy_activate_for_opponent(int player, int card, CardFunction func_
   card_instance_t *instance;
   int result;
   card_instance_t *argument2;
-  int card_00;
-  int player_00;
+  int legacy;
+  int opponent;
 
   instance = get_card_instance(player, card);
-  player_00 = 1 - player;
-  result = add_card_to_hand(player_00, instance->internal_card_id);
+  opponent = 1 - player;
+  result = add_card_to_hand(opponent, instance->internal_card_id);
   if (result == -1)
   {
     backtrace_and_abort("functions/functions.c:2138\ncard_added != -1");
   }
-  instance = get_card_instance(player_00, result);
+  instance = get_card_instance(opponent, result);
   instance->state = instance->state & 0xffffffdd | 0x20;
-  hand_count[player_00] = hand_count[player_00] + -1;
+  hand_count[opponent] = hand_count[opponent] + -1;
   argument2 = get_card_instance(player, card);
   memcpy(instance, argument2, 300);
   instance->state = instance->state & 0xffffffdd | 0x20;
-  card_00 = create_legacy_activate(player_00, result, func_ptr);
-  obliterate_card(player_00, result);
-  instance = get_card_instance(player_00, card_00);
+  legacy = create_legacy_activate(opponent, result, func_ptr);
+  obliterate_card(opponent, result);
+  instance = get_card_instance(opponent, legacy);
   instance->damage_source_player = (int8_t)player;
   instance->damage_source_card = card;
   result = get_card_image_number((unsigned int)instance->display_pic_csv_id, player, card);
@@ -13161,7 +12170,7 @@ int create_legacy_activate_for_opponent(int player, int card, CardFunction func_
     instance->targets[0].player = t_player;
     instance->targets[0].card = t_card;
   }
-  return card_00;
+  return legacy;
 }
 
 /* Retained legacy spell-trigger interface: sp_ability_trigger_impl @ 0x2684f40. */
@@ -13355,7 +12364,7 @@ int leaves_play(int player, int card, event_t event, int can_be_suppressed,
 {
   int result;
   int remaining_triggers;
-  if (trigger_condition == 0xd4)
+  if (trigger_condition == TRIGGER_LEAVE_PLAY)
   {
     result = is_humiliated(player, card, AL_TRIG);
     if ((((result == 0) || (can_be_suppressed == 0)) && (card == affected_card)) &&
@@ -13386,7 +12395,7 @@ int leaves_play(int player, int card, event_t event, int can_be_suppressed,
           }
           else
           {
-            remaining_triggers = card_counts[player][5] + 1;
+            remaining_triggers = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
             result = remaining_triggers;
           }
           do
@@ -13429,7 +12438,7 @@ int leaves_play(int player, int card, event_t event, int can_be_suppressed,
       }
       else
       {
-        result = card_counts[player][5] + 1;
+        result = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
       }
       do
       {
@@ -13528,7 +12537,7 @@ int other_leaves_play_mode(int triggering_player, int triggering_card, int t_pla
   int result;
   int remaining_triggers;
 
-  if (((((trigger_condition == 0xd4) && (triggering_card == affected_card)) &&
+  if (((((trigger_condition == TRIGGER_LEAVE_PLAY) && (triggering_card == affected_card)) &&
         (triggering_player == affected_card_controller)) &&
        ((trigger_cause == t_card && (trigger_cause_controller == t_player)))) &&
       (reason_for_trigger_controller == triggering_player))
@@ -13553,7 +12562,7 @@ int other_leaves_play_mode(int triggering_player, int triggering_card, int t_pla
           }
           else
           {
-            remaining_triggers = card_counts[triggering_player][5] + 1;
+            remaining_triggers = card_counts[triggering_player][CCOUNTS_TEYSA_KARLOV] + 1;
             result = remaining_triggers;
           }
           do
@@ -13582,7 +12591,7 @@ int other_leaves_play_mode(int triggering_player, int triggering_card, int t_pla
         }
         else
         {
-          remaining_triggers = card_counts[triggering_player][5] + 1;
+          remaining_triggers = card_counts[triggering_player][CCOUNTS_TEYSA_KARLOV] + 1;
           result = remaining_triggers;
         }
         do
@@ -13607,7 +12616,7 @@ int attached_leaves_play_mode(int triggering_player, int triggering_card, event_
   int result;
   card_instance_t *instance;
 
-  if (trigger_condition != 0xd4)
+  if (trigger_condition != TRIGGER_LEAVE_PLAY)
   {
     return 0;
   }
@@ -13797,7 +12806,7 @@ int effect_this_dies(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
   unsigned int trigger_mode;
-  if (trigger_condition != 0xd5)
+  if (trigger_condition != TRIGGER_GRAVEYARD_FROM_PLAY)
   {
     return 0;
   }
@@ -13911,7 +12920,7 @@ static int this_dies_trigger_impl(int player, int card, event_t event,
     remaining_triggers = 1;
     if (result != 0)
     {
-      remaining_triggers = card_counts[player][5] + 1;
+      remaining_triggers = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
     }
     do
     {
@@ -14191,27 +13200,14 @@ int get_special_flags_by_instance(card_instance_t *instance)
 /* ManalinkEh 2022: 0x2679d40; original functions/functions.c:1048. */
 int get_special_flags(int player, int card, int type_of_special_flag)
 {
-  card_instance_t *instance;
-  special_flags3_t flags;
-
-  instance = get_card_instance(player, card);
-  if (type_of_special_flag == 1)
+  card_instance_t *instance = get_card_instance(player, card);
+  switch (type_of_special_flag)
   {
-    return instance->ext->special_flags;
+    case 1: return instance->ext->special_flags;
+    case 2: return instance->ext->special_flags2;
+    case 3: return instance->ext->special_flags3;
+    default: return -1;
   }
-  if (type_of_special_flag != 2)
-  {
-    if (type_of_special_flag == 3)
-    {
-      flags = instance->ext->special_flags3;
-    }
-    else
-    {
-      flags = ~0U;
-    }
-    return flags;
-  }
-  return instance->ext->special_flags2;
 }
 
 /* ManalinkEh 2022: 0x2679dd0; original functions/functions.c:1066. */
@@ -14710,7 +13706,7 @@ int generic_spell(int player, int card, event_t event, int flags, target_definit
                       is_humiliated(p, c, AL_STATIC) == 0)
                   {
                     int csvid = get_id(p, c);
-                    if (csvid == 0x32b || csvid == 0x242)
+                    if (csvid == CARD_ID_TETSUO_UMEZAWA || csvid == CARD_ID_BARTEL_RUNEAXE)
                     {
                       return 0;
                     }
@@ -14898,7 +13894,7 @@ int generic_spell(int player, int card, event_t event, int flags, target_definit
   if (((player == 1) && (aura_spell != 0)) && (((unsigned char)trace_mode & 2) == 0))
   {
     ai_modifier = ai_modifier +
-                  ((instance->targets[0].player == td->preferred_controller) - 1 & 0xffffffd0) +
+                  (unsigned int)((instance->targets[0].player == td->preferred_controller) ? 0 : -48) +
                   0x18;
   }
   result = 0;
@@ -15225,7 +14221,7 @@ int generic_spell(int player, int card, event_t event, int flags, target_definit
         {
           target_definition_t td9;
           default_target_definition(player, card, &td9, 0);
-          td9.zone = 0x1000;
+          td9.zone = TARGET_ZONE_PLAYERS;
           td9.illegal_abilities = 0;
           td9.who_chooses = p;
           target_t old_t0 = instance->targets[0];
@@ -15406,12 +14402,12 @@ void get_sleighted_hacked_suppressed_ability(int player, int card, int t_player,
 /* ManalinkEh 2022: 0x267ab60; original functions/functions.c:1234. */
 int pump_until_eot(int player, int card, int t_player, int t_card, int power, int toughness)
 {
-  int card_00;
+  int result;
   card_instance_t *instance;
 
-  card_00 =
+  result =
       create_targetted_legacy_effect(player, card, effect_pump_until_eot, t_player, t_card);
-  instance = get_card_instance(player, card_00);
+  instance = get_card_instance(player, result);
   instance->counter_power = (int16_t)power;
   instance->counter_toughness = (int16_t)toughness;
   instance = in_play(t_player, t_card);
@@ -15420,7 +14416,7 @@ int pump_until_eot(int player, int card, int t_player, int t_card, int power, in
     instance->regen_status = instance->regen_status | 0x8000000;
     get_abilities(t_player, t_card, EVENT_ABILITIES, -1);
   }
-  return card_00;
+  return result;
 }
 
 
@@ -15441,16 +14437,16 @@ static int pump_ability_until_eot_with_precomputed_sleight_hack_suppress(
   keyword_t keywords;
   subtype_t added_subtype;
   color_test_t added_color;
-  int card_00;
+  int legacy_card;
   card_instance_t *instance;
 
   if ((pump->paue_flags & 0x10000) != 0)
   {
     untap_card(t_player, t_card);
   }
-  card_00 = create_targetted_legacy_effect(player, card, legacy_effect_pump_ability_until_eot,
+  legacy_card = create_targetted_legacy_effect(player, card, legacy_effect_pump_ability_until_eot,
                                            t_player, t_card);
-  instance = get_card_instance(player, card_00);
+  instance = get_card_instance(player, legacy_card);
   instance->number_of_targets = '\x01';
   instance->targets[0].player = t_player;
   keywords = pump->key_mod;
@@ -15475,7 +14471,7 @@ static int pump_ability_until_eot_with_precomputed_sleight_hack_suppress(
     instance->regen_status = instance->regen_status | 0x8000000;
     get_abilities(t_player, t_card, EVENT_ABILITIES, -1);
   }
-  return card_00;
+  return legacy_card;
 }
 
 
@@ -15498,10 +14494,9 @@ int pump_ability(int player, int card, int t_player, int t_card, pump_ability_t 
 int pump_ability_until_eot(int player, int card, int t_player, int t_card, int power,
                                 int toughness, int ability, int sp_ability)
 {
-  int result;
   pump_ability_t pump;
   pump.skey_mod = sp_ability;
-  pump.paue_flags = ((sp_ability ^ 0xffffffffU) >> 0x1f) << 9;
+  pump.paue_flags = sp_ability >= 0 ? PAUE_END_AT_EOT : 0;
   pump.pow_mod = power;
   pump.tou_mod = toughness;
   pump.key_mod = ability;
@@ -15512,8 +14507,7 @@ int pump_ability_until_eot(int player, int card, int t_player, int t_card, int p
   pump.subtype = SUBTYPE_INVALID;
   pump.color = COLOR_TEST_0;
   pump.disabling_mode = 0;
-  result = pump_ability(player, card, t_player, t_card, &pump);
-  return result;
+  return pump_ability(player, card, t_player, t_card, &pump);
 }
 
 
@@ -15521,12 +14515,12 @@ int pump_ability_until_eot(int player, int card, int t_player, int t_card, int p
 int can_block_additional_until_eot(int player, int card, int t_player, int t_card,
                                         int num_additional)
 {
-  int card_00;
+  int legacy_card;
   card_instance_t *instance;
 
-  card_00 = create_targetted_legacy_effect(player, card, legacy_effect_pump_ability_until_eot,
+  legacy_card = create_targetted_legacy_effect(player, card, legacy_effect_pump_ability_until_eot,
                                            t_player, t_card);
-  instance = get_card_instance(player, card_00);
+  instance = get_card_instance(player, legacy_card);
   instance->targets[0].player = t_player;
   instance->targets[0].card = t_card;
   instance->targets[1].player = 0;
@@ -15536,7 +14530,7 @@ int can_block_additional_until_eot(int player, int card, int t_player, int t_car
   instance->targets[3].player = 0x200;
   instance->targets[4].player = 1;
   instance->targets[5].player = num_additional;
-  return card_00;
+  return legacy_card;
 }
 
 
@@ -15847,128 +14841,73 @@ void pump_creatures_until_eot_no_repeat(int player, int card, int t_player,
 int vanilla_pump(int player, int card, event_t event, target_definition_t *td, int power,
                  int toughness, int keyword, int sp_keyword)
 {
-  bool regenerates;
-  uint32_t mode;
-  card_instance_t *instance;
-  int result;
-  const char *prompt;
-  target_definition_t *target_definition;
-  target_definition_t *unused_definition;
-  target_definition_t *unused_regeneration_definition;
-  target_definition_t td_prompt;
-  target_definition_t td_regen;
-  mode = ((uint32_t)keyword & 0x1f000000U);
-  target_definition = td;
-  unused_definition = &td_prompt;
-  td_prompt = *td;
+  uint32_t hack_side_effect = (uint32_t)keyword & 0x1f000000U;
+  target_definition_t td_prompt = *td;
+  const char *prompt = "TARGET_CREATURE";
   if (td_prompt.allowed_controller == player)
-  {
     prompt = "TARGET_CREATURE_YOU_CONTROL";
-  }
-  else
-  {
-    prompt = "TARGET_CREATURE";
-    if (td_prompt.allowed_controller == 1 - player)
-    {
-      prompt = "TARGET_CREATURE_OPPONENTS_CONTROL";
-    }
-  }
-  regenerates = mode == 0x0a000000U || mode == 0x18000000U;
+  else if (td_prompt.allowed_controller == 1 - player)
+    prompt = "TARGET_CREATURE_OPPONENTS_CONTROL";
+  bool regenerates = hack_side_effect == 0x0a000000U || hack_side_effect == 0x18000000U;
   if (regenerates)
   {
-    target_definition = &td_regen;
-    unused_definition = td;
-    unused_regeneration_definition = target_definition;
-    td_regen = *td;
-    td_regen.required_state = td_regen.required_state | 0x4000;
+    target_definition_t td_regen = *td;
+    td_regen.required_state |= 0x4000;
     if (player == 1)
-    {
-      td_regen.special = td_regen.special | 0x800000;
-    }
-    if (event == EVENT_CAN_CAST)
-    {
-      result = 0x11;
-      event = EVENT_CAN_CAST;
-      return generic_spell(player, card, event, result, target_definition, prompt, 1, NULL);
-    }
-    if (event == EVENT_CAST_SPELL && card == affected_card && player == affected_card_controller)
-    {
-      result = 0x11;
-      event = EVENT_CAST_SPELL;
-      return generic_spell(player, card, event, result, target_definition, prompt, 1, NULL);
-    }
+      td_regen.special |= 0x800000;
+    if (event == EVENT_CAN_CAST ||
+        (event == EVENT_CAST_SPELL && card == affected_card && player == affected_card_controller))
+      return generic_spell(player, card, event, 0x11, &td_regen, prompt, 1, NULL);
   }
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(td);
-    if (result != 0)
+    if (valid_target(td))
     {
-      instance = get_card_instance(player, card);
+      card_instance_t *instance = get_card_instance(player, card);
+      int leg;
       if ((keyword & 0xe0ffffffU) == 0 && sp_keyword == 0)
-      {
-        result = pump_until_eot(player, card, instance->targets[0].player,
-                                instance->targets[0].card, power, toughness);
-      }
+        leg = pump_until_eot(player, card, instance->targets[0].player,
+                             instance->targets[0].card, power, toughness);
       else
+        leg = pump_ability_until_eot(player, card, instance->targets[0].player,
+                                     instance->targets[0].card, power, toughness,
+                                     keyword & 0xe0ffffffU, sp_keyword);
+      if (hack_side_effect == 0x03000000U)
       {
-        result = pump_ability_until_eot(player, card, instance->targets[0].player,
-                                        instance->targets[0].card, power, toughness,
-                                        keyword & 0xe0ffffffU, sp_keyword);
+        if (leg >= 0)
+          alternate_legacy_text(1, player, leg);
+        int cantrip_leg = cantrip(player, card, 1);
+        if (cantrip_leg >= 0)
+          alternate_legacy_text(2, player, cantrip_leg);
       }
-      if (mode == 0x3000000U)
+      else if (hack_side_effect <= 0x03000000U)
       {
-        if (-1 < result)
-        {
-          alternate_legacy_text(1, player, result);
-        }
-        result = cantrip(player, card, 1);
-        if (-1 < result)
-        {
-          alternate_legacy_text(2, player, result);
-        }
-      }
-      else if (mode < 0x3000001U)
-      {
-        if (mode == 0x1000000U)
-        {
+        if (hack_side_effect == 0x01000000U)
           draw_a_card(player);
-        }
-        else if (mode == 0x2000000U)
-        {
+        else if (hack_side_effect == 0x02000000U)
           scry(player, 1);
-        }
       }
-      else if ((mode == 0x0a000000U) || (regenerates))
+      else if (regenerates)
       {
-        if (-1 < result)
-        {
-          alternate_legacy_text(1, player, result);
-        }
-        result = regenerate_or_shield(player, card, instance->targets[0].player,
-                                      instance->targets[0].card);
-        if (-1 < result)
-        {
-          alternate_legacy_text(2, player, result);
-        }
-        if (mode == 0x18000000U)
-        {
+        if (leg >= 0)
+          alternate_legacy_text(1, player, leg);
+        int regen_leg = regenerate_or_shield(player, card, instance->targets[0].player,
+                                             instance->targets[0].card);
+        if (regen_leg >= 0)
+          alternate_legacy_text(2, player, regen_leg);
+        if (hack_side_effect == 0x18000000U)
           return 1;
-        }
       }
-      else if (mode == 0x4000000U)
+      else if (hack_side_effect == 0x04000000U)
       {
-        if (-1 < result)
-        {
-          alternate_legacy_text(1, player, result);
-        }
+        if (leg >= 0)
+          alternate_legacy_text(1, player, leg);
         return 1;
       }
     }
     kill_card(player, card, KILL_DESTROY);
   }
-  result = 1;
-  target_definition = td;
-  return generic_spell(player, card, event, result, target_definition, prompt, 1, NULL);
+  return generic_spell(player, card, event, 1, td, prompt, 1, NULL);
 }
 
 
@@ -16055,7 +14994,7 @@ int legacy_effect_pump_ability_until_eot(int player, int card, event_t event)
 {
   subtype_t subtype;
   color_test_t color;
-  int player_00;
+  int target_player;
   bool remove_effect;
   bool timed_out;
   card_instance_t *instance;
@@ -16279,14 +15218,14 @@ int legacy_effect_pump_ability_until_eot(int player, int card, event_t event)
       {
         kill_mode = instance->targets[3].card;
         result = instance->targets[0].card;
-        player_00 = instance->targets[0].player;
+        target_player = instance->targets[0].player;
         if (kill_mode == (KILL_EXILE | KILL_BURY))
         {
-          bounce_permanent(player_00, result);
+          bounce_permanent(target_player, result);
         }
         else
         {
-          kill_card(player_00, result, kill_mode);
+          kill_card(target_player, result, kill_mode);
         }
       }
     }
@@ -16530,7 +15469,7 @@ int granted_generic_activated_ability(int granting_player, int granting_card, in
       if (td == NULL)
       {
         default_target_definition(granted_to_player, granted_to_card, &td_default, 0);
-        td_default.zone = 0x1000;
+        td_default.zone = TARGET_ZONE_PLAYERS;
         td_00 = &td_default;
         td_default.allowed_controller = 1 - granted_to_player;
       }
@@ -16620,7 +15559,7 @@ int granted_generic_activated_ability(int granting_player, int granting_card, in
            (result = is_humiliated(granting_player, granting_card, AL_STATIC), result == 0)) &&
           (((unknown62BCEC != 0 && (needed_mana_colors == 0)) || ((mode & 0x200000U) != 0))))
       {
-        return (-(unsigned int)((mode & 0xf800400U) == 0) & 0xffffff9e) + 99;
+        return (((mode & 0xf800400U) == 0) ? 1U : 99U);
       }
     }
     return 0;
@@ -16761,7 +15700,7 @@ int granted_generic_activated_ability(int granting_player, int granting_card, in
         {
           default_target_definition(granted_to_player, granted_to_card, &td_default, 0);
           td = &td_default;
-          td_default.zone = 0x1000;
+          td_default.zone = TARGET_ZONE_PLAYERS;
           td_default.allowed_controller = result;
         }
         if (validate_arbitrary_target(td, result, -1) == 0)
@@ -17890,7 +16829,7 @@ int generic_activated_ability_with_target_in_grave(
     {
       target_definition_t td2;
       default_target_definition(player, card, &td2, 0);
-      td2.zone = 0x1000;
+      td2.zone = TARGET_ZONE_PLAYERS;
       new_pick_target(&td2, "Select whose graveyard.", 0, 0x81);
       if (spell_fizzled == 1)
         return 0;
@@ -18127,7 +17066,7 @@ int resolve_declare_attackers_trigger(int player, int card, event_t event,
   int32_t stored_count;
   int32_t *storage;
   condition = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     condition = xtrigger_impl_value_dont_use_directly;
   }
@@ -18281,54 +17220,48 @@ int when_attacks_pump_self(int player, int card, event_t event, int power, int t
 /* ManalinkEh 2022: 0x26a5370; original functions/functions.c:19061. */
 void etb_ability(int player, int card, event_t event, resolve_trigger_t trigger_mode)
 {
-  unsigned char wizard_trigger_bonus;
-  int result;
-  int remaining_triggers;
-  if (trigger_condition == 0xdb)
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY)
   {
     if (((((card == affected_card) && (player == affected_card_controller)) &&
           (reason_for_trigger_controller == player)) &&
          ((trigger_cause_controller == player && (trigger_cause == card)))) &&
-        ((result = is_humiliated(player, card, AL_TRIG),
-          result == 0 && (result = check_for_cip_effects_removal(player, card), result == 0))))
+        (!is_humiliated(player, card, AL_TRIG) && !check_for_cip_effects_removal(player, card)))
     {
       if (event == EVENT_TRIGGER)
       {
         if (trigger_mode == RESOLVE_TRIGGER_DUH)
         {
-          result = duh_mode(player);
-          trigger_mode = (result != 0) + RESOLVE_TRIGGER_OPTIONAL;
+          trigger_mode = (duh_mode(player) != 0) + RESOLVE_TRIGGER_OPTIONAL;
         }
         event_result = event_result | trigger_mode;
       }
       else if (event == EVENT_RESOLVE_TRIGGER)
       {
-        remaining_triggers = 1;
+        int amount = 1;
         if (is_what(player, card, 0x47) != 0)
         {
-          remaining_triggers = card_counts[player][4] + 1;
+          amount = card_counts[player][CCOUNTS_YAROK_THE_DESECRATED] + 1;
         }
         if (is_what(player, card, 0x42) != 0)
         {
-          remaining_triggers = remaining_triggers + (unsigned int)card_counts[player][2];
+          amount = amount + (unsigned int)card_counts[player][CCOUNTS_PANHARMONICON];
         }
         if (is_what(player, card, 1) != 0)
         {
-          remaining_triggers = remaining_triggers + (unsigned int)card_counts[player][1];
+          amount = amount + (unsigned int)card_counts[player][CCOUNTS_ANCIENT_GREENWARDEN];
         }
         if (has_subtype(player, card, SUBTYPE_WIZARD) != 0)
         {
-          wizard_trigger_bonus = card_counts[player][3];
-          result = count_harmonic_prodigy(player, card);
-          remaining_triggers = remaining_triggers + (unsigned int)wizard_trigger_bonus + result;
+          unsigned char wizard_trigger_bonus = card_counts[player][CCOUNTS_NABAN_ITERATION];
+          int prodigies = count_harmonic_prodigy(player, card);
+          amount += (unsigned int)wizard_trigger_bonus + prodigies;
         }
-        result = has_subtype(player, card, SUBTYPE_SHAMAN);
-        if ((result != 0) && (result = has_subtype(player, card, SUBTYPE_WIZARD), result == 0))
+        if (has_subtype(player, card, SUBTYPE_SHAMAN) &&
+            !has_subtype(player, card, SUBTYPE_WIZARD))
         {
-          result = count_harmonic_prodigy(player, card);
-          remaining_triggers = remaining_triggers + result;
+          amount += count_harmonic_prodigy(player, card);
         }
-        for (; remaining_triggers != 0; remaining_triggers = remaining_triggers + -1)
+        for (; amount != 0; amount = amount + -1)
         {
           call_card_function(player, card, EVENT_ETB);
         }
@@ -18344,11 +17277,7 @@ void etb_ability(int player, int card, event_t event, resolve_trigger_t trigger_
 void etb_ability_global(int controller_of_trigger, event_t event, int trigger_mode, type_t type,
                         test_definition_t *test, int triggering_player, int triggering_card)
 {
-  unsigned char wizard_bonus;
-  int result;
-  card_instance_t *instance;
-  int remaining_triggers;
-  if (trigger_condition != 0xdb)
+  if (trigger_condition != TRIGGER_COMES_INTO_PLAY)
   {
     return;
   }
@@ -18372,13 +17301,12 @@ void etb_ability_global(int controller_of_trigger, event_t event, int trigger_mo
   {
     return;
   }
-  result = check_for_cip_effects_removal(trigger_cause_controller, trigger_cause);
-  if (result != 0)
+  if (check_for_cip_effects_removal(trigger_cause_controller, trigger_cause))
   {
     return;
   }
   if ((type != TYPE_NONE) &&
-      (result = is_what(trigger_cause_controller, trigger_cause, type), result == 0))
+      !is_what(trigger_cause_controller, trigger_cause, type))
   {
     return;
   }
@@ -18398,8 +17326,7 @@ void etb_ability_global(int controller_of_trigger, event_t event, int trigger_mo
   {
     if (trigger_mode == 3)
     {
-      result = duh_mode(triggering_player);
-      trigger_mode = (result != 0) + 1;
+      trigger_mode = (duh_mode(triggering_player) != 0) + 1;
     }
     event_result = event_result | trigger_mode;
     return;
@@ -18408,46 +17335,46 @@ void etb_ability_global(int controller_of_trigger, event_t event, int trigger_mo
   {
     return;
   }
-  remaining_triggers = 1;
-  instance = get_card_instance(trigger_cause_controller, trigger_cause);
+  int amount = 1;
+  card_instance_t *instance = get_card_instance(trigger_cause_controller, trigger_cause);
   instance->regen_status = instance->regen_status | 0x6000000;
   if (is_what(trigger_cause_controller, trigger_cause, 0x47) != 0)
   {
-    remaining_triggers = card_counts[triggering_player][4] + 1;
+    amount = card_counts[triggering_player][CCOUNTS_YAROK_THE_DESECRATED] + 1;
   }
   if (is_what(trigger_cause_controller, trigger_cause, 0x42) != 0)
   {
-    remaining_triggers = remaining_triggers + (unsigned int)card_counts[triggering_player][2];
+    amount = amount + (unsigned int)card_counts[triggering_player][CCOUNTS_PANHARMONICON];
   }
   if (is_what(trigger_cause_controller, trigger_cause, 1) != 0)
   {
-    remaining_triggers = remaining_triggers + (unsigned int)card_counts[triggering_player][1];
+    amount = amount + (unsigned int)card_counts[triggering_player][CCOUNTS_ANCIENT_GREENWARDEN];
   }
   bool dispatch_even_if_zero = false;
   if (has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_WIZARD) == 0)
   {
     if (has_subtype(triggering_player, triggering_card, SUBTYPE_SHAMAN) &&
         !has_subtype(triggering_player, triggering_card, SUBTYPE_WIZARD))
-      remaining_triggers += count_harmonic_prodigy(triggering_player, triggering_card);
+      amount += count_harmonic_prodigy(triggering_player, triggering_card);
     else
       dispatch_even_if_zero = true;
   }
   else
   {
-    wizard_bonus = card_counts[triggering_player][3];
-    result = count_harmonic_prodigy(triggering_player, triggering_card);
-    remaining_triggers += (unsigned int)wizard_bonus + result;
+    unsigned char wizard_bonus = card_counts[triggering_player][CCOUNTS_NABAN_ITERATION];
+    int prodigies = count_harmonic_prodigy(triggering_player, triggering_card);
+    amount += (unsigned int)wizard_bonus + prodigies;
     if (has_subtype(triggering_player, triggering_card, SUBTYPE_SHAMAN) &&
         !has_subtype(triggering_player, triggering_card, SUBTYPE_WIZARD))
-      remaining_triggers += count_harmonic_prodigy(triggering_player, triggering_card);
+      amount += count_harmonic_prodigy(triggering_player, triggering_card);
   }
-  if (!dispatch_even_if_zero && remaining_triggers == 0)
+  if (!dispatch_even_if_zero && amount == 0)
     return;
   do
   {
     call_card_function(triggering_player, triggering_card, EVENT_ETB);
-    --remaining_triggers;
-  } while (remaining_triggers != 0);
+    --amount;
+  } while (amount != 0);
 }
 
 #endif
@@ -18572,10 +17499,7 @@ static void sp_ability_trigger_impl(int controller_of_trigger, event_t event, in
                                     type_t type, test_definition_t *test, int triggering_player,
                                     int triggering_card, int allow_copies)
 {
-  int result;
-  card_instance_t *instance;
-  int additional_triggers;
-  if (trigger_condition != 0xd3)
+  if (trigger_condition != TRIGGER_SPELL_CAST)
   {
     return;
   }
@@ -18595,8 +17519,7 @@ static void sp_ability_trigger_impl(int controller_of_trigger, event_t event, in
   {
     return;
   }
-  result = is_humiliated(triggering_player, triggering_card, AL_TRIG);
-  if (result != 0)
+  if (is_humiliated(triggering_player, triggering_card, AL_TRIG))
   {
     return;
   }
@@ -18604,13 +17527,13 @@ static void sp_ability_trigger_impl(int controller_of_trigger, event_t event, in
   {
     return;
   }
-  instance = get_card_instance(trigger_cause_controller, trigger_cause);
+  card_instance_t *instance = get_card_instance(trigger_cause_controller, trigger_cause);
   if (((((uint32_t)instance->ext->special_flags2) & 0x80000000U) != 0) && (allow_copies == 0))
   {
     return;
   }
   if ((type != TYPE_NONE) &&
-      (result = is_what(trigger_cause_controller, trigger_cause, type), result == 0))
+      !is_what(trigger_cause_controller, trigger_cause, type))
   {
     return;
   }
@@ -18630,8 +17553,7 @@ static void sp_ability_trigger_impl(int controller_of_trigger, event_t event, in
   {
     if (trigger_mode == 3)
     {
-      result = duh_mode(triggering_player);
-      trigger_mode = (result != 0) + 1;
+      trigger_mode = (duh_mode(triggering_player) != 0) + 1;
     }
     event_result = event_result | trigger_mode;
     return;
@@ -18642,6 +17564,7 @@ static void sp_ability_trigger_impl(int controller_of_trigger, event_t event, in
   }
   instance = get_card_instance(trigger_cause_controller, trigger_cause);
   instance->regen_status = instance->regen_status | 0x6000000;
+  int amount;
   if (has_subtype(triggering_player, triggering_card, SUBTYPE_WIZARD) == 0)
   {
     if (!has_subtype(triggering_player, triggering_card, SUBTYPE_SHAMAN))
@@ -18649,31 +17572,31 @@ static void sp_ability_trigger_impl(int controller_of_trigger, event_t event, in
       call_card_function(triggering_player, triggering_card, EVENT_SPA);
       return;
     }
-    result = 1;
+    amount = 1;
     if (!has_subtype(triggering_player, triggering_card, SUBTYPE_WIZARD))
     {
-      additional_triggers = count_harmonic_prodigy(triggering_player, triggering_card);
-      result += additional_triggers;
+      int additional_triggers = count_harmonic_prodigy(triggering_player, triggering_card);
+      amount += additional_triggers;
     }
   }
   else
   {
-    result = count_harmonic_prodigy(triggering_player, triggering_card);
-    ++result;
+    amount = count_harmonic_prodigy(triggering_player, triggering_card);
+    ++amount;
     if (has_subtype(triggering_player, triggering_card, SUBTYPE_SHAMAN) &&
         !has_subtype(triggering_player, triggering_card, SUBTYPE_WIZARD))
     {
-      additional_triggers = count_harmonic_prodigy(triggering_player, triggering_card);
-      result += additional_triggers;
+      int additional_triggers = count_harmonic_prodigy(triggering_player, triggering_card);
+      amount += additional_triggers;
     }
   }
-  if (!result)
+  if (!amount)
     return;
   do
   {
     call_card_function(triggering_player, triggering_card, EVENT_SPA);
-    --result;
-  } while (result != 0);
+    --amount;
+  } while (amount != 0);
 }
 
 
@@ -18695,15 +17618,13 @@ void sp_ability_trigger(int controller_of_trigger, event_t event, int trigger_mo
 void disable_legend_rule(int player, int card, event_t event, int t_player)
 {
   card_instance_t *instance;
-  int result;
   if (((event == EVENT_STATIC_EFFECTS) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      result = is_humiliated(player, card, AL_STATIC);
-      if (result == 0)
+      if (!is_humiliated(player, card, AL_STATIC))
       {
         if ((t_player & 0xfffffffdU) == 0)
         {
@@ -18761,7 +17682,7 @@ static void count_for_gfp_ability_and_store_values_impl(int player, int card, in
     return;
   }
   instance = get_card_instance(result, value);
-  if (2 < instance->kill_code - 1)
+  if (instance->kill_code < KILL_BURY || instance->kill_code > KILL_SACRIFICE)
   {
     return;
   }
@@ -18817,7 +17738,7 @@ static void count_for_gfp_ability_and_store_values_impl(int player, int card, in
         value = get_abilities(player_00, result, EVENT_POWER, -1);
         result = affected_card;
         instance->targets[storage_location].player =
-            instance->targets[storage_location].player + (card_counts[player][5] + 1) * value;
+            instance->targets[storage_location].player + (card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1) * value;
         player_00 = affected_card_controller;
       }
       if ((mode & 2U) != 0)
@@ -18825,7 +17746,7 @@ static void count_for_gfp_ability_and_store_values_impl(int player, int card, in
         result = get_abilities(player_00, result, EVENT_TOUGHNESS, -1);
         player_00 = affected_card_controller;
         instance->targets[storage_location].player =
-            instance->targets[storage_location].player + (card_counts[player][5] + 1) * result;
+            instance->targets[storage_location].player + (card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1) * result;
         result = affected_card;
       }
       if ((mode & 4U) != 0)
@@ -18836,7 +17757,7 @@ static void count_for_gfp_ability_and_store_values_impl(int player, int card, in
         multiplier = 1;
         if (count != 0)
         {
-          multiplier = card_counts[player][5] + 1;
+          multiplier = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
         }
         instance->targets[storage_location].player =
             instance->targets[storage_location].player + multiplier * value;
@@ -18855,7 +17776,7 @@ static void count_for_gfp_ability_and_store_values_impl(int player, int card, in
         result = count_counters(player_00, result, COUNTER_FUNGUS);
         player_00 = affected_card_controller;
         instance->targets[storage_location].player =
-            instance->targets[storage_location].player + (card_counts[player][5] + 1) * result;
+            instance->targets[storage_location].player + (card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1) * result;
         result = affected_card;
       }
     }
@@ -18940,13 +17861,13 @@ static void count_for_gfp_ability_and_store_values_impl(int player, int card, in
     }
     if (player_00 == 1)
     {
-      *(char *)((int)&instance->targets[0xb].player + 1) =
-          *(char *)((int)&instance->targets[0xb].player + 1) + '\x01';
+      SET_BYTE1(instance->targets[0xb].player) =
+          (char)SET_BYTE1(instance->targets[0xb].player) + '\x01';
       result = is_what(bits, result, 2);
       if ((result != 0) && ((mode & 0x10U) == 0))
       {
-        counter_byte = (char *)((int)&instance->targets[0xb].player + 1);
-        *counter_byte = *counter_byte + card_counts[player][5];
+        counter_byte = (char *)&SET_BYTE1(instance->targets[0xb].player);
+        *counter_byte = *counter_byte + card_counts[player][CCOUNTS_TEYSA_KARLOV];
       }
       instance->targets[11].card = 0;
       return;
@@ -18957,7 +17878,7 @@ static void count_for_gfp_ability_and_store_values_impl(int player, int card, in
   if ((result != 0) && ((mode & 0x10U) == 0))
   {
     *(uint8_t *)&instance->targets[0xb].player =
-        (char)instance->targets[0xb].player + card_counts[player][5];
+        (char)instance->targets[0xb].player + card_counts[player][CCOUNTS_TEYSA_KARLOV];
   }
   instance->targets[0xb].card = 0;
   return;
@@ -19000,40 +17921,28 @@ void count_for_gfp_ability(int player, int card, int event, int t_player, int ty
 /* ManalinkEh 2022: 0x2689440; original functions/functions.c:10074. */
 int resolve_gfp_ability(int player, int card, event_t event, resolve_trigger_t trig_mode)
 {
-  card_instance_t *instance;
-  int result;
-
-  if (trigger_condition != 0xd5)
-  {
+  if (trigger_condition != TRIGGER_GRAVEYARD_FROM_PLAY || reason_for_trigger_controller != player)
     return 0;
-  }
-  if ((reason_for_trigger_controller == player) &&
-      (instance = in_play(player, card), instance != NULL))
+  card_instance_t *instance = in_play(player, card);
+  if (!instance)
+    return 0;
+  int num = instance->targets[11].player;
+  if (num > 0 && affect_me(player, card))
   {
-    result = instance->targets[0xb].player;
-    if ((0 < result) && ((card == affected_card && (player == affected_card_controller))))
+    if (event == EVENT_TRIGGER)
     {
-      if (event == EVENT_TRIGGER)
-      {
-        if (trig_mode == RESOLVE_TRIGGER_DUH)
-        {
-          result = duh_mode(player);
-          trig_mode = (result != 0) + RESOLVE_TRIGGER_OPTIONAL;
-        }
-        event_result = event_result | trig_mode;
-        return 0;
-      }
-      if (event == EVENT_RESOLVE_TRIGGER)
-      {
-        instance->targets[0xb].card = result;
-        instance->targets[0xb].player = 0;
-        return result;
-      }
-      if (event == EVENT_END_TRIGGER)
-      {
-        instance->targets[0xb].player = 0;
-      }
+      if (trig_mode == RESOLVE_TRIGGER_DUH)
+        trig_mode = duh_mode(player) ? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL;
+      event_result |= trig_mode;
     }
+    else if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      instance->targets[11].card = num;
+      instance->targets[11].player = 0;
+      return num;
+    }
+    else if (event == EVENT_END_TRIGGER)
+      instance->targets[11].player = 0;
   }
   return 0;
 }
@@ -19191,7 +18100,7 @@ int specific_cip(int player, int card, event_t event, int t_player, int trigger_
   int result;
   test_definition_t test;
   result = 0;
-  if (trigger_condition == 0xdb)
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY)
   {
     if (((card == affected_card) && (player == affected_card_controller)) &&
         (reason_for_trigger_controller == player))
@@ -19207,7 +18116,7 @@ int specific_cip(int player, int card, event_t event, int t_player, int trigger_
       test.id_flag = (unsigned short)flag4;
       test.cmc = cc;
       test.cmc_flag = (unsigned short)flag5;
-      if (trigger_condition == 0xdb)
+      if (trigger_condition == TRIGGER_COMES_INTO_PLAY)
       {
         result =
             new_specific_cip_impl(player, event, trigger_mode, TYPE_NONE, &test, player, card);
@@ -19225,7 +18134,7 @@ int new_specific_cip_global(int player, event_t event, int trigger_mode, type_t 
                                  int triggering_card)
 {
   int result;
-  if (trigger_condition != 0xdb)
+  if (trigger_condition != TRIGGER_COMES_INTO_PLAY)
   {
     return 0;
   }
@@ -19240,7 +18149,7 @@ int new_specific_cip(int player, int card, event_t event, int t_player, int trig
                           test_definition_t *this_test)
 {
   int result;
-  if (trigger_condition != 0xdb)
+  if (trigger_condition != TRIGGER_COMES_INTO_PLAY)
   {
     return 0;
   }
@@ -19393,7 +18302,7 @@ void lose_the_game(int player)
 {
   int result;
 
-  result = check_battlefield_for_id(player, 0x413a);
+  result = check_battlefield_for_id(player, CARD_ID_EXQUISITE_ARCHANGEL);
   if (result == 0)
   {
     if (player != 2)
@@ -19695,7 +18604,7 @@ int remove_until_upkeep_impl(int player, int card, int t_player, int t_card, int
     csvid = original_card_data & 0xffff;
     image_number = get_card_image_number(csvid, t_player, t_card);
     saved_image_number = (uint16_t)image_number;
-    if ((csvid == 0x3eae || csvid == 0x3ef4) || (has_second_half = false, csvid == 0x3efb))
+    if ((csvid == CARD_ID_BRISELA_VOICE_OF_NIGHTMARES || csvid == CARD_ID_CHITTERING_HOST) || (has_second_half = false, csvid == CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP))
     {
       unmeld(csvid, csvids, csvids + 1);
       card_00 = get_internal_card_id_from_csv_id(csvids[0]);
@@ -19820,7 +18729,7 @@ void replace_all_instances_of_one_color_word_with_another(int player, int card, 
     blue_option = 1;
     white_option = 1;
   }
-  color_value = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\014", "\001\003", "\001\004",
+  color_value = dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_OMIT_ILLEGAL,
                             "From Black...", result, 1, "From Blue...", blue_option, 1,
                             "From Green...", green_option, 1, "From Red...", red_option, 1,
                             "From White...", white_option, 1, 0, 0, 0, 0);
@@ -19854,12 +18763,12 @@ void replace_all_instances_of_one_color_word_with_another(int player, int card, 
   else
   {
     green_priority = 1;
-    result = (-(unsigned int)(color_value - 3 < 2) & 9) + 1;
+    result = ((color_value - 3 < 2) ? 10U : 1U);
   }
   choice = (unsigned int)(options[3] == 0);
-  result = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014", "\001\003",
-                       "\001\004", "...to Black", (unsigned int)(options[1] == 0),
-                       (-(unsigned int)((color_value - 3 & 0xfffffffd) == 0) & 9) + 1, "...to Blue",
+  result = dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
+                       DLG_OMIT_ILLEGAL, "...to Black", (unsigned int)(options[1] == 0),
+                       (((color_value - 3 & 0xfffffffd) == 0) ? 10U : 1U), "...to Blue",
                        (unsigned int)(options[2] == 0), result, "...to Green", choice,
                        green_priority, "...to Red", (unsigned int)(options[4] == 0), red_priority,
                        "...to White", (unsigned int)(options[5] == 0), white_priority, 0, 0, 0, 0);
@@ -19950,7 +18859,7 @@ void replace_all_instances_of_one_basic_land_type_word_with_another(int player, 
     blue_option = 1;
     white_option = 1;
   }
-  color_value = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\014", "\001\003", "\001\004",
+  color_value = dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_OMIT_ILLEGAL,
                             "From Swamp...", result, 1, "From Island...", blue_option, 1,
                             "From Forest...", green_option, 1, "From Mountain...", red_option, 1,
                             "From Plain...", white_option, 1, 0, 0, 0, 0);
@@ -19984,13 +18893,13 @@ void replace_all_instances_of_one_basic_land_type_word_with_another(int player, 
   else
   {
     green_priority = 1;
-    result = (-(unsigned int)(color_value - 3 < 2) & 9) + 1;
+    result = ((color_value - 3 < 2) ? 10U : 1U);
   }
   choice = (unsigned int)(options[3] == 0);
   result =
-      dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\014", "\001\002", "\001\003", "\001\004",
+      dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_NO_STORAGE, DLG_RANDOM, DLG_NO_CANCEL, DLG_OMIT_ILLEGAL,
                   "...to Swamp", (unsigned int)(options[1] == 0),
-                  (-(unsigned int)((color_value - 3 & 0xfffffffd) == 0) & 9) + 1, "...to Island",
+                  (((color_value - 3 & 0xfffffffd) == 0) ? 10U : 1U), "...to Island",
                   (unsigned int)(options[2] == 0), result, "...to Forest", choice, green_priority,
                   "...to Mountain", (unsigned int)(options[4] == 0), red_priority, "...to Plain",
                   (unsigned int)(options[5] == 0), white_priority, 0, 0, 0, 0);
@@ -20020,57 +18929,39 @@ void replace_all_instances_of_one_basic_land_type_word_with_another(int player, 
  * Built-in chooser UI is stubbed; see functions/choose_a_card.cpp. */
 int new_card_from_list(int player, int mode, test_definition_t *test)
 {
-  uint16_t requested_type_flag;
-  int result;
-  color_test_t colors;
-  type_t types;
-
   if (ai_is_speculating == 1)
+    return -1;
+
+  type_t types = test->type;
+  if (types == TYPE_ANY)
+    types |= TARGET_TYPE_PLANESWALKER;
+
+  switch (test->type_flag)
   {
-    result = -1;
+  case DOESNT_MATCH:
+    types = ~types;
+    break;
+  case F1_NO_CREATURE:
+    types &= ~TYPE_CREATURE;
+    break;
+  case F1_NO_PWALKER:
+    types &= ~TARGET_TYPE_PLANESWALKER;
+    break;
+  case F1_NONARTIFACT_CREATURE:
+    types = (types & ~TYPE_ARTIFACT) | TYPE_CREATURE;
+    break;
   }
+
+  color_test_t colors = test->color_flag == 2 ? -2 : -1;
+  int selected;
+  if (mode & 1)
+    selected = choose_a_card_test_ct(test->message, test, colors, types);
   else
-  {
-    types = test->type;
-    if (types == TYPE_ANY)
-    {
-      types = TARGET_TYPE_PLANESWALKER | TYPE_ANY;
-    }
-    requested_type_flag = test->type_flag;
-    if (requested_type_flag == 4)
-    {
-      types = types & ~TARGET_TYPE_PLANESWALKER;
-    }
-    else if ((unsigned short)requested_type_flag < 5)
-    {
-      if (requested_type_flag == 1)
-      {
-        types = types ^ ~TYPE_NONE;
-      }
-      else if (requested_type_flag == 2)
-      {
-        types = types & ~TYPE_CREATURE;
-      }
-    }
-    else if (requested_type_flag == 9)
-    {
-      types = types & ~TYPE_ARTIFACT | TYPE_CREATURE;
-    }
-    colors = (test->color_flag != 2) - COLOR_TEST_BLACK;
-    if ((mode & 1U) == 0)
-    {
-      result = choose_a_card_test_ct_allow_cancel(test->message, test, colors, types);
-    }
-    else
-    {
-      result = choose_a_card_test_ct(test->message, test, colors, types);
-    }
-    if ((mode & 6U) == 4)
-    {
-      return get_internal_card_id_from_csv_id(result);
-    }
-  }
-  return result;
+    selected = choose_a_card_test_ct_allow_cancel(test->message, test, colors, types);
+
+  if ((mode & 6) == 4)
+    return get_internal_card_id_from_csv_id(selected);
+  return selected;
 }
 
 #endif
@@ -20092,18 +18983,18 @@ void haste_and_remove_token_at_end_of_next_turn(token_generation_t *token, int b
 /* ManalinkEh 2022: 0x2678910; original functions/functions.c:18504. */
 static int haste_and_kill_at_eot(int player, int card, event_t event, int kill_mode)
 {
-  int card_00;
+  int target_card;
   int result;
   card_instance_t *instance;
   card_instance_t *attached_instance;
-  int player_00;
+  int target_player;
   instance = get_card_instance(player, card);
   if (-1 < instance->damage_target_player)
   {
     instance = get_card_instance(player, card);
-    player_00 = (int)instance->damage_target_player;
-    card_00 = instance->damage_target_card;
-    haste(player_00, card_00, event);
+    target_player = (int)instance->damage_target_player;
+    target_card = instance->damage_target_card;
+    haste(target_player, target_card, event);
     if ((((trigger_condition == TRIGGER_EOT) && (card == affected_card)) &&
          (player == affected_card_controller)) &&
         (player == reason_for_trigger_controller))
@@ -20117,7 +19008,7 @@ static int haste_and_kill_at_eot(int player, int card, event_t event, int kill_m
         }
         else if (event == EVENT_RESOLVE_TRIGGER)
         {
-          attached_instance = get_card_instance(player_00, card_00);
+          attached_instance = get_card_instance(target_player, target_card);
           if (((attached_instance->state & STATE_OUBLIETTED) == 0) && (kill_mode != 0))
           {
             if (kill_mode != 4)
@@ -20128,7 +19019,7 @@ static int haste_and_kill_at_eot(int player, int card, event_t event, int kill_m
                 {
                   return 0;
                 }
-                bounce_permanent(player_00, card_00);
+                bounce_permanent(target_player, target_card);
                 return 0;
               }
               if (2 < kill_mode)
@@ -20137,11 +19028,11 @@ static int haste_and_kill_at_eot(int player, int card, event_t event, int kill_m
                 {
                   return 0;
                 }
-                if (player_00 != instance->targets[0].player)
+                if (target_player != instance->targets[0].player)
                 {
                   return 0;
                 }
-                kill_card(player_00, card_00, KILL_SACRIFICE);
+                kill_card(target_player, target_card, KILL_SACRIFICE);
                 return 0;
               }
               if (kill_mode < 1)
@@ -20149,7 +19040,7 @@ static int haste_and_kill_at_eot(int player, int card, event_t event, int kill_m
                 return 0;
               }
             }
-            kill_card(player_00, card_00, kill_mode);
+            kill_card(target_player, target_card, kill_mode);
           }
           else
           {
@@ -20994,24 +19885,14 @@ void reanimate_all(int player, int card, int targ_player, int type, int flag1, i
 /* ManalinkEh 2022: 0x2683db0; original functions/functions.c:5039. */
 static int haste_and_exile_your_upkeep(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-
-  instance = get_card_instance(player, card);
-  result = (int)instance->damage_target_player;
-  if (-1 < instance->damage_target_player)
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->damage_target_player >= 0)
+    haste(instance->damage_target_player, instance->damage_target_card, event);
+  if (instance->damage_target_player == current_turn &&
+      upkeep_trigger_mode_impl(player, card, event, RESOLVE_TRIGGER_MANDATORY, 0))
   {
-    haste(result, instance->damage_target_card, event);
-    result = (int)instance->damage_target_player;
-  }
-  if (result == current_turn)
-  {
-    result = upkeep_trigger_mode_impl(player, card, event, RESOLVE_TRIGGER_MANDATORY, 0);
-    if (result != 0)
-    {
-      kill_card((int)instance->damage_target_player, instance->damage_target_card, KILL_EXILE);
-      kill_card(player, card, KILL_EXILE);
-    }
+    kill_card(instance->damage_target_player, instance->damage_target_card, KILL_EXILE);
+    kill_card(player, card, KILL_EXILE);
   }
   return 0;
 }
@@ -21020,42 +19901,41 @@ static int haste_and_exile_your_upkeep(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x26a2d40; original functions/functions.c:5013. */
 int effect_unearth(int player, int card, event_t event)
 {
-  int player_00;
-  int card_00;
+  int p;
+  int c;
   card_instance_t *instance;
-  int result;
+  int iid;
   card_instance_t *reanimated_instance;
 
   instance = get_card_instance(player, card);
-  player_00 = instance->targets[0].player;
-  card_00 = instance->targets[0].card;
-  haste(player_00, card_00, event);
+  p = instance->targets[0].player;
+  c = instance->targets[0].card;
+  haste(p, c, event);
   if (instance->targets[1].player < 0)
   {
-    reanimated_instance = in_play(player_00, card_00);
+    reanimated_instance = in_play(p, c);
     if (reanimated_instance != NULL)
     {
       instance->targets[1].player = 0;
-      set_special_flags(player_00, card_00, 0x4000);
+      set_special_flags(p, c, 0x4000);
     }
   }
-  leaves_play(player_00, card_00, event, 0, 0);
+  leaves_play(p, c, event, 0, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
-    result = get_original_internal_card_id(player_00, card_00);
-    reanimated_instance = get_card_instance(player_00, card_00);
-    add_card_to_rfg(reanimated_instance->state >> 0xc & 1, result);
+    iid = get_original_internal_card_id(p, c);
+    reanimated_instance = get_card_instance(p, c);
+    add_card_to_rfg(reanimated_instance->state >> 0xc & 1, iid);
   }
   if (instance->targets[1].card != 0x42)
   {
-    result = eot_trigger(player, card, event);
-    if (result != 0)
+    if (eot_trigger(player, card, event))
     {
       instance->targets[1].card = 0x42;
-      instance = get_card_instance(player_00, card_00);
-      if ((instance->state & 0x800000) == 0)
+      reanimated_instance = get_card_instance(p, c);
+      if ((reanimated_instance->state & 0x800000) == 0)
       {
-        kill_card(player_00, card_00, KILL_EXILE);
+        kill_card(p, c, KILL_EXILE);
         return 0;
       }
     }
@@ -21067,39 +19947,21 @@ int effect_unearth(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x269a810; original functions/functions.c:75. */
 void ereboss_titan_effect(int player)
 {
-  int count;
-  int graveyard_index;
-  int card;
-  int choice;
-
-  count = count_graveyard(player);
-  graveyard_index = count + -1;
-  if (-1 < graveyard_index)
-  {
-    do
+  for (int i = count_graveyard(player) - 1; i >= 0; --i)
+    if (cards_data[graveyard_ptr_mutable[player][i]].id == CARD_ID_EREBOSS_TITAN &&
+        hand_count[player] != 0)
     {
-      while ((cards_data[graveyard_ptr_mutable[player][graveyard_index]].id != 0x3b12 ||
-              (hand_count[player] == 0)))
-      {
-        graveyard_index = graveyard_index + -1;
-        if (graveyard_index == -1)
-        {
-          return;
-        }
-      }
-      card = add_card_to_hand(player, graveyard_ptr_mutable[player][graveyard_index]);
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\014", "\001\002",
-                          "Return Erebos's Titan to your hand", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
+      int preview = add_card_to_hand(player, graveyard_ptr_mutable[player][i]);
+      int choice = dialog_impl(player, preview, EVENT_ACTIVATE, DLG_NO_STORAGE, DLG_RANDOM,
+                               "Return Erebos's Titan to your hand", 1, 10, "Decline", 1, 1,
+                               0, 0, 0, 0);
       if (choice == 1)
       {
         discard(player, 0, player);
-        from_grave_to_hand(player, graveyard_index, 1);
+        from_grave_to_hand(player, i, 1);
       }
-      graveyard_index = graveyard_index + -1;
-      obliterate_card(player, card);
-    } while (graveyard_index != -1);
-  }
-  return;
+      obliterate_card(player, preview);
+    }
 }
 
 
@@ -21109,7 +19971,7 @@ int upkeep_trigger_mode_impl(int player, int card, event_t event,
 {
   int result;
 
-  if (trigger_condition != 0xc9)
+  if (trigger_condition != TRIGGER_UPKEEP)
   {
     return 0;
   }
@@ -21166,7 +20028,7 @@ int test_leaves_play_mode(int triggering_player, int triggering_card, event_t ev
 {
   int result;
   int remaining_triggers;
-  if ((((trigger_condition == 0xd4) && (triggering_card == affected_card)) &&
+  if ((((trigger_condition == TRIGGER_LEAVE_PLAY) && (triggering_card == affected_card)) &&
        (triggering_player == affected_card_controller)) &&
       (((result = new_make_test_in_play(trigger_cause_controller, trigger_cause, 0, test),
          result != 0 && (reason_for_trigger_controller == triggering_player)) &&
@@ -21194,7 +20056,7 @@ int test_leaves_play_mode(int triggering_player, int triggering_card, event_t ev
         }
         else
         {
-          result = card_counts[triggering_player][5] + 1;
+          result = card_counts[triggering_player][CCOUNTS_TEYSA_KARLOV] + 1;
         }
         do
         {
@@ -21225,7 +20087,7 @@ int test_leaves_play_mode(int triggering_player, int triggering_card, event_t ev
           }
           else
           {
-            remaining_triggers = card_counts[triggering_player][5] + 1;
+            remaining_triggers = card_counts[triggering_player][CCOUNTS_TEYSA_KARLOV] + 1;
             result = remaining_triggers;
           }
           do
@@ -21282,9 +20144,9 @@ static int fx_permanents_destroyed_this_way_accumulate(int player, int card, eve
   int source_player_or_index;
 
   instance = get_card_instance(player, card);
-  bool process_dies = trigger_condition == 0xd5;
+  bool process_dies = trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY;
   bool resolve_now = false;
-  if (trigger_condition == 0xd4)
+  if (trigger_condition == TRIGGER_LEAVE_PLAY)
   {
     if ((((card == affected_card) && (player == affected_card_controller)) &&
          (reason_for_trigger_controller == player)) &&
@@ -21341,7 +20203,7 @@ static int fx_permanents_destroyed_this_way_accumulate(int player, int card, eve
           }
         }
       }
-      if (trigger_condition != 0xd5)
+      if (trigger_condition != TRIGGER_GRAVEYARD_FROM_PLAY)
       {
         return 0;
       }
@@ -21500,7 +20362,7 @@ int reveal_card_until_you_reveal_test(int player, int t_player, test_definition_
     wanted = count_deck(t_player);
     if ((int)(qty & 255) < wanted)
       wanted = qty & 255;
-    limit = (qty >> 8) & 255;
+    limit = (test->qty >> 8) & 255;
   }
   else
   {
@@ -21946,51 +20808,33 @@ int new_effect_coercion(ec_definition_t *this_definition, test_definition_t *thi
 int exile_top_x_card_you_may_play_them(int player, int card, int howmany, test_definition_t *test,
                                        int t_player, mpcfe_mode_t flags)
 {
-  int count;
-  int *deck;
-  int index;
-  int card_id;
-  int legacy_card;
-  int exile_count;
-  char buffer[100];
-
-  count = count_deck(t_player);
-  exile_count = howmany;
-  if (count < howmany)
+  int amount = count_deck(t_player);
+  if (howmany < amount)
+    amount = howmany;
+  if (amount != 0)
   {
-    exile_count = count;
-  }
-  if (exile_count != 0)
-  {
-    index = scnprintf(buffer, 100, "Cards exiled");
+    char buffer[100];
+    int pos = scnprintf(buffer, sizeof(buffer), "Cards exiled");
     if (card != -1)
     {
-      card_id = get_id(player, card);
-      scnprintf(buffer + index, 100 - index, " by %s", cards_ptr[card_id]->name);
+      int id = get_id(player, card);
+      scnprintf(buffer + pos, sizeof(buffer) - pos, " by %s", cards_ptr[id]->name);
     }
-    deck = deck_ptr[t_player];
-    show_deck(player, deck, exile_count, buffer, 0, EXE_STR(ENGINE_DONE_LABEL));
-    if ((*deck != -1) && (0 < exile_count))
+    int *deck = deck_ptr[t_player];
+    show_deck(player, deck, amount, buffer, 0, EXE_STR(ENGINE_DONE_LABEL));
+    int legacy = -1;
+    for (int count = 0; *deck != -1 && count < amount; ++count)
     {
-      index = 0;
-      legacy_card = -1;
-      do
+      int iid = *deck_ptr[t_player];
+      if (iid != -1)
       {
-        card_id = *deck_ptr[t_player];
-        if (card_id != -1)
-        {
-          rfg_top_card_of_deck(t_player);
-          if (!test || new_make_test(t_player, card_id, -1, test))
-            legacy_card = create_may_play_card_from_exile_effect(
-                player, card, t_player, (unsigned int)cards_data[card_id].id, flags);
-        }
-        index = index + 1;
-        if ((*deck == -1) || (exile_count <= index))
-        {
-          return legacy_card;
-        }
-      } while (true);
+        rfg_top_card_of_deck(t_player);
+        if (!test || new_make_test(t_player, iid, -1, test))
+          legacy = create_may_play_card_from_exile_effect(
+              player, card, t_player, (unsigned int)cards_data[iid].id, flags);
+      }
     }
+    return legacy;
   }
   return -1;
 }
@@ -22009,60 +20853,60 @@ static int shapeshift_target_effect(int player, int card, event_t event)
   int result;
   card_instance_t *current_instance;
   unsigned int copies_token_characteristics;
-  int player_00;
+  int target_player;
 
   instance = get_card_instance(player, card);
   mode = instance->targets[1].player;
   card_00 = instance->damage_target_card;
-  player_00 = (int)instance->damage_target_player;
+  target_player = (int)instance->damage_target_player;
   func_ptr = (CardFunction)instance->targets[2].player;
   copies_token_characteristics = mode & 0x400000;
   if (event == EVENT_CHANGE_TYPE && card_00 == affected_card &&
-      (result = instance->targets[1].card, affected_card_controller == player_00) && result != -1 &&
+      (result = instance->targets[1].card, affected_card_controller == target_player) && result != -1 &&
       ((((unsigned int)land_can_be_played >> 16) & 2) == 0))
   {
     event_result = result;
     if (copies_token_characteristics)
-      set_special_flags2(player_00, card_00, 0x400);
+      set_special_flags2(target_player, card_00, 0x400);
     else if (!(mode & 1))
       return 0;
   }
   if (copies_token_characteristics)
-    token_characteristic_setting_effects(player, card, event, player_00, card_00);
+    token_characteristic_setting_effects(player, card, event, target_player, card_00);
   bool expired = (mode & 1) && eot_trigger(player, card, event);
   if (!expired)
   {
     if (event != EVENT_STATIC_EFFECTS || !(mode & 0x800000) ||
-        count_counters(player_00, card_00, mode >> 0x18))
+        count_counters(target_player, card_00, mode >> 0x18))
       return 0;
   }
   if (((mode & 2) != 0) && (func_ptr != (CardFunction)0xffffffff))
   {
     create_targetted_legacy_activate((int)instance->damage_source_player,
-                                     instance->damage_source_card, func_ptr, player_00, card_00);
+                                     instance->damage_source_card, func_ptr, target_player, card_00);
   }
   if ((copies_token_characteristics != 0) &&
       (current_instance = get_card_instance(player, card),
        (current_instance->ext->special_flags2 & SF2_TEMPORARY_COPY_OF_TOKEN) == 0))
   {
-    set_special_infos(player_00, card_00, instance->targets[10].player);
+    set_special_infos(target_player, card_00, instance->targets[10].player);
   }
   if (((mode & 8) != 0) && (instance = get_card_instance(player, card),
                             (instance->ext->special_flags3 & 0x1000000U) != SF3_0))
   {
-    remove_special_flags(player_00, card_00, 0x1000000);
+    remove_special_flags(target_player, card_00, 0x1000000);
   }
   kill_card(player, card, KILL_EXILE);
-  instance = get_card_instance(player_00, card_00);
+  instance = get_card_instance(target_player, card_00);
   instance->regen_status = instance->regen_status | 0x1000000;
-  get_abilities(player_00, card_00, EVENT_CHANGE_TYPE, -1);
-  instance = in_play(player_00, card_00);
+  get_abilities(target_player, card_00, EVENT_CHANGE_TYPE, -1);
+  instance = in_play(target_player, card_00);
   if (instance == NULL)
   {
     return 0;
   }
-  result = get_id(player_00, card_00);
-  verify_legend_rule(player_00, card_00, result);
+  result = get_id(target_player, card_00);
+  verify_legend_rule(target_player, card_00, result);
   return 0;
 }
 
@@ -22412,34 +21256,29 @@ int resolve_counter_activated_ability(int player, int card, target_definition_t 
 /* ManalinkEh 2022: 0x268db60; original functions/functions.c:12601. */
 int charge_mana_for_multi_x(int player, int color, int num_x)
 {
-  int result;
+  int old_hack_xx = hack_xx;
   int amount;
-  result = hack_xx;
-  if ((player == 0) && (ai_is_speculating != 1))
+  if (player == HUMAN && ai_is_speculating != 1)
   {
     hack_xx = num_x;
-    charge_mana(0, color, -1);
+    charge_mana(player, color, -1);
     amount = x_value;
   }
   else
   {
-    result = has_mana(player, color, 1);
-    if (result / num_x < 1)
+    int mana_avail = has_mana(player, color, 1);
+    if (mana_avail / num_x < 1)
     {
       spell_fizzled = 1;
       return 0;
     }
-    amount = (result / num_x) * num_x;
+    amount = (mana_avail / num_x) * num_x;
     charge_mana(player, color, amount);
-    result = hack_xx;
+    old_hack_xx = hack_xx;
   }
-  if (spell_fizzled != 1)
-  {
-    hack_xx = result;
-    return amount;
-  }
-  hack_xx = result;
-  return 0;
+  int fizzled = spell_fizzled == 1;
+  hack_xx = old_hack_xx;
+  return fizzled ? 0 : amount;
 }
 
 #endif
@@ -22512,7 +21351,7 @@ int if_a_card_would_be_put_into_graveyard_from_library_do_something_instead(
   int result;
   enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_REPLACE_MILL;
   condition = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     condition = xtrigger_impl_value_dont_use_directly;
   }
@@ -22561,7 +21400,7 @@ int if_a_card_would_be_put_into_graveyard_from_anywhere_but_library_do_something
   enable_xtrigger_flags =
       enable_xtrigger_flags | ENABLE_XTRIGGER_REPLACE_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY;
   condition = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     condition = xtrigger_impl_value_dont_use_directly;
   }
@@ -22628,17 +21467,7 @@ void if_a_card_would_be_put_into_graveyard_from_anywhere_exile_it_instead(
 #endif
 
 
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x268fdf0; original functions/functions.c:12260. */
-/* The release specializes flags to 1 (the mana-payment caller domain). */
-static int how_much_life_can_i_pay_for_mana(int player, int flags)
-{
-  if (life_total_can_change(player) && !check_battlefield_for_id(2, 0x3010))
-    return life[player];
-  return 0;
-}
 
-#endif
 
 
 #ifndef SHANDALAR
@@ -22646,9 +21475,9 @@ static int how_much_life_can_i_pay_for_mana(int player, int flags)
 int has_mana_multi_a(int player, int colorless, int black, int blue, int green, int red,
                           int white)
 {
-  if (card_flags[player] & 2)
+  if (card_flags[player] & CFLAGS_KRRIK)
   {
-    int krrik_offset = how_much_life_can_i_pay_for_mana(player, 1) / 2;
+    int krrik_offset = how_much_life_can_i_pay_impl(player, 1) / 2;
     black = black < krrik_offset ? 0 : black - krrik_offset;
   }
   colorless = MAX(0, colorless);
@@ -22683,9 +21512,9 @@ int has_mana_multi_a(int player, int colorless, int black, int blue, int green, 
 int has_mana_multi(int player, int colorless, int black, int blue, int green, int red,
                         int white)
 {
-  if (card_flags[player] & 2)
+  if (card_flags[player] & CFLAGS_KRRIK)
   {
-    int krrik_offset = how_much_life_can_i_pay_for_mana(player, 1) / 2;
+    int krrik_offset = how_much_life_can_i_pay_impl(player, 1) / 2;
     black = black < krrik_offset ? 0 : black - krrik_offset;
   }
   MANA_ARTIFACT = 0;
@@ -23370,7 +22199,7 @@ int get_color_by_internal_id_no_hack(int internal_id)
   {
     if (data->id == CARD_ID_DRYAD_ARBOR)
       color = COLOR_TEST_GREEN;
-    else if (data->id == 0x5186)
+    else if (data->id == CARD_ID_JASCONIAN_ISLE)
       color = COLOR_TEST_BLUE;
     else
       color = 0;
@@ -25047,7 +23876,7 @@ void remove_summoning_sickness(int player, int card)
 {
   card_instance_t *instance = get_card_instance(player, card);
   if (instance->state & STATE_SUMMON_SICK)
-    instance->state &= ~(STATE_SUMMON_SICK | STATE_SICKNESS_UNUSED);
+    instance->state &= ~(STATE_SUMMON_SICK | STATE_SUMMON_SICK_BACKUP);
 }
 
 #endif
@@ -25901,7 +24730,7 @@ int is_what(int player, int card, int test_type)
   if (player == -1)
   {
     typ = cards_data[card].type;
-    if ((test_type & TYPE_CREATURE) && cards_data[card].id == 0x5a13)
+    if ((test_type & TYPE_CREATURE) && cards_data[card].id == CARD_ID_GRIST_THE_HUNGER_TIDE)
       return 1;
   }
   else
@@ -25956,7 +24785,7 @@ int is_what(int player, int card, int test_type)
 /* ManalinkEh 2022: 0x2677b70; original functions/functions.c:16703. */
 static int get_pt_for_creature_with_variable_pt(int player, int iid, event_t event)
 {
-  if (cards_data[iid].id == 0x5a13)
+  if (cards_data[iid].id == CARD_ID_GRIST_THE_HUNGER_TIDE)
     return 1;
   int curr = event == EVENT_POWER ? cards_data[iid].power : cards_data[iid].toughness;
   if ((curr > 0 && (curr & 0x4000)))
@@ -26787,8 +25616,9 @@ card_instance_t *has_activation_on_stack(int player, int card)
 /* ManalinkEh 2022: 0x267c0c0; original functions/functions.c:2626. */
 int is_basic_land_by_id(int id)
 {
-  return id == 0x5b || id == 0x7e || id == 0xef || id == 0xbc || id == 0xa4 ||
-         (unsigned int)id - 0x834U <= 4U || id == 0x3d67;
+  return id == CARD_ID_FOREST || id == CARD_ID_ISLAND || id == CARD_ID_SWAMP ||
+         id == CARD_ID_PLAINS || id == CARD_ID_MOUNTAIN ||
+         (unsigned int)id - CARD_ID_SNOW_COVERED_FOREST <= 4U || id == CARD_ID_WASTES;
 }
 
 #endif
@@ -27372,6 +26202,8 @@ int prevent_damage_until_eot_legacy(int player, int card, event_t event)
   if (event == EVENT_PREVENT_DAMAGE)
   {
     card_instance_t *damage = get_card_instance(affected_card_controller, affected_card);
+    int damage_player = affected_card_controller;
+    int damage_card_index = affected_card;
     if (damage->internal_card_id == damage_card && damage->info_slot > 0 &&
         damage->damage_target_player == instance->targets[0].player &&
         damage->damage_target_card == instance->targets[0].card)
@@ -27388,7 +26220,7 @@ int prevent_damage_until_eot_legacy(int player, int card, event_t event)
         if (remaining != -1)
         {
           instance->targets[1].player = remaining - amount;
-          damage = get_card_instance(affected_card_controller, affected_card);
+          damage = get_card_instance(damage_player, damage_card_index);
         }
         damage->info_slot = 0;
       }

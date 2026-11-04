@@ -1,0 +1,2090 @@
+{
+  "format": 1,
+  "status": "Nine existing subtype helpers restructured and one unused compatibility wrapper removed; combined build, 15,169 fixed slots, twelve ABI/constant contracts, source projections and 81,920 post-change native/rebuilt fixture comparisons pass.",
+  "functions": [
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "get_subtypes",
+      "before_sha256": "c8e48b2b521768f46f243b161c4df2045ff6eca67dba2c014d54de991462bd32",
+      "after_sha256": "7fb2d8910b5708792fe756537a727340ad042502db736ca34b1363c9236e8dab",
+      "before_lines": 62,
+      "after_lines": 34
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "get_subtypes_by_csvid",
+      "before_sha256": "f5b906384460b695dd18dbc14c45e2bac08a4355d9dfb25149a57938ffba9fa2",
+      "after_sha256": "6dc52a710199faa5f32f4174b30b438604e5ec706cc3a6fa28ba9da40b42d489",
+      "before_lines": 29,
+      "after_lines": 26
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "has_subtype_by_id",
+      "before_sha256": "8a12559194cc6fe6be042b1cd4356994ce2d357b5946c3ef89598b82fa7994a6",
+      "after_sha256": "6ef07bf5c55280772cc2cf9f390aba680df2ecc8fb1a1efd9cc34d9c8f911682",
+      "before_lines": 104,
+      "after_lines": 51
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "add_a_subtype_not_in_play",
+      "before_sha256": "142b3166170954cd8282114c761cce4ea2a5c36ed7cc363d86aa7c316d843ab7",
+      "after_sha256": "1bfed9065d5112425763fdd315f50665425267623d69e0848c32cf4bf4e9e1e5",
+      "before_lines": 27,
+      "after_lines": 21
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "force_a_subtype_not_in_play",
+      "before_sha256": "d4c748dd621ca049bd251e45a4af795c4dea09750b71bcc86a0156d67004f3eb",
+      "after_sha256": "e749f1cb06b3a038fea22e730891d3bdb811fe1b4c4a20b8e76960ed71343620",
+      "before_lines": 27,
+      "after_lines": 21
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "add_a_subtype",
+      "before_sha256": "7e01610ce1ff11e5c1d433cb2087832e89860e65aea5b38eb247c70a0f095a18",
+      "after_sha256": "476c3022b811be27670a1bc30f25fab639e6eedd50dbc95d49847f4f7e3b58e5",
+      "before_lines": 8,
+      "after_lines": 4
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "force_a_subtype",
+      "before_sha256": "98c658afee8c9471f248503e46a2cb21bc0223e5f7ae31f42d0a7845f446ee52",
+      "after_sha256": "0114ddc77332804b0e92c3387613d72d3b8bbd56ec486a08994677817a115e3e",
+      "before_lines": 9,
+      "after_lines": 6
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "add_a_subtype_until_eot",
+      "before_sha256": "df1afec7243fe631eea81ed370c5c8c985e18fc0b856ae38df05e7c679cbb586",
+      "after_sha256": "789bd3555b236e3475752da564cc940c6098aa749b1e30454e2671c8fafc9014",
+      "before_lines": 13,
+      "after_lines": 8
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "name": "force_a_subtype_until_eot",
+      "before_sha256": "b36c64abde013a2ca9c636e5204c5f6a82d2bab6897f84d7881127fe571f1ce6",
+      "after_sha256": "6cd0ac6af05e7c58a21f6d471ca990d26cf7f9fc1c7a5a352139043c0de368bd",
+      "before_lines": 13,
+      "after_lines": 8
+    }
+  ],
+  "files": [
+    {
+      "source": "functions/has_creature_type.c",
+      "before_bytes_sha256": "000a8ff510cd1f799f4aa83a731e8ece45ad67d17005e34d53bfaf6163ad80de",
+      "after_bytes_sha256": "c30156680b0d0518cf8047053ab09a3a2521ab76111801c2803cdcf71251bda5",
+      "before_sha256": "f001e370ae37b23b7d653b5a033ac9cd853c554e52a31ac2439fc2c478768877",
+      "after_sha256": "1c3a1f3dbe9fd95ff5ebb15e1f655231bf9efef7c058d6b553c8067372156f06"
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "before_dll_sha256": "54942d5171b69aab2118e766e11bdfef7cab0b52f4c4246605c3589eb8907e04",
+  "before_debug_sha256": "2c95c7ddfb250857f98a6cf5229a00ab84d610f20d1529f3cadc7c37c46f80f6",
+  "before_fixture": {
+    "cases": 81920,
+    "mismatches": 0,
+    "plan_sha256": "d59d2cf88fd7fa7d2129b9e1b719a54992b0f2193e416113a03207649787bca2",
+    "log_sha256": "a98f9a0d1fe272841af8b3025dc680ccc357820745040a30839da968deca2e01",
+    "base_sha256": "20c101d10397787ce4c48440be5160eba5fdd84d5c9a93de954ad45f90d7c029"
+  },
+  "native_quirks": [
+    "Only slots 0..14 of sixteen modifier records are scanned; stop at the first invalid subtype.",
+    "Forced modifiers clear the complete 26-entry report; all other mode bytes act as additions.",
+    "get_subtypes retains the native append bounds, including writes beyond entry 25 with a long all-addition sequence; fixture output storage includes trailing canaries for those writes.",
+    "has_subtype_by_id retains the second modifier pass, the index+5 insertion bound and twenty-entry search.",
+    "get_subtypes_by_csvid appends Grist's Insect subtype after the modifier loop, including after an invalid record.",
+    "Keep getter/callee ordering, both legacy record getters and existing assertion behavior; malformed live-card arguments invoking the abort path are outside the fixture."
+  ],
+  "scope": "Nine existing helper definitions in their original source unit; no new ABI/type aliases. Fixtures execute actual native/rebuilt bodies and selected real callees, with deterministic opaque leaves and substituted fixture data. Not whole-game proof.",
+  "retired_unused_wrapper": {
+    "source": "functions/has_creature_type.c",
+    "name": "add_force_a_subtype_not_in_play",
+    "before_sha256": "3eb82df2331fbe312a890701a8564d0624b20f08ad8dbfe5bde924bed55e4cd5",
+    "source_references_before": 1,
+    "native_csv_entry": false,
+    "canonical_mapping": false
+  },
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "87d92d3fa66896826f786b65e13b9b7b024c68fb9339c3cb959d33f5580033ad",
+    "debug_sha256": "6115c4f69d45e89b25e71ec3ce59a94397050c550a006dd491d18ee48858ce9a",
+    "build_log_sha256": "a673ba249a0297463e4932f6de696464a2f3d122421e3f8b2a98701e813fec9f",
+    "full_file_projections": 1,
+    "raw_file_projections": 1,
+    "source_definitions": 9,
+    "retired_unused_wrappers": 1,
+    "native_abi_constant_contracts": {
+      "assertions": 12,
+      "result": "passed",
+      "source_sha256": "0c8dd666b93387ad3514fb0668caaecd2cf7bb99fb4725ad8c5eb5667d3d9b0c",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fixtures": {
+      "before": {
+        "plan": {
+          "entries": [
+            {
+              "side": 0,
+              "index": 0,
+              "name": "get_subtypes",
+              "address": "0x2673410",
+              "size": 356,
+              "sha256": "f03c1cc3c77dfef01924ee3187b7c6ee566336eb02304c35c57e426eba2e4016"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "name": "get_subtypes_by_csvid",
+              "address": "0x2673320",
+              "size": 230,
+              "sha256": "fb25989415c22c4684c79d3cd6fa186ec2edb6de8853b7c568199997f74989e5"
+            },
+            {
+              "side": 0,
+              "index": 2,
+              "name": "has_subtype_by_id",
+              "address": "0x26736e0",
+              "size": 458,
+              "sha256": "9dc8b78cc1b5bfa0deccec8718887c38903419c4d896d5be0e3392602150c07b"
+            },
+            {
+              "side": 0,
+              "index": 3,
+              "name": "add_a_subtype_not_in_play",
+              "address": "0x2673220",
+              "size": 113,
+              "sha256": "c2d885d72e6524383f2fa5a59e0c8c014d9eca980e7a2221b3ffe2d441db6f4c"
+            },
+            {
+              "side": 0,
+              "index": 4,
+              "name": "force_a_subtype_not_in_play",
+              "address": "0x26732a0",
+              "size": 113,
+              "sha256": "24c8a799a1f68c2c35a0a6a4fe1686f7a7bdcc2e3193a08942f971620e230c21"
+            },
+            {
+              "side": 0,
+              "index": 5,
+              "name": "add_a_subtype",
+              "address": "0x2672f70",
+              "size": 43,
+              "sha256": "b467ef8ccfc65179bdf208a5d9ef011b695d1de123e4789a0df05fb7fff742d7"
+            },
+            {
+              "side": 0,
+              "index": 6,
+              "name": "force_a_subtype",
+              "address": "0x2672f30",
+              "size": 55,
+              "sha256": "b2652bad291703a58f77c1033fd18af7c8c369acd1be330dfded36f16b72ccbd"
+            },
+            {
+              "side": 0,
+              "index": 7,
+              "name": "add_a_subtype_until_eot",
+              "address": "0x2673040",
+              "size": 99,
+              "sha256": "7f56ebc9b53ec3177b0599eff1dd8d58f922e1577332f0db70fea89d4ed817d9"
+            },
+            {
+              "side": 0,
+              "index": 8,
+              "name": "force_a_subtype_until_eot",
+              "address": "0x2672fd0",
+              "size": 99,
+              "sha256": "06f554cfca9010688a0f6d6148459671139595c137b0d5ca32fa0fb332206480"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "name": "get_subtypes",
+              "address": "0x26b9aa0",
+              "size": 576,
+              "sha256": "d978d433422285ed7a02bbbee24ecc9684fadfb9b3cccd89dce21cabb511a50e"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "name": "get_subtypes_by_csvid",
+              "address": "0x26bb450",
+              "size": 240,
+              "sha256": "c36ea961399ef8c5e50b7cd828b6bd4cf77399ca21c6e6de433e2d48665df89e"
+            },
+            {
+              "side": 1,
+              "index": 2,
+              "name": "has_subtype_by_id",
+              "address": "0x26bc360",
+              "size": 496,
+              "sha256": "7297f5418d61ca9744e37fde01994e3c1e8895910af34c09149ff512206d0abc"
+            },
+            {
+              "side": 1,
+              "index": 3,
+              "name": "add_a_subtype_not_in_play",
+              "address": "0x26bc550",
+              "size": 112,
+              "sha256": "d6359e55aadf5eebd1a8f97a2b060ec77337cfa384dcf162ed1bcc29b21589c5"
+            },
+            {
+              "side": 1,
+              "index": 4,
+              "name": "force_a_subtype_not_in_play",
+              "address": "0x26bc5c0",
+              "size": 112,
+              "sha256": "ea030dbea54b9ddce061361f236b8ecaf19ab55e03f6bea8160b8042bf3d2dbb"
+            },
+            {
+              "side": 1,
+              "index": 5,
+              "name": "add_a_subtype",
+              "address": "0x26bc8d0",
+              "size": 48,
+              "sha256": "65307a90d1381f25f36e3849e309a960071640fbe6768b506ba4c5fe86c55f33"
+            },
+            {
+              "side": 1,
+              "index": 6,
+              "name": "force_a_subtype",
+              "address": "0x26bcef0",
+              "size": 64,
+              "sha256": "9b30d0f435ad69fe32f0a2b39f60f71743d33c25b8b04c3c8d176dcf820994c8"
+            },
+            {
+              "side": 1,
+              "index": 7,
+              "name": "add_a_subtype_until_eot",
+              "address": "0x26bb1e0",
+              "size": 112,
+              "sha256": "25909c8a75fefaf5de35241d1b8a21c2789a52f5edb8df663502bc449198d630"
+            },
+            {
+              "side": 1,
+              "index": 8,
+              "name": "force_a_subtype_until_eot",
+              "address": "0x26b9970",
+              "size": 112,
+              "sha256": "9ee506ccb5fb8310f1fdbf0e60d0791e45072ef8ab7cc49111b549fb42ef9147"
+            }
+          ],
+          "pure_helpers": [
+            {
+              "side": 0,
+              "index": -1,
+              "name": "has_new_types",
+              "address": "0x26722f0",
+              "size": 99,
+              "sha256": "520628adfab2a610024e1e9b15db97b0d79ac76393058b18468f2d247ca1f1a4"
+            },
+            {
+              "side": 1,
+              "index": -1,
+              "name": "has_new_types",
+              "address": "0x26b9400",
+              "size": 112,
+              "sha256": "180cb3f16ce7153a9da95f6b63c7cc93e6fed27093c8fc0cfc7c4ebcd59acae4"
+            }
+          ],
+          "patches": [
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 48,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 126,
+              "kind": "call",
+              "target": "check_special_flags3",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 171,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 203,
+              "kind": "call",
+              "target": "backtrace_and_abort",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 227,
+              "kind": "call",
+              "target": "in_hand",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 272,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 289,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 340,
+              "kind": "call",
+              "target": "on_stack",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x2673320",
+              "offset": 45,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x2673320",
+              "offset": 111,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x2673320",
+              "offset": 135,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x2673320",
+              "offset": 176,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x2673320",
+              "offset": 193,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 19,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 43,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 298,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 311,
+              "kind": "data",
+              "target": "cards_data",
+              "addend": 58
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 343,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 358,
+              "kind": "data",
+              "target": "cards_data",
+              "addend": 41
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 382,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x2673220",
+              "offset": 18,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x2673220",
+              "offset": 43,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x2673220",
+              "offset": 73,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x2673220",
+              "offset": 95,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x2673220",
+              "offset": 102,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26732a0",
+              "offset": 18,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26732a0",
+              "offset": 43,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26732a0",
+              "offset": 73,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26732a0",
+              "offset": 95,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26732a0",
+              "offset": 102,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype",
+              "function_address": "0x2672f70",
+              "offset": 24,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype",
+              "function_address": "0x2672f70",
+              "offset": 39,
+              "kind": "call",
+              "target": "update_alter_add_subtype",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype",
+              "function_address": "0x2672f30",
+              "offset": 25,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype",
+              "function_address": "0x2672f30",
+              "offset": 35,
+              "kind": "call",
+              "target": "update_alter_remove_creature_subtypes",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype",
+              "function_address": "0x2672f30",
+              "offset": 51,
+              "kind": "call",
+              "target": "update_alter_add_subtype",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x2673040",
+              "offset": 35,
+              "kind": "callback",
+              "target": "legacy_callback",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x2673040",
+              "offset": 44,
+              "kind": "call",
+              "target": "create_targetted_legacy_effect",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x2673040",
+              "offset": 58,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x2673040",
+              "offset": 77,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x2672fd0",
+              "offset": 35,
+              "kind": "callback",
+              "target": "legacy_callback",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x2672fd0",
+              "offset": 44,
+              "kind": "call",
+              "target": "create_targetted_legacy_effect",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x2672fd0",
+              "offset": 58,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x2672fd0",
+              "offset": 77,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "has_new_types",
+              "function_address": "0x26722f0",
+              "offset": 8,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 47,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 155,
+              "kind": "call",
+              "target": "check_special_flags3",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 194,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 231,
+              "kind": "call",
+              "target": "backtrace_and_abort",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 283,
+              "kind": "call",
+              "target": "in_hand",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 340,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 361,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 507,
+              "kind": "call",
+              "target": "on_stack",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x26bb450",
+              "offset": 45,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x26bb450",
+              "offset": 111,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x26bb450",
+              "offset": 135,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x26bb450",
+              "offset": 176,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x26bb450",
+              "offset": 193,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc360",
+              "offset": 19,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc360",
+              "offset": 43,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc360",
+              "offset": 101,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc360",
+              "offset": 111,
+              "kind": "data",
+              "target": "cards_data",
+              "addend": 58
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc360",
+              "offset": 166,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc360",
+              "offset": 359,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc360",
+              "offset": 369,
+              "kind": "data",
+              "target": "cards_data",
+              "addend": 41
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x26bc550",
+              "offset": 13,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x26bc550",
+              "offset": 35,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x26bc550",
+              "offset": 65,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x26bc550",
+              "offset": 87,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x26bc550",
+              "offset": 94,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26bc5c0",
+              "offset": 13,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26bc5c0",
+              "offset": 35,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26bc5c0",
+              "offset": 65,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26bc5c0",
+              "offset": 87,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26bc5c0",
+              "offset": 94,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype",
+              "function_address": "0x26bc8d0",
+              "offset": 24,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype",
+              "function_address": "0x26bc8d0",
+              "offset": 39,
+              "kind": "call",
+              "target": "update_alter_add_subtype",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype",
+              "function_address": "0x26bcef0",
+              "offset": 25,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype",
+              "function_address": "0x26bcef0",
+              "offset": 35,
+              "kind": "call",
+              "target": "update_alter_remove_creature_subtypes",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype",
+              "function_address": "0x26bcef0",
+              "offset": 51,
+              "kind": "call",
+              "target": "update_alter_add_subtype",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x26bb1e0",
+              "offset": 35,
+              "kind": "callback",
+              "target": "legacy_callback",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x26bb1e0",
+              "offset": 44,
+              "kind": "call",
+              "target": "create_targetted_legacy_effect",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x26bb1e0",
+              "offset": 58,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x26bb1e0",
+              "offset": 77,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x26b9970",
+              "offset": 35,
+              "kind": "callback",
+              "target": "legacy_callback",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x26b9970",
+              "offset": 44,
+              "kind": "call",
+              "target": "create_targetted_legacy_effect",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x26b9970",
+              "offset": 58,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x26b9970",
+              "offset": 77,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "has_new_types",
+              "function_address": "0x26b9400",
+              "offset": 8,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            }
+          ],
+          "inputs": {
+            ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+            "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+            "ManalinkEh.dll": "54942d5171b69aab2118e766e11bdfef7cab0b52f4c4246605c3589eb8907e04",
+            "ManalinkEh.dbg": "2c95c7ddfb250857f98a6cf5229a00ab84d610f20d1529f3cadc7c37c46f80f6"
+          },
+          "scope": "Actual nine native/rebuilt helper bodies plus real has_new_types and get_subtypes_by_csvid callees; patch only decoded direct opaque leaf calls, four named data objects and the legacy callback operand. No DLL entrypoint/import execution."
+        },
+        "plan_sha256": "d59d2cf88fd7fa7d2129b9e1b719a54992b0f2193e416113a03207649787bca2",
+        "log_sha256": "a98f9a0d1fe272841af8b3025dc680ccc357820745040a30839da968deca2e01",
+        "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "cases": 81920,
+        "mismatches": 0
+      },
+      "after": {
+        "plan": {
+          "entries": [
+            {
+              "side": 0,
+              "index": 0,
+              "name": "get_subtypes",
+              "address": "0x2673410",
+              "size": 356,
+              "sha256": "f03c1cc3c77dfef01924ee3187b7c6ee566336eb02304c35c57e426eba2e4016"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "name": "get_subtypes_by_csvid",
+              "address": "0x2673320",
+              "size": 230,
+              "sha256": "fb25989415c22c4684c79d3cd6fa186ec2edb6de8853b7c568199997f74989e5"
+            },
+            {
+              "side": 0,
+              "index": 2,
+              "name": "has_subtype_by_id",
+              "address": "0x26736e0",
+              "size": 458,
+              "sha256": "9dc8b78cc1b5bfa0deccec8718887c38903419c4d896d5be0e3392602150c07b"
+            },
+            {
+              "side": 0,
+              "index": 3,
+              "name": "add_a_subtype_not_in_play",
+              "address": "0x2673220",
+              "size": 113,
+              "sha256": "c2d885d72e6524383f2fa5a59e0c8c014d9eca980e7a2221b3ffe2d441db6f4c"
+            },
+            {
+              "side": 0,
+              "index": 4,
+              "name": "force_a_subtype_not_in_play",
+              "address": "0x26732a0",
+              "size": 113,
+              "sha256": "24c8a799a1f68c2c35a0a6a4fe1686f7a7bdcc2e3193a08942f971620e230c21"
+            },
+            {
+              "side": 0,
+              "index": 5,
+              "name": "add_a_subtype",
+              "address": "0x2672f70",
+              "size": 43,
+              "sha256": "b467ef8ccfc65179bdf208a5d9ef011b695d1de123e4789a0df05fb7fff742d7"
+            },
+            {
+              "side": 0,
+              "index": 6,
+              "name": "force_a_subtype",
+              "address": "0x2672f30",
+              "size": 55,
+              "sha256": "b2652bad291703a58f77c1033fd18af7c8c369acd1be330dfded36f16b72ccbd"
+            },
+            {
+              "side": 0,
+              "index": 7,
+              "name": "add_a_subtype_until_eot",
+              "address": "0x2673040",
+              "size": 99,
+              "sha256": "7f56ebc9b53ec3177b0599eff1dd8d58f922e1577332f0db70fea89d4ed817d9"
+            },
+            {
+              "side": 0,
+              "index": 8,
+              "name": "force_a_subtype_until_eot",
+              "address": "0x2672fd0",
+              "size": 99,
+              "sha256": "06f554cfca9010688a0f6d6148459671139595c137b0d5ca32fa0fb332206480"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "name": "get_subtypes",
+              "address": "0x26b9aa0",
+              "size": 544,
+              "sha256": "94a84d79ab414c0f88052486335f410e9b669b1e704a16461dd541feeec7108b"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "name": "get_subtypes_by_csvid",
+              "address": "0x26bb430",
+              "size": 416,
+              "sha256": "b617db5b71db41258380b74a510e212e5112533d892bd3b107f9cd97aa99db25"
+            },
+            {
+              "side": 1,
+              "index": 2,
+              "name": "has_subtype_by_id",
+              "address": "0x26bc3f0",
+              "size": 480,
+              "sha256": "fa91f8f0d1c2c1b972d1174ee33af8d824908f007c15c7f494106b1adf38a6c1"
+            },
+            {
+              "side": 1,
+              "index": 3,
+              "name": "add_a_subtype_not_in_play",
+              "address": "0x26bc5d0",
+              "size": 128,
+              "sha256": "9dd3b86fdfc10c00a52c404fda375b72174afb0172ac4108bcd80c222852eaa7"
+            },
+            {
+              "side": 1,
+              "index": 4,
+              "name": "force_a_subtype_not_in_play",
+              "address": "0x26bc650",
+              "size": 128,
+              "sha256": "79a9bf8256bfdf0802c5981937ce97ca1e67b89f13d0ec592cfbcbb16854f4f4"
+            },
+            {
+              "side": 1,
+              "index": 5,
+              "name": "add_a_subtype",
+              "address": "0x26bc970",
+              "size": 48,
+              "sha256": "259674616113e30f15991da9170165c4bc0658a1e76389751086edf5caf1099c"
+            },
+            {
+              "side": 1,
+              "index": 6,
+              "name": "force_a_subtype",
+              "address": "0x26bcf90",
+              "size": 64,
+              "sha256": "8cc9c842ed25311bcf68ac29a63486f1eab30736a923b22c98f604e7350fa497"
+            },
+            {
+              "side": 1,
+              "index": 7,
+              "name": "add_a_subtype_until_eot",
+              "address": "0x26bb1c0",
+              "size": 112,
+              "sha256": "21bf8e5eae41ff518631b1041b494b27ca591156d0a9d6deae2595c25d2dd269"
+            },
+            {
+              "side": 1,
+              "index": 8,
+              "name": "force_a_subtype_until_eot",
+              "address": "0x26b9970",
+              "size": 112,
+              "sha256": "9ee506ccb5fb8310f1fdbf0e60d0791e45072ef8ab7cc49111b549fb42ef9147"
+            }
+          ],
+          "pure_helpers": [
+            {
+              "side": 0,
+              "index": -1,
+              "name": "has_new_types",
+              "address": "0x26722f0",
+              "size": 99,
+              "sha256": "520628adfab2a610024e1e9b15db97b0d79ac76393058b18468f2d247ca1f1a4"
+            },
+            {
+              "side": 1,
+              "index": -1,
+              "name": "has_new_types",
+              "address": "0x26b9400",
+              "size": 112,
+              "sha256": "180cb3f16ce7153a9da95f6b63c7cc93e6fed27093c8fc0cfc7c4ebcd59acae4"
+            }
+          ],
+          "patches": [
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 48,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 126,
+              "kind": "call",
+              "target": "check_special_flags3",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 171,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 203,
+              "kind": "call",
+              "target": "backtrace_and_abort",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 227,
+              "kind": "call",
+              "target": "in_hand",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 272,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 289,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes",
+              "function_address": "0x2673410",
+              "offset": 340,
+              "kind": "call",
+              "target": "on_stack",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x2673320",
+              "offset": 45,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x2673320",
+              "offset": 111,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x2673320",
+              "offset": 135,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x2673320",
+              "offset": 176,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x2673320",
+              "offset": 193,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 19,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 43,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 298,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 311,
+              "kind": "data",
+              "target": "cards_data",
+              "addend": 58
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 343,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 358,
+              "kind": "data",
+              "target": "cards_data",
+              "addend": 41
+            },
+            {
+              "side": 0,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26736e0",
+              "offset": 382,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x2673220",
+              "offset": 18,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x2673220",
+              "offset": 43,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x2673220",
+              "offset": 73,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x2673220",
+              "offset": 95,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x2673220",
+              "offset": 102,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26732a0",
+              "offset": 18,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26732a0",
+              "offset": 43,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26732a0",
+              "offset": 73,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26732a0",
+              "offset": 95,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26732a0",
+              "offset": 102,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype",
+              "function_address": "0x2672f70",
+              "offset": 24,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype",
+              "function_address": "0x2672f70",
+              "offset": 39,
+              "kind": "call",
+              "target": "update_alter_add_subtype",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype",
+              "function_address": "0x2672f30",
+              "offset": 25,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype",
+              "function_address": "0x2672f30",
+              "offset": 35,
+              "kind": "call",
+              "target": "update_alter_remove_creature_subtypes",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype",
+              "function_address": "0x2672f30",
+              "offset": 51,
+              "kind": "call",
+              "target": "update_alter_add_subtype",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x2673040",
+              "offset": 35,
+              "kind": "callback",
+              "target": "legacy_callback",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x2673040",
+              "offset": 44,
+              "kind": "call",
+              "target": "create_targetted_legacy_effect",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x2673040",
+              "offset": 58,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x2673040",
+              "offset": 77,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x2672fd0",
+              "offset": 35,
+              "kind": "callback",
+              "target": "legacy_callback",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x2672fd0",
+              "offset": 44,
+              "kind": "call",
+              "target": "create_targetted_legacy_effect",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x2672fd0",
+              "offset": 58,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x2672fd0",
+              "offset": 77,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "has_new_types",
+              "function_address": "0x26722f0",
+              "offset": 8,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 50,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 147,
+              "kind": "call",
+              "target": "check_special_flags3",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 186,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 243,
+              "kind": "call",
+              "target": "in_hand",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 296,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 313,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 399,
+              "kind": "call",
+              "target": "backtrace_and_abort",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes",
+              "function_address": "0x26b9aa0",
+              "offset": 483,
+              "kind": "call",
+              "target": "on_stack",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x26bb430",
+              "offset": 81,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x26bb430",
+              "offset": 143,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x26bb430",
+              "offset": 167,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x26bb430",
+              "offset": 216,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "get_subtypes_by_csvid",
+              "function_address": "0x26bb430",
+              "offset": 233,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc3f0",
+              "offset": 16,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc3f0",
+              "offset": 40,
+              "kind": "call",
+              "target": "is_what",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc3f0",
+              "offset": 295,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc3f0",
+              "offset": 305,
+              "kind": "data",
+              "target": "cards_data",
+              "addend": 58
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc3f0",
+              "offset": 375,
+              "kind": "call",
+              "target": "get_internal_card_id_from_csv_id",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc3f0",
+              "offset": 385,
+              "kind": "data",
+              "target": "cards_data",
+              "addend": 41
+            },
+            {
+              "side": 1,
+              "name": "has_subtype_by_id",
+              "function_address": "0x26bc3f0",
+              "offset": 420,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x26bc5d0",
+              "offset": 13,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x26bc5d0",
+              "offset": 43,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x26bc5d0",
+              "offset": 73,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x26bc5d0",
+              "offset": 95,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_not_in_play",
+              "function_address": "0x26bc5d0",
+              "offset": 102,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26bc650",
+              "offset": 13,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26bc650",
+              "offset": 43,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26bc650",
+              "offset": 73,
+              "kind": "data",
+              "target": "land_can_be_played",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26bc650",
+              "offset": 95,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_not_in_play",
+              "function_address": "0x26bc650",
+              "offset": 102,
+              "kind": "data",
+              "target": "added_subtypes_not_in_play",
+              "addend": 4
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype",
+              "function_address": "0x26bc970",
+              "offset": 24,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype",
+              "function_address": "0x26bc970",
+              "offset": 39,
+              "kind": "call",
+              "target": "update_alter_add_subtype",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype",
+              "function_address": "0x26bcf90",
+              "offset": 25,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype",
+              "function_address": "0x26bcf90",
+              "offset": 35,
+              "kind": "call",
+              "target": "update_alter_remove_creature_subtypes",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype",
+              "function_address": "0x26bcf90",
+              "offset": 51,
+              "kind": "call",
+              "target": "update_alter_add_subtype",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x26bb1c0",
+              "offset": 35,
+              "kind": "callback",
+              "target": "legacy_callback",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x26bb1c0",
+              "offset": 44,
+              "kind": "call",
+              "target": "create_targetted_legacy_effect",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x26bb1c0",
+              "offset": 58,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "add_a_subtype_until_eot",
+              "function_address": "0x26bb1c0",
+              "offset": 77,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x26b9970",
+              "offset": 35,
+              "kind": "callback",
+              "target": "legacy_callback",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x26b9970",
+              "offset": 44,
+              "kind": "call",
+              "target": "create_targetted_legacy_effect",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x26b9970",
+              "offset": 58,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "force_a_subtype_until_eot",
+              "function_address": "0x26b9970",
+              "offset": 77,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "has_new_types",
+              "function_address": "0x26b9400",
+              "offset": 8,
+              "kind": "data",
+              "target": "cards_ptr",
+              "addend": 0
+            }
+          ],
+          "inputs": {
+            ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+            "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+            "ManalinkEh.dll": "87d92d3fa66896826f786b65e13b9b7b024c68fb9339c3cb959d33f5580033ad",
+            "ManalinkEh.dbg": "6115c4f69d45e89b25e71ec3ce59a94397050c550a006dd491d18ee48858ce9a"
+          },
+          "scope": "Actual nine native/rebuilt helper bodies plus real has_new_types and get_subtypes_by_csvid callees; patch only decoded direct opaque leaf calls, four named data objects and the legacy callback operand. No DLL entrypoint/import execution."
+        },
+        "plan_sha256": "fa4b2284e82c8d920320223239690f17dfb4525d6a938a0eeb04345f3143e62b",
+        "log_sha256": "a98f9a0d1fe272841af8b3025dc680ccc357820745040a30839da968deca2e01",
+        "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "cases": 81920,
+        "mismatches": 0
+      }
+    },
+    "combined_fixture_comparisons": 163840,
+    "fixture_scope": "Actual nine native/rebuilt helpers, real has_new_types code and real get_subtypes_by_csvid callees. Deterministic opaque leaf stubs and four substituted data objects. Compare full 128-byte output storage including trailing canaries, four 300-byte card records and extensions, complete two-player modifier table, dispatch flags, ordered call arguments and integer results. 512 environments, both players plus -1 for supported csvid queries, eight subtype queries and four interleaved events. Invalid live-card abort paths, invalid array indices, arbitrary asynchronous mutation and full gameplay are outside the fixture.",
+    "fixture_sources": {
+      ".recovery\\subtype_fixture_base_c655.c": "20c101d10397787ce4c48440be5160eba5fdd84d5c9a93de954ad45f90d7c029",
+      ".recovery\\prepare_subtype_fixture_c655.py": "878c85ddd64cf3e66dbe31f06bd748fbf8e07574a905fb113a183598e749a776",
+      ".recovery\\build_subtype_fixture_c655.py": "45fe5f729710ee04a8d1d88b5566a5a8ac82051f004bf8d9d8d6deb49bed9938"
+    },
+    "checker_sha256": "1b07b2039f8221bb0960e8b78805e785463814d568912773664d088fc2370fc8",
+    "staging": "preserved"
+  }
+}

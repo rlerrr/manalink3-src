@@ -1,0 +1,3403 @@
+{
+  "format": 1,
+  "status": "Named mappings for 75 split cards reconstructed; 983,145 release/actual-rebuilt/source cases, combined build, 15,169 slots and full source projection pass.",
+  "source": "functions/functions.c",
+  "name": "split_cards_id_table",
+  "native_address": "0x267c470",
+  "native_size": 2774,
+  "native_body_sha256": "e02ec4e3fd66788be37d17df9b82a345c43387401c33c5977d29b9b422957d35",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "before_rebuilt_sha256": "b959b632bed0e13f2497e1f9f03f918b45141051fb3dbbb1f1edd08edf1f36ea",
+  "before_debug_sha256": "4405c2921d30a2b6a59bf75ab0beddb17e40e679068acd763c5c161ab86b55e9",
+  "source_before_sha256": "59bf91b238d338909dcfabbae04f246dcfc52b4de90d14f3103ab5e5918e8b36",
+  "source_after_sha256": "179806ec77dccce9924d7d871ab1c0e81797f05ff395d17a41587dc7b3e7ad1a",
+  "definition_before_sha256": "696bfdfc9a0eb18ac4de9ad0832e0b915a93e67cd4065c78ec367682b0f8e747",
+  "definition_after_sha256": "a933ed930f805e9e14958188f59fb1d41b2d2c699bd2c81fcaf869d56019c3fe",
+  "before_definition_bytes": 11074,
+  "after_definition_bytes": 8114,
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "card_id_header_sha256": "3b41032de788e7a7058fee28ffcd15bf3b3a5e55e8402ee1cc6436f3b9ac73a4",
+  "native_enumerator_values": {
+    "CARD_ID_ASSAULT_BATTERY": 4936,
+    "CARD_ID_PAIN_SUFFERING": 5056,
+    "CARD_ID_SPITE_MALICE": 5127,
+    "CARD_ID_STAND_DELIVER": 5130,
+    "CARD_ID_WAX_WANE": 5187,
+    "CARD_ID_FIRE_ICE": 5369,
+    "CARD_ID_ILLUSION_REALITY": 5386,
+    "CARD_ID_LIFE_DEATH": 5395,
+    "CARD_ID_NIGHT_DAY": 5409,
+    "CARD_ID_ORDER_CHAOS": 5410,
+    "CARD_ID_BOUND_DETERMINED": 8179,
+    "CARD_ID_CRIME_PUNISHMENT": 8189,
+    "CARD_ID_HIDE_SEEK": 8222,
+    "CARD_ID_HIT_RUN": 8223,
+    "CARD_ID_ODDS_ENDS": 8245,
+    "CARD_ID_PURE_SIMPLE": 8264,
+    "CARD_ID_RESEARCH_DEVELOPMENT": 8274,
+    "CARD_ID_RISE_FALL": 8276,
+    "CARD_ID_SUPPLY_DEMAND": 8301,
+    "CARD_ID_TRIAL_ERROR": 8306,
+    "CARD_ID_ALIVE_WELL": 13111,
+    "CARD_ID_ARMED_DANGEROUS": 13112,
+    "CARD_ID_FAR_AWAY": 13115,
+    "CARD_ID_BECK_CALL": 13120,
+    "CARD_ID_FLESH_BLOOD": 13124,
+    "CARD_ID_BREAKING_ENTERING": 13130,
+    "CARD_ID_TURN_BURN": 13133,
+    "CARD_ID_CATCH_RELEASE": 13135,
+    "CARD_ID_DOWN_DIRTY": 13143,
+    "CARD_ID_GIVE_TAKE": 13151,
+    "CARD_ID_PROFIT_LOSS": 13168,
+    "CARD_ID_PROTECT_SERVE": 13196,
+    "CARD_ID_READY_WILLING": 13202,
+    "CARD_ID_WEAR_TEAR": 13231,
+    "CARD_ID_TOIL_TROUBLE": 13235,
+    "CARD_ID_CUT_RIBBONS": 16881,
+    "CARD_ID_DESTINED_LEAD": 16888,
+    "CARD_ID_FAILURE_COMPLY": 16904,
+    "CARD_ID_HEAVEN_EARTH": 16939,
+    "CARD_ID_ONWARD_VICTORY": 16985,
+    "CARD_ID_PREPARE_FIGHT": 16995,
+    "CARD_ID_RAGS_RICHES": 17002,
+    "CARD_ID_REDUCE_RUBBLE": 17003,
+    "CARD_ID_SPRING_MIND": 17032,
+    "CARD_ID_START_FINISH": 17033,
+    "CARD_ID_APPEAL_AUTHORITY": 17085,
+    "CARD_ID_CLAIM_FAME": 17101,
+    "CARD_ID_CONSIGN_OBLIVION": 17102,
+    "CARD_ID_DRIVEN_DESPAIR": 17124,
+    "CARD_ID_FARM_MARKET": 17131,
+    "CARD_ID_GRIND_DUST": 17145,
+    "CARD_ID_LEAVE_CHANCE": 17167,
+    "CARD_ID_REASON_BELIEVE": 17205,
+    "CARD_ID_REFUSE_COOPERATE": 17206,
+    "CARD_ID_STRUGGLE_SURVIVE": 17230,
+    "CARD_ID_ALIVE": 19145,
+    "CARD_ID_APPEAL": 19146,
+    "CARD_ID_ARMED": 19147,
+    "CARD_ID_ASSAULT": 19148,
+    "CARD_ID_AUTHORITY": 19149,
+    "CARD_ID_AWAY": 19150,
+    "CARD_ID_BATTERY": 19151,
+    "CARD_ID_BECK": 19152,
+    "CARD_ID_BELIEVE": 19153,
+    "CARD_ID_BLOOD": 19154,
+    "CARD_ID_BOUND": 19156,
+    "CARD_ID_BREAKING": 19157,
+    "CARD_ID_BURN": 19158,
+    "CARD_ID_CALL": 19160,
+    "CARD_ID_CATCH": 19161,
+    "CARD_ID_CHANCE": 19162,
+    "CARD_ID_CHAOS": 19163,
+    "CARD_ID_CLAIM": 19164,
+    "CARD_ID_COMPLY": 19166,
+    "CARD_ID_CONSIGN": 19167,
+    "CARD_ID_COOPERATE": 19168,
+    "CARD_ID_CRIME": 19169,
+    "CARD_ID_CUT": 19170,
+    "CARD_ID_DANGEROUS": 19171,
+    "CARD_ID_DAY": 19173,
+    "CARD_ID_DEATH": 19175,
+    "CARD_ID_DELIVER": 19176,
+    "CARD_ID_DEMAND": 19177,
+    "CARD_ID_DESPAIR": 19178,
+    "CARD_ID_DESTINED": 19179,
+    "CARD_ID_DETERMINED": 19180,
+    "CARD_ID_DEVELOPMENT": 19181,
+    "CARD_ID_DIRTY": 19182,
+    "CARD_ID_DOWN": 19183,
+    "CARD_ID_DRIVEN": 19184,
+    "CARD_ID_DUST": 19186,
+    "CARD_ID_EARTH": 19187,
+    "CARD_ID_ENDS": 19188,
+    "CARD_ID_ENTERING": 19189,
+    "CARD_ID_ERROR": 19190,
+    "CARD_ID_FAILURE": 19191,
+    "CARD_ID_FALL": 19192,
+    "CARD_ID_FAME": 19193,
+    "CARD_ID_FAR": 19194,
+    "CARD_ID_FARM": 19195,
+    "CARD_ID_FIGHT": 19197,
+    "CARD_ID_FINISH": 19198,
+    "CARD_ID_FIRE": 19199,
+    "CARD_ID_FLESH": 19200,
+    "CARD_ID_GIVE": 19201,
+    "CARD_ID_GRIND": 19203,
+    "CARD_ID_HEAVEN": 19204,
+    "CARD_ID_HIDE": 19205,
+    "CARD_ID_HIT": 19206,
+    "CARD_ID_ICE": 19207,
+    "CARD_ID_ILLUSION": 19208,
+    "CARD_ID_LEAD": 19211,
+    "CARD_ID_LEAVE": 19212,
+    "CARD_ID_LIFE": 19213,
+    "CARD_ID_LOSS": 19214,
+    "CARD_ID_MALICE": 19215,
+    "CARD_ID_MARKET": 19216,
+    "CARD_ID_MIND": 19218,
+    "CARD_ID_NIGHT": 19223,
+    "CARD_ID_OBLIVION": 19224,
+    "CARD_ID_ODDS": 19225,
+    "CARD_ID_ONWARD": 19226,
+    "CARD_ID_ORDER": 19227,
+    "CARD_ID_PAIN": 19228,
+    "CARD_ID_PREPARE": 19229,
+    "CARD_ID_PROFIT": 19230,
+    "CARD_ID_PROTECT": 19231,
+    "CARD_ID_PUNISHMENT": 19232,
+    "CARD_ID_PURE": 19233,
+    "CARD_ID_RAGS": 19234,
+    "CARD_ID_READY": 19235,
+    "CARD_ID_REALITY": 19236,
+    "CARD_ID_REASON": 19237,
+    "CARD_ID_REDUCE": 19238,
+    "CARD_ID_REFUSE": 19239,
+    "CARD_ID_RELEASE": 19240,
+    "CARD_ID_RESEARCH": 19241,
+    "CARD_ID_RIBBONS": 19243,
+    "CARD_ID_RICHES": 19244,
+    "CARD_ID_RISE": 19245,
+    "CARD_ID_RUBBLE": 19247,
+    "CARD_ID_RUN": 19248,
+    "CARD_ID_SEEK": 19249,
+    "CARD_ID_SERVE": 19250,
+    "CARD_ID_SIMPLE": 19251,
+    "CARD_ID_SPITE": 19252,
+    "CARD_ID_SPRING": 19253,
+    "CARD_ID_STAND": 19254,
+    "CARD_ID_START": 19255,
+    "CARD_ID_STRUGGLE": 19256,
+    "CARD_ID_SUFFERING": 19257,
+    "CARD_ID_SUPPLY": 19258,
+    "CARD_ID_SURVIVE": 19259,
+    "CARD_ID_TAKE": 19260,
+    "CARD_ID_TEAR": 19261,
+    "CARD_ID_TOIL": 19262,
+    "CARD_ID_TRIAL": 19263,
+    "CARD_ID_TROUBLE": 19264,
+    "CARD_ID_TURN": 19266,
+    "CARD_ID_VICTORY": 19267,
+    "CARD_ID_WANE": 19268,
+    "CARD_ID_WAX": 19269,
+    "CARD_ID_WEAR": 19270,
+    "CARD_ID_WELL": 19271,
+    "CARD_ID_WILLING": 19277,
+    "CARD_ID_ASSEMBLE": 19283,
+    "CARD_ID_ASSURE": 19284,
+    "CARD_ID_ASSURE_ASSEMBLE": 19285,
+    "CARD_ID_CONCOCT": 19319,
+    "CARD_ID_CONNIVE": 19320,
+    "CARD_ID_CONNIVE_CONCOCT": 19321,
+    "CARD_ID_DISCOVERY": 19338,
+    "CARD_ID_DISCOVERY_DISPERSAL": 19339,
+    "CARD_ID_DISPERSAL": 19341,
+    "CARD_ID_EXPANSION": 19355,
+    "CARD_ID_EXPANSION_EXPLOSION": 19356,
+    "CARD_ID_EXPLOSION": 19358,
+    "CARD_ID_FINALITY": 19360,
+    "CARD_ID_FIND": 19361,
+    "CARD_ID_FIND_FINALITY": 19362,
+    "CARD_ID_FLOURISH": 19366,
+    "CARD_ID_FLOWER": 19367,
+    "CARD_ID_FLOWER_FLOURISH": 19368,
+    "CARD_ID_INTEGRITY": 19400,
+    "CARD_ID_INTEGRITY_INTERVENTION": 19401,
+    "CARD_ID_INTERVENTION": 19402,
+    "CARD_ID_INVENT": 19404,
+    "CARD_ID_INVERT": 19405,
+    "CARD_ID_INVERT_INVENT": 19406,
+    "CARD_ID_RESPONSE": 19470,
+    "CARD_ID_RESPONSE_RESURGENCE": 19471,
+    "CARD_ID_RESURGENCE": 19472,
+    "CARD_ID_STATUE": 19490,
+    "CARD_ID_STATUS": 19491,
+    "CARD_ID_STATUS_STATUE": 19492,
+    "CARD_ID_BEDAZZLE": 19551,
+    "CARD_ID_BEDECK": 19552,
+    "CARD_ID_BEDECK_BEDAZZLE": 19553,
+    "CARD_ID_CARNAGE": 19567,
+    "CARD_ID_CARNIVAL": 19568,
+    "CARD_ID_CARNIVAL_CARNAGE": 19569,
+    "CARD_ID_COLLISION": 19582,
+    "CARD_ID_COLLISION_COLOSSUS": 19583,
+    "CARD_ID_COLOSSUS": 19584,
+    "CARD_ID_CONSECRATE": 19586,
+    "CARD_ID_CONSECRATE_CONSUME": 19587,
+    "CARD_ID_CONSUME": 19589,
+    "CARD_ID_DEPLOY": 19597,
+    "CARD_ID_DEPOSE": 19598,
+    "CARD_ID_DEPOSE_DEPLOY": 19599,
+    "CARD_ID_INCONGRUITY": 19660,
+    "CARD_ID_INCUBATION": 19661,
+    "CARD_ID_INCUBATION_INCONGRUITY": 19662,
+    "CARD_ID_REPLICATE": 19709,
+    "CARD_ID_REPUDIATE": 19710,
+    "CARD_ID_REPUDIATE_REPLICATE": 19711,
+    "CARD_ID_REVENGE": 19713,
+    "CARD_ID_REVIVAL": 19714,
+    "CARD_ID_REVIVAL_REVENGE": 19715,
+    "CARD_ID_THRASH": 19774,
+    "CARD_ID_THRASH_THREAT": 19775,
+    "CARD_ID_THREAT": 19776,
+    "CARD_ID_WARDEN": 19790,
+    "CARD_ID_WARRANT": 19791,
+    "CARD_ID_WARRANT_WARDEN": 19792
+  },
+  "map": [
+    {
+      "combined": 4936,
+      "first": 19148,
+      "second": 19151,
+      "fusable": 0,
+      "combined_name": "CARD_ID_ASSAULT_BATTERY",
+      "first_name": "CARD_ID_ASSAULT",
+      "second_name": "CARD_ID_BATTERY"
+    },
+    {
+      "combined": 5056,
+      "first": 19228,
+      "second": 19257,
+      "fusable": 0,
+      "combined_name": "CARD_ID_PAIN_SUFFERING",
+      "first_name": "CARD_ID_PAIN",
+      "second_name": "CARD_ID_SUFFERING"
+    },
+    {
+      "combined": 5127,
+      "first": 19252,
+      "second": 19215,
+      "fusable": 0,
+      "combined_name": "CARD_ID_SPITE_MALICE",
+      "first_name": "CARD_ID_SPITE",
+      "second_name": "CARD_ID_MALICE"
+    },
+    {
+      "combined": 5130,
+      "first": 19254,
+      "second": 19176,
+      "fusable": 0,
+      "combined_name": "CARD_ID_STAND_DELIVER",
+      "first_name": "CARD_ID_STAND",
+      "second_name": "CARD_ID_DELIVER"
+    },
+    {
+      "combined": 5187,
+      "first": 19269,
+      "second": 19268,
+      "fusable": 0,
+      "combined_name": "CARD_ID_WAX_WANE",
+      "first_name": "CARD_ID_WAX",
+      "second_name": "CARD_ID_WANE"
+    },
+    {
+      "combined": 5369,
+      "first": 19199,
+      "second": 19207,
+      "fusable": 0,
+      "combined_name": "CARD_ID_FIRE_ICE",
+      "first_name": "CARD_ID_FIRE",
+      "second_name": "CARD_ID_ICE"
+    },
+    {
+      "combined": 5386,
+      "first": 19208,
+      "second": 19236,
+      "fusable": 0,
+      "combined_name": "CARD_ID_ILLUSION_REALITY",
+      "first_name": "CARD_ID_ILLUSION",
+      "second_name": "CARD_ID_REALITY"
+    },
+    {
+      "combined": 5395,
+      "first": 19213,
+      "second": 19175,
+      "fusable": 0,
+      "combined_name": "CARD_ID_LIFE_DEATH",
+      "first_name": "CARD_ID_LIFE",
+      "second_name": "CARD_ID_DEATH"
+    },
+    {
+      "combined": 5409,
+      "first": 19223,
+      "second": 19173,
+      "fusable": 0,
+      "combined_name": "CARD_ID_NIGHT_DAY",
+      "first_name": "CARD_ID_NIGHT",
+      "second_name": "CARD_ID_DAY"
+    },
+    {
+      "combined": 5410,
+      "first": 19227,
+      "second": 19163,
+      "fusable": 0,
+      "combined_name": "CARD_ID_ORDER_CHAOS",
+      "first_name": "CARD_ID_ORDER",
+      "second_name": "CARD_ID_CHAOS"
+    },
+    {
+      "combined": 8179,
+      "first": 19156,
+      "second": 19180,
+      "fusable": 0,
+      "combined_name": "CARD_ID_BOUND_DETERMINED",
+      "first_name": "CARD_ID_BOUND",
+      "second_name": "CARD_ID_DETERMINED"
+    },
+    {
+      "combined": 8189,
+      "first": 19169,
+      "second": 19232,
+      "fusable": 0,
+      "combined_name": "CARD_ID_CRIME_PUNISHMENT",
+      "first_name": "CARD_ID_CRIME",
+      "second_name": "CARD_ID_PUNISHMENT"
+    },
+    {
+      "combined": 8222,
+      "first": 19205,
+      "second": 19249,
+      "fusable": 0,
+      "combined_name": "CARD_ID_HIDE_SEEK",
+      "first_name": "CARD_ID_HIDE",
+      "second_name": "CARD_ID_SEEK"
+    },
+    {
+      "combined": 8223,
+      "first": 19206,
+      "second": 19248,
+      "fusable": 0,
+      "combined_name": "CARD_ID_HIT_RUN",
+      "first_name": "CARD_ID_HIT",
+      "second_name": "CARD_ID_RUN"
+    },
+    {
+      "combined": 8245,
+      "first": 19225,
+      "second": 19188,
+      "fusable": 0,
+      "combined_name": "CARD_ID_ODDS_ENDS",
+      "first_name": "CARD_ID_ODDS",
+      "second_name": "CARD_ID_ENDS"
+    },
+    {
+      "combined": 8264,
+      "first": 19233,
+      "second": 19251,
+      "fusable": 0,
+      "combined_name": "CARD_ID_PURE_SIMPLE",
+      "first_name": "CARD_ID_PURE",
+      "second_name": "CARD_ID_SIMPLE"
+    },
+    {
+      "combined": 8274,
+      "first": 19241,
+      "second": 19181,
+      "fusable": 0,
+      "combined_name": "CARD_ID_RESEARCH_DEVELOPMENT",
+      "first_name": "CARD_ID_RESEARCH",
+      "second_name": "CARD_ID_DEVELOPMENT"
+    },
+    {
+      "combined": 8276,
+      "first": 19245,
+      "second": 19192,
+      "fusable": 0,
+      "combined_name": "CARD_ID_RISE_FALL",
+      "first_name": "CARD_ID_RISE",
+      "second_name": "CARD_ID_FALL"
+    },
+    {
+      "combined": 8301,
+      "first": 19258,
+      "second": 19177,
+      "fusable": 0,
+      "combined_name": "CARD_ID_SUPPLY_DEMAND",
+      "first_name": "CARD_ID_SUPPLY",
+      "second_name": "CARD_ID_DEMAND"
+    },
+    {
+      "combined": 8306,
+      "first": 19263,
+      "second": 19190,
+      "fusable": 0,
+      "combined_name": "CARD_ID_TRIAL_ERROR",
+      "first_name": "CARD_ID_TRIAL",
+      "second_name": "CARD_ID_ERROR"
+    },
+    {
+      "combined": 13111,
+      "first": 19145,
+      "second": 19271,
+      "fusable": 1,
+      "combined_name": "CARD_ID_ALIVE_WELL",
+      "first_name": "CARD_ID_ALIVE",
+      "second_name": "CARD_ID_WELL"
+    },
+    {
+      "combined": 13112,
+      "first": 19147,
+      "second": 19171,
+      "fusable": 1,
+      "combined_name": "CARD_ID_ARMED_DANGEROUS",
+      "first_name": "CARD_ID_ARMED",
+      "second_name": "CARD_ID_DANGEROUS"
+    },
+    {
+      "combined": 13115,
+      "first": 19194,
+      "second": 19150,
+      "fusable": 1,
+      "combined_name": "CARD_ID_FAR_AWAY",
+      "first_name": "CARD_ID_FAR",
+      "second_name": "CARD_ID_AWAY"
+    },
+    {
+      "combined": 13120,
+      "first": 19152,
+      "second": 19160,
+      "fusable": 1,
+      "combined_name": "CARD_ID_BECK_CALL",
+      "first_name": "CARD_ID_BECK",
+      "second_name": "CARD_ID_CALL"
+    },
+    {
+      "combined": 13124,
+      "first": 19200,
+      "second": 19154,
+      "fusable": 1,
+      "combined_name": "CARD_ID_FLESH_BLOOD",
+      "first_name": "CARD_ID_FLESH",
+      "second_name": "CARD_ID_BLOOD"
+    },
+    {
+      "combined": 13130,
+      "first": 19157,
+      "second": 19189,
+      "fusable": 1,
+      "combined_name": "CARD_ID_BREAKING_ENTERING",
+      "first_name": "CARD_ID_BREAKING",
+      "second_name": "CARD_ID_ENTERING"
+    },
+    {
+      "combined": 13133,
+      "first": 19266,
+      "second": 19158,
+      "fusable": 1,
+      "combined_name": "CARD_ID_TURN_BURN",
+      "first_name": "CARD_ID_TURN",
+      "second_name": "CARD_ID_BURN"
+    },
+    {
+      "combined": 13135,
+      "first": 19161,
+      "second": 19240,
+      "fusable": 1,
+      "combined_name": "CARD_ID_CATCH_RELEASE",
+      "first_name": "CARD_ID_CATCH",
+      "second_name": "CARD_ID_RELEASE"
+    },
+    {
+      "combined": 13143,
+      "first": 19183,
+      "second": 19182,
+      "fusable": 1,
+      "combined_name": "CARD_ID_DOWN_DIRTY",
+      "first_name": "CARD_ID_DOWN",
+      "second_name": "CARD_ID_DIRTY"
+    },
+    {
+      "combined": 13151,
+      "first": 19201,
+      "second": 19260,
+      "fusable": 1,
+      "combined_name": "CARD_ID_GIVE_TAKE",
+      "first_name": "CARD_ID_GIVE",
+      "second_name": "CARD_ID_TAKE"
+    },
+    {
+      "combined": 13168,
+      "first": 19230,
+      "second": 19214,
+      "fusable": 1,
+      "combined_name": "CARD_ID_PROFIT_LOSS",
+      "first_name": "CARD_ID_PROFIT",
+      "second_name": "CARD_ID_LOSS"
+    },
+    {
+      "combined": 13196,
+      "first": 19231,
+      "second": 19250,
+      "fusable": 1,
+      "combined_name": "CARD_ID_PROTECT_SERVE",
+      "first_name": "CARD_ID_PROTECT",
+      "second_name": "CARD_ID_SERVE"
+    },
+    {
+      "combined": 13202,
+      "first": 19235,
+      "second": 19277,
+      "fusable": 1,
+      "combined_name": "CARD_ID_READY_WILLING",
+      "first_name": "CARD_ID_READY",
+      "second_name": "CARD_ID_WILLING"
+    },
+    {
+      "combined": 13231,
+      "first": 19270,
+      "second": 19261,
+      "fusable": 1,
+      "combined_name": "CARD_ID_WEAR_TEAR",
+      "first_name": "CARD_ID_WEAR",
+      "second_name": "CARD_ID_TEAR"
+    },
+    {
+      "combined": 13235,
+      "first": 19262,
+      "second": 19264,
+      "fusable": 1,
+      "combined_name": "CARD_ID_TOIL_TROUBLE",
+      "first_name": "CARD_ID_TOIL",
+      "second_name": "CARD_ID_TROUBLE"
+    },
+    {
+      "combined": 16881,
+      "first": 19170,
+      "second": 19243,
+      "fusable": 0,
+      "combined_name": "CARD_ID_CUT_RIBBONS",
+      "first_name": "CARD_ID_CUT",
+      "second_name": "CARD_ID_RIBBONS"
+    },
+    {
+      "combined": 16888,
+      "first": 19179,
+      "second": 19211,
+      "fusable": 0,
+      "combined_name": "CARD_ID_DESTINED_LEAD",
+      "first_name": "CARD_ID_DESTINED",
+      "second_name": "CARD_ID_LEAD"
+    },
+    {
+      "combined": 16904,
+      "first": 19191,
+      "second": 19166,
+      "fusable": 0,
+      "combined_name": "CARD_ID_FAILURE_COMPLY",
+      "first_name": "CARD_ID_FAILURE",
+      "second_name": "CARD_ID_COMPLY"
+    },
+    {
+      "combined": 16939,
+      "first": 19204,
+      "second": 19187,
+      "fusable": 0,
+      "combined_name": "CARD_ID_HEAVEN_EARTH",
+      "first_name": "CARD_ID_HEAVEN",
+      "second_name": "CARD_ID_EARTH"
+    },
+    {
+      "combined": 16985,
+      "first": 19226,
+      "second": 19267,
+      "fusable": 0,
+      "combined_name": "CARD_ID_ONWARD_VICTORY",
+      "first_name": "CARD_ID_ONWARD",
+      "second_name": "CARD_ID_VICTORY"
+    },
+    {
+      "combined": 16995,
+      "first": 19229,
+      "second": 19197,
+      "fusable": 0,
+      "combined_name": "CARD_ID_PREPARE_FIGHT",
+      "first_name": "CARD_ID_PREPARE",
+      "second_name": "CARD_ID_FIGHT"
+    },
+    {
+      "combined": 17002,
+      "first": 19234,
+      "second": 19244,
+      "fusable": 0,
+      "combined_name": "CARD_ID_RAGS_RICHES",
+      "first_name": "CARD_ID_RAGS",
+      "second_name": "CARD_ID_RICHES"
+    },
+    {
+      "combined": 17003,
+      "first": 19238,
+      "second": 19247,
+      "fusable": 0,
+      "combined_name": "CARD_ID_REDUCE_RUBBLE",
+      "first_name": "CARD_ID_REDUCE",
+      "second_name": "CARD_ID_RUBBLE"
+    },
+    {
+      "combined": 17032,
+      "first": 19253,
+      "second": 19218,
+      "fusable": 0,
+      "combined_name": "CARD_ID_SPRING_MIND",
+      "first_name": "CARD_ID_SPRING",
+      "second_name": "CARD_ID_MIND"
+    },
+    {
+      "combined": 17033,
+      "first": 19255,
+      "second": 19198,
+      "fusable": 0,
+      "combined_name": "CARD_ID_START_FINISH",
+      "first_name": "CARD_ID_START",
+      "second_name": "CARD_ID_FINISH"
+    },
+    {
+      "combined": 17085,
+      "first": 19146,
+      "second": 19149,
+      "fusable": 0,
+      "combined_name": "CARD_ID_APPEAL_AUTHORITY",
+      "first_name": "CARD_ID_APPEAL",
+      "second_name": "CARD_ID_AUTHORITY"
+    },
+    {
+      "combined": 17101,
+      "first": 19164,
+      "second": 19193,
+      "fusable": 0,
+      "combined_name": "CARD_ID_CLAIM_FAME",
+      "first_name": "CARD_ID_CLAIM",
+      "second_name": "CARD_ID_FAME"
+    },
+    {
+      "combined": 17102,
+      "first": 19167,
+      "second": 19224,
+      "fusable": 0,
+      "combined_name": "CARD_ID_CONSIGN_OBLIVION",
+      "first_name": "CARD_ID_CONSIGN",
+      "second_name": "CARD_ID_OBLIVION"
+    },
+    {
+      "combined": 17124,
+      "first": 19184,
+      "second": 19178,
+      "fusable": 0,
+      "combined_name": "CARD_ID_DRIVEN_DESPAIR",
+      "first_name": "CARD_ID_DRIVEN",
+      "second_name": "CARD_ID_DESPAIR"
+    },
+    {
+      "combined": 17131,
+      "first": 19195,
+      "second": 19216,
+      "fusable": 0,
+      "combined_name": "CARD_ID_FARM_MARKET",
+      "first_name": "CARD_ID_FARM",
+      "second_name": "CARD_ID_MARKET"
+    },
+    {
+      "combined": 17145,
+      "first": 19203,
+      "second": 19186,
+      "fusable": 0,
+      "combined_name": "CARD_ID_GRIND_DUST",
+      "first_name": "CARD_ID_GRIND",
+      "second_name": "CARD_ID_DUST"
+    },
+    {
+      "combined": 17167,
+      "first": 19212,
+      "second": 19162,
+      "fusable": 0,
+      "combined_name": "CARD_ID_LEAVE_CHANCE",
+      "first_name": "CARD_ID_LEAVE",
+      "second_name": "CARD_ID_CHANCE"
+    },
+    {
+      "combined": 17205,
+      "first": 19237,
+      "second": 19153,
+      "fusable": 0,
+      "combined_name": "CARD_ID_REASON_BELIEVE",
+      "first_name": "CARD_ID_REASON",
+      "second_name": "CARD_ID_BELIEVE"
+    },
+    {
+      "combined": 17206,
+      "first": 19239,
+      "second": 19168,
+      "fusable": 0,
+      "combined_name": "CARD_ID_REFUSE_COOPERATE",
+      "first_name": "CARD_ID_REFUSE",
+      "second_name": "CARD_ID_COOPERATE"
+    },
+    {
+      "combined": 17230,
+      "first": 19256,
+      "second": 19259,
+      "fusable": 0,
+      "combined_name": "CARD_ID_STRUGGLE_SURVIVE",
+      "first_name": "CARD_ID_STRUGGLE",
+      "second_name": "CARD_ID_SURVIVE"
+    },
+    {
+      "combined": 19285,
+      "first": 19284,
+      "second": 19283,
+      "fusable": 0,
+      "combined_name": "CARD_ID_ASSURE_ASSEMBLE",
+      "first_name": "CARD_ID_ASSURE",
+      "second_name": "CARD_ID_ASSEMBLE"
+    },
+    {
+      "combined": 19321,
+      "first": 19320,
+      "second": 19319,
+      "fusable": 0,
+      "combined_name": "CARD_ID_CONNIVE_CONCOCT",
+      "first_name": "CARD_ID_CONNIVE",
+      "second_name": "CARD_ID_CONCOCT"
+    },
+    {
+      "combined": 19339,
+      "first": 19338,
+      "second": 19341,
+      "fusable": 0,
+      "combined_name": "CARD_ID_DISCOVERY_DISPERSAL",
+      "first_name": "CARD_ID_DISCOVERY",
+      "second_name": "CARD_ID_DISPERSAL"
+    },
+    {
+      "combined": 19356,
+      "first": 19355,
+      "second": 19358,
+      "fusable": 0,
+      "combined_name": "CARD_ID_EXPANSION_EXPLOSION",
+      "first_name": "CARD_ID_EXPANSION",
+      "second_name": "CARD_ID_EXPLOSION"
+    },
+    {
+      "combined": 19362,
+      "first": 19361,
+      "second": 19360,
+      "fusable": 0,
+      "combined_name": "CARD_ID_FIND_FINALITY",
+      "first_name": "CARD_ID_FIND",
+      "second_name": "CARD_ID_FINALITY"
+    },
+    {
+      "combined": 19368,
+      "first": 19367,
+      "second": 19366,
+      "fusable": 0,
+      "combined_name": "CARD_ID_FLOWER_FLOURISH",
+      "first_name": "CARD_ID_FLOWER",
+      "second_name": "CARD_ID_FLOURISH"
+    },
+    {
+      "combined": 19401,
+      "first": 19400,
+      "second": 19402,
+      "fusable": 0,
+      "combined_name": "CARD_ID_INTEGRITY_INTERVENTION",
+      "first_name": "CARD_ID_INTEGRITY",
+      "second_name": "CARD_ID_INTERVENTION"
+    },
+    {
+      "combined": 19406,
+      "first": 19405,
+      "second": 19404,
+      "fusable": 0,
+      "combined_name": "CARD_ID_INVERT_INVENT",
+      "first_name": "CARD_ID_INVERT",
+      "second_name": "CARD_ID_INVENT"
+    },
+    {
+      "combined": 19471,
+      "first": 19470,
+      "second": 19472,
+      "fusable": 0,
+      "combined_name": "CARD_ID_RESPONSE_RESURGENCE",
+      "first_name": "CARD_ID_RESPONSE",
+      "second_name": "CARD_ID_RESURGENCE"
+    },
+    {
+      "combined": 19492,
+      "first": 19491,
+      "second": 19490,
+      "fusable": 0,
+      "combined_name": "CARD_ID_STATUS_STATUE",
+      "first_name": "CARD_ID_STATUS",
+      "second_name": "CARD_ID_STATUE"
+    },
+    {
+      "combined": 19553,
+      "first": 19552,
+      "second": 19551,
+      "fusable": 0,
+      "combined_name": "CARD_ID_BEDECK_BEDAZZLE",
+      "first_name": "CARD_ID_BEDECK",
+      "second_name": "CARD_ID_BEDAZZLE"
+    },
+    {
+      "combined": 19569,
+      "first": 19568,
+      "second": 19567,
+      "fusable": 0,
+      "combined_name": "CARD_ID_CARNIVAL_CARNAGE",
+      "first_name": "CARD_ID_CARNIVAL",
+      "second_name": "CARD_ID_CARNAGE"
+    },
+    {
+      "combined": 19583,
+      "first": 19582,
+      "second": 19584,
+      "fusable": 0,
+      "combined_name": "CARD_ID_COLLISION_COLOSSUS",
+      "first_name": "CARD_ID_COLLISION",
+      "second_name": "CARD_ID_COLOSSUS"
+    },
+    {
+      "combined": 19587,
+      "first": 19586,
+      "second": 19589,
+      "fusable": 0,
+      "combined_name": "CARD_ID_CONSECRATE_CONSUME",
+      "first_name": "CARD_ID_CONSECRATE",
+      "second_name": "CARD_ID_CONSUME"
+    },
+    {
+      "combined": 19599,
+      "first": 19598,
+      "second": 19597,
+      "fusable": 0,
+      "combined_name": "CARD_ID_DEPOSE_DEPLOY",
+      "first_name": "CARD_ID_DEPOSE",
+      "second_name": "CARD_ID_DEPLOY"
+    },
+    {
+      "combined": 19662,
+      "first": 19661,
+      "second": 19660,
+      "fusable": 0,
+      "combined_name": "CARD_ID_INCUBATION_INCONGRUITY",
+      "first_name": "CARD_ID_INCUBATION",
+      "second_name": "CARD_ID_INCONGRUITY"
+    },
+    {
+      "combined": 19711,
+      "first": 19710,
+      "second": 19709,
+      "fusable": 0,
+      "combined_name": "CARD_ID_REPUDIATE_REPLICATE",
+      "first_name": "CARD_ID_REPUDIATE",
+      "second_name": "CARD_ID_REPLICATE"
+    },
+    {
+      "combined": 19715,
+      "first": 19714,
+      "second": 19713,
+      "fusable": 0,
+      "combined_name": "CARD_ID_REVIVAL_REVENGE",
+      "first_name": "CARD_ID_REVIVAL",
+      "second_name": "CARD_ID_REVENGE"
+    },
+    {
+      "combined": 19775,
+      "first": 19774,
+      "second": 19776,
+      "fusable": 0,
+      "combined_name": "CARD_ID_THRASH_THREAT",
+      "first_name": "CARD_ID_THRASH",
+      "second_name": "CARD_ID_THREAT"
+    },
+    {
+      "combined": 19792,
+      "first": 19791,
+      "second": 19790,
+      "fusable": 0,
+      "combined_name": "CARD_ID_WARRANT_WARDEN",
+      "first_name": "CARD_ID_WARRANT",
+      "second_name": "CARD_ID_WARDEN"
+    }
+  ],
+  "combined_cases": 75,
+  "fusable_cases": 15,
+  "before_native_execution": {
+    "cases": 983145,
+    "card_id_domain": [
+      0,
+      65535
+    ],
+    "half_flags": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      -1,
+      -2,
+      -2147483648,
+      2147483647,
+      -2147483647,
+      -2147483646,
+      -2147483645
+    ],
+    "extra_card_ids": [
+      -1,
+      -2147483648,
+      -2147483647,
+      2147483647,
+      65536,
+      65537,
+      2147418112
+    ],
+    "harness_sha256": "5371ae1557e5f7617677e10e8bd0ee13ce91de057691f924cc8039fca8a92e3e",
+    "scope": "The 32-bit harness maps the release DLL without resolving imports or running its entry point and calls only this checked, call-free integer helper. Release outputs equal the prior standalone source and the recovered map rule for the recorded input domain."
+  },
+  "discovery": {
+    "partial_argument_screen": ".recovery/reccmp/partial-arguments-fresh-c633.json",
+    "partial_argument_screen_sha256": "36907953fe0a656b39c9701a03b3c3061f4a8f54a9ce28241c9e27a419287737",
+    "screened": 6276,
+    "candidates": 1,
+    "initial_stale_binding_signal": "The earlier time-counter signal used a pre-relink explicit address. Fresh DWARF and COFF identify the real helper, whose emitted selector remains COUNTER_TIME (111); no source edit was made there.",
+    "scalar_array_global_initializers_checked": 131,
+    "scalar_array_global_initializer_differences": 0,
+    "prismatic_vista_query_routes": [
+      {
+        "player": 0,
+        "mana_colors_added": 0,
+        "native": {
+          "kind": "call",
+          "callee": "generic_activated_ability",
+          "arguments": [
+            0,
+            3,
+            115,
+            9,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "trace": [
+            "0x233b920",
+            "0x233b921",
+            "0x233b923",
+            "0x233b924",
+            "0x233b925",
+            "0x233b926",
+            "0x233b92c",
+            "0x233b92f",
+            "0x233b932",
+            "0x233b935",
+            "0x233b93b",
+            "0x233b93e",
+            "0x233ba00",
+            "0x233ba07",
+            "0x233ba09",
+            "0x233ba68",
+            "0x233ba6b",
+            "0x233ba6e",
+            "0x233ba76",
+            "0x233ba7e",
+            "0x233ba86",
+            "0x233ba8e",
+            "0x233ba96",
+            "0x233ba9e",
+            "0x233baa6",
+            "0x233baae",
+            "0x233bab6",
+            "0x233babe",
+            "0x233bac6",
+            "0x233baca"
+          ],
+          "prefix": []
+        },
+        "rebuilt": {
+          "kind": "call",
+          "callee": "generic_activated_ability",
+          "arguments": [
+            0,
+            3,
+            115,
+            9,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "trace": [
+            "0x238f2b0",
+            "0x238f2b1",
+            "0x238f2b3",
+            "0x238f2b4",
+            "0x238f2b5",
+            "0x238f2b6",
+            "0x238f2bc",
+            "0x238f2bf",
+            "0x238f2c2",
+            "0x238f2c5",
+            "0x238f2cb",
+            "0x238f2ce",
+            "0x238f398",
+            "0x238f39f",
+            "0x238f3a1",
+            "0x238f3a7",
+            "0x238f3af",
+            "0x238f3b7",
+            "0x238f3bf",
+            "0x238f3c7",
+            "0x238f3cf",
+            "0x238f3d7",
+            "0x238f3df",
+            "0x238f3e7",
+            "0x238f3ef",
+            "0x238f3f7",
+            "0x238f3ff",
+            "0x238f402",
+            "0x238f405",
+            "0x238f409"
+          ],
+          "prefix": []
+        }
+      },
+      {
+        "player": 0,
+        "mana_colors_added": 4,
+        "native": {
+          "kind": "call",
+          "callee": "mana_producer",
+          "arguments": [
+            0,
+            3,
+            115
+          ],
+          "trace": [
+            "0x233b920",
+            "0x233b921",
+            "0x233b923",
+            "0x233b924",
+            "0x233b925",
+            "0x233b926",
+            "0x233b92c",
+            "0x233b92f",
+            "0x233b932",
+            "0x233b935",
+            "0x233b93b",
+            "0x233b93e",
+            "0x233ba00",
+            "0x233ba07",
+            "0x233ba09",
+            "0x233ba0b",
+            "0x233ba0e",
+            "0x233ba11",
+            "0x233ba19",
+            "0x233ba1d"
+          ],
+          "prefix": []
+        },
+        "rebuilt": {
+          "kind": "call",
+          "callee": "mana_producer",
+          "arguments": [
+            0,
+            3,
+            115
+          ],
+          "trace": [
+            "0x238f2b0",
+            "0x238f2b1",
+            "0x238f2b3",
+            "0x238f2b4",
+            "0x238f2b5",
+            "0x238f2b6",
+            "0x238f2bc",
+            "0x238f2bf",
+            "0x238f2c2",
+            "0x238f2c5",
+            "0x238f2cb",
+            "0x238f2ce",
+            "0x238f398",
+            "0x238f39f",
+            "0x238f3a1",
+            "0x238f438",
+            "0x238f440",
+            "0x238f2fe",
+            "0x238f301",
+            "0x238f304",
+            "0x238f308"
+          ],
+          "prefix": []
+        }
+      },
+      {
+        "player": 1,
+        "mana_colors_added": 0,
+        "native": {
+          "kind": "call",
+          "callee": "generic_activated_ability",
+          "arguments": [
+            1,
+            3,
+            115,
+            9,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "trace": [
+            "0x233b920",
+            "0x233b921",
+            "0x233b923",
+            "0x233b924",
+            "0x233b925",
+            "0x233b926",
+            "0x233b92c",
+            "0x233b92f",
+            "0x233b932",
+            "0x233b935",
+            "0x233b93b",
+            "0x233b93e",
+            "0x233ba00",
+            "0x233ba07",
+            "0x233ba09",
+            "0x233ba68",
+            "0x233ba6b",
+            "0x233ba6e",
+            "0x233ba76",
+            "0x233ba7e",
+            "0x233ba86",
+            "0x233ba8e",
+            "0x233ba96",
+            "0x233ba9e",
+            "0x233baa6",
+            "0x233baae",
+            "0x233bab6",
+            "0x233babe",
+            "0x233bac6",
+            "0x233baca"
+          ],
+          "prefix": []
+        },
+        "rebuilt": {
+          "kind": "call",
+          "callee": "generic_activated_ability",
+          "arguments": [
+            1,
+            3,
+            115,
+            9,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "trace": [
+            "0x238f2b0",
+            "0x238f2b1",
+            "0x238f2b3",
+            "0x238f2b4",
+            "0x238f2b5",
+            "0x238f2b6",
+            "0x238f2bc",
+            "0x238f2bf",
+            "0x238f2c2",
+            "0x238f2c5",
+            "0x238f2cb",
+            "0x238f2ce",
+            "0x238f398",
+            "0x238f39f",
+            "0x238f3a1",
+            "0x238f3a7",
+            "0x238f3af",
+            "0x238f3b7",
+            "0x238f3bf",
+            "0x238f3c7",
+            "0x238f3cf",
+            "0x238f3d7",
+            "0x238f3df",
+            "0x238f3e7",
+            "0x238f3ef",
+            "0x238f3f7",
+            "0x238f3ff",
+            "0x238f402",
+            "0x238f405",
+            "0x238f409"
+          ],
+          "prefix": []
+        }
+      },
+      {
+        "player": 1,
+        "mana_colors_added": 4,
+        "native": {
+          "kind": "call",
+          "callee": "mana_producer",
+          "arguments": [
+            1,
+            3,
+            115
+          ],
+          "trace": [
+            "0x233b920",
+            "0x233b921",
+            "0x233b923",
+            "0x233b924",
+            "0x233b925",
+            "0x233b926",
+            "0x233b92c",
+            "0x233b92f",
+            "0x233b932",
+            "0x233b935",
+            "0x233b93b",
+            "0x233b93e",
+            "0x233ba00",
+            "0x233ba07",
+            "0x233ba09",
+            "0x233ba0b",
+            "0x233ba0e",
+            "0x233ba11",
+            "0x233ba19",
+            "0x233ba1d"
+          ],
+          "prefix": []
+        },
+        "rebuilt": {
+          "kind": "call",
+          "callee": "mana_producer",
+          "arguments": [
+            1,
+            3,
+            115
+          ],
+          "trace": [
+            "0x238f2b0",
+            "0x238f2b1",
+            "0x238f2b3",
+            "0x238f2b4",
+            "0x238f2b5",
+            "0x238f2b6",
+            "0x238f2bc",
+            "0x238f2bf",
+            "0x238f2c2",
+            "0x238f2c5",
+            "0x238f2cb",
+            "0x238f2ce",
+            "0x238f398",
+            "0x238f39f",
+            "0x238f3a1",
+            "0x238f438",
+            "0x238f440",
+            "0x238f2fe",
+            "0x238f301",
+            "0x238f304",
+            "0x238f308"
+          ],
+          "prefix": []
+        }
+      }
+    ],
+    "scalar_array_initializers": [
+      {
+        "name": "en_kor_card",
+        "source": "cards/stronghold.c",
+        "native_address": "0x2721040",
+        "rebuilt_address": "0x2722120",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "glyph_of_delusion_wall_card",
+        "source": "cards/legends.c",
+        "native_address": "0x2774014",
+        "rebuilt_address": "0x27780f0",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "tetra_code",
+        "source": "cards/antiquities.c",
+        "native_address": "0x2774018",
+        "rebuilt_address": "0x2778010",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "charge_mana_called_from_pay_phyrexian_mana",
+        "source": "cards/new_phyrexia.c",
+        "native_address": "0x277401c",
+        "rebuilt_address": "0x279a0dc",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "mulligans_complete",
+        "source": "cards/vanguard.c",
+        "native_address": "0x2796050",
+        "rebuilt_address": "0x279a0e0",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "lc_unaccent_map",
+        "source": "cards/unglued_unhinged.c",
+        "native_address": "0x273f300",
+        "rebuilt_address": "0x2757980",
+        "size": 256,
+        "storage_contract": [
+          "array",
+          [
+            256
+          ],
+          [
+            "scalar",
+            1,
+            8
+          ]
+        ],
+        "initializer_sha256": "42d69edda0ae98a56e89baccc482844fa72e4b6a8422bd0b79e4580ac826d466"
+      },
+      {
+        "name": "txtfx_not_found",
+        "source": "cards/unglued_unhinged.c",
+        "native_address": "0x273f2ec",
+        "rebuilt_address": "0x2757968",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "a2c70538651a7e9296b097e8c3dfc1b195a945802ffe45aa471868fba6f1042e"
+      },
+      {
+        "name": "number_bits_set",
+        "source": "cards/zendikar_rising.c",
+        "native_address": "0x2774020",
+        "rebuilt_address": "0x2778120",
+        "size": 64,
+        "storage_contract": [
+          "array",
+          [
+            16
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "f5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b"
+      },
+      {
+        "name": "mirror_sheen_player",
+        "source": "cards/eventide.c",
+        "native_address": "0x2774060",
+        "rebuilt_address": "0x27780e0",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "rashmi_triggering",
+        "source": "cards/kaladesh.c",
+        "native_address": "0x2774064",
+        "rebuilt_address": "0x27780ec",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "balduvian_hydra_player",
+        "source": "cards/ice_age.c",
+        "native_address": "0x277406c",
+        "rebuilt_address": "0x27780e8",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "balduvian_hydra_card",
+        "source": "cards/ice_age.c",
+        "native_address": "0x2774068",
+        "rebuilt_address": "0x27780e4",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "aff_player",
+        "source": "cards/unlimited.c",
+        "native_address": "0x27211a0",
+        "rebuilt_address": "0x272212c",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "aff_card",
+        "source": "cards/unlimited.c",
+        "native_address": "0x272119c",
+        "rebuilt_address": "0x2722128",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "hack_illusionary_mask_event",
+        "source": "cards/unlimited.c",
+        "native_address": "0x2721198",
+        "rebuilt_address": "0x2722124",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "52e9e3add38bf08350e260942004423cf95fce71609ae1a46b260442db2608bb"
+      },
+      {
+        "name": "opal_eye_card",
+        "source": "cards/betrayers_of_kamigawa.c",
+        "native_address": "0x27211a4",
+        "rebuilt_address": "0x2722004",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "num_schemes",
+        "source": "cards/archenemy.c",
+        "native_address": "0x2774120",
+        "rebuilt_address": "0x27780c0",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "arch_deck",
+        "source": "cards/archenemy.c",
+        "native_address": "0x2774080",
+        "rebuilt_address": "0x2778020",
+        "size": 160,
+        "storage_contract": [
+          "array",
+          [
+            2,
+            20
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+      },
+      {
+        "name": "hack_gpf_player",
+        "source": "functions/targets.c",
+        "native_address": "0x2721288",
+        "rebuilt_address": "0x2723808",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "hack_gpf_card",
+        "source": "functions/targets.c",
+        "native_address": "0x2721284",
+        "rebuilt_address": "0x2723804",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "auto_targets",
+        "source": "functions/targets.c",
+        "native_address": "0x2796840",
+        "rebuilt_address": "0x27b7020",
+        "size": 2000,
+        "storage_contract": [
+          "array",
+          [
+            500
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "2da42fb1d7bd8524e83d5a1e332bad697c8769ba430770a19bec630eb8ffcaa8"
+      },
+      {
+        "name": "auto_targets_target",
+        "source": "functions/targets.c",
+        "native_address": "0x2796060",
+        "rebuilt_address": "0x27b6840",
+        "size": 2000,
+        "storage_contract": [
+          "array",
+          [
+            500
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "2da42fb1d7bd8524e83d5a1e332bad697c8769ba430770a19bec630eb8ffcaa8"
+      },
+      {
+        "name": "read_auto_target_file",
+        "source": "functions/targets.c",
+        "native_address": "0x2774800",
+        "rebuilt_address": "0x2798b60",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "suppress_legend_rule",
+        "source": "functions/gain_control_and_legend_rule.c",
+        "native_address": "0x27748e0",
+        "rebuilt_address": "0x2797e20",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "free_spell_card",
+        "source": "functions/play_spell_for_free.c",
+        "native_address": "0x2721298",
+        "rebuilt_address": "0x272374c",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "free_spell_player",
+        "source": "functions/play_spell_for_free.c",
+        "native_address": "0x2721294",
+        "rebuilt_address": "0x2723748",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "tapped_for_mana",
+        "source": "functions/produce_mana.c",
+        "native_address": "0x27748ec",
+        "rebuilt_address": "0x27989a4",
+        "size": 28,
+        "storage_contract": [
+          "array",
+          [
+            7
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "3addfb141cd7c9c4c6543a82191a3707ac29c7a041217782e61d4d91c691aee8"
+      },
+      {
+        "name": "always_prompt_for_color",
+        "source": "functions/produce_mana.c",
+        "native_address": "0x27748e8",
+        "rebuilt_address": "0x27989a0",
+        "size": 1,
+        "storage_contract": [
+          "scalar",
+          1,
+          6
+        ],
+        "initializer_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "name": "num_loadtexts",
+        "source": "functions/load_text.c",
+        "native_address": "0x2775448",
+        "rebuilt_address": "0x2798968",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "last_loadtext_from_file",
+        "source": "functions/load_text.c",
+        "native_address": "0x2775340",
+        "rebuilt_address": "0x2798860",
+        "size": 262,
+        "storage_contract": [
+          "array",
+          [
+            262
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "ba1d859d62b101dc263d6834aaa81378941736dfab33b15243a4bf3b45691735"
+      },
+      {
+        "name": "num_loadtexts_from_file",
+        "source": "functions/load_text.c",
+        "native_address": "0x2775320",
+        "rebuilt_address": "0x2798840",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "discard_controller",
+        "source": "functions/functions.c",
+        "native_address": "0x2775474",
+        "rebuilt_address": "0x2797810",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "card_is_being_cycled",
+        "source": "functions/functions.c",
+        "native_address": "0x2775470",
+        "rebuilt_address": "0x2797800",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "dont_account_for_trinisphere",
+        "source": "functions/functions.c",
+        "native_address": "0x277546c",
+        "rebuilt_address": "0x279780c",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "havengul_lich_hack",
+        "source": "functions/functions.c",
+        "native_address": "0x2775468",
+        "rebuilt_address": "0x2797808",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "life_to_lose_on_gain_life",
+        "source": "functions/functions.c",
+        "native_address": "0x2797120",
+        "rebuilt_address": "0x27b670c",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "hack_what_was_sacced_for_gaa",
+        "source": "functions/functions.c",
+        "native_address": "0x2775464",
+        "rebuilt_address": "0x2797804",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "suspend_cannot_lose_the_game",
+        "source": "functions/functions.c",
+        "native_address": "0x2775460",
+        "rebuilt_address": "0x27b6708",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "add_to_die_rolls",
+        "source": "functions/engine.c",
+        "native_address": "0x2797190",
+        "rebuilt_address": "0x27b6670",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "roll_extra_dice",
+        "source": "functions/engine.c",
+        "native_address": "0x2797198",
+        "rebuilt_address": "0x27b6678",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "card_counts",
+        "source": "functions/engine.c",
+        "native_address": "0x2797200",
+        "rebuilt_address": "0x27b66e4",
+        "size": 14,
+        "storage_contract": [
+          "array",
+          [
+            2,
+            7
+          ],
+          [
+            "scalar",
+            1,
+            8
+          ]
+        ],
+        "initializer_sha256": "e7ecebbc590bc88b3761fa6cd03d749f87463dabb67021a5c6768c25ec68b3f2"
+      },
+      {
+        "name": "card_flags",
+        "source": "functions/engine.c",
+        "native_address": "0x2797218",
+        "rebuilt_address": "0x27b66fc",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            4,
+            7
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "your_spells_cant_be_countered_by_color",
+        "source": "functions/engine.c",
+        "native_address": "0x27971a0",
+        "rebuilt_address": "0x27b6680",
+        "size": 2,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            1,
+            8
+          ]
+        ],
+        "initializer_sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7"
+      },
+      {
+        "name": "hack_xx",
+        "source": "functions/engine.c",
+        "native_address": "0x272129c",
+        "rebuilt_address": "0x2722bd0",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "67abdd721024f0ff4e0b3f4c2fc13bc5bad42d0b7851d456d88d203d15aaa450"
+      },
+      {
+        "name": "override_xx",
+        "source": "functions/engine.c",
+        "native_address": "0x2775a80",
+        "rebuilt_address": "0x27b66e0",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "mana_colors_added",
+        "source": "functions/engine.c",
+        "native_address": "0x2797210",
+        "rebuilt_address": "0x27b66f4",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "mana_color_override",
+        "source": "functions/engine.c",
+        "native_address": "0x2797140",
+        "rebuilt_address": "0x27b6620",
+        "size": 64,
+        "storage_contract": [
+          "array",
+          [
+            2,
+            8
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "f5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b"
+      },
+      {
+        "name": "mana_quantity_override",
+        "source": "functions/engine.c",
+        "native_address": "0x27971c0",
+        "rebuilt_address": "0x27b66a0",
+        "size": 64,
+        "storage_contract": [
+          "array",
+          [
+            2,
+            8
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "f5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b"
+      },
+      {
+        "name": "multi_mana_transmutation",
+        "source": "functions/engine.c",
+        "native_address": "0x2797180",
+        "rebuilt_address": "0x27b6660",
+        "size": 16,
+        "storage_contract": [
+          "array",
+          [
+            2,
+            2
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb"
+      },
+      {
+        "name": "backup_card_ext",
+        "source": "functions/ai.c",
+        "native_address": "0x2785f00",
+        "rebuilt_address": "0x2788480",
+        "size": 57600,
+        "storage_contract": [
+          "array",
+          [
+            57600
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "c72274a22cba2dcef62e0f62834446ee39b0cd95ad0faa27a89b3b49f48aa390"
+      },
+      {
+        "name": "backup_graveyard_source",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f60",
+        "rebuilt_address": "0x27791a0",
+        "size": 4000,
+        "storage_contract": [
+          "array",
+          [
+            4000
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "fc19b1997119425765295aeab72d76faa6927d4f83985d328c26f20468d6cc76"
+      },
+      {
+        "name": "backup_next_graveyard_source_id",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f54",
+        "rebuilt_address": "0x2779188",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup_turn_count",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f50",
+        "rebuilt_address": "0x2779184",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup_always_prompt_for_color",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f4c",
+        "rebuilt_address": "0x2779180",
+        "size": 1,
+        "storage_contract": [
+          "scalar",
+          1,
+          6
+        ],
+        "initializer_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "name": "backup_mulligans_complete",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f44",
+        "rebuilt_address": "0x2779178",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            8
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "backup_challenge_round",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f40",
+        "rebuilt_address": "0x2779174",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup_challenge1",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f3c",
+        "rebuilt_address": "0x2779170",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup_challenge2",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f38",
+        "rebuilt_address": "0x277916c",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup_challenge3",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f34",
+        "rebuilt_address": "0x2779168",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup_challenge4",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f30",
+        "rebuilt_address": "0x2779164",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup_counters_added",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f2c",
+        "rebuilt_address": "0x2779160",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup_counters_added_type",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f28",
+        "rebuilt_address": "0x2778188",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup_mana_colors_added",
+        "source": "functions/ai.c",
+        "native_address": "0x2784f20",
+        "rebuilt_address": "0x27966c0",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            8
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "backup_mana_color_override",
+        "source": "functions/ai.c",
+        "native_address": "0x2784ee0",
+        "rebuilt_address": "0x2796680",
+        "size": 64,
+        "storage_contract": [
+          "array",
+          [
+            64
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "f5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b"
+      },
+      {
+        "name": "backup_mana_quantity_override",
+        "source": "functions/ai.c",
+        "native_address": "0x2784ea0",
+        "rebuilt_address": "0x2796640",
+        "size": 64,
+        "storage_contract": [
+          "array",
+          [
+            64
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "f5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b"
+      },
+      {
+        "name": "backup_multi_mana_transmutation",
+        "source": "functions/ai.c",
+        "native_address": "0x2784e8c",
+        "rebuilt_address": "0x2796628",
+        "size": 16,
+        "storage_contract": [
+          "array",
+          [
+            16
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb"
+      },
+      {
+        "name": "backup_card_counts",
+        "source": "functions/ai.c",
+        "native_address": "0x2784e7c",
+        "rebuilt_address": "0x277a150",
+        "size": 14,
+        "storage_contract": [
+          "array",
+          [
+            14
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "e7ecebbc590bc88b3761fa6cd03d749f87463dabb67021a5c6768c25ec68b3f2"
+      },
+      {
+        "name": "backup_card_flags",
+        "source": "functions/ai.c",
+        "native_address": "0x2784e74",
+        "rebuilt_address": "0x27966d8",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            8
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "backup_your_spells_cant_be_countered_by_color",
+        "source": "functions/ai.c",
+        "native_address": "0x2784e70",
+        "rebuilt_address": "0x27966d4",
+        "size": 2,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7"
+      },
+      {
+        "name": "backup_roll_extra_dice",
+        "source": "functions/ai.c",
+        "native_address": "0x2784e68",
+        "rebuilt_address": "0x277a370",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            8
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "backup_add_to_die_rolls",
+        "source": "functions/ai.c",
+        "native_address": "0x2784e60",
+        "rebuilt_address": "0x277a378",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            8
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "backup_added_subtypes_not_in_play",
+        "source": "functions/ai.c",
+        "native_address": "0x2784d60",
+        "rebuilt_address": "0x277a260",
+        "size": 256,
+        "storage_contract": [
+          "array",
+          [
+            256
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+      },
+      {
+        "name": "backup0_card_ext",
+        "source": "functions/ai.c",
+        "native_address": "0x2776c60",
+        "rebuilt_address": "0x277a380",
+        "size": 57600,
+        "storage_contract": [
+          "array",
+          [
+            57600
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "c72274a22cba2dcef62e0f62834446ee39b0cd95ad0faa27a89b3b49f48aa390"
+      },
+      {
+        "name": "backup0_graveyard_source",
+        "source": "functions/ai.c",
+        "native_address": "0x2775cc0",
+        "rebuilt_address": "0x27781c0",
+        "size": 4000,
+        "storage_contract": [
+          "array",
+          [
+            4000
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "fc19b1997119425765295aeab72d76faa6927d4f83985d328c26f20468d6cc76"
+      },
+      {
+        "name": "backup0_next_graveyard_source_id",
+        "source": "functions/ai.c",
+        "native_address": "0x2775cb4",
+        "rebuilt_address": "0x27781b4",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup0_turn_count",
+        "source": "functions/ai.c",
+        "native_address": "0x2775cb0",
+        "rebuilt_address": "0x27781b0",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup0_always_prompt_for_color",
+        "source": "functions/ai.c",
+        "native_address": "0x2775cac",
+        "rebuilt_address": "0x27781ac",
+        "size": 1,
+        "storage_contract": [
+          "scalar",
+          1,
+          6
+        ],
+        "initializer_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "name": "backup0_mulligans_complete",
+        "source": "functions/ai.c",
+        "native_address": "0x2775ca4",
+        "rebuilt_address": "0x27781a4",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            8
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "backup0_challenge_round",
+        "source": "functions/ai.c",
+        "native_address": "0x2775ca0",
+        "rebuilt_address": "0x27781a0",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup0_challenge1",
+        "source": "functions/ai.c",
+        "native_address": "0x2775c9c",
+        "rebuilt_address": "0x277819c",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup0_challenge2",
+        "source": "functions/ai.c",
+        "native_address": "0x2775c98",
+        "rebuilt_address": "0x2778198",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup0_challenge3",
+        "source": "functions/ai.c",
+        "native_address": "0x2775c94",
+        "rebuilt_address": "0x2778194",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup0_challenge4",
+        "source": "functions/ai.c",
+        "native_address": "0x2775c90",
+        "rebuilt_address": "0x2778190",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup0_counters_added",
+        "source": "functions/ai.c",
+        "native_address": "0x2775c8c",
+        "rebuilt_address": "0x277818c",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup0_counters_added_type",
+        "source": "functions/ai.c",
+        "native_address": "0x2775c88",
+        "rebuilt_address": "0x2778184",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "backup0_mana_colors_added",
+        "source": "functions/ai.c",
+        "native_address": "0x2775c80",
+        "rebuilt_address": "0x2796620",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            8
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "backup0_mana_color_override",
+        "source": "functions/ai.c",
+        "native_address": "0x2775c40",
+        "rebuilt_address": "0x27965e0",
+        "size": 64,
+        "storage_contract": [
+          "array",
+          [
+            64
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "f5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b"
+      },
+      {
+        "name": "backup0_mana_quantity_override",
+        "source": "functions/ai.c",
+        "native_address": "0x2775c00",
+        "rebuilt_address": "0x27965a0",
+        "size": 64,
+        "storage_contract": [
+          "array",
+          [
+            64
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "f5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b"
+      },
+      {
+        "name": "backup0_multi_mana_transmutation",
+        "source": "functions/ai.c",
+        "native_address": "0x2775bec",
+        "rebuilt_address": "0x2796580",
+        "size": 16,
+        "storage_contract": [
+          "array",
+          [
+            16
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb"
+      },
+      {
+        "name": "backup0_card_counts",
+        "source": "functions/ai.c",
+        "native_address": "0x2775bdc",
+        "rebuilt_address": "0x277a140",
+        "size": 14,
+        "storage_contract": [
+          "array",
+          [
+            14
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "e7ecebbc590bc88b3761fa6cd03d749f87463dabb67021a5c6768c25ec68b3f2"
+      },
+      {
+        "name": "backup0_card_flags",
+        "source": "functions/ai.c",
+        "native_address": "0x2775bd4",
+        "rebuilt_address": "0x27966cc",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            8
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "backup0_your_spells_cant_be_countered_by_color",
+        "source": "functions/ai.c",
+        "native_address": "0x2775bd0",
+        "rebuilt_address": "0x27966c8",
+        "size": 2,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7"
+      },
+      {
+        "name": "backup0_roll_extra_dice",
+        "source": "functions/ai.c",
+        "native_address": "0x2775bc8",
+        "rebuilt_address": "0x277a360",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            8
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "backup0_add_to_die_rolls",
+        "source": "functions/ai.c",
+        "native_address": "0x2775bc0",
+        "rebuilt_address": "0x277a368",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            8
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "backup0_added_subtypes_not_in_play",
+        "source": "functions/ai.c",
+        "native_address": "0x2775ac0",
+        "rebuilt_address": "0x277a160",
+        "size": 256,
+        "storage_contract": [
+          "array",
+          [
+            256
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+      },
+      {
+        "name": "hack_ai_decision_phase_upkeep",
+        "source": "functions/ai.c",
+        "native_address": "0x2775aa0",
+        "rebuilt_address": "0x2778180",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "graveyard_source",
+        "source": "functions/deck.c",
+        "native_address": "0x2794020",
+        "rebuilt_address": "0x2796720",
+        "size": 4000,
+        "storage_contract": [
+          "array",
+          [
+            2,
+            500
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "fc19b1997119425765295aeab72d76faa6927d4f83985d328c26f20468d6cc76"
+      },
+      {
+        "name": "next_graveyard_source_id",
+        "source": "functions/deck.c",
+        "native_address": "0x27212b8",
+        "rebuilt_address": "0x2722bcc",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "67abdd721024f0ff4e0b3f4c2fc13bc5bad42d0b7851d456d88d203d15aaa450"
+      },
+      {
+        "name": "gy_from_anywhere_pos",
+        "source": "functions/deck.c",
+        "native_address": "0x27212b4",
+        "rebuilt_address": "0x2722bc8",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "gy_from_anywhere_source",
+        "source": "functions/deck.c",
+        "native_address": "0x27212b0",
+        "rebuilt_address": "0x2722bc4",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "replace_milled",
+        "source": "functions/deck.c",
+        "native_address": "0x2794008",
+        "rebuilt_address": "0x2796708",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "num_cards_milled",
+        "source": "functions/deck.c",
+        "native_address": "0x2794000",
+        "rebuilt_address": "0x2796700",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "challenge_round",
+        "source": "functions/challenge_mode.c",
+        "native_address": "0x27950e0",
+        "rebuilt_address": "0x27966e0",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "unlocked",
+        "source": "functions/challenge_mode.c",
+        "native_address": "0x27b3660",
+        "rebuilt_address": "0x279a100",
+        "size": 200,
+        "storage_contract": [
+          "array",
+          [
+            50
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+      },
+      {
+        "name": "challenge1",
+        "source": "functions/challenge_mode.c",
+        "native_address": "0x2721cbc",
+        "rebuilt_address": "0x2722bbc",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "challenge2",
+        "source": "functions/challenge_mode.c",
+        "native_address": "0x2721cb8",
+        "rebuilt_address": "0x2722bb8",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "challenge3",
+        "source": "functions/challenge_mode.c",
+        "native_address": "0x2721cb4",
+        "rebuilt_address": "0x2722bb4",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "challenge4",
+        "source": "functions/challenge_mode.c",
+        "native_address": "0x2721cb0",
+        "rebuilt_address": "0x2722bb0",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "challenge_names",
+        "source": "functions/challenge_mode.c",
+        "native_address": "0x27214e0",
+        "rebuilt_address": "0x27223e0",
+        "size": 2000,
+        "storage_contract": [
+          "array",
+          [
+            40,
+            50
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "274bb225b460c4dd93cc108977c52028a33e8fb26829b424cc87059960a1db3d"
+      },
+      {
+        "name": "unlock_codes",
+        "source": "functions/challenge_mode.c",
+        "native_address": "0x2721340",
+        "rebuilt_address": "0x2722240",
+        "size": 400,
+        "storage_contract": [
+          "array",
+          [
+            40,
+            10
+          ],
+          [
+            "scalar",
+            1,
+            6
+          ]
+        ],
+        "initializer_sha256": "e32443f3234f70024ebe12a57d43084b2301aa671b991920c5d198d1cffeab03"
+      },
+      {
+        "name": "lock_ids",
+        "source": "functions/challenge_mode.c",
+        "native_address": "0x2766f40",
+        "rebuilt_address": "0x2765820",
+        "size": 200,
+        "storage_contract": [
+          "array",
+          [
+            50
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "e8b0f12397fefa93eae9db1fa4ec0680110b2d1e9ea5e98c7e655b8a70882356"
+      },
+      {
+        "name": "cd_list",
+        "source": "functions/challenge_mode.c",
+        "native_address": "0x27658a0",
+        "rebuilt_address": "0x2764180",
+        "size": 5776,
+        "storage_contract": [
+          "array",
+          [
+            1444
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "62d175efa19f4e1b07a467b50d0ebf7335b638034fa0a55c3c5a659c9a8698e3"
+      },
+      {
+        "name": "hack_allow_sorcery_if_rules_engine_is_only_effect",
+        "source": "functions/rules_engine.c",
+        "native_address": "0x2795100",
+        "rebuilt_address": "0x27989c0",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "vanguard_avatar",
+        "source": "functions/rules_engine.c",
+        "native_address": "0x2795220",
+        "rebuilt_address": "0x2798ae0",
+        "size": 80,
+        "storage_contract": [
+          "array",
+          [
+            2,
+            10
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "5b6fb58e61fa475939767d68a446f97f1bff02c0e5935a3ea8bb51e6515783d8"
+      },
+      {
+        "name": "vcount",
+        "source": "functions/rules_engine.c",
+        "native_address": "0x2795210",
+        "rebuilt_address": "0x2798ad0",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "companion",
+        "source": "functions/rules_engine.c",
+        "native_address": "0x27951c0",
+        "rebuilt_address": "0x2798a80",
+        "size": 80,
+        "storage_contract": [
+          "array",
+          [
+            2,
+            10
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "5b6fb58e61fa475939767d68a446f97f1bff02c0e5935a3ea8bb51e6515783d8"
+      },
+      {
+        "name": "ccount",
+        "source": "functions/rules_engine.c",
+        "native_address": "0x279519c",
+        "rebuilt_address": "0x2798a5c",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+      },
+      {
+        "name": "settings",
+        "source": "functions/rules_engine.c",
+        "native_address": "0x2795120",
+        "rebuilt_address": "0x27989e0",
+        "size": 124,
+        "storage_contract": [
+          "array",
+          [
+            31
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "7b8ec8dd836b564f0c85ad088fc744de820345204e154bc1503e04e9d6fdd9f1"
+      },
+      {
+        "name": "challenge",
+        "source": "functions/rules_engine.c",
+        "native_address": "0x279510c",
+        "rebuilt_address": "0x27989cc",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "rules_engine_card",
+        "source": "functions/rules_engine.c",
+        "native_address": "0x2721d50",
+        "rebuilt_address": "0x27237f0",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "12a3ae445661ce5dee78d0650d33362dec29c4f82af05e7e57fb595bbbacf0ca"
+      },
+      {
+        "name": "deadbox_card",
+        "source": "functions/rules_engine.c",
+        "native_address": "0x2721d48",
+        "rebuilt_address": "0x27237e8",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "12a3ae445661ce5dee78d0650d33362dec29c4f82af05e7e57fb595bbbacf0ca"
+      },
+      {
+        "name": "starting_life_total",
+        "source": "functions/rules_engine.c",
+        "native_address": "0x2721d40",
+        "rebuilt_address": "0x27237e0",
+        "size": 8,
+        "storage_contract": [
+          "array",
+          [
+            2
+          ],
+          [
+            "scalar",
+            4,
+            5
+          ]
+        ],
+        "initializer_sha256": "dac6ac5672b274b5d60c6c4cb995a900f467bab90b3d484b6472b7c4826e7890"
+      },
+      {
+        "name": "force_init_upkeep",
+        "source": "functions/rules_engine.c",
+        "native_address": "0x2795108",
+        "rebuilt_address": "0x27989c8",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "event_rval",
+        "source": "functions/events.c",
+        "native_address": "0x27b372c",
+        "rebuilt_address": "0x27b6704",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "raw_base_pt",
+        "source": "functions/events.c",
+        "native_address": "0x2721d64",
+        "rebuilt_address": "0x2722be8",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "67abdd721024f0ff4e0b3f4c2fc13bc5bad42d0b7851d456d88d203d15aaa450"
+      },
+      {
+        "name": "raw_characteristic_pt",
+        "source": "functions/events.c",
+        "native_address": "0x2721d60",
+        "rebuilt_address": "0x2722be4",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "67abdd721024f0ff4e0b3f4c2fc13bc5bad42d0b7851d456d88d203d15aaa450"
+      },
+      {
+        "name": "hack_silent_counters",
+        "source": "functions/counters.c",
+        "native_address": "0x279528c",
+        "rebuilt_address": "0x27966e8",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "counters_added",
+        "source": "functions/counters.c",
+        "native_address": "0x2795288",
+        "rebuilt_address": "0x27966e4",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "counters_added_type",
+        "source": "functions/counters.c",
+        "native_address": "0x2721d68",
+        "rebuilt_address": "0x2722bc0",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "ad95131bc0b799c0b1af477fb14fcf26a6a9f76079e48bf090acb7e8367bfd0e"
+      },
+      {
+        "name": "can_block_target_player",
+        "source": "functions/abilities.c",
+        "native_address": "0x2795298",
+        "rebuilt_address": "0x2778168",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      },
+      {
+        "name": "can_block_target_card",
+        "source": "functions/abilities.c",
+        "native_address": "0x2795294",
+        "rebuilt_address": "0x2778164",
+        "size": 4,
+        "storage_contract": [
+          "scalar",
+          4,
+          5
+        ],
+        "initializer_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      }
+    ],
+    "remaining_partial_argument_signal_resolution": "Prismatic Vista query event 0x73 reaches mana_producer unchanged when mana colors exist, or the same generic activation query otherwise. Static native/current constant-call multisets differ because query and activation tails are folded differently; no source edit is made."
+  },
+  "scope": "Source reconstruction of one existing helper with 75 combined/half-card mappings, not 75 new handlers or a gameplay bug fix. Native names and numeric values come from release DWARF; exhaustive execution covers the recorded card-ID domain, not arbitrary whole-gameplay behavior.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "6e5b893eb30a3f359b6cfd434f9250883ff15e312f784ec256eeb3dea87426f9",
+    "dbg_sha256": "22fc3b75a599b32110e3618313826df09e899f4e5c1286dbf9d020f3df241136",
+    "address": "0x268ab10",
+    "size": 2777,
+    "body_sha256": "7097761fc58262a8eeca61b7a10205c45b770c9a6add1f86cb06140b27fa1420",
+    "native_execution_cases": 983145,
+    "actual_rebuilt_dll_checked": true,
+    "standalone_named_source_checked": true,
+    "harness_sha256": "3924a237a1b889b702a58dec94a051e9496c37c0176b0923338fc6ad857cca34",
+    "harness_executable_sha256": "11a7766e3bcfa0b11923d49d8a70a079659cc82c1e820481f86c3e08899aa177",
+    "execution_log_sha256": "4c96df54ae59b0f8aaab4a5d20089dceffe5ae2fea05c159921c1ab1e0ac3c56",
+    "full_file_projection": "passed",
+    "staging": "preserved"
+  }
+}

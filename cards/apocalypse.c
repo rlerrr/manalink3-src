@@ -324,11 +324,11 @@ static int ap_disciples(int player, int card, event_t event, color_test_t colors
         weaken_priority = 1;
         black_cost_or_result = (unsigned int)(current_phase == 0x18) * 9 + 1;
       }
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\004", "Give -2/-0",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_OMIT_ILLEGAL, "Give -2/-0",
                            black_available, weaken_priority, "Give Flying", blue_available,
                            black_cost_or_result, "Get mana", green_available, 1, "Give +2/+0",
                            red_available, black_cost_or_result, "Prevent damage", white_available,
-                           (-(unsigned int)(white_available == 0) & 0xffffffcf) + 0x32, 0, 0, 0, 0);
+                           ((white_available == 0) ? 1U : 50U), 0, 0, 0, 0);
       if (choice == 0)
       {
         spell_fizzled = 1;
@@ -783,14 +783,14 @@ int card_order_chaos(int player, int card, event_t event)
   if (event == EVENT_MODIFY_COST)
   {
     default_target_definition(player, card, &td, 2);
-    td.required_state = 2;
+    td.required_state = TARGET_STATE_ATTACKING;
     generic_split_card(player, card, EVENT_MODIFY_COST, 0x4b1b, can_target(&td), 5, 0x4adb, 1, 10);
     return 0;
   }
   if (event == EVENT_PLAY_FIRST_HALF)
   {
     default_target_definition(player, card, &td, 2);
-    td.required_state = 2;
+    td.required_state = TARGET_STATE_ATTACKING;
     new_pick_target(&td, "Select target attacking creature.", 0, 0x81);
     return 0;
   }
@@ -800,7 +800,7 @@ int card_order_chaos(int player, int card, event_t event)
       event != EVENT_CHANGE_TARGET)
     return 0;
   default_target_definition(player, card, &td, 2);
-  td.required_state = 2;
+  td.required_state = TARGET_STATE_ATTACKING;
   chaos_priority = 8;
   order_priority = 5;
   if (event == EVENT_RESOLVE_SPELL)
@@ -1326,7 +1326,7 @@ int card_fire_ice(int player, int card, event_t event)
   if (event == EVENT_MODIFY_COST)
   {
     default_target_definition(player, card, &td, 2);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_target_definition(player, card, &td2, 0x47);
     ice_priority_or_target_card = can_target(&td2);
     generic_split_card(player, card, EVENT_MODIFY_COST, 0x4aff, can_target(&td), 10, 0x4b07,
@@ -1337,7 +1337,7 @@ int card_fire_ice(int player, int card, event_t event)
   {
     instance->number_of_targets = '\0';
     default_target_definition(player, card, &td2, 0x102);
-    td2.zone = 0x1200;
+    td2.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     ice_priority_or_target_card = pick_target(&td2, "TARGET_ANY");
     if (ice_priority_or_target_card != 0)
     {
@@ -1364,7 +1364,7 @@ int card_fire_ice(int player, int card, event_t event)
       event != EVENT_CHANGE_TARGET)
     return 0;
   default_target_definition(player, card, &td, 2);
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   default_target_definition(player, card, &td2, 0x47);
   ice_priority_or_target_card = 5;
   if (event == EVENT_RESOLVE_SPELL)
@@ -1387,7 +1387,7 @@ int card_fire_ice(int player, int card, event_t event)
   }
   else if (event == EVENT_CAST_SPELL && card == affected_card &&
            player == affected_card_controller && current_turn != player)
-    ice_priority_or_target_card = ((current_phase < 0x17) - 1 & 0xfffffff6) + 0xf;
+    ice_priority_or_target_card = ((current_phase < 0x17) ? 15U : 5U);
   fire_target_definition = &td;
   ice_available = can_target(&td2);
   can_play_first_half = can_target(fire_target_definition);
@@ -1622,7 +1622,7 @@ int card_grave_defiler( int player, int card, event_t event){
 	return regeneration(player, card, event, MANACOST_XB(1, 1));
 }
 
-static int check_deck_for_test(int player, test_definition_t *test){
+int check_deck_for_test(int player, test_definition_t *test){
 	int i;
 	int test_result = new_get_test_score(test);
 	for(i = 0; i < 500 && deck_ptr[player][i] != -1; i++){
@@ -2303,8 +2303,8 @@ Whenever a creature attacks or blocks, ~ deals 2 damage to it. */
 	    card_instance_t* instance = get_card_instance(player, card);
 	    int i;
 	    for (i = instance->info_slot - 1; i >= 0; --i){
-	        int c = ((unsigned char*)&instance->targets[2].player)[i];
-	        if (in_play(current_turn, c)){ damage_creature(current_turn, c, 2, player, card); }
+	        unsigned char *attackers = (unsigned char *)&instance->targets[2].player;
+	        if (in_play(current_turn, attackers[i])){ damage_creature(current_turn, attackers[i], 2, player, card); }
 	    }
 	}
 	if (event == EVENT_DECLARE_BLOCKERS){
@@ -2314,8 +2314,8 @@ Whenever a creature attacks or blocks, ~ deals 2 damage to it. */
 	    }
 	}
 	if (event == EVENT_CHECK_PUMP && current_phase < 0x16){
-	    pumpable_toughness[player] -= 2;
-	    pumpable_toughness[1-player] -= 2;
+	    pumpable_toughness[current_turn] -= 2;
+	    pumpable_toughness[1-current_turn] -= 2;
 	}
 	return global_enchantment(player, card, event);
 }
@@ -3020,7 +3020,7 @@ int card_whirlpool_rider(int player, int card, event_t event);
 int card_credit_voucher(int player, int card, event_t event)
 {
   int result;
-  int card_00;
+  int selected;
   test_definition_t test;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
@@ -3031,10 +3031,10 @@ int card_credit_voucher(int player, int card, event_t event)
       result = 0;
       do
       {
-        card_00 = new_select_a_card(player, player, 4, 0, 2, -1, &test);
-        if (card_00 < 0)
+        selected = new_select_a_card(player, player, 4, 0, 2, -1, &test);
+        if (selected < 0)
           break;
-        put_on_top_of_deck(player, card_00);
+        put_on_top_of_deck(player, selected);
         result = result + 1;
       } while (hand_count[player] != 0);
     }
@@ -3111,8 +3111,7 @@ int card_whirlpool_warrior(int player, int card, event_t event)
     draw_cards(player_00, result);
     return 0;
   }
-  result = generic_activated_ability(player, card, event, 8, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 8, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
 }
 
 

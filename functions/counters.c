@@ -357,16 +357,16 @@ int get_counter_type_by_id(int csvid)
   case CARD_ID_THE_MIRARI_CONJECTURE:
   case CARD_ID_TIME_OF_ICE:
   case CARD_ID_TRIUMPH_OF_GERRARD:
-  case 0x5208:
-  case 0x520a:
-  case 0x5239:
-  case 0x5244:
-  case 0x52a6:
-  case 0x52a7:
-  case 0x52a8:
-  case 0x52a9:
-  case 0x52aa:
-  case 0x52b5:
+  case CARD_ID_ELSPETH_CONQUERS_DEATH:
+  case CARD_ID_ELSPETHS_NIGHTMARE:
+  case CARD_ID_KIORA_BESTS_THE_SEA_GOD:
+  case CARD_ID_MEDOMAIS_PROPHECY:
+  case CARD_ID_THE_AKROAN_WAR:
+  case CARD_ID_THE_BINDING_OF_THE_TITANS:
+  case CARD_ID_THE_BIRTH_OF_MELETIS:
+  case CARD_ID_THE_FIRST_IROAN_GAMES:
+  case CARD_ID_THE_TRIUMPH_OF_ANAX:
+  case CARD_ID_TYMARET_CALLS_THE_DEAD:
     return COUNTER_LORE;
   case CARD_ID_AJANI_GOLDMANE:
   case CARD_ID_CHANDRA_NALAAR:
@@ -485,71 +485,71 @@ int get_counter_type_by_id(int csvid)
   case CARD_ID_RAL_IZZET_VICEROY:
   case CARD_ID_VRASKA_GOLGARI_QUEEN:
   case CARD_ID_DOVIN_GRAND_ARBITER:
-  case 0x4d5b:
-  case 0x4d5d:
-  case 0x4d60:
-  case 0x4d62:
-  case 0x4d7c:
-  case 0x4d87:
-  case 0x4d90:
-  case 0x4d92:
-  case 0x4dab:
-  case 0x4dc2:
-  case 0x4dd0:
-  case 0x4dd2:
-  case 0x4dd3:
-  case 0x4dd5:
-  case 0x4dd9:
-  case 0x4ddb:
-  case 0x4de5:
-  case 0x4df4:
-  case 0x4df6:
-  case 0x4df9:
-  case 0x4dfb:
-  case 0x4e01:
-  case 0x4e0d:
-  case 0x4e18:
-  case 0x4e1a:
-  case 0x4e1b:
-  case 0x4e23:
-  case 0x4e30:
-  case 0x4e32:
-  case 0x4e35:
-  case 0x4e36:
-  case 0x4e38:
-  case 0x4e3c:
-  case 0x4e47:
-  case 0x4e4d:
-  case 0x4e51:
-  case 0x4ee8:
-  case 0x4f29:
-  case 0x4f32:
-  case 0x4f51:
-  case 0x4f52:
-  case 0x4f55:
-  case 0x4f98:
-  case 0x4fbc:
-  case 0x4fd0:
-  case 0x5084:
-  case 0x50d2:
-  case 0x51e0:
-  case 0x51eb:
-  case 0x520b:
-  case 0x5356:
-  case 0x53b8:
-  case 0x5568:
-  case 0x55a2:
-  case 0x55a9:
-  case 0x567e:
-  case 0x56c4:
-  case 0x58ae:
-  case 0x58cc:
-  case 0x58e9:
-  case 0x5901:
-  case 0x5902:
-  case 0x59d8:
-  case 0x5a06:
-  case 0x5a13:
+  case CARD_ID_AJANI_THE_GREATHEARTED:
+  case CARD_ID_ANGRATH_CAPTAIN_OF_CHAOS:
+  case CARD_ID_ARLINN_VOICE_OF_THE_PACK:
+  case CARD_ID_ASHIOK_DREAM_RENDER:
+  case CARD_ID_CHANDRA_FIRE_ARTISAN:
+  case CARD_ID_DAVRIEL_ROGUE_SHADOWMAGE:
+  case CARD_ID_DOMRI_ANARCH_OF_BOLAS:
+  case CARD_ID_DOVIN_HAND_OF_CONTROL:
+  case CARD_ID_GIDEON_BLACKBLADE:
+  case CARD_ID_HUATLI_THE_SUNS_HEART:
+  case CARD_ID_JACE_WIELDER_OF_MYSTERIES:
+  case CARD_ID_JAYA_VENERATED_FIREMAGE:
+  case CARD_ID_JIANG_YANGGU_WILDCRAFTER:
+  case CARD_ID_KARN_THE_GREAT_CREATOR:
+  case CARD_ID_KAYA_BANE_OF_THE_DEAD:
+  case CARD_ID_KIORA_BEHEMOTH_BECKONER:
+  case CARD_ID_LILIANA_DREADHORDE_GENERAL:
+  case CARD_ID_NAHIRI_STORM_OF_STONE:
+  case CARD_ID_NARSET_PARTER_OF_VEILS:
+  case CARD_ID_NICOL_BOLAS_DRAGON_GOD:
+  case CARD_ID_NISSA_WHO_SHAKES_THE_WORLD:
+  case CARD_ID_OB_NIXILIS_THE_HATE_TWISTED:
+  case CARD_ID_RAL_STORM_CONDUIT:
+  case CARD_ID_SAHEELI_SUBLIME_ARTIFICER:
+  case CARD_ID_SAMUT_TYRANT_SMASHER:
+  case CARD_ID_SARKHAN_THE_MASTERLESS:
+  case CARD_ID_SORIN_VENGEFUL_BLOODLORD:
+  case CARD_ID_TAMIYO_COLLECTOR_OF_TALES:
+  case CARD_ID_TEFERI_TIME_RAVELER:
+  case CARD_ID_TEYO_THE_SHIELDMAGE:
+  case CARD_ID_TEZZERET_MASTER_OF_THE_BRIDGE:
+  case CARD_ID_THE_WANDERER:
+  case CARD_ID_TIBALT_RAKISH_INSTIGATOR:
+  case CARD_ID_UGIN_THE_INEFFABLE:
+  case CARD_ID_VIVIEN_CHAMPION_OF_THE_WILDS:
+  case CARD_ID_VRASKA_SWARMS_EMINENCE:
+  case CARD_ID_SERRA_THE_BENEVOLENT:
+  case CARD_ID_WRENN_AND_SIX:
+  case CARD_ID_AJANI_STRENGTH_OF_THE_PRIDE:
+  case CARD_ID_CHANDRA_ACOLYTE_OF_FLAME:
+  case CARD_ID_CHANDRA_AWAKENED_INFERNO:
+  case CARD_ID_CHANDRA_NOVICE_PYROMANCER:
+  case CARD_ID_MU_YANLING_SKY_DANCER:
+  case CARD_ID_SORIN_IMPERIOUS_BLOODLORD:
+  case CARD_ID_VIVIEN_ARKBOW_RANGER:
+  case CARD_ID_GARRUK_CURSED_HUNTSMAN:
+  case CARD_ID_OKO_THIEF_OF_CROWNS:
+  case CARD_ID_ASHIOK_NIGHTMARE_MUSE:
+  case CARD_ID_CALIX_DESTINYS_HAND:
+  case CARD_ID_ELSPETH_SUNS_NEMESIS:
+  case CARD_ID_LUKKA_COPPERCOAT_OUTCAST:
+  case CARD_ID_VIVIEN_MONSTERS_ADVOCATE:
+  case CARD_ID_JACE_MIRROR_MAGE:
+  case CARD_ID_NAHIRI_HEIR_OF_THE_ANCIENTS:
+  case CARD_ID_NISSA_OF_SHADOWED_BOUGHS:
+  case CARD_ID_JESKA_THRICE_REBORN:
+  case CARD_ID_TEVESH_SZAT_DOOM_OF_FOOLS:
+  case CARD_ID_KASMINA_ENIGMA_SAGE:
+  case CARD_ID_LUKKA_WAYWARD_BONDER:
+  case CARD_ID_PROFESSOR_ONYX:
+  case CARD_ID_ROWAN_SCHOLAR_OF_SPARKS:
+  case CARD_ID_WILL_SCHOLAR_OF_FROST:
+  case CARD_ID_DAKKON_SHADOW_SLAYER:
+  case CARD_ID_GEYADRONE_DIHADA:
+  case CARD_ID_GRIST_THE_HUNGER_TIDE:
     return COUNTER_LOYALTY;
   case CARD_ID_CHANCE_ENCOUNTER:
   case CARD_ID_GEMSTONE_CAVERNS:
@@ -749,7 +749,7 @@ int get_counter_type_by_id(int csvid)
   case CARD_ID_SHIVAN_SAND_MAGE:
   case CARD_ID_SOULTETHER_GOLEM:
   case CARD_ID_AS_FORETOLD:
-  case 0x4ebe:
+  case CARD_ID_MOX_TANTALITE:
     return COUNTER_TIME;
   case CARD_ID_HELIX_PINNACLE:
     return COUNTER_TOWER;
@@ -768,7 +768,7 @@ int get_counter_type_by_id(int csvid)
   case CARD_ID_VILE_REQUIEM:
   case CARD_ID_WAR_DANCE:
   case CARD_ID_YISAN_THE_WANDERER_BARD:
-  case 0x4e60:
+  case CARD_ID_ARIA_OF_FLAME:
     return COUNTER_VERSE;
   case CARD_ID_LIVING_ARTIFACT:
     return COUNTER_VITALITY;
@@ -781,7 +781,7 @@ int get_counter_type_by_id(int csvid)
     return COUNTER_WIND;
   case CARD_ID_DJINN_OF_WISHES:
   case CARD_ID_RING_OF_THREE_WISHES:
-  case 0x5142:
+  case CARD_ID_WISHCLAW_TALISMAN:
     return COUNTER_WISH;
   case CARD_ID_BLACK_MANA_BATTERY:
   case CARD_ID_BLUE_MANA_BATTERY:
@@ -889,16 +889,16 @@ int get_counter_type_by_id(int csvid)
     return COUNTER_PREY;
   case CARD_ID_ARIXMETHES_SLUMBERING_ISLE:
     return COUNTER_SLUMBER;
-  case 0x5127:
+  case CARD_ID_THE_MAGIC_MIRROR:
     return COUNTER_KNOWLEDGE;
-  case 0x5226:
+  case CARD_ID_HELIODS_PUNISHMENT:
     return COUNTER_TASK;
-  case 0x5374:
+  case CARD_ID_OMINOUS_SEAS:
     return COUNTER_FORESHADOW;
-  case 0x5481:
+  case CARD_ID_NINE_LIVES:
     return COUNTER_INCARNATION;
-  case 0x53f5:
-  case 0x5478:
+  case CARD_ID_NETHERBORN_ALTAR:
+  case CARD_ID_MALEFIC_SCYTHE:
     return COUNTER_SOUL;
   default:
     return -1;
@@ -963,16 +963,10 @@ void get_special_counters_name(char *dest, int csvid, int num)
 // unaffected by doubling effects; num may be positive or negative
 void add_counters_as_cost(int player, int card, counter_t type, int num)
 {
-  if (0 < num)
-  {
+  if (num > 0)
     num = get_updated_counters_number_as_cost(player, card, type, num);
-  }
-  if (num == 0)
-  {
-    return;
-  }
-  add_or_remove_counters_impl(player, card, player, card, type, num);
-  return;
+  if (num != 0)
+    add_or_remove_counters_impl(player, card, player, card, type, num);
 }
 
 // num must be > 0, or no effect
@@ -1104,7 +1098,7 @@ int has_any_counters(int player, counter_t counter_type, type_t type)
  * counters on a Grizzly Bears; is very slightly in favor of adding a second (or third, etc.) Eon counter to a Magosi, the Waterveil it controls; is very
  * slightly against adding a second (or third, etc.) Eon counter to a Magosi, the Waterveil the human player controls; is very, very much against removing an
  * Eon counter from its own Magosi, the Waterveil; and is very, very much in favor of removing an Eon counter from the human player's Magosi, the Waterveil. */
-static int raw_counter_value(int player, int t_player, int t_card, counter_t counter_type,
+int raw_counter_value(int player, int t_player, int t_card, counter_t counter_type,
                              int adding)
 {
   card_instance_t *instance;
@@ -1128,157 +1122,48 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
   switch (counter_type)
   {
   case COUNTER_P1_P1:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
     }
-    if (csvid == 0x2367)
+    switch (csvid)
     {
+    case CARD_ID_TETRAVUS:
+    case CARD_ID_TRISKELION:
+    case CARD_ID_SPIKE_FEEDER:
+    case CARD_ID_SPIKE_WEAVER:
+    case CARD_ID_WORKHORSE:
+    case CARD_ID_MOLTEN_HYDRA:
+    case CARD_ID_CANOPY_CRAWLER:
+    case CARD_ID_PENTAVUS:
+    case CARD_ID_ETCHED_ORACLE:
+    case CARD_ID_TWILIGHT_DROVER:
+    case CARD_ID_ULASHT_THE_HATE_SEED:
+    case CARD_ID_TRISKELAVUS:
+    case CARD_ID_ASHLING_THE_PILGRIM:
+    case CARD_ID_FERTILID:
+    case CARD_ID_FESTERCREEP:
+    case CARD_ID_SHINEWEND:
+    case CARD_ID_MYCOLOTH:
+    case CARD_ID_APOCALYPSE_HYDRA:
+    case CARD_ID_DEATHBRINGER_THOCTAR:
+    case CARD_ID_JORAGA_WARCALLER:
+    case CARD_ID_THOUGHT_GORGER:
+    case CARD_ID_ANIMAR_SOUL_OF_ELEMENTS:
+    case CARD_ID_VISH_KAL_BLOOD_ARBITER:
+    case CARD_ID_MIKAEUS_THE_LUNARCH:
+    case CARD_ID_HERALD_OF_WAR:
+    case CARD_ID_GYRE_SAGE:
       return 7300;
-    }
-    if (csvid < 0x2368)
-    {
-      if (csvid == 0x18cb)
-      {
-        return 7300;
-      }
-      if (csvid < 0x18cc)
-      {
-        if (csvid == 0xdf2)
-        {
-          return 7300;
-        }
-        if (csvid < 0xdf3)
-        {
-          if (csvid == 0xd66)
-          {
-            return 7300;
-          }
-          if ((csvid - 0x216 & 0xfffb) == 0)
-          {
-            return 7300;
-          }
-        }
-        else
-        {
-          if (csvid == 0xe02)
-          {
-            return 7300;
-          }
-          if (csvid == 0xfb5)
-          {
-            return 7300;
-          }
-        }
-      }
-      else
-      {
-        if (csvid == 0x1f39)
-        {
-          return 7300;
-        }
-        if (csvid < 0x1f3a)
-        {
-          if (csvid == 0x1a63)
-          {
-            return 7300;
-          }
-          if (csvid == 0x1b89)
-          {
-            return 7300;
-          }
-        }
-        else
-        {
-          if (csvid == 0x1fd9)
-          {
-            return 7300;
-          }
-          if (csvid == 0x2206)
-          {
-            return 7300;
-          }
-        }
-      }
-    }
-    else
-    {
-      if (csvid == 0x2b36)
-      {
-        return 7300;
-      }
-      if (csvid < 0x2b37)
-      {
-        if (csvid == 0x277c)
-        {
-          return 7300;
-        }
-        if (csvid < 0x277d)
-        {
-          if (csvid == 0x24d7)
-          {
-            return 7300;
-          }
-          if (csvid < 0x24d8)
-          {
-            if ((uint16_t)(csvid + 0xdb77) < 2)
-            {
-              return 7300;
-            }
-          }
-          else if (csvid == 0x2722)
-          {
-            return 7300;
-          }
-        }
-        else
-        {
-          if (csvid == 0x2810)
-          {
-            return 7300;
-          }
-          if (csvid == 0x2a1f)
-          {
-            return 7300;
-          }
-        }
-      }
-      else
-      {
-        if (csvid == 0x2ef6)
-        {
-          return 7300;
-        }
-        if (csvid < 0x2ef7)
-        {
-          if (csvid == 0x2de7)
-          {
-            return 7300;
-          }
-          if (csvid == 0x2df5)
-          {
-            return 7300;
-          }
-        }
-        else
-        {
-          if (csvid == 0x306c)
-          {
-            return 7300;
-          }
-          if (csvid == 0x32aa)
-          {
-            return 7300;
-          }
-        }
-      }
+    default:
+      break;
     }
     result = check_special_flags(t_player, t_card, 0x8000);
-    value = (-(unsigned int)(result == 0) & 0xffffe82c) + 0x1c84;
+    value = (result == 0) ? 1200 : 7300;
     break;
   case COUNTER_M1_M1:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1286,7 +1171,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = -3200;
     break;
   case COUNTER_P0_P1:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1294,7 +1179,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = 150;
     break;
   case COUNTER_P0_P2:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1302,7 +1187,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = 300;
     break;
   case COUNTER_P1_P0:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1310,7 +1195,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = 600;
     break;
   case COUNTER_P1_P2:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1318,7 +1203,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = 1800;
     break;
   case COUNTER_P2_P0:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1326,7 +1211,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = 2400;
     break;
   case COUNTER_P2_P2:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1334,7 +1219,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = 4800;
     break;
   case COUNTER_M0_M1:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1342,7 +1227,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = -1600;
     break;
   case COUNTER_M0_M2:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1350,7 +1235,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = -7200;
     break;
   case COUNTER_M1_M0:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1358,7 +1243,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = -1563;
     break;
   case COUNTER_M2_M1:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1366,7 +1251,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = -4800;
     break;
   case COUNTER_M2_M2:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -1375,7 +1260,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_AGE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0xd)
+    if (result != COUNTER_AGE)
     {
       return 0;
     }
@@ -1383,7 +1268,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_AIM:
     result = get_counter_type_by_instance(instance);
-    if (result != 0xe)
+    if (result != COUNTER_AIM)
     {
       return 0;
     }
@@ -1391,7 +1276,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_ARROW:
     result = get_counter_type_by_instance(instance);
-    if (result != 0xf)
+    if (result != COUNTER_ARROW)
     {
       return 0;
     }
@@ -1399,14 +1284,14 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_ARROWHEAD:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x10)
+    if (result != COUNTER_ARROWHEAD)
     {
       return 0;
     }
     value = 490;
     break;
   case COUNTER_AWAKENING:
-    result = is_what(t_player, t_card, 1);
+    result = is_what(t_player, t_card, TYPE_LAND);
     if (result == 0)
     {
       return 0;
@@ -1415,48 +1300,48 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_BLAZE:
     result = get_counter_type_by_instance(instance);
-    if (result == 0x12)
+    if (result == COUNTER_BLAZE)
     {
       value = 52;
     }
     else
     {
-      result = is_what(t_player, t_card, 1);
+      result = is_what(t_player, t_card, TYPE_LAND);
       if (result == 0)
       {
         return 0;
       }
-      value = (-(unsigned int)(adding == 0) & 0xfffffe73) - 4;
+      value = (adding == 0) ? -401 : -4;
     }
     break;
   case COUNTER_BLOOD:
-    if (csvid == 0x1e60)
+    if (csvid == CARD_ID_BLOODLETTER_QUILL)
     {
       value = -160;
     }
     else
     {
-      value = (csvid != 0x204f) - 1 & 0x2260;
+      value = (csvid != CARD_ID_RAKDOS_RITEKNIFE) ? 0 : 8800;
     }
     break;
   case COUNTER_BOUNTY:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
     }
-    return (-(unsigned int)(adding == 0) & 0xfffffdad) - 6;
+    return (adding == 0) ? -601 : -6;
   case COUNTER_BRIBERY:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
     }
-    value = (-(unsigned int)(adding == 0) & 0xfffffd4a) - 7;
+    value = (adding == 0) ? -701 : -7;
     break;
   case COUNTER_CARRION:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x16)
+    if (result != COUNTER_CARRION)
     {
       return 0;
     }
@@ -1464,7 +1349,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_CHIP:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x17)
+    if (result != COUNTER_CHIP)
     {
       return 0;
     }
@@ -1472,7 +1357,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_CORPSE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x18)
+    if (result != COUNTER_CORPSE)
     {
       return 0;
     }
@@ -1480,7 +1365,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_CREDIT:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x19)
+    if (result != COUNTER_CREDIT)
     {
       return 0;
     }
@@ -1488,7 +1373,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_CUBE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x1a)
+    if (result != COUNTER_CUBE)
     {
       return 0;
     }
@@ -1496,7 +1381,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_CURRENCY:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x1b)
+    if (result != COUNTER_CURRENCY)
     {
       return 0;
     }
@@ -1504,14 +1389,14 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_DEATH:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x1c)
+    if (result != COUNTER_DEATH)
     {
       return 0;
     }
-    value = (-(unsigned int)(adding == 0) & 0xffffec7c) - 5;
+    value = (adding == 0) ? -5001 : -5;
     break;
   case COUNTER_DELAY:
-    if (csvid == 0x159f)
+    if (csvid == CARD_ID_DELAYING_SHIELD)
     {
       value = -850;
     }
@@ -1521,7 +1406,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
       {
         return 0;
       }
-      if (instance->display_pic_csv_id != 0xc41)
+      if (instance->display_pic_csv_id != CARD_ID_ERTAIS_MEDDLING)
       {
         return 0;
       }
@@ -1529,47 +1414,26 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     }
     break;
   case COUNTER_DEPLETION:
-    result = get_counter_type_by_instance(instance);
-    if (result != 0x1e)
-    {
+    if (get_counter_type_by_instance(instance) != COUNTER_DEPLETION)
       return 0;
-    }
-    if (csvid == 0x196a)
+    switch (csvid)
     {
-      value = -9999;
+    case CARD_ID_HICKORY_WOODLOT:
+    case CARD_ID_PEAT_BOG:
+    case CARD_ID_REMOTE_FARM:
+    case CARD_ID_SANDSTONE_NEEDLE:
+    case CARD_ID_SAPRAZZAN_SKERRY:
+      return 480;
+    case CARD_ID_DECREE_OF_SILENCE:
+      return -9999;
+    case CARD_ID_FORCE_BUBBLE:
+      return -540;
+    default:
+      return -350;
     }
-    else if (csvid < 0x196b)
-    {
-      if (csvid < 0x11f7)
-      {
-        if (0x11d7 < csvid)
-        {
-          return (-(unsigned int)((1U << ((char)csvid + 0x28U & 0x1f) & 0x40400001U) == 0) &
-                  0xfffffcc2) +
-                 0x1e0;
-        }
-        if (csvid == 0x1188)
-        {
-          value = 480;
-        }
-        else
-        {
-          value = ((csvid == 0x11c6) - 1 & 0xfffffcc2) + 0x1e0;
-        }
-      }
-      else
-      {
-        value = -350;
-      }
-    }
-    else
-    {
-      value = ((csvid != 0x1981) - 1 & 0xffffff42) - 0x15e;
-    }
-    break;
   case COUNTER_DESPAIR:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x1f)
+    if (result != COUNTER_DESPAIR)
     {
       return 0;
     }
@@ -1577,7 +1441,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_DEVOTION:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x20)
+    if (result != COUNTER_DEVOTION)
     {
       return 0;
     }
@@ -1585,32 +1449,32 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_DIVINITY:
     result = get_counter_type_by_instance(instance);
-    if (result == 0x21)
+    if (result == COUNTER_DIVINITY)
     {
       value = 9600;
     }
     else
     {
-      value = (-(unsigned int)(adding == 0) & 0x1f3c) + 5;
+      value = (adding == 0) ? 8001 : 5;
     }
     break;
   case COUNTER_DOOM:
-    if ((csvid == 0x1d7) && (life[1 - player] < life[player]))
+    if ((csvid == CARD_ID_ARMAGEDDON_CLOCK) && (life[1 - player] < life[player]))
     {
       value = 13;
     }
     else
     {
-      value = (-(unsigned int)(adding == 0) & 0xfffffce7) - 8;
+      value = (adding == 0) ? -801 : -8;
     }
     break;
   case COUNTER_DREAM:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x23)
+    if (result != COUNTER_DREAM)
     {
       return 0;
     }
-    if (((csvid == 0x2fa) && (adding != 0)) &&
+    if (((csvid == CARD_ID_RASPUTIN_DREAMWEAVER) && (adding != 0)) &&
         (result = count_counters(t_player, t_card, COUNTER_DREAM), 6 < result))
     {
       return 0;
@@ -1619,7 +1483,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_ECHO:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x24)
+    if (result != COUNTER_ECHO)
     {
       return 0;
     }
@@ -1627,7 +1491,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_ELIXIR:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x25)
+    if (result != COUNTER_ELIXIR)
     {
       return 0;
     }
@@ -1635,7 +1499,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_VORTEX:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x26)
+    if (result != COUNTER_VORTEX)
     {
       return 0;
     }
@@ -1643,15 +1507,15 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_EON:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x27)
+    if (result != COUNTER_EON)
     {
       return 0;
     }
-    value = (-(unsigned int)(adding == 0) & 0x2325) + 4;
+    value = (adding == 0) ? 9001 : 4;
     break;
   case COUNTER_EYEBALL:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x28)
+    if (result != COUNTER_EYEBALL)
     {
       return 0;
     }
@@ -1659,16 +1523,16 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_FADE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x29)
+    if (result != COUNTER_FADE)
     {
       return 0;
     }
-    if (csvid == 0x127a)
+    if (csvid == CARD_ID_PARALLAX_DEMENTIA)
     {
       value = 9200;
       if ((int)instance->damage_target_player == 1 - player)
       {
-        value = ((t_player != player) - 1 & 0xffffb1e6) + 0x270d;
+        value = (t_player != player) ? 9997 : -9997;
       }
     }
     else
@@ -1683,18 +1547,18 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_FEATHER:
     result = get_counter_type_by_instance(instance);
-    if (result == 0x2b)
+    if (result == COUNTER_FEATHER)
     {
       value = 8600;
     }
     else
     {
-      value = (-(unsigned int)(adding == 0) & 0x2b6) + 7;
+      value = (adding == 0) ? 701 : 7;
     }
     break;
   case COUNTER_FILIBUSTER:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x2c)
+    if (result != COUNTER_FILIBUSTER)
     {
       return 0;
     }
@@ -1702,11 +1566,11 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_FLAME:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x2d)
+    if (result != COUNTER_FLAME)
     {
       return 0;
     }
-    value = ((t_player != player) - 1 & 0xfffffaec) + 0x28a;
+    value = (t_player != player) ? 650 : -650;
     break;
   case COUNTER_FLOOD:
     if (adding != 0)
@@ -1720,7 +1584,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_FUNK:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x30)
+    if (result != COUNTER_FUNK)
     {
       return 0;
     }
@@ -1728,13 +1592,13 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_FUSE:
     result = get_counter_type_by_instance(instance);
-    if (result == 0x31)
+    if (result == COUNTER_FUSE)
     {
       value = 400;
     }
     else
     {
-      result = is_what(t_player, t_card, 2);
+      result = is_what(t_player, t_card, TYPE_CREATURE);
       if (result == 0)
       {
         return 0;
@@ -1746,24 +1610,24 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = -210;
     break;
   case COUNTER_GOLD:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
     }
-    value = (-(unsigned int)(adding == 0) & 0xffffe892) - 3;
+    value = (adding == 0) ? -6001 : -3;
     break;
   case COUNTER_GROWTH:
     result = get_counter_type_by_instance(instance);
-    if (result == 0x34)
+    if (result == COUNTER_GROWTH)
     {
       return 0;
     }
-    value = ((csvid == 0x1042) - 1 & 0xfffffe2f) + 0x1e0;
+    value = (csvid == CARD_ID_MOMENTUM) ? 480 : 15;
     break;
   case COUNTER_HATCHLING:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x35)
+    if (result != COUNTER_HATCHLING)
     {
       return 0;
     }
@@ -1771,7 +1635,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_HEALING:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x36)
+    if (result != COUNTER_HEALING)
     {
       return 0;
     }
@@ -1779,7 +1643,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_HOOFPRINT:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x37)
+    if (result != COUNTER_HOOFPRINT)
     {
       return 0;
     }
@@ -1789,7 +1653,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     if (adding == 0)
     {
       result = is_tapped(t_player, t_card);
-      value = (-(unsigned int)(result == 0) & 0x7c8) - 0x7d1;
+      value = (result == 0) ? -9 : -2001;
     }
     else
     {
@@ -1798,7 +1662,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_HUNGER:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x39)
+    if (result != COUNTER_HUNGER)
     {
       return 0;
     }
@@ -1806,29 +1670,29 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_HUSK:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x3a)
+    if (result != COUNTER_HUSK)
     {
       return 0;
     }
     value = 8100;
     break;
   case COUNTER_ICE:
-    if (csvid == 0x20a4)
+    if (csvid == CARD_ID_DARK_DEPTHS)
     {
       value = -330;
     }
-    else if (csvid == 0x2117)
+    else if (csvid == CARD_ID_WOOLLY_RAZORBACK)
     {
       value = -230;
     }
     else
     {
-      value = ((csvid == 0x7b7) - 1 & 0xffffffae) + 0x50;
+      value = (csvid == CARD_ID_ICEBERG) ? 80 : -2;
     }
     break;
   case COUNTER_INFECTION:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x3c)
+    if (result != COUNTER_INFECTION)
     {
       return 0;
     }
@@ -1836,7 +1700,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_INTERVENTION:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x3d)
+    if (result != COUNTER_INTERVENTION)
     {
       return 0;
     }
@@ -1844,7 +1708,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_JAVELIN:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x3e)
+    if (result != COUNTER_JAVELIN)
     {
       return 0;
     }
@@ -1852,7 +1716,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_KI:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x3f)
+    if (result != COUNTER_KI)
     {
       return 0;
     }
@@ -1929,14 +1793,14 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     return result;
   case COUNTER_LORE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x41)
+    if (result != COUNTER_LORE)
     {
       return 0;
     }
     value = 8300;
     break;
   case COUNTER_LOYALTY:
-    result = is_what(t_player, t_card, 0x100);
+    result = is_what(t_player, t_card, TARGET_TYPE_PLANESWALKER);
     if (result == 0)
     {
       return 0;
@@ -1945,84 +1809,84 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_LUCK:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x43)
+    if (result != COUNTER_LUCK)
     {
       return 0;
     }
-    if (csvid == 0x158b)
+    if (csvid == CARD_ID_CHANCE_ENCOUNTER)
     {
       value = 9998;
     }
     else
     {
-      value = (-(unsigned int)(adding == 0) & 0x12a) + 3;
+      value = (adding == 0) ? 301 : 3;
     }
     break;
   case COUNTER_MAGNET:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
     }
-    value = (-(unsigned int)(adding == 0) & 0xfffffc21) - 10;
+    value = (adding == 0) ? -1001 : -10;
     break;
   default:
     value = 0;
     break;
   case COUNTER_MANNEQUIN:
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
     }
-    value = (-(unsigned int)(adding == 0) & 0xffffe4b2) - 0xb;
+    value = (adding == 0) ? -7001 : -11;
     break;
   case COUNTER_MATRIX:
     value = 46;
     break;
   case COUNTER_MINE:
-    result = is_what(t_player, t_card, 1);
+    result = is_what(t_player, t_card, TYPE_LAND);
     if (result == 0)
     {
       return 0;
     }
-    value = (-(unsigned int)(adding == 0) & 0xffffe4b2) - 0xc;
+    value = (adding == 0) ? -7002 : -12;
     break;
   case COUNTER_MINING:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x49)
+    if (result != COUNTER_MINING)
     {
       return 0;
     }
     value = 470;
     break;
   case COUNTER_MIRE:
-    result = is_what(t_player, t_card, 1);
+    result = is_what(t_player, t_card, TYPE_LAND);
     if (result == 0)
     {
       return 0;
     }
-    value = (-(unsigned int)(adding == 0) & 0xffffff9c) - 1;
+    value = (adding == 0) ? -101 : -1;
     break;
   case COUNTER_MUSIC:
     value = -700;
     break;
   case COUNTER_MUSTER:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x4c)
+    if (result != COUNTER_MUSTER)
     {
       return 0;
     }
     value = 130;
     break;
   case COUNTER_NET:
-    if (csvid != 0x70f)
+    if (csvid != CARD_ID_MERSEINE)
     {
       return 0;
     }
     if ((int)instance->damage_target_player == 1 - player)
     {
-      value = ((t_player == player) - 1 & 0xfffffff0) + 8;
+      value = (t_player == player) ? 8 : -8;
     }
     else
     {
@@ -2030,17 +1894,17 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
       {
         return 0;
       }
-      value = ((t_player != player) - 1 & 0xfffffce0) + 400;
+      value = (t_player != player) ? 400 : -400;
     }
     break;
   case COUNTER_OMEN:
-    if (csvid != 0x12c7)
+    if (csvid != CARD_ID_CELESTIAL_CONVERGENCE)
     {
       return 0;
     }
     if (life[1 - player] < life[player])
     {
-      value = ((t_player == player) - 1 & 0xffffb1e6) + 0x270d;
+      value = (t_player == player) ? 9997 : -9997;
     }
     else
     {
@@ -2048,12 +1912,12 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
       {
         return 0;
       }
-      value = ((t_player != player) - 1 & 0xffffb1e0) + 10000;
+      value = (t_player != player) ? 10000 : -10000;
     }
     break;
   case COUNTER_ORE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x4f)
+    if (result != COUNTER_ORE)
     {
       return 0;
     }
@@ -2061,7 +1925,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_PAGE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x50)
+    if (result != COUNTER_PAGE)
     {
       return 0;
     }
@@ -2069,7 +1933,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_PAIN:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x51)
+    if (result != COUNTER_PAIN)
     {
       return 0;
     }
@@ -2080,18 +1944,18 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_PETAL:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x53)
+    if (result != COUNTER_PETAL)
     {
       return 0;
     }
     value = 81;
     break;
   case COUNTER_PHYLACTERY:
-    value = (-(unsigned int)(adding == 0) & 7999) + 2;
+    value = (adding == 0) ? 8001 : 2;
     break;
   case COUNTER_PIN:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x56)
+    if (result != COUNTER_PIN)
     {
       return 0;
     }
@@ -2099,23 +1963,23 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_PLAGUE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x57)
+    if (result != COUNTER_PLAGUE)
     {
       return 0;
     }
     if (instance->damage_target_player == player)
     {
-      value = ((t_player != player) - 1 & 0xffffff38) + 100;
+      value = (t_player != player) ? 100 : -100;
     }
     else if ((1 - player != (int)instance->damage_target_player) ||
-             (value = 0xffffff9c, t_player == player))
+             (value = -100, t_player == player))
     {
       value = 100;
     }
     break;
   case COUNTER_POLYP:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x58)
+    if (result != COUNTER_POLYP)
     {
       return 0;
     }
@@ -2123,21 +1987,21 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_POP:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x59)
+    if (result != COUNTER_POP)
     {
       return 0;
     }
     value = 35;
     break;
   case COUNTER_PRESSURE:
-    if (csvid == 0x39b2)
+    if (csvid == CARD_ID_MOUNT_KERALIA)
     {
-      value = ((t_player == player) - 1 & 0xfffffd30) + 0x168;
+      value = (t_player == player) ? 360 : -360;
     }
     else
     {
       result = get_counter_type_by_instance(instance);
-      if (result != 0x5a)
+      if (result != COUNTER_PRESSURE)
       {
         return 0;
       }
@@ -2146,7 +2010,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_PUPA:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x5b)
+    if (result != COUNTER_PUPA)
     {
       return 0;
     }
@@ -2224,7 +2088,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
       return 0;
     return result;
   case COUNTER_RUST:
-    result = is_what(t_player, t_card, 0x40);
+    result = is_what(t_player, t_card, TYPE_ARTIFACT);
     if (result == 0)
     {
       return 0;
@@ -2232,19 +2096,19 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     value = -600;
     break;
   case COUNTER_SCREAM:
-    if ((LEGACY_EFFECT_CUSTOM == iid) && (instance->display_pic_csv_id == 0x232))
+    if ((LEGACY_EFFECT_CUSTOM == iid) && (instance->display_pic_csv_id == CARD_ID_ALL_HALLOWS_EVE))
     {
       value = -500;
     }
     else
     {
-      if (csvid != 0xc3e)
+      if (csvid != CARD_ID_ENDLESS_SCREAM)
       {
         return 0;
       }
       if (instance->damage_target_player == player)
       {
-        value = ((t_player == player) - 1 & 0xffffff10) + 0x78;
+        value = (t_player == player) ? 120 : -120;
       }
       else
       {
@@ -2252,20 +2116,20 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
         {
           return 0;
         }
-        value = ((t_player != player) - 1 & 0xffffff10) + 0x78;
+        value = (t_player != player) ? 120 : -120;
       }
     }
     break;
   case COUNTER_SCROLL:
-    if (csvid != 0x39a3)
+    if (csvid != CARD_ID_ARETOPOLIS)
     {
       return 0;
     }
-    value = ((t_player == player) - 1 & 0xffffffbc) + 0x22;
+    value = (t_player == player) ? 34 : -34;
     break;
   case COUNTER_SHELL:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x60)
+    if (result != COUNTER_SHELL)
     {
       return 0;
     }
@@ -2273,7 +2137,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_PALLIATION:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x61)
+    if (result != COUNTER_PALLIATION)
     {
       return 0;
     }
@@ -2281,7 +2145,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_SHOE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x62)
+    if (result != COUNTER_SHOE)
     {
       return 0;
     }
@@ -2289,7 +2153,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_SHRED:
     result = get_counter_type_by_instance(instance);
-    if (result != 99)
+    if (result != COUNTER_SHRED)
     {
       return 0;
     }
@@ -2300,7 +2164,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_SLEIGHT:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x65)
+    if (result != COUNTER_SLEIGHT)
     {
       return 0;
     }
@@ -2308,7 +2172,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_SLIME:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x66)
+    if (result != COUNTER_SLIME)
     {
       return 0;
     }
@@ -2316,7 +2180,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_SOOT:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x67)
+    if (result != COUNTER_SOOT)
     {
       return 0;
     }
@@ -2324,7 +2188,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_SPORE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x68)
+    if (result != COUNTER_SPORE)
     {
       return 0;
     }
@@ -2332,7 +2196,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_STORAGE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x69)
+    if (result != COUNTER_STORAGE)
     {
       return 0;
     }
@@ -2340,7 +2204,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_STRIFE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x6a)
+    if (result != COUNTER_STRIFE)
     {
       return 0;
     }
@@ -2348,7 +2212,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_STUDY:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x6b)
+    if (result != COUNTER_STUDY)
     {
       return 0;
     }
@@ -2356,7 +2220,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_THEFT:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x6c)
+    if (result != COUNTER_THEFT)
     {
       return 0;
     }
@@ -2370,97 +2234,77 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     return 0;
   case COUNTER_TIDE:
     result = get_counter_type_by_instance(instance);
-    if (result == 0x6e)
+    if (result == COUNTER_TIDE)
     {
       result = count_counters(t_player, t_card, COUNTER_P1_P1);
-      return (-(unsigned int)(result == 0) & 0x148) - 300;
+      return (result == 0) ? 28 : -300;
     }
     return 0;
   case COUNTER_TIME:
-    if ((LEGACY_EFFECT_CUSTOM == iid) && (instance->info_slot == (int)generic_suspend_legacy))
+    if (LEGACY_EFFECT_CUSTOM == iid && instance->info_slot == (int)generic_suspend_legacy)
+      return -901;
+    if (get_counter_type_by_instance(instance) != COUNTER_TIME)
+      return 0;
+    switch (csvid)
     {
-      return -0x385;
+    case CARD_ID_CHRONOZOA:
+    case CARD_ID_DEADLY_GRUB:
+    case CARD_ID_REALITY_ACID:
+    case CARD_ID_LOST_AURAMANCERS:
+      return -150;
+    default:
+      return 9100;
     }
-    result = get_counter_type_by_instance(instance);
-    if (result == 0x6f)
-    {
-      if (csvid == 0x227e)
-      {
-        return -0x96;
-      }
-      if (csvid < 0x227f)
-      {
-        if (csvid != 0x2233)
-        {
-          return ((csvid != 0x223c) - 1 & 0xffffdbde) + 0x238c;
-        }
-        return -0x96;
-      }
-      return ((csvid != 0x2304) - 1 & 0xffffdbde) + 0x238c;
-    }
-    return 0;
   case COUNTER_TOWER:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x70)
+    if (result != COUNTER_TOWER)
     {
       return 0;
     }
     value = 30;
     break;
   case COUNTER_TRAP:
-    result = is_what(t_player, t_card, 1);
+    result = is_what(t_player, t_card, TYPE_LAND);
     if (result != 0)
     {
-      return (-(unsigned int)(adding == 0) & 100) + 1;
+      return (adding == 0) ? 101 : 1;
     }
     return 0;
   case COUNTER_TREASURE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x73)
+    if (result != COUNTER_TREASURE)
     {
       return 0;
     }
     value = 5000;
     break;
   case COUNTER_VELOCITY:
-    if (csvid != 0x943)
+    if (csvid != CARD_ID_TORNADO)
     {
       return 0;
     }
     value = -550;
     break;
   case COUNTER_VERSE:
-    result = get_counter_type_by_instance(instance);
-    if (result == 0x75)
+    if (get_counter_type_by_instance(instance) != COUNTER_VERSE)
+      return 0;
+    switch (csvid)
     {
-      if (csvid == 0xef3)
-      {
-        return 7000;
-      }
-      if (csvid < 0xef4)
-      {
-        if (csvid != 0xea3)
-        {
-          return 530;
-        }
-        result = hand_count[1 - t_player];
-        limit = count_counters(t_player, t_card, COUNTER_VERSE);
-        return ((result < (int)(limit + (unsigned int)(adding == 0))) - 1 & 0xffffe6ba) + 7000;
-      }
-      if (csvid == 0xf35)
-      {
-        return 7000;
-      }
-      if (csvid == 0xf6e)
-      {
-        return 7000;
-      }
-      return ((csvid == 0xf1a) - 1 & 0xffffe6ba) + 7000;
+    case CARD_ID_MIDSUMMER_REVEL:
+    case CARD_ID_RECANTATION:
+    case CARD_ID_SERRAS_LITURGY:
+    case CARD_ID_VILE_REQUIEM:
+      return 7000;
+    case CARD_ID_DISCORDANT_DIRGE:
+      result = hand_count[1 - t_player];
+      limit = count_counters(t_player, t_card, COUNTER_VERSE);
+      return result < (int)(limit + (unsigned int)(adding == 0)) ? 7000 : 530;
+    default:
+      return 530;
     }
-    return 0;
   case COUNTER_VITALITY:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x76)
+    if (result != COUNTER_VITALITY)
     {
       return 0;
     }
@@ -2468,7 +2312,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_WAGE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x77)
+    if (result != COUNTER_WAGE)
     {
       return 0;
     }
@@ -2476,22 +2320,22 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_WINCH:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x78)
+    if (result != COUNTER_WINCH)
     {
       return 0;
     }
     value = 310;
     break;
   case COUNTER_WIND:
-    if (csvid == 0x195)
+    if (csvid == CARD_ID_CYCLONE)
     {
       if (life[1 - player] < life[player])
       {
-        value = ((t_player == player) - 1 & 0xffffffe8) + 0xc;
+        value = (t_player == player) ? 12 : -12;
       }
       else
       {
-        value = ((t_player != player) - 1 & 0xffffffe6) + 0xd;
+        value = (t_player != player) ? 13 : -13;
       }
     }
     else
@@ -2501,117 +2345,42 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_WISH:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x7a)
+    if (result != COUNTER_WISH)
     {
       return 0;
     }
     value = 540;
     break;
   case COUNTER_CHARGE:
-    if (csvid == 0x2be0)
+    switch (csvid)
     {
-      value = 6500;
-    }
-    else
-    {
-      if (csvid < 0x2be1)
-      {
-        if (csvid == 0x1adb)
-        {
-          return 9999;
-        }
-        if (csvid < 0x1adc)
-        {
-          if (csvid == 0x11af)
-          {
-            return 6500;
-          }
-          if (csvid == 0x1860)
-          {
-            return 6500;
-          }
-        }
-        else
-        {
-          if (csvid == 0x2483)
-          {
-            return 6500;
-          }
-          if (csvid < 0x2484)
-          {
-            if (csvid == 0x1ca8)
-            {
-              return 6500;
-            }
-            if (csvid == 0x1da3)
-            {
-              return 6500;
-            }
-          }
-          else
-          {
-            if (csvid == 0x2840)
-            {
-              return 6500;
-            }
-            if (csvid == 0x2b29)
-            {
-              return 6500;
-            }
-          }
-        }
-      }
-      else
-      {
-        if (csvid == 0x39b0)
-        {
-          return ((t_player == player) - 1 & 0xfffffc7c) + 0x1c2;
-        }
-        if (csvid < 0x39b1)
-        {
-          if (csvid == 0x2d3f)
-          {
-            return 6500;
-          }
-          if (csvid < 0x2d40)
-          {
-            if (csvid == 0x2c25)
-            {
-              return 6500;
-            }
-            if (csvid == 0x2d17)
-            {
-              return 6500;
-            }
-            if (csvid == 0x2c06)
-            {
-              return 6500;
-            }
-          }
-          else
-          {
-            if (csvid == 0x2da2)
-            {
-              return 6500;
-            }
-            if (csvid == 0x3095)
-            {
-              return 6500;
-            }
-          }
-        }
-      }
-      result = get_counter_type_by_instance(instance);
-      if (result != 0x7b)
-      {
+    case CARD_ID_MAGISTRATES_SCEPTER:
+    case CARD_ID_RIPTIDE_REPLICATOR:
+    case CARD_ID_OROCHI_HATCHERY:
+    case CARD_ID_UMEZAWAS_JITTE:
+    case CARD_ID_DOOR_OF_DESTINIES:
+    case CARD_ID_LIGHTNING_REAVER:
+    case CARD_ID_SPHINX_BONE_WAND:
+    case CARD_ID_CULLING_DAIS:
+    case CARD_ID_GOLEM_FOUNDRY:
+    case CARD_ID_LUX_CANNON:
+    case CARD_ID_TITAN_FORGE:
+    case CARD_ID_CONVERSION_CHAMBER:
+    case CARD_ID_SHRINE_OF_LOYAL_LEGIONS:
+    case CARD_ID_OTHERWORLD_ATLAS:
+      return 6500;
+    case CARD_ID_DARKSTEEL_REACTOR:
+      return 9999;
+    case CARD_ID_KILNSPIRE_DISTRICT:
+      return t_player == player ? 450 : -450;
+    default:
+      if (get_counter_type_by_instance(instance) != COUNTER_CHARGE)
         return 0;
-      }
-      value = 450;
+      return 450;
     }
-    break;
   case COUNTER_CRYSTAL:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x7c)
+    if (result != COUNTER_CRYSTAL)
     {
       return 0;
     }
@@ -2619,7 +2388,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_GEM:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x7d)
+    if (result != COUNTER_GEM)
     {
       return 0;
     }
@@ -2627,7 +2396,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_PLOT:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x7f)
+    if (result != COUNTER_PLOT)
     {
       return 0;
     }
@@ -2635,7 +2404,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_HOUR:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x80)
+    if (result != COUNTER_HOUR)
     {
       return 0;
     }
@@ -2643,7 +2412,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_FURY:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x81)
+    if (result != COUNTER_FURY)
     {
       return 0;
     }
@@ -2651,7 +2420,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_SPITE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x82)
+    if (result != COUNTER_SPITE)
     {
       return 0;
     }
@@ -2659,7 +2428,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_UNITY:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x83)
+    if (result != COUNTER_UNITY)
     {
       return 0;
     }
@@ -2667,7 +2436,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_BRICK:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x84)
+    if (result != COUNTER_BRICK)
     {
       return 0;
     }
@@ -2678,7 +2447,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_LANDMARK:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x87)
+    if (result != COUNTER_LANDMARK)
     {
       return 0;
     }
@@ -2693,7 +2462,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_SLUMBER:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x89)
+    if (result != COUNTER_SLUMBER)
     {
       return 0;
     }
@@ -2701,7 +2470,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_KNOWLEDGE:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x8d)
+    if (result != COUNTER_KNOWLEDGE)
     {
       return 0;
     }
@@ -2714,7 +2483,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     }
     if (t_player == player)
     {
-      result = is_what(t_player, t_card, 2);
+      result = is_what(t_player, t_card, TYPE_CREATURE);
       if (result == 0)
       {
         return 0;
@@ -2723,7 +2492,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     }
     else
     {
-      result = is_what(t_player, t_card, 2);
+      result = is_what(t_player, t_card, TYPE_CREATURE);
       if (result == 0)
       {
         return 0;
@@ -2733,7 +2502,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_TASK:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x8f)
+    if (result != COUNTER_TASK)
     {
       return 0;
     }
@@ -2749,7 +2518,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     {
       return 0;
     }
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -2761,7 +2530,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     {
       return 0;
     }
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -2773,7 +2542,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     {
       return 0;
     }
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -2809,7 +2578,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     {
       return 0;
     }
-    result = is_what(t_player, t_card, 2);
+    result = is_what(t_player, t_card, TYPE_CREATURE);
     if (result == 0)
     {
       return 0;
@@ -2819,7 +2588,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
   case COUNTER_TRAMPLE:
     if (adding == 0)
     {
-      result = is_what(t_player, t_card, 2);
+      result = is_what(t_player, t_card, TYPE_CREATURE);
       if (result != 0)
       {
         return 2107;
@@ -2830,7 +2599,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
   case COUNTER_VIGILANCE:
     if (adding == 0)
     {
-      result = is_what(t_player, t_card, 2);
+      result = is_what(t_player, t_card, TYPE_CREATURE);
       if (result != 0)
       {
         return 2111;
@@ -2841,7 +2610,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_FORESHADOW:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x9d)
+    if (result != COUNTER_FORESHADOW)
     {
       return 0;
     }
@@ -2849,25 +2618,25 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
     break;
   case COUNTER_INCARNATION:
     result = get_counter_type_by_instance(instance);
-    if (result != 0x9e)
+    if (result != COUNTER_INCARNATION)
     {
       return 0;
     }
     value = -3338;
     break;
   case COUNTER_SOUL:
-    if (csvid == 0x53f5)
+    if (csvid == CARD_ID_NETHERBORN_ALTAR)
     {
       value = -3707;
     }
     else
     {
-      value = (csvid != 0x5478) - 1 & 0x517;
+      value = (csvid != CARD_ID_MALEFIC_SCYTHE) ? 0 : 1303;
     }
     break;
   case COUNTER_ACORN:
     result = get_counter_type_by_instance(instance);
-    if (result != 0xa0)
+    if (result != COUNTER_ACORN)
     {
       return 0;
     }
@@ -3291,18 +3060,16 @@ int can_have_counters_placed_on_it(int player, int card);
 /* ManalinkEh 2022: 0x26d44d0; original functions/counters.c:2691. */
 int can_have_counters_placed_on_it(int player, int card)
 {
-  int result;
-
-  if (-1 < card)
+  if (card < 0)
+    return 1;
+  switch (get_id(player, card))
   {
-    result = get_id(player, card);
-    if ((result == 0x25db) || (result == 0x2cd6))
-    {
-      result = is_humiliated(player, card, AL_STATIC);
-      return (unsigned int)(result != 0);
-    }
+  case CARD_ID_TATTERKITE:
+  case CARD_ID_MELIRAS_KEEPERS:
+    return is_humiliated(player, card, AL_STATIC) != 0;
+  default:
+    return 1;
   }
-  return 1;
 }
 
 /* Counter operations carry source and recipient pairs and use the shared
@@ -3313,36 +3080,15 @@ int counters_added_type = -1; /* Target .data 0x02721d68, counters.c:7. */
 /* ManalinkEh 2022: 0x26d4540; original functions/counters.c:919. */
 static int get_updated_counters_number_as_cost(int player, int card, counter_t type, int number)
 {
-  int result;
-  result = can_have_counters_placed_on_it(player, card);
-  if (result != 0)
-  {
-    if (type == COUNTER_M1_M1)
-    {
-      if ((-1 < card) && (result = is_what(player, card, 2), result == 0))
-      {
-        return number;
-      }
-      result = check_battlefield_for_id(player, 0x2d73);
-    }
-    else
-    {
-      if (type != COUNTER_P1_P1)
-      {
-        return number;
-      }
-      if ((-1 < card) && (result = is_what(player, card, 2), result == 0))
-      {
-        return number;
-      }
-      result = check_battlefield_for_id(1 - player, 0x4f3c);
-    }
-    if (result == 0)
-    {
-      return number;
-    }
-  }
-  return 0;
+  if (!can_have_counters_placed_on_it(player, card))
+    return 0;
+  if (type != COUNTER_M1_M1 && type != COUNTER_P1_P1)
+    return number;
+  if (card >= 0 && !is_what(player, card, TYPE_CREATURE))
+    return number;
+  int blocker_controller = type == COUNTER_M1_M1 ? player : 1 - player;
+  int blocker_id = type == COUNTER_M1_M1 ? CARD_ID_MELIRA_SYLVOK_OUTCAST : CARD_ID_BLIGHTBEETLE;
+  return check_battlefield_for_id(blocker_controller, blocker_id) ? 0 : number;
 }
 
 /* ManalinkEh 2022: 0x26d45f0; original functions/counters.c:933. */
@@ -3408,13 +3154,8 @@ static int get_updated_counters_number_impl(int player, int card, counter_t type
 /* ManalinkEh 2022: 0x26d4810; original functions/counters.c:933. */
 int get_updated_counters_number(int player, int card, counter_t type, int number)
 {
-  int result;
-
-  if (0 < number)
-  {
-    result = get_updated_counters_number_impl(player, card, type, number);
-    return result;
-  }
+  if (number > 0)
+    return get_updated_counters_number_impl(player, card, type, number);
   return number;
 }
 
@@ -3597,28 +3338,20 @@ static void add_or_remove_counters_impl(int player, int card, int t_player, int 
 }
 
 /* ManalinkEh 2022: 0x26d4840; original functions/counters.c:1266. */
-void add_counters(int player, int card, int t_player, int t_card, counter_t type,
-                              int num)
+void add_counters(int player, int card, int t_player, int t_card, counter_t type, int num)
 {
-  card_instance_t *instance;
-  int num_00;
-
-  instance = get_card_instance(t_player, t_card);
+  card_instance_t *instance = get_card_instance(t_player, t_card);
   if (instance->internal_card_id == activation_card)
   {
     t_player = instance->parent_controller;
     t_card = instance->parent_card;
   }
-  if (0 < num)
+  if (num > 0)
   {
-    num_00 = get_updated_counters_number(t_player, t_card, type, num);
-    if (0 < num_00)
-    {
-      add_or_remove_counters_impl(player, card, t_player, t_card, type, num_00);
-      return;
-    }
+    num = get_updated_counters_number(t_player, t_card, type, num);
+    if (num > 0)
+      add_or_remove_counters_impl(player, card, t_player, t_card, type, num);
   }
-  return;
 }
 
 /* Recovered October 2022 source-aware counter removal. */
@@ -3626,25 +3359,22 @@ void add_counters(int player, int card, int t_player, int t_card, counter_t type
 /* ManalinkEh 2022: 0x26ceef0; original functions/counters.c:1630. */
 static void clear_all_counters(int player, int card, int t_player, int t_card, counter_t type)
 {
-  unsigned int previous_status;
-  card_instance_t *instance;
-
-  instance = get_card_instance(t_player, t_card);
-  previous_status = instance->regen_status;
-  instance->special_counter_type = 0xff;
-  instance->special_counters = '\0';
-  instance->counters2 = '\0';
-  instance->counters3 = '\0';
-  instance->counters4 = '\0';
-  instance->counters = '\0';
-  instance->counters5 = '\0';
-  instance->counters_m1m1 = '\0';
-  instance->targets[0x12].player = -1;
-  instance->targets[0x12].card = -0x10000;
+  card_instance_t *instance = get_card_instance(t_player, t_card);
+  unsigned int previous_status = instance->regen_status;
+  instance->special_counter_type = COUNTER_invalid;
+  instance->special_counters = 0;
+  instance->counters2 = 0;
+  instance->counters3 = 0;
+  instance->counters4 = 0;
+  instance->counters = 0;
+  instance->counters5 = 0;
+  instance->counters_m1m1 = 0;
+  instance->targets[18].player = -1;
+  /* Two empty hidden slots, each with an invalid counter-type byte. */
+  instance->targets[18].card = (int32_t)0xffff0000U;
   instance->counter_power = 0;
   instance->counter_toughness = 0;
-  instance->regen_status = previous_status | (KEYWORD_RECALC_POWER | KEYWORD_RECALC_TOUGHNESS);
-  return;
+  instance->regen_status = previous_status | KEYWORD_RECALC_POWER | KEYWORD_RECALC_TOUGHNESS;
 }
 
 /* ManalinkEh 2022: 0x26d48d0; original functions/counters.c:1304. */
@@ -3723,27 +3453,19 @@ static void remove_counters_impl(int player, int card, int t_player, int t_card,
 }
 
 /* ManalinkEh 2022: 0x26d4c10; original functions/counters.c:1304. */
-void remove_counters(int player, int card, int t_player, int t_card, counter_t type,
-                                 int num)
+void remove_counters(int player, int card, int t_player, int t_card, counter_t type, int num)
 {
-  if (num < 1)
-  {
-    return;
-  }
-  remove_counters_impl(player, card, t_player, t_card, type, num);
-  return;
+  if (num > 0)
+    remove_counters_impl(player, card, t_player, t_card, type, num);
 }
 
 /* ManalinkEh 2022: 0x26d4c50; original functions/counters.c:1630. */
 void remove_all_counters(int player, int card, int t_player, int t_card, counter_t type)
 {
-  if ((char)type != -1)
-  {
-    remove_counters_impl(player, card, t_player, t_card, type, 0xff);
-    return;
-  }
-  clear_all_counters(player, card, t_player, t_card, type);
-  return;
+  if ((uint8_t)type == COUNTER_invalid)
+    clear_all_counters(player, card, t_player, t_card, type);
+  else
+    remove_counters_impl(player, card, t_player, t_card, type, 255);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -3854,22 +3576,12 @@ void copy_counters(int player, int card, int t_player, int t_card, int src_playe
 }
 
 /* ManalinkEh 2022: 0x26d5970; original functions/counters.c:1281. */
-void add_counters_predoubled(int player, int card, int t_player, int t_card,
-                                         counter_t type, int num)
+void add_counters_predoubled(int player, int card, int t_player, int t_card, counter_t type, int num)
 {
-  int result;
-  result = is_what(t_player, t_card, 0x80);
-  if (result != 0)
-  {
+  if (is_what(t_player, t_card, TYPE_EFFECT))
     backtrace_and_abort("functions/counters.c:1283\n!is_what(t_player, t_card, TYPE_EFFECT)");
-  }
-  result = can_have_counters_placed_on_it(t_player, t_card);
-  if ((result != 0) && (num != 0))
-  {
+  if (can_have_counters_placed_on_it(t_player, t_card) && num != 0)
     add_or_remove_counters_impl(player, card, t_player, t_card, type, num);
-    return;
-  }
-  return;
 }
 
 

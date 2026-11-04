@@ -543,24 +543,20 @@ int card_liutenants_of_the_guard(int player, int card, event_t event)
 
   int ai_priorities[2];
   token_generation_t token;
-  char pos1[100];
-  char pos2[100];
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
   }
-  memset(pos1, 0, sizeof(pos1));
-  memcpy(pos1, "Strenght (+1/+1 counters on this)\000", 34);
-  memset(pos2, 0, sizeof(pos2));
-  memcpy(pos2, "Number (1/1 soldier tokens)\000", 28);
+  char pos1[100] = "Strenght (+1/+1 counters on this)";
+  char pos2[100] = "Number (1/1 soldier tokens)";
   result = 0;
   ai_priorities[0] = 10;
   ai_priorities[1] = 5;
   vote_counts = will_of_the_council(player, card, pos1, pos2, ai_priorities);
   add_counters(player, card, player, card, COUNTER_P1_P1, vote_counts & 0xff);
-  default_token_definition(player, card, 0x4986, &token);
+  default_token_definition(player, card, CARD_ID_SOLDIER, &token);
   token.qty = (unsigned char)(vote_counts >> 8);
   token.tou = 1;
   token.pow = 1;
@@ -724,18 +720,16 @@ int card_spectral_grasp(int player, int card, event_t event){
 
 int card_throne_warden(int player, int card, event_t event)
 {
-  int player_00;
-  int result;
-  if ((((current_turn == player) && (trigger_condition == 0xcd)) && (card == affected_card)) &&
+  int monarch;
+  if ((((current_turn == player) && (trigger_condition == TRIGGER_EOT)) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    player_00 = who_is_the_monarch();
-    if (player_00 == player)
+    monarch = who_is_the_monarch();
+    if (monarch == player)
     {
-      result = eot_trigger(player_00, card, event);
-      if (result != 0)
+      if (eot_trigger(monarch, card, event))
       {
-        add_counters(player_00, card, player_00, card, COUNTER_P1_P1, 1);
+        add_counters(monarch, card, monarch, card, COUNTER_P1_P1, 1);
       }
     }
   }
@@ -885,18 +879,14 @@ int card_messenger_jays(int player, int card, event_t event)
   int result;
 
   int ai_priorities[2];
-  char pos1[100];
-  char pos2[100];
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
   }
-  memset(pos1, 0, sizeof(pos1));
-  memcpy(pos1, "Feather (+1/+1 counters on this)\000", 33);
-  memset(pos2, 0, sizeof(pos2));
-  memcpy(pos2, "Quill (Draw & discard)", 22);
+  char pos1[100] = "Feather (+1/+1 counters on this)";
+  char pos2[100] = "Quill (Draw & discard)";
   result = 0;
   ai_priorities[0] = 10;
   ai_priorities[1] = 5;
@@ -1436,23 +1426,16 @@ int card_orchard_elemental(int player, int card, event_t event)
   int result;
 
   int ai_priorities[2];
-  char pos1[100];
-  char pos2[100];
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
   }
-  memset(pos1, 0, sizeof(pos1));
-  memcpy(pos1, "Sprout (2 +1/+1 counters on this)\000", 34);
-  memset(pos2, 0, sizeof(pos2));
-  memcpy(pos2, "Harvest (3 life)\000", 17);
+  char pos1[100] = "Sprout (2 +1/+1 counters on this)";
+  char pos2[100] = "Harvest (3 life)";
   result = 0;
   ai_priorities[0] = life[player] * 3;
-  pos2[0x11] = '\0';
-  pos2[0x12] = '\0';
-  pos2[0x13] = '\0';
   ai_priorities[1] = life[1 - player] * 3;
   vote_counts = will_of_the_council(player, card, pos1, pos2, ai_priorities);
   add_counters(player, card, player, card, COUNTER_P1_P1, (vote_counts & 0xff) * 2);
@@ -1952,7 +1935,7 @@ int card_leovold_emissary_of_trest(int player, int card, event_t event)
   int result;
   const target_t *targeting_spell_or_effect;
   check_legend_rule(player, card, event);
-  if (((((trigger_condition == 0xcf) && (card == affected_card)) &&
+  if (((((trigger_condition == TRIGGER_REPLACE_CARD_DRAW) && (card == affected_card)) &&
         (affected_card_controller == player)) &&
        ((event == EVENT_TRIGGER && (1 - player == reason_for_trigger_controller)))) &&
       (suppress_draw == 0))

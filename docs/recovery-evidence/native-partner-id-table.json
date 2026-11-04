@@ -1,0 +1,248 @@
+{
+  "format": 1,
+  "status": "Eleven native partner mappings named; one build, 15,169 fixed slots, full source projection, instruction/table comparison and 65,543 release/rebuilt/source cases pass.",
+  "name": "get_partner_with_id",
+  "source": "cards/vanguard.c",
+  "native_address": "0x22c6410",
+  "native_size": 30,
+  "native_body_sha256": "5cf0b9036b7d1d33ac4cb4b24e4662aef989e0996acac3e8549c0a945783671a",
+  "native_table_address": "0x273cbc0",
+  "native_table_sha256": "5ed31d8110cf12d7ee6f7d39fbc1e924e58d019737ab2b31fae9438b2d7cb673",
+  "native_table_values": [
+    18651,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    18643,
+    -1,
+    18625,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    18656,
+    -1,
+    -1,
+    18648,
+    -1,
+    -1,
+    -1,
+    -1,
+    18653,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    18605,
+    -1,
+    -1,
+    -1,
+    -1,
+    18621,
+    -1,
+    -1,
+    18598,
+    -1,
+    18626,
+    -1,
+    -1,
+    18618
+  ],
+  "native_enumerators": {
+    "CARD_ID_GORM_THE_GREAT": 18598,
+    "CARD_ID_VIRTUS_THE_VEILED": 18651,
+    "CARD_ID_KHORVATH_BRIGHTFLAME": 18605,
+    "CARD_ID_SYLVIA_BRIGHTSPEAR": 18643,
+    "CARD_ID_KRAV_THE_UNREDEEMED": 18607,
+    "CARD_ID_REGNA_THE_REDEEMER": 18625,
+    "CARD_ID_OKAUN_EYE_OF_CHAOS": 18618,
+    "CARD_ID_ZNDRSPLT_EYE_OF_WISDOM": 18656,
+    "CARD_ID_PIR_IMAGINATIVE_RASCAL": 18621,
+    "CARD_ID_TOOTHY_IMAGINARY_FRIEND": 18648,
+    "CARD_ID_ROWAN_KENRITH": 18626,
+    "CARD_ID_WILL_KENRITH": 18653
+  },
+  "nonreciprocal_native_mappings": [
+    {
+      "id": 18607,
+      "partner": 18625,
+      "reverse": -1
+    }
+  ],
+  "mapping": [
+    {
+      "id": 18598,
+      "name": "CARD_ID_GORM_THE_GREAT",
+      "partner": 18651,
+      "partner_name": "CARD_ID_VIRTUS_THE_VEILED"
+    },
+    {
+      "id": 18605,
+      "name": "CARD_ID_KHORVATH_BRIGHTFLAME",
+      "partner": 18643,
+      "partner_name": "CARD_ID_SYLVIA_BRIGHTSPEAR"
+    },
+    {
+      "id": 18607,
+      "name": "CARD_ID_KRAV_THE_UNREDEEMED",
+      "partner": 18625,
+      "partner_name": "CARD_ID_REGNA_THE_REDEEMER"
+    },
+    {
+      "id": 18618,
+      "name": "CARD_ID_OKAUN_EYE_OF_CHAOS",
+      "partner": 18656,
+      "partner_name": "CARD_ID_ZNDRSPLT_EYE_OF_WISDOM"
+    },
+    {
+      "id": 18621,
+      "name": "CARD_ID_PIR_IMAGINATIVE_RASCAL",
+      "partner": 18648,
+      "partner_name": "CARD_ID_TOOTHY_IMAGINARY_FRIEND"
+    },
+    {
+      "id": 18626,
+      "name": "CARD_ID_ROWAN_KENRITH",
+      "partner": 18653,
+      "partner_name": "CARD_ID_WILL_KENRITH"
+    },
+    {
+      "id": 18643,
+      "name": "CARD_ID_SYLVIA_BRIGHTSPEAR",
+      "partner": 18605,
+      "partner_name": "CARD_ID_KHORVATH_BRIGHTFLAME"
+    },
+    {
+      "id": 18648,
+      "name": "CARD_ID_TOOTHY_IMAGINARY_FRIEND",
+      "partner": 18621,
+      "partner_name": "CARD_ID_PIR_IMAGINATIVE_RASCAL"
+    },
+    {
+      "id": 18651,
+      "name": "CARD_ID_VIRTUS_THE_VEILED",
+      "partner": 18598,
+      "partner_name": "CARD_ID_GORM_THE_GREAT"
+    },
+    {
+      "id": 18653,
+      "name": "CARD_ID_WILL_KENRITH",
+      "partner": 18626,
+      "partner_name": "CARD_ID_ROWAN_KENRITH"
+    },
+    {
+      "id": 18656,
+      "name": "CARD_ID_ZNDRSPLT_EYE_OF_WISDOM",
+      "partner": 18618,
+      "partner_name": "CARD_ID_OKAUN_EYE_OF_CHAOS"
+    }
+  ],
+  "before_definition_sha256": "1c92b9276296b973cfb67f88a944bc9d23c2e734e24e3dc3b6f2c300126a988a",
+  "after_definition_sha256": "80f517e5378cdfa6d52c062908688425e0db6e887963d4fc23eec8854edb6d5f",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "source_before_sha256": "fdf8c8106899b3b53098e664e91bbb1de12423975956090936032ed0901c181c",
+  "source_after_sha256": "aa982448a6ce43be264b68f1c2d1385086547fadad67ab2457dbffac2a35300f",
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "card_id_header_sha256": "3b41032de788e7a7058fee28ffcd15bf3b3a5e55e8402ee1cc6436f3b9ac73a4",
+  "before_execution": {
+    "address": "0x25f8310",
+    "size": 37,
+    "body_sha256": "a8858f245d91f27b9194735480ebaff5aac0476d92f8fca4bf31dcf253e78355",
+    "dll_sha256": "b2563df995bfa38272e7701409bbb1b8d818b9b48a11d1ad3751501431f62f5b",
+    "dbg_sha256": "ff9c31fa0a50f69cb708177e60b5760a3f30e658e1db41f60c3975778e1875dc"
+  },
+  "before_execution_log_sha256": "75922453d80aec42792cd6c6bea8bb856f35dd1362d1ea3f56383c1ede2f450a",
+  "scope": "Readable reconstruction of one existing call-free lookup, not new card handlers or a gameplay fix. All eleven native mappings and the absent Regna reverse mapping are retained. Direct DLL checks cover every 16-bit ID plus seven signed/out-of-range IDs, not the full 32-bit domain or game state.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "address": "0x25f8330",
+    "size": 30,
+    "body_sha256": "65dcb732dc6488a9eae248e984a9c4f31dbd832ba576332900a4ef8d7425fd06",
+    "dll_sha256": "c27ebb076acb2ed2e20d14e3d9c30b896ea9116f855e2002cf5e118823d36ad9",
+    "dbg_sha256": "4747383899b4a3eb36ffa4b503951fc6423fca663a5e16c2d6c8ff8569d97383",
+    "native_rebuilt_source_cases": 65543,
+    "card_id_domain": [
+      0,
+      65535
+    ],
+    "extra_signed_out_of_range_ids": 7,
+    "known_mappings": 11,
+    "source_projection": "passed",
+    "staging": "preserved",
+    "instruction_shape_matches_native": true,
+    "normalized_instructions": [
+      [
+        "push",
+        "ebp"
+      ],
+      [
+        "mov",
+        "ebp, esp"
+      ],
+      [
+        "mov",
+        "eax, dword ptr [ebp + 8]"
+      ],
+      [
+        "lea",
+        "edx, [eax - 0x48a6]"
+      ],
+      [
+        "or",
+        "eax, 0xffffffff"
+      ],
+      [
+        "cmp",
+        "edx, 0x3a"
+      ],
+      [
+        "ja",
+        "0x1c"
+      ],
+      [
+        "movsx",
+        "eax, word ptr [edx + edx + <partner table>]"
+      ],
+      [
+        "pop",
+        "ebp"
+      ],
+      [
+        "ret",
+        ""
+      ]
+    ],
+    "table_addresses": [
+      "0x273cbc0",
+      "0x275af40"
+    ],
+    "table_bytes_match_native": true,
+    "harness_sha256": "b1a2081e3a23ce0d85506c5ebfcc15cf146e1fcabca1de4d796babc7837088ea",
+    "harness_executable_sha256": "3b4765494c50598fb510b8fbbbabb59e63f6fee6bf78e74eda812d870bcabfeb",
+    "execution_log_sha256": "75922453d80aec42792cd6c6bea8bb856f35dd1362d1ea3f56383c1ede2f450a",
+    "scope": "Only the relocated table address and branch base are normalized in the instruction check. Native and rebuilt tables have identical 118 bytes. Call-free lookup execution is bounded to the recorded input domain; no entry point, imports or engine-dependent routines are invoked."
+  }
+}

@@ -450,29 +450,17 @@ static int archon_of_valors_reach_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2025e30; original cards/battlebond.c:240. */
 int bonus_round_legacy(int player, int card, event_t event)
 {
-  int result;
-  test_definition_t test;
-  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
-      (player == affected_card_controller))
+  if (trigger_condition == TRIGGER_SPELL_CAST && card == affected_card &&
+      player == affected_card_controller && !is_token(trigger_cause_controller, trigger_cause))
   {
-    result = is_token(trigger_cause_controller, trigger_cause);
-    if (result == 0)
-    {
-      default_test_definition(&test, 0x38);
-      test.type_flag = 2;
-      result = new_specific_spell_played(player, card, event, 2, 2, &test);
-      if (result != 0)
-      {
-        copy_spell_from_stack(trigger_cause_controller, trigger_cause_controller, trigger_cause);
-      }
-    }
+    test_definition_t test;
+    default_test_definition(&test, 0x38);
+    test.type_flag = 2;
+    if (new_specific_spell_played(player, card, event, 2, 2, &test))
+      copy_spell_from_stack(trigger_cause_controller, trigger_cause_controller, trigger_cause);
   }
-  result = eot_trigger(player, card, event);
-  if (result == 0)
-  {
-    return 0;
-  }
-  kill_card(player, card, KILL_EXILE);
+  if (eot_trigger(player, card, event))
+    kill_card(player, card, KILL_EXILE);
   return 0;
 }
 
@@ -499,7 +487,7 @@ int card_bonus_round(int player, int card, event_t event)
       return 0;
     }
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  result = basic_spell(player, card, event);
   return result;
 }
 
@@ -587,7 +575,7 @@ int card_regna_the_redeemer(int player, int card, event_t event)
     result = get_trap_condition(player, 1);
     if (result != 0)
     {
-      default_token_definition(player, card, 0x49a4, &token);
+      default_token_definition(player, card, CARD_ID_WARRIOR, &token);
       token.qty = '\x02';
       generate_token(&token);
       return 0;
@@ -669,7 +657,7 @@ int card_najeela_the_blade_blossom(int player, int card, event_t event)
 
   check_legend_rule(player, card, event);
   attack_trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     attack_trigger = xtrigger_impl_value_dont_use_directly;
   }
@@ -688,7 +676,7 @@ int card_najeela_the_blade_blossom(int player, int card, event_t event)
 
     instance = get_card_instance(player, card);
     attacker_count = instance->info_slot;
-    default_token_definition(current_turn, card, 0x49a4, &token);
+    default_token_definition(current_turn, card, CARD_ID_WARRIOR, &token);
     token.qty = (char)attacker_count;
     token.action = 3;
     token.color_forced = ' ';
@@ -715,7 +703,7 @@ int card_najeela_the_blade_blossom(int player, int card, event_t event)
 int card_stolen_strategy(int player, int card, event_t event)
 {
   int result;
-  int player_00;
+  int opponent;
 
   upkeep_trigger_ability_mode(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
@@ -724,14 +712,14 @@ int card_stolen_strategy(int player, int card, event_t event)
     if (result == 0)
     {
 
-      player_00 = 1 - player;
-      result = *deck_ptr[player_00];
+      opponent = 1 - player;
+      result = *deck_ptr[opponent];
       if (-1 < result)
       {
-        rfg_top_card_of_deck(player_00);
+        rfg_top_card_of_deck(opponent);
         if ((cards_data[result].type & 1) == 0)
         {
-          create_may_play_card_from_exile_effect(player, card, player_00,
+          create_may_play_card_from_exile_effect(player, card, opponent,
                                                  (unsigned int)cards_data[result].id,
                                                  MPCFE_UNTIL_EOT | MPCFE_FOR_CMC);
         }
@@ -815,7 +803,7 @@ int card_brightling(int player, int card, event_t event)
       if ((special_keywords & 8) == 0 && current_phase <= 0x14 && current_turn == player)
       {
         dying_or_sick = is_sick(player, card);
-        vigilance_priority = (-(unsigned int)(dying_or_sick == 0) & 9) + 1;
+        vigilance_priority = ((dying_or_sick == 0) ? 10U : 1U);
       }
       lifelink_priority = 1;
       if ((special_keywords & 2) == 0 && current_phase < 0x19)
@@ -824,18 +812,18 @@ int card_brightling(int player, int card, event_t event)
       if (current_turn == player)
       {
         toughness_priority = 1;
-        power_priority = ((current_phase == 0x18) - 1 & 0xfffffff9) + 8;
+        power_priority = ((current_phase == 0x18) ? 8U : 1U);
       }
       else
       {
         power_priority = 1;
-        toughness_priority = ((current_phase == 0x18) - 1 & 0xfffffff9) + 8;
+        toughness_priority = ((current_phase == 0x18) ? 8U : 1U);
       }
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Vigilance",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Vigilance",
                            white_available_mode_or_power, vigilance_priority, "Lifelink",
                            white_available_mode_or_power, lifelink_priority, "Bounce",
                            white_available_mode_or_power,
-                           (-(unsigned int)(dying_or_sick == 0) & 0xfffffff7) + 10, "+1/-1",
+                           ((dying_or_sick == 0) ? 1U : 10U), "+1/-1",
                            generic_available_or_toughness, power_priority, "-1/+1",
                            generic_available_or_toughness, toughness_priority, 0, 0, 0, 0);
       if (choice == 0)
@@ -953,7 +941,7 @@ int card_krav_the_unredeemed(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     if (event == EVENT_CAN_ACTIVATE)
     {
       if (can_use_activated_abilities(player, card) == 0)
@@ -1019,7 +1007,7 @@ int card_krav_the_unredeemed(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     default_target_definition(player, card, &td, 0);
   }
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
 
@@ -1264,7 +1252,7 @@ int card_arcane_artisan(int player, int card, event_t event)
            ((event == EVENT_RESOLVE_ACTIVATION || (event == EVENT_CLEANUP))))
   {
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
 
@@ -1339,15 +1327,15 @@ int card_pirs_whim(int player, int card, event_t event)
     scnprintf(buffer_caster, 0x32, "Which are you?");
     scnprintf(buf, 0x32, "Which is %s?", opponent_name);
     scnprintf(buffer_player, 0x32, "Which is the player?");
-    result = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\011", buffer_caster, "\001\002",
-                         "\001\003", "\001\014", "Friend", 1, 10, "Foe", 1, 0xfffffff6, 0, 0, 0, 0);
+    result = dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_HEADER(buffer_caster), DLG_RANDOM,
+                         DLG_NO_CANCEL, DLG_NO_STORAGE, "Friend", 1, 10, "Foe", 1, 0xfffffff6, 0, 0, 0, 0);
     foe[player] = result + -1;
     if (player != 0)
     {
       buf = buffer_player;
     }
-    result = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\011", buf, "\001\002", "\001\003",
-                         "\001\014", "Friend", 1, 0xfffffff6, "Foe", 1, 10, 0, 0, 0, 0);
+    result = dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_HEADER(buf), DLG_RANDOM, DLG_NO_CANCEL,
+                         DLG_NO_STORAGE, "Friend", 1, 0xfffffff6, "Foe", 1, 10, 0, 0, 0, 0);
 
     player_pass = 0;
     foe[1 - player] = result + -1;
@@ -1378,7 +1366,7 @@ int card_bramble_sovereign(int player, int card, event_t event)
   int result;
 
 
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     result = has_mana_multi(player, 1, 0, 0, 1, 0, 0);
@@ -1456,7 +1444,7 @@ int card_generous_patron(int player, int card, event_t event)
 int get_random_permanent(int player, test_definition_t *this_test)
 {
   card_instance_t *instance;
-  long selected_card;
+  int selected_card;
   int candidate_count_or_result;
   int card;
   test_definition_t default_test;
@@ -1468,8 +1456,8 @@ int get_random_permanent(int player, test_definition_t *this_test)
     default_test_definition(this_test, 0x47);
   }
   candidate_count_or_result = active_cards_count[player];
-  if (candidate_count_or_result == hand_count[player] ||
-      candidate_count_or_result - hand_count[player] < 0)
+  int32_t permanents = (uint32_t)candidate_count_or_result - (uint32_t)hand_count[player];
+  if (permanents <= 0)
     return -1;
   if ((trace_mode & 2U) != 0)
   {
@@ -1568,8 +1556,8 @@ int card_last_one_standing(int player, int card, event_t event)
     {
       chosen_name = get_card_name_by_id(get_id(chosen_player, own_creatures_or_selected));
       scnprintf(buffer, 100, "Last One Standing chose %s at random", chosen_name);
-      dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\006", chosen_player,
-                  own_creatures_or_selected, "\001\011", buffer, "\001\014", "\001\003", 0, 0, 0,
+      dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_FULLCARD(chosen_player,
+                  own_creatures_or_selected), DLG_HEADER(buffer), DLG_NO_STORAGE, DLG_NO_CANCEL, 0, 0, 0,
                   0);
       state_untargettable(chosen_player, own_creatures_or_selected, 1);
       new_manipulate_all(player, card, 2, &this_test, ACT_KILL_DESTROY);

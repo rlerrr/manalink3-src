@@ -1,5 +1,19 @@
 # Card recovery triage
 
+The [C725 full comparison](recovery-evidence/reccmp-indexed-arrays-and-public-call-refresh.json.gz)
+of C724 covers 18,837 ranges: 12,768 exact, 284 effective and 5,785 different.
+Categories are unchanged from C721, with five different score changes and no
+added/removed ranges. Three source batches refine 51 existing definitions (42
+literal/enum-only, nine native-supported) across 34 units; no new bodies. All
+14 comparator-source hashes and existing automatic models remain unchanged.
+The wider queue has 1,692 annotated entries and 915 without site observations,
+down from 917; all 575 tiny candidates have observations. Two new spell checks
+use verified arithmetic-flag overwrite prefixes in both public C callees plus
+the existing strict continuation checks. Callee/data/ABI assumptions remain;
+these are review leads, not missing bodies or gameplay-bug counts. C724 passes
+all 15,169 entry slots; twelve mapping follow-ups remain. See [scope](recovery-scope.md)
+and [reccmp](reccmp.md).
+
 This inventory records the post-enum comparison checkpoint before the later native record/parameter restoration; its binary and source hashes identify that snapshot. The subsequent focused build is recorded separately in [recovery scope](recovery-scope.md).
 
 Remaining manual review: **0 native card ranges**. Separately tracked: **5,100 explicitly reviewed/reconstructed ranges** and **6,634 verified retained ranges**. The classifier does not edit C source or recovery records. It additionally checks public/private COFF linkage and requires a current, input-hash-verified helper review inventory. Narrow argument/interface edits do not close whole-body review.

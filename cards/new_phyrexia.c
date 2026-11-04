@@ -103,7 +103,7 @@ int card_batterskull(int player, int card, event_t event)
   if (event == EVENT_ETB)
   {
     token_generation_t token;
-    default_token_definition(player, card, 0x4935, &token);
+    default_token_definition(player, card, CARD_ID_PHYREXIAN_GERM, &token);
     token.action = TOKEN_ACTION_EQUIP;
     generate_token(&token);
   }
@@ -147,7 +147,7 @@ int card_batterskull(int player, int card, event_t event)
         td.allowed_controller = player;
         bounce_priority = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 5, 0, 0, 0,
                                                     0, 0, 0, &td, NULL);
-        bounce_priority = (-(unsigned int)(bounce_priority == 0) & 9) + 1;
+        bounce_priority = ((bounce_priority == 0) ? 10U : 1U);
       }
       else
       {
@@ -158,11 +158,11 @@ int card_batterskull(int player, int card, event_t event)
         bounce_priority = 1;
         if ((keywords & 0x800000) != 0)
         {
-          bounce_priority = (-(unsigned int)((special_keywords & 0x20) == 0) & 0xfffffff7) + 10;
+          bounce_priority = (((special_keywords & 0x20) == 0) ? 1U : 10U);
         }
       }
       choice =
-          dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Equip", equip_available, 5,
+          dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Equip", equip_available, 5,
                       "Return Batterskul to hand", bounce_available, bounce_priority, 0, 0, 0, 0);
       if (choice == 0)
       {
@@ -177,7 +177,7 @@ int card_batterskull(int player, int card, event_t event)
       {
         return 0;
       }
-      ai_modifier = ai_modifier + ((1 - player == current_turn) - 1 & 0xffffffe8) + 0x30;
+      ai_modifier = ai_modifier + (unsigned int)((1 - player == current_turn) ? 0 : -24) + 0x30;
       return generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 3, 0, 0, 0, 0, 0, 0, NULL,
                                        NULL);
     }
@@ -524,7 +524,7 @@ int card_hex_parasite(int player, int card, event_t event)
   bool ai = ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0);
   if (ai && event != EVENT_RESOLVE_ACTIVATION)
   {
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_must_have_counters;
   }
   if (event == EVENT_CAN_ACTIVATE)
@@ -630,9 +630,9 @@ int card_karn_liberated(int player, int card, event_t event)
     int general2_id;
     int8_t general1_ebk;
     int8_t general2_ebk;
-  } karn_commander_snapshot_t;
-  STATIC_ASSERT(sizeof(karn_commander_snapshot_t) == 16, karn_native_commander_snapshot_bytes);
-  STATIC_ASSERT(offsetof(karn_commander_snapshot_t, general1_ebk) == 12,
+  } edh_data_t;
+  STATIC_ASSERT(sizeof(edh_data_t) == 16, karn_native_commander_snapshot_bytes);
+  STATIC_ASSERT(offsetof(edh_data_t, general1_ebk) == 12,
                 karn_native_commander_flag_offset);
   int exiled_by_karn[2][151];
 
@@ -666,7 +666,7 @@ int card_karn_liberated(int player, int card, event_t event)
   int legacy;
   int entry_index;
   int exiled_count[2];
-  karn_commander_snapshot_t commanders[2];
+  edh_data_t commanders[2];
   target_definition_t player_target;
   target_definition_t permanent_target;
   test_definition_t hand_test;
@@ -676,7 +676,7 @@ int card_karn_liberated(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     default_target_definition(player, card, &player_target, 0);
-    player_target.zone = 0x1000;
+    player_target.zone = TARGET_ZONE_PLAYERS;
     default_target_definition(player, card, &permanent_target, 0x47);
     value = can_target(&permanent_target);
     owner_or_opponent = 1 - player;
@@ -688,7 +688,7 @@ int card_karn_liberated(int player, int card, event_t event)
     }
     result = can_target(&player_target);
     value =
-        dialog_impl(player, card, event, "\001\002", "\001\017", "Exile a card in target's hand",
+        dialog_impl(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Exile a card in target's hand",
                     result, hand_priority, 4, "Exile a permanent", value, 10, 0xfffffffd,
                     "Restart the game", 1, 0x14, 0xfffffff2, 0, 0, 0, 0);
     if (event == EVENT_CAN_ACTIVATE)
@@ -779,7 +779,7 @@ int card_karn_liberated(int player, int card, event_t event)
               {
                 kill_card(instance->targets[0].player, selected_card, KILL_EXILE);
                 result = check_rfg(owner_or_opponent, (unsigned int)cards_data[value].id);
-                if ((result != 0) && (*(char *)((int)&commander->targets[3].player + 1) == '\x04'))
+                if ((result != 0) && ((char)SET_BYTE1(commander->targets[3].player) == '\x04'))
                 {
                   exiledby_remember(instance->parent_controller, instance->parent_card,
                                     owner_or_opponent, value, NULL, NULL);
@@ -868,7 +868,7 @@ int card_karn_liberated(int player, int card, event_t event)
           {
             if (in_play(restart_player, value) && has_subtype(restart_player, value, SUBTYPE_AURA))
               put_on_top_of_deck(restart_player, value);
-            else if (get_id(restart_player, value) == 0x3953)
+            else if (get_id(restart_player, value) == CARD_ID_ELDER_DRAGON_HIGHLANDER)
             {
               commanders[restart_player].edh_card = value;
               remove_all_counters(restart_player, value, restart_player, value, ~COUNTER_P1_P1);
@@ -891,7 +891,7 @@ int card_karn_liberated(int player, int card, event_t event)
                 commanders[restart_player].general1_ebk = commander_exiled;
                 commander_exiled = false;
                 if (((1 << (commander_bit_base + 1 & 0x1f) & turn_or_csvid) != 0) &&
-                    (*(char *)((int)&record->targets[3].player + 1) == '\x04'))
+                    ((char)SET_BYTE1(record->targets[3].player) == '\x04'))
                 {
                   result = check_rfg(restart_player, commanders[restart_player].general2_id);
                   commander_exiled = result != 0;
@@ -902,7 +902,7 @@ int card_karn_liberated(int player, int card, event_t event)
               *(uint8_t *)&record->targets[3].player = 1;
 
               if (commanders[restart_player].general2_id >= 0)
-                *(uint8_t *)((int)&record->targets[3].player + 1) = 1;
+                SET_BYTE1(record->targets[3].player) = 1;
             }
           }
           value = active_cards_count[restart_player] - 1;
@@ -940,7 +940,7 @@ int card_karn_liberated(int player, int card, event_t event)
               }
               else if (card_category == '\x03')
               {
-                if (cards_data[result].id != 0x3953)
+                if (cards_data[result].id != CARD_ID_ELDER_DRAGON_HIGHLANDER)
                 {
                   if (!is_plane_card((unsigned int)csvid))
                     remove_all_counters(restart_player, value, restart_player, value,
@@ -1090,7 +1090,7 @@ int card_karn_liberated(int player, int card, event_t event)
                            (commanders[player].general2_ebk != '\0'))
                   {
                     instance = get_card_instance(player, commanders[player].edh_card);
-                    *(uint8_t *)((int)&instance->targets[3].player + 1) = 4;
+                    SET_BYTE1(instance->targets[3].player) = 4;
                     commander_enters_the_battlefield(player, commanders[player].edh_card, player,
                                                      value, 2);
                     put_into_play(player, value);
@@ -1102,7 +1102,7 @@ int card_karn_liberated(int player, int card, event_t event)
                   {
                     instance = get_card_instance(owner_or_opponent,
                                                  commanders[owner_or_opponent].edh_card);
-                    *(uint8_t *)((int)&instance->targets[3].player + 1) = 4;
+                    SET_BYTE1(instance->targets[3].player) = 4;
                     commander_enters_the_battlefield(owner_or_opponent,
                                                      commanders[owner_or_opponent].edh_card, player,
                                                      value, 2);
@@ -1280,7 +1280,7 @@ int card_karn_liberated(int player, int card, event_t event)
           {
             selected = get_card_instance(value, selected_card);
             if ((selected->internal_card_id == commander->targets[2].card) &&
-                (*(char *)((int)&commander->targets[3].player + 1) == '\x04'))
+                ((char)SET_BYTE1(commander->targets[3].player) == '\x04'))
             {
               commander_flags = &record->targets[7].card;
               *commander_flags =
@@ -3352,14 +3352,14 @@ int card_gremlin_mine(int player, int card, event_t event)
       event != EVENT_CLEANUP)
     return 0;
   default_target_definition(player, card, &td, 0x40);
-  td.special = 8;
+  td.special = TARGET_SPECIAL_ARTIFACT_CREATURE;
   default_target_definition(player, card, &td2, 0x40);
   if (player == 1)
   {
-    td2.special = 0x40000;
+    td2.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td2.extra = 0x7b;
   }
-  td2.illegal_type = 2;
+  td2.illegal_type = TYPE_CREATURE;
   instance = get_card_instance(player, card);
   if (event == EVENT_CAN_ACTIVATE)
   {
@@ -3379,7 +3379,7 @@ int card_gremlin_mine(int player, int card, event_t event)
   {
     instance->info_slot = 0;
     value = can_target(&td2);
-    choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014",
+    choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE,
                          "Damage artifact creature", can_target(&td), 10, "Remove Charge counters",
                          value, 5, 0, 0, 0, 0);
     if (choice == 0)
@@ -3639,7 +3639,7 @@ When ~ enters the battlefield, choose one -
 		td.zone = TARGET_ZONE_PLAYERS;
 		td.allowed_controller = 1-player;
 
-		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_AUTOCHOOSE_IF_1,
+		int choice = DIALOG(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_AUTOCHOOSE_IF_1,
 							"Gain 2 life", 1, life[player] < 6 ? 10 : 1,
 							"Opponent lose 2 life", would_validate_arbitrary_target(&td, 1-player, -1), 5);
 		if( choice == 1 ){
@@ -4328,7 +4328,7 @@ int card_praetors_grasp(int player, int card, event_t event)
 			new_default_test_definition(&test, 0, "Select a card to exile.");
 
 			int csvid = new_global_tutor(player, 1-player, TUTOR_FROM_DECK, TUTOR_RFG, 1, AI_MAX_VALUE, &test);
-			if (csvid != -1)
+			if (csvid >= 0)
 			{
 				create_may_play_card_from_exile_effect(player, card, 1-player, csvid, MPCFE_FACE_DOWN);
 			}
@@ -5103,7 +5103,7 @@ static int deal_6_damage_legacy(int player, int card, event_t event)
       }
       else
       {
-        remaining_hits = card_counts[player_00][5] + 1;
+        remaining_hits = card_counts[player_00][CCOUNTS_TEYSA_KARLOV] + 1;
         do
         {
           damage_creature(p, card_00, 6, player_00, source_card);
@@ -5124,11 +5124,11 @@ static int deal_6_damage_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x226d140; original cards/new_phyrexia.c:519. */
 static void cathedral_membrane_legacy(int player, int card, int t_player, int t_card)
 {
-  int card_00;
+  int leg;
   card_instance_t *instance;
 
-  card_00 = create_targetted_legacy_effect(player, card, deal_6_damage_legacy, t_player, t_card);
-  instance = get_card_instance(player, card_00);
+  leg = create_targetted_legacy_effect(player, card, deal_6_damage_legacy, t_player, t_card);
+  instance = get_card_instance(player, leg);
   instance->targets[0].player = player;
   instance->targets[0].card = card;
   instance->targets[1].player = t_player;
@@ -5143,7 +5143,7 @@ static int bludgeon_brawl_effect(int player, int card, event_t event);
 static int bludgeon_brawl_effect(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int player_00;
+  int target_player;
   card_instance_t *equipment;
   card_instance_t *equipped;
   int mana_value_or_valid;
@@ -5151,12 +5151,12 @@ static int bludgeon_brawl_effect(int player, int card, event_t event)
   target_definition_t td;
 
   instance = get_card_instance(player, card);
-  player_00 = (int)instance->damage_target_player;
+  target_player = (int)instance->damage_target_player;
   equipment_card = instance->damage_target_card;
-  equipment = in_play(player_00, equipment_card);
-  if ((equipment != NULL) && (equipped = is_equipping(player_00, equipment_card), equipped != NULL))
+  equipment = in_play(target_player, equipment_card);
+  if ((equipment != NULL) && (equipped = is_equipping(target_player, equipment_card), equipped != NULL))
   {
-    mana_value_or_valid = get_cmc(player_00, equipment_card);
+    mana_value_or_valid = get_cmc(target_player, equipment_card);
     modify_pt_and_abilities((int)equipment->damage_target_player, equipment->damage_target_card,
                             event, mana_value_or_valid, 0, 0);
   }
@@ -5177,7 +5177,7 @@ static int bludgeon_brawl_effect(int player, int card, event_t event)
                instance->targets[1].player == affected_card_controller;
     if (detach)
     {
-      unattach(player_00, equipment_card);
+      unattach(target_player, equipment_card);
       kill_card(player, card, KILL_EXILE);
     }
   }
@@ -5190,11 +5190,11 @@ static int bludgeon_brawl_effect(int player, int card, event_t event)
   if ((event == EVENT_RESOLVE_ACTIVATION) &&
       (mana_value_or_valid = validate_target(player, card, &td, 0), mana_value_or_valid != 0))
   {
-    equip_target_creature(player_00, equipment_card, instance->targets[0].player,
+    equip_target_creature(target_player, equipment_card, instance->targets[0].player,
                           instance->targets[0].card);
   }
-  return granted_generic_activated_ability(player, card, player_00, equipment_card, event, 0x102,
-                                           get_cmc(player_00, equipment_card), 0, 0, 0, 0, 0, 0,
+  return granted_generic_activated_ability(player, card, target_player, equipment_card, event, 0x102,
+                                           get_cmc(target_player, equipment_card), 0, 0, 0, 0, 0, 0,
                                            &td, "Select target creature you control.");
 }
 
@@ -5255,12 +5255,12 @@ int card_bludgeon_brawl(int player, int card, event_t event)
 #ifndef SHANDALAR
 /* Recovered October 2022 Phyrexian cost helpers. */
 int charge_mana_called_from_pay_phyrexian_mana;
-static const char *const phyrexian_color_words[6] = {"colorless", "black", "blue", "green", "red", "white"};
 
 /* ManalinkEh 2022: 0x226caa0; original cards/new_phyrexia.c:60. */
 static int charge_phyrexian_mana_impl(int player, int cless, int black, int blue, int green,
                                       int red, int white, int clred_artifact)
 {
+  static const char *words[6] = {"colorless", "black", "blue", "green", "red", "white"};
   int life_available;
   int color;
   int chosen_or_mana;
@@ -5286,7 +5286,7 @@ static int charge_phyrexian_mana_impl(int player, int cless, int black, int blue
   manacost_modified[1] = black;
   life_payment_or_available = can_pay_life(player, 2);
   life_available = how_much_life_can_i_pay(player);
-  if (has_mana(player, (-(unsigned int)(clred_artifact == 0) ^ 0xffffffff) & 6, cless) == 0)
+  if (has_mana(player, (unsigned int)(clred_artifact == 0 ? COLOR_COLORLESS : COLOR_ARTIFACT), cless) == 0)
   {
     spell_fizzled = 1;
     return 0;
@@ -5308,7 +5308,7 @@ static int charge_phyrexian_mana_impl(int player, int cless, int black, int blue
         minimum_life_symbols =
             black - chosen_or_mana & (int)(black - chosen_or_mana ^ 0xffffffffU) >> 0x1f;
         sprintf(buffer, " Pay 2 life for how much %s mana? (max %d, min %d)",
-                phyrexian_color_words[color], argument3, minimum_life_symbols);
+                words[color], argument3, minimum_life_symbols);
         while (true)
         {
           chosen_or_mana = choose_a_number(player, buffer, argument3);
@@ -5383,7 +5383,7 @@ int has_phyrexian_mana(int player, int cless, int black, int blue, int green, in
   if (has_mana_multi(player, cless, black, blue, green, red, white) == 0)
   {
     life_needed_or_available =
-        has_mana(player, (-(unsigned int)(clred_artifact == 0) ^ 0xffffffff) & 6, cless);
+        has_mana(player, (unsigned int)(clred_artifact == 0 ? COLOR_COLORLESS : COLOR_ARTIFACT), cless);
     payable = 0;
     if ((life_needed_or_available != 0) &&
         (life_needed_or_available = can_pay_life(player, 1), life_needed_or_available != 0))
@@ -5440,8 +5440,7 @@ int has_phyrexian_mana_for_activated_ability(int player, int card, int cless, in
 
   result = get_cost_mod_for_activated_abilities(
       player, card, (int)(cless ^ 0xffffffffU) >> 0x1f & cless, black, blue, green, red, white);
-  result = has_phyrexian_mana(player, result, black, blue, green, red, white, 0);
-  return result;
+  return has_phyrexian_mana(player, result, black, blue, green, red, white, 0);
 }
 
 

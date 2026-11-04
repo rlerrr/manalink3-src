@@ -630,7 +630,8 @@ void scrylike_effect(int player, int t_player, int remaining)
           show_deck(player, deck, remaining, "Choose a card to put on the bottom", 0, EXE_STR(ENGINE_DONE_LABEL));
       if (selected == -1)
         break;
-      deck[count_deck(t_player)] = deck[selected];
+      int deck_size = count_deck(t_player);
+      deck[deck_size] = deck[selected];
       remove_card_from_deck(t_player, selected);
       --remaining;
     }
@@ -641,7 +642,7 @@ void scrylike_effect(int player, int t_player, int remaining)
 
 void scry(int player, int number_of_cards)
 {
-  if (check_battlefield_for_id(player, 0x565b)) /* Eligeth, Crossroads Augur */
+  if (check_battlefield_for_id(player, CARD_ID_ELIGETH_CROSSROADS_AUGUR)) /* Eligeth, Crossroads Augur */
     draw_cards(player, number_of_cards);
   else
   {
@@ -1073,17 +1074,17 @@ static void side_effects_to_tutor_deck_from_permanents(int player, int targ_play
 {
   int amount;
   int card;
-  int player_00;
+  int opponent;
 
-  player_00 = 1 - player;
-  amount = count_cards_by_id(player_00, 0x3741);
+  opponent = 1 - player;
+  amount = count_cards_by_id(opponent, CARD_ID_OB_NIXILIS_UNSHACKLED);
   if (amount == 0)
   {
     return;
   }
   lose_life(player, amount * 10);
-  card = locate_id(player_00, 0x3741);
-  impose_sacrifice(player_00, card, player, amount, 2, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+  card = locate_id(opponent, 0x3741);
+  impose_sacrifice(opponent, card, player, amount, 2, 0, 0, 0, 0, 0, 0, 0, -1, 0);
   return;
 }
 
@@ -1615,7 +1616,7 @@ int new_global_tutor(int player, int targ_player, int search_location, int desti
   int capacity = this_test->qty;
   int tutored[capacity];
   int selector = 1 - player;
-  int opposition_agent = check_battlefield_for_id(selector, 0x56a2);
+  int opposition_agent = check_battlefield_for_id(selector, CARD_ID_OPPOSITION_AGENT);
   int self_search = player == targ_player;
   int shuffle_after = avoid_shuffle == 0 && search_location == TUTOR_FROM_DECK;
   int shuffle_before;
@@ -1855,7 +1856,7 @@ int new_global_tutor(int player, int targ_player, int search_location, int desti
       --hand_count[selector];
       reveal_card(selector, card_added, -1, -1);
       add_card_to_rfg(player, iid);
-      create_may_play_card_from_exile_effect(selector, card_added, player, cards_data[iid].id, 1);
+      create_may_play_card_from_exile_effect(selector, card_added, player, cards_data[iid].id, MPCFE_FOR_CMC);
       obliterate_card(selector, card_added);
       break;
     }
@@ -1907,35 +1908,24 @@ int global_tutor(int player, int targ_player, int search_location, int destinati
  * Native behavior: the 50-byte local is passed with a formatting bound of 100. */
 int reveal_top_cards_of_library(int player, int num_cards)
 {
-  int *argument2;
-  int argument3;
-  char buffer[50];
-
-  argument3 = count_deck(player);
-  if (num_cards < argument3)
+  int count = count_deck(player);
+  if (num_cards < count)
+    count = num_cards;
+  if (count <= 0)
+    return 0;
+  if (ai_is_speculating != 1)
   {
-    argument3 = num_cards;
+    char buffer[50];
+    if (player == 0)
+      scnprintf(buffer, 100, " You reveal");
+    else
+      scnprintf(buffer, 100, " %s reveals", opponent_name);
+    int *deck = deck_ptr[player];
+    call_sub_437E20_unless_ai_is_speculating();
+    hack_show_deck_force_expansion = 0;
+    show_deck_exe(0, deck, count, buffer, 0, 0x78f0a8);
   }
-  if (0 < argument3)
-  {
-    if (ai_is_speculating != 1)
-    {
-      if (player == 0)
-      {
-        scnprintf(buffer, 100, " You reveal");
-      }
-      else
-      {
-        scnprintf(buffer, 100, " %s reveals", opponent_name);
-      }
-      argument2 = deck_ptr[player];
-      call_sub_437E20_unless_ai_is_speculating();
-      hack_show_deck_force_expansion = 0;
-      show_deck_exe(0, argument2, argument3, buffer, 0, 0x78f0a8);
-    }
-    return argument3;
-  }
-  return 0;
+  return count;
 }
 
 

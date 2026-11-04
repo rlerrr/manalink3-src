@@ -145,46 +145,31 @@ void proliferate_auto_single_permanent_or_player(int player, int card, int p, in
 void proliferate_manual_single_permanent_or_player(int player, int card, int p, int c,
                                                    int add_untargettable)
 {
-  int result;
-  counter_t type;
-  player_counter_names_t type_00;
-  unsigned int available_counters;
   if (c != -1)
   {
-    type = choose_existing_counter_type(player, player, card, p, c, CECT_HUMAN_CAN_CANCEL, -1, -1);
-    if (type != COUNTER_invalid)
+    counter_t counter_type = choose_existing_counter_type(
+        player, player, card, p, c, CECT_HUMAN_CAN_CANCEL, -1, -1);
+    if (counter_type != COUNTER_invalid)
     {
-      if (add_untargettable != 0)
-      {
+      if (add_untargettable)
         state_untargettable(p, c, 1);
-      }
-      add_counters(player, card, p, c, type, 1);
-      return;
+      add_counters(player, card, p, c, counter_type, 1);
     }
-    spell_fizzled = 0;
+    else
+      spell_fizzled = 0;
     return;
   }
-  available_counters = 0;
-  type_00 = PCOUNTER_POISON;
-  do
-  {
-    result = count_player_counters(p, type_00);
-    if (result != 0)
-    {
-      available_counters = available_counters | 1 << ((unsigned char)type_00 & 0x1f);
-    }
-    type_00 = type_00 + PCOUNTER_EXPERIENCE;
-  } while (type_00 != (PCOUNTER_ENERGY | PCOUNTER_EXPERIENCE));
-  if (available_counters == 0)
-  {
+  unsigned int available_counters = 0;
+  for (player_counter_names_t type = PCOUNTER_POISON; type <= PCOUNTER_ENERGY; ++type)
+    if (count_player_counters(p, type))
+      available_counters |= 1U << ((unsigned char)type & 0x1f);
+  if (!available_counters)
     return;
-  }
-  result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\014", "\001\003", "\001\004",
-                       "Poison counter", available_counters & 1, 1, "Experience counter",
-                       available_counters & 2, 1, "Energy counter", available_counters & 4, 1, 0, 0,
-                       0, 0);
-  add_player_counters(p, result + PCOUNTER_invalid, 1);
-  return;
+  int counters_to_add = dialog_impl(
+      player, card, EVENT_ACTIVATE, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_OMIT_ILLEGAL,
+      "Poison counter", available_counters & 1, 1, "Experience counter", available_counters & 2, 1,
+      "Energy counter", available_counters & 4, 1, 0, 0, 0, 0);
+  add_player_counters(p, counters_to_add + PCOUNTER_invalid, 1);
 }
 
 void proliferate(int player, int card)
@@ -207,7 +192,7 @@ void proliferate(int player, int card)
   target_definition_t td;
 
   if ((player == 1) ||
-      (choice_or_result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\014", "\001\003",
+      (choice_or_result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_NO_STORAGE, DLG_NO_CANCEL,
                                       "Automatic", 1, 1, "Manual", 1, 1, 0, 0, 0, 0),
        choice_or_result == CHOICE_AUTO))
   {
@@ -240,14 +225,14 @@ void proliferate(int player, int card)
   {
     base_target_definition(player, card, &td, 0x47);
     td.allow_cancel = 2;
-    td.special = 0x40000;
+    td.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td.extra = 0xff;
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     choice_or_result = count_player_counters(0, PCOUNTER_invalid);
     if ((choice_or_result == 0) &&
         (choice_or_result = count_player_counters(1, PCOUNTER_invalid), choice_or_result == 0))
     {
-      td.zone = 0x200;
+      td.zone = TARGET_ZONE_IN_PLAY;
     }
     else
     {
@@ -281,7 +266,7 @@ void proliferate(int player, int card)
         if (chosen_players[1 - chosen_player] != 0 ||
             (choice_or_result = count_player_counters(1 - chosen_player, PCOUNTER_invalid),
              choice_or_result == 0))
-          td.zone = 0x200;
+          td.zone = TARGET_ZONE_IN_PLAY;
       }
     }
     remove_untargettable_from_all();
@@ -969,7 +954,7 @@ int card_genesis_wave(int player, int card, event_t event){
 				}
 				int amount = max;
 				char msg[100];
-				scnprintf(msg, 100, "Select a permanent card with CMC %d.", max);
+				scnprintf(msg, 100, "Select a permanent card with CMC <= %d.", max);
 				test_definition_t test;
 				new_default_test_definition(&test, TYPE_PERMANENT, msg);
 				test.cmc = max + 1;
@@ -1529,7 +1514,7 @@ int card_lux_cannon(int player, int card, event_t event)
           ability_flags_or_result = count_counters(player, card, COUNTER_CHARGE);
           destroy_available = (unsigned int)(2 < ability_flags_or_result);
         }
-        choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Add a charge counter", 1, 5,
+        choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Add a charge counter", 1, 5,
                              "Kill a permanent", destroy_available, 10, 0, 0, 0, 0);
         if (choice != 0)
         {
@@ -2031,7 +2016,7 @@ int card_generic_som_tapland(int player, int card, event_t event)
   // inlines comes_into_play_tapped()
   if ((event == EVENT_CAST_SPELL || event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE) && affect_me(player, card)
 	  && !check_special_flags2(player, card, SF2_FACE_DOWN_DUE_TO_MANIFEST)
-	  && !((card_flags[0] | card_flags[1]) & 8) && !is_humiliated(player, card, AL_TRIG))
+	  && !((card_flags[0] | card_flags[1]) & CFLAGS_ARCHELOS) && !is_humiliated(player, card, AL_TRIG))
 	{
 	  int num_needed = 2;
 	  if (in_play(player, card))	// will be false for EVENT_CAST_SPELL, true for EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE
@@ -3328,24 +3313,15 @@ int card_fume_spitter(int player, int card, event_t event)
   int result;
   target_definition_t td;
 
-  if (event == EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  instance = get_card_instance(player, card);
+  default_target_definition(player, card, &td, 2);
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
-    get_card_instance(player, card);
-    default_target_definition(player, card, &td, 2);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    instance = get_card_instance(player, card);
-    default_target_definition(player, card, &td, 2);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-    {
-      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
-                               COUNTER_M1_M1, 1);
-    }
+    add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                             COUNTER_M1_M1, 1);
   }
   result = generic_activated_ability(player, card, event, 0xc, 0, 0, 0, 0, 0, 0, 0, &td,
                                      "TARGET_CREATURE");
@@ -3964,19 +3940,19 @@ int card_grindclock(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
-    return dialog_impl(player, card, EVENT_CAN_ACTIVATE, "Charge counter", 1, 1, "\001\025",
-                       "\001\020", 0, 0, 0, 0, 0, 0, "Mill", 1, 1, "\001\025", "\001\020", 0, 0, 0,
-                       0, 0, 0, "\001\024", &td, "TARGET_PLAYER", 0, 0, 0, 0);
+    td.zone = TARGET_ZONE_PLAYERS;
+    return dialog_impl(player, card, EVENT_CAN_ACTIVATE, "Charge counter", 1, 1, DLG_TAP,
+                       DLG_MANA6(0, 0, 0, 0, 0, 0), "Mill", 1, 1, DLG_TAP, DLG_MANA6(0, 0, 0,
+                       0, 0, 0), DLG_TARGET(&td, "TARGET_PLAYER"), 0, 0, 0, 0);
   }
   if (event != EVENT_ACTIVATE)
   {
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     charge_priority_or_result =
-        dialog_impl(player, card, event, "Charge counter", 1, 1, "\001\025", "\001\020", 0, 0, 0, 0,
-                    0, 0, "Mill", 1, 1, "\001\025", "\001\020", 0, 0, 0, 0, 0, 0, "\001\024", &td,
-                    "TARGET_PLAYER", 0, 0, 0, 0);
+        dialog_impl(player, card, event, "Charge counter", 1, 1, DLG_TAP, DLG_MANA6(0, 0, 0, 0,
+                    0, 0), "Mill", 1, 1, DLG_TAP, DLG_MANA6(0, 0, 0, 0, 0, 0), DLG_TARGET(&td,
+                    "TARGET_PLAYER"), 0, 0, 0, 0);
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
       if (charge_priority_or_result == CHOICE_CHARGE)
@@ -4005,10 +3981,10 @@ int card_grindclock(int player, int card, event_t event)
   else if (player != 1)
   {
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
-    dialog_impl(player, card, EVENT_ACTIVATE, "Charge counter", 1, 1, "\001\025", "\001\020", 0, 0,
-                0, 0, 0, 0, "Mill", 1, 1, "\001\025", "\001\020", 0, 0, 0, 0, 0, 0, "\001\024", &td,
-                "TARGET_PLAYER", 0, 0, 0, 0);
+    td.zone = TARGET_ZONE_PLAYERS;
+    dialog_impl(player, card, EVENT_ACTIVATE, "Charge counter", 1, 1, DLG_TAP, DLG_MANA6(0, 0,
+                0, 0, 0, 0), "Mill", 1, 1, DLG_TAP, DLG_MANA6(0, 0, 0, 0, 0, 0), DLG_TARGET(&td,
+                "TARGET_PLAYER"), 0, 0, 0, 0);
     charge_priority_or_result = -0x18;
   }
   else
@@ -4031,10 +4007,10 @@ int card_grindclock(int player, int card, event_t event)
     }
     if (!ai_dialog)
     {
-      td.zone = 0x1000;
-      dialog_impl(1, card, EVENT_ACTIVATE, "Charge counter", 1, 1, "\001\025", "\001\020", 0, 0, 0,
-                  0, 0, 0, "Mill", 1, human_mill_priority, "\001\025", "\001\020", 0, 0, 0, 0, 0, 0,
-                  "\001\024", &td, "TARGET_PLAYER", 0, 0, 0, 0);
+      td.zone = TARGET_ZONE_PLAYERS;
+      dialog_impl(1, card, EVENT_ACTIVATE, "Charge counter", 1, 1, DLG_TAP, DLG_MANA6(0, 0, 0,
+                  0, 0, 0), "Mill", 1, human_mill_priority, DLG_TAP, DLG_MANA6(0, 0, 0, 0, 0, 0),
+                  DLG_TARGET(&td, "TARGET_PLAYER"), 0, 0, 0, 0);
       charge_priority_or_result = 0x18;
     }
   }
@@ -4048,11 +4024,11 @@ int card_grindclock(int player, int card, event_t event)
           999 - (charge_count + charge_priority_or_result + 1) / (charge_count + 2);
     }
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     dialog_impl(player, card, EVENT_ACTIVATE, "Charge counter", 1, charge_priority_or_result,
-                "\001\025", "\001\020", 0, 0, 0, 0, 0, 0, "Mill", 1, mill_priority, "\001\025",
-                "\001\020", 0, 0, 0, 0, 0, 0, "\001\024", &td, "TARGET_PLAYER", 0, 0, 0, 0);
-    charge_priority_or_result = ((player == 1) - 1 & 0xffffffd0) + 0x18;
+                DLG_TAP, DLG_MANA6(0, 0, 0, 0, 0, 0), "Mill", 1, mill_priority, DLG_TAP,
+                DLG_MANA6(0, 0, 0, 0, 0, 0), DLG_TARGET(&td, "TARGET_PLAYER"), 0, 0, 0, 0);
+    charge_priority_or_result = (unsigned int)((player == 1) ? 24 : -24);
   }
   ai_modifier = ai_modifier + charge_priority_or_result;
   return 0;
@@ -4312,8 +4288,6 @@ int card_infiltration_lens(int player, int card, event_t event)
 
 int card_instill_infection(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
   target_definition_t td;
   if (!IS_GS_EVENT(player, card, event))
   {
@@ -4322,10 +4296,9 @@ int card_instill_infection(int player, int card, event_t event)
   default_target_definition(player, card, &td, 2);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
-      instance = get_card_instance(player, card);
+      card_instance_t *instance = get_card_instance(player, card);
       add_counters(player, card, instance->targets[0].player,
                                instance->targets[0].card, COUNTER_M1_M1, 1);
       draw_cards(player, 1);
@@ -4508,20 +4481,20 @@ int card_livewire_lash(int player, int card, event_t event)
   card_instance_t *instance;
   int equipped_card;
   const target_t *targeting_spell;
-  int player_00;
+  int p;
   target_definition_t td;
   instance = is_equipping(player, card);
   if (instance != NULL)
   {
     instance = get_card_instance(player, card);
-    player_00 = (int)instance->damage_target_player;
+    p = (int)instance->damage_target_player;
     equipped_card = instance->damage_target_card;
-    instance = get_card_instance(player_00, equipped_card);
+    instance = get_card_instance(p, equipped_card);
     if (is_humiliated(player, card, AL_STATIC) == 0)
     {
-      if (is_humiliated(player_00, equipped_card, AL_TRIG) == 0)
+      if (is_humiliated(p, equipped_card, AL_TRIG) == 0)
       {
-        targeting_spell = becomes_target_of_spell(player, card, event, player_00, equipped_card, 2,
+        targeting_spell = becomes_target_of_spell(player, card, event, p, equipped_card, 2,
                                                   RESOLVE_TRIGGER_MANDATORY);
         if (targeting_spell != NULL)
         {
@@ -4529,14 +4502,14 @@ int card_livewire_lash(int player, int card, event_t event)
           saved_target_player = instance->targets[0].player;
           saved_target_card = instance->targets[0].card;
           instance->number_of_targets = '\0';
-          default_target_definition(player_00, equipped_card, &td, 0x102);
-          td.zone = 0x1200;
+          default_target_definition(p, equipped_card, &td, 0x102);
+          td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
           td.allow_cancel = 0;
           if (can_target(&td) != 0)
           {
             if (new_pick_target(&td, "TARGET_ANY", 0, 0) != 0)
             {
-              damage_creature(instance->targets[0].player, instance->targets[0].card, 2, player_00,
+              damage_creature(instance->targets[0].player, instance->targets[0].card, 2, p,
                               equipped_card);
               instance->targets[0].player = saved_target_player;
               instance->targets[0].card = saved_target_card;
@@ -5091,9 +5064,14 @@ etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card))
   {
     card_instance_t* spell = get_card_instance(trigger_cause_controller, trigger_cause);
-    if (spell->number_of_targets == 1 && spell->targets[0].card != -1 &&
-        has_subtype(spell->targets[0].player, spell->targets[0].card, SUBTYPE_GOLEM))
-      sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+    if (spell->number_of_targets == 1 &&
+        get_card_instance(trigger_cause_controller, trigger_cause)->targets[0].card != -1)
+    {
+      int target_card = get_card_instance(trigger_cause_controller, trigger_cause)->targets[0].card;
+      int target_player = get_card_instance(trigger_cause_controller, trigger_cause)->targets[0].player;
+      if (has_subtype(target_player, target_card, SUBTYPE_GOLEM))
+        sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
+    }
   }
   if (event == EVENT_SPA)
   {
@@ -6767,16 +6745,16 @@ static int imprint_legacy(int player, int card, event_t event) { return 0; }
 static void imprint(int player, int card, int store_player, int store_card)
 {
   uint8_t previous_target_count;
-  int card_00;
+  int legacy_id;
   card_instance_t *instance;
 
-  card_00 = create_legacy_effect(player, card, imprint_legacy);
-  instance = get_card_instance(player, card_00);
+  legacy_id = create_legacy_effect(player, card, imprint_legacy);
+  instance = get_card_instance(player, legacy_id);
   instance->targets[0].card = store_card;
   previous_target_count = instance->number_of_targets;
   instance->targets[0].player = store_player;
   instance->number_of_targets = previous_target_count + '\x01';
-  add_status(player, card_00, 0x10000);
+  add_status(player, legacy_id, 0x10000);
   return;
 }
 

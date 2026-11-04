@@ -1707,7 +1707,7 @@ static void static_graveyard_abilities(int player, int card, event_t event)
   if (((unsigned int)player_bits[player] >> 24) & 2)
     return;
 
-  if (trigger_condition == 0xdb && card == affected_card && player == affected_card_controller &&
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY && card == affected_card && player == affected_card_controller &&
       reason_for_trigger_controller == player && trigger_cause_controller == player)
   {
     unsigned int graveyard_mask, triggers;
@@ -1922,7 +1922,7 @@ static void static_graveyard_abilities(int player, int card, event_t event)
     }
   }
 
-  if (trigger_condition == 0xd3 && card == affected_card && player == affected_card_controller &&
+  if (trigger_condition == TRIGGER_SPELL_CAST && card == affected_card && player == affected_card_controller &&
       reason_for_trigger_controller == player)
   {
     unsigned int graveyard_mask = get_graveyard_counts(player);
@@ -2103,7 +2103,7 @@ static void static_graveyard_abilities(int player, int card, event_t event)
     }
   }
 
-  if (trigger_condition == 0xd7 && card == affected_card && player == affected_card_controller &&
+  if (trigger_condition == TRIGGER_DEAL_DAMAGE && card == affected_card && player == affected_card_controller &&
       reason_for_trigger_controller == player)
   {
     unsigned int graveyard_mask = get_graveyard_counts(player);
@@ -2228,7 +2228,7 @@ static void static_graveyard_abilities(int player, int card, event_t event)
     }
   }
   card_instance_t *engine = get_card_instance(player, card);
-  if (engine->targets[1].player > 0 && trigger_condition == 0xd5 && card == affected_card &&
+  if (engine->targets[1].player > 0 && trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && card == affected_card &&
       player == affected_card_controller && reason_for_trigger_controller == player)
   {
     engine = get_card_instance(player, card);
@@ -2410,7 +2410,7 @@ static void static_graveyard_abilities(int player, int card, event_t event)
       if (cards_data[graveyard[index]].id == CARD_ID_ARCLIGHT_PHOENIX)
         reanimate_permanent(player, card, player, index, REANIMATE_DEFAULT);
   }
-  if (trigger_condition != 0xe0 || card != affected_card || player != affected_card_controller ||
+  if (trigger_condition != TRIGGER_GAIN_LIFE || card != affected_card || player != affected_card_controller ||
       reason_for_trigger_controller != player)
     return;
   unsigned int graveyard_mask = get_graveyard_counts(player);
@@ -4002,12 +4002,12 @@ int get_stormcolor_count(int player, color_t clr)
 /* ManalinkEh 2022: 0x26c7890; original functions/rules_engine.c:84. */
 int limit_allowed_in_deck(int csvid)
 {
-  static const int unlimited_list[17] = {91,   126,   164,   188,   239,   2100,  2101, 2102, 2103,
+  static int unlimited_list[17] = {91,   126,   164,   188,   239,   2100,  2101, 2102, 2103,
                                          2104, 20819, 15719, 22636, 19685, 18489, 7107, 13335};
   for (unsigned int i = 0; i < 17; ++i)
     if (csvid == unlimited_list[i])
       return 5000;
-  return csvid == 0x5100 ? 7 : 4;
+  return csvid == CARD_ID_SEVEN_DWARVES ? 7 : 4;
 }
 
 #endif

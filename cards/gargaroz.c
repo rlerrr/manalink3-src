@@ -474,28 +474,21 @@ int card_willbender(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x24294b0; original cards/gargaroz.c:665. */
 int card_aethersnatch(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-  card_instance_t *target_spell;
-  int card_00;
-
-  instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_CAN_CAST)
-  {
     return counterspell(player, card, EVENT_CAN_CAST, NULL, -1);
-  }
   if (event == EVENT_CAST_SPELL)
   {
-    if ((card == affected_card) && (player == affected_card_controller))
+    if (card == affected_card && player == affected_card_controller)
     {
-      target_spell = get_card_instance(card_on_stack_controller, card_on_stack);
-      if (target_spell->number_of_targets == '\x01')
+      card_instance_t *spell = get_card_instance(card_on_stack_controller, card_on_stack);
+      if (spell->number_of_targets == 1)
       {
         instance->info_slot = 1;
         return deflect_one_target(player, card, EVENT_CAST_SPELL, NULL);
       }
-      target_spell = get_card_instance(card_on_stack_controller, card_on_stack);
-      if (1 < target_spell->number_of_targets)
+      spell = get_card_instance(card_on_stack_controller, card_on_stack);
+      if (spell->number_of_targets > 1)
       {
         instance->info_slot = 2;
         return deflect_multi_targets(player, card, EVENT_CAST_SPELL, NULL);
@@ -503,40 +496,32 @@ int card_aethersnatch(int player, int card, event_t event)
       return counterspell(player, card, EVENT_CAST_SPELL, NULL, 0);
     }
   }
-  else if ((event == EVENT_RESOLVE_SPELL) &&
-           (result = counterspell_validate(player, card, NULL, 0), result != 0))
+  else if (event == EVENT_RESOLVE_SPELL && counterspell_validate(player, card, NULL, 0))
   {
-    result = instance->info_slot;
-    if (result == 1)
+    int mode = instance->info_slot;
+    if (mode == 1)
     {
       deflect_one_target(player, card, EVENT_RESOLVE_SPELL, NULL);
-      result = instance->info_slot;
+      mode = instance->info_slot;
     }
-    if (result == 2)
-    {
+    if (mode == 2)
       deflect_multi_targets(player, card, EVENT_RESOLVE_SPELL, NULL);
-    }
-    result = is_what(instance->targets[0].player, instance->targets[0].card, 0x47);
-    if (result != 0)
+    if (is_what(instance->targets[0].player, instance->targets[0].card, TYPE_PERMANENT))
     {
-      target_spell = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-      result = target_spell->internal_card_id;
-      if (-1 < result)
+      card_instance_t *spell = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      int iid = spell->internal_card_id;
+      if (iid >= 0)
       {
         obliterate_card(instance->targets[0].player, instance->targets[0].card);
-        card_00 = add_card_to_hand(player, result);
-        put_into_play(player, card_00);
-        result = instance->targets[0].player;
-        if (result != player)
+        int card_added = add_card_to_hand(player, iid);
+        put_into_play(player, card_added);
+        int controller = instance->targets[0].player;
+        if (controller != player)
         {
-          if (result == 1)
-          {
-            add_state(player, card_00, 0x1000);
-          }
+          if (controller == AI)
+            add_state(player, card_added, 0x1000);
           else
-          {
-            remove_state(player, card_00, 0x1000);
-          }
+            remove_state(player, card_added, 0x1000);
         }
       }
     }
@@ -589,98 +574,61 @@ static char *has_only_1_target_and_targets_a_creature_and_can_legally_change_tar
 /* ManalinkEh 2022: 0x2428fe0; original cards/gargaroz.c:504. */
 int card_muck_drubb(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-  target_definition_t td_spell;
-
-  counterspell_target_definition(player, card, &td_spell, 0xff);
-  td_spell.special = td_spell.special | 0x8000;
-  td_spell.extra =
-      (int32_t)has_only_1_target_and_targets_a_creature_and_can_legally_change_target_to_me;
-  instance = get_card_instance(player, card);
+  target_definition_t td;
+  counterspell_target_definition(player, card, &td, TYPE_ANY);
+  td.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
+  td.extra = (int32_t)has_only_1_target_and_targets_a_creature_and_can_legally_change_target_to_me;
+  card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_CAN_CAST)
   {
-    result = counterspell(player, card, EVENT_CAN_CAST, &td_spell, 0);
-    if (result == 0)
+    if (counterspell(player, card, event, &td, 0))
     {
-      instance->info_slot = 0;
-      return 1;
+      instance->info_slot = 1;
+      return 99;
     }
-    instance->info_slot = 1;
-    result = 99;
+    instance->info_slot = 0;
+    return 1;
   }
-  else
-  {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (((card == affected_card) && (player == affected_card_controller)) &&
-          (current_turn == player))
-      {
-        ai_modifier = ai_modifier + -10;
-      }
-      etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
-    }
-    else
-    {
-      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-      result = card_on_stack_controller;
-      if ((event == EVENT_ETB) && (instance->info_slot == 1))
-      {
-        instance->number_of_targets = '\x01';
-        instance->targets[0].player = result;
-        instance->targets[0].card = card_on_stack;
-        result = counterspell_validate(player, card, &td_spell, 0);
-        if (result != 0)
-        {
 
-          instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-          instance->targets[0].player = player;
-          instance->targets[0].card = card;
-        }
-      }
+  if (event == EVENT_CAST_SPELL && affect_me(player, card) && current_turn == player)
+    ai_modifier -= 10;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB && instance->info_slot == 1)
+  {
+    instance->number_of_targets = 1;
+    instance->targets[0].player = card_on_stack_controller;
+    instance->targets[0].card = card_on_stack;
+    if (counterspell_validate(player, card, &td, 0))
+    {
+      card_instance_t *spell = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      spell->targets[0].player = player;
+      spell->targets[0].card = card;
     }
-    result = madness(player, card, event, 2, 1, 0, 0, 0, 0);
   }
-  return result;
+  return madness(player, card, event, MANACOST_XB(2, 1));
 }
 
 /* ManalinkEh 2022: 0x24277b0; original cards/gargaroz.c:550. */
 static char *has_only_1_target_and_can_legally_change_target_to_attached(
     int who_chooses, int spell_player, int spell_card, int targeting_player, int targeting_card)
 {
-  int32_t saved_target_player;
-  int32_t saved_target_card;
-  card_instance_t *target_spell;
-  char *rejection;
-  card_instance_t *targeting_aura;
-  int enchanted_card_or_result;
+  card_instance_t *spell = get_card_instance(spell_player, spell_card);
+  if (spell->number_of_targets != 1)
+    return "must have only 1 target";
+  card_instance_t *targeting = get_card_instance(targeting_player, targeting_card);
+  int attached_player = targeting->damage_target_player;
+  int attached_card = targeting->damage_target_card;
+  if (attached_player < 0 || attached_card < 0)
+    return "targeting card must be attached";
 
-  target_spell = get_card_instance(spell_player, spell_card);
-  rejection = "must have only 1 target";
-  if (target_spell->number_of_targets == '\x01')
-  {
-    targeting_aura = get_card_instance(targeting_player, targeting_card);
-    enchanted_card_or_result = targeting_aura->damage_target_card;
-    if ((targeting_aura->damage_target_player < 0) || (enchanted_card_or_result < 0))
-    {
-      return "targeting card must be attached";
-    }
-    saved_target_player = target_spell->targets[9].player;
-    target_spell->targets[9].player = (int)targeting_aura->damage_target_player;
-    saved_target_card = target_spell->targets[9].card;
-    target_spell->targets[9].card = enchanted_card_or_result;
-    set_special_flags2(spell_player, spell_card, 0x10000);
-    enchanted_card_or_result = call_card_function(spell_player, spell_card, EVENT_CAN_CAST);
-    target_spell->targets[9].player = saved_target_player;
-    target_spell->targets[9].card = saved_target_card;
-    remove_special_flags2(spell_player, spell_card, 0x10000);
-    rejection = "cannot target this creature";
-    if (enchanted_card_or_result != 0)
-    {
-      rejection = NULL;
-    }
-  }
-  return rejection;
+  target_t prev_9 = spell->targets[9];
+  spell->targets[9].player = attached_player;
+  spell->targets[9].card = attached_card;
+  set_special_flags2(spell_player, spell_card, 0x10000);
+  int rvalue = call_card_function(spell_player, spell_card, EVENT_CAN_CAST);
+  spell->targets[9] = prev_9;
+  remove_special_flags2(spell_player, spell_card, 0x10000);
+  return rvalue ? NULL : "cannot target this creature";
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -699,7 +647,7 @@ int card_captured_by_the_consulate(int player, int card, event_t event)
   if (!(((((((instance == NULL) || (instance->damage_target_player == -1)) ||
             (cannot_attack((int)instance->damage_target_player, instance->damage_target_card,
                            event),
-             trigger_condition != 0xd3)) ||
+             trigger_condition != TRIGGER_SPELL_CAST)) ||
            ((card != affected_card || (player != affected_card_controller)))) ||
           ((reason_for_trigger_controller != player ||
             ((trigger_card_or_result = is_humiliated(player, card, AL_TRIG),
@@ -717,7 +665,7 @@ int card_captured_by_the_consulate(int player, int card, event_t event)
       counterspell_target_definition(player, card, &td, 0xff);
       td.illegal_abilities = 0;
       td.extra = (int32_t)has_only_1_target_and_can_legally_change_target_to_attached;
-      td.special = 0x8000;
+      td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
       instance->targets[0].player = trigger_cause_controller;
       trigger_card_or_result = trigger_cause;
       instance->number_of_targets = '\x01';
@@ -860,119 +808,86 @@ static char *can_legally_change_target_to_me(int who_chooses, int player, int ca
 /* ManalinkEh 2022: 0x24281d0; original cards/gargaroz.c:142. */
 int card_silver_wyvern(int player, int card, event_t event)
 {
-  int result;
 
   if (((event != EVENT_ACTIVATE) && (1 < event - EVENT_RESOLVE_ACTIVATION)) &&
       (event != EVENT_CLEANUP))
   {
     return 0;
   }
-  result = deflect_away_from_me(player, card, event, 0, 0, 0, 1, 0, 0, 0, 0, NULL, 1);
-  return result;
+  return deflect_away_from_me(player, card, event, 0, 0, 0, 1, 0, 0, 0, 0, NULL, 1);
 }
 
 /* ManalinkEh 2022: 0x24276f0; original cards/gargaroz.c:415. */
 static char *can_legally_change_target_to_me(int who_chooses, int player, int card,
                                              int targeting_player, int targeting_card)
 {
-  int32_t saved_target_player;
-  int32_t saved_target_card;
-  card_instance_t *instance;
-  char *rejection;
-  int retarget_legal;
-
-  instance = get_card_instance(player, card);
-  rejection = "must have at least 1 target";
-  if (instance->number_of_targets != '\0')
-  {
-    saved_target_player = instance->targets[9].player;
-    instance->targets[9].player = targeting_player;
-    saved_target_card = instance->targets[9].card;
-    instance->targets[9].card = targeting_card;
-    set_special_flags2(player, card, 0x10000);
-    retarget_legal = call_card_function(player, card, EVENT_CAN_CAST);
-    instance->targets[9].card = saved_target_card;
-    instance->targets[9].player = saved_target_player;
-    remove_special_flags2(player, card, 0x10000);
-    rejection = "cannot target this creature";
-    if (retarget_legal != 0)
-    {
-      return NULL;
-    }
-  }
-  return rejection;
+  card_instance_t *eff = get_card_instance(player, card);
+  if (!eff->number_of_targets)
+    return "must have at least 1 target";
+  target_t prev_9;
+  prev_9.player = eff->targets[9].player;
+  eff->targets[9].player = targeting_player;
+  prev_9.card = eff->targets[9].card;
+  eff->targets[9].card = targeting_card;
+  set_special_flags2(player, card, 0x10000);
+  int rvalue = call_card_function(player, card, EVENT_CAN_CAST);
+  eff->targets[9].card = prev_9.card;
+  eff->targets[9].player = prev_9.player;
+  remove_special_flags2(player, card, 0x10000);
+  return rvalue ? NULL : "cannot target this creature";
 }
 
 /* ManalinkEh 2022: 0x2428df0; original cards/gargaroz.c:430. */
 int card_mizzium_meddler(int player, int card, event_t event)
 {
-  int player_00;
-  card_instance_t *instance;
-  int result;
-  card_instance_t *target_spell;
-  target_definition_t td_spell;
+  target_definition_t td;
+  counterspell_target_definition(player, card, &td, TYPE_ANY);
+  td.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
+  td.extra = (int32_t)can_legally_change_target_to_me;
+  card_instance_t *instance = get_card_instance(player, card);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-  counterspell_target_definition(player, card, &td_spell, 0xff);
-  td_spell.special = td_spell.special | 0x8000;
-  td_spell.extra = (int32_t)can_legally_change_target_to_me;
-  instance = get_card_instance(player, card);
-  result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
-  player_00 = card_on_stack_controller;
-  result = card_on_stack;
   if (event == EVENT_CAN_CAST)
   {
-    result = counterspell(player, card, EVENT_CAN_CAST, &td_spell, 0);
-    if (result == 0)
+    if (counterspell(player, card, event, &td, 0))
     {
-      instance->info_slot = 0;
-      return 1;
+      instance->info_slot = 1;
+      return 99;
     }
-    instance->info_slot = 1;
-    result = 99;
+    instance->info_slot = 0;
+    return 1;
   }
-  else
+
+  if (event == EVENT_CAST_SPELL)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (((card == affected_card) && (player == affected_card_controller)) &&
-          (current_turn == player))
-      {
-        ai_modifier = ai_modifier + -10;
-      }
-    }
-    else if ((event == EVENT_ETB) && (instance->info_slot == 1))
-    {
-
-      instance->targets[0].card = card_on_stack;
-      instance->targets[0].player = player_00;
-      instance->number_of_targets = '\x01';
-      set_special_flags2(player_00, result, 0x10000);
-      result = call_card_function(instance->targets[0].player, instance->targets[0].card,
-                                  EVENT_CHANGE_TARGET);
-      remove_special_flags2(instance->targets[0].player, instance->targets[0].card, 0x10000);
-      if (result == -1)
-      {
-        spell_fizzled = 1;
-      }
-      else
-      {
-        instance->info_slot = result;
-      }
-      result = counterspell_validate(player, card, &td_spell, 0);
-      if (result != 0)
-      {
-
-        target_spell = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-        result = instance->info_slot;
-        target_spell->targets[result].player = player;
-        target_spell->targets[result].card = card;
-        return 0;
-      }
-    }
-    result = 0;
+    if (affect_me(player, card) && current_turn == player)
+      ai_modifier -= 10;
   }
-  return result;
+  else if (event == EVENT_ETB && instance->info_slot == 1)
+  {
+    int stack_controller = card_on_stack_controller;
+    int stack_card = card_on_stack;
+    instance->targets[0].card = stack_card;
+    instance->targets[0].player = stack_controller;
+    instance->number_of_targets = 1;
+    set_special_flags2(stack_controller, stack_card, SF2_SPELLSKITE);
+    int target_index = call_card_function(instance->targets[0].player, instance->targets[0].card,
+                                          EVENT_CHANGE_TARGET);
+    remove_special_flags2(instance->targets[0].player, instance->targets[0].card, SF2_SPELLSKITE);
+    if (target_index == -1)
+      spell_fizzled = 1;
+    else
+      instance->info_slot = target_index;
+
+    if (counterspell_validate(player, card, &td, 0))
+    {
+      card_instance_t *spell = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      target_index = instance->info_slot;
+      spell->targets[target_index].player = player;
+      spell->targets[target_index].card = card;
+    }
+  }
+  return 0;
 }
 
 #endif

@@ -800,6 +800,9 @@ typedef enum
 /* Card States */
 typedef enum
 {
+#ifndef SHANDALAR
+  STATE_0 = 0,
+#endif
   STATE_DRAWN_THIS_TURN			= 0x1,		// Card was drawn this turn.
   STATE_IN_PLAY					= 0x2,		// If STATE_INVISIBLE also set, then on the stack and no longer interruptible.
   STATE_ATTACKING				= 0x4,		// Card is currently attacking.
@@ -834,7 +837,8 @@ typedef enum
   STATE_SUMMONSICK_NOATTACK		= 0x10000,	// Unable to attack due to summoning sickness.  Temporarily removable with haste or Instill Energy.
   STATE_SUMMONSICK_NOTAP		= 0x20000,	// Unable to tap as a cost due to summoning sickness.  Temporarily removable with hase or Thousand-Year Elixir.
 #else
-  STATE_SICKNESS_UNUSED			= 0x10000,
+  STATE_SUMMON_SICK_BACKUP		= 0x10000,
+  STATE_SICKNESS_UNUSED = STATE_SUMMON_SICK_BACKUP, // Legacy source spelling.
   STATE_SUMMON_SICK				= 0x20000,
 #endif
   STATE_NO_AUTO_TAPPING			= 0x40000,
@@ -863,6 +867,8 @@ typedef enum
   STATE_ATTACKED_THIS_TURN		= 0x40000000,	// Card is currently or was previously attacking this turn.
   STATE_BLOCKED_THIS_TURN		= 0x80000000,	// Card is currently or was previously blocking this turn.
 #else
+  STATE_STIFLED = 0x40000000,
+  STATE_BEING_CAST = 0x80000000,
   STATE_DONT_RECOPY_ONTO_STACK	= 0x20000000,	// If set during EVENT_ACTIVATE, then don't copy the card back into its (already-existing) activation card on the stack.  Caller's responsibility to either update all relevant values there (per recopy_card_onto_stack), or simply not handle EVENT_RESOLVE_ACTIVATION.  Bit is removed when recopying is skipped.  Works only for activation, not casting.
 #endif
 } state_t;
@@ -1461,22 +1467,14 @@ typedef struct card_instance_struct
 #else
   union
   {
-    uint8_t extension_init_bytes[8]; /* Byte view for the existing zero initializer. */
-    struct
-    {
-      card_ext_t *ext;               /* October 2022: 0x2c. */
-      uint32_t unused30;             /* October 2022: 0x30. */
-    };
+    card_ext_t *ext;                 /* 0x2c */
   };
+  uint32_t unused30;                 /* 0x30 */
 #endif
   int16_t	power;				/*  0x34 */
   uint8_t	number_of_targets;	/*  0x36 */
 #ifndef SHANDALAR
-  union
-  {
-    uint8_t unknown0x37; /* Existing damage-card/trample storage. */
-    uint8_t mode;       /* October 2022 DWARF: byte at 0x37. */
-  };
+  uint8_t mode;                     /* 0x37 */
   /* October 2022 DWARF: anonymous union at 0x38, still four bytes on x86. */
   union
   {
@@ -1576,20 +1574,9 @@ typedef struct card_instance_struct
   uint16_t unused_0x12a;
   uint8_t unused_0x12c;
 #else
-  union
-  {
-    struct
-    {
-  uint8_t	upkeep_colorless;	/* 0x124 */	// These seven bytes are strong candidates for reclamation.  Used in: 0x402B60, 0x437670, Energy Flux, Sunken City, Stasis, Conversion, Junun Efreet, Phantasmal Force, Force of Nature, Cosmic Horror
-  uint8_t	upkeep_black;		/* 0x125 */
-  uint8_t	upkeep_blue;		/* 0x126 */
-  uint8_t	upkeep_green;		/* 0x127 */
-    };
-    uint32_t token_special_keywords; /* Native token keyword mirror at 0x124. */
-  };
-  uint8_t	upkeep_red;			/* 0x128 */
-  uint8_t	upkeep_white;		/* 0x129 */
-  uint8_t	upkeep_artmana;		/* 0x12A */
+  uint32_t unused0x124;              /* 0x124: native token keyword mirror */
+  uint16_t unused0x128;              /* 0x128 */
+  uint8_t unused0x12a;               /* 0x12a */
 #endif
   uint8_t	counters_m1m1;		/* 0x12B */
 #ifdef SHANDALAR	// strongly-typed accessors
@@ -2241,12 +2228,14 @@ typedef enum {
 	TRAP_DISCARDED_CARDS				= 0x203,
 	TRAP_UNBLOCKED_CREATURES			= 0x204,
 	TRAP_MAX_DAMAGE_DEALT				= 0x205,
+	TRAP_TOKENS_CREATED				= 0x206,
 #define TRAP_MAX_BYTES_PER_TURN		0x20F
 #define TRAP_NUMBYTES_BYTES_PER_TURN	(TRAP_MAX_BYTES_PER_TURN - TRAP_MIN_BYTES_PER_TURN + 1)
 
 	// Values 0x300 through 0x301: One byte of storage for each, not cleared.
 #define TRAP_MIN_BYTES_PERSISTENT	0x300
 	TRAP_TURN_COUNT						= 0x300,
+	TRAP_SPELL_COUNT					= 0x301,
 #define TRAP_MAX_BYTES_PERSISTENT	0x301
 #define TRAP_NUMBYTES_BYTES_PERSISTENT	(TRAP_MAX_BYTES_PERSISTENT - TRAP_MIN_BYTES_PERSISTENT + 1)
 
@@ -2260,8 +2249,10 @@ typedef enum {
 	TRAP_STORM_GREEN					= 0x405,
 	TRAP_STORM_RED						= 0x406,
 	TRAP_STORM_WHITE					= 0x407,
-	TRAP_COT_FLAG						= 0x408,
+	TRAP_NONCREATURES_PLAYED			= 0x408,
+	TRAP_COT_FLAG						= 0x40B,
 	TRAP_PLANESWALKERS_PLAYED			= 0x409,
+	TRAP_PROWL_PIRATE					= 0x40A,
 #define TRAP_MAX_NYBBLES_PER_TURN	0x40F
 #if ((TRAP_MAX_NYBBLES_PER_TURN - TRAP_MIN_NYBBLES_PER_TURN + 1) % 2) != 0
 #  error "Number of nybbles per turn must be a multiple of 2"
@@ -2285,6 +2276,7 @@ typedef enum {
 	TRAP_PROWL_FAERIE					= 0x609,	// Combat damage dealt to a player by a Faerie creature; always recorded
 	TRAP_PEER_THROUGH_DEPTHS			= 0x60A,
 	TRAP_REACH_THROUGH_MISTS			= 0x60B,
+	TRAP_ATTACKED_ROGUE				= 0x60D,
 	TRAP_REVOLT							= 0x60C,	// "If a permanent you controlled left the battlefield this turn..."
 #define TRAP_MAX_BITS_PER_TURN		0x61F
 #if ((TRAP_MAX_BITS_PER_TURN - TRAP_MIN_BITS_PER_TURN + 1) % 8) != 0
@@ -3178,6 +3170,16 @@ typedef struct
   int32_t flags;
 } target_definition_t;
 
+/* October 2022 target_definition_t.flags names. */
+enum {
+  TARGET_FLAG0 = 0,
+  TARGET_FLAG_IGNORE_SHROUD = 1,
+  TARGET_FLAG_FROM_AURA = 2,
+  TARGET_FLAG_FROM_EQUIP = 4,
+  TARGET_FLAG_FROM_ACTIVATION = 8,
+  TARGET_FLAG_FROM_SPELL = 16
+};
+
 
 typedef enum
 {
@@ -3241,6 +3243,7 @@ typedef enum
 {
 	// Some of these aren't used in Shandalar.dll, and have been verified not to be used from Shandalar.exe; they're removed, and some repurposed as well.
 
+	TARGET_SPECIAL_0 = 0,
 	TARGET_SPECIAL_WALL					= (1 << 0),
 	TARGET_SPECIAL_SPELL_ON_STACK		= (1 << 1),
 	TARGET_SPECIAL_BASIC_LAND			= (1 << 2), // Optional land color - 1 in extra.  Checked for but unused by exe.
@@ -3282,6 +3285,8 @@ typedef enum
 #endif
 	TARGET_SPECIAL_CMC_GREATER_OR_EQUAL	= (1 << 24),
 	TARGET_SPECIAL_OPPONENT				= (1 << 25),	// If targeting a player, must be an opponent.  For when either player's permanents can also be targeted - otherwise, just use allowed(1-player)
+	TARGET_SPECIAL_NOT_OPPONENT = (1 << 26),
+	TARGET_SPECIAL_NOT_SPELL_ON_STACK = (1 << 27),
 } target_special_t;
 
 typedef enum
@@ -3393,6 +3398,8 @@ typedef enum
 {
 	SHAPESHIFT_UNTIL_EOT			= 0x01,	// Effect ends at end of turn; otherwise permanent, unless SHAPESHIFT_COUNTER_FLAG is set.
 	SHAPESHIFT_EFFECT_WHEN_REMOVE	= 0x02,	// When this effect removes itself (via SHAPESHIFT_UNTIL_EOT or SHAPESHIFT_COUNTER), add an activateable legacy effect to the permanent, with function stored in targets[2].player.  (The latter must be set manually; if left unset, this has no effect.)
+	SHAPESHIFT_ADD_ARTIFACT = 0x04,
+	SHAPESHIFT_RESET_DLR_AT_EOE = 0x08,
 #define SHAPESHIFT_COUNTER(counter_type)	(SHAPESHIFT_IMPL_COUNTER_FLAG | ((counter_type & 0xFF) << 24))	// Effect ends if permanent doesn't have a counter of type counter_type on it.
 
 	// The following bits are reserved for the implementation; don't set directly.
@@ -3565,6 +3572,9 @@ typedef enum {
 	GFPC_STORE_OWNER			= 1<<7,
 	GFPC_TRACK_OWNER			= 1<<8,
 	GFPC_TRACK_CONTROLLER		= 1<<9,
+	GFPC_EXTRA_ONLY_TOKENS = 1<<10,
+	GFPC_STORE_COUNTERS = 1<<11,
+	GFPC_HOFRI_GHOSTFORGE = 1<<12,
 #endif
 } count_for_gfp_ability_and_store_values_flags_t;
 

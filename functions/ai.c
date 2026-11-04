@@ -19,38 +19,38 @@ int check_destroys_if_blocked(int attack_player, int attack_card, int defend_pla
                                    int defend_card);
 
 /* October 2022 per-player card and counterability flag storage. */
-static uint8_t backup_card_flags[8];
-static uint8_t backup_your_spells_cant_be_countered_by_color[2];
-static uint8_t backup0_card_flags[8];
-static uint8_t backup0_your_spells_cant_be_countered_by_color[2];
+static char backup_card_flags[8];
+static char backup_your_spells_cant_be_countered_by_color[2];
+static char backup0_card_flags[8];
+static char backup0_your_spells_cant_be_countered_by_color[2];
 
 /* October 2022 mana modifier table storage. */
-static uint8_t backup_mana_colors_added[8];
-static uint8_t backup_mana_color_override[64];
-static uint8_t backup_mana_quantity_override[64];
-static uint8_t backup_multi_mana_transmutation[16];
-static uint8_t backup0_mana_colors_added[8];
-static uint8_t backup0_mana_color_override[64];
-static uint8_t backup0_mana_quantity_override[64];
-static uint8_t backup0_multi_mana_transmutation[16];
+static char backup_mana_colors_added[8];
+static char backup_mana_color_override[64];
+static char backup_mana_quantity_override[64];
+static char backup_multi_mana_transmutation[16];
+static char backup0_mana_colors_added[8];
+static char backup0_mana_color_override[64];
+static char backup0_mana_quantity_override[64];
+static char backup0_multi_mana_transmutation[16];
 
 /* October 2022 extension storage; fixed banks and original template. */
 static char backup_card_ext[57600];
 static char backup0_card_ext[57600];
 
 /* October 2022 dice modifier cache storage. */
-static uint8_t backup_add_to_die_rolls[8];
-static uint8_t backup_roll_extra_dice[8];
-static uint8_t backup0_add_to_die_rolls[8];
-static uint8_t backup0_roll_extra_dice[8];
+static char backup_add_to_die_rolls[8];
+static char backup_roll_extra_dice[8];
+static char backup0_add_to_die_rolls[8];
+static char backup0_roll_extra_dice[8];
 
 /* October 2022 private subtype-table snapshots. */
-static uint8_t backup_added_subtypes_not_in_play[256];
-static uint8_t backup0_added_subtypes_not_in_play[256];
+static char backup_added_subtypes_not_in_play[256];
+static char backup0_added_subtypes_not_in_play[256];
 
 /* October 2022 private AI snapshots of the 14-byte card-count cache. */
-static uint8_t backup_card_counts[2][7];
-static uint8_t backup0_card_counts[2][7];
+static char backup_card_counts[14];
+static char backup0_card_counts[14];
 
 int get_usertime_of_current_thread_in_ms(void);	// exe
 extern int start_usertime_of_current_thread_in_ms;
@@ -213,8 +213,7 @@ int network_rand(int player, int upperbound)
       return result;
     }
   }
-  result = internal_rand(upperbound);
-  return result;
+  return internal_rand(upperbound);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */

@@ -1,0 +1,607 @@
+{
+  "format": 1,
+  "status": "One native token flag restored and five native-sized zero-initialized buffers reconstructed; combined build, 15,169 slots, six exact raw/canonical projections and one complete native/current CFG correspondence pass.",
+  "files": [
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "before_bytes_sha256": "93f7eabf97b4e73e74e5a205e6def5675b7d9d24d4e187dc9a0935c6742161ad",
+      "after_bytes_sha256": "7d0459e13272e679f47cabcb1bf04ddaf355f5102c61e97d0cb624498470c176",
+      "before_sha256": "b7646dee4dd5a5401b2fa61ad84de46b81ef9ed63f33c83f92254b5da3986de3",
+      "after_sha256": "91c042c8265508dc73cea2368579a37da114e1028f96c8fd7b96747cfc4f84aa"
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "before_bytes_sha256": "55dce452f9d6e97a6c81a4ef81e3f4b48c4f1e7a6cd6a3874a4eaf6b7f22c9c5",
+      "after_bytes_sha256": "7fa68f6da305d0cc59446730aa41404783f6e10f031d5f3d415fc86f13c53a6b",
+      "before_sha256": "486fa80ad4e02ee56d882e65e4cc7dd3a66feb984517a87e2b64c2de82985ce3",
+      "after_sha256": "a3dc4551b87b3e3c08adf1d41707d3dee3ca360cf67e3555fdfa2344f9cbfe25"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "before_bytes_sha256": "20e8756bc14ac4cfef9a6f41643c5083f0224b4e74cc956d46a8b07f7f25c63b",
+      "after_bytes_sha256": "0ce91c984a59b32e0eb8f8a55bee935caa63eed9b6de2e712b1ecf469c93b874",
+      "before_sha256": "e563c257983ecf8f77aa3b6e048fcd4f9e58198d926803cdeb4283e50275e374",
+      "after_sha256": "779e204e466ce34bcdea3e2f5d92560dbb4dace3d68581a237a7ba8e56b014b1"
+    },
+    {
+      "source": "cards/dragons_of_tarkir.c",
+      "before_bytes_sha256": "dc8a7fc728ca463e7eb6eadfe90cfee316149ff3376fe910cf31a20ad2af5c72",
+      "after_bytes_sha256": "fa230568f0d2e396923314f4fcaeea245a4107937503ff34d2cd3f9e7b04a74c",
+      "before_sha256": "8905aa4ba992bb30fed997502f2fb0f1dbbfca3cf5fbdbf5bec15cbcac306572",
+      "after_sha256": "c271ea99268ddf34fe2b1c1284fb76139105a5e3a12a4241bd29587b598c7be6"
+    },
+    {
+      "source": "cards/battle_for_zendikar.c",
+      "before_bytes_sha256": "71dbfaf76b70aa53711e9051fde58b5a3323281da5424939b3e9e29f1f741c07",
+      "after_bytes_sha256": "95e13ee02dce4227b26c2640ccc6ec4cb0ad3afe850d89b0b01c5b3d04f53703",
+      "before_sha256": "fd2a8d1c68e6abf71b22c428905f7d5fa7e82d39af102fe07a303a484a703bcb",
+      "after_sha256": "063c51f84c946fb39e8482fb3c075bf0f0202bc24f22f7283f6e12715760d159"
+    },
+    {
+      "source": "cards/commander_2018.c",
+      "before_bytes_sha256": "8fd2b910c2cbb7e1188bbfb64128dec221218fb1fd53364dc98e6191d9f8fbcd",
+      "after_bytes_sha256": "165cc2d5abefa8739544d35d17e09a5846d0ec386b922bd1337fe64347c85013",
+      "before_sha256": "a93ec1448a039647888abcc5b31689f7a4c0cfa5b1c80cf08480583f851a40df",
+      "after_sha256": "71d2f7c8a54e17654ce5beea581859fa2a1206c878cf13317c8c70a77863882c"
+    }
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "native_buffer_types": {
+    "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+    "functions": [
+      {
+        "name": "card_kindred_charge",
+        "source": "cards/commander_2017.c",
+        "native_address": "0x228eaa0",
+        "native_function_die": "0x24ca5e1",
+        "array": {
+          "name": "marked",
+          "variable_die": "0x24ca681",
+          "array_type_die": "0x24ca7e5",
+          "element_type_die": "0x2415fdf",
+          "element_name": "char",
+          "element_encoding": 6,
+          "element_bytes": 1,
+          "dimensions": [
+            151
+          ],
+          "bytes": 151
+        }
+      },
+      {
+        "name": "card_symbol_status",
+        "source": "cards/unglued_unhinged.c",
+        "native_address": "0x2305d40",
+        "native_function_die": "0x2c5cf11",
+        "array": {
+          "name": "expansions",
+          "variable_die": "0x2c5cf87",
+          "array_type_die": "0x2c5d16d",
+          "element_type_die": "0x2ba96b5",
+          "element_name": "char",
+          "element_encoding": 6,
+          "element_bytes": 1,
+          "dimensions": [
+            198
+          ],
+          "bytes": 198
+        }
+      },
+      {
+        "name": "card_scale_blessing",
+        "source": "cards/dragons_of_tarkir.c",
+        "native_address": "0x231bd00",
+        "native_function_die": "0x2ea550a",
+        "array": {
+          "name": "has_counter",
+          "variable_die": "0x2ea5594",
+          "array_type_die": "0x2ea4907",
+          "element_type_die": "0x2de14ca",
+          "element_name": "char",
+          "element_encoding": 6,
+          "element_bytes": 1,
+          "dimensions": [
+            151
+          ],
+          "bytes": 151
+        }
+      },
+      {
+        "name": "card_drana_liberator_of_malakir",
+        "source": "cards/battle_for_zendikar.c",
+        "native_address": "0x2452f40",
+        "native_function_die": "0x4043068",
+        "array": {
+          "name": "marked",
+          "variable_die": "0x4043100",
+          "array_type_die": "0x4043261",
+          "element_type_die": "0x3f8520f",
+          "element_name": "char",
+          "element_encoding": 6,
+          "element_bytes": 1,
+          "dimensions": [
+            151
+          ],
+          "bytes": 151
+        }
+      },
+      {
+        "name": "card_saheeli_the_gifted",
+        "source": "cards/commander_2018.c",
+        "native_address": "0x25650d0",
+        "native_function_die": "0x4e2c8f3",
+        "array": {
+          "name": "marked",
+          "variable_die": "0x4e2cb8c",
+          "array_type_die": "0x4e2cd0c",
+          "element_type_die": "0x4d78620",
+          "element_name": "char",
+          "element_encoding": 6,
+          "element_bytes": 1,
+          "dimensions": [
+            151
+          ],
+          "bytes": 151
+        }
+      }
+    ],
+    "scope": "Native DWARF local array element types and extents only. Initializer spelling is inferred separately from source structure and emitted zero-fill operations."
+  },
+  "before_cfg": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "8fe7657d1425a3661c434694e580764b7385704d91144cbb785b958759966389",
+      "ManalinkEh.dbg": "d25c5f7c9eba5210b0afaf9e4cc3ecaa9f7b1699a507fc4a271414d84a2bcb82"
+    },
+    "results": [
+      {
+        "name": "card_crawling_sensation",
+        "matched": false,
+        "reason": "Instruction prefix changed",
+        "ranges": [
+          {
+            "address": "0x22ad500",
+            "size": 353,
+            "sha256": "645dde92b5d90ac58736d479b22ffd78ef03a4dfd2b3bac317f139a33ef72b2c",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x24f8f70",
+            "size": 352,
+            "sha256": "c66bfa01050f98f1462b115ea31c3d85ef40d3477336ec8a0b0f7c161a54c2c9",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_scale_blessing",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x231bd00",
+            "size": 456,
+            "sha256": "29b73a7f2b2789fae8426ae05a253eb19a3e9d7d7a9e5b9296efd490c9dc493a",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x216a230",
+            "size": 464,
+            "sha256": "91fa613435138fed9d37ca54a6939d21874c5fa3afdca5add5d62a58b2e4cd7a",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_drana_liberator_of_malakir",
+        "matched": false,
+        "reason": "('Unbound operand', '0xb0', '0xb8')",
+        "ranges": [
+          {
+            "address": "0x2452f40",
+            "size": 384,
+            "sha256": "974f45c5c69ea831bff733b3566dd2815364c082de6e2129b432e9695b0776aa",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x208ee30",
+            "size": 400,
+            "sha256": "19fa2a67e91c6632c4c2b794fae97b84dedce6d043c90bdb8d32f144c79f1c41",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_kindred_charge",
+        "matched": false,
+        "reason": "('Operation changed', 'cmp', 'mov')",
+        "ranges": [
+          {
+            "address": "0x228eaa0",
+            "size": 488,
+            "sha256": "e4ce1f84fd3185a0b352e4465b7562c61db54fe3babd79ae296d394ef0026fe3",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x20f09c0",
+            "size": 480,
+            "sha256": "6c539f9c0f32abd6cd103dcc39315afb6da9a3f1ff3cc422a42bf8cb84fd3e5e",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_saheeli_the_gifted",
+        "matched": false,
+        "reason": "('Operation changed', 'xor', 'test')",
+        "ranges": [
+          {
+            "address": "0x25650d0",
+            "size": 970,
+            "sha256": "687c97b75bc767c13a2eb08b93dd0133f9b835ba06274e244a008d55359a3ea2",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x20f6e00",
+            "size": 992,
+            "sha256": "46fd4dfb30db61affb5a34b9198373a105c834caf240c57ecb4ca687f2e0ea0e",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_symbol_status",
+        "matched": false,
+        "reason": "('Unbound operand', '0xc0', '0xc4')",
+        "ranges": [
+          {
+            "address": "0x2305d40",
+            "size": 453,
+            "sha256": "f81207f2331776ddfd1dc7b9a1be42e1ae5320c18d1cdc326a6986aef3bb234f",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x25ada70",
+            "size": 448,
+            "sha256": "e1098ae50009d98163c410dac47f5660a749a626ea82b99fa5660143f4b25fc8",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      }
+    ],
+    "checker_sha256": "87aa7dbd6cc82000ed1dbe16c7e305258600fa6b4df821be2afbfe6f9bb5469a",
+    "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+    "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+  },
+  "scope": "Crawling Sensation inlines the static make_insect helper: native code stores the green color byte and zero no_sleight together after default_token_definition. Restore that explicit flag instead of relying on the initializer, whose result is conditional on its source. Five other card handlers retain their native named char[151]/char[198] buffers but express their zero fills as scoped declarations at the same execution points. Those declared array bytes are unchanged; native stores into adjacent stack padding do not justify increasing the array extents. Aggregate initializer spelling is an inference from native code generation and ordinary C reconstruction. No costs, event conditions, counter loops or caller APIs are changed.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "a10d5628a3bf3696bbc50a9f9e6221c2688fc52a6b65fc232c25ed2966b96613",
+    "debug_sha256": "87359b0b460cda99f99854c07bb0c09f0ab577cdeee971d572f4941a90f7b4ba",
+    "build_log_sha256": "8420bc31d8b159a83e043f584937a5c775fe5411992466435ffb2e01e2cd351e",
+    "source_definitions": 6,
+    "canonical_and_raw_file_projections": 6,
+    "native_array_bytes": 802,
+    "strict_cfg_before": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "8fe7657d1425a3661c434694e580764b7385704d91144cbb785b958759966389",
+        "ManalinkEh.dbg": "d25c5f7c9eba5210b0afaf9e4cc3ecaa9f7b1699a507fc4a271414d84a2bcb82"
+      },
+      "results": [
+        {
+          "name": "card_crawling_sensation",
+          "matched": false,
+          "reason": "Instruction prefix changed",
+          "ranges": [
+            {
+              "address": "0x22ad500",
+              "size": 353,
+              "sha256": "645dde92b5d90ac58736d479b22ffd78ef03a4dfd2b3bac317f139a33ef72b2c",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24f8f70",
+              "size": 352,
+              "sha256": "c66bfa01050f98f1462b115ea31c3d85ef40d3477336ec8a0b0f7c161a54c2c9",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_scale_blessing",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x231bd00",
+              "size": 456,
+              "sha256": "29b73a7f2b2789fae8426ae05a253eb19a3e9d7d7a9e5b9296efd490c9dc493a",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x216a230",
+              "size": 464,
+              "sha256": "91fa613435138fed9d37ca54a6939d21874c5fa3afdca5add5d62a58b2e4cd7a",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_drana_liberator_of_malakir",
+          "matched": false,
+          "reason": "('Unbound operand', '0xb0', '0xb8')",
+          "ranges": [
+            {
+              "address": "0x2452f40",
+              "size": 384,
+              "sha256": "974f45c5c69ea831bff733b3566dd2815364c082de6e2129b432e9695b0776aa",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x208ee30",
+              "size": 400,
+              "sha256": "19fa2a67e91c6632c4c2b794fae97b84dedce6d043c90bdb8d32f144c79f1c41",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_kindred_charge",
+          "matched": false,
+          "reason": "('Operation changed', 'cmp', 'mov')",
+          "ranges": [
+            {
+              "address": "0x228eaa0",
+              "size": 488,
+              "sha256": "e4ce1f84fd3185a0b352e4465b7562c61db54fe3babd79ae296d394ef0026fe3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x20f09c0",
+              "size": 480,
+              "sha256": "6c539f9c0f32abd6cd103dcc39315afb6da9a3f1ff3cc422a42bf8cb84fd3e5e",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_saheeli_the_gifted",
+          "matched": false,
+          "reason": "('Operation changed', 'xor', 'test')",
+          "ranges": [
+            {
+              "address": "0x25650d0",
+              "size": 970,
+              "sha256": "687c97b75bc767c13a2eb08b93dd0133f9b835ba06274e244a008d55359a3ea2",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x20f6e00",
+              "size": 992,
+              "sha256": "46fd4dfb30db61affb5a34b9198373a105c834caf240c57ecb4ca687f2e0ea0e",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_symbol_status",
+          "matched": false,
+          "reason": "('Unbound operand', '0xc0', '0xc4')",
+          "ranges": [
+            {
+              "address": "0x2305d40",
+              "size": 453,
+              "sha256": "f81207f2331776ddfd1dc7b9a1be42e1ae5320c18d1cdc326a6986aef3bb234f",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25ada70",
+              "size": 448,
+              "sha256": "e1098ae50009d98163c410dac47f5660a749a626ea82b99fa5660143f4b25fc8",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "87aa7dbd6cc82000ed1dbe16c7e305258600fa6b4df821be2afbfe6f9bb5469a",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "a10d5628a3bf3696bbc50a9f9e6221c2688fc52a6b65fc232c25ed2966b96613",
+        "ManalinkEh.dbg": "87359b0b460cda99f99854c07bb0c09f0ab577cdeee971d572f4941a90f7b4ba"
+      },
+      "results": [
+        {
+          "name": "card_crawling_sensation",
+          "matched": true,
+          "proof": {
+            "cfg_states": 92,
+            "reached_instruction_counts": [
+              92,
+              92
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2665470",
+                "rebuilt": "0x26dcdc0",
+                "identity": "_default_token_definition"
+              },
+              {
+                "native": "0x26659d0",
+                "rebuilt": "0x26dced0",
+                "identity": "_generate_token"
+              },
+              {
+                "native": "0x26795b0",
+                "rebuilt": "0x2685c50",
+                "identity": "_duh_mode"
+              },
+              {
+                "native": "0x267c220",
+                "rebuilt": "0x2686870",
+                "identity": "_global_enchantment"
+              },
+              {
+                "native": "0x2695220",
+                "rebuilt": "0x2689a30",
+                "identity": "_upkeep_trigger_ability_mode"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266ad90",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b32d0",
+                "rebuilt": "0x266b560",
+                "identity": "_in_play"
+              },
+              {
+                "native": "0x26b9430",
+                "rebuilt": "0x2671ed0",
+                "identity": "_mill"
+              },
+              {
+                "native": "0x26b9470",
+                "rebuilt": "0x266f110",
+                "identity": "_whenever_type_is_put_into_graveyard_from_anywhere"
+              },
+              {
+                "native": "0x26dd430",
+                "rebuilt": "0x26534e0",
+                "identity": "_is_humiliated"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x22ad500",
+              "size": 353,
+              "sha256": "645dde92b5d90ac58736d479b22ffd78ef03a4dfd2b3bac317f139a33ef72b2c",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24f8f80",
+              "size": 368,
+              "sha256": "d1e636576bc2e8ff146c5268ae54b9ffcdef6c1d0c73f70d4ab8b7e121982831",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_scale_blessing",
+          "matched": false,
+          "reason": "('Operation changed', 'xor', 'test')",
+          "ranges": [
+            {
+              "address": "0x231bd00",
+              "size": 456,
+              "sha256": "29b73a7f2b2789fae8426ae05a253eb19a3e9d7d7a9e5b9296efd490c9dc493a",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x216a250",
+              "size": 448,
+              "sha256": "f44e2344b32e9639d978abdee427e0eb4d56c3ea533057ac525e3496f4f8a1f2",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_drana_liberator_of_malakir",
+          "matched": false,
+          "reason": "('Unbound operand', '0xb0', '0xb4')",
+          "ranges": [
+            {
+              "address": "0x2452f40",
+              "size": 384,
+              "sha256": "974f45c5c69ea831bff733b3566dd2815364c082de6e2129b432e9695b0776aa",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x208ee30",
+              "size": 416,
+              "sha256": "aaf2d87eb622adb66254bb924f3e4380a9d867741d735c6cd38acc824e16f789",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_kindred_charge",
+          "matched": false,
+          "reason": "('Operation changed', 'cmp', 'mov')",
+          "ranges": [
+            {
+              "address": "0x228eaa0",
+              "size": 488,
+              "sha256": "e4ce1f84fd3185a0b352e4465b7562c61db54fe3babd79ae296d394ef0026fe3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x20f09f0",
+              "size": 464,
+              "sha256": "7364aba9446b545c24656029902cd7e41c58a36a661e03143ab867188cef449e",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_saheeli_the_gifted",
+          "matched": false,
+          "reason": "('Unbound operand', '0xfffffe85', '0xfffffe8a')",
+          "ranges": [
+            {
+              "address": "0x25650d0",
+              "size": 970,
+              "sha256": "687c97b75bc767c13a2eb08b93dd0133f9b835ba06274e244a008d55359a3ea2",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x20f6e20",
+              "size": 992,
+              "sha256": "b122fde16e26e59d662db8134a604bd4f7688d040f0ef8a7339120aed8d08d29",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_symbol_status",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x2305d40",
+              "size": 453,
+              "sha256": "f81207f2331776ddfd1dc7b9a1be42e1ae5320c18d1cdc326a6986aef3bb234f",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25ada90",
+              "size": 448,
+              "sha256": "09de1d5eab23d92fad45d026b9e4ed25b861739da002c4e1e337fce3c51d6387",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "87aa7dbd6cc82000ed1dbe16c7e305258600fa6b4df821be2afbfe6f9bb5469a",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "checker_sha256": "81869f601f02cffaeb6b914b6c157ff00f087414193e4a0894f7f24c7b6a866c",
+    "staging": "preserved",
+    "scope": "Crawling Sensation now has strict complete entry-reachable CFG correspondence under the same unique COFF/global/fixed engine and read-only literal identities; it failed the same checker before. No predicate, return-tail or void-return relaxation is enabled. The five array edits are source-level zero-fill reconstructions: same char element type, native extent, initialization point and subsequent code; moving declarations introduces no pre-clear reference. They are not claimed as complete function matches, and their remaining differences are unresolved. Native writes into adjacent stack padding do not enlarge the declared objects. Ordinary C object lifetimes, valid stack access, mapped callee/global behavior and normal returns remain assumptions. No full comparison refresh or gameplay fixture was needed."
+  }
+}

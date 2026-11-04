@@ -70,17 +70,12 @@ int card_glimmerbell(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  if (event != EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      instance = get_card_instance(player, card);
-      untap_card(instance->parent_controller, instance->parent_card);
-    }
+    instance = get_card_instance(player, card);
+    untap_card(instance->parent_controller, instance->parent_card);
   }
   result = generic_activated_ability(player, card, event, 0, 1, 0, 1, 0, 0, 0, 0, NULL, NULL);
   return result;
@@ -105,9 +100,9 @@ int card_inspired_ultimatum(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     default_target_definition(player, card, &td_any, 0x102);
-    td_any.zone = 0x1200;
+    td_any.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_target_definition(player, card, &td_player, 0);
-    td_player.zone = 0x1000;
+    td_player.zone = TARGET_ZONE_PLAYERS;
     result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td_any, NULL, 2, NULL);
     return result;
   }
@@ -116,9 +111,9 @@ int card_inspired_ultimatum(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
       default_target_definition(player, card, &td_any, 0x102);
-      td_any.zone = 0x1200;
+      td_any.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
       default_target_definition(player, card, &td_player, 0);
-      td_player.zone = 0x1000;
+      td_player.zone = TARGET_ZONE_PLAYERS;
       if ((card == affected_card) &&
           ((player == affected_card_controller &&
             (result = new_pick_target(&td_player, "Select target player to gain life.", 0, 0x81),
@@ -131,9 +126,9 @@ int card_inspired_ultimatum(int player, int card, event_t event)
   else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
   {
     default_target_definition(player, card, &td_any, 0x102);
-    td_any.zone = 0x1200;
+    td_any.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_target_definition(player, card, &td_player, 0);
-    td_player.zone = 0x1000;
+    td_player.zone = TARGET_ZONE_PLAYERS;
     if (event == EVENT_RESOLVE_SPELL)
     {
       instance = get_card_instance(player, card);
@@ -159,7 +154,7 @@ int card_inspired_ultimatum(int player, int card, event_t event)
   else if (event == EVENT_CHANGE_TARGET)
   {
     default_target_definition(player, card, &td_any, 0x102);
-    td_any.zone = 0x1200;
+    td_any.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_target_definition(player, card, &td_player, 0);
   }
   return 0;
@@ -211,40 +206,7 @@ int card_ruinous_ultimatum(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x22884c0; original cards/ikoria.c:2222. */
 static int has_counter(int unused1, int unused2, int player, int card)
 {
-  card_instance_t *instance;
-  int result;
-  instance = get_card_instance(player, card);
-  if (instance->internal_card_id == activation_card)
-  {
-    instance = get_card_instance(instance->parent_controller, instance->parent_card);
-  }
-  result = (unsigned int)instance->special_counters + (unsigned int)instance->counters +
-           (unsigned int)instance->counters_m1m1;
-  if ((char)instance->targets[0x12].player != -1)
-  {
-    result = result + (unsigned int)instance->counters2;
-  }
-  if (*(char *)((int)&instance->targets[0x12].player + 1) != -1)
-  {
-    result = result + (unsigned int)instance->counters3;
-  }
-  if (*(char *)((int)&instance->targets[0x12].player + 2) != -1)
-  {
-    result = result + (unsigned int)instance->counters4;
-  }
-  if (*(char *)((int)&instance->targets[0x12].player + 3) != -1)
-  {
-    result = result + (unsigned int)instance->counters5;
-  }
-  if (*(char *)((int)&instance->targets[0x12].card + 2) != -1)
-  {
-    result = result + (unsigned int)(unsigned char)instance->targets[0x12].card;
-  }
-  if (*(char *)((int)&instance->targets[0x12].card + 3) == -1)
-  {
-    return result;
-  }
-  return result + (unsigned int)*(unsigned char *)((int)&instance->targets[0x12].card + 1);
+  return count_counters(player, card, -1);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -290,7 +252,7 @@ int card_general_kudro_of_drannith(int player, int card, event_t event)
 
   check_legend_rule(player, card, event);
   boost_creature_type(player, card, event, SUBTYPE_HUMAN, 1, 1, 0, BCT_CONTROLLER_ONLY);
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     default_test_definition(&test, 0x47);
@@ -352,8 +314,7 @@ int triome(int player, int card, event_t event)
     result = plain_mana_producer(player, card, event);
     return result;
   }
-  result = cycling(player, card, event, 3, 0, 0, 0, 0, 0);
-  return result;
+  return cycling(player, card, event, 3, 0, 0, 0, 0, 0);
 }
 
 /* ManalinkEh 2022: 0x2288a10; original cards/ikoria.c:232. */
@@ -373,7 +334,7 @@ int card_cunning_nightbonder(int player, int card, event_t event)
         ((result = get_original_internal_card_id(affected_card_controller, affected_card),
           (cards_data[result].type & 0x10) != 0 ||
               ((result = is_what(affected_card_controller, affected_card, 2),
-                result != 0 && (result = check_battlefield_for_id(affected_card_controller, 0x21f5),
+                result != 0 && (result = check_battlefield_for_id(affected_card_controller, CARD_ID_TEFERI_MAGE_OF_ZHALFIR),
                                 result != 0))))))
     {
       if (event == EVENT_MODIFY_COST_GLOBAL)
@@ -802,8 +763,8 @@ static int vivien_library_ability(int player, int card, event_t event)
     top_iid_or_result = *deck_ptr[player];
   }
   top_iid_or_result =
-      dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\014", "\001\021",
-                  top_iid_or_result, "Check top card of deck", view_available, 0, "Play top card",
+      dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, DLG_NO_STORAGE, DLG_SMALLCARD_ID(
+                  top_iid_or_result), "Check top card of deck", view_available, 0, "Play top card",
                   play_available, 10, 0, 0, 0, 0);
   if (top_iid_or_result == 0)
   {
@@ -970,7 +931,7 @@ int card_shark_typhoon(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       token_size = instance->info_slot;
       token_generation_t token;
-      default_token_definition(player, card, 0x5394, &token);
+      default_token_definition(player, card, CARD_ID_SHARK, &token);
       token.key_plus = 0x20;
       token.pow = token_size;
       token.tou = token_size;
@@ -978,7 +939,7 @@ int card_shark_typhoon(int player, int card, event_t event)
       return cycling(player, card, EVENT_RESOLVE_ACTIVATION_FROM_HAND, 1, 0, 1, 0, 0, 0);
     }
   }
-  if (trigger_condition == 0xd3 && card == affected_card && player == affected_card_controller)
+  if (trigger_condition == TRIGGER_SPELL_CAST && card == affected_card && player == affected_card_controller)
   {
     test_definition_t test;
     default_test_definition(&test, 2);
@@ -990,7 +951,7 @@ int card_shark_typhoon(int player, int card, event_t event)
 
     token_generation_t token;
     cycling_result_or_cmc = get_cmc(trigger_cause_controller, trigger_cause);
-    default_token_definition(player, card, 0x5394, &token);
+    default_token_definition(player, card, CARD_ID_SHARK, &token);
     token.key_plus = 0x20;
     token.pow = cycling_result_or_cmc;
     token.tou = cycling_result_or_cmc;
@@ -1266,7 +1227,7 @@ int card_lukka_coppercoat_outcast(int player, int card, event_t event)
       instance->number_of_targets = '\0';
       instance->info_slot = 0;
       result = can_target(&td);
-      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Exile top 3", 1,
+      result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_PLANESWALKER, "Exile top 3", 1,
                            10, 1, "Exile a creature", result, 10, 0xfffffffe, "Creature smash", 1,
                            0x14, 0xfffffff9, 0, 0, 0, 0);
       if (result == 0)
@@ -1541,61 +1502,33 @@ static const char *permanent_you_control_and_own(int who_chooses, int player, in
 /* ManalinkEh 2022: 0x228cd10; original cards/ikoria.c:2625. */
 int card_yorion_sky_nomad(int player, int card, event_t event)
 {
-  int minimum_size_or_scan;
-  int deck_size;
-
-  target_definition_t td;
-  char flicker_array[2][151];
-
-  if (event == EVENT_QUERY)
+  if (event == EVENT_QUERY && attacking_card == 2)
   {
-    if (attacking_card == 2)
-    {
-      if (singleplayer_mode == 2)
-      {
-        minimum_size_or_scan = 0x3b;
-      }
-      else
-      {
-        minimum_size_or_scan = ((other_game_mode == OGM_EDH) - 1 & 0xffffffda) + 0x75;
-      }
-      deck_size = count_deck(player);
-      return (unsigned int)(minimum_size_or_scan < deck_size);
-    }
-    check_legend_rule(player, card, EVENT_QUERY);
-    etb_ability(player, card, EVENT_QUERY, RESOLVE_TRIGGER_MANDATORY);
+    int min_deck_size = singleplayer_mode == 2 ? 0x3b :
+                        (other_game_mode == OGM_EDH ? 117 : 79);
+    int deck_size = count_deck(player);
+    return min_deck_size < deck_size;
   }
-  else
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
   {
-    check_legend_rule(player, card, event);
-    etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if (event == EVENT_ETB)
-    {
-
-      default_target_definition(player, card, &td, 0x47);
-      td.allowed_controller = player;
-      td.preferred_controller = player;
-      td.special = 0xc000;
-      td.extra = (int32_t)permanent_you_control_and_own;
-      td.illegal_abilities = 0;
-      td.allow_cancel = 3;
-      memset(flicker_array, 0, sizeof(flicker_array));
-      minimum_size_or_scan = mark_up_to_n_targets_noload(
-          &td, "Select a nonland permanent you own and control.", -1, flicker_array);
-      if ((0 < minimum_size_or_scan) && (0 < active_cards_count[player]))
-      {
-        minimum_size_or_scan = 0;
-        do
-        {
-          if (flicker_array[player][minimum_size_or_scan] != '\0')
-          {
-            alternate_legacy_text(2, player,
-                                  remove_until_eot(player, card, player, minimum_size_or_scan));
-          }
-          minimum_size_or_scan = minimum_size_or_scan + 1;
-        } while (minimum_size_or_scan < active_cards_count[player]);
-      }
-    }
+    target_definition_t td;
+    default_target_definition(player, card, &td, 0x47);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    td.special = TARGET_SPECIAL_NOT_ME | TARGET_SPECIAL_EXTRA_FUNCTION;
+    td.extra = (int32_t)permanent_you_control_and_own;
+    td.illegal_abilities = 0;
+    td.allow_cancel = 3;
+    char flicker_array[2][151];
+    memset(flicker_array, 0, sizeof(flicker_array));
+    int num = mark_up_to_n_targets_noload(
+        &td, "Select a nonland permanent you own and control.", -1, flicker_array);
+    if (num > 0)
+      for (int c = 0; c < active_cards_count[player]; ++c)
+        if (flicker_array[player][c])
+          alternate_legacy_text(2, player, remove_until_eot(player, card, player, c));
   }
   return hybrid(player, card, event);
 }
@@ -1761,7 +1694,7 @@ int card_umori_the_collector(int player, int card, event_t event)
         if (is_what(-1, *deck_cursor, 1) == 0)
         {
           iid_type_or_result = *deck_cursor;
-          id_or_result = get_internal_card_id_from_csv_id(0x53b2);
+          id_or_result = get_internal_card_id_from_csv_id(CARD_ID_UMORI_THE_COLLECTOR);
           if ((companion_skipped) || (iid_type_or_result != id_or_result))
           {
             card_types = get_type_with_iid(-1, -1, *deck_cursor);
@@ -1896,7 +1829,7 @@ int card_vivien_monsters_advocate(int player, int card, event_t event)
             c = c + 1;
           } while (c < active_cards_count[1]);
         }
-        if (dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Create a beast", 1,
+        if (dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_PLANESWALKER, "Create a beast", 1,
                         3, 1, "Double your next creature", 1, maximum_payable_cmc, 0xfffffffe, 0, 0,
                         0, 0) == 0)
         {
@@ -1916,13 +1849,13 @@ int card_vivien_monsters_advocate(int player, int card, event_t event)
     {
       if (instance->info_slot == CHOICE_BEAST)
       {
-        choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Vigilance", 1,
+        choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, "Vigilance", 1,
                              1, "Reach", 1, 1, "Trample", 1, 1, 0, 0, 0, 0);
         counters[0] = 0;
         counters[1] = 0x9a;
         counters[2] = 0x98;
         counters[3] = 0x99;
-        default_token_definition(player, card, 0x4907, &token);
+        default_token_definition(player, card, CARD_ID_BEAST, &token);
         token.action_argument = 1;
         token.action = TOKEN_ACTION_ADD_COUNTERS;
         token.action_argument = (((unsigned int)(unsigned short)counters[choice] << 16) | 1U);
@@ -2027,7 +1960,7 @@ int card_lutri_the_spellchaser(int player, int card, event_t event)
     return 1;
   }
   check_legend_rule(player, card, event);
-  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if ((((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((instance = get_card_instance(player, card),
         instance->info_slot == 1 &&
@@ -2199,7 +2132,7 @@ int card_lurrus_of_the_dream_den(int player, int card, event_t event)
       if (is_what(-1, deck[i], 0x47) && get_cmc_by_internal_id(deck[i]) > 2)
       {
         int iid = deck[i];
-        int lurrus_iid = get_internal_card_id_from_csv_id(0x5359);
+        int lurrus_iid = get_internal_card_id_from_csv_id(CARD_ID_LURRUS_OF_THE_DREAM_DEN);
         if (lurrus_count != 0 || iid != lurrus_iid)
           return 0;
         lurrus_count = 1;
@@ -2257,8 +2190,8 @@ int card_lurrus_of_the_dream_den(int player, int card, event_t event)
     {
       if (is_what(-1, grave[i], 0x47) && !is_what(-1, grave[i], 1) &&
           get_cmc_by_internal_id(grave[i]) < 3 &&
-          has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, grave[i]) &&
-          (is_what(-1, grave[i], 0x30) || can_sorcery_be_played(player, EVENT_CAN_ACTIVATE)) &&
+          has_mana_to_cast_iid(player, EVENT_ACTIVATE, grave[i]) &&
+          (is_what(-1, grave[i], 0x30) || can_sorcery_be_played(player, EVENT_ACTIVATE)) &&
           can_legally_play_iid(player, grave[i]))
       {
         playable[0][count] = grave[i];

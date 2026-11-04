@@ -370,8 +370,10 @@ int constricting_sliver_legacy(int player, int card, event_t event)
     if (event == EVENT_SET_LEGACY_EFFECT_NAME && instance->targets[1].card > -1)
       scnprintf(set_legacy_effect_name_addr, 51, "%s",
                 cards_ptr[cards_data[instance->targets[1].card].id]->name);
-    other_leaves_play_mode(player, card, instance->damage_target_player,
-                           instance->damage_target_card, event, RESOLVE_TRIGGER_AI(player), 1, 0);
+    int target_player = instance->damage_target_player;
+    int target_card = instance->damage_target_card;
+    resolve_trigger_t mode = RESOLVE_TRIGGER_AI(player);
+    other_leaves_play_mode(player, card, target_player, target_card, event, mode, 1, 0);
     if (event == EVENT_LEAVES_PLAY_ABILITY)
     {
       int owner = instance->targets[1].player;
@@ -480,7 +482,7 @@ int card_ephemeral_shield(int player, int card, event_t event){
 			spell_fizzled = 1;
 			return 0;
 		}
-		td.allow_cancel = result & (1<<31) ? 0 : 1;
+		td.allow_cancel = ((unsigned int)result & (1u << 31)) == 0;
 		if( pick_target(&td, "TARGET_CREATURE") ){
 			instance->info_slot = 0;
 		}
@@ -1891,7 +1893,7 @@ int card_covenant_of_blood(int player, int card, event_t event){
 			spell_fizzled = 1;
 			return 0;
 		}
-		td.allow_cancel = result & (1<<31) ? 0 : 1;
+		td.allow_cancel = ((unsigned int)result & (1u << 31)) == 0;
 		if( pick_target(&td, "TARGET_ANY") ){
 			instance->info_slot = 0;
 		}
@@ -2073,7 +2075,7 @@ int card_endless_obedience(int player, int card, event_t event){
 			spell_fizzled = 1;
 			return 0;
 		}
-		int mode = result & (1<<31) ? 0 : 1;
+		int mode = ((unsigned int)result & (1u << 31)) == 0;
 		test_definition_t this_test;
 		new_default_test_definition(&this_test, TYPE_CREATURE, "Select target creature card.");
 
@@ -2619,7 +2621,7 @@ int card_stain_the_mind(int player, int card, event_t event){
 			spell_fizzled = 1;
 			return 0;
 		}
-		td.allow_cancel = result & (1<<31) ? 0 : 1;
+		td.allow_cancel = ((unsigned int)result & (1u << 31)) == 0;
 		if( pick_target(&td, "TARGET_PLAYER") ){
 			instance->info_slot = 0;
 		}
@@ -3121,7 +3123,7 @@ int card_crowds_favor(int player, int card, event_t event){
 			spell_fizzled = 1;
 			return 0;
 		}
-		td.allow_cancel = result & (1<<31) ? 0 : 1;
+		td.allow_cancel = ((unsigned int)result & (1u << 31)) == 0;
 		if( pick_target(&td, "TARGET_CREATURE") ){
 			instance->info_slot = 0;
 		}
@@ -3228,7 +3230,7 @@ int card_goblin_rabblemaster(int player, int card, event_t event)
   if (beginning_of_combat(player, card, event, player) != 0)
   {
     token_generation_t token;
-    default_token_definition(player, card, 0x493a, &token);
+    default_token_definition(player, card, CARD_ID_GOBLIN, &token);
     token.tou = 1;
     token.pow = 1;
     token.s_key_plus = 4;
@@ -3628,7 +3630,7 @@ int card_stoke_the_flames(int player, int card, event_t event){
 			spell_fizzled = 1;
 			return 0;
 		}
-		td.allow_cancel = result & (1<<31) ? 0 : 1;
+		td.allow_cancel = ((unsigned int)result & (1u << 31)) == 0;
 		if( pick_target(&td, "TARGET_ANY") ){
 			instance->info_slot = 0;
 		}
@@ -3824,27 +3826,24 @@ int card_treefolk_warrior(int player, int card, event_t event)
 
 int card_kalonian_twingrove(int player, int card, event_t event)
 {
-  int result;
-  token_generation_t token;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event != EVENT_ETB)
+  if (event == EVENT_ETB)
   {
-    if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
-         (affected_card_controller == player)) &&
-        (player != -1))
-    {
-      result = get_hacked_subtype(player, card, 0x5001);
-      result = count_subtype(player, 1, result);
-      set_characteristic_pt(result);
-    }
-    return 0;
+    token_generation_t token;
+    default_token_definition(player, card, CARD_ID_TREEFOLK_WARRIOR, &token);
+    token.color_forced = 8;
+    token.tou = 0x4000;
+    token.pow = 0x4000;
+    token.special_infos = 0x42;
+    generate_token(&token);
   }
-  default_token_definition(player, card, 0x499b, &token);
-  token.color_forced = '\b';
-  token.tou = 0x4000;
-  token.pow = 0x4000;
-  token.special_infos = 0x42;
-  generate_token(&token);
+  else if (event - EVENT_POWER < 2 && card == affected_card &&
+           affected_card_controller == player && player != -1)
+  {
+    int forest = get_hacked_subtype(player, card, 0x5001);
+    int count = count_subtype(player, TYPE_LAND, forest);
+    set_characteristic_pt(count);
+  }
   return 0;
 }
 
@@ -5205,7 +5204,7 @@ static int eternal_thirst_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       count_for_gfp_ability(player, card, 0x77, 1 - player, 2, NULL);
     }

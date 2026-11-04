@@ -1,0 +1,831 @@
+{
+  "format": 1,
+  "status": "Four existing definitions across four units refined: indexed Amaug worker with separated local roles, plus explicit native ordering for four source color/sleight query pairs. Six native and six rebuilt physical sites retain color-before-sleight order. One grouped build passes all 15,169 entry slots; no new body or gameplay-bug claim.",
+  "files": [
+    {
+      "source": "cards/alliances.c",
+      "before_bytes_sha256": "aec247a90273e1cd640fa953785f2f9e9ae3659ab77e4d991071c1d629dede49",
+      "after_bytes_sha256": "2d2187fc6971abd4ed207a6bcd37249c3324b57ea7a09326916a5bc87dd0d787",
+      "before_sha256": "c595a5f254833f7e47f2e0c66d762ab043e141a7d668345ddb6a6cf0b6ccd7c5",
+      "after_sha256": "377232021ce6c1a5ad6ea0ee168525476a9ef42e435651dda756d2dae9571102"
+    },
+    {
+      "source": "cards/commander_2018.c",
+      "before_bytes_sha256": "efae21360a8cccd85862e07b07528ee2bac00924f72dfeb38af7e09835924ef0",
+      "after_bytes_sha256": "4eb44a88ebdd76dc0d95fe65a6215acbf0df548ff91c96445a1fd3dd4c1575bd",
+      "before_sha256": "c36196203b1592d78484f8cc485aa2b4e4db67a19d743fba4a99598089086113",
+      "after_sha256": "5ef9e41a64267d731d81600e6da16884e0c4b54146ebab92d6ae5510a9342381"
+    },
+    {
+      "source": "cards/planar_chaos.c",
+      "before_bytes_sha256": "0a9b40e873c2f62419b99b85b59c79551804240b241dd6e76aff8bb9313abda3",
+      "after_bytes_sha256": "d5e139868ab4017f6cd9c7261a63d8ff92d286fba33d4080dcb5394d17e41229",
+      "before_sha256": "d535bc871725ac9dca517a197f17e403370c8e659eb2b011be6169a24bccdca8",
+      "after_sha256": "a98fb632b1540bfdf3dec4b440d75bde5ee6bf42b4e2cf3e8c5e0074719793d7"
+    },
+    {
+      "source": "cards/zendikar.c",
+      "before_bytes_sha256": "bca614f918d724ee43b1a0aaa307a66620f2cfa42a832516cf82f0ccd3d78aad",
+      "after_bytes_sha256": "17e085cd95e149de5a0d7953616ba8df59282454057dffaa76fa52ff399394b2",
+      "before_sha256": "588ec5222ef98e6a1902e4faeb40562f06d4d8bf03fc22d89abf962b0223b1b2",
+      "after_sha256": "02bac2dd9822739b8e09130b0f782ede87a1a8bfe563e10cc5596f85ba95d032"
+    }
+  ],
+  "source_reviews": [
+    {
+      "name": "amaug_leg_part",
+      "source": "cards/commander_2018.c",
+      "address": "0x255fd50",
+      "before_sha256": "6e7fd806fc015dccacc34963e8ca25e41e4e57a76da931e5e50a2d2f8ef4d859",
+      "after_sha256": "054f905b3f82be04f32d73f952cbdb882c1cde3e24eb59d4a3957140bd539c09",
+      "reason": "Reconstruct seven stored target-card slots through struct array indices and separate IID, masks, legality result, playable count, selected index and dialog availability roles. Preserve CAN-only -1 initialization, saved used-types snapshot across callbacks, early 99 return, no CAN_ACTIVATE exile query, two-row eight-column storage with seven candidates, raw selected-type bit count and TYPE_EFFECT surrogate for tribal. Dialog writes OR into live saved-instance fields; final IID is re-read from the local selectable array after callbacks. Native cached body is the specialized amaug_leg worker; public wrapper and source ABI stay unchanged.",
+      "kind": "native_private_type_worker_roles",
+      "native_range": {
+        "address": "0x255fd50",
+        "size": 1548,
+        "bytes_hex": "5589e557565389cb81ecb40100008985d4feffff8995d8feffff89542404890424e83a2d150083fb7389c60f8417010000c785d0feffff0000000083fb6d74188b85d0feffff81c4b40100005b5e5f5dc38db426000000008b4074c785ccfeffff000000008985d0feffff31dbeb0b904383fb070f84de0100008b7cde7883ffff74ed8d04ff31c9668b0cc534707e0089c8894424048b85d4feffff890424e82c79150085c074c8897c2408c7442404ffffffffc70424ffffffffe8401d120089c181e17e010000a8200f84e803000083c910897c2404c70424ffffffff898dc8feffffe8173b11008b8dc8feffff85c0740380c9808b85d0feffff09c139c80f846affffff8b85d4feffffc74424086d000000897c2404890424e830a1110085c00f8448ffffff8b85ccfeffff89bc85dcfeffff899c85fcfeffff408985ccfeffffe928ffffff8b40748985ccfeffff407511c7467400000000c785ccfeffff000000008d86b00000008d5e788985d8feffffc785d0feffff0000000066908b3b83ffff0f8485000000897c2408c7442404ffffffffc70424ffffffffe85d1c120089c681e67e010000a8207479897c2404c70424ffffffffe8413a110083ce1085c0740681ce800000008b85ccfeffff89f109c139c174368b85d4feffffc744240873000000897c2404890424e85ca0110085c0741883f8630f84fc030000c785d0feffff010000008d7426009083c308399dd8feffff0f8561ffffffe91cfeffff8d742600897c2404c70424ffffffffe8c839110085c0758a85f6758c83c308399dd8feffff0f8531ffffffe9ecfdffff8d7426008d9d1cffffffc7442408773d7502c7442404ff000000891c24e89aea15008b85ccfeffff8944240c8d85dcfeffff894424088b85d4feffff895c241cc7442418ffffffffc744241401000000c74424100000000089442404890424e8d80d0f0089c783f8ff0f842d0200008b8485dcfeffffc7442404ffffffff89442408c70424ffffffffe81e1b120089042489c3e80493110083f8010f861b020000f6c380740df685d0feffff800f844102000031c089d983e108740c31c9f685d0feffff080f94c189da81e2000100008995ccfeffff741531d2f785d0feffff000100000f94c28995ccfeffff89da83e2108995c8feffff741231d2f685d0feffff100f94c28995c8feffff89da83e2048995c4feffff741231d2f685d0feffff040f94c28995c4feffff89da83e202740c31d2f685d0feffff020f94c283e340740c31dbf685d0feffff400f94c38944246c8b85ccfeffff894424548b85c8feffff894424488b85c4feffff894c24608944243c89542430c784248000000000000000c744247c00000000c744247800000000c744247400000000c744247001000000c74424688e3d7502c744246401000000c744245c953d7502c744245801000000c74424509d3d7502c744244c01000000c7442444aa3d7502c744244001000000c7442438b23d7502c744243401000000c744242cbe3d7502c744242801000000895c2424c7442420c73d7502c744241cd03d7502c7442418d33d7502c7442414d63d7502c7442410d93d7502c744240cdc3d75028b85d8feffff894424048b85d4feffffc74424086d000000890424e8549a180083f807773fff2485e03d7502897c2404c70424ffffffff898dc8feffffe8323711008b8dc8feffff85c00f8517fcffff85c90f848cfbffffe90dfcffff8db42600000000c70594f14e0001000000c785d0feffff00000000e937fbffff8db426000000008b84bddcfeffffc70424ffffffff89442404e8d936110085c00f84c1000000f685d0feffff800f85b4000000f6c3800f84c2fdffff8d7600b801000000e9b7fdffff8b567480ca808956748d742600908b84bddcfeffff31d28d04c0668b14c534707e0089d0894424088b85d4feffff89442404890424e844901000c705348b620001000000c785d0feffff00000000e99bfaffff8b4e7483c908894e74ebb08b5e7480cf01895e74eba58b467483c810894674eb9a8b467483c804894674eb8f8b467483c802894674eb848b467483c840894674e976ffffff8db6000000008b467409d8894674e963ffffffc785d0feffff63000000e934faffff",
+        "sha256": "46c9a956e19d055e22a0431797ab809dd4eeb9dd622865d033e715f8cd36b587"
+      },
+      "native_decomp": "/* October 2022 ManalinkEh.dll: amaug_leg @ 0x255fd50; DWARF unit cards/commander_2018.c. Raw analysis output. */\n\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* WARNING: Enum \"anon_enum_32\": Some values do not have unique names */\n/* DWARF original prototype: int amaug_leg(int player, int card, event_t event) */\n\nint __regparm3 amaug_leg(int player,int card,event_t event)\n\n{\n  card_instance_t *pcVar1;\n  int iVar2;\n  type_t tVar3;\n  type_t tVar4;\n  uint uVar5;\n  undefined4 uVar6;\n  int iVar7;\n  uint uVar8;\n  int iVar9;\n  int32_t *piVar10;\n  uint uVar11;\n  type_t tStack_140;\n  type_t tStack_13c;\n  type_t tStack_138;\n  int iStack_134;\n  int playable [2] [8];\n  test_definition_t this_test;\n  \n                    /* Unresolved local var: card_instance_t * leg@[???] */\n  pcVar1 = get_card_instance(player,card);\n  if (event == EVENT_CAN_ACTIVATE) {\n                    /* Unresolved local var: int i@[???]\n                       Unresolved local var: int tr@[???]\n                       Unresolved local var: int used_types@[???] */\n    tStack_138 = pcVar1->targets[0].player;\n    if (tStack_138 == ~TYPE_NONE) {\n      pcVar1->targets[0].player = 0;\n      tStack_138 = TYPE_NONE;\n    }\n    piVar10 = &pcVar1->targets[0].card;\n    iStack_134 = 0;\n    do {\n                    /* Unresolved local var: int iid@[???] */\n      iVar9 = *piVar10;\n      if (iVar9 != -1) {\n                    /* Unresolved local var: int types@[???] */\n        tVar4 = get_type_with_iid(-1,-1,iVar9);\n        tVar3 = tVar4 & (TARGET_TYPE_PLANESWALKER|TYPE_ARTIFACT|TYPE_SPELL|TYPE_ENCHANTMENT|\n                        TYPE_CREATURE);\n        if ((tVar4 & TYPE_INTERRUPT) == TYPE_NONE) {\n          iVar7 = is_tribal(-1,iVar9);\n          if (iVar7 != 0) goto LAB_0255ff16;\n          if (tVar3 != TYPE_NONE) goto LAB_0255ff1c;\n        }\n        else {\n          iVar7 = is_tribal(-1,iVar9);\n          tVar3 = tVar3 | TYPE_INSTANT;\n          if (iVar7 != 0) {\nLAB_0255ff16:\n            tVar3 = tVar3 | TYPE_EFFECT;\n          }\nLAB_0255ff1c:\n                    /* Unresolved local var: int z@[???] */\n          if (((tVar3 | tStack_138) != tStack_138) &&\n             (iVar9 = can_legally_play_iid_now(player,iVar9,EVENT_CAN_ACTIVATE), iVar9 != 0)) {\n            if (iVar9 == 99) {\n              return 99;\n            }\n            iStack_134 = 1;\n          }\n        }\n      }\n      piVar10 = piVar10 + 2;\n      if (&pcVar1->targets[7].card == piVar10) {\n        return iStack_134;\n      }\n    } while( true );\n  }\n  if (event != EVENT_ACTIVATE) {\n    return 0;\n  }\n                    /* Unresolved local var: int pc@[???]\n                       Unresolved local var: int i@[???]\n                       Unresolved local var: int used_types@[???]\n                       Unresolved local var: int selected@[???] */\n  tVar4 = pcVar1->targets[0].player;\n  tStack_138 = 0;\n  iVar9 = 0;\n  do {\n                    /* Unresolved local var: int iid@[???] */\n    iVar7 = pcVar1->targets[iVar9].card;\n    if ((iVar7 != -1) && (iVar2 = check_rfg(player,(uint)cards_data[iVar7].id), iVar2 != 0)) {\n                    /* Unresolved local var: int types@[???] */\n      tVar3 = get_type_with_iid(-1,-1,iVar7);\n      tStack_13c = tVar3 & (TARGET_TYPE_PLANESWALKER|TYPE_ARTIFACT|TYPE_SPELL|TYPE_ENCHANTMENT|\n                           TYPE_CREATURE);\n      if ((tVar3 & TYPE_INTERRUPT) == TYPE_NONE) {\n        iVar2 = is_tribal(-1,iVar7);\n        if (iVar2 != 0) goto LAB_0255fe43;\n        if (tStack_13c != TYPE_NONE) goto LAB_0255fe46;\n      }\n      else {\n        tStack_13c = tStack_13c | TYPE_INSTANT;\n        iVar2 = is_tribal(-1,iVar7);\n        if (iVar2 != 0) {\nLAB_0255fe43:\n          tStack_13c = tStack_13c | TYPE_EFFECT;\n        }\nLAB_0255fe46:\n        if ((tVar4 != (tStack_13c | tVar4)) &&\n           (iVar2 = can_legally_play_iid_now(player,iVar7,EVENT_ACTIVATE), iVar2 != 0)) {\n          playable[0][tStack_138] = iVar7;\n          playable[1][tStack_138] = iVar9;\n          tStack_138 = tStack_138 + 1;\n        }\n      }\n    }\n    iVar9 = iVar9 + 1;\n  } while (iVar9 != 7);\n  new_default_test_definition(&this_test,0xff,\"Select a card to cast.\");\n  iVar9 = select_card_from_zone(player,player,playable[0],tStack_138,0,1,-1,&this_test);\n  if (iVar9 == -1) {\nLAB_02560240:\n    spell_fizzled = 1;\n  }\n  else {\n                    /* Unresolved local var: int types@[???] */\n    tVar3 = get_type_with_iid(-1,-1,playable[0][iVar9]);\n    uVar5 = num_bits_set(tVar3);\n    if (uVar5 < 2) {\n      iVar7 = is_tribal(-1,playable[0][iVar9]);\n      if ((iVar7 != 0) && ((tVar4 & TYPE_EFFECT) == TYPE_NONE)) {\n        if ((tVar3 & TYPE_EFFECT) == TYPE_NONE) goto LAB_02560057;\n        goto LAB_02560298;\n      }\n      pcVar1->targets[0].player = pcVar1->targets[0].player | tVar3;\n    }\n    else {\n                    /* Unresolved local var: int choice@[???] */\n      if (((tVar3 & TYPE_EFFECT) == TYPE_NONE) || ((tVar4 & TYPE_EFFECT) != TYPE_NONE)) {\nLAB_02560057:\n        uVar6 = 0;\n      }\n      else {\nLAB_02560298:\n        uVar6 = 1;\n      }\n      uVar5 = 0;\n      if ((tVar3 & TYPE_SORCERY) != TYPE_NONE) {\n        uVar5 = (uint)((tVar4 & TYPE_SORCERY) == TYPE_NONE);\n      }\n      tStack_138 = tVar3 & TARGET_TYPE_PLANESWALKER;\n      if (tStack_138 != TYPE_NONE) {\n        tStack_138 = (type_t)((tVar4 & TARGET_TYPE_PLANESWALKER) == TYPE_NONE);\n      }\n      tStack_13c = tVar3 & TYPE_INSTANT;\n      if (tStack_13c != TYPE_NONE) {\n        tStack_13c = (type_t)((tVar4 & TYPE_INSTANT) == TYPE_NONE);\n      }\n      tStack_140 = tVar3 & TYPE_ENCHANTMENT;\n      if (tStack_140 != TYPE_NONE) {\n        tStack_140 = (type_t)((tVar4 & TYPE_ENCHANTMENT) == TYPE_NONE);\n      }\n      uVar8 = 0;\n      if ((tVar3 & TYPE_CREATURE) != TYPE_NONE) {\n        uVar8 = (uint)((tVar4 & TYPE_CREATURE) == TYPE_NONE);\n      }\n      uVar11 = 0;\n      if ((tVar3 & TYPE_ARTIFACT) != TYPE_NONE) {\n        uVar11 = (uint)((tVar4 & TYPE_ARTIFACT) == TYPE_NONE);\n      }\n      iVar7 = dialog_impl(player,card,EVENT_ACTIVATE,&UNK_02753ddc,&UNK_02753dd9,&UNK_02753dd6,\n                          &UNK_02753dd3,&UNK_02753dd0,&UNK_02753dc7,uVar11,1,&UNK_02753dbe,uVar8,1,\n                          &UNK_02753db2,tStack_140,1,&UNK_02753daa,tStack_13c,1,&UNK_02753d9d,\n                          tStack_138,1,&UNK_02753d95,uVar5,1,&UNK_02753d8e,uVar6,1,0,0,0,0);\n      switch(iVar7) {\n      default:\n        goto LAB_02560240;\n      case 1:\n        pcVar1->targets[0].player = pcVar1->targets[0].player | 0x40;\n        break;\n      case 2:\n        pcVar1->targets[0].player = pcVar1->targets[0].player | 2;\n        break;\n      case 3:\n        pcVar1->targets[0].player = pcVar1->targets[0].player | 4;\n        break;\n      case 4:\n        pcVar1->targets[0].player = pcVar1->targets[0].player | 0x10;\n        break;\n      case 5:\n        pcVar1->targets[0].player = pcVar1->targets[0].player | 0x100;\n        break;\n      case 6:\n        pcVar1->targets[0].player = pcVar1->targets[0].player | 8;\n        break;\n      case 7:\n        pcVar1->targets[0].player = pcVar1->targets[0].player | 0x80;\n      }\n    }\n    play_card_in_exile_for_free(player,player,(uint)cards_data[playable[0][iVar9]].id);\n    cant_be_responded_to = 1;\n  }\n  return 0;\n}\n\n",
+      "native_decomp_sha256": "94cdf4781bbf9403f045c365fbf179c7408bced89909ce533bd6eb9a03459851"
+    },
+    {
+      "name": "card_phyrexian_boon",
+      "source": "cards/alliances.c",
+      "address": "0x20a57e0",
+      "before_sha256": "8acfb14268194e21a7e7562fb168801547a2d01e50c67bf508d18562a4e6ec0c",
+      "after_sha256": "fe52dafe1674b08c32cd317b64d6fc033518ab9f9d91ec6ed036617c28793af0",
+      "reason": "Make native get_color then get_sleighted_color_test ordering explicit using the existing int return contracts. Both duplicated native AI/stat paths have this order. Preserve attachment/affected gates, post-query live attachment controller in AI scoring and final aura dispatch. Selected-site refinement only; no whole-function/native-body or gameplay fix claim.",
+      "kind": "native_sequenced_color_queries",
+      "native_range": {
+        "address": "0x20a57e0",
+        "size": 532,
+        "bytes_hex": "5589e557565383ec148b5d108d73ce83fe01765481fbc7000000744c83fb74741a83fb6c0f849600000083fb71740c81fb000400000f85e50000008b450c895c2408894424048b4508c744240c02000000890424e8e730640083c4145b5e5f5dc38db426000000008b450c894424048b4508890424e876da600089c185c074300fbe405084c078288b790481fbc70000000f8401010000393d8c397a0075113905848c73000f84950000008d7426009031c083c4145b5e5f5dc38db600000000a18c397a0039450c746689d880e4fe3d000600000f8461ffffff81fb000800000f8455ffffff83fe020f864cffffff83fb3c0f8443ffffff83fb360f843affffff81fb900000000f842effffff81fb004700000f8422ffffff31c0eb958d760081fb005400000f840fffffffeb9c6690a1848c73003945087590e9fcfeffff90897c2404890424e844915d00c74424080200000089c78b450c894424048b4508890424e878aa5d0021c783fb330f848500000083fb320f85a0feffff83ff018b3db405620019c083c80201c7893db4056200e933ffffff90897c2404890424894df0e8e9905d0089c78b450c894424048b4508c744240802000000890424e81daa5d008b4df085c78b15a8317a000f95c0807950010f95c138c80f95c025ff0000004883e0d083c01801c28915a8317a00e934feffff669083ff018b0db405620019c083e0fd4001c1890db4056200e9b6feffff",
+        "sha256": "f2874ce330f81ca4eb202be0717b33e6c228af7c01c6a822d74bf2c45132f824"
+      }
+    },
+    {
+      "name": "card_serras_boon",
+      "source": "cards/planar_chaos.c",
+      "address": "0x23bd1e0",
+      "before_sha256": "e2f72a46acc3262589b62cf76450fb16787d72fbda892759d1459a526750fded",
+      "after_sha256": "db4ab2e27b6b60cedcc3d3a8fb78f790aafb3eb2fe9a72bb5eecc0af3de51386",
+      "reason": "Make native get_color then get_sleighted_color_test ordering explicit using the existing int return contracts. Both duplicated native AI/stat paths have this order. Preserve attachment/affected gates, post-query live attachment controller in AI scoring and final aura dispatch. Selected-site refinement only; no whole-function/native-body or gameplay fix claim.",
+      "kind": "native_sequenced_color_queries",
+      "native_range": {
+        "address": "0x23bd1e0",
+        "size": 531,
+        "bytes_hex": "5589e557565383ec148b5d108d73ce83fe01765481fbc7000000744c83fb74741a83fb6c0f849600000083fb71740c81fb000400000f85e50000008b450c895c2408894424048b4508c744240c02000000890424e8e7b6320083c4145b5e5f5dc38db426000000008b450c894424048b4508890424e876602f0089c185c074300fbe405084c078288b790481fbc70000000f8401010000393d8c397a0075113905848c73000f84950000008d7426009031c083c4145b5e5f5dc38db600000000a18c397a0039450c746689d880e4fe3d000600000f8461ffffff81fb000800000f8455ffffff83fe020f864cffffff83fb3c0f8443ffffff83fb360f843affffff81fb900000000f842effffff81fb004700000f8422ffffff31c0eb958d760081fb005400000f840fffffffeb9c6690a1848c73003945087590e9fcfeffff90897c2404890424e844172c00c74424082000000089c78b450c894424048b4508890424e878302c0021c783fb330f848500000083fb320f85a0feffff83ff018b3db405620019c083e0fd4001c7893db4056200e932ffffff897c2404890424894df0e8e9162c0089c78b450c894424048b4508c744240820000000890424e81d302c008b4df085c78b15a8317a000f95c0807950010f95c138c80f95c025ff0000004883e0d083c01801c28915a8317a00e934feffff669083ff018b0db405620019c083c80201c1890db4056200e9b7feffff",
+        "sha256": "36f9c5f94f1144a3399c9ecf67750e6af729e3b5925b077b64e193f934b7670f"
+      }
+    },
+    {
+      "name": "card_chandra_ablaze",
+      "source": "cards/zendikar.c",
+      "address": "0x25df420",
+      "before_sha256": "f6173ee2d3eb40d28a705a7397373e63edbcf981f7b55a9bd84416c7bf9c9990",
+      "after_sha256": "b88a8091037e143400ded9adc38d0c607d4284f60ea9aff60a8c9396700c08ee",
+      "reason": "Make two native color/sleight query pairs explicitly sequential. Priority scan keeps a fresh grave IID after each callback and only queries legality after the saved color mask test. Discard resolution keeps selected color before loading live parent fields for the sleight call, saves the red predicate before discard, then conditionally damages. Painter/Dawn/Lattice timestamp logic, grave selection/removal/cast approximation and APNAP behavior remain untouched. No new body or gameplay fix claim.",
+      "kind": "native_sequenced_color_queries",
+      "native_range": {
+        "address": "0x25df420",
+        "size": 2470,
+        "bytes_hex": "55b8dc20000089e5575653e8a0cd110029c48b45108b5d08894424088b450c89442404891c24e8454408008b451083e87283f8017632837d106d742c8b4510c744240c05000000894424088b450c89442404891c24e8a6ffb7ff81c4dc2000005b5e5f5dc38d76008b450c891c24894424048dbddcdfffffe813360d00c7442404ff000000893c24898584dfffff8db588dfffffe8f7f60d008b450cc744240c020100008974240889442404891c24c78580e0ffff00010000e8620d0800c78594dfffff00120000837d106d0f849e010000893424e8c60f0800c744242001000000894424188b4510894424088b450cc744241c00000000c7442414048e7502c7442410168c7502c744240c0b8a750289442404891c24c744245000000000c744244c00000000c744244800000000c744244400000000c7442440f9ffffffc744243c00000000c744243801000000c7442434d88d7502c7442430feffffffc744242c00000000c744242801000000c7442424ef8d7502e8b4a61000837d10730f8422020000837d10720f85acfeffff83f8020f841706000083f8030f84ee020000480f8593feffff8b049dc4f14e0085c00f8e84feffff893424e87021080085c00f8474feffff83fb010f84a4070000897c2418c7442414ffffffffc744241003000000c744240c01000000c744240804000000895c2404891c24e8df1c0700891c248944240489c7e841f409008b9584dfffffc74424081000000089c68b8210010000894424048b820c010000890424e8690d0a00897c240421c6891c24e89bad0b0085f60f84effdffff8b450cc74424080400000089442404891c24e84c2c1000e9d3fdffff8db426000000008b450cc74424081000000089442404891c24e8190d0a00897c241089854ce0ffff8b450cc744240c00000000895c240889442404891c24e894110e0089857cdfffff85c0740ac7857cdfffff0a0000008b049dc4f14e00c7854ce0ffff00000000c78578dfffff0000000083f8027f20ba0100000029da3b0495c4f14e000f9dc025ff0000004883e00f898578dfffff8b3c9d18704d00c78574dfffff000000008b0783f8ff7517e99b0000008d76008b470483c70483f8ff0f8489000000c74424083800000089442404c70424ffffffffe839250a0085c074d58b07891c2489442404e8570d0a008b550cc74424081000000089542404891c24898580dfffffe82a0c0a00858580dfffff74a28b07891c2489442404e804a7090085c074908b8574dfffff83c005898574dfffffe97cffffff8d74260085c00f858cfcffffe9a5fcffff8d7600893424e8e00c08008b9574dfffff894424188b450c8954243c8b8d7cdfffff8b9578dfffffc7442414048e7502c7442410168c7502c744240c0b8a7502c74424086d00000089442404891c248954242cc744245000000000c744244c00000000c744244800000000c744244400000000c7442440f9ffffffc744243801000000c7442434d88d7502c7442430feffffffc744242801000000c7442424ef8d7502c744242001000000894c241ce8c7a310008b9584dfffff48c64236000f85c2fbffffc74424040e8a7502893424e8a6140800e9adfbffff908b049d18704d00c744240810000000898570dfffff8b450c89442404891c24e8ec0a0a0031ff89857cdfffffc78584dfffff00000000c78580dfffff00000000c78574dfffffffffffff8b04bd20f54e0031f685c07e519089742404893c24e8bc390d0085c0743689742404893c24e87c3c0d003d962500000f847101000039fb0f843102000089742404893c24e85d3c0d003d081b00000f8412010000463934bd20f54e007fb04783ff02759c8d049b8b9580dfffff31f6895d088d048089b578dfffff31ff8bb574dfffff8d04808b9d70dfffffc1e00489856cdfffff8b857cdfffff21d0898584dfffffeb399081fe081b00007444894424048b4508890424e8190b0a008b9580dfffff09d085857cdfffff0f85250100004781fff40100000f84480200008b04bb83f8ff0f843c02000081fe7a09000075b48b8d84dfffff85c974d5c74424083800000089442404c70424ffffffffe892220a0085c074b98b04bb894424048b4508890424e88ca4090085c074a38b856cdfffff8b9578dfffff8b84b82040790289bc9584e8ffff898495b4e0ffff8b04bb89849554f0ffff42899578dfffffe96cffffff9089742404893c24e844300d008b40543b8584dfffff0f86d3feffff898584dfffffc78574dfffff081b0000c78580dfffff01000000e9b4feffff8db60000000089742404893c24e804300d008b908000000085d20f8875feffff8b40543b8584dfffff0f8666feffff8b8d80dfffff898584dfffff09d1c78574dfffff96250000898d80dfffffe943feffff8d742600c7442408380000008b04bbc70424ffffffff89442404e895210a0085c00f84b8feffff8b04bb894424048b4508890424e88ba3090085c00f849efeffff8b856cdfffff8b8d78dfffff8b84b82040790289bc8d84e8ffff89848db4e0ffff8b04bb89848d54f0ffff41898d78dfffffe967feffff8d74260089742404891c24e82c3a0d003d7a0900000f85b8fdffff89742404891c24e8252f0d008b50543b9584dfffff0f869dfdffffc74424082000000089742404891c24899584dfffffe80c080a00c78574dfffff7a090000898580dfffffe96efdffff8db426000000008b3570866200895c2404893424e8fef50b00893424c744240403000000e85e440d008b357086620083f601895c2404893424e8d9f50b00c744240403000000893424e839440d00e940f8ffff8d7426008bb578dfffff8b5d08c78584dfffff000000008dbd54f0ffff85f60f8e1bf8ffff895d088d7426008b4508c7442414b0757300c744241000000000c744240ca18d750289742408897c2404890424e8cd0f070089c383f8ff0f848a0000008b8d84dfffff8b848554f0ffff89848d24f8ffff8b849d84e8ffff894424088b849db4e0ffff894424048b450841890424898d84dfffffe8a6a30d0083f8ff0f84b5000000894424048b45088904244ee8ad3e0d0039f37d29904339f38b849db4e0ffff89849db0e0ffff8b849d84e8ffff89849d80e8ffff8b049f89449ffc75d885f60f8540ffffff8b8584dfffff8b5d0885c00f8e43f7ffff8d848524f8ffff8db524f8ffff898584dfffff8d7426008b06891c248944240483c604e87f510d00c7442408ffffffff89c7c744240402020000891c24e895930e00897c2408895c2404891c24e8d58e08003bb584dfffff75bde9e4f6ffffc70424b88d7502898580dfffffe826140e008b8580dfffffe92effffff8b8d84dfffffc7442408100000008b8110010000894424048b810c010000890424e805060a0089854ce0ffffe92bf8ffff",
+        "sha256": "36347993a1ce1cae7de81634a768e339b77348fd7a853e3f93142d86833e71a0"
+      },
+      "native_decomp": "/* October 2022 ManalinkEh.dll: card_chandra_ablaze @ 0x25df420; DWARF unit cards/zendikar.c. Raw analysis output. */\n\n/* WARNING: Function: ___chkstk_ms replaced with injection: manalink_stack_probe */\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* WARNING: Enum \"anon_enum_32\": Some values do not have unique names */\n/* DWARF original prototype: int card_chandra_ablaze(int player, int card, event_t event) */\n\nint card_chandra_ablaze(int player,int card,event_t event)\n\n{\n  int *piVar1;\n  int iVar2;\n  card_instance_t *pcVar3;\n  int iVar4;\n  uint uVar5;\n  uint uVar6;\n  int iVar7;\n  int *piVar8;\n  int iStack_2090;\n  uint uStack_208c;\n  int iStack_2088;\n  uint uStack_2084;\n  uint uStack_2080;\n  target_definition_t td;\n  test_definition_t this_test;\n  int sources [500];\n  int positions [500];\n  int iids [500];\n  int chosen_iids [500];\n  \n  chosen_iids[499] = 0x25df430;\n  check_legend_rule(player,card,event);\n  if ((event - EVENT_RESOLVE_ACTIVATION < 2) || (event == EVENT_ACTIVATE)) {\n                    /* Unresolved local var: card_instance_t * instance@[???]\n                       Unresolved local var: int[3] priorities@[???]\n                       Unresolved local var: anon_enum_32 choice@[???] */\n    pcVar3 = get_card_instance(player,card);\n    default_test_definition(&this_test,0xff);\n    this_test.zone = 0x100;\n    default_target_definition(player,card,&td,0x102);\n    td.zone = 0x1200;\n    if (event == EVENT_ACTIVATE) {\n                    /* Unresolved local var: int c@[???]\n                       Unresolved local var: int * grave@[???] */\n      this_test.color = get_sleighted_color_test(player,card,0x10);\n      iStack_2088 = check_battlefield_for_special_card(player,card,player,0,&this_test);\n      if (iStack_2088 != 0) {\n        iStack_2088 = 10;\n      }\n      this_test.color = 0;\n      uStack_208c = 0;\n      if (hand_count[player] < 3) {\n        uStack_208c = (hand_count[1 - player] <= hand_count[player]) - 1 & 0xf;\n      }\n      piVar8 = graveyard_ptr_mutable[player];\n      iStack_2090 = 0;\n      iVar2 = *piVar8;\n      while (iVar2 != -1) {\n        iVar2 = is_what(-1,iVar2,0x38);\n        if (iVar2 != 0) {\n          uVar5 = get_color_by_internal_id(player,*piVar8);\n          uVar6 = get_sleighted_color_test(player,card,0x10);\n          if (((uVar5 & uVar6) != 0) && (iVar2 = can_legally_play_iid(player,*piVar8), iVar2 != 0))\n          {\n            iStack_2090 = iStack_2090 + 5;\n          }\n        }\n        piVar1 = piVar8 + 1;\n        piVar8 = piVar8 + 1;\n        iVar2 = *piVar1;\n      }\n      iVar2 = can_target(&td);\n      iVar2 = dialog_impl(player,card,EVENT_ACTIVATE,&UNK_02758a0b,&UNK_02758c16,&UNK_02758e04,iVar2\n                          ,iStack_2088,1,&UNK_02758def,1,uStack_208c,0xfffffffe,&UNK_02758dd8,1,\n                          iStack_2090,0xfffffff9,0,0,0,0);\n      pcVar3->number_of_targets = '\\0';\n      if (iVar2 == 1) {\n        pick_target(&td,\"TARGET_ANY\");\n      }\n    }\n    else {\n      iVar2 = can_target(&td);\n      iVar4 = dialog_impl(player,card,event,&UNK_02758a0b,&UNK_02758c16,&UNK_02758e04,iVar2,0,1,\n                          &UNK_02758def,1,0,0xfffffffe,&UNK_02758dd8,1,0,0xfffffff9,0,0,0,0);\n      iVar2 = current_turn;\n      if (event == EVENT_CAN_ACTIVATE) {\n        if (iVar4 == 0) {\n          return 0;\n        }\n      }\n      else if (event == EVENT_RESOLVE_ACTIVATION) {\n        if (iVar4 == 2) {\n                    /* Unresolved local var: int p@[???]\n                       Unresolved local var: int macro_apnap@[???] */\n          new_discard_all(current_turn,player);\n          draw_cards(iVar2,3);\n          uVar5 = current_turn ^ 1;\n          new_discard_all(uVar5,player);\n          draw_cards(uVar5,3);\n        }\n        else if (iVar4 == 3) {\n                    /* Unresolved local var: int * grave@[???]\n                       Unresolved local var: int i@[???]\n                       Unresolved local var: int num_valid@[???]\n                       Unresolved local var: int red@[???]\n                       Unresolved local var: int z@[???]\n                       Unresolved local var: int changer@[???]\n                       Unresolved local var: int result@[???]\n                       Unresolved local var: uint timestamp@[???]\n                       Unresolved local var: int num_chosen@[???] */\n          piVar8 = graveyard_ptr_mutable[player];\n          uVar5 = get_sleighted_color_test(player,card,0x10);\n          iVar2 = 0;\n          uStack_2080 = 0;\n          uStack_2084 = 0;\n          iStack_2090 = -1;\n          do {\n            iVar4 = 0;\n            if (0 < active_cards_count[iVar2]) {\n              do {\n                pcVar3 = in_play(iVar2,iVar4);\n                if (pcVar3 != (card_instance_t *)0x0) {\n                  iVar7 = get_id(iVar2,iVar4);\n                  if (iVar7 == 0x2596) {\n                    /* Unresolved local var: card_instance_t * inst@[???] */\n                    pcVar3 = get_card_instance(iVar2,iVar4);\n                    uVar6 = pcVar3->targets[1].card;\n                    if ((-1 < (int)uVar6) && (uStack_2080 < pcVar3->timestamp)) {\n                      uStack_2084 = uStack_2084 | uVar6;\n                      iStack_2090 = 0x2596;\n                      uStack_2080 = pcVar3->timestamp;\n                    }\n                  }\n                  if ((player == iVar2) && (iVar7 = get_id(player,iVar4), iVar7 == 0x97a)) {\n                    /* Unresolved local var: card_instance_t * inst@[???] */\n                    pcVar3 = get_card_instance(player,iVar4);\n                    uVar6 = pcVar3->timestamp;\n                    if (uStack_2080 < uVar6) {\n                      uStack_2084 = get_sleighted_color_test(player,iVar4,0x20);\n                      iStack_2090 = 0x97a;\n                      uStack_2080 = uVar6;\n                    }\n                  }\n                  iVar7 = get_id(iVar2,iVar4);\n                  if (iVar7 == 0x1b08) {\n                    /* Unresolved local var: card_instance_t * inst@[???] */\n                    pcVar3 = get_card_instance(iVar2,iVar4);\n                    if (uStack_2080 < pcVar3->timestamp) {\n                      iStack_2090 = 0x1b08;\n                      uStack_2084 = 1;\n                      uStack_2080 = pcVar3->timestamp;\n                    }\n                  }\n                }\n                iVar4 = iVar4 + 1;\n              } while (iVar4 < active_cards_count[iVar2]);\n            }\n            iVar2 = iVar2 + 1;\n          } while (iVar2 != 2);\n          uStack_208c = 0;\n          iVar2 = 0;\n          do {\n            iVar4 = piVar8[iVar2];\n            if (iVar4 == -1) break;\n            if ((iStack_2090 == 0x97a) || (iStack_2090 == 0x1b08)) {\n              if (((uVar5 & uStack_2084) != 0) &&\n                 ((iVar4 = is_what(-1,iVar4,0x38), iVar4 != 0 &&\n                  (iVar4 = can_legally_play_iid(player,piVar8[iVar2]), iVar4 != 0)))) {\n                iVar4 = graveyard_source[player][iVar2];\n                positions[uStack_208c] = iVar2;\n                sources[uStack_208c] = iVar4;\n                iids[uStack_208c] = piVar8[iVar2];\n                uStack_208c = uStack_208c + 1;\n              }\n            }\n            else {\n              uVar6 = get_color_by_internal_id(player,iVar4);\n              if ((((uVar5 & (uVar6 | uStack_2084)) != 0) &&\n                  (iVar4 = is_what(-1,piVar8[iVar2],0x38), iVar4 != 0)) &&\n                 (iVar4 = can_legally_play_iid(player,piVar8[iVar2]), iVar4 != 0)) {\n                iVar4 = graveyard_source[player][iVar2];\n                positions[uStack_208c] = iVar2;\n                sources[uStack_208c] = iVar4;\n                iids[uStack_208c] = piVar8[iVar2];\n                uStack_208c = uStack_208c + 1;\n              }\n            }\n            iVar2 = iVar2 + 1;\n          } while (iVar2 != 500);\n          uStack_2080 = 0;\n          if (0 < (int)uStack_208c) {\n            do {\n                    /* Unresolved local var: int selected@[???]\n                       Unresolved local var: int pos@[???]\n                       Unresolved local var: int j@[???] */\n              iVar2 = show_deck(player,iids,uStack_208c,\"Select a card to play.\",0,str_Done);\n              if (iVar2 == -1) break;\n              chosen_iids[uStack_2080] = iids[iVar2];\n              uStack_2080 = uStack_2080 + 1;\n              iVar4 = find_in_graveyard_by_source(player,sources[iVar2],positions[iVar2]);\n              if (iVar4 == -1) {\n                    /* WARNING: Subroutine does not return */\n                backtrace_and_abort(\"cards/zendikar.c:3111\\npos != -1\");\n              }\n              uStack_208c = uStack_208c + -1;\n              remove_card_from_grave(player,iVar4);\n              if (iVar2 < (int)uStack_208c) {\n                do {\n                  iVar4 = iVar2 + 1;\n                  sources[iVar2] = sources[iVar4];\n                  sources[iVar2 + 500] = positions[iVar4];\n                  positions[iVar2 + 500] = iids[iVar4];\n                  iVar2 = iVar4;\n                } while (iVar4 != uStack_208c);\n              }\n            } while (uStack_208c != 0);\n            if (0 < (int)uStack_2080) {\n              piVar8 = chosen_iids;\n              do {\n                    /* Unresolved local var: int pos@[???] */\n                iVar2 = *piVar8;\n                piVar8 = piVar8 + 1;\n                iVar2 = raw_put_iid_on_top_of_graveyard(player,iVar2);\n                increase_trap_condition(player,0x202,-1);\n                play_card_in_grave_for_free(player,player,iVar2);\n              } while (piVar8 != chosen_iids + uStack_2080);\n            }\n          }\n        }\n        else if (((iVar4 == 1) && (0 < hand_count[player])) &&\n                (iVar2 = valid_target(&td), iVar2 != 0)) {\n                    /* Unresolved local var: int selected@[???]\n                       Unresolved local var: int red_card@[???] */\n          if (player == 1) {\n            this_test.color =\n                 get_sleighted_color_test(pcVar3->parent_controller,pcVar3->parent_card,0x10);\n          }\n          iVar2 = new_select_a_card(player,player,4,1,3,-1,&this_test);\n          uVar5 = get_color(player,iVar2);\n          uVar6 = get_sleighted_color_test(pcVar3->parent_controller,pcVar3->parent_card,0x10);\n          discard_card(player,iVar2);\n          if ((uVar5 & uVar6) != 0) {\n            damage_target0(player,card,4);\n          }\n        }\n      }\n    }\n  }\n  iVar2 = planeswalker(player,card,event,5);\n  return iVar2;\n}\n\n",
+      "native_decomp_sha256": "43f9f5d8608c5ae3eb483c63479e7a59647d5ecb6c36051bcf528b1152dc006c"
+    }
+  ],
+  "native_color_query_sites": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85"
+    },
+    "script_sha256": "b2da0a925bb779970db1f292c1df9969ab61b554d961a142d0a6ea92ca434ac8",
+    "native_callee_addresses": {
+      "_get_color": "0x267ea70",
+      "_get_sleighted_color_test": "0x26803c0",
+      "_get_color_by_internal_id": "0x26804d0"
+    },
+    "functions": [
+      {
+        "name": "card_phyrexian_boon",
+        "address": "0x20a57e0",
+        "pairs": [
+          {
+            "first_callee": "_get_color",
+            "first_call": "0x20a5927",
+            "second_call": "0x20a5943",
+            "bytes_hex": "e844915d00c74424080200000089c78b450c894424048b4508890424e878aa5d00",
+            "sha256": "012e32a2688711b1f45ba75cb7c9623fca52d911d11882711980d84ff90432ad",
+            "instructions": [
+              {
+                "address": "0x20a5927",
+                "instruction": "call 0x267ea70"
+              },
+              {
+                "address": "0x20a592c",
+                "instruction": "mov dword ptr [esp + 8], 2"
+              },
+              {
+                "address": "0x20a5934",
+                "instruction": "mov edi, eax"
+              },
+              {
+                "address": "0x20a5936",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x20a5939",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x20a593d",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20a5940",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20a5943",
+                "instruction": "call 0x26803c0"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          },
+          {
+            "first_callee": "_get_color",
+            "first_call": "0x20a5982",
+            "second_call": "0x20a599e",
+            "bytes_hex": "e8e9905d0089c78b450c894424048b4508c744240802000000890424e81daa5d00",
+            "sha256": "4b631ba362aeafc6de8e1bc8816c9cbd28746f220a450a43b854b355a85d9fee",
+            "instructions": [
+              {
+                "address": "0x20a5982",
+                "instruction": "call 0x267ea70"
+              },
+              {
+                "address": "0x20a5987",
+                "instruction": "mov edi, eax"
+              },
+              {
+                "address": "0x20a5989",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x20a598c",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x20a5990",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20a5993",
+                "instruction": "mov dword ptr [esp + 8], 2"
+              },
+              {
+                "address": "0x20a599b",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20a599e",
+                "instruction": "call 0x26803c0"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          }
+        ]
+      },
+      {
+        "name": "card_serras_boon",
+        "address": "0x23bd1e0",
+        "pairs": [
+          {
+            "first_callee": "_get_color",
+            "first_call": "0x23bd327",
+            "second_call": "0x23bd343",
+            "bytes_hex": "e844172c00c74424082000000089c78b450c894424048b4508890424e878302c00",
+            "sha256": "a9bc51166438c44693b1cb1e5ecc9050c6a11f2fb0848a3c3b8985264a3c9dae",
+            "instructions": [
+              {
+                "address": "0x23bd327",
+                "instruction": "call 0x267ea70"
+              },
+              {
+                "address": "0x23bd32c",
+                "instruction": "mov dword ptr [esp + 8], 0x20"
+              },
+              {
+                "address": "0x23bd334",
+                "instruction": "mov edi, eax"
+              },
+              {
+                "address": "0x23bd336",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x23bd339",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x23bd33d",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x23bd340",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x23bd343",
+                "instruction": "call 0x26803c0"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          },
+          {
+            "first_callee": "_get_color",
+            "first_call": "0x23bd382",
+            "second_call": "0x23bd39e",
+            "bytes_hex": "e8e9162c0089c78b450c894424048b4508c744240820000000890424e81d302c00",
+            "sha256": "82761840ee4808555ec96aaa92de5329f24ebaf330f829e171f00bfa00df2378",
+            "instructions": [
+              {
+                "address": "0x23bd382",
+                "instruction": "call 0x267ea70"
+              },
+              {
+                "address": "0x23bd387",
+                "instruction": "mov edi, eax"
+              },
+              {
+                "address": "0x23bd389",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x23bd38c",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x23bd390",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x23bd393",
+                "instruction": "mov dword ptr [esp + 8], 0x20"
+              },
+              {
+                "address": "0x23bd39b",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x23bd39e",
+                "instruction": "call 0x26803c0"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          }
+        ]
+      },
+      {
+        "name": "card_chandra_ablaze",
+        "address": "0x25df420",
+        "pairs": [
+          {
+            "first_callee": "_get_color",
+            "first_call": "0x25df62a",
+            "second_call": "0x25df652",
+            "bytes_hex": "e841f409008b9584dfffffc74424081000000089c68b8210010000894424048b820c010000890424e8690d0a00",
+            "sha256": "850b7e53b7f3c9d9bd76495db0a91010756809bf3f7af54fd4cd8b3950fb094b",
+            "instructions": [
+              {
+                "address": "0x25df62a",
+                "instruction": "call 0x267ea70"
+              },
+              {
+                "address": "0x25df62f",
+                "instruction": "mov edx, dword ptr [ebp - 0x207c]"
+              },
+              {
+                "address": "0x25df635",
+                "instruction": "mov dword ptr [esp + 8], 0x10"
+              },
+              {
+                "address": "0x25df63d",
+                "instruction": "mov esi, eax"
+              },
+              {
+                "address": "0x25df63f",
+                "instruction": "mov eax, dword ptr [edx + 0x110]"
+              },
+              {
+                "address": "0x25df645",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x25df649",
+                "instruction": "mov eax, dword ptr [edx + 0x10c]"
+              },
+              {
+                "address": "0x25df64f",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x25df652",
+                "instruction": "call 0x26803c0"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          },
+          {
+            "first_callee": "_get_color_by_internal_id",
+            "first_call": "0x25df774",
+            "second_call": "0x25df791",
+            "bytes_hex": "e8570d0a008b550cc74424081000000089542404891c24898580dfffffe82a0c0a00",
+            "sha256": "2a07820b7d5aa8aa53016fcf075c32840384177c3d40ed103a48627535a77077",
+            "instructions": [
+              {
+                "address": "0x25df774",
+                "instruction": "call 0x26804d0"
+              },
+              {
+                "address": "0x25df779",
+                "instruction": "mov edx, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x25df77c",
+                "instruction": "mov dword ptr [esp + 8], 0x10"
+              },
+              {
+                "address": "0x25df784",
+                "instruction": "mov dword ptr [esp + 4], edx"
+              },
+              {
+                "address": "0x25df788",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x25df78b",
+                "instruction": "mov dword ptr [ebp - 0x2080], eax"
+              },
+              {
+                "address": "0x25df791",
+                "instruction": "call 0x26803c0"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          }
+        ]
+      }
+    ],
+    "scope": "Six native color-then-sleight physical sites for four source query pairs: aura AI/stat paths are duplicated. Chandra resolution parent loads are between 0x25df62a and 0x25df652, following get_color; priority grave-ID reads remain fresh around callbacks. Named int-return caller/callee and ordinary-memory assumptions apply, no callee semantics, full CFG or gameplay claim."
+  },
+  "color_site_collector_source": "import collections,csv,json,sys\nfrom pathlib import Path\nsys.path.insert(0,'tools/recovery')\nfrom inspect_release import Image\nfrom canonicalize_helpers import sha\nfrom capstone import Cs,CS_ARCH_X86,CS_MODE_32,CS_GRP_JUMP\nfrom capstone.x86_const import X86_OP_IMM\nimage=Image(Path('.recovery/2022-ManalinkEh.dll').read_bytes());dbg=Image(Path('G:/Manalink/ManalinkEh_10_22_Hotfix.dbg').read_bytes())\nnames=collections.defaultdict(set)\nfor n,o,s,k,t in dbg.symbols:\n if n in ['_get_color','_get_color_by_internal_id','_get_sleighted_color_test']:\n  if s==-1:names[n].add(o)\n  elif s>0:names[n].add(0x2000000+dbg.pe.sections[s-1].VirtualAddress+o)\nassert len(names)==3 and all(len(v)==1 for v in names.values())\ntargets={next(iter(v)):n for n,v in names.items()};right=next(iter(names['_get_sleighted_color_test']))\nmeta=list(csv.DictReader(Path('.recovery/reccmp/current-refresh-c721.metadata.csv').open()));md=Cs(CS_ARCH_X86,CS_MODE_32);md.detail=True;rows=[]\nfor name,count in [('card_phyrexian_boon',2),('card_serras_boon',2),('card_chandra_ablaze',2)]:\n r=next(r for r in meta if r['name']==name);base=int(r['address'],0);size=int(r['size']);raw=image.pe.get_data(base-0x2000000,size)\n code=list(md.disasm(raw,base));assert sum(i.size for i in code)==size\n call_indices=[j for j,i in enumerate(code) if i.mnemonic=='call'];pairs=[]\n for first,second in zip(call_indices,call_indices[1:]):\n  a,b=code[first],code[second]\n  if (a.operands[0].type!=X86_OP_IMM or b.operands[0].type!=X86_OP_IMM or b.operands[0].imm!=right\n      or targets.get(a.operands[0].imm) not in ['_get_color','_get_color_by_internal_id']):continue\n  assert not any(i.group(CS_GRP_JUMP) or i.mnemonic=='ret' for i in code[first+1:second])\n  incoming=[hex(i.address) for i in code if i.group(CS_GRP_JUMP) and i.operands[0].type==X86_OP_IMM and a.address<i.operands[0].imm<=b.address and not a.address<i.address<=b.address]\n  assert not incoming,(name,incoming)\n  data=raw[a.address-base:b.address-base+b.size]\n  pairs.append(dict(first_callee=targets[a.operands[0].imm],first_call=hex(a.address),second_call=hex(b.address),bytes_hex=data.hex(),sha256=sha(data),instructions=[dict(address=hex(i.address),instruction=i.mnemonic+' '+i.op_str) for i in code[first:second+1]],scope='Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof.'))\n assert len(pairs)==count,(name,len(pairs),count)\n rows.append(dict(name=name,address=r['address'],pairs=pairs))\nout=dict(inputs={p:sha(Path(p).read_bytes()) for p in ['.recovery/2022-ManalinkEh.dll','G:/Manalink/ManalinkEh_10_22_Hotfix.dbg']},script_sha256=sha(Path(__file__).read_bytes()),native_callee_addresses={n:hex(next(iter(v))) for n,v in names.items()},functions=rows,scope='Six native color-then-sleight physical sites for four source query pairs: aura AI/stat paths are duplicated. Chandra resolution parent loads are between 0x25df62a and 0x25df652, following get_color; priority grave-ID reads remain fresh around callbacks. Named int-return caller/callee and ordinary-memory assumptions apply, no callee semantics, full CFG or gameplay claim.')\nPath('.recovery/reccmp/native-color-sites-c724.json').write_text(json.dumps(out,indent=2)+'\\n')\nprint('Collected six native color-before-sleight sites across three callers.')\n",
+  "verified_type_values": {
+    "TYPE_ARTIFACT": 64,
+    "TYPE_CREATURE": 2,
+    "TYPE_ENCHANTMENT": 4,
+    "TYPE_INSTANT": 16,
+    "TARGET_TYPE_PLANESWALKER": 256,
+    "TYPE_SORCERY": 8,
+    "TYPE_EFFECT": 128
+  },
+  "type_header_expressions": {
+    "TYPE_ARTIFACT": "1 << 6",
+    "TYPE_CREATURE": "1 << 1",
+    "TYPE_ENCHANTMENT": "1 << 2",
+    "TYPE_INSTANT": "1 << 4",
+    "TARGET_TYPE_PLANESWALKER": "1 << 8",
+    "TYPE_SORCERY": "1 << 3",
+    "TYPE_EFFECT": "1 << 7"
+  },
+  "header_inputs": {
+    "defs.h": "73298bdd1a5286ae955523adbc020e985e6d40d844c3e3c2097b648ba2195774",
+    "manalink.h": "5a4226316a3813cbccdeeaefde9cd687fe426d0f0e9b4bc0ec24971318b703f3"
+  },
+  "planner_source": "import csv,json,re,sys\nfrom pathlib import Path\nsys.path.insert(0,'tools/recovery')\nfrom canonicalize_helpers import read,span,mask,sha\npacket=json.loads(Path('.recovery/reccmp/call-surplus-leads-c718.json').read_bytes());meta=list(csv.DictReader(Path('.recovery/reccmp/current-refresh-c721.metadata.csv').open()));rows=[]\ndef calls(b):return [n for n in re.findall(r'\\b([A-Za-z_]\\w*)\\s*\\(',mask(b)) if n not in {'if','while','for','switch','sizeof'}]\ndef put(source,name,address,body,kind,reason,native=None,native_path=None):\n s=read(source);before=s[slice(*span(s,name))];after=before[:before.index('{')]+body.strip()\n assert calls(before)==calls(after),name\n assert span(after,name)==(0,len(after));assert after!=before\n rows.append(dict(source=source,name=name,address=address,before=before,after=after,kind=kind,reason=reason,native=native,native_path=native_path))\nr=packet[117]\nput(r['source'],r['name'],r['address'],r'''{\n  card_instance_t *leg = get_card_instance(player, card);\n  int playable[2][8];\n  test_definition_t this_test;\n  if (event == EVENT_CAN_ACTIVATE)\n  {\n    type_t used_types = leg->targets[0].player;\n    if (used_types == ~TYPE_NONE)\n    {\n      leg->targets[0].player = 0;\n      used_types = TYPE_NONE;\n    }\n    int any_playable = 0;\n    for (int i = 0; i < 7; ++i)\n    {\n      int iid = leg->targets[i].card;\n      if (iid != -1)\n      {\n        type_t raw_types = get_type_with_iid(-1, -1, iid);\n        type_t types = raw_types & (TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_SPELL |\n                                   TYPE_ENCHANTMENT | TYPE_CREATURE);\n        int tribal = is_tribal(-1, iid);\n        if (raw_types & TYPE_INTERRUPT)\n          types |= TYPE_INSTANT;\n        if (tribal)\n          types |= TYPE_EFFECT;\n        if (types != TYPE_NONE && (types | used_types) != used_types)\n        {\n          int available = can_legally_play_iid_now(player, iid, EVENT_CAN_ACTIVATE);\n          if (available == 99)\n            return 99;\n          if (available != 0)\n            any_playable = 1;\n        }\n      }\n    }\n    return any_playable;\n  }\n  if (event != EVENT_ACTIVATE)\n    return 0;\n\n  type_t used_types = leg->targets[0].player;\n  int playable_count = 0;\n  for (int i = 0; i < 7; ++i)\n  {\n    int iid = leg->targets[i].card;\n    if (iid != -1 && check_rfg(player, (unsigned int)cards_data[iid].id) != 0)\n    {\n      type_t raw_types = get_type_with_iid(-1, -1, iid);\n      type_t allowed_types = raw_types & (TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_SPELL |\n                                        TYPE_ENCHANTMENT | TYPE_CREATURE);\n      if (raw_types & TYPE_INTERRUPT)\n        allowed_types |= TYPE_INSTANT;\n      int tribal = is_tribal(-1, iid);\n      if (tribal)\n        allowed_types |= TYPE_EFFECT;\n      if (allowed_types != TYPE_NONE && (allowed_types | used_types) != used_types &&\n          can_legally_play_iid_now(player, iid, EVENT_ACTIVATE) != 0)\n      {\n        playable[0][playable_count] = iid;\n        playable[1][playable_count] = i;\n        ++playable_count;\n      }\n    }\n  }\n  new_default_test_definition(&this_test, 0xff, \"Select a card to cast.\");\n  int selected = select_card_from_zone(player, player, playable[0], playable_count,\n                                       0, 1, -1, &this_test);\n  if (selected == -1)\n  {\n    spell_fizzled = 1;\n    return 0;\n  }\n  type_t types = get_type_with_iid(-1, -1, playable[0][selected]);\n  unsigned int type_count = num_bits_set(types);\n  bool choose_type = type_count >= 2;\n  if (!choose_type)\n  {\n    int tribal = is_tribal(-1, playable[0][selected]);\n    choose_type = tribal != 0 && (used_types & TYPE_EFFECT) == TYPE_NONE;\n    if (!choose_type)\n      leg->targets[0].player |= types;\n  }\n  if (choose_type)\n  {\n    unsigned int tribal_available = (types & TYPE_EFFECT) != TYPE_NONE &&\n                                   (used_types & TYPE_EFFECT) == TYPE_NONE;\n    unsigned int sorcery_available = (types & TYPE_SORCERY) != TYPE_NONE &&\n                                    (used_types & TYPE_SORCERY) == TYPE_NONE;\n    type_t planeswalker_available = (type_t)((types & TARGET_TYPE_PLANESWALKER) != TYPE_NONE &&\n                                            (used_types & TARGET_TYPE_PLANESWALKER) == TYPE_NONE);\n    type_t instant_available = (type_t)((types & TYPE_INSTANT) != TYPE_NONE &&\n                                      (used_types & TYPE_INSTANT) == TYPE_NONE);\n    type_t enchantment_available = (type_t)((types & TYPE_ENCHANTMENT) != TYPE_NONE &&\n                                          (used_types & TYPE_ENCHANTMENT) == TYPE_NONE);\n    unsigned int creature_available = (types & TYPE_CREATURE) != TYPE_NONE &&\n                                     (used_types & TYPE_CREATURE) == TYPE_NONE;\n    unsigned int artifact_available = (types & TYPE_ARTIFACT) != TYPE_NONE &&\n                                     (used_types & TYPE_ARTIFACT) == TYPE_NONE;\n    int choice = dialog_impl(\n        player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,\n        DLG_OMIT_ILLEGAL, DLG_AUTOCHOOSE_IF_1, \"Artifact\", artifact_available, 1,\n        \"Creature\", creature_available, 1, \"Enchantment\", enchantment_available, 1,\n        \"Instant\", instant_available, 1, \"Planeswalker\", planeswalker_available, 1,\n        \"Sorcery\", sorcery_available, 1, \"Tribal\", tribal_available, 1, 0, 0, 0, 0);\n    switch (choice)\n    {\n    default:\n      spell_fizzled = 1;\n      return 0;\n    case 1:\n      leg->targets[0].player |= TYPE_ARTIFACT;\n      break;\n    case 2:\n      leg->targets[0].player |= TYPE_CREATURE;\n      break;\n    case 3:\n      leg->targets[0].player |= TYPE_ENCHANTMENT;\n      break;\n    case 4:\n      leg->targets[0].player |= TYPE_INSTANT;\n      break;\n    case 5:\n      leg->targets[0].player |= TARGET_TYPE_PLANESWALKER;\n      break;\n    case 6:\n      leg->targets[0].player |= TYPE_SORCERY;\n      break;\n    case 7:\n      leg->targets[0].player |= TYPE_EFFECT;\n    }\n  }\n  play_card_in_exile_for_free(player, player,\n                              (unsigned int)cards_data[playable[0][selected]].id);\n  cant_be_responded_to = 1;\n  return 0;\n}''','native_private_type_worker_roles','Reconstruct seven stored target-card slots through struct array indices and separate IID, masks, legality result, playable count, selected index and dialog availability roles. Preserve CAN-only -1 initialization, saved used-types snapshot across callbacks, early 99 return, no CAN_ACTIVATE exile query, two-row eight-column storage with seven candidates, raw selected-type bit count and TYPE_EFFECT surrogate for tribal. Dialog writes OR into live saved-instance fields; final IID is re-read from the local selectable array after callbacks. Native cached body is the specialized amaug_leg worker; public wrapper and source ABI stay unchanged.',r['native'],r['native_path'])\n\nfor source,name,color,label in [('cards/alliances.c','card_phyrexian_boon','BLACK','black'),('cards/planar_chaos.c','card_serras_boon','WHITE','white')]:\n s=read(source);before=s[slice(*span(s,name))]\n old='int '+label+' = get_color(instance->damage_target_player, instance->damage_target_card) & get_sleighted_color_test(player, card, COLOR_TEST_'+color+');'\n new='int creature_color = get_color(instance->damage_target_player, instance->damage_target_card);\\n\\t  int sleighted_color = get_sleighted_color_test(player, card, COLOR_TEST_'+color+');\\n\\t  int '+label+' = creature_color & sleighted_color;'\n assert before.count(old)==1 and not re.search(r'\\b(?:creature_color|sleighted_color)\\b',mask(before))\n after=before.replace(old,new,1);m=next(m for m in meta if m['source']==source and m['name']==name)\n put(source,name,m['address'],after[after.index('{'):],'native_sequenced_color_queries','Make native get_color then get_sleighted_color_test ordering explicit using the existing int return contracts. Both duplicated native AI/stat paths have this order. Preserve attachment/affected gates, post-query live attachment controller in AI scoring and final aura dispatch. Selected-site refinement only; no whole-function/native-body or gameplay fix claim.')\n\nr=packet[118];s=read(r['source']);before=s[slice(*span(s,r['name']))];after=before\nold='''if( is_what(-1, grave[c], TYPE_SPELL) &&\n\t\t\t\t\t\t(get_color_by_internal_id(player, grave[c]) & get_sleighted_color_test(player, card, COLOR_TEST_RED)) &&\n\t\t\t\t\t\tcan_legally_play_iid(player, grave[c])\n\t\t\t\t\t  ){\n\t\t\t\t\t\tpriorities[2]+=5;\n\t\t\t\t\t}'''\nnew='''if (is_what(-1, grave[c], TYPE_SPELL)){\n\t\t\t\t\t\tint grave_color = get_color_by_internal_id(player, grave[c]);\n\t\t\t\t\t\tint sleighted_red = get_sleighted_color_test(player, card, COLOR_TEST_RED);\n\t\t\t\t\t\tif ((grave_color & sleighted_red) && can_legally_play_iid(player, grave[c]))\n\t\t\t\t\t\t\tpriorities[2] += 5;\n\t\t\t\t\t}'''\nassert after.count(old)==1;after=after.replace(old,new,1)\nold='int red_card = get_color(player, selected) & get_sleighted_color_test(instance->parent_controller, instance->parent_card, COLOR_TEST_RED);'\nnew='''int selected_color = get_color(player, selected);\n\t\t\t\t\tint sleighted_red = get_sleighted_color_test(instance->parent_controller, instance->parent_card, COLOR_TEST_RED);\n\t\t\t\t\tint red_card = selected_color & sleighted_red;'''\nassert after.count(old)==1;after=after.replace(old,new,1)\nput(r['source'],r['name'],r['address'],after[after.index('{'):],'native_sequenced_color_queries','Make two native color/sleight query pairs explicitly sequential. Priority scan keeps a fresh grave IID after each callback and only queries legality after the saved color mask test. Discard resolution keeps selected color before loading live parent fields for the sleight call, saves the red predicate before discard, then conditionally damages. Painter/Dawn/Lattice timestamp logic, grave selection/removal/cast approximation and APNAP behavior remain untouched. No new body or gameplay fix claim.',r['native'],r['native_path'])\nPath('.recovery/reccmp/type-color-plan-c724.json').write_text(json.dumps(rows,indent=2)+'\\n')\nprint('Planned four definitions: indexed private worker and three sequenced color-query callers.')\n",
+  "planner_sha256": "47d99b1f4be3c9eff3214b926c438bf443bee03f7139ecfe5a4b6137a0aabc73",
+  "read_only_observations": [
+    {
+      "name": "card_nicol_bolas_dragon_god",
+      "source": "cards/war_of_the_spark.c",
+      "address": "0x21d25c0",
+      "source_definition_sha256": "9c9af101296f5b47b1d356e0ab996a1935bbf10766ed20d6089f7e57e7d631d1",
+      "native_decomp_sha256": "d07b1535f79e4a96bdef6222823e8cbf3866253b4d916f83871da47529826685",
+      "observation": "Fourteen native get_card_name_by_id sites are the descending 13..0 source label loop after restoring both player_bits snapshots. Candidate collection intentionally retains the native ac>14 bound and possible fifteenth append, repeated can_sacrifice probes and live fields after copied-card callbacks. No edit required by this call-surplus lead.",
+      "scope": "Read-only selected topology/source observation, not whole-function or invalid-boundary/gameplay equivalence.",
+      "native_decomp": "/* October 2022 ManalinkEh.dll: card_nicol_bolas_dragon_god @ 0x21d25c0; DWARF unit cards/war_of_the_spark.c. Raw analysis output. */\n\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n/* WARNING: Enum \"event_t\": Some values do not have unique names */\n/* WARNING: Enum \"subtype_t\": Some values do not have unique names */\n/* WARNING: Enum \"anon_enum_32\": Some values do not have unique names */\n/* DWARF original prototype: int card_nicol_bolas_dragon_god(int player, int card, event_t event) */\n\nint card_nicol_bolas_dragon_god(int player,int card,event_t event)\n\n{\n  uint8_t uVar1;\n  uint32_t uVar2;\n  uint uVar3;\n  int iVar4;\n  card_instance_t *pcVar5;\n  int iVar6;\n  int iVar7;\n  int iVar8;\n  char *pcVar9;\n  char *pcVar10;\n  char *pcVar11;\n  char *pcVar12;\n  char *pcVar13;\n  char *pcVar14;\n  char *pcVar15;\n  char *pcVar16;\n  char *pcVar17;\n  char *pcVar18;\n  char *pcVar19;\n  char *pcVar20;\n  char *pcVar21;\n  char *pcVar22;\n  int card_00;\n  int iVar23;\n  uint uVar24;\n  int *piVar25;\n  byte bVar26;\n  int iStack_a8;\n  target_definition_t *ptStack_a4;\n  card_instance_t *pcStack_a0;\n  int activable [14];\n  target_definition_t td;\n  \n                    /* Unresolved local var: card_instance_t * instance@[???] */\n  bVar26 = 0;\n  check_legend_rule(player,card,event);\n  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) {\n    iVar4 = 0;\n    if (event == EVENT_CAN_ACTIVATE) {\n      do {\n        iVar23 = 0;\n        if (0 < active_cards_count[iVar4]) {\n          do {\n            while (((pcVar5 = in_play(iVar4,iVar23), pcVar5 == (card_instance_t *)0x0 ||\n                    (iVar6 = is_what(iVar4,iVar23,0x100), iVar6 == 0)) ||\n                   (iVar6 = get_id(iVar4,iVar23), iVar6 == 0x4df9))) {\n              iVar23 = iVar23 + 1;\n              if (active_cards_count[iVar4] <= iVar23) goto LAB_021d2720;\n            }\n                    /* Unresolved local var: int iid@[???]\n                       Unresolved local var: CardFunction ptFunction@[???]\n                       Unresolved local var: int act@[???] */\n            pcVar5 = get_card_instance(iVar4,iVar23);\n            iVar6 = (*cards_data[pcVar5->internal_card_id].code_pointer)\n                              (player,card,EVENT_CAN_ACTIVATE);\n            if (iVar6 == 99) {\n              return 99;\n            }\n            iVar23 = iVar23 + 1;\n          } while (iVar23 < active_cards_count[iVar4]);\n        }\nLAB_021d2720:\n        iVar4 = iVar4 + 1;\n        if (iVar4 == 2) {\n          iVar4 = planeswalker(player,card,EVENT_CAN_ACTIVATE,4);\n          return iVar4;\n        }\n      } while( true );\n    }\n    default_target_definition(player,card,&td,0x102);\n    pcStack_a0 = get_card_instance(player,card);\n    if (event == EVENT_ACTIVATE) {\n                    /* Unresolved local var: int ab1@[???]\n                       Unresolved local var: int p@[???]\n                       Unresolved local var: int c@[???]\n                       Unresolved local var: int choice@[???] */\n      pcStack_a0->number_of_targets = '\\0';\n      (pcStack_a0->field_26).info_slot = 0;\n      iVar4 = 0;\n      _player_bits = _player_bits | 0x40000;\n      iStack_a8 = 0;\n      _DAT_004ef1a8 = _DAT_004ef1a8 | 0x40000;\n      do {\n        iVar6 = 0;\n        iVar23 = iStack_a8;\n        if (0 < active_cards_count[iVar4]) {\n          do {\n            pcVar5 = in_play(iVar4,iVar6);\n            if (((pcVar5 != (card_instance_t *)0x0) &&\n                (iVar23 = is_planeswalker(iVar4,iVar6), iVar23 != 0)) &&\n               (iVar23 = get_id(iVar4,iVar6), iVar23 != 0x4df9)) {\n                    /* Unresolved local var: int iid@[???]\n                       Unresolved local var: CardFunction ptFunction@[???]\n                       Unresolved local var: int act@[???] */\n              pcVar5 = get_card_instance(iVar4,iVar6);\n              iVar23 = (*cards_data[pcVar5->internal_card_id].code_pointer)\n                                 (player,card,EVENT_CAN_ACTIVATE);\n              if (iVar23 != 0) break;\n            }\n            iVar6 = iVar6 + 1;\n            iVar23 = iStack_a8;\n          } while (iVar6 < active_cards_count[iVar4]);\n        }\n        iStack_a8 = iVar23;\n        iVar4 = iVar4 + 1;\n      } while (iVar4 != 2);\n      _player_bits = _player_bits & 0xfffbffff;\n      _DAT_004ef1a8 = _DAT_004ef1a8 & 0xfffbffff;\n      iVar4 = can_target(&td);\n      iVar4 = dialog_impl(player,card,EVENT_ACTIVATE,&UNK_02732594,&UNK_02732591,&UNK_02732624,\n                          &UNK_02732e0e,iStack_a8,10,0,&UNK_02732df9,1,5,1,&UNK_02732df1,iVar4,10,\n                          0xfffffffd,&UNK_02732de0,1,0x14,0xfffffff8,0,0,0,0);\n      if (iVar4 == 0) {\n        spell_fizzled = 1;\n        return 0;\n      }\n      if (iVar4 == 1) {\n                    /* Unresolved local var: int ac@[???]\n                       Unresolved local var: int oldpb0@[???]\n                       Unresolved local var: int oldpb1@[???]\n                       Unresolved local var: int choice2@[???]\n                       Unresolved local var: CardFunction ptFunction@[???] */\n        pcStack_a0->number_of_targets = '\\0';\n        uVar3 = _DAT_004ef1a8;\n        uVar24 = _player_bits;\n        piVar25 = activable;\n        for (iVar23 = 0xe; iVar23 != 0; iVar23 = iVar23 + -1) {\n          *piVar25 = 0;\n          piVar25 = piVar25 + (uint)bVar26 * -2 + 1;\n        }\n        _player_bits = _player_bits | 0x40000;\n        _DAT_004ef1a8 = _DAT_004ef1a8 | 0x40000;\n        iVar6 = 0;\n        iVar23 = 0;\n        do {\n          if (0 < active_cards_count[iVar23]) {\n            card_00 = 0;\n            do {\n              if (0xe < iVar6) break;\n              pcVar5 = in_play(iVar23,card_00);\n              if (((pcVar5 != (card_instance_t *)0x0) &&\n                  (iVar7 = is_planeswalker(iVar23,card_00), iVar7 != 0)) &&\n                 (iVar7 = get_id(iVar23,card_00), iVar7 != 0x4df9)) {\n                    /* Unresolved local var: int iid@[???]\n                       Unresolved local var: CardFunction ptFunction@[???] */\n                pcVar5 = get_card_instance(iVar23,card_00);\n                iVar7 = pcVar5->internal_card_id;\n                iVar8 = (*cards_data[iVar7].code_pointer)(player,card,EVENT_CAN_ACTIVATE);\n                if (iVar8 != 0) {\n                  activable[iVar6] = iVar7;\n                  iVar6 = iVar6 + 1;\n                }\n              }\n              card_00 = card_00 + 1;\n            } while (card_00 < active_cards_count[iVar23]);\n          }\n          iVar23 = iVar23 + 1;\n        } while (iVar23 != 2);\n        if (iVar6 == 0) {\n          spell_fizzled = 1;\n          _player_bits = uVar24;\n          _DAT_004ef1a8 = uVar3;\n          return 0;\n        }\n        _player_bits = uVar24;\n        _DAT_004ef1a8 = uVar3;\n        pcVar9 = get_card_name_by_id((uint)cards_data[activable[0xd]].id);\n        pcVar10 = get_card_name_by_id((uint)cards_data[activable[0xc]].id);\n        pcVar11 = get_card_name_by_id((uint)cards_data[activable[0xb]].id);\n        pcVar12 = get_card_name_by_id((uint)cards_data[activable[10]].id);\n        pcVar13 = get_card_name_by_id((uint)cards_data[activable[9]].id);\n        pcVar14 = get_card_name_by_id((uint)cards_data[activable[8]].id);\n        pcVar15 = get_card_name_by_id((uint)cards_data[activable[7]].id);\n        pcVar16 = get_card_name_by_id((uint)cards_data[activable[6]].id);\n        pcVar17 = get_card_name_by_id((uint)cards_data[activable[5]].id);\n        pcVar18 = get_card_name_by_id((uint)cards_data[activable[4]].id);\n        pcVar19 = get_card_name_by_id((uint)cards_data[activable[3]].id);\n        pcVar20 = get_card_name_by_id((uint)cards_data[activable[2]].id);\n        pcVar21 = get_card_name_by_id((uint)cards_data[activable[1]].id);\n        pcVar22 = get_card_name_by_id((uint)cards_data[activable[0]].id);\n        iVar23 = dialog_impl(player,card,EVENT_ACTIVATE,&UNK_02732594,&UNK_02732624,&UNK_02732e27,\n                             &UNK_02732c73,pcVar22,activable[0],1,pcVar21,activable[1],1,pcVar20,\n                             activable[2],1,pcVar19,activable[3],1,pcVar18,activable[4],1,pcVar17,\n                             activable[5],1,pcVar16,activable[6],1,pcVar15,activable[7],1,pcVar14,\n                             activable[8],1,pcVar13,activable[9],1,pcVar12,activable[10],1,pcVar11,\n                             activable[0xb],1,pcVar10,activable[0xc],1,pcVar9,activable[0xd],1,0,0,0\n                             ,0);\n        if (iVar23 == 0) {\n          spell_fizzled = 1;\n          return 0;\n        }\n        uVar2 = activable[iVar23 + -1];\n        (*cards_data[uVar2].code_pointer)(player,card,EVENT_ACTIVATE);\n        if (spell_fizzled != 1) {\n          pcVar5 = get_card_instance(player,card);\n          (pcVar5->field_31).eot_toughness = uVar2;\n          pcStack_a0->targets[9].card = pcStack_a0->targets[9].card + 1;\n        }\n      }\n      else if (iVar4 == 3) {\n        new_pick_target(&td,\"TARGET_CREATURE_OR_PLANESWALKER\",0,1);\n      }\n      pcStack_a0->unk52 = (uint8_t)iVar4;\n      goto LAB_021d2648;\n    }\n  }\n  else {\n    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP)) goto LAB_021d2648;\n    default_target_definition(player,card,&td,0x102);\n    pcStack_a0 = get_card_instance(player,card);\n  }\n  ptStack_a4 = &td;\n  if (event == EVENT_RESOLVE_ACTIVATION) {\n                    /* Unresolved local var: int choice@[???] */\n    uVar1 = pcStack_a0->unk52;\n    if (uVar1 == '\\x01') {\n                    /* Unresolved local var: int int_id@[???]\n                       Unresolved local var: CardFunction ptFunction@[???] */\n      pcVar5 = get_card_instance(player,card);\n      (*cards_data[(pcVar5->field_31).eot_toughness].code_pointer)\n                (player,card,EVENT_RESOLVE_ACTIVATION);\n    }\n    else if (uVar1 == '\\x02') {\n                    /* Unresolved local var: int choice2@[???] */\n      iVar4 = 1 - player;\n      draw_a_card(player);\n      uVar24 = 0;\n      if (hand_count[iVar4] == 0) {\n        iVar23 = can_sacrifice(player,iVar4,1,TYPE_PERMANENT,SUBTYPE_INVALID);\n        uVar24 = (uint)(iVar23 == 0);\n      }\n      iVar23 = can_sacrifice(player,iVar4,1,TYPE_PERMANENT,SUBTYPE_INVALID);\n      iVar23 = dialog_impl(player,card,EVENT_RESOLVE_ACTIVATION,&UNK_02732624,&UNK_02732627,\n                           &UNK_02732e76,iVar4,&UNK_02732c73,&UNK_0273262a,&UNK_02732e27,\n                           &UNK_02732e67,hand_count[iVar4],10,&UNK_02732e57,iVar23,5,&UNK_02732e4c,\n                           uVar24,0,0,0,0,0);\n      if (iVar23 == 1) {\n        discard(iVar4,0,player);\n      }\n      else if (iVar23 == 2) {\n        impose_sacrifice(player,card,iVar4,1,0x47,0,0,0,0,0,0,0,-1,0);\n      }\n    }\n    else if (uVar1 == '\\x03') {\n      iVar4 = valid_target(ptStack_a4);\n      if (iVar4 != 0) {\n        kill_card(pcStack_a0->targets[0].player,pcStack_a0->targets[0].card,KILL_DESTROY);\n      }\n    }\n    else if (uVar1 == '\\x04') {\n                    /* Unresolved local var: int die@[???]\n                       Unresolved local var: int c@[???] */\n      iVar23 = 1 - player;\n      iVar4 = active_cards_count[iVar23] + -1;\n      if (-1 < iVar4) {\n        do {\n          pcVar5 = in_play(iVar23,iVar4);\n          if ((pcVar5 != (card_instance_t *)0x0) &&\n             ((iVar6 = is_what(iVar23,iVar4,0x100), iVar6 != 0 ||\n              ((iVar6 = is_what(iVar23,iVar4,2), iVar6 != 0 &&\n               (iVar6 = is_legendary(iVar23,iVar4), iVar6 != 0)))))) goto LAB_021d2648;\n          iVar4 = iVar4 + -1;\n        } while (iVar4 != -1);\n      }\n      lose_the_game(iVar23);\n    }\n  }\nLAB_021d2648:\n                    /* Unresolved local var: int p@[???]\n                       Unresolved local var: int c@[???] */\n  iVar4 = planeswalker(player,card,event,4);\n  return iVar4;\n}\n\n",
+      "source_definition": "int card_nicol_bolas_dragon_god(int player, int card, event_t event)\n{\n  enum\n  {\n    CHOICE_IMITATE = 1,\n    CHOICE_DRAW_EXILE = 2,\n    CHOICE_DESTROY = 3,\n    CHOICE_ULTIMATE = 4\n  };\n\n  check_legend_rule(player, card, event);\n  if (event == EVENT_CAN_ACTIVATE)\n  {\n    for (int p = 0; p != 2; ++p)\n    {\n      for (int c = 0; c < active_cards_count[p]; ++c)\n      {\n        if (in_play(p, c) && is_what(p, c, 0x100) && get_id(p, c) != CARD_ID_NICOL_BOLAS_DRAGON_GOD)\n        {\n          int iid = get_card_instance(p, c)->internal_card_id;\n          if (cards_data[iid].code_pointer(player, card, EVENT_CAN_ACTIVATE) == 99)\n            return 99;\n        }\n      }\n    }\n    return planeswalker(player, card, EVENT_CAN_ACTIVATE, 4);\n  }\n  if (event == EVENT_ACTIVATE || event == EVENT_RESOLVE_ACTIVATION || event == EVENT_CLEANUP)\n  {\n    target_definition_t td;\n    default_target_definition(player, card, &td, 0x102);\n    card_instance_t *instance = get_card_instance(player, card);\n    if (event == EVENT_ACTIVATE)\n    {\n      instance->number_of_targets = 0;\n      instance->info_slot = 0;\n      player_bits[0] |= 0x40000;\n      player_bits[1] |= 0x40000;\n      int ab1 = 0;\n      for (int p = 0; p != 2; ++p)\n      {\n        for (int c = 0; c < active_cards_count[p]; ++c)\n        {\n          if (in_play(p, c) && is_planeswalker(p, c) && get_id(p, c) != CARD_ID_NICOL_BOLAS_DRAGON_GOD)\n          {\n            int iid = get_card_instance(p, c)->internal_card_id;\n            int act = cards_data[iid].code_pointer(player, card, EVENT_CAN_ACTIVATE);\n            if (act != 0)\n            {\n              ab1 = act;\n              break;\n            }\n          }\n        }\n      }\n      player_bits[0] &= 0xfffbffff;\n      player_bits[1] &= 0xfffbffff;\n      int destroy_available = can_target(&td);\n      int choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_PLANESWALKER, DLG_NO_STORAGE,\n                               \"Use another pw's ability\", ab1, 10, 0, \"Draw and opp chooses\", 1, 5,\n                               1, \"Destroy\", destroy_available, 10, -3, \"Opp needs a hero\", 1, 20,\n                               -8, 0, 0, 0, 0);\n      if (choice == 0)\n      {\n        spell_fizzled = 1;\n        return 0;\n      }\n      if (choice == CHOICE_IMITATE)\n      {\n        instance->number_of_targets = 0;\n        uint32_t oldpb0 = player_bits[0], oldpb1 = player_bits[1];\n        int activable[14] = {0};\n        player_bits[0] |= 0x40000;\n        player_bits[1] |= 0x40000;\n        int ac = 0;\n        for (int p = 0; p != 2; ++p)\n        {\n          for (int c = 0; c < active_cards_count[p]; ++c)\n          {\n            if (ac > 14)\n              break;\n            if (in_play(p, c) && is_planeswalker(p, c) && get_id(p, c) != CARD_ID_NICOL_BOLAS_DRAGON_GOD)\n            {\n              int iid = get_card_instance(p, c)->internal_card_id;\n              if (cards_data[iid].code_pointer(player, card, EVENT_CAN_ACTIVATE))\n                activable[ac++] = iid;\n            }\n          }\n        }\n        if (ac == 0)\n        {\n          spell_fizzled = 1;\n          player_bits[0] = oldpb0;\n          player_bits[1] = oldpb1;\n          return 0;\n        }\n        player_bits[0] = oldpb0;\n        player_bits[1] = oldpb1;\n        const char *names[14];\n        for (int i = 13; i >= 0; --i)\n          names[i] = get_card_name_by_id((uint16_t)cards_data[activable[i]].id);\n        int choice2 = dialog_impl(\n            player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL, DLG_NO_DISPLAY_FOR_AI, names[0],\n            activable[0], 1, names[1], activable[1], 1, names[2], activable[2], 1, names[3],\n            activable[3], 1, names[4], activable[4], 1, names[5], activable[5], 1, names[6],\n            activable[6], 1, names[7], activable[7], 1, names[8], activable[8], 1, names[9],\n            activable[9], 1, names[10], activable[10], 1, names[11], activable[11], 1, names[12],\n            activable[12], 1, names[13], activable[13], 1, 0, 0, 0, 0);\n        if (choice2 == 0)\n        {\n          spell_fizzled = 1;\n          return 0;\n        }\n        uint32_t iid = activable[choice2 - 1];\n        cards_data[iid].code_pointer(player, card, EVENT_ACTIVATE);\n        if (spell_fizzled != 1)\n        {\n          get_card_instance(player, card)->eot_toughness = iid;\n          ++instance->targets[9].card;\n        }\n      }\n      else if (choice == CHOICE_DESTROY)\n        new_pick_target(&td, \"TARGET_CREATURE_OR_PLANESWALKER\", 0, 1);\n      instance->unk52 = (uint8_t)choice;\n    }\n    else if (event == EVENT_RESOLVE_ACTIVATION)\n    {\n      unsigned choice = instance->unk52;\n      if (choice == CHOICE_IMITATE)\n      {\n        uint32_t iid = get_card_instance(player, card)->eot_toughness;\n        cards_data[iid].code_pointer(player, card, EVENT_RESOLVE_ACTIVATION);\n      }\n      else if (choice == CHOICE_DRAW_EXILE)\n      {\n        int opponent = 1 - player;\n        draw_a_card(player);\n        unsigned nothing_available = 0;\n        if (hand_count[opponent] == 0)\n          nothing_available =\n              can_sacrifice(player, opponent, 1, TYPE_PERMANENT, SUBTYPE_INVALID) == 0;\n        int sacrifice_available =\n            can_sacrifice(player, opponent, 1, TYPE_PERMANENT, SUBTYPE_INVALID);\n        int choice2 =\n            dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_WHO_CHOOSES(\n                        opponent), DLG_NO_DISPLAY_FOR_AI, DLG_AUTOCHOOSE_IF_1, DLG_OMIT_ILLEGAL, \"Discard a card\",\n                        hand_count[opponent], 10, \"Sac a permanent\", sacrifice_available, 5,\n                        \"Do nothing\", nothing_available, 0, 0, 0, 0, 0);\n        if (choice2 == 1)\n          discard(opponent, 0, player);\n        else if (choice2 == 2)\n          impose_sacrifice(player, card, opponent, 1, 0x47, 0, 0, 0, 0, 0, 0, 0, -1, 0);\n      }\n      else if (choice == CHOICE_DESTROY)\n      {\n        if (valid_target(&td))\n          kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);\n      }\n      else if (choice == CHOICE_ULTIMATE)\n      {\n        int opponent = 1 - player;\n        for (int c = active_cards_count[opponent] - 1; c >= 0; --c)\n        {\n          if (in_play(opponent, c) && (is_what(opponent, c, 0x100) ||\n                                       (is_what(opponent, c, 2) && is_legendary(opponent, c))))\n            return planeswalker(player, card, event, 4);\n        }\n        lose_the_game(opponent);\n      }\n    }\n  }\n  return planeswalker(player, card, event, 4);\n}",
+      "native_range": {
+        "address": "0x21d25c0",
+        "size": 3274,
+        "sha256": "ae880ebc101321d695272647ce00a2c55f2e4d316b8b6c4fa7f490f04a07f46b",
+        "bytes_hex": "5589e557565381eccc0100008b45108b7508894424088b450c89442404893424e8ab124900837d10730f8489000000837d106d0f847f000000837d10727406837d102275438d45a0c744240c02010000898560ffffff894424088b450c89342489442404e817dc48008b450c89442404893424e878044e00898564ffffff837d10720f84060100008b4510c744240c04000000894424088b450c89442404893424e8bacdf8ff89c281c4cc01000089d05b5e5f5dc38d760031db837d10730f857c0100008b049d20f54e0031ff85c07f11e98a000000669047393c9d20f54e007e7e897c2404891c24e8220c4e0085c074e6c744240800010000897c2404891c24e8daf54a0085c074ce897c2404891c24e8ca0e4e003df94d000074bb897c2404891c24e8c7034e008b4d0c8b406cc744240873000000894c24048934248d04c0ff14c544707e0083f8630f8455ffffff47393c9d20f54e007f878d742600904383fb020f855affffff8b450cc744240c04000000c74424087300000089442404893424e8d7ccf8ffe918ffffff8b9564ffffff31c08a425283f8010f849804000083f8020f840e03000083f8030f84ca02000083f8040f85cbfeffffbf0100000029f78b1cbd20f54e004b7914e95a0400008d742600904b83fbff0f844b040000895c2404893c24e8220b4e0085c074e6c744240800010000895c2404893c24e8daf44a0085c00f857afeffffc744240802000000895c2404893c24e8bef44a0085c074b2895c2404893c24e84e0d490085c074a2e94dfeffff8d742600908d45a0c744240c02010000898560ffffff894424088b450c89342489442404e81cda48008b450c89442404893424e87d024e00837d106d898564ffffff0f85fbfdffffc6403600c7403800000000a1a4f14e0031db0d00000400c7855cffffff00000000a3a4f14e00a1a8f14e000d00000400a3a8f14e008b049d20f54e0031ff85c07f0deb799047393c9d20f54e007e6e897c2404891c24e8320a4e0085c074e6897c2404891c24e842f24a0085c074d6897c2404891c24e8e20c4e003df94d000074c3897c2404891c24e8df014e008b4d0c8b406cc744240873000000894c24048934248d04c0ff14c544707e0085c0749489855cffffff8db6000000004383fb020f856effffff8b1da4f14e008b3da8f14e008b8560ffffff81e3fffffbff81e7fffffbff890424891da4f14e00893da8f14e00e884db4800c744240c942573028944243c8b855cffffff8944241c8b450cc74424086d00000089442404893424c744246400000000c744246000000000c744245c00000000c744245800000000c7442454f8ffffffc744245014000000c744244c01000000c7442448e02d7302c7442444fdffffffc74424400a000000c7442438f12d7302c744243401000000c744243005000000c744242c01000000c7442428f92d7302c744242400000000c74424200a000000c74424180e2e7302c744241424267302c744241091257302e84772510089c285c0742083f8010f841502000083f8030f84d30700008b8564ffffff885052e919fcffffc70594f14e0001000000e92afcffff8b8560ffffff890424e804ed480085c00f84f4fbffff8b9564ffffffc7442408020000008b4278894424048b4274890424e88c2f4e00e9cffbffffbb0100000089342429f3e878124e008b049dc4f14e0031ff85c00f84a3070000c744241000000000c744240c47000000c744240801000000895c2404893424e823135100895c2418894424388b049dc4f14e008944242c8b450cc7442414762e7302c744241027267302c744240c24267302c74424087200000089442404893424c744245800000000c744245400000000c744245000000000c744244c00000000c744244800000000897c2444c74424404c2e7302c744243c05000000c7442434572e7302c74424300a000000c7442428672e7302c7442424272e7302c74424202a267302c744241c732c7302e8e570510083f8010f84fd06000083f8020f85cbfaffff8b450cc744243400000000c7442430ffffffffc744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241047000000c744240c01000000895c240889442404893424e898245100e95bfaffff893c24e81bfc4b00e94efaffff8b450c89342489442404e8a7fe4d008b4d0c8b404cc744240872000000894c24048934248d04c0ff14c544707e00e91bfaffff8b8564ffffff8d9d68ffffff89dfb90e000000c640360031c0f3aba1a4f14e008b0da8f14e0089855cffffff0d00000400a3a4f14e0089c80d00000400898d58ffffffa3a8f14e0031ff31db899554ffffff8975088b0c9d20f54e0085c90f8e9800000031f6eb118d76004639349d20f54e000f8e8300000083ff0e7f7e89742404891c24e819064e0085c074dd89742404891c24e829ee4a0085c074cd89742404891c24e8c9084e003df94d000074ba89742404891c24e8c6fd4d008b506cc744240873000000899560ffffff8d04d28b550c895424048b5508891424ff14c544707e0085c074828b9560ffffff8994bd68ffffff47e96fffffff4383fb020f854fffffff8b855cffffff8b9554ffffffa3a4f14e008b8558ffffff8b7508a3a8f14e0085ff0f84d10400008b7d9c8995fcfeffff31d28d04ff668b14c534707e0089d0890424e8766b4a008b5d98898560ffffff8d04db31d2668b14c534707e0089d0890424e8566b4a008b4d9489855cffffff8d04c931d2898d00ffffff668b14c534707e0089d0890424e8306b4a008b5590898558ffffff8d04d231c9899554ffffff668b0cc534707e0089c8890424e80a6b4a008b4d8c898550ffffff8d04c931d2898d4cffffff668b14c534707e0089d0890424e8e46a4a008b5588898548ffffff8d04d231c9899544ffffff668b0cc534707e0089c8890424e8be6a4a008b4d84898540ffffff8d04c931d2898d3cffffff668b14c534707e0089d0890424e8986a4a0031c9898538ffffff8b4580898534ffffff8d04c0668b0cc534707e0089c8890424e8726a4a008b8d7cffffff898530ffffff8d04c931d2898d2cffffff668b14c534707e0089d0890424e8496a4a008b9578ffffff898528ffffff8d04d231c9899524ffffff668b0cc534707e0089c8890424e8206a4a008b8d74ffffff898520ffffff8d04c931d2898d1cffffff668b14c534707e0089d0890424e8f7694a008b9570ffffff898518ffffff8d04d231c9899514ffffff668b0cc534707e0089c8890424e8ce694a0031c9898510ffffff8b856cffffff89850cffffff8d04c0668b0cc534707e0089c8890424e8a5694a008b8d68ffffff898508ffffff8d04c931d2898d04ffffff668b14c534707e0089d0890424e87c694a00899c24b00000008b9d5cffffff8b8d00ffffff899c24ac0000008b9d58ffffff899c24a00000008b9d50ffffff8b9554ffffff899c24940000008b9d48ffffff89bc24bc000000898c24a40000008bbd60ffffff8b8d4cffffff89942498000000899c24880000008b9544ffffff8b9d40ffffff898c248c00000089942480000000895c247cc78424d000000000000000c78424cc00000000000000c78424c800000000000000c78424c400000000000000c78424c00000000100000089bc24b8000000c78424b400000001000000c78424a800000001000000c784249c00000001000000c784249000000001000000c784248400000001000000c7442478010000008b9d38ffffff8b9534ffffff895c24708b9d30ffffff895c24648b9d28ffffff8b8d3cffffff89542468895c24588b9524ffffff8b9d20ffffff894c2474895424508b8d2cffffff8b9514ffffff895c244c8b9d18ffffff894c245c895c24408b8d1cffffff895424388b9d10ffffff8b950cffffff894c2444c744246c01000000c744246001000000c744245401000000c744244801000000c744243c01000000895c2434c7442430010000008954242c8b9508ffffff8b8d04ffffff8944241c8b450c89542428c744242401000000894c2420c7442418732c7302c7442414272e7302c744241024267302c744240c94257302c74424086d00000089442404893424e8d06a510085c00f84a30000008b9c8564ffffff8b550c89542404c74424086d0000008d04db893424ff14c544707e008b95fcfeffff833d94f14e00010f8463f8ffff8b450c89342489442404899560ffffffe8ddf84d0089584c8b8564ffffff8b90c0000000428990c00000008b9560ffffffe92df8ffff89855cffffff8b8560ffffffc744240c01000000c744240800000000c74424042c2e7302890424e890db48008b955cffffffe9f6f7ffffc70594f14e000100000031d2e92cf4ffffc744241000000000c744240c47000000c744240801000000895c2404893424e8800b510085c00f94c025ff00000089c7e928f8ffff89742408c744240400000000891c24e8bb714c00e9bef3ffff"
+      }
+    }
+  ],
+  "staged_diff_sha256": "365ee6cd7b44fbac2e4d753edaa9c1d8419e6b2fd17844a371e021b58d1ed3d8",
+  "prior_build": {
+    "evidence": "docs/recovery-evidence/native-indexed-meld-and-cascade-flow.json",
+    "sha256": "d92fdfc8186b86f598cddf471846a78bf90244d4277406fa751d274d926c0eb4",
+    "dll_sha256": "ae6d77ac2ac4d77e63dbbce5345977b22e224beacb8b56ced3e29008b3cc4c0c",
+    "debug_sha256": "52827fbae18aea529abf55549421774aa620119e39cd0791265683ce3dff23a0"
+  },
+  "scope": "Four existing definitions across four source files. Native worker data/query/choice order is reconstructed with struct-slot indices and distinct local roles; three caller refinements sequence four source color pairs, corresponding to six duplicated/native physical sites. Selected scope and C ABI/ordinary-memory/callee assumptions remain. No new bodies or gameplay-bug fixes; no public wrapper ABI edits. C721 comparison remains a C720 snapshot.",
+  "rebuilt_color_query_sites": {
+    "inputs": {
+      "ManalinkEh.dll": "c8e938d6fe36cd6fc34b31d65fa062777f3b8e65da1ea45fe834dace5400df01",
+      "ManalinkEh.dbg": "1430c0e7b2735ba4c9e122122c44440539ae6e740c6bc8f919c3529b49634b8d"
+    },
+    "script_sha256": "4442af21e33b707e9ad2dd5dbcbc85539b8da6afb09e11e7cbc6afefa1eeb27a",
+    "rebuilt_callee_addresses": {
+      "_get_sleighted_color_test": "0x2691900",
+      "_get_color": "0x2691b00",
+      "_get_color_by_internal_id": "0x2691fb0"
+    },
+    "functions": [
+      {
+        "name": "card_phyrexian_boon",
+        "address": "0x2037c20",
+        "pairs": [
+          {
+            "first_callee": "_get_color",
+            "first_call": "0x2037d37",
+            "second_call": "0x2037d53",
+            "bytes_hex": "e8c49d6500c74424080200000089c78b450c894424048b4508890424e8a89b6500",
+            "sha256": "3a92adc075f465acb03a947c571b3128246e1f6e0dba1891cdeff24488feaa40",
+            "instructions": [
+              {
+                "address": "0x2037d37",
+                "instruction": "call 0x2691b00"
+              },
+              {
+                "address": "0x2037d3c",
+                "instruction": "mov dword ptr [esp + 8], 2"
+              },
+              {
+                "address": "0x2037d44",
+                "instruction": "mov edi, eax"
+              },
+              {
+                "address": "0x2037d46",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2037d49",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2037d4d",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2037d50",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2037d53",
+                "instruction": "call 0x2691900"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          },
+          {
+            "first_callee": "_get_color",
+            "first_call": "0x2037dbf",
+            "second_call": "0x2037ddc",
+            "bytes_hex": "e83c9d65008b550c895424048b5508891424c7442408020000008945f0e81f9b6500",
+            "sha256": "aeb89c8c4c9f1ee673b027099d7e2321635f90d07acff469fedebfe63b97ec21",
+            "instructions": [
+              {
+                "address": "0x2037dbf",
+                "instruction": "call 0x2691b00"
+              },
+              {
+                "address": "0x2037dc4",
+                "instruction": "mov edx, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2037dc7",
+                "instruction": "mov dword ptr [esp + 4], edx"
+              },
+              {
+                "address": "0x2037dcb",
+                "instruction": "mov edx, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2037dce",
+                "instruction": "mov dword ptr [esp], edx"
+              },
+              {
+                "address": "0x2037dd1",
+                "instruction": "mov dword ptr [esp + 8], 2"
+              },
+              {
+                "address": "0x2037dd9",
+                "instruction": "mov dword ptr [ebp - 0x10], eax"
+              },
+              {
+                "address": "0x2037ddc",
+                "instruction": "call 0x2691900"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          }
+        ]
+      },
+      {
+        "name": "card_serras_boon",
+        "address": "0x2422a50",
+        "pairs": [
+          {
+            "first_callee": "_get_color",
+            "first_call": "0x2422b67",
+            "second_call": "0x2422b83",
+            "bytes_hex": "e894ef2600c74424082000000089c78b450c894424048b4508890424e878ed2600",
+            "sha256": "9239665544cae942dec80b48c713d9692d1fa9a798f5638d10ed3f4a010f1864",
+            "instructions": [
+              {
+                "address": "0x2422b67",
+                "instruction": "call 0x2691b00"
+              },
+              {
+                "address": "0x2422b6c",
+                "instruction": "mov dword ptr [esp + 8], 0x20"
+              },
+              {
+                "address": "0x2422b74",
+                "instruction": "mov edi, eax"
+              },
+              {
+                "address": "0x2422b76",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2422b79",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2422b7d",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2422b80",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2422b83",
+                "instruction": "call 0x2691900"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          },
+          {
+            "first_callee": "_get_color",
+            "first_call": "0x2422bef",
+            "second_call": "0x2422c0c",
+            "bytes_hex": "e80cef26008b550c895424048b5508891424c7442408200000008945f0e8efec2600",
+            "sha256": "80db2a0dde5accb2110fa5e130f391171938582303e95ddd808493d94f0e5b79",
+            "instructions": [
+              {
+                "address": "0x2422bef",
+                "instruction": "call 0x2691b00"
+              },
+              {
+                "address": "0x2422bf4",
+                "instruction": "mov edx, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2422bf7",
+                "instruction": "mov dword ptr [esp + 4], edx"
+              },
+              {
+                "address": "0x2422bfb",
+                "instruction": "mov edx, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2422bfe",
+                "instruction": "mov dword ptr [esp], edx"
+              },
+              {
+                "address": "0x2422c01",
+                "instruction": "mov dword ptr [esp + 8], 0x20"
+              },
+              {
+                "address": "0x2422c09",
+                "instruction": "mov dword ptr [ebp - 0x10], eax"
+              },
+              {
+                "address": "0x2422c0c",
+                "instruction": "call 0x2691900"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          }
+        ]
+      },
+      {
+        "name": "card_chandra_ablaze",
+        "address": "0x263e680",
+        "pairs": [
+          {
+            "first_callee": "_get_color",
+            "first_call": "0x263e88a",
+            "second_call": "0x263e8b2",
+            "bytes_hex": "e8713205008b9584dfffffc74424081000000089c68b8210010000894424048b820c010000890424e849300500",
+            "sha256": "3672821baf6489b679d755bbd7719bd987f5fb5329018f2507b14edc5d84ada0",
+            "instructions": [
+              {
+                "address": "0x263e88a",
+                "instruction": "call 0x2691b00"
+              },
+              {
+                "address": "0x263e88f",
+                "instruction": "mov edx, dword ptr [ebp - 0x207c]"
+              },
+              {
+                "address": "0x263e895",
+                "instruction": "mov dword ptr [esp + 8], 0x10"
+              },
+              {
+                "address": "0x263e89d",
+                "instruction": "mov esi, eax"
+              },
+              {
+                "address": "0x263e89f",
+                "instruction": "mov eax, dword ptr [edx + 0x110]"
+              },
+              {
+                "address": "0x263e8a5",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x263e8a9",
+                "instruction": "mov eax, dword ptr [edx + 0x10c]"
+              },
+              {
+                "address": "0x263e8af",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x263e8b2",
+                "instruction": "call 0x2691900"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          },
+          {
+            "first_callee": "_get_color_by_internal_id",
+            "first_call": "0x263e9d4",
+            "second_call": "0x263e9f1",
+            "bytes_hex": "e8d73505008b550cc74424081000000089542404891c24898580dfffffe80a2f0500",
+            "sha256": "9a0223464799483c3449a81a13820fbe2bb12cc92ff53ed8e04b09dcaa08ce83",
+            "instructions": [
+              {
+                "address": "0x263e9d4",
+                "instruction": "call 0x2691fb0"
+              },
+              {
+                "address": "0x263e9d9",
+                "instruction": "mov edx, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x263e9dc",
+                "instruction": "mov dword ptr [esp + 8], 0x10"
+              },
+              {
+                "address": "0x263e9e4",
+                "instruction": "mov dword ptr [esp + 4], edx"
+              },
+              {
+                "address": "0x263e9e8",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x263e9eb",
+                "instruction": "mov dword ptr [ebp - 0x2080], eax"
+              },
+              {
+                "address": "0x263e9f1",
+                "instruction": "call 0x2691900"
+              }
+            ],
+            "scope": "Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof."
+          }
+        ]
+      }
+    ],
+    "scope": "Six current color-then-sleight physical sites for four source query pairs; aura AI/stat paths are duplicated. Sources sequence the helpers in distinct full expressions. Named int-return caller/callee and ordinary-memory assumptions apply; no callee semantics, full CFG or gameplay claim."
+  },
+  "rebuilt_site_collector_source": "import collections,csv,json,sys\nfrom pathlib import Path\nsys.path.insert(0,'tools/recovery')\nfrom inspect_release import Image\nfrom canonicalize_helpers import sha\nfrom capstone import Cs,CS_ARCH_X86,CS_MODE_32,CS_GRP_JUMP\nfrom capstone.x86_const import X86_OP_IMM\nimage=Image(Path('ManalinkEh.dll').read_bytes());dbg=Image(Path('ManalinkEh.dbg').read_bytes())\nnames=collections.defaultdict(set)\nfor n,o,s,k,t in dbg.symbols:\n if n in ['_get_color','_get_color_by_internal_id','_get_sleighted_color_test']:\n  if s==-1:names[n].add(o)\n  elif s>0:names[n].add(0x2000000+dbg.pe.sections[s-1].VirtualAddress+o)\nassert len(names)==3 and all(len(v)==1 for v in names.values())\ntargets={next(iter(v)):n for n,v in names.items()};right=next(iter(names['_get_sleighted_color_test']))\nstarts=sorted({0x2000000+dbg.pe.sections[s-1].VirtualAddress+o for n,o,s,k,t in dbg.symbols if s>0 and k==32})\nfunction_addresses=collections.defaultdict(set)\nfor n,o,s,k,t in dbg.symbols:\n if s>0 and k==32:function_addresses[n].add(0x2000000+dbg.pe.sections[s-1].VirtualAddress+o)\nmeta=list(csv.DictReader(Path('.recovery/reccmp/current-refresh-c721.metadata.csv').open()));md=Cs(CS_ARCH_X86,CS_MODE_32);md.detail=True;rows=[]\nfor name,count in [('card_phyrexian_boon',2),('card_serras_boon',2),('card_chandra_ablaze',2)]:\n r=next(r for r in meta if r['name']==name);assert len(function_addresses['_'+name])==1; base=next(iter(function_addresses['_'+name]));size=next(a for a in starts if a>base)-base;raw=image.pe.get_data(base-0x2000000,size)\n code=list(md.disasm(raw,base));assert sum(i.size for i in code)==size\n call_indices=[j for j,i in enumerate(code) if i.mnemonic=='call'];pairs=[]\n for first,second in zip(call_indices,call_indices[1:]):\n  a,b=code[first],code[second]\n  if (a.operands[0].type!=X86_OP_IMM or b.operands[0].type!=X86_OP_IMM or b.operands[0].imm!=right\n      or targets.get(a.operands[0].imm) not in ['_get_color','_get_color_by_internal_id']):continue\n  assert not any(i.group(CS_GRP_JUMP) or i.mnemonic=='ret' for i in code[first+1:second])\n  incoming=[hex(i.address) for i in code if i.group(CS_GRP_JUMP) and i.operands[0].type==X86_OP_IMM and a.address<i.operands[0].imm<=b.address and not a.address<i.address<=b.address]\n  assert not incoming,(name,incoming)\n  data=raw[a.address-base:b.address-base+b.size]\n  pairs.append(dict(first_callee=targets[a.operands[0].imm],first_call=hex(a.address),second_call=hex(b.address),bytes_hex=data.hex(),sha256=sha(data),instructions=[dict(address=hex(i.address),instruction=i.mnemonic+' '+i.op_str) for i in code[first:second+1]],scope='Contiguous call-to-call sequence without intervening call, jump, return or outside direct branch into the interval; selected sites only, not whole-function proof.'))\n assert len(pairs)==count,(name,len(pairs),count)\n rows.append(dict(name=name,address=hex(base),pairs=pairs))\nout=dict(inputs={p:sha(Path(p).read_bytes()) for p in ['ManalinkEh.dll','ManalinkEh.dbg']},script_sha256=sha(Path(__file__).read_bytes()),rebuilt_callee_addresses={n:hex(next(iter(v))) for n,v in names.items()},functions=rows,scope='Six current color-then-sleight physical sites for four source query pairs; aura AI/stat paths are duplicated. Sources sequence the helpers in distinct full expressions. Named int-return caller/callee and ordinary-memory assumptions apply; no callee semantics, full CFG or gameplay claim.')\nPath('.recovery/reccmp/rebuilt-color-sites-c724.json').write_text(json.dumps(out,indent=2)+'\\n')\nprint('Collected six rebuilt color-before-sleight sites across three callers.')\n",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "source_definitions": 4,
+    "exact_file_projections": 4,
+    "dll_sha256": "c8e938d6fe36cd6fc34b31d65fa062777f3b8e65da1ea45fe834dace5400df01",
+    "debug_sha256": "1430c0e7b2735ba4c9e122122c44440539ae6e740c6bc8f919c3529b49634b8d",
+    "build_log_sha256": "d431990ccc1be91c242021941d5396ff78938b4a9152b7c2a6b854eaaf396bc9",
+    "complete_cfg_matches": [],
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "c8e938d6fe36cd6fc34b31d65fa062777f3b8e65da1ea45fe834dace5400df01",
+        "ManalinkEh.dbg": "1430c0e7b2735ba4c9e122122c44440539ae6e740c6bc8f919c3529b49634b8d"
+      },
+      "results": [
+        {
+          "name": "amaug_leg_part",
+          "matched": false,
+          "reason": "('Unbound operand', '0xfffffed4', '0xfffffed8')",
+          "ranges": [
+            {
+              "address": "0x255fd50",
+              "size": 1548,
+              "sha256": "46c9a956e19d055e22a0431797ab809dd4eeb9dd622865d033e715f8cd36b587",
+              "bytes_hex": "5589e557565389cb81ecb40100008985d4feffff8995d8feffff89542404890424e83a2d150083fb7389c60f8417010000c785d0feffff0000000083fb6d74188b85d0feffff81c4b40100005b5e5f5dc38db426000000008b4074c785ccfeffff000000008985d0feffff31dbeb0b904383fb070f84de0100008b7cde7883ffff74ed8d04ff31c9668b0cc534707e0089c8894424048b85d4feffff890424e82c79150085c074c8897c2408c7442404ffffffffc70424ffffffffe8401d120089c181e17e010000a8200f84e803000083c910897c2404c70424ffffffff898dc8feffffe8173b11008b8dc8feffff85c0740380c9808b85d0feffff09c139c80f846affffff8b85d4feffffc74424086d000000897c2404890424e830a1110085c00f8448ffffff8b85ccfeffff89bc85dcfeffff899c85fcfeffff408985ccfeffffe928ffffff8b40748985ccfeffff407511c7467400000000c785ccfeffff000000008d86b00000008d5e788985d8feffffc785d0feffff0000000066908b3b83ffff0f8485000000897c2408c7442404ffffffffc70424ffffffffe85d1c120089c681e67e010000a8207479897c2404c70424ffffffffe8413a110083ce1085c0740681ce800000008b85ccfeffff89f109c139c174368b85d4feffffc744240873000000897c2404890424e85ca0110085c0741883f8630f84fc030000c785d0feffff010000008d7426009083c308399dd8feffff0f8561ffffffe91cfeffff8d742600897c2404c70424ffffffffe8c839110085c0758a85f6758c83c308399dd8feffff0f8531ffffffe9ecfdffff8d7426008d9d1cffffffc7442408773d7502c7442404ff000000891c24e89aea15008b85ccfeffff8944240c8d85dcfeffff894424088b85d4feffff895c241cc7442418ffffffffc744241401000000c74424100000000089442404890424e8d80d0f0089c783f8ff0f842d0200008b8485dcfeffffc7442404ffffffff89442408c70424ffffffffe81e1b120089042489c3e80493110083f8010f861b020000f6c380740df685d0feffff800f844102000031c089d983e108740c31c9f685d0feffff080f94c189da81e2000100008995ccfeffff741531d2f785d0feffff000100000f94c28995ccfeffff89da83e2108995c8feffff741231d2f685d0feffff100f94c28995c8feffff89da83e2048995c4feffff741231d2f685d0feffff040f94c28995c4feffff89da83e202740c31d2f685d0feffff020f94c283e340740c31dbf685d0feffff400f94c38944246c8b85ccfeffff894424548b85c8feffff894424488b85c4feffff894c24608944243c89542430c784248000000000000000c744247c00000000c744247800000000c744247400000000c744247001000000c74424688e3d7502c744246401000000c744245c953d7502c744245801000000c74424509d3d7502c744244c01000000c7442444aa3d7502c744244001000000c7442438b23d7502c744243401000000c744242cbe3d7502c744242801000000895c2424c7442420c73d7502c744241cd03d7502c7442418d33d7502c7442414d63d7502c7442410d93d7502c744240cdc3d75028b85d8feffff894424048b85d4feffffc74424086d000000890424e8549a180083f807773fff2485e03d7502897c2404c70424ffffffff898dc8feffffe8323711008b8dc8feffff85c00f8517fcffff85c90f848cfbffffe90dfcffff8db42600000000c70594f14e0001000000c785d0feffff00000000e937fbffff8db426000000008b84bddcfeffffc70424ffffffff89442404e8d936110085c00f84c1000000f685d0feffff800f85b4000000f6c3800f84c2fdffff8d7600b801000000e9b7fdffff8b567480ca808956748d742600908b84bddcfeffff31d28d04c0668b14c534707e0089d0894424088b85d4feffff89442404890424e844901000c705348b620001000000c785d0feffff00000000e99bfaffff8b4e7483c908894e74ebb08b5e7480cf01895e74eba58b467483c810894674eb9a8b467483c804894674eb8f8b467483c802894674eb848b467483c840894674e976ffffff8db6000000008b467409d8894674e963ffffffc785d0feffff63000000e934faffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x20f20f0",
+              "size": 1552,
+              "sha256": "db9ccaa82f4cd71a4a54d2444faca482aa4242875edd03fb9406554f10dca89f",
+              "bytes_hex": "5589e557565389cb81ecb40100008985d8feffff8995d4feffff89542404890424e87a87570083fb7389c60f8427020000c785d0feffff0000000083fb6d0f85fc0100008b407431db8985d0feffffc785ccfeffff00000000eb0f8d742600904383fb070f84ce0000008b7cde7883ffff74ed8d04ff31c9668b0cc534707e0089c8894424048b85d8feffff890424e85cc8570085c074c8897c2408c7442404ffffffffc70424ffffffffe8b0225a0089c181e17e010000a8200f84a002000083c910897c2404c70424ffffffff898dc8feffffe817745c008b8dc8feffff85c0740380c9808b85d0feffff09c139c10f846affffff8b85d8feffffc74424086d000000897c2404890424e890af590085c00f8448ffffff8b85ccfeffff89bc85dcfeffff899c85fcfeffff408985ccfeffffe928ffffff8d9d1cffffffc744240894ba7202c7442404ff000000891c24e8da425c008b85ccfeffff8944240c8d85dcfeffff894424088b85d8feffff895c241cc7442418ffffffffc744241401000000c74424100000000089442404890424e878cc5e0089c783f8ff0f84dd0300008b8485dcfeffffc7442404ffffffff89442408c70424ffffffffe89e215a0089042489c3e8c431590083f8010f87d30100008b84bddcfeffffc70424ffffffff89442404e804735c0085c00f85a40100008b467409d88946748d7426008b84bddcfeffff31c98d04c0668b0cc534707e0089c8894424088b85d8feffff89442404890424e824035d00c705348b620001000000c785d0feffff000000008b85d0feffff81c4b40100005b5e5f5dc38db426000000008b40748985c8feffff407511c7467400000000c785c8feffff000000008d86b00000008d5e788985d4feffffc785d0feffff0000000066908b3383feff0f848d00000089742408c7442404ffffffffc70424ffffffffe8ad205a0089742404c70424ffffffff89c78985ccfeffffe825725c008b95ccfeffff81e77e01000083e220746483cf1085c0740681cf800000008b85c8feffff89f909c139c174318b85d8feffffc74424087300000089742404890424e88fad590083f8630f84e102000085c0740ac785d0feffff0100000083c3083b9dd4feffff0f8559ffffffe904ffffff8d74260085c0759f85ff75a183c3083b9dd4feffff0f8539ffffffe9e4feffff8d742600897c2404c70424ffffffff898dc8feffffe87a715c008b8dc8feffff85c00f855ffdffff85c90f84d4fcffffe955fdffff8db42600000000f685d0feffff800f854ffeffff8d760089d981e180000000740f8b8dd0feffffc1e90783f10183e10189d883e0088985ccfeffff74158b85d0feffffc1e80383f00183e0018985ccfeffff89d825000100008985c8feffff74158b85d0feffffc1e80883f00183e0018985c8feffff89d883e0108985c4feffff74158b85d0feffffc1e80483f00183e0018985c4feffff89d883e004740f8b85d0feffffc1e80283f00183e00189da83e202740e8b95d0feffffd1ea83f20183e20183e340740f8b9dd0feffffc1eb0683f30183e301894c246c8b8dccfeffff894c24608b8dc8feffff894c24548b8dc4feffff894c24488944243c89542430c784248000000000000000c744247c00000000c744247800000000c744247400000000c744247001000000c7442468abba7202c744246401000000c744245cb2ba7202c744245801000000c7442450baba7202c744244c01000000c7442444c7ba7202c744244001000000c7442438cfba7202c744243401000000c744242cdbba7202c744242801000000895c2424c7442420e4ba7202c744241cedba7202c7442418f0ba7202c7442414f3ba7202c7442410f6ba7202c744240cf9ba72028b85d4feffff894424048b85d8feffffc74424086d000000890424e89ffd570083f807770aff2485fcba72028d7600c70594f14e0001000000c785d0feffff00000000e9a7fcffff8b567480ca80895674e959fcffff8b4e7483c908894e74e94bfcffff8b5e7480cf01895e74e93dfcffff8b467483c810894674e92ffcffff8b467483c804894674e921fcffff8b467483c802894674e913fcffff8b467483c840894674e905fcffffc785d0feffff63000000e936fcffff8db600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_phyrexian_boon",
+          "matched": false,
+          "reason": "('Unbound operand', '0x400', '0x5400')",
+          "ranges": [
+            {
+              "address": "0x20a57e0",
+              "size": 532,
+              "sha256": "f2874ce330f81ca4eb202be0717b33e6c228af7c01c6a822d74bf2c45132f824",
+              "bytes_hex": "5589e557565383ec148b5d108d73ce83fe01765481fbc7000000744c83fb74741a83fb6c0f849600000083fb71740c81fb000400000f85e50000008b450c895c2408894424048b4508c744240c02000000890424e8e730640083c4145b5e5f5dc38db426000000008b450c894424048b4508890424e876da600089c185c074300fbe405084c078288b790481fbc70000000f8401010000393d8c397a0075113905848c73000f84950000008d7426009031c083c4145b5e5f5dc38db600000000a18c397a0039450c746689d880e4fe3d000600000f8461ffffff81fb000800000f8455ffffff83fe020f864cffffff83fb3c0f8443ffffff83fb360f843affffff81fb900000000f842effffff81fb004700000f8422ffffff31c0eb958d760081fb005400000f840fffffffeb9c6690a1848c73003945087590e9fcfeffff90897c2404890424e844915d00c74424080200000089c78b450c894424048b4508890424e878aa5d0021c783fb330f848500000083fb320f85a0feffff83ff018b3db405620019c083c80201c7893db4056200e933ffffff90897c2404890424894df0e8e9905d0089c78b450c894424048b4508c744240802000000890424e81daa5d008b4df085c78b15a8317a000f95c0807950010f95c138c80f95c025ff0000004883e0d083c01801c28915a8317a00e934feffff669083ff018b0db405620019c083e0fd4001c1890db4056200e9b6feffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2037c20",
+              "size": 544,
+              "sha256": "58293aacb21d46ea2e7b2caaad12b4f49e826245871b805ef9a4ed0c551d1128",
+              "bytes_hex": "5589e557565383ec148b5d108d73ce83fe01765481fbc7000000744c83fb74741a83fb6c0f848e00000083fb71740c81fb005400000f852d0100008b450c895c2408894424048b4508c744240c02000000890424e8e727620083c4145b5e5f5dc38db426000000008b450c894424048b4508890424e8c633630089c785c074280fbe405084c078208b4f0481fbc70000000f8401010000390d8c397a0075093905848c730074699031c083c4145b5e5f5dc38db600000000a18c397a0039450c0f84ba00000089d880e4bf3d000700000f95c281fb000800000f95c084c20f8457ffffff83fe020f864effffff83fb3c0f8445ffffff83fb360f843cffffff81fb900000000f8430ffffff31c0eb9b90894c2404890424e8c49d6500c74424080200000089c78b450c894424048b4508890424e8a89b650021c783fb330f84b500000083fb320f85d0feffff83ff018b3db405620019c083c80201c7893db40562008db60000000089d880e4fd3d000400000f84c3feffffe949ffffff8d7600a1848c73003945080f8538ffffffe9a8feffff8d74260090894c2404890424e83c9d65008b550c895424048b5508891424c7442408020000008945f0e81f9b65008545f00f95c0807f50010f95c238d08b15a8317a000f95c025ff0000004883e0d083c01801c28915a8317a00e938feffff8db60000000083ff018b0db405620019c083e0fd4001c1890db4056200e954ffffff8db426000000008d74260090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_serras_boon",
+          "matched": false,
+          "reason": "('Unbound operand', '0x400', '0x5400')",
+          "ranges": [
+            {
+              "address": "0x23bd1e0",
+              "size": 531,
+              "sha256": "36f9c5f94f1144a3399c9ecf67750e6af729e3b5925b077b64e193f934b7670f",
+              "bytes_hex": "5589e557565383ec148b5d108d73ce83fe01765481fbc7000000744c83fb74741a83fb6c0f849600000083fb71740c81fb000400000f85e50000008b450c895c2408894424048b4508c744240c02000000890424e8e7b6320083c4145b5e5f5dc38db426000000008b450c894424048b4508890424e876602f0089c185c074300fbe405084c078288b790481fbc70000000f8401010000393d8c397a0075113905848c73000f84950000008d7426009031c083c4145b5e5f5dc38db600000000a18c397a0039450c746689d880e4fe3d000600000f8461ffffff81fb000800000f8455ffffff83fe020f864cffffff83fb3c0f8443ffffff83fb360f843affffff81fb900000000f842effffff81fb004700000f8422ffffff31c0eb958d760081fb005400000f840fffffffeb9c6690a1848c73003945087590e9fcfeffff90897c2404890424e844172c00c74424082000000089c78b450c894424048b4508890424e878302c0021c783fb330f848500000083fb320f85a0feffff83ff018b3db405620019c083e0fd4001c7893db4056200e932ffffff897c2404890424894df0e8e9162c0089c78b450c894424048b4508c744240820000000890424e81d302c008b4df085c78b15a8317a000f95c0807950010f95c138c80f95c025ff0000004883e0d083c01801c28915a8317a00e934feffff669083ff018b0db405620019c083c80201c1890db4056200e9b7feffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2422a50",
+              "size": 544,
+              "sha256": "0bbc8d1219b6dd5cf0cad0999e2d07ec0cff5373e9e1246b819e556b0d762bcf",
+              "bytes_hex": "5589e557565383ec148b5d108d73ce83fe01765481fbc7000000744c83fb74741a83fb6c0f848e00000083fb71740c81fb005400000f852d0100008b450c895c2408894424048b4508c744240c02000000890424e8b779230083c4145b5e5f5dc38db426000000008b450c894424048b4508890424e89685240089c785c074280fbe405084c078208b4f0481fbc70000000f8401010000390d8c397a0075093905848c730074699031c083c4145b5e5f5dc38db600000000a18c397a0039450c0f84ba00000089d880e4bf3d000700000f95c281fb000800000f95c084c20f8457ffffff83fe020f864effffff83fb3c0f8445ffffff83fb360f843cffffff81fb900000000f8430ffffff31c0eb9b90894c2404890424e894ef2600c74424082000000089c78b450c894424048b4508890424e878ed260021c783fb330f84b500000083fb320f85d0feffff83ff018b3db405620019c083e0fd4001c7893db40562008d7426009089d880e4fd3d000400000f84c3feffffe949ffffff8d7600a1848c73003945080f8538ffffffe9a8feffff8d74260090894c2404890424e80cef26008b550c895424048b5508891424c7442408200000008945f0e8efec26008545f00f95c0807f50010f95c238d08b15a8317a000f95c025ff0000004883e0d083c01801c28915a8317a00e938feffff8db60000000083ff018b0db405620019c083c80201c1890db4056200e955ffffff8db426000000008db600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_chandra_ablaze",
+          "matched": false,
+          "reason": "('Unbound operand', '0x20dc', '0x20d8')",
+          "ranges": [
+            {
+              "address": "0x25df420",
+              "size": 2470,
+              "sha256": "36347993a1ce1cae7de81634a768e339b77348fd7a853e3f93142d86833e71a0",
+              "bytes_hex": "55b8dc20000089e5575653e8a0cd110029c48b45108b5d08894424088b450c89442404891c24e8454408008b451083e87283f8017632837d106d742c8b4510c744240c05000000894424088b450c89442404891c24e8a6ffb7ff81c4dc2000005b5e5f5dc38d76008b450c891c24894424048dbddcdfffffe813360d00c7442404ff000000893c24898584dfffff8db588dfffffe8f7f60d008b450cc744240c020100008974240889442404891c24c78580e0ffff00010000e8620d0800c78594dfffff00120000837d106d0f849e010000893424e8c60f0800c744242001000000894424188b4510894424088b450cc744241c00000000c7442414048e7502c7442410168c7502c744240c0b8a750289442404891c24c744245000000000c744244c00000000c744244800000000c744244400000000c7442440f9ffffffc744243c00000000c744243801000000c7442434d88d7502c7442430feffffffc744242c00000000c744242801000000c7442424ef8d7502e8b4a61000837d10730f8422020000837d10720f85acfeffff83f8020f841706000083f8030f84ee020000480f8593feffff8b049dc4f14e0085c00f8e84feffff893424e87021080085c00f8474feffff83fb010f84a4070000897c2418c7442414ffffffffc744241003000000c744240c01000000c744240804000000895c2404891c24e8df1c0700891c248944240489c7e841f409008b9584dfffffc74424081000000089c68b8210010000894424048b820c010000890424e8690d0a00897c240421c6891c24e89bad0b0085f60f84effdffff8b450cc74424080400000089442404891c24e84c2c1000e9d3fdffff8db426000000008b450cc74424081000000089442404891c24e8190d0a00897c241089854ce0ffff8b450cc744240c00000000895c240889442404891c24e894110e0089857cdfffff85c0740ac7857cdfffff0a0000008b049dc4f14e00c7854ce0ffff00000000c78578dfffff0000000083f8027f20ba0100000029da3b0495c4f14e000f9dc025ff0000004883e00f898578dfffff8b3c9d18704d00c78574dfffff000000008b0783f8ff7517e99b0000008d76008b470483c70483f8ff0f8489000000c74424083800000089442404c70424ffffffffe839250a0085c074d58b07891c2489442404e8570d0a008b550cc74424081000000089542404891c24898580dfffffe82a0c0a00858580dfffff74a28b07891c2489442404e804a7090085c074908b8574dfffff83c005898574dfffffe97cffffff8d74260085c00f858cfcffffe9a5fcffff8d7600893424e8e00c08008b9574dfffff894424188b450c8954243c8b8d7cdfffff8b9578dfffffc7442414048e7502c7442410168c7502c744240c0b8a7502c74424086d00000089442404891c248954242cc744245000000000c744244c00000000c744244800000000c744244400000000c7442440f9ffffffc744243801000000c7442434d88d7502c7442430feffffffc744242801000000c7442424ef8d7502c744242001000000894c241ce8c7a310008b9584dfffff48c64236000f85c2fbffffc74424040e8a7502893424e8a6140800e9adfbffff908b049d18704d00c744240810000000898570dfffff8b450c89442404891c24e8ec0a0a0031ff89857cdfffffc78584dfffff00000000c78580dfffff00000000c78574dfffffffffffff8b04bd20f54e0031f685c07e519089742404893c24e8bc390d0085c0743689742404893c24e87c3c0d003d962500000f847101000039fb0f843102000089742404893c24e85d3c0d003d081b00000f8412010000463934bd20f54e007fb04783ff02759c8d049b8b9580dfffff31f6895d088d048089b578dfffff31ff8bb574dfffff8d04808b9d70dfffffc1e00489856cdfffff8b857cdfffff21d0898584dfffffeb399081fe081b00007444894424048b4508890424e8190b0a008b9580dfffff09d085857cdfffff0f85250100004781fff40100000f84480200008b04bb83f8ff0f843c02000081fe7a09000075b48b8d84dfffff85c974d5c74424083800000089442404c70424ffffffffe892220a0085c074b98b04bb894424048b4508890424e88ca4090085c074a38b856cdfffff8b9578dfffff8b84b82040790289bc9584e8ffff898495b4e0ffff8b04bb89849554f0ffff42899578dfffffe96cffffff9089742404893c24e844300d008b40543b8584dfffff0f86d3feffff898584dfffffc78574dfffff081b0000c78580dfffff01000000e9b4feffff8db60000000089742404893c24e804300d008b908000000085d20f8875feffff8b40543b8584dfffff0f8666feffff8b8d80dfffff898584dfffff09d1c78574dfffff96250000898d80dfffffe943feffff8d742600c7442408380000008b04bbc70424ffffffff89442404e895210a0085c00f84b8feffff8b04bb894424048b4508890424e88ba3090085c00f849efeffff8b856cdfffff8b8d78dfffff8b84b82040790289bc8d84e8ffff89848db4e0ffff8b04bb89848d54f0ffff41898d78dfffffe967feffff8d74260089742404891c24e82c3a0d003d7a0900000f85b8fdffff89742404891c24e8252f0d008b50543b9584dfffff0f869dfdffffc74424082000000089742404891c24899584dfffffe80c080a00c78574dfffff7a090000898580dfffffe96efdffff8db426000000008b3570866200895c2404893424e8fef50b00893424c744240403000000e85e440d008b357086620083f601895c2404893424e8d9f50b00c744240403000000893424e839440d00e940f8ffff8d7426008bb578dfffff8b5d08c78584dfffff000000008dbd54f0ffff85f60f8e1bf8ffff895d088d7426008b4508c7442414b0757300c744241000000000c744240ca18d750289742408897c2404890424e8cd0f070089c383f8ff0f848a0000008b8d84dfffff8b848554f0ffff89848d24f8ffff8b849d84e8ffff894424088b849db4e0ffff894424048b450841890424898d84dfffffe8a6a30d0083f8ff0f84b5000000894424048b45088904244ee8ad3e0d0039f37d29904339f38b849db4e0ffff89849db0e0ffff8b849d84e8ffff89849d80e8ffff8b049f89449ffc75d885f60f8540ffffff8b8584dfffff8b5d0885c00f8e43f7ffff8d848524f8ffff8db524f8ffff898584dfffff8d7426008b06891c248944240483c604e87f510d00c7442408ffffffff89c7c744240402020000891c24e895930e00897c2408895c2404891c24e8d58e08003bb584dfffff75bde9e4f6ffffc70424b88d7502898580dfffffe826140e008b8580dfffffe92effffff8b8d84dfffffc7442408100000008b8110010000894424048b810c010000890424e805060a0089854ce0ffffe92bf8ffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x263e680",
+              "size": 2336,
+              "sha256": "c8729d02b1f088ee193a26edf5449417085cec2ec3be297cc1ee21e5a9e415f3",
+              "bytes_hex": "55b8d820000089e5575653e8a0a70b0029c48b45108b5d08894424088b450c89442404891c24e8a56507008b451083e87283f8017632837d106d742c8b4510c744240c05000000894424088b450c89442404891c24e816addfff81c4d82000005b5e5f5dc38d76008b450c891c24894424048dbddcdfffffe893c10200c7442404ff000000893c24898584dfffff8db588dfffffe8577f07008b450cc744240c020100008974240889442404891c24c78580e0ffff00010000e8a2bc0900c78594dfffff00120000837d106d0f849e010000893424e836c20900c744242001000000894424188b4510894424088b450cc744241c00000000c744241430cf7502c744241042cd7502c744240c4fcb750289442404891c24c744245000000000c744244c00000000c744244800000000c744244400000000c7442440f9ffffffc744243c00000000c744243801000000c744243404cf7502c7442430feffffffc744242c00000000c744242801000000c74424241bcf7502e8043c0300837d10730f8422020000837d10720f85acfeffff83f8020f848f05000083f8030f84ee020000480f8593feffff8b049dc4f14e0085c00f8e84feffff893424e800c5090085c00f8474feffff83fb010f841c070000897c2418c7442414ffffffffc744241003000000c744240c01000000c744240804000000895c2404891c24e89f130a00891c248944240489c7e8713205008b9584dfffffc74424081000000089c68b8210010000894424048b820c010000890424e849300500897c240421c6891c24e8eb50060085f60f84effdffff8b450cc74424080400000089442404891c24e89c9c0200e9d3fdffff8db426000000008b450cc74424081000000089442404891c24e8f92f0500897c241089854ce0ffff8b450cc744240c00000000895c240889442404891c24e8249a070089857cdfffff85c0740ac7857cdfffff0a0000008b049dc4f14e00c7854ce0ffff00000000c78578dfffff0000000083f8027f20ba0100000029da3b0495c4f14e000f9dc025ff0000004883e00f898578dfffff8b3c9d18704d00c78574dfffff000000008b0783f8ff7517e99b0000008d76008b470483c70483f8ff0f8489000000c74424083800000089442404c70424ffffffffe8e95b050085c074d58b07891c2489442404e8d73505008b550cc74424081000000089542404891c24898580dfffffe80a2f0500858580dfffff74a28b07891c2489442404e894e6040085c074908b8574dfffff83c005898574dfffffe97cffffff8d74260085c00f858cfcffffe9a5fcffff8d7600893424e850bf09008b9574dfffff894424188b450c8954243c8b8d7cdfffff8b9578dfffffc744241430cf7502c744241042cd7502c744240c4fcb7502c74424086d00000089442404891c248954242cc744245000000000c744244c00000000c744244800000000c744244400000000c7442440f9ffffffc744243801000000c744243404cf7502c7442430feffffffc744242801000000c74424241bcf7502c744242001000000894c241ce8173903008b9584dfffff48c64236000f85c2fbffffc744240452cb7502893424e886ca0900e9adfbffff908b049d18704d00c744240810000000898574dfffff8b450c89442404891c24e8cc2d050031ff898580dfffffc78578dfffffffffffffc7857cdfffff00000000c78584dfffff000000008b0cbd20f54e0031f685c97e519089742404893c24e8ecc4020085c0743689742404893c24e86cc702003d962500000f846101000039fb0f84a901000089742404893c24e84dc702003d081b00000f8402010000463934bd20f54e007fb04783ff02759c8d049b31f689b57cdfffff895d088d04808bb574dfffff8d3c80c1e70489bd70dfffff31ff89fb8bbd78dfffffeb378d760081ff081b00007440894424048b4508890424e8a93305008b9584dfffff09d0858580dfffff75294381fbf40100000f84d40100008b049e83f8ff0f84c801000081ff7a09000075b88b8584dfffffebcfc7442408380000008b049ec70424ffffffff89442404e85559050085c074b88b049e894424048b4508890424e82fe4040085c074a28b8570dfffff8b957cdfffff8b849820877902899c9584e8ffff898495b4e0ffff8b049e89849554f0ffff4289957cdfffffe96bffffff8d74260089742404893c24e8d4bb02008b40543b857cdfffff0f86e3feffffc78578dfffff081b000089857cdfffffc78584dfffff01000000e9c4feffff8db60000000089742404893c24e894bb02008b908000000085d20f8885feffff8b40543b857cdfffff0f8676feffff8b8d84dfffffc78578dfffff9625000009d189857cdfffff898d84dfffffe953feffff8d74260089742404891c24e8a4c502003d7a0900000f8540feffff89742404891c24e82dbb02008b50543b957cdfffff0f8625feffffc74424082000000089742404891c2489957cdfffffe8742b0500c78578dfffff7a090000898584dfffffe9f6fdffff8db426000000008b3570866200895c2404893424e876580600893424c744240403000000e806cc02008b357086620083f601895c2404893424e851580600c744240403000000893424e8e1cb0200e9c8f8ffff8d7426008bb57cdfffff8b5d08c78584dfffff000000008dbd54f0ffff85f60f8ea3f8ffff895d088d7426008b4508c7442414b0757300c744241000000000c744240ccdce750289742408897c2404890424e815190a0089c383f8ff0f848a0000008b8d84dfffff8b848554f0ffff89848d24f8ffff8b849d84e8ffff894424088b849db4e0ffff894424048b450841890424898d84dfffffe82e09030083f8ff0f84b5000000894424048b45088904244ee855c6020039f37d29904339f38b849db4e0ffff89849db0e0ffff8b849d84e8ffff89849d80e8ffff8b049f89449ffc75d885f60f8540ffffff8b8584dfffff8b5d0885c00f8ecbf7ffff8d848524f8ffff8db524f8ffff898584dfffff8d7426008b06891c248944240483c604e897d80200c7442408ffffffff89c7c744240402020000891c24e85d330900897c2408895c2404891c24e81d3308003bb584dfffff75bde96cf7ffffc70424e4ce7502898580dfffffe8fe7d09008b8580dfffffe92effffff8b8d84dfffffc7442408100000008b8110010000894424048b810c010000890424e86d29050089854ce0ffffe9b3f8ffff6690",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "1c75a92b27201f514bafe2cd9f5fc550016c3a2b2e5c2f30eb8324abe7a254ca",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "scope": "One grouped build, four exact source byte projections, fixed header type values, native/compiled selected call-site ordering and unchanged strict entry comparisons. All four strict checks retain frame/local-offset or aura-event-order differences; no forced matches, callee semantics or gameplay equivalence. Native Amaug packet is a specialized worker; its public wrapper and source ABI are unchanged. C721 comparison remains a C720 snapshot."
+  }
+}

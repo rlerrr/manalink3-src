@@ -73,8 +73,8 @@ int card_admonition_angel(int player, int card, event_t event)
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = 1;
-    td.special = 0x4000;
+    td.illegal_type = TYPE_LAND;
+    td.special = TARGET_SPECIAL_NOT_ME;
     instance = get_card_instance(player, card);
     result = can_target(&td);
     if (result != 0)
@@ -308,7 +308,7 @@ int card_avenger_of_zendikar(int player, int card, event_t event)
   card_instance_t *instance;
   int plant_card_or_duh;
   test_definition_t test;
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     instance = get_card_instance(player, card);
@@ -334,7 +334,7 @@ int card_avenger_of_zendikar(int player, int card, event_t event)
       count = count_permanents_by_type(player, TYPE_LAND);
       if (0 < count)
       {
-        generate_tokens_by_id(player, card, 0x4973, count);
+        generate_tokens_by_id(player, card, CARD_ID_PLANT, count);
       }
     }
     else
@@ -2024,7 +2024,7 @@ int card_quest_for_the_goblin_lord(int player, int card, event_t event)
 {
   int result;
   test_definition_t test;
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     result = is_humiliated(player, card, AL_TRIG);
@@ -2052,8 +2052,7 @@ int card_quest_for_the_goblin_lord(int player, int card, event_t event)
       }
     }
   }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 int card_quest_for_the_nihil_stone(int player, int card, event_t event)
@@ -2066,7 +2065,7 @@ int card_quest_for_the_nihil_stone(int player, int card, event_t event)
   {
     add_counters(player, card, player, card, COUNTER_QUEST, 1);
   }
-  if ((trigger_condition == 0xc9) && (hand_count[t_player] == 0))
+  if ((trigger_condition == TRIGGER_UPKEEP) && (hand_count[t_player] == 0))
   {
     result = count_counters(player, card, COUNTER_QUEST);
     if (1 < result)
@@ -2945,37 +2944,23 @@ Whenever Wrexial, the Risen Deep deals combat damage to a player, you may cast t
 /* ManalinkEh 2022: 0x2583370; original cards/worldwake.c:55. */
 static int zendikon_legacy(int player, int card, event_t event)
 {
-  uint16_t land_csv_id;
-  int player_00;
-  card_instance_t *instance;
-  int result;
-
-  instance = in_play(player, card);
-  if ((instance != NULL) && (instance->targets[0].player != -1))
+  card_instance_t *instance = in_play(player, card);
+  if (instance && instance->targets[0].player != -1 &&
+      resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
   {
-    result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if (result != 0)
+    int i = count_graveyard(instance->targets[0].player) - 1;
+    if (i >= 0)
     {
-
-      result = count_graveyard(instance->targets[0].player);
-      result = result + -1;
-      if (-1 < result)
-      {
-        player_00 = instance->targets[0].player;
-        land_csv_id = cards_data[instance->targets[0].card].id;
-        do
+      int target_player = instance->targets[0].player;
+      uint16_t land_csv_id = cards_data[instance->targets[0].card].id;
+      for (; i >= 0; --i)
+        if (cards_data[graveyard_ptr_mutable[target_player][i]].id == land_csv_id)
         {
-          if (cards_data[graveyard_ptr_mutable[player_00][result]].id == land_csv_id)
-          {
-            from_grave_to_hand(player_00, result, 0);
-            break;
-          }
-          result = result + -1;
-        } while (result != -1);
-      }
-      kill_card(player, card, KILL_EXILE);
-      return 0;
+          from_grave_to_hand(target_player, i, 0);
+          break;
+        }
     }
+    kill_card(player, card, KILL_EXILE);
   }
   return 0;
 }
@@ -3026,7 +3011,7 @@ int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t
   int land_card_or_iid;
   card_instance_t *instance;
   int death_check_or_owner;
-  int player_00;
+  int target_player;
   target_definition_t td;
 
   if (event == EVENT_GRAVEYARD_FROM_PLAY)
@@ -3037,22 +3022,22 @@ int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t
     {
 
       instance = get_card_instance(player, card);
-      player_00 = (int)instance->damage_target_player;
+      target_player = (int)instance->damage_target_player;
       land_card_or_iid = instance->damage_target_card;
-      instance = get_card_instance(player_00, land_card_or_iid);
+      instance = get_card_instance(target_player, land_card_or_iid);
       if (((land_card_or_iid == affected_card) &&
-           (((player_00 == affected_card_controller &&
+           (((target_player == affected_card_controller &&
               ((unsigned char)(instance->kill_code - 2) < 2)) &&
-             (death_check_or_owner = check_special_flags2(player_00, land_card_or_iid, 0x10000000),
+             (death_check_or_owner = check_special_flags2(target_player, land_card_or_iid, 0x10000000),
               death_check_or_owner == 0)))) &&
-          (death_check_or_owner = check_for_death_trigger_removal(player_00, land_card_or_iid),
+          (death_check_or_owner = check_for_death_trigger_removal(target_player, land_card_or_iid),
            death_check_or_owner == 0))
       {
 
         instance = get_card_instance(player, create_legacy_effect(player, card, zendikon_legacy));
-        death_check_or_owner = get_owner(player_00, land_card_or_iid);
+        death_check_or_owner = get_owner(target_player, land_card_or_iid);
         instance->targets[0].player = death_check_or_owner;
-        land_card_or_iid = get_original_internal_card_id(player_00, land_card_or_iid);
+        land_card_or_iid = get_original_internal_card_id(target_player, land_card_or_iid);
         instance->targets[0xb].player = 1;
         instance->targets[0].card = land_card_or_iid;
       }
@@ -3127,14 +3112,12 @@ int card_wind_zendikon(int player, int card, event_t event)
 int card_canopy_cover(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   unsigned int blocker_abilities;
 
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_STATIC))
     {
       instance = get_card_instance(player, card);
       if (-1 < instance->damage_target_player)

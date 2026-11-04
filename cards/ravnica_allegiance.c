@@ -6,9 +6,7 @@ static int unique_name(int unused1, int unused2, int player, int card);
 /* ManalinkEh 2022: 0x25bb240; original cards/ravnica_allegiance.c:3. */
 static int biomancers_familiar_legacy(int player, int card, event_t event)
 {
-  int result;
-  result = eot_trigger(player, card, event);
-  if (result == 0)
+  if (!eot_trigger(player, card, event))
   {
     return 0;
   }
@@ -55,7 +53,6 @@ int card_basilica_bell_haunt(int player, int card, event_t event)
 int card_bedevil(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   target_definition_t td;
 
   if (!IS_GS_EVENT(player, card, event))
@@ -66,8 +63,7 @@ int card_bedevil(int player, int card, event_t event)
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
     }
@@ -80,18 +76,15 @@ int card_bedevil(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25bb290; original cards/ravnica_allegiance.c:827. */
 static int effect_cry_of_the_carnarium(int player, int card, event_t event)
 {
-  int result;
   if (event == EVENT_CAST_SPELL)
   {
-    result = is_what(affected_card_controller, affected_card, 2);
-    if (result != 0)
+    if (is_what(affected_card_controller, affected_card, 2))
     {
       exile_if_would_be_put_into_graveyard(player, card, affected_card_controller, affected_card,
                                            1);
     }
   }
-  result = eot_trigger(player, card, event);
-  if (result == 0)
+  if (!eot_trigger(player, card, event))
   {
     return 0;
   }
@@ -226,7 +219,7 @@ int card_ethereal_absolution(int player, int card, event_t event)
       rfg_card_from_grave(whose_graveyard, grave_target);
       if (was_creature != 0)
       {
-        default_token_definition(player, card, 0x498d, &token);
+        default_token_definition(player, card, CARD_ID_SPIRIT, &token);
         token.color_forced = '\"';
         token.key_plus = 0x20;
         generate_token(&token);
@@ -246,7 +239,7 @@ int card_footlight_fiend(int player, int card, event_t event)
   if (result != 0)
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     td.allow_cancel = 0;
     instance = get_card_instance(player, card);
     result = can_target(&td);
@@ -283,35 +276,17 @@ int card_gates_ablaze(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25bf500; original cards/ravnica_allegiance.c:1744. */
 int card_growth_spiral(int player, int card, event_t event)
 {
-  int result;
   test_definition_t test;
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
+    return 0;
+  if (event == EVENT_RESOLVE_SPELL)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else if (event == EVENT_RESOLVE_SPELL)
-    {
-      draw_a_card(player);
-      new_default_test_definition(&test, 1, "Select a land card.");
-      new_global_tutor(player, player, 4, 4, 0, 1, &test);
-      kill_card(player, card, KILL_DESTROY);
-    }
-    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
-    {
-      return 0;
-    }
+    draw_a_card(player);
+    new_default_test_definition(&test, 1, "Select a land card.");
+    new_global_tutor(player, player, 4, 4, 0, 1, &test);
+    kill_card(player, card, KILL_DESTROY);
   }
-  result = basic_spell(player, card, event);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25bb4e0; original cards/ravnica_allegiance.c:1815. */
@@ -328,7 +303,7 @@ int card_guardian_project(int player, int card, event_t event)
 {
   int result;
   test_definition_t test;
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     default_test_definition(&test, 2);
@@ -424,7 +399,6 @@ int card_kayas_wrath(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c1410; original cards/ravnica_allegiance.c:2665. */
 int card_precognitive_perception(int player, int card, event_t event)
 {
-  int result;
   if (event != EVENT_CAN_CAST)
   {
     if (event == EVENT_CAST_SPELL)
@@ -448,8 +422,7 @@ int card_precognitive_perception(int player, int card, event_t event)
       return 0;
     }
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25c1bd0; original cards/ravnica_allegiance.c:2853. */
@@ -466,7 +439,7 @@ int card_rakdos_firewheeler(int player, int card, event_t event)
   }
   default_target_definition(player, card, &td_opp, 0);
   td_opp.allowed_controller = 1 - player;
-  td_opp.zone = 0x1000;
+  td_opp.zone = TARGET_ZONE_PLAYERS;
   result = can_target(&td_opp);
   if (result != 0)
   {
@@ -506,7 +479,7 @@ int card_shimmer_of_possibility(int player, int card, event_t event)
       result = 0x18;
       if (1 - player == current_turn)
       {
-        result = ((0x1d < current_phase) - 1 & 0xffffffe8) + 0x30;
+        result = ((0x1d < current_phase) ? 48U : 24U);
       }
       ai_modifier = ai_modifier + result;
     }
@@ -516,8 +489,7 @@ int card_shimmer_of_possibility(int player, int card, event_t event)
     impulse_effect(player, 4, 3);
     kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25c34e0; original cards/ravnica_allegiance.c:3575. */
@@ -530,15 +502,10 @@ int card_smothering_tithe(int player, int card, event_t event)
     charge_mana(1 - player, COLOR_ANY, 2);
     if (spell_fizzled == 1)
     {
-      generate_token_by_id(player, card, 0x4998);
+      generate_token_by_id(player, card, CARD_ID_TREASURE);
     }
   }
-  if (event != EVENT_SHOULD_AI_PLAY)
-  {
-    return (unsigned int)(event == EVENT_CAN_CAST);
-  }
-  ai_modifier = ai_modifier + (-(unsigned int)(player == 0) & 0xfffffff0) + 8;
-  return 0;
+  return global_enchantment(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25c37a0; original cards/ravnica_allegiance.c:3665. */
@@ -554,28 +521,21 @@ int card_sphinxs_insight(int player, int card, event_t event)
     }
     kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  result = basic_spell(player, card, event);
   return result;
 }
 
 /* ManalinkEh 2022: 0x25c4680; original cards/ravnica_allegiance.c:4280. */
 int card_wilderness_reclamation(int player, int card, event_t event)
 {
-  int result;
   if (current_turn == player)
   {
-    result = eot_trigger(player, card, event);
-    if (result != 0)
+    if (eot_trigger(player, card, event))
     {
       manipulate_type(player, card, player, TYPE_LAND, ACT_UNTAP);
     }
   }
-  if (event != EVENT_SHOULD_AI_PLAY)
-  {
-    return (unsigned int)(event == EVENT_CAN_CAST);
-  }
-  ai_modifier = ai_modifier + (-(unsigned int)(player == 0) & 0xfffffff0) + 8;
-  return 0;
+  return global_enchantment(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -592,7 +552,7 @@ static void afterlife(int player, int card, event_t event, int qty)
   {
     return;
   }
-  default_token_definition(player, card, 0x498d, &token);
+  default_token_definition(player, card, CARD_ID_SPIRIT, &token);
   token.color_forced = '\"';
   token.no_sleight = '\x01';
   token.key_plus = 0x20;
@@ -622,7 +582,7 @@ int card_electrodominance(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0x102);
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
@@ -773,25 +733,17 @@ int card_syndicate_messenger(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c1340; original cards/ravnica_allegiance.c:2639. */
 int card_plaza_of_harmony(int player, int card, event_t event)
 {
-  int result;
-  unsigned int mana_colors;
-
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    result = count_subtype(player, -1, 0x500c);
-    if (1 < result)
-    {
+    if (count_subtype(player, -1, 0x500c) > 1)
       gain_life(player, 3);
-    }
   }
   else if (event == EVENT_RESOLVE_SPELL)
   {
-
-    result = get_id(player, card);
-    mana_colors = get_color_of_mana_produced_by_id(result, 0x3e, player);
-    play_land_sound_effect_force_color(player, card,
-                                       mana_colors & (int)(mana_colors ^ 0xffffffff) >> 0x1f);
+    int id = get_id(player, card);
+    unsigned int colors = get_color_of_mana_produced_by_id(id, 0x3e, player);
+    play_land_sound_effect_force_color(player, card, colors & 0x80000000U ? 0 : colors);
     return 0;
   }
   return mana_producer(player, card, event);
@@ -871,7 +823,7 @@ int card_captive_audience(int player, int card, event_t event)
       life_available = (unsigned int)((life_available & 1) == 0);
     }
     choice =
-        dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\003", "\001\014",
+        dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE,
                     "Your life total becomes 4", life_available, 0xfffffff6, "Discard your hand",
                     discard_available, 0xfffffffb, "Opponent creates five Zombies",
                     zombies_available, 0xfffffff1, 0, 0, 0, 0);
@@ -887,7 +839,7 @@ int card_captive_audience(int player, int card, event_t event)
     }
     else if (choice == 3)
     {
-      default_token_definition(player, card, 0x49ac, &token);
+      default_token_definition(player, card, CARD_ID_ZOMBIE, &token);
       token.t_player = 1 - player;
       token.qty = '\x05';
       generate_token(&token);
@@ -1200,7 +1152,7 @@ static int judith_the_scourge_diva_effect(int player, int card, event_t event)
           {
             instance->targets[0xb].player = 0;
           }
-          *(uint8_t *)((int)&instance->targets[0xb].player + 1) = 1;
+          SET_BYTE1(instance->targets[0xb].player) = 1;
         }
         default_test_definition(&test, 2);
         test.type_flag = 3;
@@ -1216,7 +1168,7 @@ static int judith_the_scourge_diva_effect(int player, int card, event_t event)
     {
       target_definition_t td;
       default_target_definition(player, card, &td, 0x102);
-      td.zone = 4608;
+      td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
       td.allow_cancel = 0;
 
       for (pending_deaths = pending_deaths & 0xff; pending_deaths != 0;
@@ -1288,7 +1240,7 @@ int card_judith_the_scourge_diva(int player, int card, event_t event)
   }
   boost_creature_type(player, card, event, ~SUBTYPE_INVALID, 1, 0, 0, BCT_CONTROLLER_ONLY);
   default_target_definition(player, card, &td, 0x102);
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   td.allow_cancel = 0;
   count_for_gfp_ability_and_store_values(player, card, event, player, 2, NULL, 0x40, 0);
   if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) != 0)
@@ -1387,7 +1339,7 @@ int card_seraph_of_the_scales(int player, int card, event_t event)
     special_keyword = check_for_special_ability(player, card, 8);
     if (special_keyword == 0)
     {
-      vigilance_priority = (-(unsigned int)((current_keywords & 8) == 0) & 9) + 1;
+      vigilance_priority = (((current_keywords & 8) == 0) ? 10U : 1U);
     }
   }
   if (((current_phase == 0x18) &&
@@ -1401,7 +1353,7 @@ int card_seraph_of_the_scales(int player, int card, event_t event)
   {
     deathtouch_priority = 1;
   }
-  choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "Vigilance",
+  choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, "Vigilance",
                        vigilance_available_or_black_cost, vigilance_priority, "Deathtouch",
                        deathtouch_available_or_white_cost, deathtouch_priority, 0, 0, 0, 0);
   if (choice != 0)
@@ -1442,7 +1394,7 @@ void riot(int player, int card, event_t event)
   if (event == EVENT_ETB)
   {
 
-    result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\003", "\001\014",
+    result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE,
                          "+1/+1 counter", 1, 5, "Haste", 1, 5, 0, 0, 0, 0);
     if (result == 1)
     {
@@ -1471,8 +1423,8 @@ void riot(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25bb340; original cards/ravnica_allegiance.c:1117. */
 int dovin_grand_arbiter_legacy(int player, int card, event_t event)
 {
-  int card_00;
-  int player_00;
+  int target_card;
+  int target_player;
   card_instance_t *instance;
   int result;
 
@@ -1491,7 +1443,7 @@ int dovin_grand_arbiter_legacy(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     instance->targets[0x10].player = instance->targets[0x10].player + 1;
   }
-  if (((trigger_condition == 0xd7) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_DEAL_DAMAGE) && (card == affected_card)) &&
       ((player == affected_card_controller && (reason_for_trigger_controller == player))))
   {
 
@@ -1507,9 +1459,9 @@ int dovin_grand_arbiter_legacy(int player, int card, event_t event)
     }
     else if (event == EVENT_RESOLVE_TRIGGER)
     {
-      card_00 = instance->targets[0].card;
-      player_00 = instance->targets[0].player;
-      add_counters(player_00, card_00, player_00, card_00, COUNTER_LOYALTY, result);
+      target_card = instance->targets[0].card;
+      target_player = instance->targets[0].player;
+      add_counters(target_player, target_card, target_player, target_card, COUNTER_LOYALTY, result);
       instance->targets[0x10].player = 0;
     }
   }
@@ -1547,12 +1499,12 @@ int card_dovin_grand_arbiter(int player, int card, event_t event)
 
     instance = get_card_instance(player, card);
     loyalty_or_mode_or_reveal_count = count_counters(player, card, COUNTER_LOYALTY);
-    priority_or_remaining = ((7 < loyalty_or_mode_or_reveal_count) - 1 & 0xffffffed) + 0x14;
+    priority_or_remaining = ((7 < loyalty_or_mode_or_reveal_count) ? 20U : 1U);
     loyalty_or_mode_or_reveal_count = priority_or_remaining;
     loyalty_or_picks = count_counters(player, card, COUNTER_LOYALTY);
     loyalty_or_mode_or_reveal_count = dialog_impl(
-        player, card, event, "\001\002", "\001\017", "Add counters for combat damage", 1, 5, 1,
-        "Create a thopter & gain life", 1, ((1 < loyalty_or_picks) - 1 & 0xfffffff2) + 0xf,
+        player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Add counters for combat damage", 1, 5, 1,
+        "Create a thopter & gain life", 1, ((1 < loyalty_or_picks) ? 15U : 1U),
         0xffffffff, "Dig ten cards deep", 1, priority_or_remaining, 0xfffffff9, 0, 0, 0, 0,
         loyalty_or_mode_or_reveal_count);
     if (event == EVENT_CAN_ACTIVATE)
@@ -1568,7 +1520,7 @@ int card_dovin_grand_arbiter(int player, int card, event_t event)
     }
     else if (loyalty_or_mode_or_reveal_count == CHOICE_THOPTER)
     {
-      generate_token_by_id(player, card, 0x4995);
+      generate_token_by_id(player, card, CARD_ID_THOPTER);
       gain_life(player, 1);
     }
     else if (loyalty_or_mode_or_reveal_count == CHOICE_DIG)
@@ -1716,7 +1668,7 @@ int card_rhythm_of_the_wild(int player, int card, event_t event)
   test_definition_t test;
 
   type_uncounterable(player, card, event, player, 2, NULL);
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     default_test_definition(&test, 2);
@@ -1725,8 +1677,8 @@ int card_rhythm_of_the_wild(int player, int card, event_t event)
     if (result != 0)
     {
 
-      result = dialog_impl(trigger_cause_controller, trigger_cause, EVENT_ACTIVATE, "\001\002",
-                           "\001\003", "+1/+1 counter", 1, 5, "Haste", 1, 5, 0, 0, 0, 0);
+      result = dialog_impl(trigger_cause_controller, trigger_cause, EVENT_ACTIVATE, DLG_RANDOM,
+                           DLG_NO_CANCEL, "+1/+1 counter", 1, 5, "Haste", 1, 5, 0, 0, 0, 0);
       if (result == 1)
       {
         add_counters(trigger_cause_controller, trigger_cause, trigger_cause_controller,
@@ -1746,64 +1698,44 @@ int card_rhythm_of_the_wild(int player, int card, event_t event)
       }
     }
   }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x25c2eb0; original cards/ravnica_allegiance.c:3421. */
 int card_simic_ascendancy(int player, int card, event_t event)
 {
-  xtrigger_t trigger;
-  int result;
-  card_instance_t *instance;
-  target_definition_t td;
-
   upkeep_trigger_ability(player, card, event, player);
-  enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_1_1_COUNTERS;
-  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  enable_xtrigger_flags |= ENABLE_XTRIGGER_1_1_COUNTERS;
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY && count_counters(player, card, COUNTER_GROWTH) >= 20)
+    lose_the_game(1-player);
+
+  if (xtrigger_condition() == XTRIGGER_1_1_COUNTERS && affect_me(player, card) &&
+      trigger_cause_controller == player && reason_for_trigger_controller == player &&
+      !is_humiliated(player, card, AL_TRIG))
   {
-    result = count_counters(player, card, COUNTER_GROWTH);
-    if (0x13 < result)
+    if (event == EVENT_RESOLVE_TRIGGER)
     {
-      lose_the_game(1 - player);
+      add_counters(player, card, player, card, COUNTER_GROWTH, counters_added);
     }
+    else if (event == EVENT_TRIGGER)
+      event_result |= RESOLVE_TRIGGER_MANDATORY;
   }
-  trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
-  {
-    trigger = xtrigger_impl_value_dont_use_directly;
-  }
-  if ((((trigger == XTRIGGER_1_1_COUNTERS) && (card == affected_card)) &&
-       (player == affected_card_controller)) &&
-      ((trigger_cause_controller == player && (reason_for_trigger_controller == player))))
-  {
-    if (!is_humiliated(player, card, AL_TRIG))
-    {
-      if (event == EVENT_RESOLVE_TRIGGER)
-      {
-        add_counters(player, card, player, card, COUNTER_GROWTH, counters_added);
-        return global_enchantment(player, card, event);
-      }
-      if (event == EVENT_TRIGGER)
-        event_result |= 2;
-    }
-  }
-  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
-      event != EVENT_CLEANUP)
+  if (!IS_GAA_EVENT(event))
     return global_enchantment(player, card, event);
-  default_target_definition(player, card, &td, 2);
+
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
   td.allowed_controller = player;
   td.preferred_controller = player;
   td.allow_cancel = 0;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    instance = get_card_instance(player, card);
-    result = instance->targets[0].card;
-    instance = get_card_instance(player, card);
-    add_counters(player, card, instance->targets[0].player, result, COUNTER_P1_P1, 1);
+    int target_card = get_card_instance(player, card)->targets[0].card;
+    card_instance_t *instance = get_card_instance(player, card);
+    add_counters(player, card, instance->targets[0].player, target_card, COUNTER_P1_P1, 1);
   }
-  return generic_activated_ability(player, card, event, 4, 1, 0, 1, 1, 0, 0, 0, &td,
-                                   "TARGET_CREATURE_YOU_CONTROL");
+  return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_XGU(1, 1, 1),
+                                    0, &td, "TARGET_CREATURE_YOU_CONTROL");
 }
 
 /* ManalinkEh 2022: 0x25c3100; original cards/ravnica_allegiance.c:3467. */
@@ -1816,7 +1748,7 @@ int card_skarrgan_hellkite(int player, int card, event_t event)
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     if (event == EVENT_CAN_ACTIVATE)
     {
       result = count_counters(player, card, COUNTER_P1_P1);
@@ -1848,7 +1780,7 @@ int card_skarrgan_hellkite(int player, int card, event_t event)
     }
     default_target_definition(player, card, &td, 0x102);
   }
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   if (event != EVENT_RESOLVE_ACTIVATION)
   {
     return 0;
@@ -1904,53 +1836,35 @@ static int vindictive_vampire_effect(int player, int card, event_t event);
 /* ManalinkEh 2022: 0x25bf090; original cards/ravnica_allegiance.c:1579. */
 int card_frilled_mystic(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  const char *spell_name;
-  char buffer[100];
-
-  result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
-  instance = get_card_instance(player, card);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+  card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_CAN_CAST)
   {
-    result = card_counterspell(player, card, EVENT_CAN_CAST);
-    if (result == 0)
+    if (card_counterspell(player, card, event))
     {
-      instance->info_slot = 0;
-      return 1;
+      instance->info_slot = 1;
+      return 99;
     }
-    instance->info_slot = 1;
-    result = 99;
+    instance->info_slot = 0;
+    return 1;
   }
-  else
+
+  if (event == EVENT_CAST_SPELL)
   {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (((card == affected_card) && (player == affected_card_controller)) &&
-          (current_turn == player))
-      {
-        ai_modifier = ai_modifier + -10;
-      }
-    }
-    else if (event == EVENT_ETB)
-    {
-      result = get_id(card_on_stack_controller, card_on_stack);
-      spell_name = get_card_name_by_id(result);
-      scnprintf(buffer, 100, " Counter %s\n Pass", spell_name);
-      if (instance->info_slot == 1)
-      {
-        result = do_dialog(player, player, card, card_on_stack_controller, card_on_stack, buffer,
-                           (unsigned int)(card_on_stack_controller == player));
-        if (result == 0)
-        {
-          real_counter_a_spell(player, card, card_on_stack_controller, card_on_stack);
-        }
-      }
-    }
-    result = 0;
+    if (affect_me(player, card) && current_turn == player)
+      ai_modifier -= 10;
   }
-  return result;
+  else if (event == EVENT_ETB)
+  {
+    const char *spell_name = get_card_name_by_id(get_id(card_on_stack_controller, card_on_stack));
+    char buffer[100];
+    scnprintf(buffer, sizeof buffer, " Counter %s\n Pass", spell_name);
+    if (instance->info_slot == 1 &&
+        do_dialog(player, player, card, card_on_stack_controller, card_on_stack, buffer,
+                   card_on_stack_controller == player) == 0)
+      real_counter_a_spell(player, card, card_on_stack_controller, card_on_stack);
+  }
+  return 0;
 }
 
 /* ManalinkEh 2022: 0x25c14e0; original cards/ravnica_allegiance.c:2684. */
@@ -1968,7 +1882,7 @@ int card_priest_of_forgotten_gods(int player, int card, event_t event)
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     td.allow_cancel = 3;
     new_default_test_definition(&test, 2, "Select another creature to sacrifice.");
     test.not_me = 1;
@@ -2033,7 +1947,7 @@ int card_priest_of_forgotten_gods(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     td.allow_cancel = 3;
     new_default_test_definition(&test, 2, "Select another creature to sacrifice.");
     test.not_me = 1;
@@ -2070,7 +1984,6 @@ static int vindictive_vampire_effect(int player, int card, event_t event)
 {
   card_instance_t *instance;
   card_instance_t *dying;
-  int result;
   unsigned int pending_deaths;
   test_definition_t this_test;
 
@@ -2081,15 +1994,14 @@ static int vindictive_vampire_effect(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       if ((-1 < instance->damage_target_player) &&
-          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           result != 0x4d4b))
+          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x4d4b))
       {
         kill_card(player, card, KILL_EXILE);
       }
     }
     instance = get_card_instance(player, card);
     if ((-1 < instance->damage_target_player) &&
-        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
+        (effect_follows_control_of_attachment(player, card, 0x4700) != 0))
     {
       return 0;
     }
@@ -2098,7 +2010,7 @@ static int vindictive_vampire_effect(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     if ((-1 < instance->damage_target_player) &&
-        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+        (effect_follows_control_of_attachment(player, card, event) != 0))
     {
       return 0;
     }
@@ -2108,7 +2020,7 @@ static int vindictive_vampire_effect(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       dying = in_play(affected_card_controller, affected_card);
       if ((dying != NULL) &&
-          (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+          (is_this_dying(affected_card_controller, affected_card) != 0))
       {
 
         if ((instance->damage_target_card == affected_card) &&
@@ -2121,7 +2033,7 @@ static int vindictive_vampire_effect(int player, int card, event_t event)
           {
             instance->targets[0xb].player = 0;
           }
-          *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+          SET_BYTE2(instance->targets[0xb].player) = 1;
           return 0;
         }
         default_test_definition(&this_test, 2);
@@ -2133,8 +2045,7 @@ static int vindictive_vampire_effect(int player, int card, event_t event)
   pending_deaths = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (pending_deaths != 0)
   {
-    result = check_status(player, card, 0x10000);
-    if (result == 0)
+    if (!check_status(player, card, 0x10000))
     {
 
       for (pending_deaths = pending_deaths & 0xff; pending_deaths != 0;
@@ -2146,7 +2057,7 @@ static int vindictive_vampire_effect(int player, int card, event_t event)
       kill_card(player, card, KILL_EXILE);
     }
   }
-  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
   {
     kill_card(player, card, KILL_EXILE);
   }
@@ -2234,7 +2145,7 @@ int card_cindervines(int player, int card, event_t event)
   int result;
 
 
-  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_SPELL_CAST) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     test_definition_t this_test;
@@ -2275,7 +2186,7 @@ int card_hero_of_precinct_one(int player, int card, event_t event)
 {
   test_definition_t test;
 
-  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_SPELL_CAST) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     default_test_definition(&test, 0xff);
@@ -2286,7 +2197,7 @@ int card_hero_of_precinct_one(int player, int card, event_t event)
   {
     return 0;
   }
-  generate_token_by_id(player, card, 0x494c);
+  generate_token_by_id(player, card, CARD_ID_HUMAN);
   return 0;
 }
 
@@ -2317,13 +2228,13 @@ int card_lavinia_azorius_renegade(int player, int card, event_t event)
         return 0;
       }
     }
-    if (trigger_condition != 0xd3)
+    if (trigger_condition != TRIGGER_SPELL_CAST)
     {
       return 0;
     }
   }
 
-  if (trigger_condition == 0xd3 &&
+  if (trigger_condition == TRIGGER_SPELL_CAST &&
       ((card == affected_card) && (player == affected_card_controller)) &&
       (controller_or_cmc = played_for_free(trigger_cause_controller, trigger_cause),
        controller_or_cmc != 0))
@@ -2433,15 +2344,10 @@ int card_growth_chamber_guardian(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c1b40; original cards/ravnica_allegiance.c:2815. */
 int card_pteramander(int player, int card, event_t event)
 {
-  int result;
-
-  if (((event == EVENT_ACTIVATE) || (event - EVENT_RESOLVE_ACTIVATION < 2)) ||
-      (result = 0, event == EVENT_CLEANUP))
-  {
-    result = count_graveyard_by_type(player, 0x38);
-    result = adapt(player, card, event, 4, 7 - result, 0, 1, 0, 0, 0);
-  }
-  return result;
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  int cless = 7 - count_graveyard_by_type(player, TYPE_INSTANT | TYPE_INTERRUPT | TYPE_SORCERY);
+  return adapt(player, card, event, 4, cless, 0, 1, 0, 0, 0);
 }
 
 /* ManalinkEh 2022: 0x25c2870; original cards/ravnica_allegiance.c:3250. */
@@ -2502,7 +2408,7 @@ int card_consecrate_consume(int player, int card, event_t event)
 
   new_default_test_definition(&test, 0xff, "Select target card to exile.");
   default_target_definition(player, card, &td_player, 0);
-  td_player.zone = 0x1000;
+  td_player.zone = TARGET_ZONE_PLAYERS;
   if (event == EVENT_PLAY_FIRST_HALF)
   {
     return generic_spell(player, card, EVENT_CAST_SPELL, 0x1000, NULL, NULL, 1, &test);
@@ -2680,7 +2586,7 @@ int card_depose_deploy(int player, int card, event_t event)
       }
       if ((selected_halves & 2) != 0)
       {
-        generate_tokens_by_id(player, card, 0x4995, 2);
+        generate_tokens_by_id(player, card, CARD_ID_THOPTER, 2);
         result = count_permanents_by_type(player, TYPE_CREATURE);
         gain_life(player, result);
       }
@@ -2750,7 +2656,7 @@ int card_thrash_threat(int player, int card, event_t event)
       }
       if ((selected_halves_or_available & 2) != 0)
       {
-        default_token_definition(player, card, 0x4907, &token);
+        default_token_definition(player, card, CARD_ID_BEAST, &token);
         token.color_forced = '\x18';
         token.tou = 4;
         token.pow = 4;
@@ -2787,7 +2693,7 @@ int card_warrant_warden(int player, int card, event_t event)
   target_definition_t td;
 
   default_target_definition(player, card, &td, 2);
-  td.required_state = 0x20;
+  td.required_state = TARGET_STATE_IN_COMBAT;
   if (event == EVENT_PLAY_FIRST_HALF)
   {
     generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ATTACKING_BLOCKING_CREATURE", 1,
@@ -2811,7 +2717,7 @@ int card_warrant_warden(int player, int card, event_t event)
       }
       if ((selected_halves & 2) != 0)
       {
-        default_token_definition(player, card, 0x498a, &token);
+        default_token_definition(player, card, CARD_ID_SPHINX, &token);
         token.color_forced = '$';
         token.key_plus = 0x20;
         token.s_key_plus = 8;
@@ -2933,7 +2839,7 @@ int card_deputy_of_detention(int player, int card, event_t event)
 
   default_target_definition(player, card, &td, 0x47);
   p = 1 - player;
-  td.illegal_type = 1;
+  td.illegal_type = TYPE_LAND;
   td.allow_cancel = 0;
   td.allowed_controller = p;
   instance = get_card_instance(player, card);
@@ -3069,7 +2975,7 @@ int card_teysa_karlov(int player, int card, event_t event)
     }
     return 0;
   }
-  card_counts[player][5] = card_counts[player][5] + '\x01';
+  card_counts[player][CCOUNTS_TEYSA_KARLOV] = card_counts[player][CCOUNTS_TEYSA_KARLOV] + '\x01';
   return 0;
 }
 
@@ -3116,45 +3022,31 @@ int card_tithe_taker(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25bcb70; original cards/ravnica_allegiance.c:546. */
 int card_cavalcade_of_calamity(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  int tgt_card;
-  test_definition_t test;
-
   if (event == EVENT_DECLARE_ATTACKERS)
   {
-    default_test_definition(&test, 2);
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
     test.power = 2;
-    test.power_flag = 3;
-    store_attackers(player, card, EVENT_DECLARE_ATTACKERS, DAT_TRACK, player, -1, &test);
-    dat_ability(player, card, EVENT_DECLARE_ATTACKERS, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    test.power_flag = F5_POWER_LESSER_THAN_VALUE;
+    store_attackers(player, card, event, DAT_TRACK, player, -1, &test);
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
   }
   else
   {
     dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
     if (event == EVENT_DAT_ABILITY)
     {
-
-      instance = get_card_instance(player, card);
-      result = instance->info_slot + -1;
-      if (-1 < result)
+      card_instance_t *instance = get_card_instance(player, card);
+      const uint8_t *attackers = (const uint8_t *)&instance->targets + 2 * sizeof(target_t);
+      for (int index = instance->info_slot - 1; index >= 0; --index)
       {
-        do
-        {
-
-          tgt_card = planeswalker_its_attacking(
-              player, (unsigned int)*(unsigned char *)((int)&instance->targets[2].player + result));
-          if (tgt_card != -2)
-          {
-            damage_creature(1 - current_turn, tgt_card, 1, player, card);
-          }
-          result = result + -1;
-        } while (result != -1);
+        int target_card = planeswalker_its_attacking(player, attackers[index]);
+        if (target_card != -2)
+          damage_creature(1 - current_turn, target_card, 1, player, card);
       }
     }
   }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -3216,7 +3108,7 @@ int card_incubation_incongruity(int player, int card, event_t event)
       {
         token_generation_t token;
         kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
-        default_token_definition(player, card, 0x4933, &token);
+        default_token_definition(player, card, CARD_ID_FROG_LIZARD, &token);
         token.t_player = (int32_t)(instance->targets[0].player);
         token.pow = 3;
         token.tou = 3;
@@ -3241,7 +3133,7 @@ int card_mirror_march(int player, int card, event_t event)
   int result;
   char copy_count;
 
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     test_definition_t test;
@@ -3274,81 +3166,58 @@ int card_mirror_march(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c1f60; original cards/ravnica_allegiance.c:3004. */
 int card_repudiate_replicate(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-  unsigned int selected_halves_or_available;
+  enum { COUNTER_ACTIVATED = 1, COUNTER_TRIGGERED = 2, REPUDIATE = 1, REPLICATE = 2 };
   target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  td.allowed_controller = td.preferred_controller = player;
+  card_instance_t *instance = get_card_instance(player, card);
 
-  default_target_definition(player, card, &td, 2);
-  td.allowed_controller = player;
-  td.preferred_controller = player;
-  instance = get_card_instance(player, card);
+  if (event == EVENT_PLAY_SECOND_HALF)
+    return generic_spell(player, card, EVENT_CAST_SPELL, GS_CAN_TARGET | GS_LITERAL_PROMPT,
+                           &td, "Select target creature you control.", 1, NULL);
+
   if (event == EVENT_PLAY_FIRST_HALF)
   {
-    result = instance->targets[9].card;
-    if (result == 1)
-    {
+    if (instance->targets[9].card == COUNTER_ACTIVATED)
       cast_counter_activated_ability(player, card, 0);
-    }
-    else if (result == 2)
-    {
+    else if (instance->targets[9].card == COUNTER_TRIGGERED)
       cast_counter_triggered_ability(player, card, 0);
-    }
   }
-  else
+  else if (event == EVENT_CAN_CAST)
   {
-    if (event == EVENT_PLAY_SECOND_HALF)
-    {
-      return generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td,
-                           "Select target creature you control.", 1, NULL);
-    }
-    if (event == EVENT_CAN_CAST)
-    {
-      result = can_counter_activated_ability(player, card, EVENT_CAN_CAST, NULL);
-      if (result != 0)
-      {
-        instance->targets[9].card = 1;
-      }
-      result = can_counter_triggered_ability(player, card, EVENT_CAN_CAST, NULL);
-      if (result != 0)
-      {
-        instance->targets[9].card = 2;
-      }
-    }
-    else if ((event != EVENT_CAST_SPELL) && (event == EVENT_RESOLVE_SPELL))
-    {
-      selected_halves_or_available = instance->info_slot;
-      if ((selected_halves_or_available & 1) != 0)
-      {
-        result = instance->targets[9].card;
-        if (result == 1)
-        {
-          resolve_counter_activated_ability(player, card, NULL, 0);
-          selected_halves_or_available = instance->info_slot;
-        }
-        else if (result == 2)
-        {
-          resolve_counter_triggered_ability(player, card, NULL, 0);
-          selected_halves_or_available = instance->info_slot;
-        }
-      }
-      if (((selected_halves_or_available & 2) != 0) && (result = valid_target(&td), result != 0))
-      {
-        copy_token(player, card, player, instance->targets[0].card);
-      }
-      kill_card(player, card, KILL_DESTROY);
-    }
+    // The second successful query wins; neither query clears an existing marker.
+    if (can_counter_activated_ability(player, card, event, NULL))
+      instance->targets[9].card = COUNTER_ACTIVATED;
+    if (can_counter_triggered_ability(player, card, event, NULL))
+      instance->targets[9].card = COUNTER_TRIGGERED;
   }
-  result = can_target(&td);
-  selected_halves_or_available = 0;
-  if (result != 0)
+  else if (event == EVENT_RESOLVE_SPELL)
   {
-    result = can_sorcery_be_played(player, event);
-    selected_halves_or_available = (unsigned int)(result != 0);
+    unsigned int halves = instance->info_slot;
+    if (halves & REPUDIATE)
+    {
+      if (instance->targets[9].card == COUNTER_ACTIVATED)
+      {
+        resolve_counter_activated_ability(player, card, NULL, 0);
+        halves = instance->info_slot;
+      }
+      else if (instance->targets[9].card == COUNTER_TRIGGERED)
+      {
+        resolve_counter_triggered_ability(player, card, NULL, 0);
+        halves = instance->info_slot;
+      }
+    }
+    if ((halves & REPLICATE) && valid_target(&td))
+      copy_token(player, card, player, instance->targets[0].card);
+    kill_card(player, card, KILL_DESTROY);
   }
-  result = can_counter_activated_or_triggered_ability(player, card, event);
-  return hybrid_split_card(player, card, event, 0x4cfe, result, 10, 0x4cfd,
-                           selected_halves_or_available, 8);
+
+  int replicate_available = 0;
+  if (can_target(&td))
+    replicate_available = can_sorcery_be_played(player, event) != 0;
+  int repudiate_available = can_counter_activated_or_triggered_ability(player, card, event);
+  return hybrid_split_card(player, card, event, CARD_ID_REPUDIATE, repudiate_available, 10,
+                             CARD_ID_REPLICATE, replicate_available, 8);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -3375,58 +3244,34 @@ int card_sphinx_of_the_guildpact(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c3860; original cards/ravnica_allegiance.c:3739. */
 int card_sunder_shaman(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  unsigned int packed_damage_or_player;
-  unsigned int player_pass;
-  const char *prompt;
-  int times_damaged[2];
-  target_definition_t td;
-
   maxblockers_1(player, card, event);
-  result = damage_dealt_by_me(player, card, event,
-                              DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
-                                  DDBM_MUST_BE_COMBAT_DAMAGE);
-  if (result != 0)
+  if (damage_dealt_by_me(player, card, event,
+                         DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
+                             DDBM_MUST_BE_COMBAT_DAMAGE))
   {
-
-    instance = get_card_instance(player, card);
-
-    player_pass = 0;
-    packed_damage_or_player = instance->targets[1].player;
+    card_instance_t *instance = get_card_instance(player, card);
+    unsigned int packed_damage = instance->targets[1].player;
     instance->targets[1].player = 0;
-    times_damaged[0] = packed_damage_or_player & 0xff;
-    times_damaged[1] = packed_damage_or_player >> 8 & 0xff;
-    do
-    {
-      packed_damage_or_player = current_turn ^ player_pass;
-      if (times_damaged[packed_damage_or_player] != 0)
+    int times_damaged[2] = {packed_damage & 0xff, packed_damage >> 8 & 0xff};
+    APNAP(p, {
+      if (times_damaged[p])
       {
-        default_target_definition(player, card, &td, 0x44);
+        target_definition_t td;
+        default_target_definition(player, card, &td, TYPE_ARTIFACT | TYPE_ENCHANTMENT);
         td.allow_cancel = 0;
-        td.allowed_controller = packed_damage_or_player;
-        td.preferred_controller = packed_damage_or_player;
-        result = can_target(&td);
-        if (result != 0)
+        td.allowed_controller = p;
+        td.preferred_controller = p;
+        if (can_target(&td))
         {
-          if (player == packed_damage_or_player)
-          {
-            prompt = "Select target artifact or enchantment you control.";
-          }
-          else
-          {
-            prompt = "Select target artifact or enchantment controlled by opponent.";
-          }
-          result = new_pick_target(&td, prompt, 0, 0x80);
-          if (result != 0)
-          {
+          const char *prompt = player == p
+              ? "Select target artifact or enchantment you control."
+              : "Select target artifact or enchantment controlled by opponent.";
+          if (new_pick_target(&td, prompt, 0, 0x80))
             action_on_target(player, card, 0, ACT_KILL_DESTROY);
-          }
         }
       }
-      player_pass = player_pass + 1;
-      instance->number_of_targets = '\0';
-    } while (player_pass != 2);
+      instance->number_of_targets = 0;
+    });
   }
   return 0;
 }
@@ -3474,37 +3319,21 @@ static int tin_street_dodger_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c3d60; original cards/ravnica_allegiance.c:3958. */
 int card_tin_street_dodger(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-
   haste(player, card, event);
-  if (event == EVENT_CAN_ACTIVATE)
-  {
-    if (event != EVENT_RESOLVE_ACTIVATION)
-      return generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
-  }
-  else
-  {
-    if (event == EVENT_ACTIVATE)
-    {
-      if ((current_turn != player) || (0x17 < current_phase))
-      {
-        ai_modifier = ai_modifier + -1000;
-      }
-      return generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
-    }
-    if (event != EVENT_RESOLVE_ACTIVATION)
-    {
-      if (event != EVENT_CLEANUP)
-      {
-        return 0;
-      }
-      return generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
-    }
-  }
+  if (!IS_GAA_EVENT(event))
+    return 0;
 
-  instance = get_card_instance(player, card);
-  create_targetted_legacy_effect(player, card, tin_street_dodger_legacy,
-                                 instance->parent_controller, instance->parent_card);
+  if (event == EVENT_ACTIVATE)
+  {
+    if (current_turn != player || current_phase > 0x17)
+      ai_modifier -= 1000;
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    create_targetted_legacy_effect(player, card, tin_street_dodger_legacy,
+                                   instance->parent_controller, instance->parent_card);
+  }
   return generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
 }
 
@@ -3529,7 +3358,7 @@ int card_revival_revenge(int player, int card, event_t event)
   this_test.cmc = 4;
   this_test.cmc_flag = 3;
   default_target_definition(player, card, &td, 0);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   td.allowed_controller = 1 - player;
   if (event == EVENT_PLAY_FIRST_HALF)
   {
@@ -3660,7 +3489,6 @@ static int spectacle_impl(int player, int card, event_t event, int colorless, in
 int card_drill_bit(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   ec_definition_t this_definition;
   target_definition_t td;
   test_definition_t this_test;
@@ -3671,12 +3499,11 @@ int card_drill_bit(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 2);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       default_test_definition(&this_test, 1);
       this_test.type_flag = 1;
@@ -3770,7 +3597,6 @@ int card_rix_maadi_reveler(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25c32f0; original cards/ravnica_allegiance.c:3513. */
 int card_skewer_the_critics(int player, int card, event_t event)
 {
-  int result;
   target_definition_t td;
   if (event != EVENT_CAN_CAST)
   {
@@ -3791,11 +3617,10 @@ int card_skewer_the_critics(int player, int card, event_t event)
       {
         spectacle_impl(player, card, event, 0, 0, 0, 0, 1, 0);
         default_target_definition(player, card, &td, 0x102);
-        td.zone = 0x1200;
+        td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
         if (event == EVENT_RESOLVE_SPELL)
         {
-          result = valid_target(&td);
-          if (result != 0)
+          if (valid_target(&td))
           {
             damage_target0(player, card, 3);
           }
@@ -3811,7 +3636,7 @@ int card_skewer_the_critics(int player, int card, event_t event)
   }
   spectacle_impl(player, card, event, 0, 0, 0, 0, 1, 0);
   default_target_definition(player, card, &td, 0x102);
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   return generic_spell(player, card, event, 1, &td, "TARGET_ANY", 1, NULL);
 }
 
@@ -3843,8 +3668,9 @@ int card_spawn_of_mayhem(int player, int card, event_t event)
           instance = in_play(player, card);
           if (instance == NULL)
             break;
-          damage_player(current_turn, 1, player, card);
-          damage_player(current_turn ^ 1, 1, player, card);
+          APNAP(p, {
+            damage_player(p, 1, player, card);
+          });
           result = result + -1;
         } while (result != 0);
       }
@@ -3864,8 +3690,7 @@ int card_spawn_of_mayhem(int player, int card, event_t event)
       } while (result != 0);
     }
   }
-  result = spectacle_impl(player, card, event, 1, 2, 0, 0, 0, 0);
-  return result;
+  return spectacle_impl(player, card, event, 1, 2, 0, 0, 0, 0);
 }
 
 #endif
@@ -3921,42 +3746,22 @@ int card_zegana_utopian_speaker(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25bd4d0; original cards/ravnica_allegiance.c:834. */
 int card_cry_of_the_carnarium(int player, int card, event_t event)
 {
-  int creature_card;
-  card_instance_t *instance;
-  unsigned int player_pass;
-  unsigned int turn_or_scan_player;
-  unsigned int player_00;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    player_pass = 0;
-    turn_or_scan_player = current_turn;
-    do
-    {
-      player_00 = player_pass ^ turn_or_scan_player;
-      creature_card = active_cards_count[player_00] + -1;
-      for (; creature_card >= 0; --creature_card)
+    APNAP(p, {
+      for (int c = active_cards_count[p] - 1; c >= 0; --c)
       {
-        instance = in_play(player_00, creature_card);
-        if (instance && is_what(player_00, creature_card, 2))
-          exile_if_would_be_put_into_graveyard(player, card, player_00, creature_card, 1);
-        turn_or_scan_player = current_turn;
+        if (in_play(p, c) && is_what(p, c, TYPE_CREATURE))
+          exile_if_would_be_put_into_graveyard(player, card, p, c, 1);
       }
-      player_pass = player_pass + 1;
-    } while (player_pass != 2);
-    player_pass = 0;
-    do
-    {
-      turn_or_scan_player = turn_or_scan_player ^ player_pass;
-      creature_card = active_cards_count[turn_or_scan_player] + -1;
-      for (; creature_card >= 0; --creature_card)
+    });
+    APNAP(p, {
+      for (int c = active_cards_count[p] - 1; c >= 0; --c)
       {
-        instance = in_play(turn_or_scan_player, creature_card);
-        if (instance && is_what(turn_or_scan_player, creature_card, 2))
-          pump_until_eot(player, card, turn_or_scan_player, creature_card, -2, -2);
+        if (in_play(p, c) && is_what(p, c, TYPE_CREATURE))
+          pump_until_eot(player, card, p, c, -2, -2);
       }
-      player_pass = player_pass + 1;
-      turn_or_scan_player = current_turn;
-    } while (player_pass != 2);
+    });
     seek_grave_to_reanimate_this_turn(player, 2, 2, REANIMATEXTRA_EXILE_FROM_GRAVEYARD);
     create_legacy_effect(player, card, effect_cry_of_the_carnarium);
     kill_card(player, card, KILL_DESTROY);
@@ -3986,7 +3791,7 @@ int card_incubation_druid(int player, int card, event_t event)
 
   available = get_color_of_mana_produced_by_id(get_id(player, card), 0x3e, player);
   mana_amount_or_result = count_counters(player, card, COUNTER_P1_P1);
-  mana_amount_or_result = (-(unsigned int)(mana_amount_or_result == 0) & 0xfffffffe) + 3;
+  mana_amount_or_result = ((mana_amount_or_result == 0) ? 1U : 3U);
   if (event == EVENT_CAN_ACTIVATE)
   {
     if (mana_producing_creature_all_one_color(player, card, EVENT_CAN_ACTIVATE, 0x18, available,
@@ -4027,7 +3832,7 @@ int card_incubation_druid(int player, int card, event_t event)
     }
     else
     {
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Get mana", 1, 1,
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, "Get mana", 1, 1,
                            "Adapt", 1, 1, 0, 0, 0, 0);
       if (choice == 0)
       {

@@ -1,0 +1,710 @@
+{
+  "format": 1,
+  "status": "Native Suspend callback source ownership restored in both sets; four private source definitions, three physical source-bound helpers, unchanged card bodies, successful final build and 15,169 fixed slots. Concrete private-linkage audit now has zero mismatches; instruction differences remain.",
+  "files": [
+    {
+      "source": "cards/time_spiral.c",
+      "before_bytes_sha256": "6a1c0f570acbc49156650efb1c835e2b9254f5ad4d584eac2172cacf11cd71c4",
+      "after_bytes_sha256": "724295cae4654951ae0fc1f851f593f94e386add3ec576924c41356eed623efe",
+      "before_sha256": "7318d737ae7d2c40e9e0e0a03a3994beb9479a972a82dc3d0f5cd0ece5ac31cc",
+      "after_sha256": "fde5a7202e65ac4bc321ba8b2877075b4bcfbfd19da97205498df446a3670e9d",
+      "operations": [
+        {
+          "before": "/* Canonical recovered helper declarations. */\nconst char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,\n                                               int targeting_player, int targeting_card);\nconst char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,\n                                                                      int card,\n                                                                      int targeting_player,\n                                                                      int targeting_card);\n\n",
+          "after": ""
+        },
+        {
+          "before": "const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,\n                                               int targeting_player, int targeting_card)\n{\n  int result;\n  card_instance_t *instance;\n\n  result = is_what(player, card, 0x47);\n  if (result == 0)\n  {\n    instance = get_card_instance(player, card);\n    if (((instance->internal_card_id != LEGACY_EFFECT_CUSTOM) ||\n         (instance->info_slot_fn != generic_suspend_legacy)) &&\n        (cards_data[instance->internal_card_id].id != CARD_ID_GREATER_GARGADON_SUSPENDED))\n    {\n      return (char *)EXE_STR(0x728f6c);\n    }\n  }\n  return NULL;\n}\n",
+          "after": ""
+        },
+        {
+          "before": "const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,\n                                                                       int card,\n                                                                       int targeting_player,\n                                                                       int targeting_card)\n{\n  const char *requirement_error;\n  int result;\n\n  requirement_error = target_must_be_permanent_or_suspend(who_chooses, player, card,\n                                                          targeting_player, targeting_card);\n  if (requirement_error == NULL)\n  {\n    result = count_counters(player, card, COUNTER_TIME);\n    if (result == 0)\n    {\n      return \"must have counters\";\n    }\n  }\n  return requirement_error;\n}\n",
+          "after": ""
+        },
+        {
+          "before": "static const char* target_must_be_permanent_or_suspend_and_have_counters(",
+          "after": "static const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,\n                                               int targeting_player, int targeting_card)\n{\n  int result;\n  card_instance_t *instance;\n\n  result = is_what(player, card, 0x47);\n  if (result == 0)\n  {\n    instance = get_card_instance(player, card);\n    if (((instance->internal_card_id != LEGACY_EFFECT_CUSTOM) ||\n         (instance->info_slot_fn != generic_suspend_legacy)) &&\n        (cards_data[instance->internal_card_id].id != CARD_ID_GREATER_GARGADON_SUSPENDED))\n    {\n      return (char *)EXE_STR(0x728f6c);\n    }\n  }\n  return NULL;\n}\n\nstatic const char* target_must_be_permanent_or_suspend_and_have_counters("
+        },
+        {
+          "before": "int card_jhoiras_timebug(",
+          "after": "static const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,\n                                                                       int card,\n                                                                       int targeting_player,\n                                                                       int targeting_card)\n{\n  const char *requirement_error;\n  int result;\n\n  requirement_error = target_must_be_permanent_or_suspend(who_chooses, player, card,\n                                                          targeting_player, targeting_card);\n  if (requirement_error == NULL)\n  {\n    result = count_counters(player, card, COUNTER_TIME);\n    if (result == 0)\n    {\n      return \"must have counters\";\n    }\n  }\n  return requirement_error;\n}\n\nint card_jhoiras_timebug("
+        }
+      ]
+    },
+    {
+      "source": "cards/planar_chaos.c",
+      "before_bytes_sha256": "105428dde77e4d1456970ccd1632d8cfe999636f4c84372a6ba1cc8e3b7088cd",
+      "after_bytes_sha256": "d9bb2a310ce2279417794ecde09bc68ba5a9d92be30f80588f712e44745399d1",
+      "before_sha256": "a886e11120a5c384317c4f18c1b2df3b882b3d620e49d364493ece5797b8d99e",
+      "after_sha256": "6873b7589038f8dc45ef7242c95459125034513c7c7433f6c2f43c8a0b650543",
+      "operations": [
+        {
+          "before": "int card_timecrafting(",
+          "after": "static const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,\n                                               int targeting_player, int targeting_card)\n{\n  int result;\n  card_instance_t *instance;\n\n  result = is_what(player, card, 0x47);\n  if (result == 0)\n  {\n    instance = get_card_instance(player, card);\n    if (((instance->internal_card_id != LEGACY_EFFECT_CUSTOM) ||\n         (instance->info_slot_fn != generic_suspend_legacy)) &&\n        (cards_data[instance->internal_card_id].id != CARD_ID_GREATER_GARGADON_SUSPENDED))\n    {\n      return (char *)EXE_STR(0x728f6c);\n    }\n  }\n  return NULL;\n}\n\nstatic const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,\n                                                                       int card,\n                                                                       int targeting_player,\n                                                                       int targeting_card)\n{\n  const char *requirement_error;\n  int result;\n\n  requirement_error = target_must_be_permanent_or_suspend(who_chooses, player, card,\n                                                          targeting_player, targeting_card);\n  if (requirement_error == NULL)\n  {\n    result = count_counters(player, card, COUNTER_TIME);\n    if (result == 0)\n    {\n      return \"must have counters\";\n    }\n  }\n  return requirement_error;\n}\n\nint card_timecrafting("
+        }
+      ]
+    },
+    {
+      "source": "manalink.h",
+      "before_bytes_sha256": "944f4eb3981dad2f3e1ecf1aaaa000b5b3b876d7d9c1c52225a55a0c2913acc9",
+      "after_bytes_sha256": "0b10f5e0959ee9bbfe5f5fc98c44897757d8c42ac47eb9dc2bd3631c7b7f6dc9",
+      "before_sha256": "102ea8e7c3f21db40ab8d763cc8deb2412eead3c7158885ae3ae2394cd00f5a1",
+      "after_sha256": "a3e9bc3dfb25419437fc71641c952511beac2b8a425ff09d3d5fec87d3b6366b",
+      "operations": [
+        {
+          "before": "const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,\n                                               int targeting_player, int targeting_card);\nconst char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,\n                                                                      int card,\n                                                                      int targeting_player,\n                                                                      int targeting_card);\n",
+          "after": ""
+        }
+      ]
+    }
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "baseline": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "02666b7e67d5f09cf5ec67b6384cb2ba71211e30b5889f6088b723add82660d7",
+      "ManalinkEh.dbg": "b8e8c3dbf8392737f1fff6f431ea847638a48bba332ccf1d7c6d507d9ad41179"
+    },
+    "results": [
+      {
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend",
+        "ranges": [
+          {
+            "address": "0x20e7ea0",
+            "size": 106,
+            "sha256": "4c5a75185a98a2725ec4db6b29650f4aed8c6cc0ce7c7c1bf14f1304ac6058d1"
+          },
+          {
+            "address": "0x25898d0",
+            "size": 65,
+            "sha256": "264b1d67df015d98f54ce9596aa1c4ec4ad54428298a19e5b4b93e66d23cdc7b"
+          }
+        ],
+        "matched": false,
+        "reason": "('Operation changed', 'mov', 'add')"
+      },
+      {
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "ranges": [
+          {
+            "address": "0x20ea700",
+            "size": 103,
+            "sha256": "d20cc873a8dae561e4171738ce4e61ba975dba853d6ed64a01d16706925e90a5"
+          },
+          {
+            "address": "0x2589990",
+            "size": 104,
+            "sha256": "b057ec0acf06baff8b4a45f8fcfeee7f855c32f73c98e0e64c0c38b3006603d5"
+          }
+        ],
+        "matched": false,
+        "reason": "Register allocation changed"
+      },
+      {
+        "source": "cards/planar_chaos.c",
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "ranges": [
+          {
+            "address": "0x23b4470",
+            "size": 144,
+            "sha256": "b32017557aaba46b000f96ff03802c5795e984c946dae941c922700f872feb71"
+          },
+          null
+        ],
+        "matched": false,
+        "reason": "No source-owned rebuilt callback"
+      },
+      {
+        "source": "cards/time_spiral.c",
+        "name": "card_clockspinning",
+        "ranges": [
+          {
+            "address": "0x20ed3a0",
+            "size": 1117,
+            "sha256": "2140a3c4fa9a39a08cccf6840f021f5b85b685fd9a86a549100f61b0393b26cf"
+          },
+          {
+            "address": "0x258c660",
+            "size": 1152,
+            "sha256": "a8b02e788757c800730463ffad69d809bc837d87d4fd18ffec1771193adb3310"
+          }
+        ],
+        "matched": false,
+        "reason": "('Unbound operand', '0x11c', '0x118')"
+      },
+      {
+        "source": "cards/time_spiral.c",
+        "name": "card_jhoiras_timebug",
+        "ranges": [
+          {
+            "address": "0x20f3e70",
+            "size": 497,
+            "sha256": "430abf3cca4af485afcd99d9010db4bfd120879d5c3b18b6b935cd56fbf067d4"
+          },
+          {
+            "address": "0x2592cf0",
+            "size": 497,
+            "sha256": "5e746282d176e20d91aeacaada19ae6ae4cc5c7d2eab7b2a3b7c6c29849eea47"
+          }
+        ],
+        "matched": false,
+        "reason": "Register allocation changed"
+      },
+      {
+        "source": "cards/planar_chaos.c",
+        "name": "card_timecrafting",
+        "ranges": [
+          {
+            "address": "0x23be9f0",
+            "size": 995,
+            "sha256": "659a85da95216966aec0e16000be95c9ef462a6a55e1b39f3e4a8b2d95d6f531"
+          },
+          {
+            "address": "0x2426210",
+            "size": 1036,
+            "sha256": "0170a41d411fc575aead2606ba4726a381a36b129c81d16d0508aa5a5d1390b9"
+          }
+        ],
+        "matched": false,
+        "reason": "('Unbound operand', '0x98', '0x94')"
+      }
+    ],
+    "source_bindings": [
+      {
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend",
+        "native_address": "0x20e7ea0",
+        "rebuilt": {
+          "address": 39360720,
+          "size": 65,
+          "die_offset": "0x524c928",
+          "external": true
+        }
+      },
+      {
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "native_address": "0x20ea700",
+        "rebuilt": {
+          "address": 39360912,
+          "size": 104,
+          "die_offset": "0x522e357",
+          "external": true
+        }
+      },
+      {
+        "source": "cards/time_spiral.c",
+        "name": "card_clockspinning",
+        "native_address": "0x20ed3a0",
+        "rebuilt": {
+          "address": 39372384,
+          "size": 1152,
+          "die_offset": "0x5248376",
+          "external": true
+        }
+      },
+      {
+        "source": "cards/time_spiral.c",
+        "name": "card_jhoiras_timebug",
+        "native_address": "0x20f3e70",
+        "rebuilt": {
+          "address": 39398640,
+          "size": 497,
+          "die_offset": "0x5240799",
+          "external": true
+        }
+      },
+      {
+        "source": "cards/planar_chaos.c",
+        "name": "card_timecrafting",
+        "native_address": "0x23be9f0",
+        "rebuilt": {
+          "address": 37904912,
+          "size": 1036,
+          "die_offset": "0x3ed219c",
+          "external": true
+        }
+      }
+    ],
+    "checker_sha256": "137cc92420d8545932bb81a18b7c9330e7955e6bbb8d3de51d79c0c5ba372d2f",
+    "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+    "scope": "Strict native DWARF extents and current C-CU/name DWARF entries, with explicit source ownership to distinguish same-named private callbacks. Full instructions/operands must agree, apart from bound symbols, exact read-only strings, internal jump layout and padding. No OFFSET wildcards or predicate/return-tail relaxations. Callee identities and conventional ABI remain assumptions."
+  },
+  "scope": "Restore source ownership/linkage: two Time Spiral helpers and their Planar Chaos counterparts. The Planar Chaos base has no invented standalone native address; it is a native compiler-selected inline definition with no explicit inline declaration. Both CUs own private callbacks with the same original spelling. Public header declarations and unnecessary Time Spiral forward declarations removed. Card bodies, callback semantics and string contents retained; original exact source spelling is not claimed.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "77043e4c03f6381220883da8cb4f50539517150417f7e2709a4c9e3dcbac70b2",
+    "debug_sha256": "c28cea653b8ff04a71524d5e7220de39046530ebb32bdd8cabc45799b85e97db",
+    "build_log_sha256": "5fa75941d5f353eef02014eb736f81c49c80c999c7a8466a916dc81e7a93c3c3",
+    "exact_file_projections": 3,
+    "source_definitions": 4,
+    "unchanged_card_callers": [
+      {
+        "source": "cards/time_spiral.c",
+        "name": "card_clockspinning",
+        "source_definition_sha256": "cf8108ac2f2c957443f04e001face14b1498bd7a606eea4fe7b01cc8ea057c73"
+      },
+      {
+        "source": "cards/time_spiral.c",
+        "name": "card_jhoiras_timebug",
+        "source_definition_sha256": "5d726e6051680fa67670331d427e73bba89a7d97cf2b6b6ba90329fe6b878e48"
+      },
+      {
+        "source": "cards/planar_chaos.c",
+        "name": "card_timecrafting",
+        "source_definition_sha256": "419f98e8114f564802b450b8ff8bdba228c8d7bde295c42193dd4577a7f4b8a4"
+      }
+    ],
+    "private_dwarf_contracts": [
+      {
+        "side": 0,
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend",
+        "die_offset": "0xd10a9d",
+        "address": "0x20e7ea0",
+        "external": false,
+        "inline_attribute": 0,
+        "decl_file": 1,
+        "decl_line": 1026,
+        "parameters": [
+          "who_chooses",
+          "player",
+          "card",
+          "targeting_player",
+          "targeting_card"
+        ],
+        "parameter_name_order_scope": "DIE child order, not physical ABI order; optimized concrete DIEs may reorder children."
+      },
+      {
+        "side": 0,
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "die_offset": "0xd14f50",
+        "address": "0x20ea700",
+        "external": false,
+        "inline_attribute": 1,
+        "decl_file": 1,
+        "decl_line": 3214,
+        "parameters": [
+          "who_chooses",
+          "player",
+          "card",
+          "targeting_player",
+          "targeting_card"
+        ],
+        "parameter_name_order_scope": "DIE child order, not physical ABI order; optimized concrete DIEs may reorder children."
+      },
+      {
+        "side": 0,
+        "source": "cards/planar_chaos.c",
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "die_offset": "0x37d0e99",
+        "address": "0x23b4470",
+        "external": false,
+        "inline_attribute": 1,
+        "decl_file": 1,
+        "decl_line": 3380,
+        "parameters": [
+          "who_chooses",
+          "player",
+          "card",
+          "targeting_player",
+          "targeting_card"
+        ],
+        "parameter_name_order_scope": "DIE child order, not physical ABI order; optimized concrete DIEs may reorder children."
+      },
+      {
+        "side": 0,
+        "source": "cards/planar_chaos.c",
+        "name": "target_must_be_permanent_or_suspend",
+        "die_offset": "0x37c466a",
+        "address": null,
+        "external": false,
+        "inline_attribute": 1,
+        "decl_file": 1,
+        "decl_line": 3368,
+        "parameters": [
+          "who_chooses",
+          "player",
+          "card",
+          "targeting_player",
+          "targeting_card"
+        ],
+        "parameter_name_order_scope": "DIE child order, not physical ABI order; optimized concrete DIEs may reorder children."
+      },
+      {
+        "side": 1,
+        "source": "cards/planar_chaos.c",
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "die_offset": "0x3ed25c0",
+        "address": "0x241a8b0",
+        "external": false,
+        "inline_attribute": 0,
+        "decl_file": 1,
+        "decl_line": 4050,
+        "parameters": [
+          "who_chooses",
+          "player",
+          "card",
+          "targeting_player",
+          "targeting_card"
+        ],
+        "parameter_name_order_scope": "DIE child order, not physical ABI order; optimized concrete DIEs may reorder children."
+      },
+      {
+        "side": 1,
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "die_offset": "0x52409e4",
+        "address": "0x2589a20",
+        "external": false,
+        "inline_attribute": 0,
+        "decl_file": 1,
+        "decl_line": 3376,
+        "parameters": [
+          "who_chooses",
+          "player",
+          "card",
+          "targeting_player",
+          "targeting_card"
+        ],
+        "parameter_name_order_scope": "DIE child order, not physical ABI order; optimized concrete DIEs may reorder children."
+      },
+      {
+        "side": 1,
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend",
+        "die_offset": "0x524cb36",
+        "address": "0x2589960",
+        "external": false,
+        "inline_attribute": 1,
+        "decl_file": 1,
+        "decl_line": 1162,
+        "parameters": [
+          "who_chooses",
+          "player",
+          "card",
+          "targeting_player",
+          "targeting_card"
+        ],
+        "parameter_name_order_scope": "DIE child order, not physical ABI order; optimized concrete DIEs may reorder children."
+      },
+      {
+        "side": 1,
+        "source": "cards/planar_chaos.c",
+        "name": "target_must_be_permanent_or_suspend",
+        "die_offset": "0x3ed2765",
+        "address": null,
+        "external": false,
+        "inline_attribute": 1,
+        "decl_file": 1,
+        "decl_line": 4030,
+        "parameters": [
+          "who_chooses",
+          "player",
+          "card",
+          "targeting_player",
+          "targeting_card"
+        ],
+        "parameter_name_order_scope": "DIE child order, not physical ABI order; optimized concrete DIEs may reorder children."
+      }
+    ],
+    "source_bound_reccmp_entries": {
+      "0x20e7ea0": {
+        "rebuilt_address": 39360864,
+        "rebuilt_size": 65,
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend",
+        "resolution": "unique C source/name range on each side"
+      },
+      "0x20ea700": {
+        "rebuilt_address": 39361056,
+        "rebuilt_size": 104,
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "resolution": "unique C source/name range on each side"
+      },
+      "0x23b4470": {
+        "rebuilt_address": 37857456,
+        "rebuilt_size": 144,
+        "source": "cards/planar_chaos.c",
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "resolution": "unique C source/name range on each side"
+      }
+    },
+    "timecrafting_local_callback": [
+      {
+        "side": 0,
+        "callback_address": "0x23b4470",
+        "range": {
+          "address": "0x23be9f0",
+          "size": 995,
+          "sha256": "659a85da95216966aec0e16000be95c9ef462a6a55e1b39f3e4a8b2d95d6f531"
+        },
+        "assignments": [
+          {
+            "address": "0x23bea59",
+            "instruction": "mov dword ptr [ebp - 0x38], 0x23b4470"
+          },
+          {
+            "address": "0x23beb1d",
+            "instruction": "mov dword ptr [ebp - 0x38], 0x23b4470"
+          },
+          {
+            "address": "0x23beb72",
+            "instruction": "mov dword ptr [ebp - 0x38], 0x23b4470"
+          },
+          {
+            "address": "0x23bed08",
+            "instruction": "mov dword ptr [ebp - 0x38], 0x23b4470"
+          }
+        ]
+      },
+      {
+        "side": 1,
+        "callback_address": "0x241a8b0",
+        "range": {
+          "address": "0x24262a0",
+          "size": 1036,
+          "sha256": "c6036dd2332704f98c503748a90b33e268b962ff478c755edfccd1d9ab771964"
+        },
+        "assignments": [
+          {
+            "address": "0x2426338",
+            "instruction": "mov dword ptr [ebp - 0x38], 0x241a8b0"
+          },
+          {
+            "address": "0x2426496",
+            "instruction": "mov dword ptr [ebp - 0x38], 0x241a8b0"
+          },
+          {
+            "address": "0x2426526",
+            "instruction": "mov dword ptr [ebp - 0x38], 0x241a8b0"
+          },
+          {
+            "address": "0x242656e",
+            "instruction": "mov dword ptr [ebp - 0x38], 0x241a8b0"
+          }
+        ]
+      }
+    ],
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "77043e4c03f6381220883da8cb4f50539517150417f7e2709a4c9e3dcbac70b2",
+        "ManalinkEh.dbg": "c28cea653b8ff04a71524d5e7220de39046530ebb32bdd8cabc45799b85e97db"
+      },
+      "results": [
+        {
+          "source": "cards/time_spiral.c",
+          "name": "target_must_be_permanent_or_suspend",
+          "ranges": [
+            {
+              "address": "0x20e7ea0",
+              "size": 106,
+              "sha256": "4c5a75185a98a2725ec4db6b29650f4aed8c6cc0ce7c7c1bf14f1304ac6058d1"
+            },
+            {
+              "address": "0x2589960",
+              "size": 65,
+              "sha256": "264b1d67df015d98f54ce9596aa1c4ec4ad54428298a19e5b4b93e66d23cdc7b"
+            }
+          ],
+          "matched": false,
+          "reason": "('Operation changed', 'mov', 'add')"
+        },
+        {
+          "source": "cards/time_spiral.c",
+          "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+          "ranges": [
+            {
+              "address": "0x20ea700",
+              "size": 103,
+              "sha256": "d20cc873a8dae561e4171738ce4e61ba975dba853d6ed64a01d16706925e90a5"
+            },
+            {
+              "address": "0x2589a20",
+              "size": 104,
+              "sha256": "0d831058e104a91e4fb333ab5e65b36d5fdaa869c6401d3b351893c4ee2c4a39"
+            }
+          ],
+          "matched": false,
+          "reason": "Register allocation changed"
+        },
+        {
+          "source": "cards/planar_chaos.c",
+          "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+          "ranges": [
+            {
+              "address": "0x23b4470",
+              "size": 144,
+              "sha256": "b32017557aaba46b000f96ff03802c5795e984c946dae941c922700f872feb71"
+            },
+            {
+              "address": "0x241a8b0",
+              "size": 144,
+              "sha256": "4e129550d6e20b4c4098842622713d34bfe0e08d3ebf16cec3ff3265cb393dc7"
+            }
+          ],
+          "matched": false,
+          "reason": "('Operation changed', 'mov', 'xor')"
+        },
+        {
+          "source": "cards/time_spiral.c",
+          "name": "card_clockspinning",
+          "ranges": [
+            {
+              "address": "0x20ed3a0",
+              "size": 1117,
+              "sha256": "2140a3c4fa9a39a08cccf6840f021f5b85b685fd9a86a549100f61b0393b26cf"
+            },
+            {
+              "address": "0x258c6f0",
+              "size": 1152,
+              "sha256": "75f70500708652f835caf2fe78ced5b5b55171a9359fae93d6707bc696c5ee4b"
+            }
+          ],
+          "matched": false,
+          "reason": "('Unbound operand', '0x11c', '0x118')"
+        },
+        {
+          "source": "cards/time_spiral.c",
+          "name": "card_jhoiras_timebug",
+          "ranges": [
+            {
+              "address": "0x20f3e70",
+              "size": 497,
+              "sha256": "430abf3cca4af485afcd99d9010db4bfd120879d5c3b18b6b935cd56fbf067d4"
+            },
+            {
+              "address": "0x2592d80",
+              "size": 497,
+              "sha256": "639ff111ea201c16325692aedb84c30e9b623432afac63211aced7dbc38ccc10"
+            }
+          ],
+          "matched": false,
+          "reason": "Register allocation changed"
+        },
+        {
+          "source": "cards/planar_chaos.c",
+          "name": "card_timecrafting",
+          "ranges": [
+            {
+              "address": "0x23be9f0",
+              "size": 995,
+              "sha256": "659a85da95216966aec0e16000be95c9ef462a6a55e1b39f3e4a8b2d95d6f531"
+            },
+            {
+              "address": "0x24262a0",
+              "size": 1036,
+              "sha256": "c6036dd2332704f98c503748a90b33e268b962ff478c755edfccd1d9ab771964"
+            }
+          ],
+          "matched": false,
+          "reason": "('Unbound operand', '0x98', '0x94')"
+        }
+      ],
+      "source_bindings": [
+        {
+          "source": "cards/time_spiral.c",
+          "name": "target_must_be_permanent_or_suspend",
+          "native_address": "0x20e7ea0",
+          "rebuilt": {
+            "address": 39360864,
+            "size": 65,
+            "die_offset": "0x524cb36",
+            "external": false
+          }
+        },
+        {
+          "source": "cards/time_spiral.c",
+          "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+          "native_address": "0x20ea700",
+          "rebuilt": {
+            "address": 39361056,
+            "size": 104,
+            "die_offset": "0x52409e4",
+            "external": false
+          }
+        },
+        {
+          "source": "cards/planar_chaos.c",
+          "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+          "native_address": "0x23b4470",
+          "rebuilt": {
+            "address": 37857456,
+            "size": 144,
+            "die_offset": "0x3ed25c0",
+            "external": false
+          }
+        },
+        {
+          "source": "cards/time_spiral.c",
+          "name": "card_clockspinning",
+          "native_address": "0x20ed3a0",
+          "rebuilt": {
+            "address": 39372528,
+            "size": 1152,
+            "die_offset": "0x5248503",
+            "external": true
+          }
+        },
+        {
+          "source": "cards/time_spiral.c",
+          "name": "card_jhoiras_timebug",
+          "native_address": "0x20f3e70",
+          "rebuilt": {
+            "address": 39398784,
+            "size": 497,
+            "die_offset": "0x5240769",
+            "external": true
+          }
+        },
+        {
+          "source": "cards/planar_chaos.c",
+          "name": "card_timecrafting",
+          "native_address": "0x23be9f0",
+          "rebuilt": {
+            "address": 37905056,
+            "size": 1036,
+            "die_offset": "0x3ed219c",
+            "external": true
+          }
+        }
+      ],
+      "checker_sha256": "137cc92420d8545932bb81a18b7c9330e7955e6bbb8d3de51d79c0c5ba372d2f",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict native DWARF extents and current C-CU/name DWARF entries, with explicit source ownership to distinguish same-named private callbacks. Full instructions/operands must agree, apart from bound symbols, exact read-only strings, internal jump layout and padding. No OFFSET wildcards or predicate/return-tail relaxations. Callee identities and conventional ABI remain assumptions."
+    },
+    "private_linkage_audit": {
+      "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "examined_native_definitions": 18849,
+      "native_private_source_definitions": 1538,
+      "candidates": [],
+      "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d"
+    },
+    "discovery_scans": {
+      "getter_sites": {
+        "path": ".recovery/reccmp/getter-delta-candidates-c691.json",
+        "sha256": "2ef35926264fcb9354f73f1bd69992e2d7e36b232bd2624f4dccf9296d1cd2cd",
+        "examined": 1839,
+        "candidates": 11,
+        "scope": "Discovery only: current unique COFF bindings and native DWARF extents, full static direct-getter call counts. Extra sites may be compiler duplication/inlining; not extra dynamic calls or gameplay bugs."
+      },
+      "target_locals": {
+        "path": ".recovery/reccmp/target-snapshot-candidates-c691.json",
+        "sha256": "cb1ebeda650298fae1c4552e3f5d54d13d2f588bd8566c5a1e0c7528e092ed8c",
+        "examined": 1830,
+        "candidates": 11,
+        "scope": "Discovery only: native source-owned lexical locals whose target-related names do not occur in the current body. Renaming, compiler lowering and equivalent source forms may explain them; absence is not a missing snapshot proof."
+      }
+    },
+    "staging": "preserved",
+    "scope": "Private source ownership is restored without inventing a native entry for the Planar Chaos base inline fragment. Three physical private helpers bind one-to-one by C CU/name through the existing reccmp binding routine; the two time-counter callbacks are distinct. Four native/current Timecrafting assignments select its local callback and never the Time Spiral copy. All three card bodies are unchanged. Native and rebuilt DWARF show compiler-selected inlining, not source-declared inline. Strict CFGs still differ for all six selected entries; no full instruction, callee or gameplay equivalence claimed. Full report/setup refresh deferred. A header rebuild was followed by an incremental rebuild after removing the initial explicit inline annotations; only the final plain-static source/build is accepted."
+  }
+}

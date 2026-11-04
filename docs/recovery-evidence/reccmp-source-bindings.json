@@ -1,0 +1,1747 @@
+{
+  "format": 1,
+  "status": "Native-backed label restored; build and all explicit source-address mappings verified against a fresh full comparison.",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "comparison_inputs": {
+    "setup_sha256": "a30c17b44cd21b80da43fd526d8e68226692b109d06b91b1e545b3175c2631c6",
+    "report_sha256": "400bf85cb2091f774897ca45e0b710417491471b3ca6503026ecc40eb23a5905",
+    "inputs": {
+      "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dll": "8cbc62ccae8f1d1e0af97566961f043da5b113ba737ae4ce5fedeeafa9d05d41",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "b4e6eed1b5d4cd16ef62f6a3d9da39ca28b29c9772bad17097f4a385876be465"
+    },
+    "metadata_sha256": "2858270a97c13c27365bacd1c82badb4ab00d816f814bcf82707203b820bf5be",
+    "metadata_snapshot": ".recovery\\reccmp\\source-bindings-c622.metadata.csv",
+    "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "comparator_source_sha256": {
+      "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+      "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+      "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+      "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b"
+    },
+    "command": [
+      "reccmp-reccmp",
+      "--target",
+      "MANALINK2022",
+      "--no-color",
+      "--json",
+      ".recovery/reccmp/source-bindings-c622.json",
+      "--silent"
+    ],
+    "exit_code": 0
+  },
+  "before_report_sha256": "fd392364586c139d19e055a361f8e2bfd42d0c4c3242c46d80230049e8a41b3c",
+  "before_functions": 18725,
+  "after_functions": 18828,
+  "before_summary": {
+    "exact": 12280,
+    "different": 6184,
+    "effective": 261
+  },
+  "after_summary": {
+    "exact": 12453,
+    "different": 6105,
+    "effective": 270
+  },
+  "common_ranges": {
+    "count": 18725,
+    "before_summary": {
+      "exact": 12280,
+      "different": 6184,
+      "effective": 261
+    },
+    "after_summary": {
+      "exact": 12370,
+      "different": 6086,
+      "effective": 269
+    },
+    "improved": 163,
+    "lower_score": 3,
+    "unchanged": 18559,
+    "newly_exact": 90,
+    "no_longer_exact": 0
+  },
+  "source_binding_resolution": {
+    "verified": 160,
+    "newly_included": 103,
+    "existing_mappings_strengthened": 57,
+    "entries": [
+      {
+        "native_address": "0x2035040",
+        "native_size": 170,
+        "rebuilt_address": 34230384,
+        "rebuilt_size": 170,
+        "source": "cards/born_of_the_gods.c",
+        "name": "effect_prevent_damage_to_or_from_until_my_next_turn",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2035940",
+        "native_size": 43,
+        "rebuilt_address": 34232704,
+        "rebuilt_size": 43,
+        "source": "cards/born_of_the_gods.c",
+        "name": "inspired",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x204d340",
+        "native_size": 40,
+        "rebuilt_address": 39744336,
+        "rebuilt_size": 40,
+        "source": "cards/urza_saga.c",
+        "name": "pariah_effect",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2087420",
+        "native_size": 41,
+        "rebuilt_address": 36655008,
+        "rebuilt_size": 41,
+        "source": "cards/m11.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2090960",
+        "native_size": 42,
+        "rebuilt_address": 37448368,
+        "rebuilt_size": 42,
+        "source": "cards/nemesis.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x209d660",
+        "native_size": 78,
+        "rebuilt_address": 33751456,
+        "rebuilt_size": 78,
+        "source": "cards/alliances.c",
+        "name": "is_damage_to_player_or_planeswalker",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x209d520",
+        "native_size": 158,
+        "rebuilt_address": 33752448,
+        "rebuilt_size": 158,
+        "source": "cards/alliances.c",
+        "name": "effect_cant_be_blocked_except_by_walls",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x209c780",
+        "native_size": 6,
+        "rebuilt_address": 33748208,
+        "rebuilt_size": 6,
+        "source": "cards/alliances.c",
+        "name": "rtrue",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x209de80",
+        "native_size": 42,
+        "rebuilt_address": 33754112,
+        "rebuilt_size": 42,
+        "source": "cards/alliances.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x209e090",
+        "native_size": 50,
+        "rebuilt_address": 33754640,
+        "rebuilt_size": 50,
+        "source": "cards/alliances.c",
+        "name": "al_pitchspell",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x209e0d0",
+        "native_size": 126,
+        "rebuilt_address": 33754704,
+        "rebuilt_size": 126,
+        "source": "cards/alliances.c",
+        "name": "casting_al_pitchspell",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x20b1020",
+        "native_size": 165,
+        "rebuilt_address": 38462960,
+        "rebuilt_size": 165,
+        "source": "cards/saviors_of_kamigawa.c",
+        "name": "card_exile_into_darkness_impl",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x20b1380",
+        "native_size": 41,
+        "rebuilt_address": 38463824,
+        "rebuilt_size": 41,
+        "source": "cards/saviors_of_kamigawa.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x20ba810",
+        "native_size": 89,
+        "rebuilt_address": 33635552,
+        "rebuilt_size": 89,
+        "source": "cards/aether_revolt.c",
+        "name": "is_creature_or_vehicle",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x20ba940",
+        "native_size": 76,
+        "rebuilt_address": 33640096,
+        "rebuilt_size": 76,
+        "source": "cards/aether_revolt.c",
+        "name": "make_thopter",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x20bc5f0",
+        "native_size": 115,
+        "rebuilt_address": 33641824,
+        "rebuilt_size": 115,
+        "source": "cards/aether_revolt.c",
+        "name": "has_a_counter_and_not_mana_src",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x20e7ea0",
+        "native_size": 106,
+        "rebuilt_address": 39366176,
+        "rebuilt_size": 65,
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x20ea700",
+        "native_size": 103,
+        "rebuilt_address": 39366368,
+        "rebuilt_size": 104,
+        "source": "cards/time_spiral.c",
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x20ea990",
+        "native_size": 97,
+        "rebuilt_address": 39367296,
+        "rebuilt_size": 97,
+        "source": "cards/time_spiral.c",
+        "name": "re_enable_abilities_at_eot",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x21206e0",
+        "native_size": 72,
+        "rebuilt_address": 35688544,
+        "rebuilt_size": 72,
+        "source": "cards/homelands.c",
+        "name": "give_first_strike",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x21203f0",
+        "native_size": 158,
+        "rebuilt_address": 35687792,
+        "rebuilt_size": 158,
+        "source": "cards/homelands.c",
+        "name": "effect_cant_be_blocked_except_by_walls",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x212a660",
+        "native_size": 79,
+        "rebuilt_address": 38980432,
+        "rebuilt_size": 79,
+        "source": "cards/stronghold.c",
+        "name": "is_damaging_me",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x21363e0",
+        "native_size": 30,
+        "rebuilt_address": 38801216,
+        "rebuilt_size": 30,
+        "source": "cards/shards_of_alara.c",
+        "name": "is_basic_land_by_internal_id",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2147060",
+        "native_size": 42,
+        "rebuilt_address": 39028992,
+        "rebuilt_size": 44,
+        "source": "cards/tempest.c",
+        "name": "is_already_damaged",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2147090",
+        "native_size": 47,
+        "rebuilt_address": 39030416,
+        "rebuilt_size": 47,
+        "source": "cards/tempest.c",
+        "name": "can_be_untapped",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2148440",
+        "native_size": 44,
+        "rebuilt_address": 39034016,
+        "rebuilt_size": 44,
+        "source": "cards/tempest.c",
+        "name": "is_blocking_kod",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x215e910",
+        "native_size": 40,
+        "rebuilt_address": 37984832,
+        "rebuilt_size": 40,
+        "source": "cards/planeswalker.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x215f9b0",
+        "native_size": 6,
+        "rebuilt_address": 34352192,
+        "rebuilt_size": 6,
+        "source": "cards/coldsnap.c",
+        "name": "rtrue",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2160e70",
+        "native_size": 119,
+        "rebuilt_address": 34357504,
+        "rebuilt_size": 119,
+        "source": "cards/coldsnap.c",
+        "name": "casting_coldsnap_pitchspell",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2186430",
+        "native_size": 42,
+        "rebuilt_address": 37949888,
+        "rebuilt_size": 42,
+        "source": "cards/planeshift.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2197b70",
+        "native_size": 44,
+        "rebuilt_address": 36350224,
+        "rebuilt_size": 44,
+        "source": "cards/khans_of_tarkir.c",
+        "name": "has_1_1_counter",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x21d4b10",
+        "native_size": 93,
+        "rebuilt_address": 39962384,
+        "rebuilt_size": 36,
+        "source": "cards/war_of_the_spark.c",
+        "name": "count_type_in_hand",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x21c6910",
+        "native_size": 170,
+        "rebuilt_address": 39898304,
+        "rebuilt_size": 170,
+        "source": "cards/war_of_the_spark.c",
+        "name": "effect_prevent_damage_to_or_from_until_my_next_turn",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x21c7d20",
+        "native_size": 115,
+        "rebuilt_address": 39899344,
+        "rebuilt_size": 115,
+        "source": "cards/war_of_the_spark.c",
+        "name": "has_a_counter_and_not_mana_src",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x21e2690",
+        "native_size": 91,
+        "rebuilt_address": 34663120,
+        "rebuilt_size": 91,
+        "source": "cards/conflux.c",
+        "name": "target_damaged_me_this_turn",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x21e9870",
+        "native_size": 67,
+        "rebuilt_address": 36422400,
+        "rebuilt_size": 67,
+        "source": "cards/legends.c",
+        "name": "is_damaging_me",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x21eca70",
+        "native_size": 63,
+        "rebuilt_address": 36435264,
+        "rebuilt_size": 63,
+        "source": "cards/legends.c",
+        "name": "glyph_of_reincarnation_legacy",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x21ecf80",
+        "native_size": 90,
+        "rebuilt_address": 36436464,
+        "rebuilt_size": 90,
+        "source": "cards/legends.c",
+        "name": "destroy_nonwall_at_end_of_combat",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x21ed580",
+        "native_size": 30,
+        "rebuilt_address": 36437984,
+        "rebuilt_size": 30,
+        "source": "cards/legends.c",
+        "name": "landwalk_disabling_card",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2205870",
+        "native_size": 44,
+        "rebuilt_address": 36847360,
+        "rebuilt_size": 35,
+        "source": "cards/m19.c",
+        "name": "test_not_in_array4",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x22060e0",
+        "native_size": 113,
+        "rebuilt_address": 36847712,
+        "rebuilt_size": 113,
+        "source": "cards/m19.c",
+        "name": "is_artifact_or_enchantment_or_flying_creature",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x220d4f0",
+        "native_size": 35,
+        "rebuilt_address": 34693952,
+        "rebuilt_size": 995,
+        "source": "cards/conspiracy-take-the-crown.c",
+        "name": "you_become_the_monarch",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x222bd80",
+        "native_size": 78,
+        "rebuilt_address": 37370544,
+        "rebuilt_size": 78,
+        "source": "cards/modern_horizons_2.c",
+        "name": "basic_landcycling",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2245050",
+        "native_size": 109,
+        "rebuilt_address": 33908336,
+        "rebuilt_size": 109,
+        "source": "cards/antiquities.c",
+        "name": "permanent_you_control_and_own",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x224d6b0",
+        "native_size": 41,
+        "rebuilt_address": 34803888,
+        "rebuilt_size": 44,
+        "source": "cards/darksteel.c",
+        "name": "not_already_dying",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2259ac0",
+        "native_size": 44,
+        "rebuilt_address": 37567280,
+        "rebuilt_size": 44,
+        "source": "cards/oath_of_the_gatewatch.c",
+        "name": "has_1_1_counter",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x226d6f0",
+        "native_size": 171,
+        "rebuilt_address": 37498464,
+        "rebuilt_size": 171,
+        "source": "cards/new_phyrexia.c",
+        "name": "can_legally_change_target_to_me",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x226d350",
+        "native_size": 47,
+        "rebuilt_address": 37497536,
+        "rebuilt_size": 47,
+        "source": "cards/new_phyrexia.c",
+        "name": "target_must_have_counters",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x227ec60",
+        "native_size": 42,
+        "rebuilt_address": 37408768,
+        "rebuilt_size": 42,
+        "source": "cards/morningtide.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x227ec90",
+        "native_size": 128,
+        "rebuilt_address": 37408816,
+        "rebuilt_size": 128,
+        "source": "cards/morningtide.c",
+        "name": "reinforce",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x22887d0",
+        "native_size": 44,
+        "rebuilt_address": 35920592,
+        "rebuilt_size": 44,
+        "source": "cards/ikoria.c",
+        "name": "permanent_you_control_and_own",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2288060",
+        "native_size": 27,
+        "rebuilt_address": 35919504,
+        "rebuilt_size": 27,
+        "source": "cards/ikoria.c",
+        "name": "iid_has_cycling",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2290d60",
+        "native_size": 44,
+        "rebuilt_address": 34975200,
+        "rebuilt_size": 44,
+        "source": "cards/dragons_maze.c",
+        "name": "has_1_1_counter",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x229e1f0",
+        "native_size": 152,
+        "rebuilt_address": 38712352,
+        "rebuilt_size": 146,
+        "source": "cards/shadows_over_innistrad.c",
+        "name": "is_aura_or_equipment",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x22c64f0",
+        "native_size": 80,
+        "rebuilt_address": 39818544,
+        "rebuilt_size": 29,
+        "source": "cards/vanguard.c",
+        "name": "locate_edh_card",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x22c3350",
+        "native_size": 40,
+        "rebuilt_address": 39794592,
+        "rebuilt_size": 40,
+        "source": "cards/vanguard.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x22c4ca0",
+        "native_size": 169,
+        "rebuilt_address": 39800944,
+        "rebuilt_size": 169,
+        "source": "cards/vanguard.c",
+        "name": "vanguard_card",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x22d6b60",
+        "native_size": 27,
+        "rebuilt_address": 33826336,
+        "rebuilt_size": 27,
+        "source": "cards/amonkhet.c",
+        "name": "iid_has_cycling",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x22e9b20",
+        "native_size": 42,
+        "rebuilt_address": 39972176,
+        "rebuilt_size": 44,
+        "source": "cards/weatherlight.c",
+        "name": "is_already_damaged",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x22ea620",
+        "native_size": 33,
+        "rebuilt_address": 39974880,
+        "rebuilt_size": 33,
+        "source": "cards/weatherlight.c",
+        "name": "lose_2_life_thunk",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x22eaa40",
+        "native_size": 17,
+        "rebuilt_address": 39975904,
+        "rebuilt_size": 17,
+        "source": "cards/weatherlight.c",
+        "name": "can_pay_2_life_thunk",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2302b70",
+        "native_size": 47,
+        "rebuilt_address": 39503104,
+        "rebuilt_size": 52,
+        "source": "cards/unglued_unhinged.c",
+        "name": "target_must_have_counters",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2310ef0",
+        "native_size": 134,
+        "rebuilt_address": 39466864,
+        "rebuilt_size": 134,
+        "source": "cards/torment.c",
+        "name": "grave_eater",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2311050",
+        "native_size": 55,
+        "rebuilt_address": 39467216,
+        "rebuilt_size": 55,
+        "source": "cards/torment.c",
+        "name": "false_memories_legacy",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x23403a0",
+        "native_size": 42,
+        "rebuilt_address": 34038272,
+        "rebuilt_size": 42,
+        "source": "cards/avacyn_restored.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2359bb0",
+        "native_size": 1607,
+        "rebuilt_address": 39266432,
+        "rebuilt_size": 134,
+        "source": "cards/theros_beyond_death.c",
+        "name": "breach_effect",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2359730",
+        "native_size": 30,
+        "rebuilt_address": 39263712,
+        "rebuilt_size": 30,
+        "source": "cards/theros_beyond_death.c",
+        "name": "is_basic_land_by_internal_id",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x235b430",
+        "native_size": 132,
+        "rebuilt_address": 39280944,
+        "rebuilt_size": 55,
+        "source": "cards/theros_beyond_death.c",
+        "name": "find_attached_legacy_effect_not_full",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2363860",
+        "native_size": 51,
+        "rebuilt_address": 35181600,
+        "rebuilt_size": 51,
+        "source": "cards/eventide.c",
+        "name": "chroma",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2376a50",
+        "native_size": 44,
+        "rebuilt_address": 37015088,
+        "rebuilt_size": 44,
+        "source": "cards/mirage.c",
+        "name": "is_blocking_kod",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2377aa0",
+        "native_size": 27,
+        "rebuilt_address": 37019344,
+        "rebuilt_size": 27,
+        "source": "cards/mirage.c",
+        "name": "phasing",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x239afb0",
+        "native_size": 36,
+        "rebuilt_address": 36259296,
+        "rebuilt_size": 36,
+        "source": "cards/kaladesh.c",
+        "name": "test_not_in_array3",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x239b200",
+        "native_size": 89,
+        "rebuilt_address": 36259552,
+        "rebuilt_size": 89,
+        "source": "cards/kaladesh.c",
+        "name": "is_creature_or_vehicle",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x239b2a0",
+        "native_size": 76,
+        "rebuilt_address": 36259712,
+        "rebuilt_size": 76,
+        "source": "cards/kaladesh.c",
+        "name": "make_thopter",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x239bcb0",
+        "native_size": 88,
+        "rebuilt_address": 36262464,
+        "rebuilt_size": 88,
+        "source": "cards/kaladesh.c",
+        "name": "nonland_nontoken_permanent",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x239bd10",
+        "native_size": 97,
+        "rebuilt_address": 36262560,
+        "rebuilt_size": 97,
+        "source": "cards/kaladesh.c",
+        "name": "re_enable_abilities_at_eot",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x239c350",
+        "native_size": 41,
+        "rebuilt_address": 36264144,
+        "rebuilt_size": 41,
+        "source": "cards/kaladesh.c",
+        "name": "attack_trigger_with_energy",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x23b4400",
+        "native_size": 110,
+        "rebuilt_address": 37860736,
+        "rebuilt_size": 110,
+        "source": "cards/planar_chaos.c",
+        "name": "is_permanent_or_suspend_legacy",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x23ecfe0",
+        "native_size": 33,
+        "rebuilt_address": 35784800,
+        "rebuilt_size": 33,
+        "source": "cards/ice_age.c",
+        "name": "lose_2_life_thunk",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x23ecfc0",
+        "native_size": 17,
+        "rebuilt_address": 35784768,
+        "rebuilt_size": 17,
+        "source": "cards/ice_age.c",
+        "name": "can_pay_2_life_thunk",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x23ee2b0",
+        "native_size": 42,
+        "rebuilt_address": 35791200,
+        "rebuilt_size": 42,
+        "source": "cards/ice_age.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x24276f0",
+        "native_size": 191,
+        "rebuilt_address": 35503040,
+        "rebuilt_size": 188,
+        "source": "cards/gargaroz.c",
+        "name": "can_legally_change_target_to_me",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2427990",
+        "native_size": 88,
+        "rebuilt_address": 35503472,
+        "rebuilt_size": 88,
+        "source": "cards/gargaroz.c",
+        "name": "has_only_1_target_and_could_legally_change_target",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2429ab0",
+        "native_size": 72,
+        "rebuilt_address": 39125728,
+        "rebuilt_size": 72,
+        "source": "cards/the_dark.c",
+        "name": "give_first_strike",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x242a620",
+        "native_size": 90,
+        "rebuilt_address": 39128656,
+        "rebuilt_size": 90,
+        "source": "cards/the_dark.c",
+        "name": "destroy_nonwall_at_end_of_combat",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2438530",
+        "native_size": 463,
+        "rebuilt_address": 38507536,
+        "rebuilt_size": 224,
+        "source": "cards/scars_of_mirrodin.c",
+        "name": "proliferate_manual_single_permanent_or_player",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2472230",
+        "native_size": 148,
+        "rebuilt_address": 35099712,
+        "rebuilt_size": 148,
+        "source": "cards/eldritch_moon.c",
+        "name": "is_aura_or_equipment",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x247de80",
+        "native_size": 88,
+        "rebuilt_address": 35146992,
+        "rebuilt_size": 88,
+        "source": "cards/eldritch_moon.c",
+        "name": "produce_mana_your_next_main_phase_this_turn",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2488b80",
+        "native_size": 42,
+        "rebuilt_address": 36037552,
+        "rebuilt_size": 42,
+        "source": "cards/invasion.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x249f190",
+        "native_size": 42,
+        "rebuilt_address": 36693008,
+        "rebuilt_size": 42,
+        "source": "cards/m12.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x24a6440",
+        "native_size": 42,
+        "rebuilt_address": 36538464,
+        "rebuilt_size": 42,
+        "source": "cards/legions.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x24bb3b0",
+        "native_size": 47,
+        "rebuilt_address": 39519280,
+        "rebuilt_size": 47,
+        "source": "cards/unlimited.c",
+        "name": "can_be_untapped",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x24bd0c0",
+        "native_size": 90,
+        "rebuilt_address": 39528048,
+        "rebuilt_size": 90,
+        "source": "cards/unlimited.c",
+        "name": "destroy_nonwall_at_end_of_combat",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x24d0920",
+        "native_size": 81,
+        "rebuilt_address": 36161424,
+        "rebuilt_size": 81,
+        "source": "cards/journey_into_nyx.c",
+        "name": "is_enchanted_or_enchantment_creature",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x24ddce0",
+        "native_size": 36,
+        "rebuilt_address": 38129824,
+        "rebuilt_size": 36,
+        "source": "cards/ravnica.c",
+        "name": "test_not_in_array3",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x24def10",
+        "native_size": 40,
+        "rebuilt_address": 38135264,
+        "rebuilt_size": 40,
+        "source": "cards/ravnica.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x24e1980",
+        "native_size": 96,
+        "rebuilt_address": 38145136,
+        "rebuilt_size": 96,
+        "source": "cards/ravnica.c",
+        "name": "ravnica_manachanger",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x24f6c70",
+        "native_size": 67,
+        "rebuilt_address": 38589072,
+        "rebuilt_size": 67,
+        "source": "cards/scourge.c",
+        "name": "dimensional_breach_effect_legacy",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x25152c0",
+        "native_size": 47,
+        "rebuilt_address": 35512224,
+        "rebuilt_size": 47,
+        "source": "cards/gatecrash.c",
+        "name": "target_must_have_counters",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2516f20",
+        "native_size": 162,
+        "rebuilt_address": 35519472,
+        "rebuilt_size": 162,
+        "source": "cards/gatecrash.c",
+        "name": "bloodrush",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x252a420",
+        "native_size": 41,
+        "rebuilt_address": 35598496,
+        "rebuilt_size": 44,
+        "source": "cards/guildpact.c",
+        "name": "not_already_dying",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2537d20",
+        "native_size": 42,
+        "rebuilt_address": 37140048,
+        "rebuilt_size": 42,
+        "source": "cards/mirrodin.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2537d50",
+        "native_size": 27,
+        "rebuilt_address": 37140096,
+        "rebuilt_size": 27,
+        "source": "cards/mirrodin.c",
+        "name": "affinity",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x25494e0",
+        "native_size": 42,
+        "rebuilt_address": 38620592,
+        "rebuilt_size": 42,
+        "source": "cards/shadowmoor.c",
+        "name": "test_exclude_this_creature",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2549510",
+        "native_size": 47,
+        "rebuilt_address": 38620640,
+        "rebuilt_size": 47,
+        "source": "cards/shadowmoor.c",
+        "name": "target_must_have_counters",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x254a8a0",
+        "native_size": 41,
+        "rebuilt_address": 38625552,
+        "rebuilt_size": 41,
+        "source": "cards/shadowmoor.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x254b790",
+        "native_size": 50,
+        "rebuilt_address": 38629376,
+        "rebuilt_size": 50,
+        "source": "cards/shadowmoor.c",
+        "name": "modify_cost_for_hybrid_spells",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x255f7c0",
+        "native_size": 74,
+        "rebuilt_address": 34546224,
+        "rebuilt_size": 85,
+        "source": "cards/commander_2018.c",
+        "name": "is_enchanted_or_enchantment_creature",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x255f810",
+        "native_size": 89,
+        "rebuilt_address": 34549488,
+        "rebuilt_size": 89,
+        "source": "cards/commander_2018.c",
+        "name": "is_aura_or_equipment",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2560470",
+        "native_size": 104,
+        "rebuilt_address": 34549584,
+        "rebuilt_size": 93,
+        "source": "cards/commander_2018.c",
+        "name": "rfg_at_end_of_combat",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x25716a0",
+        "native_size": 131,
+        "rebuilt_address": 35455216,
+        "rebuilt_size": 131,
+        "source": "cards/future_sight.c",
+        "name": "is_permanent_or_suspend_legacy",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x257f440",
+        "native_size": 58,
+        "rebuilt_address": 34022128,
+        "rebuilt_size": 58,
+        "source": "cards/archenemy.c",
+        "name": "scheme_behold_the_power_of_destruction",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2590710",
+        "native_size": 26,
+        "rebuilt_address": 36578576,
+        "rebuilt_size": 26,
+        "source": "cards/lorwyn.c",
+        "name": "raise_command_singleton_ai_priorities",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x259ff10",
+        "native_size": 42,
+        "rebuilt_address": 34588208,
+        "rebuilt_size": 39,
+        "source": "cards/commander_legends.c",
+        "name": "test_exclude_this_creature",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x25a2820",
+        "native_size": 41,
+        "rebuilt_address": 34599040,
+        "rebuilt_size": 41,
+        "source": "cards/commander_legends.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x25c9800",
+        "native_size": 85,
+        "rebuilt_address": 39303248,
+        "rebuilt_size": 71,
+        "source": "cards/throne_of_eldraine.c",
+        "name": "nonland_nontoken_permanent",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x25d6fc0",
+        "native_size": 78,
+        "rebuilt_address": 40075984,
+        "rebuilt_size": 78,
+        "source": "cards/zendikar.c",
+        "name": "is_damage_to_player_or_planeswalker",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x25d6ab0",
+        "native_size": 47,
+        "rebuilt_address": 40074864,
+        "rebuilt_size": 47,
+        "source": "cards/zendikar.c",
+        "name": "target_must_have_counters",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x25e8ff0",
+        "native_size": 30,
+        "rebuilt_address": 37732880,
+        "rebuilt_size": 30,
+        "source": "cards/onslaught.c",
+        "name": "turn_face_down",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x25fb3e0",
+        "native_size": 197,
+        "rebuilt_address": 38072848,
+        "rebuilt_size": 197,
+        "source": "cards/prophecy.c",
+        "name": "bounce_at_end_of_combat",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2608d70",
+        "native_size": 44,
+        "rebuilt_address": 34285632,
+        "rebuilt_size": 44,
+        "source": "cards/champions_of_kamigawa.c",
+        "name": "test_not_in_array4",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x260c2f0",
+        "native_size": 66,
+        "rebuilt_address": 34299312,
+        "rebuilt_size": 66,
+        "source": "cards/champions_of_kamigawa.c",
+        "name": "soulshift",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2619160",
+        "native_size": 30,
+        "rebuilt_address": 35651456,
+        "rebuilt_size": 30,
+        "source": "cards/guilds_of_ravnica.c",
+        "name": "is_basic_land_by_internal_id",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2621c80",
+        "native_size": 42,
+        "rebuilt_address": 35349728,
+        "rebuilt_size": 42,
+        "source": "cards/fate_reforged.c",
+        "name": "is_already_damaged",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2621d90",
+        "native_size": 44,
+        "rebuilt_address": 35350000,
+        "rebuilt_size": 44,
+        "source": "cards/fate_reforged.c",
+        "name": "has_1_1_counter",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2622bf0",
+        "native_size": 104,
+        "rebuilt_address": 35353680,
+        "rebuilt_size": 104,
+        "source": "cards/fate_reforged.c",
+        "name": "rfg_at_end_of_combat",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2622c60",
+        "native_size": 113,
+        "rebuilt_address": 35353792,
+        "rebuilt_size": 113,
+        "source": "cards/fate_reforged.c",
+        "name": "is_artifact_or_enchantment_or_flying_creature",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2623260",
+        "native_size": 104,
+        "rebuilt_address": 35355360,
+        "rebuilt_size": 104,
+        "source": "cards/fate_reforged.c",
+        "name": "dash",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x262f2e0",
+        "native_size": 91,
+        "rebuilt_address": 39180624,
+        "rebuilt_size": 91,
+        "source": "cards/theros.c",
+        "name": "target_damaged_me_this_turn",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2657690",
+        "native_size": 273,
+        "rebuilt_address": 40797680,
+        "rebuilt_size": 46,
+        "source": "functions/windows.c",
+        "name": "memcpy_displayed_inst_and_ext",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x265b740",
+        "native_size": 52,
+        "rebuilt_address": 40799392,
+        "rebuilt_size": 52,
+        "source": "functions/windows.c",
+        "name": "draw_smallcard_special_effect_card",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x265b780",
+        "native_size": 61,
+        "rebuilt_address": 40796992,
+        "rebuilt_size": 61,
+        "source": "functions/windows.c",
+        "name": "draw_smallcard_normal",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2662150",
+        "native_size": 40,
+        "rebuilt_address": 40329840,
+        "rebuilt_size": 40,
+        "source": "functions/draft.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2663910",
+        "native_size": 28,
+        "rebuilt_address": 40590752,
+        "rebuilt_size": 28,
+        "source": "functions/gain_control_and_legend_rule.c",
+        "name": "true_verify_legend_rule",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26677f0",
+        "native_size": 634,
+        "rebuilt_address": 40626976,
+        "rebuilt_size": 55,
+        "source": "functions/manipulate_and_damage_all.c",
+        "name": "new_damage_all",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x266c040",
+        "native_size": 210,
+        "rebuilt_address": 40655104,
+        "rebuilt_size": 39,
+        "source": "functions/produce_mana.c",
+        "name": "mana_doublers",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26738b0",
+        "native_size": 44,
+        "rebuilt_address": 40609856,
+        "rebuilt_size": 44,
+        "source": "functions/has_creature_type.c",
+        "name": "has_subtype",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2677460",
+        "native_size": 3,
+        "rebuilt_address": 40391824,
+        "rebuilt_size": 3,
+        "source": "functions/functions.c",
+        "name": "empty",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2678680",
+        "native_size": 88,
+        "rebuilt_address": 40397248,
+        "rebuilt_size": 88,
+        "source": "functions/functions.c",
+        "name": "has_only_1_target_and_could_legally_change_target",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2679210",
+        "native_size": 42,
+        "rebuilt_address": 40399312,
+        "rebuilt_size": 42,
+        "source": "functions/functions.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x2681910",
+        "native_size": 28,
+        "rebuilt_address": 40405696,
+        "rebuilt_size": 28,
+        "source": "functions/functions.c",
+        "name": "check_battlefield_for_id",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x268dc60",
+        "native_size": 73,
+        "rebuilt_address": 40464960,
+        "rebuilt_size": 73,
+        "source": "functions/functions.c",
+        "name": "check_damage_test",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2691740",
+        "native_size": 42,
+        "rebuilt_address": 40414512,
+        "rebuilt_size": 42,
+        "source": "functions/functions.c",
+        "name": "reveal_card",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2691770",
+        "native_size": 38,
+        "rebuilt_address": 40414560,
+        "rebuilt_size": 38,
+        "source": "functions/functions.c",
+        "name": "reveal_card_iid",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x2693be0",
+        "native_size": 29,
+        "rebuilt_address": 40416016,
+        "rebuilt_size": 29,
+        "source": "functions/functions.c",
+        "name": "set_legacy_image",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26a5370",
+        "native_size": 515,
+        "rebuilt_address": 40487952,
+        "rebuilt_size": 42,
+        "source": "functions/functions.c",
+        "name": "etb_ability",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26ba760",
+        "native_size": 31,
+        "rebuilt_address": 40230352,
+        "rebuilt_size": 31,
+        "source": "functions/challenge_mode.c",
+        "name": "is_unlocked_by_challenge",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26c6a60",
+        "native_size": 41,
+        "rebuilt_address": 40702992,
+        "rebuilt_size": 41,
+        "source": "functions/rules_engine.c",
+        "name": "snprintf",
+        "resolution": "unique C source/name range on each side"
+      },
+      {
+        "native_address": "0x26c78d0",
+        "native_size": 21,
+        "rebuilt_address": 40706624,
+        "rebuilt_size": 21,
+        "source": "functions/rules_engine.c",
+        "name": "read_settings",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26cdc60",
+        "native_size": 26,
+        "rebuilt_address": 40629952,
+        "rebuilt_size": 26,
+        "source": "functions/multiblock.c",
+        "name": "arbitrary_can_block_additional",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26d16d0",
+        "native_size": 26,
+        "rebuilt_address": 40259648,
+        "rebuilt_size": 132,
+        "source": "functions/counters.c",
+        "name": "get_counter_name_by_type",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26d4260",
+        "native_size": 26,
+        "rebuilt_address": 40270640,
+        "rebuilt_size": 26,
+        "source": "functions/counters.c",
+        "name": "poison",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26d42a0",
+        "native_size": 26,
+        "rebuilt_address": 40270704,
+        "rebuilt_size": 26,
+        "source": "functions/counters.c",
+        "name": "add_experience",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26d42e0",
+        "native_size": 26,
+        "rebuilt_address": 40270768,
+        "rebuilt_size": 26,
+        "source": "functions/counters.c",
+        "name": "add_energy",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26d6eb0",
+        "native_size": 60,
+        "rebuilt_address": 40389792,
+        "rebuilt_size": 60,
+        "source": "functions/exiledby.c",
+        "name": "exiledby_remember",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26dd430",
+        "native_size": 36,
+        "rebuilt_address": 40193616,
+        "rebuilt_size": 36,
+        "source": "functions/abilities.c",
+        "name": "is_humiliated",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26e1000",
+        "native_size": 52,
+        "rebuilt_address": 40199360,
+        "rebuilt_size": 52,
+        "source": "functions/abilities.c",
+        "name": "generic_protection_from",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26e3f70",
+        "native_size": 403,
+        "rebuilt_address": 40725632,
+        "rebuilt_size": 37,
+        "source": "functions/sacrifices.c",
+        "name": "new_get_special_permanent_for_sacrifice",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26e3ec0",
+        "native_size": 165,
+        "rebuilt_address": 40725584,
+        "rebuilt_size": 37,
+        "source": "functions/sacrifices.c",
+        "name": "get_best_permanent_for_sacrifice",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      },
+      {
+        "native_address": "0x26ee200",
+        "native_size": 39,
+        "rebuilt_address": 40372880,
+        "rebuilt_size": 39,
+        "source": "functions/equipments.c",
+        "name": "resolve_activation_equipment",
+        "resolution": "owning C CU and unique exact COFF entry on each side"
+      }
+    ]
+  },
+  "remaining_exclusions": {
+    "no rebuilt function with this name": 10,
+    "ambiguous original name": 9,
+    "verified equivalent native helper shares a canonical implementation": 1,
+    "ambiguous rebuilt name": 1
+  },
+  "score_decreases_reviewed": [
+    {
+      "address": "0x222e1f0",
+      "name": "card_battle_plan",
+      "normalization_changes": {
+        "orig": [
+          {
+            "address": "0x222e32b",
+            "before": "call <OFFSET9>",
+            "after": "call basic_landcycling (FUNCTION)"
+          }
+        ],
+        "recomp": []
+      },
+      "conclusion": "Only resolved call/callback labels changed; lower score reflects grouped-diff realignment."
+    },
+    {
+      "address": "0x22438b0",
+      "name": "card_world_weary",
+      "normalization_changes": {
+        "orig": [
+          {
+            "address": "0x224396b",
+            "before": "call <OFFSET4>",
+            "after": "call basic_landcycling (FUNCTION)"
+          }
+        ],
+        "recomp": []
+      },
+      "conclusion": "Only resolved call/callback labels changed; lower score reflects grouped-diff realignment."
+    },
+    {
+      "address": "0x23f96e0",
+      "name": "card_glacial_chasm",
+      "normalization_changes": {
+        "orig": [
+          {
+            "address": "0x23f97ec",
+            "before": "mov dword ptr [esp + 0x10], <OFFSET7>",
+            "after": "mov dword ptr [esp + 0x10], lose_2_life_thunk(2) (FUNCTION)"
+          },
+          {
+            "address": "0x23f97f4",
+            "before": "mov dword ptr [esp + 0xc], <OFFSET8>",
+            "after": "mov dword ptr [esp + 0xc], can_pay_2_life_thunk(2) (FUNCTION)"
+          }
+        ],
+        "recomp": [
+          {
+            "address": "0x222ab2d",
+            "before": "mov dword ptr [esp + 0x10], lose_2_life_thunk(1) (FUNCTION)",
+            "after": "mov dword ptr [esp + 0x10], lose_2_life_thunk(2) (FUNCTION)"
+          },
+          {
+            "address": "0x222ab35",
+            "before": "mov dword ptr [esp + 0xc], can_pay_2_life_thunk(1) (FUNCTION)",
+            "after": "mov dword ptr [esp + 0xc], can_pay_2_life_thunk(2) (FUNCTION)"
+          },
+          {
+            "address": "0x222ab9c",
+            "before": "mov dword ptr [esp + 0x10], lose_2_life_thunk(1) (FUNCTION)",
+            "after": "mov dword ptr [esp + 0x10], lose_2_life_thunk(2) (FUNCTION)"
+          },
+          {
+            "address": "0x222aba4",
+            "before": "mov dword ptr [esp + 0xc], can_pay_2_life_thunk(1) (FUNCTION)",
+            "after": "mov dword ptr [esp + 0xc], can_pay_2_life_thunk(2) (FUNCTION)"
+          },
+          {
+            "address": "0x222acd0",
+            "before": "mov dword ptr [esp + 0x10], lose_2_life_thunk(1) (FUNCTION)",
+            "after": "mov dword ptr [esp + 0x10], lose_2_life_thunk(2) (FUNCTION)"
+          },
+          {
+            "address": "0x222acd8",
+            "before": "mov dword ptr [esp + 0xc], can_pay_2_life_thunk(1) (FUNCTION)",
+            "after": "mov dword ptr [esp + 0xc], can_pay_2_life_thunk(2) (FUNCTION)"
+          }
+        ]
+      },
+      "conclusion": "Only resolved call/callback labels changed; lower score reflects grouped-diff realignment."
+    }
+  ],
+  "small_diff_candidates": 399,
+  "small_diff_queue_sha256": "97c5ac889780f6490824038a6ef2edaad54ebe53f95e0e2d31dec9eb3c0dae47",
+  "corrected_function_scores": [
+    {
+      "address": "0x236f9a0",
+      "name": "card_springjack_pasture",
+      "before": 0.9977477477477478,
+      "after": 1.0
+    },
+    {
+      "address": "0x20e97c0",
+      "name": "lim_dul_the_necromancer_effect",
+      "before": 0.9961832061068703,
+      "after": 1.0
+    },
+    {
+      "address": "0x23f5d60",
+      "name": "card_enduring_renewal",
+      "before": 0.9953488372093023,
+      "after": 1.0
+    },
+    {
+      "address": "0x2035280",
+      "name": "consuming_rage_legacy",
+      "before": 0.9897959183673469,
+      "after": 1.0
+    },
+    {
+      "address": "0x2220530",
+      "name": "card_freewind_equenaut",
+      "before": 0.9866666666666667,
+      "after": 1.0
+    },
+    {
+      "address": "0x2569a60",
+      "name": "card_baku_altar",
+      "before": 0.9863013698630136,
+      "after": 1.0
+    },
+    {
+      "address": "0x26305d0",
+      "name": "generic_hydra_head",
+      "before": 0.9827586206896551,
+      "after": 1.0
+    },
+    {
+      "address": "0x20a79f0",
+      "name": "card_spiny_starfish",
+      "before": 0.98,
+      "after": 1.0
+    },
+    {
+      "address": "0x260a5c0",
+      "name": "rfg_when_die_legacy",
+      "before": 0.9767441860465116,
+      "after": 1.0
+    },
+    {
+      "address": "0x2278b00",
+      "name": "card_inquisitor_exarch",
+      "before": 0.92,
+      "after": 0.9333333333333333
+    },
+    {
+      "address": "0x216bd30",
+      "name": "foster_effect",
+      "before": 0.9953488372093023,
+      "after": 1.0
+    },
+    {
+      "address": "0x2173510",
+      "name": "card_foster",
+      "before": 0.9941860465116279,
+      "after": 1.0
+    },
+    {
+      "address": "0x243a690",
+      "name": "card_genesis_wave",
+      "before": 0.9951456310679612,
+      "after": 1.0
+    },
+    {
+      "address": "0x2188ea0",
+      "name": "card_dromar_charm",
+      "before": 0.6727272727272727,
+      "after": 0.6772727272727272
+    }
+  ],
+  "source_correction": {
+    "source": "cards/planeshift.c",
+    "function": "card_dromar_charm",
+    "native_address": "0x2188ea0",
+    "native_site": "0x21891d5",
+    "native_instruction": "mov dword ptr [esp + 0x28], 0x2730197",
+    "native_string": "Target creature gets -2/-2",
+    "before_definition_sha256": "bc213b0379d79afa26d5d74074b28c89aaf1f2f9d7d715583c0b11dd78f0d607",
+    "after_definition_sha256": "0ea8736727ace834b00762252d0aa89f3188825cad90b2f8d6d8cb717e48430f",
+    "source_sha256": "b28674260ec13ac90a7bd0e4d0414358a2d37800f90806ec0de612ebc755ed71",
+    "comparison_report_sha256": "fd392364586c139d19e055a361f8e2bfd42d0c4c3242c46d80230049e8a41b3c",
+    "old_diff": {
+      "orig": [
+        [
+          "0x21891d5",
+          "mov dword ptr [esp + 0x28], \"Target creature gets -2/-2\" (STRING)"
+        ]
+      ],
+      "recomp": [
+        [
+          "0x2433d89",
+          "mov dword ptr [esp + 0x28], \"Target crit gets -5/-5\" (STRING)"
+        ]
+      ]
+    },
+    "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+    "naming_state": {
+      "format": 2,
+      "canonical_bindings_sha256": "ae7a69f0d1811a6c46af09266f15fccf9291aa022c6d06501a2341c94915fcbd",
+      "recovery_mappings_sha256": "3bcd138ca897b9ee6ed2d28b45886cb8a7d8c820b236c5661629627c4b99515c"
+    }
+  },
+  "compiled_correction": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "8cbc62ccae8f1d1e0af97566961f043da5b113ba737ae4ce5fedeeafa9d05d41",
+    "dbg_sha256": "b4e6eed1b5d4cd16ef62f6a3d9da39ca28b29c9772bad17097f4a385876be465",
+    "native_site": "0x21891d5",
+    "current_function": {
+      "address": 37960288,
+      "size": 1005,
+      "name": "card_dromar_charm",
+      "source": "cards/planeshift.c"
+    },
+    "matched": [
+      {
+        "address": "0x2433d89",
+        "instruction": "mov dword ptr [esp + 0x28], 0x274caf7",
+        "string": "Target creature gets -2/-2"
+      }
+    ],
+    "staging": "preserved",
+    "scope": "Changed native chooser label and its corresponding stack argument only; no whole-function equality claim."
+  },
+  "scope": "Full report pins current DLL/debug/CSV/comparator inputs. Exact/effective counts are reccmp classifications, not gameplay proofs. Common-range scores include changed address/name normalization and source corrections; gains are not attributed exclusively to source edits. Split private ranges and C++ overloads are not paired by this C source rule. Existing user staging is preserved."
+}

@@ -728,11 +728,10 @@ int card_scale_blessing(int player, int card, event_t event)
   int c;
   card_instance_t *instance;
   int live_count_or_result;
-  char has_counter[151];
   if (event == EVENT_RESOLVE_SPELL)
   {
     bolster(player, card, 1);
-    memset(has_counter, 0, sizeof(has_counter));
+    char has_counter[151] = {0};
     if (active_cards_count[player] > 0)
     {
       c = 0;
@@ -3817,7 +3816,7 @@ int card_guardian_shield_bearer(int player, int card, event_t event)
   if (event == EVENT_TURNED_FACE_UP)
   {
     default_target_definition(player, card, &td, 2);
-    td.special = 0x4000;
+    td.special = TARGET_SPECIAL_NOT_ME;
     td.preferred_controller = player;
     td.allowed_controller = player;
     td.allow_cancel = 0;
@@ -3998,7 +3997,6 @@ int card_salt_road_ambushers(int player, int card, event_t event)
 
 int card_salt_road_quartermasters(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t td;
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 2);
@@ -4015,16 +4013,15 @@ int card_salt_road_quartermasters(int player, int card, event_t event)
     }
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&td) != 0))
     {
       instance = get_card_instance(player, card);
       add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_P1_P1, 1);
     }
   }
-  result = generic_activated_ability(player, card, event, 0x44, 2, 0, 0, 1, 0, 0, 0, &td,
+  return generic_activated_ability(player, card, event, 0x44, 2, 0, 0, 1, 0, 0, 0, &td,
                                      "TARGET_CREATURE");
-  return result;
 }
 
 int card_sandsteppe_scavenger(int player, int card, event_t event)
@@ -4611,7 +4608,7 @@ int card_enduring_scalelord(int player, int card, event_t event)
   int result;
   enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_1_1_COUNTERS;
   current_trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     current_trigger = xtrigger_impl_value_dont_use_directly;
   }
@@ -5104,7 +5101,7 @@ int card_sarkhan_unbroken(int player, int card, event_t event)
 			  test.subtype = SUBTYPE_DRAGON;
 			  test.no_shuffle = 1;
 
-			  while (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_FIRST_FOUND, &test) != -1)
+			  while (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_FIRST_FOUND, &test) >= 0)
 				{}
 
 			  shuffle(player);
@@ -5559,7 +5556,7 @@ int card_display_of_dominance(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = 2;
+    td.illegal_type = TYPE_CREATURE;
     td.required_color = get_sleighted_color_test(player, card, 6);
     td.preferred_controller = player;
     get_card_instance(player, card);
@@ -5576,7 +5573,7 @@ int card_display_of_dominance(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = 2;
+    td.illegal_type = TYPE_CREATURE;
     td.required_color = get_sleighted_color_test(player, card, 6);
     td.preferred_controller = player;
     instance = get_card_instance(player, card);
@@ -5592,7 +5589,7 @@ int card_display_of_dominance(int player, int card, event_t event)
   else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
   {
     default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = 2;
+    td.illegal_type = TYPE_CREATURE;
     td.required_color = get_sleighted_color_test(player, card, 6);
     td.preferred_controller = player;
     instance = get_card_instance(player, card);
@@ -5604,7 +5601,7 @@ int card_display_of_dominance(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = 2;
+    td.illegal_type = TYPE_CREATURE;
     td.required_color = get_sleighted_color_test(player, card, 6);
     td.preferred_controller = player;
     instance = get_card_instance(player, card);
@@ -5619,7 +5616,7 @@ int card_display_of_dominance(int player, int card, event_t event)
       return 0;
     }
 
-    choice = dialog_impl(player, card, event, "\001\002", "Destroy non-creature", destroy_available,
+    choice = dialog_impl(player, card, event, DLG_RANDOM, "Destroy non-creature", destroy_available,
                          5, "Permanents untargettable", 1, 10, 0, 0, 0, 0);
     if (choice == 0)
     {

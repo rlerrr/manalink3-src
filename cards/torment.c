@@ -30,25 +30,11 @@ static int grave_recycler(int player, int card, event_t event, int crds)
       test_definition_t this_test;
       new_default_test_definition(&this_test, TYPE_ANY,
                                   "Select a card to put on bottom of your deck.");
-      int amount = 0;
-      while (amount < crds)
-      {
-        int no_canc = 0;
-        if (amount > 0)
-        {
-          no_canc = 1;
-        }
-        if (new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_BOTTOM_OF_DECK, no_canc,
-                             AI_MAX_VALUE, &this_test) >= 0)
-        {
-          amount++;
-        }
-        else
-        {
-          break;
-        }
-      }
-      if (amount == crds)
+      if (new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_BOTTOM_OF_DECK, 0,
+                           AI_MAX_VALUE, &this_test) >= 0 &&
+          (crds == 1 ||
+           new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_BOTTOM_OF_DECK, 1,
+                            AI_MAX_VALUE, &this_test) >= 0))
       {
         sac = 0;
       }
@@ -1239,7 +1225,7 @@ int card_hypnox(int player, int card, event_t event)
     if (instance->info_slot != 1)
     {
       default_target_definition(player, card, &td, 2);
-      td.zone = 0x1000;
+      td.zone = TARGET_ZONE_PLAYERS;
       instance = get_card_instance(player, card);
       tgt_player = 1 - player;
       result = would_validate_arbitrary_target(&td, tgt_player, -1);
@@ -1542,7 +1528,7 @@ int card_laquatus_champion(int player, int card, event_t event)
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 2);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     td.allow_cancel = 0;
     instance = get_card_instance(player, card);
     result = pick_target(&td, "TARGET_PLAYER");
@@ -1935,7 +1921,7 @@ Threshold - As long as seven or more cards are in your graveyard, ~ gets +1/+1 a
 int card_nantuko_cultivator(int player, int card, event_t event)
 {
   int result;
-  int card_00;
+  int selected;
   int num;
   test_definition_t this_test;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -1951,11 +1937,11 @@ int card_nantuko_cultivator(int player, int card, event_t event)
   {
     do
     {
-      card_00 = new_select_a_card(player, player, 4, 0, 3, -1, &this_test);
-      if (card_00 == -1)
+      selected = new_select_a_card(player, player, 4, 0, 3, -1, &this_test);
+      if (selected == -1)
         break;
       num = num + 1;
-      discard_card(player, card_00);
+      discard_card(player, selected);
     } while (result != num);
   }
   add_counters(player, card, player, card, COUNTER_P1_P1, num);
@@ -1980,7 +1966,10 @@ Enchantment
 |G, Discard a card: Target creature gets +2/+2 until end of turn.
 |G, Sacrifice ~: Target creature gets +2/+2 until end of turn. */
 	if (event == EVENT_CHECK_ABILITIES && affected_card_controller == player && card_narcissism(player, card, EVENT_CAN_ACTIVATE)){
-		int amount = MIN(has_mana(player, COLOR_GREEN, 1), hand_count[player] + (can_sacrifice_this_as_cost(player, card) != 0));
+		int mana_available = has_mana(player, COLOR_GREEN, 1);
+		int can_sacrifice = can_sacrifice_this_as_cost(player, card);
+		int cards_available = hand_count[player] + (can_sacrifice != 0);
+		int amount = MIN(mana_available, cards_available);
 		check_abilities_power += 2 * amount;
 		check_abilities_toughness += 2 * amount;
 	}
@@ -2625,10 +2614,8 @@ Reveal a card in your hand, then put that card onto the battlefield if it has th
 
 static int remove_counters_at_eot(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
-  result = eot_trigger(player, card, event);
-  if (result == 0)
+  if (!eot_trigger(player, card, event))
   {
     return 0;
   }

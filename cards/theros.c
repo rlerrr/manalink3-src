@@ -748,11 +748,13 @@ static int gift_of_immortality_legacy(int player, int card, event_t event)
   if (eot_trigger(player, card, event))
   {
     card_instance_t *instance = get_card_instance(player, card);
-    int owner = instance->targets[1].player;
-    int iid = instance->targets[1].card;
     if (in_play(instance->targets[2].player, instance->targets[2].card))
+    {
+      int owner = instance->targets[1].player;
+      int iid = instance->targets[1].card;
       seek_grave_for_id_to_reanimate(instance->targets[2].player, instance->targets[2].card, owner,
                                      cards_data[iid].id, REANIMATE_ATTACH_AS_AURA);
+    }
     kill_card(player, card, KILL_EXILE);
   }
 
@@ -1218,6 +1220,7 @@ int card_aqueous_form(int player, int card, event_t event)
 
 	card_instance_t* instance = get_card_instance(player, card);
 	if (instance->damage_target_player >= 0){
+		instance = get_card_instance(player, card);
 		store_attackers(player, card, event, 0, instance->damage_target_player, instance->damage_target_card, NULL);
 		dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
 		if (event == EVENT_DAT_ABILITY){
@@ -1573,7 +1576,7 @@ int card_sea_gods_revenge(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_OPTIONAL_TARGET, &td, "TARGET_CREATURE", 3, NULL);
 }
 
-int sealock_monster_legacy(int player, int card, event_t event)
+static int sealock_monster_legacy(int player, int card, event_t event)
 {
   card_instance_t *instance = get_card_instance(player, card);
   int p = instance->damage_target_player;
@@ -3900,15 +3903,20 @@ int card_sylvan_caryatid(int player, int card, event_t event){
 static int time_to_feed_legacy(int player, int card, event_t event)
 {
 
-  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->damage_target_player >= 0)
   {
-    card_instance_t *instance = get_card_instance(player, card);
-    int p = instance->damage_target_player;
-    int c = instance->damage_target_card;
-    if (p > -1 && affect_me(p, c) && !check_for_death_trigger_removal(p, c) && is_this_dying(p, c))
+    instance = get_card_instance(player, card);
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
     {
-      instance->damage_target_player = instance->damage_target_card = -1;
-      instance->targets[11].player = 66;
+      int c = instance->damage_target_card;
+      int p = instance->damage_target_player;
+      if (affect_me(p, c) && !check_for_death_trigger_removal(p, c) && is_this_dying(p, c))
+      {
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
+        instance->targets[11].player = 66;
+      }
     }
   }
 
@@ -4155,8 +4163,9 @@ int card_ashiok_nightmare_weaver(int player, int card, event_t event)
 					else
 					  {
 						instance->targets[0].player = -1;
-						instance->targets[0].card = *loc;
-						int iid = *loc & ~0x80000000;
+						int exiled_card = *loc;
+						instance->targets[0].card = exiled_card;
+						int iid = exiled_card & ~0x80000000;
 						add_counters_as_cost(player, card, COUNTER_LOYALTY, -get_cmc_by_id(cards_data[iid].id));
 					  }
 					break;
@@ -4983,23 +4992,20 @@ int card_tymaret_the_murder_king(int player, int card, event_t event){
 
 int card_underworld_cerberus(int player, int card, event_t event)
 {
-  int first_player_or_second_count;
-  int first_count_or_second_player;
   int num_returned[2];
   test_definition_t test;
   minblockers_3(player, card, event);
-  if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) == 0)
-  {
+  if (!this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY))
     return 0;
-  }
+
   exile_from_owners_graveyard(player, card);
-  new_default_test_definition(&test, 2, "");
-  first_player_or_second_count = current_turn;
-  first_count_or_second_player = from_grave_to_hand_multiple(current_turn, &test);
-  num_returned[first_player_or_second_count] = first_count_or_second_player;
-  first_count_or_second_player = 1 - current_turn;
-  first_player_or_second_count = from_grave_to_hand_multiple(first_count_or_second_player, &test);
-  num_returned[first_count_or_second_player] = first_player_or_second_count;
+  new_default_test_definition(&test, TYPE_CREATURE, "");
+  int first_player = current_turn;
+  int returned = from_grave_to_hand_multiple(first_player, &test);
+  num_returned[first_player] = returned;
+  int second_player = 1 - current_turn;
+  returned = from_grave_to_hand_multiple(second_player, &test);
+  num_returned[second_player] = returned;
   ai_modifier = ai_modifier + (num_returned[1] - num_returned[0]) * 8;
   return 0;
 }
@@ -5532,7 +5538,7 @@ static int generic_hydra_head(int player, int card, event_t event)
   card_instance_t *instance = get_card_instance(player, card);
   if (instance->kill_code > 0 && instance->kill_code > KILL_SACRIFICE)
   {
-    instance->kill_code = KILL_DESTROY;
+    instance->kill_code = KILL_BURY;
   }
   leaves_play(player, card, event, 0, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
@@ -6172,7 +6178,7 @@ int new_creature_with_targeted_bestow(int player, int card, event_t event, targe
   }
   else
     apply_attachment = event - EVENT_POWER < 3;
-  if (!apply_attachment && trigger_condition != 0xd4)
+  if (!apply_attachment && trigger_condition != TRIGGER_LEAVE_PLAY)
   {
     return 0;
   }

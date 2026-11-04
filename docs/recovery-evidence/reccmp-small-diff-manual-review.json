@@ -1,0 +1,1195 @@
+{
+  "format": 1,
+  "status": "Eighteen small-difference candidates manually reviewed; no game source edits indicated.",
+  "discovery_report": ".recovery/reccmp/current-refresh-c675.json",
+  "discovery_report_sha256": "a41c30e89c183520edc7611675339c04dbc9297c01501bc5036bd5540cf167f7",
+  "inputs": {
+    "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+    "C:\\dev\\manalink3-src\\ManalinkEh.dll": "6b838e8d70759702fd0b4ebbb73a2d5efaec95ab7844caf2a215f70fd6a358dc",
+    "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "a561ec0f69999a92af5e55f6830923e22b36c5d0dfb60969fb7f512811ed765e",
+    "C:\\dev\\manalink3-src\\.recovery\\2022-Magic.exe": "0170f02b1c381a20a97ca0c12e99c8d338453ce4edbfc99148e726d565bee0de"
+  },
+  "metadata_snapshot_sha256": "c3837feb0de891bde213d162c47d99de7da4d22bdb10a2fe72a381702d72e0d7",
+  "discovery_queue_sha256": "b4b2d06b49349ce9c165d7398ce2dbe77c6bcd5aa06c612f7374fa70f7b562c0",
+  "reviewed": [
+    {
+      "name": "hissing_iguanar_effect",
+      "address": "0x2136920",
+      "source": "cards/shards_of_alara.c",
+      "source_definition_sha256": "929b5726b99c24b54201dfa59fedea56d5b25caee5c34ef68936529a460c411c",
+      "kind": "bounded_byte_counter_loop",
+      "reason": "The compared loop counters are initialized from BYTE0/BYTE1 of resolve_gfp_ability, hence 0..255, and decremented once per iteration. They are not exposed by address to callbacks. On their reachable values the native nonzero branches and rebuilt signed-positive branches select the same iterations; the other differing branch displacements follow the changed encodings. kill_code is uint8_t, so its source <= 0 condition also means == 0. No signed-negative helper return is being treated as a byte counter.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x2136b3b",
+              "jne 0x4e"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x250034b",
+              "jg 0x4e"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.995049504950495,
+      "native_range": {
+        "address": "0x2136920",
+        "size": 827,
+        "sha256": "bf5eed493e0803015d26ae387926e12c188f53436b8a62c57cfb13e7281b75a7"
+      },
+      "rebuilt_range": {
+        "name": "hissing_iguanar_effect",
+        "address": "0x2500130",
+        "size": 832,
+        "sha256": "774bc224d7472168f1d6938a4ef1d616289df62e99274f561f157ad0faaa7bca",
+        "symbols": [
+          "_hissing_iguanar_effect"
+        ],
+        "disassembly": ".recovery/reccmp/hissing_iguanar_effect-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/hissing_iguanar_effect-native-c654.asm",
+          "sha256": "c035d241591e67a9da9c07fa22a3370d63f63cdf3064f503da7dacaf070e8944"
+        },
+        {
+          "path": ".recovery/reccmp/hissing_iguanar_effect-rebuilt-c676.asm",
+          "sha256": "b6da40b2a66cae861fa6ca8f87d773a6280d4558da7e193e9bfc54270541fea1"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "card_hissing_iguanar",
+      "address": "0x213ea90",
+      "source": "cards/shards_of_alara.c",
+      "source_definition_sha256": "0676ccd426fc1786de4a2b62d38a0310908c6612e948c039691dc9de2bb0b244",
+      "kind": "bounded_byte_counter_loop",
+      "reason": "The compared loop counters are initialized from BYTE0/BYTE1 of resolve_gfp_ability, hence 0..255, and decremented once per iteration. They are not exposed by address to callbacks. On their reachable values the native nonzero branches and rebuilt signed-positive branches select the same iterations; the other differing branch displacements follow the changed encodings. kill_code is uint8_t, so its source <= 0 condition also means == 0. No signed-negative helper return is being treated as a byte counter.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x213ebf9",
+              "jne 0x51"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2508239",
+              "jg 0x51"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9931506849315068,
+      "native_range": {
+        "address": "0x213ea90",
+        "size": 590,
+        "sha256": "beff506eefb2d25eed5c26be876bdd2aae99604c67affcf464c69d41b2d1528c"
+      },
+      "rebuilt_range": {
+        "name": "card_hissing_iguanar",
+        "address": "0x25080d0",
+        "size": 592,
+        "sha256": "39f5eb95080ce85c72fb469097d8d4e06ff340c708fb22244500e2ce9461028f",
+        "symbols": [
+          "_card_hissing_iguanar"
+        ],
+        "disassembly": ".recovery/reccmp/card_hissing_iguanar-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/card_hissing_iguanar-native-c654.asm",
+          "sha256": "3135609da41a6b256e89cdcd678f89aaea5147fb4cef5e5b0f5905d214529988"
+        },
+        {
+          "path": ".recovery/reccmp/card_hissing_iguanar-rebuilt-c676.asm",
+          "sha256": "a5f074a480f907e663a9417e5da421f91f7aa4d078be1f1848380d3b0e9539e5"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "magnetic_mine_effect",
+      "address": "0x232af80",
+      "source": "cards/mirrodin_besieged.c",
+      "source_definition_sha256": "5d90e70cafd52b1903ce3a2967aaa42ffe4b9c092113c13e1840580406f56554",
+      "kind": "bounded_byte_counter_loop",
+      "reason": "The compared loop counters are initialized from BYTE0/BYTE1 of resolve_gfp_ability, hence 0..255, and decremented once per iteration. They are not exposed by address to callbacks. On their reachable values the native nonzero branches and rebuilt signed-positive branches select the same iterations; the other differing branch displacements follow the changed encodings. kill_code is uint8_t, so its source <= 0 condition also means == 0. No signed-negative helper return is being treated as a byte counter.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x232b18a",
+              "je 0x2f"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x237ce6a",
+              "jle 0x2f"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x232b1c7",
+              "je 0x25"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x237cea7",
+              "jle 0x25"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9899497487437185,
+      "native_range": {
+        "address": "0x232af80",
+        "size": 826,
+        "sha256": "b6a830e12b3072edbcdef318ce2a4de7762547334dd3f46e5871fd04d7971f2d"
+      },
+      "rebuilt_range": {
+        "name": "magnetic_mine_effect",
+        "address": "0x237cc60",
+        "size": 832,
+        "sha256": "a4f680caed5e71e86d9cc971b90b624770f2399b037fb3c3c876bd6501b739b9",
+        "symbols": [
+          "_magnetic_mine_effect"
+        ],
+        "disassembly": ".recovery/reccmp/magnetic_mine_effect-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/magnetic_mine_effect-native-c654.asm",
+          "sha256": "c462a58e53679ae5e919ba15155ab5cf78a28c5f880138c2e409d97f65c07c33"
+        },
+        {
+          "path": ".recovery/reccmp/magnetic_mine_effect-rebuilt-c676.asm",
+          "sha256": "e74deb2fc678f0be2d04dcb1485ff28052258a1cef703be3f4ebffa9607c2834"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "card_magnetic_mine",
+      "address": "0x2331440",
+      "source": "cards/mirrodin_besieged.c",
+      "source_definition_sha256": "7c1196d583fe48c62799d22b9ffe82ee8ce7ef121206039f367988e30f0a19c9",
+      "kind": "bounded_byte_counter_loop",
+      "reason": "The compared loop counters are initialized from BYTE0/BYTE1 of resolve_gfp_ability, hence 0..255, and decremented once per iteration. They are not exposed by address to callbacks. On their reachable values the native nonzero branches and rebuilt signed-positive branches select the same iterations; the other differing branch displacements follow the changed encodings. kill_code is uint8_t, so its source <= 0 condition also means == 0. No signed-negative helper return is being treated as a byte counter.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x2331598",
+              "je 0x31"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23831c8",
+              "jle 0x31"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x23315d7",
+              "je -0x121"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2383207",
+              "jle -0x121"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9867549668874173,
+      "native_range": {
+        "address": "0x2331440",
+        "size": 575,
+        "sha256": "8282b84e59d01ee204f268a86165e3e389d622fff509f760b940b8a497f50938"
+      },
+      "rebuilt_range": {
+        "name": "card_magnetic_mine",
+        "address": "0x2383070",
+        "size": 576,
+        "sha256": "367116095f3040b0be6be8c3a4061fd2f1a0813580a83f20798c3491889491a7",
+        "symbols": [
+          "_card_magnetic_mine"
+        ],
+        "disassembly": ".recovery/reccmp/card_magnetic_mine-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/card_magnetic_mine-native-c654.asm",
+          "sha256": "3b993a54fe3dcccbb48df476eb3ba0b676a4aeeec6fbe8681652d585712fd398"
+        },
+        {
+          "path": ".recovery/reccmp/card_magnetic_mine-rebuilt-c676.asm",
+          "sha256": "62c8c0114caa51cb4380f50cb5fea2fc144458dd654eb91120235c1478e402da"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "midnight_entourage_effect",
+      "address": "0x20ba9d0",
+      "source": "cards/aether_revolt.c",
+      "source_definition_sha256": "dcf539de32672391bc41b67ae5cddf52a95faccc95e370ffc55b0c0ff0f766fb",
+      "kind": "bounded_byte_counter_loop",
+      "reason": "The life-loss count is the low byte of resolve_gfp_ability, retained in a local across draw_cards, then decremented to zero. Native jle and rebuilt je at loop entry agree on this 0..255 domain. Reversed affect_me comparisons are equality comparisons to the same affected globals; no callback intervenes in these comparison prefixes.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x20baaf8",
+              "cmp esi, dword ptr [<OFFSET2>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2013ea8",
+              "cmp dword ptr [<OFFSET2>], esi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x20babf9",
+              "jle 0x1d"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2013fa9",
+              "je 0x1d"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x20bac38",
+              "cmp ebx, dword ptr [<OFFSET3>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2013fe8",
+              "cmp dword ptr [<OFFSET3>], ebx"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9849246231155779,
+      "native_range": {
+        "address": "0x20ba9d0",
+        "size": 861,
+        "sha256": "eb4e789460113d567b6d49b770da6ad41141c878f163d6e36fe343706620f4ca"
+      },
+      "rebuilt_range": {
+        "name": "midnight_entourage_effect",
+        "address": "0x2013d80",
+        "size": 864,
+        "sha256": "46eb239c6e41ab409978ea454ddea5b55b2524dbffbe7b253b2f3c5a16e5e0cd",
+        "symbols": [
+          "_midnight_entourage_effect"
+        ],
+        "disassembly": ".recovery/reccmp/midnight_entourage_effect-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/midnight_entourage_effect-native-c654.asm",
+          "sha256": "c0a67934cee5d2bf6af38132367e28628f9d7ffc1f3ffd31437e04a8fd2c2754"
+        },
+        {
+          "path": ".recovery/reccmp/midnight_entourage_effect-rebuilt-c676.asm",
+          "sha256": "7cb0e534e8d99b989676b0e2179926a349f3b45a7b5e192b9f3df86a8d23783a"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "can_activate_basic_equipment",
+      "address": "0x26edf70",
+      "source": "functions/equipments.c",
+      "source_definition_sha256": "50668729fa52d0066532d3bf8e1690c17665015b7dcde495fbf8ace08bc722d7",
+      "kind": "shift_followed_by_byte_mask",
+      "reason": "Native SAR 16 and rebuilt SHR 16 both immediately feed AND 0xff before the colored-cost array write. For every 32-bit equip_cost, the final bits 16..23 agree; neither path consumes the shifted sign-fill bits or intervening flags.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x26edfb5",
+              "sar eax, 0x10"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x267ef15",
+              "shr eax, 0x10"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9878048780487805,
+      "native_range": {
+        "address": "0x26edf70",
+        "size": 274,
+        "sha256": "5b6d489fe3d188b7e02f611219c1895318c0886d78435e7f15295bb805d870b1"
+      },
+      "rebuilt_range": {
+        "name": "can_activate_basic_equipment",
+        "address": "0x267eed0",
+        "size": 288,
+        "sha256": "c4c97edd61d5fa3408e38c01cbd0aebc612161cc3926a78c44921c6b94773541",
+        "symbols": [
+          "_can_activate_basic_equipment"
+        ],
+        "disassembly": ".recovery/reccmp/can_activate_basic_equipment-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/can_activate_basic_equipment-native-c654.asm",
+          "sha256": "f0e3d02c47d2edff2dd0d51931ddb1c613419c6e28c3805adf913d3219b6d7f6"
+        },
+        {
+          "path": ".recovery/reccmp/can_activate_basic_equipment-rebuilt-c676.asm",
+          "sha256": "fba2c8b3c6b1fd2383664e7c9af2ec7feabf66c5bcdeb8311696e0691f7123ad"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "new_card_from_list",
+      "address": "0x268ecf0",
+      "source": "functions/functions.c",
+      "source_definition_sha256": "3bb35bf7a4e5a17c6bfb712f766b5641f1d594c5690c62e5997d898949c0bb6e",
+      "kind": "mask_followed_by_forced_bit",
+      "reason": "The native (types & 0xffffffbf) | 2 and rebuilt (types & 0xffffffbd) | 2 produce the same 32-bit value. The only differing AND bit is immediately forced by OR 2 on both paths; flags are overwritten by that OR before the common tail.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x268ed76",
+              "and edx, 0xffffffbf"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x268fe86",
+              "and edx, 0xffffffbd"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9841269841269841,
+      "native_range": {
+        "address": "0x268ecf0",
+        "size": 194,
+        "sha256": "3b2cc1fc9aa4c346f1976680b2bb924b99809452dbc91157ed92c96356286a0e"
+      },
+      "rebuilt_range": {
+        "name": "new_card_from_list",
+        "address": "0x268fe00",
+        "size": 208,
+        "sha256": "1ac2ad6eaf42fe9fe2d63f2dbbe743f5fe199c183bf336441e6dc3535ae97809",
+        "symbols": [
+          "_new_card_from_list"
+        ],
+        "disassembly": ".recovery/reccmp/new_card_from_list-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/new_card_from_list-native-c654.asm",
+          "sha256": "484dd9034a9b25636fbb608e9b35ab98ac90dddff4838f5cb6c792fb8eb9329e"
+        },
+        {
+          "path": ".recovery/reccmp/new_card_from_list-rebuilt-c676.asm",
+          "sha256": "7fa8355a9c2061db56d489b7b816234683f83d95e4e0e47c1480290c96311ab0"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "test_has_border_val",
+      "address": "0x2302910",
+      "source": "cards/unglued_unhinged.c",
+      "source_definition_sha256": "1b6bd52930da695b8907ae3179cd0a1d6da960929c5c1715fe3768eb873913a7",
+      "kind": "symmetric_equality",
+      "reason": "CMP reverses the same 32-bit operands, followed by SETE and zero extension. Equality is symmetric, and the ordering flags from CMP have no other consumer in the function.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x230292f",
+              "cmp dword ptr [ebp + 0xc], eax"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25aadff",
+              "cmp eax, dword ptr [ebp + 0xc]"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9333333333333333,
+      "native_range": {
+        "address": "0x2302910",
+        "size": 44,
+        "sha256": "25781a74870c7b5f99b84072b8226d1cf1b00000f688e8dd25aba3469bf19532"
+      },
+      "rebuilt_range": {
+        "name": "test_has_border_val",
+        "address": "0x25aade0",
+        "size": 48,
+        "sha256": "04c1389840d7d9daaa8ef812defa112a2e9d68111c6f52fe8075177217a7d918",
+        "symbols": [
+          "_test_has_border_val"
+        ],
+        "disassembly": ".recovery/reccmp/test_has_border_val-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/test_has_border_val-native-c654.asm",
+          "sha256": "574666fe723270f3bd07354d30262cecdfe81202ebc777407a16e3e515847265"
+        },
+        {
+          "path": ".recovery/reccmp/test_has_border_val-rebuilt-c676.asm",
+          "sha256": "31344902b91c7e76f68ffa130ee3bcdf445fd16fb4a7d09743ab465c4832a5b8"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "test_has_watermark_val",
+      "address": "0x25c4af0",
+      "source": "cards/unstable.c",
+      "source_definition_sha256": "807a4925ea7caff191f154a7b8046f2f08e815a56c9232c3a9924b200a0b8b40",
+      "kind": "symmetric_equality",
+      "reason": "CMP reverses the same 32-bit operands, followed by SETE and zero extension. Equality is symmetric, and the ordering flags from CMP have no other consumer in the function.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x25c4afb",
+              "cmp dword ptr [ebp + 0xc], eax"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x25c42ab",
+              "cmp eax, dword ptr [ebp + 0xc]"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.8888888888888888,
+      "native_range": {
+        "address": "0x25c4af0",
+        "size": 24,
+        "sha256": "f130d5f22c14336992a8e31cb7b58e1ad4eb46e400de862ad8bf9583d35009fe"
+      },
+      "rebuilt_range": {
+        "name": "test_has_watermark_val",
+        "address": "0x25c42a0",
+        "size": 32,
+        "sha256": "3a3167a1c52cc884a81fcff66e946a1b5a789622111ce2900ab65681b63eb90d",
+        "symbols": [
+          "_test_has_watermark_val"
+        ],
+        "disassembly": ".recovery/reccmp/test_has_watermark_val-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/test_has_watermark_val-native-c654.asm",
+          "sha256": "5f3a9e9fcd1c62bd60e795f56ce81ef4bf40dc1113e1ef579f0801dc2fa090c3"
+        },
+        {
+          "path": ".recovery/reccmp/test_has_watermark_val-rebuilt-c676.asm",
+          "sha256": "e70f99fd0494dcc00ee7cb0c971be40ca0348e1515d05611f3c0648bdb3cd8de"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "renowned_weaponsmith_tutor",
+      "address": "0x2621c50",
+      "source": "cards/fate_reforged.c",
+      "source_definition_sha256": "786fd2aaebba10cdfe325773dd60519bba6c1ddc66791b621797bf06e670dd1a",
+      "kind": "wider_load_with_low_word_consumers",
+      "reason": "Native loads a dword from cards_data[iid].id while rebuilt loads its word. Both compare DX against the same two card ids, then SETE into AL/DL, OR the values and AND 0xff. No high loaded bit reaches the return value. The native wider access is valid inside the card_data record; this review concerns the resulting predicate, not memory-access-width identity.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x2621c5a",
+              "mov edx, dword ptr [eax*8 + 0x7e7034]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21b5fda",
+              "mov dx, word ptr [eax*8 + 0x7e7034]"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9230769230769231,
+      "native_range": {
+        "address": "0x2621c50",
+        "size": 41,
+        "sha256": "bb64dd889606648694ffa960c1c8dc49eae8fcd7a53cef4cf7a697b7e83fa3dc"
+      },
+      "rebuilt_range": {
+        "name": "renowned_weaponsmith_tutor",
+        "address": "0x21b5fd0",
+        "size": 48,
+        "sha256": "202e1c6607ee694d7e68a01a48de8fccec363bc31ce399461a16b00c970f0ecb",
+        "symbols": [
+          "_renowned_weaponsmith_tutor"
+        ],
+        "disassembly": ".recovery/reccmp/renowned_weaponsmith_tutor-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/renowned_weaponsmith_tutor-native-c654.asm",
+          "sha256": "18418fa6fe64af26e01578b2debc630d70bcc90d79ec5156690382e96af86342"
+        },
+        {
+          "path": ".recovery/reccmp/renowned_weaponsmith_tutor-rebuilt-c676.asm",
+          "sha256": "07303d86626068662efaed24e57789275b1a16dd47fe8c49f0b37caa0dc7a790"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "make_one_fractal",
+      "address": "0x23c8b60",
+      "source": "cards/strixhaven.c",
+      "source_definition_sha256": "bc26598803883942cab2368d7f99bc52d0c03b2024f1931608bba2a4a4a618f8",
+      "kind": "equivalent_packed_argument_construction",
+      "reason": "The native compiler-specialized helper stores the full input count into token.action_argument then clears its high word. The rebuilt specialization masks that input to 0xffff before the dword store. Both pass the same final token record to generate_token, including zero high counter-type bits. Intermediate writes to the local token are not observed by a callback. The reviewed range is the mapped specialized worker, not an assumed public four-argument ABI.",
+      "changes": [
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x2512b5d",
+              "and ebx, 0xffff"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x23c8b9a",
+              "mov word ptr [ebp - 0x1e], 0"
+            ]
+          ],
+          "rebuilt": []
+        }
+      ],
+      "matching": 0.9583333333333334,
+      "native_range": {
+        "address": "0x23c8b60",
+        "size": 76,
+        "sha256": "a5c7b3c35899ab2645dce22a12da8bd011d0153f41008681f50667c01ff3f846"
+      },
+      "rebuilt_range": {
+        "name": "make_one_fractal",
+        "address": "0x2512b50",
+        "size": 80,
+        "sha256": "1f2174764352d04090b2862fd4bbd79ee7817f8c10fa01decc15022ee435c0b3",
+        "symbols": [
+          "_make_one_fractal.constprop.0"
+        ],
+        "disassembly": ".recovery/reccmp/make_one_fractal-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/make_one_fractal-native-c654.asm",
+          "sha256": "af48b3b59d120963b02ee4e0b1480baf8e47c69321f6c072ffaa474ae8698e97"
+        },
+        {
+          "path": ".recovery/reccmp/make_one_fractal-rebuilt-c676.asm",
+          "sha256": "f843446bac357374135ddb81fd82716d187c8ed5e9a2485a04b54e95431597b8"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "card_dire_fleet_daredevil",
+      "address": "0x2191bf0",
+      "source": "cards/rivals_of_ixalan.c",
+      "source_definition_sha256": "a95701d66d066f4545aa059d76d0c32697542ba1484ad9021b1fdc26fe73dcf9",
+      "kind": "zero_extension_moved_across_call",
+      "reason": "Native clears EDI before loading the saved card id into DI; rebuilt loads DI first and ANDs EDI with 0xffff after rfg_card_from_grave. Both preserve the saved id across that call in the callee-saved register, and pass the identical unsigned 16-bit id to create_may_play_card_from_exile_effect. No earlier use observes the high bits.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x2191cbe",
+              "xor edi, edi"
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x24aa748",
+              "and edi, 0xffff"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2191cf9",
+              "jmp -0xd9"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x24aa76d",
+              "jmp -0xdd"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9701492537313433,
+      "native_range": {
+        "address": "0x2191bf0",
+        "size": 270,
+        "sha256": "1f961e3a50f7294ba1e88ca8fbbf0ea5333b206f0dc82d79702e408348059028"
+      },
+      "rebuilt_range": {
+        "name": "card_dire_fleet_daredevil",
+        "address": "0x24aa660",
+        "size": 288,
+        "sha256": "3e29769cea8aa481c72379a6750a185106c34c71d2cb5bab2bcc05391146a4e5",
+        "symbols": [
+          "_card_dire_fleet_daredevil"
+        ],
+        "disassembly": ".recovery/reccmp/card_dire_fleet_daredevil-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/card_dire_fleet_daredevil-native-c654.asm",
+          "sha256": "32e1cb4aea4181bfa4f4d630b9ac03533892c6f86495d8f913a4de1e4bc2485c"
+        },
+        {
+          "path": ".recovery/reccmp/card_dire_fleet_daredevil-rebuilt-c676.asm",
+          "sha256": "44f4f2ee9d3614c93f2589ad01f24775164b99acfa8a723f6649fafbbb9e07c2"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "teysa_orzhov_scion_effect",
+      "address": "0x252b3c0",
+      "source": "cards/guildpact.c",
+      "source_definition_sha256": "68a2e89f0207cb2ab9c35e201e34834c2a11182f9ea078cbc2d449ec7dda5f5c",
+      "kind": "sign_extended_byte_sign_test",
+      "reason": "Immediately after MOVSX EAX, byte [instance+0x50], native TEST EAX,EAX and rebuilt TEST AL,AL feed JS. The sign of the sign-extended value is exactly the sign of its source byte. No other flags from these TEST instructions are consumed.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x252b44b",
+              "test eax, eax"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x21f3b9b",
+              "test al, al"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9948186528497409,
+      "native_range": {
+        "address": "0x252b3c0",
+        "size": 851,
+        "sha256": "90550c2b35af860fd17d7046b14dd700c842bfb40059084a7772d43bb7c90c82"
+      },
+      "rebuilt_range": {
+        "name": "teysa_orzhov_scion_effect",
+        "address": "0x21f3b10",
+        "size": 864,
+        "sha256": "83fb5261b8e7e8d0ef7fb16a9c3090b9b564899857641421e2a30b48f0318935",
+        "symbols": [
+          "_teysa_orzhov_scion_effect"
+        ],
+        "disassembly": ".recovery/reccmp/teysa_orzhov_scion_effect-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/teysa_orzhov_scion_effect-native-c654.asm",
+          "sha256": "f60ab21dae343dc1122349112650782e72c9d5250ac3da75fbad8aebf9f3cf53"
+        },
+        {
+          "path": ".recovery/reccmp/teysa_orzhov_scion_effect-rebuilt-c676.asm",
+          "sha256": "c19ace570b4a2d1f3ef6bc97b124b8e21298b6f9af25e99da42ce475b80dfabd"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "card_ayula_queen_among_bears",
+      "address": "0x2336980",
+      "source": "cards/modern_horizons.c",
+      "source_definition_sha256": "fa054a05dee8f9d15c63101a32175b8989bf72f56ee0c8a9ab5b14247e8a0304",
+      "kind": "redundant_zero_initialization",
+      "reason": "When the first can_target result is zero, native copies that known zero from EAX into EDX while rebuilt XORs EDX. On the nonzero branch both call the second can_target and normalize its return with SETNE. Thus the same 0/1 Fight availability reaches dialog_impl, including for negative or noncanonical nonzero returns. The two other deltas reverse equality CMP operands only.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x23369c8",
+              "cmp esi, dword ptr [<OFFSET3>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x238eb78",
+              "cmp dword ptr [<OFFSET3>], esi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x23369d0",
+              "cmp ebx, dword ptr [<OFFSET4>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x238eb80",
+              "cmp dword ptr [<OFFSET4>], ebx"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2336af1",
+              "mov edx, eax"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x238eca1",
+              "xor edx, edx"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9817073170731707,
+      "native_range": {
+        "address": "0x2336980",
+        "size": 803,
+        "sha256": "4b2af62d245cda714992d650bb4867a4b6eb2366ce52b79497af3a44815bd7e0"
+      },
+      "rebuilt_range": {
+        "name": "card_ayula_queen_among_bears",
+        "address": "0x238eb30",
+        "size": 816,
+        "sha256": "3aa6d840cf5fb8eee4146ed2b0c0e7180c726e7a47f0ae241569c3b778797aa9",
+        "symbols": [
+          "_card_ayula_queen_among_bears"
+        ],
+        "disassembly": ".recovery/reccmp/card_ayula_queen_among_bears-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/card_ayula_queen_among_bears-native-c654.asm",
+          "sha256": "1a200e1b5b69f65a0806bdb51b95a25d76458b5938884c0d44144685438c8eec"
+        },
+        {
+          "path": ".recovery/reccmp/card_ayula_queen_among_bears-rebuilt-c676.asm",
+          "sha256": "5bc58cc0a0821ffaee88f7fc8484d196cca7c8d431c24e481612c99418c8662d"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "card_kitaki_wars_wage",
+      "address": "0x20b5790",
+      "source": "cards/saviors_of_kamigawa.c",
+      "source_definition_sha256": "5cdf378ae751390df603f78aece49351b0be0806a75daccfffce26ff0574e491",
+      "kind": "shared_dialog_and_fizzle_comparison",
+      "reason": "Native compares spell_fizzled directly with 1 after charge_mana_multi; rebuilt loads spell_fizzled and shares the existing DEC/JNE sequence used for dialog choices. Both sacrifice precisely on value 1, and continue otherwise, including negative or greater-than-one values. The query/call order, captured current_turn and inclusive descending card scan are unchanged.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x20b58c8",
+              "cmp dword ptr [<OFFSET11>], 1"
+            ],
+            [
+              "0x20b58cf",
+              "jne -0xdd"
+            ],
+            [
+              "0x20b58d5",
+              "jmp -0x63"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x24b1868",
+              "mov eax, dword ptr [<OFFSET11>]"
+            ],
+            [
+              "0x24b186d",
+              "jmp -0x5e"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9707602339181286,
+      "native_range": {
+        "address": "0x20b5790",
+        "size": 327,
+        "sha256": "763de6d60812bfeb3fec7fa263076c7bbeddb0a0e234a5e40be47e3ba08d6603"
+      },
+      "rebuilt_range": {
+        "name": "card_kitaki_wars_wage",
+        "address": "0x24b1730",
+        "size": 320,
+        "sha256": "4b18f44fddb00a9e2932b449a76e42565b5c568d0903ad88042db475957cb7bb",
+        "symbols": [
+          "_card_kitaki_wars_wage"
+        ],
+        "disassembly": ".recovery/reccmp/card_kitaki_wars_wage-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/card_kitaki_wars_wage-native-c654.asm",
+          "sha256": "38567257edc2bc3cb1eedf8a4a139e19490cf3c89d55ee749c55b3997912be81"
+        },
+        {
+          "path": ".recovery/reccmp/card_kitaki_wars_wage-rebuilt-c676.asm",
+          "sha256": "b504f10ff086ec865baa8b3fafccdfeb6f970765ae0a4ee1eca6af0c048bd8a2"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "card_stonecoil_serpent",
+      "address": "0x25d46f0",
+      "source": "cards/throne_of_eldraine.c",
+      "source_definition_sha256": "d70a5a07b2b96bec1a85b977f467b3b69ed4fbafa1061ec5a774eb390326e535",
+      "kind": "redundant_pointer_spill",
+      "reason": "The native paid-cast tail restores the previously saved instance pointer then joins the info_slot load. Rebuilt retains that pointer in EDX through the existing spill/reload sequence and loads info_slot directly at the join. Both read info_slot after set_x_for_x_spells returns, from the same original instance pointer; neither substitutes x_value or a pre-callback snapshot. The other deltas are reversed equality comparisons and padding.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x25d4750",
+              "cmp ebx, dword ptr [<OFFSET4>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x257cc10",
+              "cmp dword ptr [<OFFSET4>], ebx"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x25d4758",
+              "cmp esi, dword ptr [<OFFSET5>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x257cc18",
+              "cmp dword ptr [<OFFSET5>], esi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x25d47ad",
+              "je 0x11"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x257cc6d",
+              "je 0xe"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x25d47bd",
+              "lea esi, [esi]"
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [
+            [
+              "0x25d47c7",
+              "mov dword ptr [ebp - 0x10], edx"
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [
+            [
+              "0x25d47d4",
+              "jne -0x27"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x257cc8e",
+              "jne -0x21"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x25d480e",
+              "jmp -0xee"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x257ccc8",
+              "mov eax, dword ptr [edx + 0x38]"
+            ],
+            [
+              "0x257cccb",
+              "jmp -0xe8"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9192546583850931,
+      "native_range": {
+        "address": "0x25d46f0",
+        "size": 291,
+        "sha256": "8f72e79f1f7dd0f78962bd16edb3d33df73d86f2a2cf86e57ccec6dbdd51fc55"
+      },
+      "rebuilt_range": {
+        "name": "card_stonecoil_serpent",
+        "address": "0x257cbb0",
+        "size": 288,
+        "sha256": "a7a5b6f2420ba1584713b91db970b822757b710dd1bed412b5386fcc7518f552",
+        "symbols": [
+          "_card_stonecoil_serpent"
+        ],
+        "disassembly": ".recovery/reccmp/card_stonecoil_serpent-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/card_stonecoil_serpent-native-c654.asm",
+          "sha256": "e4bd5cd23af5fb83dff07749a14951b376e1040106f3f7020a919f30d87a9d8b"
+        },
+        {
+          "path": ".recovery/reccmp/card_stonecoil_serpent-rebuilt-c676.asm",
+          "sha256": "0a5b5accf6cf9afa69eba4e01930dcbc0ceb641a0e5f29282492471b0d1088a2"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "card_deepwood_legate",
+      "address": "0x217ee30",
+      "source": "cards/mercadian_masques.c",
+      "source_definition_sha256": "700e192c318336aeb37088ea01aa3c8581293ed23d5ced78fe0fe37aba65257d",
+      "kind": "tail_argument_slot_materialization",
+      "reason": "The extra rebuilt writes materialize known EVENT_MODIFY_COST (Deepwood Legate) or EVENT_ETB/EVENT_SHOULD_AI_PLAY (Illusions) into the outgoing event parameter slot before a shared tail call. Native retains the same event in a register and writes that slot in the common tail. Both pass the original event and the same player/card to the same helper. The call order and event-specific side effects agree; other changed CMPs are equality operand reversals. This is source/tail-call review, not stack-byte identity or proof about arbitrary callees inspecting caller stack storage.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x217ee68",
+              "cmp edi, dword ptr [<OFFSET1>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2344708",
+              "cmp dword ptr [<OFFSET1>], edi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x217ee70",
+              "cmp esi, dword ptr [<OFFSET2>]"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2344710",
+              "cmp dword ptr [<OFFSET2>], esi"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x217ef37",
+              "jmp -0xed"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23447d7",
+              "mov dword ptr [ebp + 0x10], 0xa4"
+            ],
+            [
+              "0x23447de",
+              "jmp -0xf1"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9517241379310345,
+      "native_range": {
+        "address": "0x217ee30",
+        "size": 268,
+        "sha256": "7bbb59b841c1246bb6f6f425e2fed737e0f846fc130a8a1bd72706bf3b68e04f"
+      },
+      "rebuilt_range": {
+        "name": "card_deepwood_legate",
+        "address": "0x23446d0",
+        "size": 288,
+        "sha256": "09980aace541f48b08970d6e514387202a76e90db573633e4d31fa45e7800853",
+        "symbols": [
+          "_card_deepwood_legate"
+        ],
+        "disassembly": ".recovery/reccmp/card_deepwood_legate-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/card_deepwood_legate-native-c654.asm",
+          "sha256": "220730e7f0b8a194cf190adc3e21aeb79eff0df28e9739e10e374908754637c4"
+        },
+        {
+          "path": ".recovery/reccmp/card_deepwood_legate-rebuilt-c676.asm",
+          "sha256": "1b1ef578682be97cb7dfb83f0c3e59b48769c19a2806c232ed1e4f2f24bdbbf6"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    },
+    {
+      "name": "card_illusions_of_grandeur",
+      "address": "0x23fcd90",
+      "source": "cards/ice_age.c",
+      "source_definition_sha256": "a40c3bfea5cdf10c70f319f1bc7905794ed132916f66e43fc58496c70d385151",
+      "kind": "tail_argument_slot_materialization",
+      "reason": "The extra rebuilt writes materialize known EVENT_MODIFY_COST (Deepwood Legate) or EVENT_ETB/EVENT_SHOULD_AI_PLAY (Illusions) into the outgoing event parameter slot before a shared tail call. Native retains the same event in a register and writes that slot in the common tail. Both pass the original event and the same player/card to the same helper. The call order and event-specific side effects agree; other changed CMPs are equality operand reversals. This is source/tail-call review, not stack-byte identity or proof about arbitrary callees inspecting caller stack storage.",
+      "changes": [
+        {
+          "original": [
+            [
+              "0x23fce7e",
+              "je -0x28"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x222c49e",
+              "je 0x58"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x23fcecc",
+              "jmp -0x76"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x222c4ec",
+              "mov dword ptr [ebp + 0x10], 0x5100"
+            ],
+            [
+              "0x222c4f3",
+              "jmp -0x7a"
+            ],
+            [
+              "0x222c4f5",
+              "lea esi, [esi]"
+            ],
+            [
+              "0x222c4f8",
+              "mov dword ptr [ebp + 0x10], 0xc7"
+            ],
+            [
+              "0x222c4ff",
+              "jmp -0x89"
+            ]
+          ]
+        }
+      ],
+      "matching": 0.9512195121951219,
+      "native_range": {
+        "address": "0x23fcd90",
+        "size": 318,
+        "sha256": "b89366f3d5ae46ba9e548b9c579d607a04ea6e767cf692defb089f17913f999d"
+      },
+      "rebuilt_range": {
+        "name": "card_illusions_of_grandeur",
+        "address": "0x222c3b0",
+        "size": 352,
+        "sha256": "08cfa1a426bb30347034d7c9a4987e0c6589f5c27bb09f42389dbc16d859cdd9",
+        "symbols": [
+          "_card_illusions_of_grandeur"
+        ],
+        "disassembly": ".recovery/reccmp/card_illusions_of_grandeur-rebuilt-c676.asm"
+      },
+      "disassemblies": [
+        {
+          "path": ".recovery/reccmp/card_illusions_of_grandeur-native-c654.asm",
+          "sha256": "ae0638e6be1a06b11bfd838cec6ce10083cc3347d042649317ff140ed198d74a"
+        },
+        {
+          "path": ".recovery/reccmp/card_illusions_of_grandeur-rebuilt-c676.asm",
+          "sha256": "ed1f43e4613167f51814d715173d408a39866c076730e5b239d854bb504a5b2a"
+        }
+      ],
+      "verdict": "No source correction indicated by these reviewed difference sites."
+    }
+  ],
+  "scope": "Manual source and native/rebuilt assembly review of the listed C675 difference sites. Explanations use stated operand domains, ordinary C local storage, nonvolatile engine records and normal ABI preservation. These are not automated full-CFG, gameplay, arbitrary-alias or callee-equivalence proofs. No comparator score is changed, no candidate is deleted, and no game source/build is changed. The original C675 automated-review counts remain historical; the new C676 scratch queues add explicitly labeled manual reviews.",
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d"
+}

@@ -1,0 +1,467 @@
+{
+  "format": 1,
+  "status": "Six source restorations and 34 scoped reviews; build and 15,169 fixed slots pass. Seal Away gains strict full native CFG correspondence.",
+  "files": [
+    {
+      "source": "cards/battlebond.c",
+      "before_bytes_sha256": "23d645c635b9bc85d85f19984af1288fd5e4fb795baafc75ccb34a7016b14071",
+      "after_bytes_sha256": "5f89c9553b3c9453046b8389620cc65c6c0c456503b3ebfe0923b9a0cd485d08",
+      "before_sha256": "a253c63a29a9fa8319eaeea562cf0504040c866d99f0a4d88513fc5e4a036464",
+      "after_sha256": "530fad67fc5e78401db239be90859e43d0ef99dea72102d82e7334c53d2fca11"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "before_bytes_sha256": "d5fe8f30f61367a1a58e1dbe901cd11f455f8b55f0e53b4e03ac9d6389094721",
+      "after_bytes_sha256": "1c796389c49b335abf74fac77fdea6dd578fc03307e9e5cb09f61158bbd58c4d",
+      "before_sha256": "47eeacf0be366103e984ffc061dbe2f8a7b8b811ca3b49f5200dc5c90d38d2c9",
+      "after_sha256": "4a3ae3124e530c57af786ebaa0badd095bb20b9ab17b16e0be4322829f2ed6fc"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "before_bytes_sha256": "e4835c0d401accc4a00a4d297e3ab72f42bb592502866b918ec98d999147d486",
+      "after_bytes_sha256": "8ddbdadb4c68bc93dfc8cf936fad69560440e950b35e2497463d6c2539bedcaa",
+      "before_sha256": "992d4fdaeda9f55646426d6f27582ba9d76479c6028cf76cc046d88da5ab3255",
+      "after_sha256": "f3295c75445b3217a93ac5c7806c009cb14933ba94ed33bf84fe442a9bcf5d2a"
+    },
+    {
+      "source": "cards/dominaria.c",
+      "before_bytes_sha256": "4e3e5c19ecdb0716613f2df4bd23e876f02401169d1dd3068731aba5b4b6b26f",
+      "after_bytes_sha256": "c0e800e5e734d3acf21d6e0bd8afccc2bd45122a863614d8ebba88ae25919340",
+      "before_sha256": "d07da32192865d1e84146fd1f09dbdf0820bcf345fab1f6e2c46e41017dc412a",
+      "after_sha256": "476a3b917705867ba7a1e3c2183119b248acb1c9ac71666960b77db0d04fe4d9"
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "before_bytes_sha256": "6574b804641108c458f64a4216c3c26697073f483d7ee68be581ce55493d8c36",
+      "after_bytes_sha256": "9376e69dcffa2054047dce88e985b04f341de0b6fc41f2f254c85ddbf011b8f8",
+      "before_sha256": "19cfd18533013eff889b23229f7d839c621d521bc6a0fbcd3129c4b85996a5bf",
+      "after_sha256": "63242f83e0b3b3e6576b49e7570fef929031bb332a7db088a6a255d665ae5690"
+    },
+    {
+      "source": "cards/innistrad.c",
+      "before_bytes_sha256": "60bebf9fb10fb2a2640174ffd0e02937b6eec08f233b826b1143d808899ed98b",
+      "after_bytes_sha256": "1b48ea63396656d49b2d0ee9105a5bcc91a891072f555b19d1ad7a6b492e070c",
+      "before_sha256": "65d23d71e44d294441ac957ce8905640de047ab4d2e2d948aa08fd68784aba96",
+      "after_sha256": "ef696e93bdf5f34ed822bf43f8b70ae6779e055ac90cc444d63efdc545eb4e36"
+    }
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "baseline": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "5e97c7df0cc0ead61245e2e74dd01e8f9d4c032cc8f7685f7565ae9fcdd57588",
+      "ManalinkEh.dbg": "8877294c37c8f4cce165ed19e792639a9470f95cca11585e0f34dcb660a40e9d"
+    },
+    "results": [
+      {
+        "name": "get_random_permanent",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x20277e0",
+            "size": 373,
+            "sha256": "1a14111ffa6eb60c8b792cddce719b858000fc5dedeeb9c5062385085fd269ea",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x20990d0",
+            "size": 368,
+            "sha256": "424b649dfd872db767f6d7b8a457d63d6df72c655f550a227368d4df1a123792",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_radiant_scrollwielder",
+        "matched": false,
+        "reason": "('Operation changed', 'xor', 'call')",
+        "ranges": [
+          {
+            "address": "0x23d8f80",
+            "size": 241,
+            "sha256": "7a7c5268c44c552e705d9c292039d9e5f7277d62e9aaa9903127ff201fc26d50",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2526720",
+            "size": 240,
+            "sha256": "bea8413f7c9cc893a855413effa4330e31d09b262adfab3792544ee6ba60d95f",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_elkin_bottle",
+        "matched": false,
+        "reason": "('Unbound operand', '0x30', '0x8')",
+        "ranges": [
+          {
+            "address": "0x23f59c0",
+            "size": 225,
+            "sha256": "7aaf66117c131ef15e47ed8b43b0c9eba91843371ab056937d72304e59f2e345",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x223d4b0",
+            "size": 240,
+            "sha256": "b7c0aaa3a4c22abd2135d7ae3a7fd8de86643c245acef6f000181e241aff3d4e",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_seal_away",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x22d28e0",
+            "size": 266,
+            "sha256": "592ead4e8058aded4c4a86e3a829d7f6a8cf39592a5d5d7f519b8ce8196161a4",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x214fb70",
+            "size": 288,
+            "sha256": "577250eaf50f449d8b8764b121f3108ca13947ac95a69f43ffea52bf2ad86e0d",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_simic_ascendancy",
+        "matched": false,
+        "reason": "('Unbound operand', '0x8', '0x30')",
+        "ranges": [
+          {
+            "address": "0x25c2eb0",
+            "size": 588,
+            "sha256": "d653ec39be995486123707db4ac3231ac668559ae51d0331af76c309450f7151",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x24786a0",
+            "size": 608,
+            "sha256": "45ada67ca8330fc0dae9f61b7d679f77c1c845a125ccf7745b70ac71f0e03682",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_garruk_relentless",
+        "matched": false,
+        "reason": "('Unbound operand', '0x8', '0xc')",
+        "ranges": [
+          {
+            "address": "0x2076000",
+            "size": 727,
+            "sha256": "748578a11842d88d90529a879efaa3fbe74a47510ac91865a28e190313129c63",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x224a040",
+            "size": 768,
+            "sha256": "269aef8b04188581b71bbae4a63f4b7f08a62f410a357e9f7d5e378cfdd88b53",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      }
+    ],
+    "checker_sha256": "0c59f13d0e277da623b764f01981180b1bac6c7cf5b81624385a1e03f7db345a",
+    "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+    "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+  },
+  "native_local_contracts": [
+    {
+      "source": "cards/battlebond.c",
+      "name": "get_random_permanent",
+      "die_offset": "0x1822f1",
+      "variables": [
+        {
+          "name": "prm",
+          "type": "int[151]",
+          "die_offset": "0x182342"
+        },
+        {
+          "name": "prm_count",
+          "type": "int",
+          "die_offset": "0x182353"
+        },
+        {
+          "name": "c",
+          "type": "int",
+          "die_offset": "0x18236e"
+        },
+        {
+          "name": "rnd",
+          "type": "int",
+          "die_offset": "0x182381"
+        },
+        {
+          "name": "default_test",
+          "type": "test_definition_t",
+          "die_offset": "0x18239b"
+        }
+      ]
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_radiant_scrollwielder",
+      "die_offset": "0x3949605",
+      "variables": [
+        {
+          "name": "found",
+          "type": "int[151]",
+          "die_offset": "0x3949674"
+        },
+        {
+          "name": "fc",
+          "type": "int",
+          "die_offset": "0x3949685"
+        },
+        {
+          "name": "grave",
+          "type": "int *",
+          "die_offset": "0x3949699"
+        },
+        {
+          "name": "i",
+          "type": "int",
+          "die_offset": "0x39496ae"
+        },
+        {
+          "name": "stp",
+          "type": "int",
+          "die_offset": "0x39496c1"
+        },
+        {
+          "name": "csvid",
+          "type": "int",
+          "die_offset": "0x39496d6"
+        }
+      ]
+    },
+    {
+      "source": "cards/ice_age.c",
+      "name": "card_elkin_bottle",
+      "die_offset": "0x3ba31d9",
+      "variables": [
+        {
+          "name": "iid",
+          "type": "int",
+          "die_offset": "0x3ba323b"
+        },
+        {
+          "name": "csvid",
+          "type": "int",
+          "die_offset": "0x3ba3259"
+        }
+      ]
+    }
+  ],
+  "scope": "DWARF type/name restoration, defined native arithmetic and structured common continuations. No exact original source spelling or newly demonstrated gameplay bug claimed.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "9a2d349e0ce6cd063db4ed496d36327f0471b96b0e01a1ebb4d5d0ff538e18a3",
+    "debug_sha256": "ff40a260e60a81a2bf98f9a17720cbf9a3d55bce203d467af5d94367640e3571",
+    "build_log_sha256": "3af19eca5485b181c91c8c52bfcbf80f13c7adab04b1eede26be74490a218b38",
+    "exact_file_projections": 6,
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "9a2d349e0ce6cd063db4ed496d36327f0471b96b0e01a1ebb4d5d0ff538e18a3",
+        "ManalinkEh.dbg": "ff40a260e60a81a2bf98f9a17720cbf9a3d55bce203d467af5d94367640e3571"
+      },
+      "results": [
+        {
+          "name": "get_random_permanent",
+          "matched": false,
+          "reason": "('Operation changed', 'mov', 'test')",
+          "ranges": [
+            {
+              "address": "0x20277e0",
+              "size": 373,
+              "sha256": "1a14111ffa6eb60c8b792cddce719b858000fc5dedeeb9c5062385085fd269ea",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x20990d0",
+              "size": 368,
+              "sha256": "30563ce8c5c4817ae9ac77edd6cc8b782203eca630736adea567771a698939e7",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_radiant_scrollwielder",
+          "matched": false,
+          "reason": "('Unbound operand', '0xc', '0x10')",
+          "ranges": [
+            {
+              "address": "0x23d8f80",
+              "size": 241,
+              "sha256": "7a7c5268c44c552e705d9c292039d9e5f7277d62e9aaa9903127ff201fc26d50",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25266e0",
+              "size": 240,
+              "sha256": "de99d2948b605120d7fac10f7aef9184a3772582fbc02ca06b0b65f05f980fab",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_elkin_bottle",
+          "matched": false,
+          "reason": "('Unbound operand', '0x30', '0x8')",
+          "ranges": [
+            {
+              "address": "0x23f59c0",
+              "size": 225,
+              "sha256": "7aaf66117c131ef15e47ed8b43b0c9eba91843371ab056937d72304e59f2e345",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x223d4a0",
+              "size": 240,
+              "sha256": "b9f0f2ace7910ae472131a4067ff42843a6dc7d7681ff379cd41fa9461f7d72b",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_seal_away",
+          "matched": true,
+          "proof": {
+            "cfg_states": 71,
+            "reached_instruction_counts": [
+              71,
+              71
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2660240",
+                "rebuilt": "0x26dab90",
+                "identity": "_default_target_definition"
+              },
+              {
+                "native": "0x26604c0",
+                "rebuilt": "0x26db140",
+                "identity": "_can_target"
+              },
+              {
+                "native": "0x2660db0",
+                "rebuilt": "0x26dbda0",
+                "identity": "_new_pick_target"
+              },
+              {
+                "native": "0x2693ce0",
+                "rebuilt": "0x26a7560",
+                "identity": "_obliviation"
+              },
+              {
+                "native": "0x26a2330",
+                "rebuilt": "0x269ac40",
+                "identity": "_return_from_oblivion"
+              },
+              {
+                "native": "0x26a5370",
+                "rebuilt": "0x269c1b0",
+                "identity": "_etb_ability"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266aeb0",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26df260",
+                "rebuilt": "0x2654440",
+                "identity": "_flash"
+              },
+              {
+                "native": "0x273d390",
+                "rebuilt": "0x2730fd0",
+                "identity": "readonly-C-string:e0330033f0cb9aa88bfa6ea3e58ab4a2ac91dd75fca592879e9feb415418a274"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x22d28e0",
+              "size": 266,
+              "sha256": "592ead4e8058aded4c4a86e3a829d7f6a8cf39592a5d5d7f519b8ce8196161a4",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x214fb70",
+              "size": 272,
+              "sha256": "c974b88f4e1e185ad00c162003c8819e229db96f9942a72b545fcd884672b33d",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_simic_ascendancy",
+          "matched": false,
+          "reason": "('Unbound operand', '0x7d', '0x7e')",
+          "ranges": [
+            {
+              "address": "0x25c2eb0",
+              "size": 588,
+              "sha256": "d653ec39be995486123707db4ac3231ac668559ae51d0331af76c309450f7151",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2478670",
+              "size": 592,
+              "sha256": "40ae1d8c0e88d823993019dda69ec160a47149dbc1ed64771bb04ee3fb5e1d8a",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_garruk_relentless",
+          "matched": false,
+          "reason": "('Operation changed', 'cmp', 'mov')",
+          "ranges": [
+            {
+              "address": "0x2076000",
+              "size": 727,
+              "sha256": "748578a11842d88d90529a879efaa3fbe74a47510ac91865a28e190313129c63",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x224a030",
+              "size": 736,
+              "sha256": "1dca327aff4a69c29dca48d304e1c97bee28ebf2e3f6c5ff031262d2d003d943",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "0c59f13d0e277da623b764f01981180b1bac6c7cf5b81624385a1e03f7db345a",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "new_complete_cfg_matches": [
+      "card_seal_away"
+    ],
+    "site_review_archive": {
+      "path": "docs/recovery-evidence/reccmp-runtime-and-value-flow-review.json.gz",
+      "sha256": "fe9a8fadfce3467b0dab3f455c98dc51fc71114d82553e45bda6e4bcaf3b0a70",
+      "functions": 34
+    },
+    "staging": "preserved",
+    "scope": "One incremental build after six definitions. Focused full CFG comparison passes Seal Away and leaves five instruction-different. Other site explanations are scoped; no new full-score or gameplay claim."
+  }
+}

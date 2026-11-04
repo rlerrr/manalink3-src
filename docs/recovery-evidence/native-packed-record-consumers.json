@@ -1,0 +1,1488 @@
+{
+  "format": 1,
+  "status": "Fourteen existing packed-record consumers restructured; build, 15,169 fixed slots, twelve ABI/constant contracts, source projections and 36,864 post-change native/rebuilt fixture comparisons pass.",
+  "functions": [
+    {
+      "source": "cards/commander_2017.c",
+      "name": "card_the_ur_dragon",
+      "before_sha256": "f50ed1d1e1d67172a7c31749d263d44245e2745ac3bc4f0fca6baf2bab5573f6",
+      "after_sha256": "7a3fb78337b03edcd702753d41b2cf1988902fada9bc63597caedd8f07927ca9",
+      "before_lines": 50,
+      "after_lines": 28
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "name": "card_arahbo_roar_of_the_world",
+      "before_sha256": "591aca10cf829126075e257074e06f01efe4e40c52474810d257765e944db17a",
+      "after_sha256": "bb8e773fcb81ddbdb1fe16174ccb0d5842181b9371440f29e5dac2aee74bdf4b",
+      "before_lines": 95,
+      "after_lines": 59
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_anointer_of_valor",
+      "before_sha256": "0d4a390c22ed9b5c658a1ad9261e3bb4c89aec6099bca4f60976ab1fd7b82f30",
+      "after_sha256": "e4e6b84b1324d68b5fb70a8b60249a6ba51222ae08da0594f41958f9361f0edc",
+      "before_lines": 50,
+      "after_lines": 24
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_keleth_sunmane_familiar",
+      "before_sha256": "159d5913be25b84eee0dc70370c94343c33d519150d96a181862b65ae7c03622",
+      "after_sha256": "6949b1a138a79d1fc0b4a22be8fb833d71c38be978f6dc1cf1fcb798e9344239",
+      "before_lines": 42,
+      "after_lines": 23
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_reyav_master_smith",
+      "before_sha256": "01036c5a001bae84ade3024d942440c9f7e2ea14e3f848a42292b8fea1ecc2ea",
+      "after_sha256": "7ff179974f1e522ae9c137c86d1fb63883b4d80c3fddf205486a60af01c5f8a5",
+      "before_lines": 32,
+      "after_lines": 19
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "card_cavalcade_of_calamity",
+      "before_sha256": "381c6912214d290ab37e7c8f6fbd617c5787bd0140934111a75560458e72ab24",
+      "after_sha256": "8f7b62abb2ad71612e7bb87a46bf25ea7e108fab403f196b80d2483d52371650",
+      "before_lines": 42,
+      "after_lines": 28
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_master_symmetrist",
+      "before_sha256": "12c32886ebb6ecc8a68696f75ef14c2e9c16ede341753a1e2b904f0b025e2508",
+      "after_sha256": "966229c038a499606fbcd8cca4cad349b5d0c6ee0fb193c51f5c8ada67c830ab",
+      "before_lines": 45,
+      "after_lines": 20
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_mila_crafty_companion",
+      "before_sha256": "4cfe7ad1f71f641006ef87b66fb85af5657dbfb1dd3e9e163b79f78fdfbb2077",
+      "after_sha256": "6bc5e738e0ef7f60afee9872c03834a719fb3da027fbf1d8ff67dd9f700d6b9c",
+      "before_lines": 52,
+      "after_lines": 25
+    },
+    {
+      "source": "cards/visions.c",
+      "name": "fx_milled_power",
+      "before_sha256": "f786865959d1e73cd25c3a407311dda78c9ffe06358ccba9b082cad164b690a7",
+      "after_sha256": "1851b6d5a1a8474e73797ed4e749d996a853209278a0f98017f7781428de23ce",
+      "before_lines": 35,
+      "after_lines": 19
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_dreadhorde_invasion",
+      "before_sha256": "2a6f52a2cd7c45b4a67095e941fe7e9a9a81bcddf4abc4c721120ef6f97a5209",
+      "after_sha256": "439e9a99a7a8a68ba25ce990bd1b2f891b195b7ae1cddc4dd8dcee12b3bd8ca6",
+      "before_lines": 54,
+      "after_lines": 35
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_sarkhan_the_masterless",
+      "before_sha256": "2c5ae14c51d8f51fa013156726f61e4b6261a5d323529054029ba27eed342b3e",
+      "after_sha256": "821db0983ce61eae7859816af39ca981ef93e63feaab4b4af2e8becf849d153c",
+      "before_lines": 112,
+      "after_lines": 87
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "name": "card_necropolis_regent",
+      "before_sha256": "574fb1688a9d55dc33bc63aae2a9afdbcc25521f99e9a33294873e288393d2b5",
+      "after_sha256": "7f76c210d82c25c913bcbc703fd5c41f8d65e5955d01336517422a7de737457f",
+      "before_lines": 55,
+      "after_lines": 40
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "name": "card_endless_whispers",
+      "before_sha256": "32920f0a71f498518b2f6cd5998de19ff680509d6a1c1cb55fbeea5ab0d4a9a9",
+      "after_sha256": "9399650588f0e39e157e9ce0ca427972d4a6d040f9cd1f7017c4ec710ad6ae12",
+      "before_lines": 91,
+      "after_lines": 91
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "count_for_gfp_ability_and_store_values_impl",
+      "before_sha256": "4b0dd51566a355e048a1fa118373e7fd7fcf06e17120f8dea9e49b55e5dac60a",
+      "after_sha256": "991a995bf3c383302033b60635408b6197f9043256850ff6f64a88a4313fbd83",
+      "before_lines": 235,
+      "after_lines": 235
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/commander_2017.c",
+      "before_bytes_sha256": "64007c0d68dcb050b22267df207402791bc42d741b15a96ee61e26c25b98dbb1",
+      "after_bytes_sha256": "55dce452f9d6e97a6c81a4ef81e3f4b48c4f1e7a6cd6a3874a4eaf6b7f22c9c5",
+      "before_sha256": "72cd445eb1bf50eef1adb891ba679ae9e85d780cadfe2b5b00782f3c412ea160",
+      "after_sha256": "486fa80ad4e02ee56d882e65e4cc7dd3a66feb984517a87e2b64c2de82985ce3"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "before_bytes_sha256": "34ad9727324cacd5476781fa07a0dc76bd0a205b4b19e142fa42dad442efbf4f",
+      "after_bytes_sha256": "3641527a418703317d9c8da1550d421a07aa4ab202b06866763cf371f2cc927e",
+      "before_sha256": "f926f7f775d569fc2b20704bbccf495f80f0e48fa9cbb14699b68024968e0266",
+      "after_sha256": "33758fd80f0b93cc38bae88ab73a2684927d0e202e22ed113a7e207d6d3168dd"
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "before_bytes_sha256": "debc7be107373bcec1d479c879b460ca3b99f805a2e81fbf7c8f98cf2c21d5e8",
+      "after_bytes_sha256": "23d819261f7668b0d606cecd6c30a75d84895f775864e3e5e3aa45383bf8206a",
+      "before_sha256": "9ac37bfb570ffd434a61146752238fd29497b208f8228367566dd6a1b6e352b8",
+      "after_sha256": "675d13ca270aeaf29e63727455ce7e61034fbced7f019603569bb94976754281"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "before_bytes_sha256": "d3f98917fbec5aee4e33f74fe0768888cc353c3c7fc99d7689740adcd8dca718",
+      "after_bytes_sha256": "6093bc2fe750db2cfa8e204328e3fb0bae9d34213dcb36f361990576e324c7a5",
+      "before_sha256": "48046461ca50b584df13bd23b9d52d55786caf1fc7e15cacc711e924f332ee41",
+      "after_sha256": "844625a4a3c072409c62d7714b66aeec339f4175fa2e2d451113703eb85c2425"
+    },
+    {
+      "source": "cards/visions.c",
+      "before_bytes_sha256": "25370f79ba55aceb22ea6d3278a6fcbb1fd63ae02eeeaf2d520ff49b475a743f",
+      "after_bytes_sha256": "6eaa8f248eb443c4073d2f1fde07ff920347c7e8bfa0586c609e2f6229f69d3e",
+      "before_sha256": "e16a4d9e4fa0a11d5d6a3d5b9f8e1acdd9df35987ed8e01c6f942db2f45c47eb",
+      "after_sha256": "77683c1436474e4b42c690c00f4a3e1560cda7fae5795e3870b3142dc19456a3"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "before_bytes_sha256": "9de330fb90db92d347f054d0ed8c9394c595bc9747ad0382af924d8261f04535",
+      "after_bytes_sha256": "204b5010da8973088fbc03a61f305ec4c9651f8a295776879f021afc63a2a209",
+      "before_sha256": "3d7a22f17010a689615ed3c3a9aa91089e2d13f9f5daa8479e8e1846dffeff9e",
+      "after_sha256": "258bd1b7307fdf65b995eb8812955678d4ae97e24ce2322edc9ee87ae4f12cbd"
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "before_bytes_sha256": "9fd83182c1e667fc82a6163bb38552a694aa2e0d44cb48e102f54009f9a82fe2",
+      "after_bytes_sha256": "c61aab95320979aa5aa1e6a5dc0e1a830e3ab2fe0c121ad72cc5a6a28a718284",
+      "before_sha256": "6f84b8fb4ba4954754adb4a55c6c2e48f62ea7a75786c7f46c2de3b6b4c4c4c6",
+      "after_sha256": "f1178f053256b4b714b6b50cadf30f5e674d0c178e775a08f84dfba82868a8ef"
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "before_bytes_sha256": "bcbe9d075d4734b5eea18c632a1a023c508381c7d41ca678d19fc853d864a299",
+      "after_bytes_sha256": "82823af755dcdd871be424785d00774a08b5c4ec532f5c6abe3b684e94c3f40e",
+      "before_sha256": "7762977d8de7bb3d97ba4f5d4b73c25620c2b784377cf2846abc2186c72832c5",
+      "after_sha256": "cbec5e6e5653bca26bc68b1930e0abcba47d7705606141a3a62de89d4b3782d8"
+    },
+    {
+      "source": "functions/functions.c",
+      "before_bytes_sha256": "936137a2709be4145a2831664990a4969d196ed4aff9f63ddbd05d14fa030be2",
+      "after_bytes_sha256": "a370c9d7c88a8b6943c554ea714d786e7da9b40346e6ad7630f9a69a1563680b",
+      "before_sha256": "365287211fe25e71289109a49177733398050ec764742b3f25974d6546f2ecd8",
+      "after_sha256": "bf78288654a4e55d9ce86be28ca1c5b303542e61439dcb30dec60b2fd143f9fa"
+    }
+  ],
+  "before_dll_sha256": "16225240b0f12981cd77029fdef688427df8bbb43bfec985bcdac6b23b667d7c",
+  "before_debug_sha256": "02538edc0c82083f81ae3d38f86a2f73d7e31bed99779290588e6f82fd4b7478",
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "before_fixture": {
+    "cases": 36864,
+    "mismatches": 0,
+    "plan_sha256": "8a0c9afee4a88e37e10bc9f012cdbbbcc1f098011d12526d1b0aa4e8440b6b6f",
+    "log_sha256": "5fc5b94467347e9ed5cd8dca43da39d69dd7009f1223f06d8d436c279778f5f9",
+    "base_sha256": "bb9328fc8a60a1aab95fc24943f9470f3da4677f386e5bfd133e69e5cb584f15"
+  },
+  "native_quirks": [
+    "Read attacker bytes and current_turn again after opaque calls; do not cache a card ID across the helper sequence.",
+    "Most reverse loops capture the initial count; Necropolis Regent resolution instead rereads its pending count after each add_counters call.",
+    "The Ur-Dragon draws the full tracked count and tutors once for each surviving tracked attacker, matching the release rather than the printed rule.",
+    "Necropolis Regent retains its 26-record cap, upper-only damage saturation, recomputed write offsets and possible negative pending count. The byte view starts at the whole card object.",
+    "Reyav's old one-byte-before-table sentinel becomes an equivalent reverse index loop while retaining the positive-count guard."
+  ],
+  "scope": "Fourteen existing definitions across nine original source units; no new handlers or ABI aliases. Actual three-handler fixtures cover Master Symmetrist, Reyav and Necropolis Regent with deterministic opaque leaves, including mutations between reads. Other bodies have source/control-flow/address review and build coverage, not whole-handler gameplay proof.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "b3a8c3455f1add3a8fde1f692550c3115d73de74f3d4175938393b3480ad66e1",
+    "debug_sha256": "183465c1e5a588a4bf5d2f35a5db37551350e9135460b16bcf8597814f6033a1",
+    "build_log_sha256": "5d30cdf3545defa3e85bf8dfc27e133e6df897f51733b87836f32ac8ab57554f",
+    "full_file_projections": 9,
+    "raw_file_projections": 9,
+    "source_definitions": 14,
+    "include_edits": 1,
+    "native_abi_constant_contracts": {
+      "assertions": 12,
+      "result": "passed",
+      "source_sha256": "9e9373c97124706ee8ddbfe07848bb6e5dd6a17c285dbe6adadef34637e6d906",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fixtures": {
+      "before": {
+        "plan": {
+          "entries": [
+            {
+              "side": 0,
+              "index": 0,
+              "name": "card_master_symmetrist",
+              "address": "0x23d4150",
+              "size": 309,
+              "sha256": "728f655ba39a46bd086c5eadba908600f8d4505a478c69b76ca4bed4661210b0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "name": "card_reyav_master_smith",
+              "address": "0x25aea60",
+              "size": 279,
+              "sha256": "6aabd3493be50a991f15d7d71585adfaea85ac1fe54f4823ae69d7d9cb414965"
+            },
+            {
+              "side": 0,
+              "index": 2,
+              "name": "card_necropolis_regent",
+              "address": "0x24615d0",
+              "size": 371,
+              "sha256": "f97da49a4ef3106739789b304d1861c3e72116405b5364707702e930fdc7353d"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "name": "card_master_symmetrist",
+              "address": "0x2527250",
+              "size": 304,
+              "sha256": "b6ec2f605fdd76545116730279ad93bf8c4073c54e0101c9fa6937eb7535d6d0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "name": "card_reyav_master_smith",
+              "address": "0x21029e0",
+              "size": 288,
+              "sha256": "161e56c1d85e72fc749661b65c3c87dc75ad246cbeeda40543ad90a433f4ac55"
+            },
+            {
+              "side": 1,
+              "index": 2,
+              "name": "card_necropolis_regent",
+              "address": "0x2484310",
+              "size": 384,
+              "sha256": "b78ebedaf875f2c60d4484dd1c4ffc99e3c4f3548a0c3f651ed771271f0cf489"
+            }
+          ],
+          "pure_helpers": [],
+          "patches": [
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 58,
+              "kind": "call",
+              "target": "store_attackers",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 93,
+              "kind": "call",
+              "target": "dat_ability",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 131,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 185,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 201,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 228,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 236,
+              "kind": "call",
+              "target": "in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 258,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 266,
+              "kind": "call",
+              "target": "get_power",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 287,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 295,
+              "kind": "call",
+              "target": "get_toughness",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 30,
+              "kind": "call",
+              "target": "check_legend_rule",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 74,
+              "kind": "call",
+              "target": "store_attackers",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 106,
+              "kind": "call",
+              "target": "dat_ability",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 136,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 177,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 185,
+              "kind": "call",
+              "target": "is_enchanted",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 202,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 210,
+              "kind": "call",
+              "target": "is_equipped",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 247,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 259,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 23,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 36,
+              "kind": "call",
+              "target": "combat_damage_being_dealt",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 56,
+              "kind": "data",
+              "target": "trigger_condition",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 117,
+              "kind": "call",
+              "target": "check_special_flags",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 202,
+              "kind": "data",
+              "target": "affected_card",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 214,
+              "kind": "data",
+              "target": "affected_card_controller",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 226,
+              "kind": "data",
+              "target": "reason_for_trigger_controller",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 326,
+              "kind": "call",
+              "target": "add_counters",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 354,
+              "kind": "data",
+              "target": "event_result",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 362,
+              "kind": "data",
+              "target": "event_result",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527250",
+              "offset": 58,
+              "kind": "call",
+              "target": "store_attackers",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527250",
+              "offset": 90,
+              "kind": "call",
+              "target": "dat_ability",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527250",
+              "offset": 120,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527250",
+              "offset": 163,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527250",
+              "offset": 171,
+              "kind": "call",
+              "target": "in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527250",
+              "offset": 192,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527250",
+              "offset": 200,
+              "kind": "call",
+              "target": "get_power",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527250",
+              "offset": 220,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527250",
+              "offset": 228,
+              "kind": "call",
+              "target": "get_toughness",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527250",
+              "offset": 270,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527250",
+              "offset": 282,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029e0",
+              "offset": 30,
+              "kind": "call",
+              "target": "check_legend_rule",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029e0",
+              "offset": 74,
+              "kind": "call",
+              "target": "store_attackers",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029e0",
+              "offset": 106,
+              "kind": "call",
+              "target": "dat_ability",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029e0",
+              "offset": 136,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029e0",
+              "offset": 177,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029e0",
+              "offset": 185,
+              "kind": "call",
+              "target": "is_enchanted",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029e0",
+              "offset": 202,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029e0",
+              "offset": 210,
+              "kind": "call",
+              "target": "is_equipped",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029e0",
+              "offset": 247,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029e0",
+              "offset": 259,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484310",
+              "offset": 23,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484310",
+              "offset": 36,
+              "kind": "call",
+              "target": "combat_damage_being_dealt",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484310",
+              "offset": 56,
+              "kind": "data",
+              "target": "trigger_condition",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484310",
+              "offset": 117,
+              "kind": "call",
+              "target": "check_special_flags",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484310",
+              "offset": 202,
+              "kind": "data",
+              "target": "affected_card",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484310",
+              "offset": 214,
+              "kind": "data",
+              "target": "affected_card_controller",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484310",
+              "offset": 226,
+              "kind": "data",
+              "target": "reason_for_trigger_controller",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484310",
+              "offset": 326,
+              "kind": "call",
+              "target": "add_counters",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484310",
+              "offset": 354,
+              "kind": "data",
+              "target": "event_result",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484310",
+              "offset": 362,
+              "kind": "data",
+              "target": "event_result",
+              "addend": 0
+            }
+          ],
+          "inputs": {
+            ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+            "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+            "ManalinkEh.dll": "16225240b0f12981cd77029fdef688427df8bbb43bfec985bcdac6b23b667d7c",
+            "ManalinkEh.dbg": "02538edc0c82083f81ae3d38f86a2f73d7e31bed99779290588e6f82fd4b7478"
+          },
+          "scope": "Actual three native/rebuilt packed-record consumer bodies; patch only decoded direct opaque leaf calls, four named data objects and the legacy callback operand. No DLL entrypoint/import execution."
+        },
+        "plan_sha256": "8a0c9afee4a88e37e10bc9f012cdbbbcc1f098011d12526d1b0aa4e8440b6b6f",
+        "log_sha256": "5fc5b94467347e9ed5cd8dca43da39d69dd7009f1223f06d8d436c279778f5f9",
+        "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "cases": 36864,
+        "mismatches": 0
+      },
+      "after": {
+        "plan": {
+          "entries": [
+            {
+              "side": 0,
+              "index": 0,
+              "name": "card_master_symmetrist",
+              "address": "0x23d4150",
+              "size": 309,
+              "sha256": "728f655ba39a46bd086c5eadba908600f8d4505a478c69b76ca4bed4661210b0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "name": "card_reyav_master_smith",
+              "address": "0x25aea60",
+              "size": 279,
+              "sha256": "6aabd3493be50a991f15d7d71585adfaea85ac1fe54f4823ae69d7d9cb414965"
+            },
+            {
+              "side": 0,
+              "index": 2,
+              "name": "card_necropolis_regent",
+              "address": "0x24615d0",
+              "size": 371,
+              "sha256": "f97da49a4ef3106739789b304d1861c3e72116405b5364707702e930fdc7353d"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "name": "card_master_symmetrist",
+              "address": "0x2527270",
+              "size": 320,
+              "sha256": "ee5a57e09293021229c9a8eb4ae0c1d75903133e58aacead35c9c534e69ce347"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "name": "card_reyav_master_smith",
+              "address": "0x21029d0",
+              "size": 288,
+              "sha256": "8e7c6b49037aae621f771046c7a4ff7e2b564461ec4451f0aef9c15f5737a078"
+            },
+            {
+              "side": 1,
+              "index": 2,
+              "name": "card_necropolis_regent",
+              "address": "0x2484320",
+              "size": 400,
+              "sha256": "043e7a9ea193c69dbed49b1ac7cdde3faf1805e01b94665a69cb33e980eafacb"
+            }
+          ],
+          "pure_helpers": [],
+          "patches": [
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 58,
+              "kind": "call",
+              "target": "store_attackers",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 93,
+              "kind": "call",
+              "target": "dat_ability",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 131,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 185,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 201,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 228,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 236,
+              "kind": "call",
+              "target": "in_play",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 258,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 266,
+              "kind": "call",
+              "target": "get_power",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 287,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_master_symmetrist",
+              "function_address": "0x23d4150",
+              "offset": 295,
+              "kind": "call",
+              "target": "get_toughness",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 30,
+              "kind": "call",
+              "target": "check_legend_rule",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 74,
+              "kind": "call",
+              "target": "store_attackers",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 106,
+              "kind": "call",
+              "target": "dat_ability",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 136,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 177,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 185,
+              "kind": "call",
+              "target": "is_enchanted",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 202,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 210,
+              "kind": "call",
+              "target": "is_equipped",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 247,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x25aea60",
+              "offset": 259,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 23,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 36,
+              "kind": "call",
+              "target": "combat_damage_being_dealt",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 56,
+              "kind": "data",
+              "target": "trigger_condition",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 117,
+              "kind": "call",
+              "target": "check_special_flags",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 202,
+              "kind": "data",
+              "target": "affected_card",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 214,
+              "kind": "data",
+              "target": "affected_card_controller",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 226,
+              "kind": "data",
+              "target": "reason_for_trigger_controller",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 326,
+              "kind": "call",
+              "target": "add_counters",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 354,
+              "kind": "data",
+              "target": "event_result",
+              "addend": 0
+            },
+            {
+              "side": 0,
+              "name": "card_necropolis_regent",
+              "function_address": "0x24615d0",
+              "offset": 362,
+              "kind": "data",
+              "target": "event_result",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527270",
+              "offset": 58,
+              "kind": "call",
+              "target": "store_attackers",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527270",
+              "offset": 93,
+              "kind": "call",
+              "target": "dat_ability",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527270",
+              "offset": 131,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527270",
+              "offset": 185,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527270",
+              "offset": 201,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527270",
+              "offset": 228,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527270",
+              "offset": 236,
+              "kind": "call",
+              "target": "in_play",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527270",
+              "offset": 258,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527270",
+              "offset": 266,
+              "kind": "call",
+              "target": "get_power",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527270",
+              "offset": 287,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_master_symmetrist",
+              "function_address": "0x2527270",
+              "offset": 295,
+              "kind": "call",
+              "target": "get_toughness",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029d0",
+              "offset": 30,
+              "kind": "call",
+              "target": "check_legend_rule",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029d0",
+              "offset": 74,
+              "kind": "call",
+              "target": "store_attackers",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029d0",
+              "offset": 106,
+              "kind": "call",
+              "target": "dat_ability",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029d0",
+              "offset": 136,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029d0",
+              "offset": 177,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029d0",
+              "offset": 185,
+              "kind": "call",
+              "target": "is_enchanted",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029d0",
+              "offset": 202,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029d0",
+              "offset": 210,
+              "kind": "call",
+              "target": "is_equipped",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029d0",
+              "offset": 247,
+              "kind": "data",
+              "target": "current_turn",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_reyav_master_smith",
+              "function_address": "0x21029d0",
+              "offset": 259,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484320",
+              "offset": 23,
+              "kind": "call",
+              "target": "get_card_instance",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484320",
+              "offset": 39,
+              "kind": "call",
+              "target": "combat_damage_being_dealt",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484320",
+              "offset": 62,
+              "kind": "data",
+              "target": "trigger_condition",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484320",
+              "offset": 128,
+              "kind": "call",
+              "target": "check_special_flags",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484320",
+              "offset": 226,
+              "kind": "data",
+              "target": "affected_card",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484320",
+              "offset": 238,
+              "kind": "data",
+              "target": "affected_card_controller",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484320",
+              "offset": 250,
+              "kind": "data",
+              "target": "reason_for_trigger_controller",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484320",
+              "offset": 350,
+              "kind": "call",
+              "target": "add_counters",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484320",
+              "offset": 378,
+              "kind": "data",
+              "target": "event_result",
+              "addend": 0
+            },
+            {
+              "side": 1,
+              "name": "card_necropolis_regent",
+              "function_address": "0x2484320",
+              "offset": 386,
+              "kind": "data",
+              "target": "event_result",
+              "addend": 0
+            }
+          ],
+          "inputs": {
+            ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+            "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+            "ManalinkEh.dll": "b3a8c3455f1add3a8fde1f692550c3115d73de74f3d4175938393b3480ad66e1",
+            "ManalinkEh.dbg": "183465c1e5a588a4bf5d2f35a5db37551350e9135460b16bcf8597814f6033a1"
+          },
+          "scope": "Actual three native/rebuilt packed-record consumer bodies; patch only decoded direct opaque leaf calls, four named data objects and the legacy callback operand. No DLL entrypoint/import execution."
+        },
+        "plan_sha256": "d83caf400404c4650ec69d5d9d3cd748e732aebd381593e24b5b3ec8b2f91365",
+        "log_sha256": "5fc5b94467347e9ed5cd8dca43da39d69dd7009f1223f06d8d436c279778f5f9",
+        "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "cases": 36864,
+        "mismatches": 0
+      }
+    },
+    "combined_fixture_comparisons": 73728,
+    "fixture_scope": "Actual native/rebuilt Master Symmetrist, Reyav and Necropolis Regent machine code with opaque deterministic leaves and six substituted globals. 1024 environments, both players and six events; initial counts -1/0/1/2/3/4/25/26, unsigned card bytes, negative/over-255 damage, nullable presence, helper success and callbacks that mutate attacker bytes/current_turn or the live pending count. Compare four complete 300-byte records, ordered arguments, return, turn/event-result and fixture scratch state. This does not establish leaf behavior or full gameplay, and does not execute the other eleven edited definitions.",
+    "fixture_sources": {
+      ".recovery\\packed_fixture_base_c657.c": "bb9328fc8a60a1aab95fc24943f9470f3da4677f386e5bfd133e69e5cb584f15",
+      ".recovery\\prepare_packed_fixture_c657.py": "c1aceabfc6290b087aa079bdf3e3018b2a05680eeef6cec36782dd1f9c5845f5",
+      ".recovery\\build_packed_fixture_c657.py": "ce4b223e5f728dc44f9f1b3e9bab32a1a6227d6265476e73ceb147256f8a923d"
+    },
+    "checker_sha256": "9518f1269b1d56687016b4beea98ff38e431d38f9a02693f4bee25380ba7e332",
+    "staging": "No agent index writes. The initial staged hash still matched at the compiled/source projection check; an external staging update was observed afterward."
+  },
+  "external_staging_update": {
+    "before_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+    "observed_sha256": "6273e6c937a5a117fb7bf6d41177a819943425f7ecb09751c91db914547fb818",
+    "action": "Leave the updated index selection untouched; record the observation only."
+  }
+}

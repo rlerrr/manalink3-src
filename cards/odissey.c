@@ -897,7 +897,7 @@ int card_bomb_squad(int player, int card, event_t event)
               c = c + 1;
               ai_modifier =
                   ai_modifier +
-                  fuse_count_or_next_card * (((scan_player_or_valid != 1) - 1 & 0xffffffe0) + 0x10);
+                  fuse_count_or_next_card * ((unsigned int)((scan_player_or_valid != 1) ? 16 : -16));
               continue;
             }
           }
@@ -912,7 +912,7 @@ int card_bomb_squad(int player, int card, event_t event)
     return 0;
   default_target_definition(player, card, &td, 2);
   if (event == EVENT_ACTIVATE)
-    ai_modifier = ai_modifier + ((1 - player == current_turn) - 1 & 0xffffffe8) + 0x30;
+    ai_modifier = ai_modifier + (unsigned int)((1 - player == current_turn) ? 0 : -24) + 0x30;
   if ((event == EVENT_RESOLVE_ACTIVATION) &&
       (scan_player_or_valid = valid_target(&td), scan_player_or_valid != 0))
   {
@@ -3891,7 +3891,7 @@ int card_nefarious_lich(int player, int card, event_t event)
   int unprevented_damage;
   test_definition_t test;
   current_xtrigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     current_xtrigger = xtrigger_impl_value_dont_use_directly;
   }
@@ -4222,51 +4222,47 @@ int card_peek(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
 }
 
-int card_petrified_field(int player, int card, event_t event){
+int card_petrified_field(int player, int card, event_t event)
+{
+  if (!IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE)
+    return mana_producer(player, card, event);
 
-	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE ){
-		return mana_producer(player, card, event);
-	}
+  test_definition_t test;
+  new_default_test_definition(&test, TYPE_LAND, "Select a land card.");
+  card_instance_t *instance = get_card_instance(player, card);
+  enum { CHOICE_MANA = 1, CHOICE_RETURN_LAND };
 
-	test_definition_t test;
-	new_default_test_definition(&test, TYPE_LAND, "Select a land card.");
-
-	card_instance_t *instance = get_card_instance( player, card );
-
-	enum{
-		CHOICE_MANA = 1,
-		CHOICE_RETURN_LAND
-	};
-
-	if( event == EVENT_ACTIVATE ){
-		if( !paying_mana() &&
-			generic_activated_ability_with_target_in_grave(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_SACRIFICE_ME,
-				MANACOST0, 0, NULL, NULL, 0, &test, GS_GRAVE_RECYCLER) ){
-			int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1,
-				"Get mana", 1, 1,
-				"Return a land from grave", 1, 5);
-			if( !choice ){
-				spell_fizzled = 1;
-				return 0;
-			}
-			if( choice == CHOICE_RETURN_LAND ){
-				return generic_activated_ability_with_target_in_grave(player, card, event, GAA_UNTAPPED | GAA_SACRIFICE_ME,
-					MANACOST0, 0, NULL, NULL, 0, &test, GS_GRAVE_RECYCLER);
-			}
-		}
-		return mana_producer(player, card, event);
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot == CHOICE_RETURN_LAND ){
-			int selected = validate_target_from_grave_source(player, card, player, 0);
-			if( selected != -1 ){
-				from_grave_to_hand(player, selected, TUTOR_HAND);
-			}
-		}
-	}
-
-	return 0;
+  if (event == EVENT_ACTIVATE)
+  {
+    if (!paying_mana() &&
+        generic_activated_ability_with_target_in_grave(player, card, EVENT_CAN_ACTIVATE,
+            GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL, 0, &test, GS_GRAVE_RECYCLER))
+    {
+      int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1,
+                           "Get mana", 1, 1, "Return a land from grave", 1, 5);
+      switch (choice)
+      {
+        case 0:
+          spell_fizzled = 1;
+          return 0;
+        case CHOICE_MANA:
+          return mana_producer(player, card, event);
+        case CHOICE_RETURN_LAND:
+          return generic_activated_ability_with_target_in_grave(player, card, event,
+              GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL, 0, &test, GS_GRAVE_RECYCLER);
+        default:
+          return 0;
+      }
+    }
+    return mana_producer(player, card, event);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == CHOICE_RETURN_LAND)
+  {
+    int selected = validate_target_from_grave_source(player, card, player, 0);
+    if (selected != -1)
+      from_grave_to_hand(player, selected, TUTOR_HAND);
+  }
+  return 0;
 }
 
 int card_phantatog(int player, int card, event_t event){
@@ -5307,7 +5303,7 @@ int card_stone_tongue_basilisk(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   result = is_humiliated(player, card, AL_STATIC);
-  if ((result == 0) && (trigger_condition == 0xda))
+  if ((result == 0) && (trigger_condition == TRIGGER_MUST_BLOCK))
   {
     result = has_threshold(player);
     if (result != 0)

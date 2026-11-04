@@ -33,7 +33,7 @@ void evolve(int player, int card, event_t event)
   int entering_stat;
   card_instance_t *instance;
   int own_stat;
-  bool check_trigger = trigger_condition == 0xdb;
+  bool check_trigger = trigger_condition == TRIGGER_COMES_INTO_PLAY;
   if (event == EVENT_CAST_SPELL)
   {
     if (card != affected_card || player != affected_card_controller)
@@ -53,7 +53,7 @@ void evolve(int player, int card, event_t event)
           ai_modifier = ai_modifier + 0x14;
       }
     }
-    check_trigger = trigger_condition == 0xdb;
+    check_trigger = trigger_condition == TRIGGER_COMES_INTO_PLAY;
     if (!check_trigger)
       return;
   }
@@ -424,7 +424,7 @@ int card_gideon_champion_of_justice(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     default_target_definition(player, card, &td, 0);
     opponent_or_result = 1 - player;
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     opponent_creatures = count_subtype(opponent_or_result, 2, -1);
     animate_priority = 0;
     if (current_turn < 0x17)
@@ -436,7 +436,7 @@ int card_gideon_champion_of_justice(int player, int card, event_t event)
     own_permanents = count_subtype(player, 0x47, -1);
     loyalty_count = count_counters(player, card, COUNTER_LOYALTY);
     choice = dialog_impl(
-        player, card, event, "\001\002", "\001\017", "Get Loyalty from opponent's creatures",
+        player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Get Loyalty from opponent's creatures",
         would_validate_arbitrary_target(&td, opponent_or_result, -1), opponent_creatures * 2, 1,
         "Animate", 1, animate_priority, 0, "Exile all the other permanents", 1,
         (0xf - loyalty_count) * 3 + (opponent_permanents - own_permanents) * 2, 0xfffffff1, 0, 0, 0,
@@ -2192,7 +2192,6 @@ static const char* target_must_have_counters(int who_chooses, int player, int ca
 }
 int card_thrull_parasite(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   counter_t type;
   target_definition_t td;
@@ -2200,18 +2199,17 @@ int card_thrull_parasite(int player, int card, event_t event)
   if (event != EVENT_ACTIVATE && event - EVENT_RESOLVE_ACTIVATION > 1 && event != EVENT_CLEANUP)
     return 0;
   default_target_definition(player, card, &td, 0x47);
-  td.illegal_type = 1;
+  td.illegal_type = TYPE_LAND;
   td.preferred_controller = 2;
   if (event != EVENT_RESOLVE_ACTIVATION &&
       (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0)))
   {
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_must_have_counters;
   }
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       instance = get_card_instance(player, card);
       type = choose_existing_counter_type(player, player, card, instance->targets[0].player,
@@ -2412,7 +2410,7 @@ int card_five_alarm_fire(int player, int card, event_t event)
   if (event == EVENT_ACTIVATE)
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   }
   else
   {
@@ -2422,7 +2420,7 @@ int card_five_alarm_fire(int player, int card, event_t event)
       return result;
     }
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
       result = valid_target(&td);
@@ -3190,7 +3188,7 @@ int card_ivy_lane_denizen(int player, int card, event_t event)
   int result;
 
 
-  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if ((((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
@@ -3254,7 +3252,7 @@ int card_ooze_flux(int player, int card, event_t event)
     td.illegal_abilities = 0;
     td.allowed_controller = player;
     td.preferred_controller = player;
-    td.special = 0x40000;
+    td.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td.extra = 0;
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
@@ -3302,7 +3300,7 @@ int card_ooze_flux(int player, int card, event_t event)
     td.illegal_abilities = 0;
     td.allowed_controller = player;
     td.preferred_controller = player;
-    td.special = 0x40000;
+    td.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td.extra = 0;
     instance = get_card_instance(player, card);
   }
@@ -3310,7 +3308,7 @@ int card_ooze_flux(int player, int card, event_t event)
   {
     return 0;
   }
-  default_token_definition(instance->parent_controller, instance->parent_card, 0x496c, &token);
+  default_token_definition(instance->parent_controller, instance->parent_card, CARD_ID_OOZE, &token);
   token.pow = instance->info_slot;
   token.tou = token.pow;
   generate_token(&token);
@@ -5795,7 +5793,9 @@ static int effect_thespians_stage(int player, int card, event_t event)
 		  if (iid == 0)	// Swamp - irritatingly inconvenient to store in dummy3
 			iid = iid_draw_a_card;
 
-		  get_card_instance(instance->parent_controller, instance->parent_card)->dummy3 = aff->targets[12].card = iid;
+		  aff->targets[12].card = iid;
+		  card_instance_t *parent = get_card_instance(instance->parent_controller, instance->parent_card);
+		  parent->dummy3 = aff->targets[12].card;
 		  aff->targets[12].player = aff->targets[13].player = aff->targets[13].card = csvid;
 
 		  // Test suite:
@@ -6168,7 +6168,7 @@ int card_zameck_guildmage(int player, int card, event_t event)
     base_target_definition(player, card, &td, 2);
     td.allowed_controller = player;
     td.preferred_controller = player;
-    td.special = 0x40000;
+    td.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td.extra = 0;
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
@@ -6247,7 +6247,7 @@ int card_zameck_guildmage(int player, int card, event_t event)
     base_target_definition(player, card, &td, 2);
     td.allowed_controller = player;
     td.preferred_controller = player;
-    td.special = 0x40000;
+    td.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td.extra = 0;
     instance = get_card_instance(player, card);
   }
@@ -6959,7 +6959,7 @@ static int vizkopa_guildmage_legacy(int player, int card, event_t event)
   amount = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (amount != 0)
   {
-    result = check_battlefield_for_id(player, 0x304d);
+    result = check_battlefield_for_id(player, CARD_ID_EXQUISITE_BLOOD);
     if (result == 0)
     {
       lose_life(1 - player, amount);

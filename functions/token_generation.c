@@ -112,6 +112,8 @@ static int real_generate_token(int player, int int_id, token_generation_t *token
 
 
 
+static void copy_token_part(int player, int card, int tok_player, int tok_card);
+
 void copy_all_tokens(int player, int card, int type, test_definition_t *test)
 {
   int c, marked[151] = {0};
@@ -131,7 +133,7 @@ void copy_all_tokens(int player, int card, int type, test_definition_t *test)
   {
     if (marked[c] && player >= 0)
     {
-      copy_token(player, card, player, c);
+      copy_token_part(player, card, player, c);
     }
   }
 }
@@ -243,7 +245,7 @@ void copy_all_tokens_both_players(int player, int card, int type, test_definitio
       }
       for (int c = limit - 1; c >= 0; --c)
         if (marked[c] && p >= 0)
-          copy_token(p, c, p, c);
+          copy_token_part(p, c, p, c);
     }
   }
 }
@@ -532,7 +534,7 @@ static void set_token(int player, int card, token_generation_t *token)
   instance->damage_source_card = token->s_card;
   special_keywords = token->s_key_plus;
   instance->ext->sp_keywords = special_keywords;
-  instance->token_special_keywords = special_keywords;
+  instance->unused0x124 = special_keywords;
   set_special_flags2(player, card, token->special_flags2);
   instance = get_card_instance(player, card);
   copied_infos = token->special_infos;
@@ -710,21 +712,15 @@ static int get_copyable_special_infos(int t_player, int t_card)
 void copy_token_definition(int player, int card, token_generation_t *token, int t_player,
                                 int t_card)
 {
-  special_flags2_t copied_flags;
-  int result;
-  card_instance_t *instance;
-  unsigned int copyable_infos;
-
-  result = get_id(t_player, t_card);
-  default_token_definition(player, card, result, token);
-  token->no_sleight = '\x01';
-  if (cards_ptr[result]->card_type == 8)
+  int csvid = get_id(t_player, t_card);
+  default_token_definition(player, card, csvid, token);
+  token->no_sleight = 1;
+  if (cards_ptr[csvid]->card_type == 8)
   {
-    instance = get_card_instance(t_player, t_card);
-    result = check_special_flags(t_player, t_card, 0x40000000);
-    if (result == 0)
+    card_instance_t *instance = get_card_instance(t_player, t_card);
+    if (!check_special_flags(t_player, t_card, 0x40000000))
     {
-      token->s_player = (int)instance->damage_source_player;
+      token->s_player = instance->damage_source_player;
       token->s_card = instance->damage_source_card;
     }
     else
@@ -732,26 +728,16 @@ void copy_token_definition(int player, int card, token_generation_t *token, int 
       token->s_card = -1;
       token->s_player = -1;
     }
-    copied_flags = instance->ext->special_flags2;
+    special_flags2_t copied_flags = instance->ext->special_flags2;
     token->s_key_plus = instance->ext->sp_keywords;
     token->special_flags2 = copied_flags;
-    if ((t_player < 0) || (t_card < 0))
-    {
-      copyable_infos = 0;
-    }
-    else
-    {
-      copyable_infos = get_copyable_special_infos(t_player, t_card);
-    }
-    token->special_infos = copyable_infos;
-    result = check_special_flags2(t_player, t_card, 0x80);
-    if (result != 0)
-    {
+    unsigned int special_infos = 0;
+    if (t_player >= 0 && t_card >= 0)
+      special_infos = get_copyable_special_infos(t_player, t_card);
+    token->special_infos = special_infos;
+    if (check_special_flags2(t_player, t_card, 0x80))
       token->special_flags2 = 0x80;
-      return;
-    }
   }
-  return;
 }
 
 /* ManalinkEh 2022: 0x2665820; original functions/token_generation.c:124. */
@@ -768,7 +754,7 @@ int token_characteristic_setting_effects(int player, int card, event_t event, in
     if (result == 0)
     {
       instance = get_card_instance(player, card);
-      special_abilities(t_player, t_card, event, instance->token_special_keywords, t_player,
+      special_abilities(t_player, t_card, event, instance->unused0x124, t_player,
                         t_card);
       if ((((event == EVENT_CHANGE_TYPE) && (t_card == affected_card)) &&
            (t_player == affected_card_controller)) &&
@@ -799,7 +785,6 @@ int generic_token(int player, int card, event_t event)
 
 /* October 2022 token ID/copy entry points. */
 static int generate_token_by_id_impl(int player, int card, int csvid, int number, int reserved);
-static void copy_token_part(int player, int card, int tok_player, int tok_card);
 void copy_token(int player, int card, int tok_player, int tok_card);
 int generate_token_by_id(int player, int card, int csvid);
 void generate_tokens_by_id(int player, int card, int csvid, int howmany);
@@ -912,8 +897,7 @@ int generate_reserved_token_by_id(int player, int csvid)
   {
     backtrace_and_abort("functions/token_generation.c:658\nis_reserved_id(csvid)");
   }
-  result = generate_token_by_id_impl(player, -1, csvid, 1, 1);
-  return result;
+  return generate_token_by_id_impl(player, -1, csvid, 1, 1);
 }
 
 

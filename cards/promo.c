@@ -795,7 +795,7 @@ int card_necropolis_of_azar(int player, int card, event_t event)
     play_sound_effect(WAV_NECRAZAR);
     instance = get_card_instance(player, card);
     parent_controller = instance->parent_controller;
-    default_token_definition(player, card, 900, &token);
+    default_token_definition(player, card, CARD_ID_SPAWN_OF_AZAR, &token);
     random_power = network_rand(parent_controller, 3);
     token.pow = (int32_t)(random_power + 1);
     random_toughness = network_rand(parent_controller, 3);
@@ -1301,10 +1301,7 @@ static int has_globe_counter(int unused, int unused2, int player, int card)
 /* ManalinkEh 2022: 0x2411480; original cards/promo.c:1596. */
 int card_bog_humbugs(int player, int card, event_t event)
 {
-  int result;
-
-  result = damage_dealt_by_me(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE);
-  if (result == 0)
+  if (!damage_dealt_by_me(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE))
   {
     return 0;
   }
@@ -1332,7 +1329,7 @@ int card_fruitcake_elemental(int player, int card, event_t event)
   if (event == EVENT_ACTIVATE)
   {
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
   }
   else
   {
@@ -1341,7 +1338,7 @@ int card_fruitcake_elemental(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
 
     if (((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0)) &&
         (instance = get_card_instance(player, card), instance->targets[0].player == 1 - player))
@@ -1375,7 +1372,7 @@ int card_seasons_beatings(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   if (event == EVENT_RESOLVE_SPELL)
   {
     if (valid_target(&td) != 0)
@@ -1537,7 +1534,7 @@ int card_snow_mercy(int player, int card, event_t event)
                    damage_or_enchantment->damage_source_card, COUNTER_GLOBE, 1);
     }
   }
-  if (((trigger_condition == 0xd7) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_DEAL_DAMAGE) && (card == affected_card)) &&
       ((player == affected_card_controller &&
         ((reason_for_trigger_controller == player &&
           (result = is_humiliated(player, card, AL_TRIG), result == 0))))))

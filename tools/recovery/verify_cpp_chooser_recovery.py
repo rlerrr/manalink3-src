@@ -18,22 +18,27 @@ def evidence(proof,root=ROOT):
     return json.loads((root/path).read_text())
 
 
-def coverage(proof,root=ROOT):
+def coverage(proof,root=ROOT,*,historical=False):
     record=evidence(proof,root)
     if not record:return {}
     text=read(root/SOURCE)
+    if not historical:
+        source_pin=next(row for row in proof['files'] if row['source']==SOURCE)
+        assert sha(text.encode())==source_pin['canonical_sha256'],SOURCE
     for row in record['header_dependencies']:
         assert sha(Path(row['path']).read_bytes())==row['sha256']
     for row in record['functions']:
         if row['kind']=='cpp_source':
-            a,b=span(text,row['name']);assert sha(text[a:b].encode())==row['definition_sha256'],row['name']
+            bounds=span(text,row['name']);assert bounds,row['name']
+            if historical:assert sha(text[slice(*bounds)].encode())==row['definition_sha256'],row['name']
     a,b=span(text,'generate_choose_a_card_dlg_template')
-    assert sha(text[a:b].encode())==record['template_definition_sha256']
+    if historical:assert sha(text[a:b].encode())==record['template_definition_sha256']
     return {int(r['address'],16):dict(category='reviewed_cpp_source' if r['kind']=='cpp_source' else 'reviewed_compiler_source',
                 source=SOURCE,source_function=r['name'] if r['kind']=='cpp_source' else 'dlgproc_choose_a_card_helper',
-                source_body_sha256=r.get('definition_sha256',sha(text.encode())),
+                source_body_sha256=sha(text[slice(*span(text,r['name']))].encode()) if r['kind']=='cpp_source' else sha(text.encode()),
+                original_review_definition_sha256=r.get('definition_sha256'),
                 source_body=text[slice(*span(text,r['name']))] if r['kind']=='cpp_source' else text,
-                review='Complete native chooser body and C++/Win32 contracts reviewed. Compiler artifacts come from the pinned STL/stdio source and vector lifecycle; interactive behavior is not runtime-tested.')
+                review='Complete native chooser body and C++/Win32 contracts reviewed. Current source is bound to canonical file pins; later edits retain their own evidence. Compiler artifacts come from the pinned STL/stdio source and vector lifecycle; interactive behavior is not runtime-tested.')
             for r in record['functions']}
 
 
@@ -149,7 +154,7 @@ def verify(proof,image,root=ROOT):
     callback=[s for s in rebuilt.functions() if 'dlgproc_choose_a_card' in s[0] and s[0].endswith('@16')]
     assert len(callback)==1,'Expected real stdcall dialog callback with four stack arguments'
     assert all(r[2]=='0x10' for r in record['native_instruction_blocks']['0x26efbb0']['instructions'] if r[1]=='ret')
-    covered=coverage(proof,root);assert len(covered)==18
+    covered=coverage(proof,root,historical=True);assert len(covered)==18
     assert len(resolved_stub_addresses(proof,root))==5
     return dict(cpp_source_functions=10,compiler_generated_ranges=8,complete_native_ranges=18,
                 restored_stub_boundaries=5,dialog_template_bytes=990,dialog_controls=22,

@@ -2274,39 +2274,25 @@ Artifact
 
 int card_jugan_rising_star(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  int ret_location;
-  target_t *target_cursor;
-  target_t *next_target;
-  target_definition_t td;
   check_legend_rule(player, card, event);
-  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (result == 0)
-  {
+  if (!this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY))
     return 0;
-  }
-  default_target_definition(player, card, &td, 2);
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
   td.preferred_controller = player;
-  instance = get_card_instance(player, card);
-  ret_location = 0;
-  result = can_target(&td);
-  do
+  card_instance_t *instance = get_card_instance(player, card);
+  int count = 0;
+  int available = can_target(&td);
+  while (available && count < 5)
   {
-    if (result == 0)
-      break;
-    new_pick_target(&td, "TARGET_CREATURE", ret_location, 0);
-    ret_location = ret_location + 1;
-    result = can_target(&td);
-  } while (ret_location < 5);
-  instance->number_of_targets = '\0';
-  target_cursor = instance->targets;
-  do
-  {
-    next_target = target_cursor + 1;
-    add_counters(player, card, target_cursor->player, target_cursor->card, COUNTER_P1_P1, 1);
-    target_cursor = next_target;
-  } while (next_target != instance->targets + 5);
+    new_pick_target(&td, "TARGET_CREATURE", count, 0);
+    ++count;
+    available = can_target(&td);
+  }
+  instance->number_of_targets = 0;
+  for (int i = 0; i != 5; ++i)
+    add_counters(player, card, instance->targets[i].player, instance->targets[i].card,
+                 COUNTER_P1_P1, 1);
   return 0;
 }
 
@@ -2931,7 +2917,7 @@ static int rfg_when_die_legacy(int player, int card, event_t event)
     if (affect_me(p, c))
     {
       card_instance_t *affected = get_card_instance(p, c);
-      if (affected->kill_code >= KILL_BURY && affected->kill_code <= KILL_SACRIFICE)
+      if (affected->kill_code >= KILL_DESTROY && affected->kill_code <= KILL_SACRIFICE)
       {
         affected->kill_code = KILL_EXILE;
         set_special_flags2(p, c, SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE);
@@ -5560,8 +5546,7 @@ int card_boseiju_who_shelters_all(int player, int card, event_t event)
     add_status(player, result, 0x10000);
     return 0;
   }
-  result = mana_producer(player, card, event);
-  return result;
+  return mana_producer(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -5625,7 +5610,7 @@ static int card_otherworldly_journey_impl(int player, int card, event_t event)
     td.preferred_controller = player;
     default_target_definition(player, card, &td2, 2);
     td2.preferred_controller = player;
-    td2.required_state = 0x4000;
+    td2.required_state = TARGET_STATE_DESTROYED;
     get_card_instance(player, card);
     if (player != 0)
     {
@@ -5643,7 +5628,7 @@ static int card_otherworldly_journey_impl(int player, int card, event_t event)
       td.preferred_controller = player;
       default_target_definition(player, card, &td2, 2);
       td2.preferred_controller = player;
-      td2.required_state = 0x4000;
+      td2.required_state = TARGET_STATE_DESTROYED;
       get_card_instance(player, card);
       if ((card == affected_card) && (player == affected_card_controller))
       {
@@ -5664,7 +5649,7 @@ static int card_otherworldly_journey_impl(int player, int card, event_t event)
     td.preferred_controller = player;
     default_target_definition(player, card, &td2, 2);
     td2.preferred_controller = player;
-    td2.required_state = 0x4000;
+    td2.required_state = TARGET_STATE_DESTROYED;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
     {
@@ -5700,7 +5685,7 @@ static int card_otherworldly_journey_impl(int player, int card, event_t event)
     td.preferred_controller = player;
     default_target_definition(player, card, &td2, 2);
     td2.preferred_controller = player;
-    td2.required_state = 0x4000;
+    td2.required_state = TARGET_STATE_DESTROYED;
     get_card_instance(player, card);
     return 0;
   }
@@ -5712,36 +5697,19 @@ int card_reverse_the_sands(int player, int card, event_t event)
 {
   int result;
 
-  if (event != EVENT_CAN_CAST)
+  if (!IS_GS_EVENT(player, card, event))
+    return 0;
+  if (event == EVENT_RESOLVE_SPELL)
   {
-    if (event == EVENT_CAST_SPELL)
+    result = do_dialog(player, player, card, -1, -1,
+                       " Switch life totals\n Keep life totals as they are", 0);
+    if (result == 0)
     {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
+      exchange_life_totals(player, 1 - player);
     }
-    else if (event == EVENT_RESOLVE_SPELL)
-    {
-      result = do_dialog(player, player, card, -1, -1,
-                         " Switch life totals\n Keep life totals as they are", 0);
-      if (result == 0)
-      {
-        exchange_life_totals(player, 1 - player);
-      }
-      kill_card(player, card, KILL_DESTROY);
-    }
-    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
-    {
-      return 0;
-    }
+    kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
-  return result;
+  return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -5793,7 +5761,7 @@ static int card_cranial_extraction_impl(int player, int card, event_t event)
         return 0;
       }
       default_target_definition(player, card, &td, 2);
-      td.zone = 0x1000;
+      td.zone = TARGET_ZONE_PLAYERS;
       if ((card == affected_card) && (player == affected_card_controller))
       {
         ai_modifier = ai_modifier + 0x30;
@@ -5803,7 +5771,7 @@ static int card_cranial_extraction_impl(int player, int card, event_t event)
     if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
     {
       default_target_definition(player, card, &td, 2);
-      td.zone = 0x1000;
+      td.zone = TARGET_ZONE_PLAYERS;
       if ((event == EVENT_RESOLVE_SPELL) && (result = valid_target(&td), result != 0))
       {
 
@@ -5829,7 +5797,7 @@ static int card_cranial_extraction_impl(int player, int card, event_t event)
     }
   }
   default_target_definition(player, card, &td, 2);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   return generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
 }
 
@@ -5842,7 +5810,7 @@ int card_masako_the_humorless(int player, int card, event_t event)
 
   if (event == EVENT_STATIC_EFFECTS)
   {
-    card_flags[player] = card_flags[player] | 1;
+    card_flags[player] = card_flags[player] | CFLAGS_MASAKO;
   }
   result = flash(player, card, event);
   return result;

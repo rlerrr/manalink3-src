@@ -637,7 +637,8 @@ int card_blessed_alliance(int player, int card, event_t event){
 	return 0;
 }
 
-int card_borrowed_grace(int player, int card, event_t event){
+int card_borrowed_grace(int player, int card, event_t event)
+{
 /* Borrowed Grace	|2|W	0x200ef0d
  * Instant
  * Escalate |1|W
@@ -645,68 +646,60 @@ int card_borrowed_grace(int player, int card, event_t event){
  * * Creatures you control get +2/+0 until end of turn.
  * * Creatures you control get +0/+2 until end of turn. */
 
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
+  if (!IS_GS_EVENT(player, card, event))
+    return 0;
+  enum { CHOICE_POWER = 1, CHOICE_TOUGHNESS = 2 };
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_CAST)
+    return 1;
 
-	enum
-	{
-		CHOICE_2_0 	= 1<<0,
-		CHOICE_0_2 	= 1<<1,
-		CHOICE_MASK = CHOICE_2_0 | CHOICE_0_2,
-	};
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+  {
+    instance->number_of_targets = 0;
+    if (check_special_flags2(player, card, SF2_COPIED_FROM_STACK))
+      return 0;
+    instance->info_slot = 0;
+    int choice = DIALOG(player, card, event, DLG_NO_STORAGE, DLG_RANDOM,
+                        "+2/+0 until end of turn", 1, 10,
+                        "+0/+2 until end of turn", 1, 5);
+    if (!choice)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    instance->info_slot |= 1u << (((unsigned int)choice - 1u) & 31);
+    if (!has_mana_multi(player, MANACOST_XW(1, 1)))
+      return 0;
+    if (DIALOG(player, card, event, DLG_NO_STORAGE, DLG_NO_CANCEL,
+                "Escalate", 1, 10, "Decline", 1, 1) != 1)
+      return 0;
+    charge_mana_multi(player, MANACOST_XW(1, 1));
+    if (spell_fizzled == 1)
+    {
+      spell_fizzled = 0;
+      return 0;
+    }
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return basic_spell(player, card, event);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		instance->number_of_targets = 0;
-		if( ! check_special_flags2(player, card, SF2_COPIED_FROM_STACK) ){
-			instance->info_slot = 0;
-			while( (instance->info_slot & CHOICE_MASK) != CHOICE_MASK ){
-					int choice = DIALOG(player, card, event, DLG_NO_STORAGE, DLG_RANDOM,
-										"+2/+0 until end of turn", !(instance->info_slot & CHOICE_2_0), 10,
-										"+0/+2 until end of turn", !(instance->info_slot & CHOICE_0_2), 5);
-
-					if( ! choice ){
-						spell_fizzled = 1;
-						return 0;
-					}
-					instance->info_slot |= 1 << (choice - 1);
-					if ((instance->info_slot & CHOICE_MASK) == CHOICE_MASK){ has_mana_multi(player, MANACOST_XW(1, 1)); break; }
-					if( has_mana_multi(player, MANACOST_XW(1, 1)) ){
-						int choice2 = DIALOG(player, card, event, DLG_NO_STORAGE, DLG_NO_CANCEL,
-											"Escalate", 1, 10,
-											"Decline", 1, 1);
-						if( choice2 == 1 ){
-							charge_mana_multi(player, MANACOST_XW(1, 1));
-							if( spell_fizzled == 1 ){
-								spell_fizzled = 0;
-								break;
-							}
-						}
-						else{
-							break;
-						}
-					}
-					else{
-						break;
-					}
-			}
-		}
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		int pow = (instance->info_slot & CHOICE_2_0) ? 2 : 0;
-		int tou = (instance->info_slot & CHOICE_0_2) ? 2 : 0;
-		pump_subtype_until_eot(player, card, player, -1, pow, tou, 0, 0);
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return 0;
+    // The native code makes one further selection, then returns after the mana query.
+    choice = DIALOG(player, card, event, DLG_NO_STORAGE, DLG_RANDOM,
+                     "+2/+0 until end of turn", !(instance->info_slot & CHOICE_POWER), 10,
+                     "+0/+2 until end of turn", !(instance->info_slot & CHOICE_TOUGHNESS), 5);
+    if (!choice)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    instance->info_slot |= 1u << (((unsigned int)choice - 1u) & 31);
+    has_mana_multi(player, MANACOST_XW(1, 1));
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    unsigned int modes = instance->info_slot;
+    pump_subtype_until_eot(player, card, player, -1,
+                           modes & CHOICE_POWER ? 2 : 0, modes & CHOICE_TOUGHNESS ? 2 : 0, 0, 0);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return 0;
 }
 
 int card_bruna_the_fading_light(int player, int card, event_t event){
@@ -2088,8 +2081,8 @@ int card_identity_thief(int player, int card, event_t event)
   if (event == EVENT_DAT_ABILITY)
   {
     default_target_definition(player, card, &td, 2);
-    td.illegal_type = 0x1000;
-    td.special = 0x4000;
+    td.illegal_type = TARGET_TYPE_TOKEN;
+    td.special = TARGET_SPECIAL_NOT_ME;
     instance = get_card_instance(player, card);
     result = can_target(&td);
     if ((result != 0) &&
@@ -2416,8 +2409,10 @@ int card_unsubstantiate(int player, int card, event_t event)
 	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		int good = 1*(instance->info_slot == 66 && counterspell_validate(player, card, &td1, 0)) |
-				   2*(instance->info_slot == 67 && valid_target(&td));
+		int good = instance->info_slot == 66 && counterspell_validate(player, card, &td1, 0);
+		if (instance->info_slot == 67 && valid_target(&td)){
+			good |= 2;
+		}
 		if( good ){
 			bounce_permanent(instance->targets[0].player, instance->targets[0].card);
 		}
@@ -2570,27 +2565,20 @@ int card_borrowed_malevolence(int player, int card, event_t event){
 
 int card_cemetery_recruitment(int player, int card, event_t event)
 {
-  int grave_index;
-  int zombie_match;
-  test_definition_t test;
   if (!IS_GS_EVENT(player, card, event))
-  {
     return 0;
-  }
-  new_default_test_definition(&test, 2, "Select target creature card.");
+  test_definition_t test;
+  new_default_test_definition(&test, TYPE_CREATURE, "Select target creature card.");
   if (event == EVENT_RESOLVE_SPELL)
   {
-    grave_index = validate_target_from_grave_source(player, card, player, 0);
-    if (grave_index != -1)
+    int pos = validate_target_from_grave_source(player, card, player, 0);
+    if (pos != -1)
     {
-      zombie_match = has_subtype_by_id(
-          player, (unsigned int)cards_data[graveyard_ptr_mutable[player][grave_index]].id,
-          SUBTYPE_ZOMBIE);
-      from_grave_to_hand(player, grave_index, 1);
-      if (zombie_match != 0)
-      {
+      int zombie = has_subtype_by_id(
+          player, (unsigned int)cards_data[graveyard_ptr_mutable[player][pos]].id, SUBTYPE_ZOMBIE);
+      from_grave_to_hand(player, pos, 1);
+      if (zombie)
         draw_a_card(player);
-      }
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -5935,7 +5923,7 @@ int card_spell_queller(int player, int card, event_t event)
       {
         counterspell_target_definition(player, card, &td, 0xff);
         td.extra = 4;
-        td.special = 0x800;
+        td.special = TARGET_SPECIAL_CMC_LESSER_OR_EQUAL;
         instance = get_card_instance(player, card);
         if (instance->info_slot == 1)
         {
@@ -5987,8 +5975,8 @@ int card_spell_queller(int player, int card, event_t event)
               exiled_card_or_result =
                   can_legally_play_iid(instance->targets[1].player, instance->targets[1].card);
               exiled_card_or_result = dialog_impl(
-                  player, card, EVENT_ACTIVATE, "\001\010", instance->targets[1].player, "\001\014",
-                  "\001\003", "\001\016", "\001\021", instance->targets[1].card, prompt,
+                  player, card, EVENT_ACTIVATE, DLG_WHO_CHOOSES(instance->targets[1].player), DLG_NO_STORAGE,
+                  DLG_NO_CANCEL, DLG_AUTOCHOOSE_IF_1, DLG_SMALLCARD_ID(instance->targets[1].card), prompt,
                   exiled_card_or_result, 10, "Pass", 1, 0xffffffe7, 0, 0, 0, 0);
               if (exiled_card_or_result == 1)
               {
@@ -6005,7 +5993,7 @@ int card_spell_queller(int player, int card, event_t event)
   }
   counterspell_target_definition(player, card, &td, 0xff);
   td.extra = 4;
-  td.special = 0x800;
+  td.special = TARGET_SPECIAL_CMC_LESSER_OR_EQUAL;
   instance = get_card_instance(player, card);
   exiled_card_or_result = counterspell(player, card, EVENT_CAN_CAST, &td, 0);
   cast_result = 1;
@@ -6325,43 +6313,22 @@ int card_soul_separator(int player, int card, event_t event)
 
 int card_stitchers_graft(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-  instance = in_play(player, card);
-  if (instance != NULL)
+  if (in_play(player, card) && is_equipping(player, card) &&
+      !is_humiliated(player, card, AL_STATIC))
   {
-    instance = is_equipping(player, card);
-    if (instance != NULL)
-    {
-      result = is_humiliated(player, card, AL_STATIC);
-      if (result == 0)
-      {
-        instance = get_card_instance(player, card);
-        store_attackers(player, card, event, 0, (int)instance->damage_target_player,
-                        instance->damage_target_card, NULL);
-        dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
-        if (event == EVENT_DAT_ABILITY)
-        {
-          does_not_untap_effect(player, card, (int)instance->damage_target_player,
-                                instance->damage_target_card, 0, 1);
-          leaves_play(player, card, EVENT_DAT_ABILITY, 1, 0);
-          return vanilla_equipment(player, card, event, 2, 3, 3, 0, 0);
-        }
-      }
-    }
+    card_instance_t *inst = get_card_instance(player, card);
+    store_attackers(player, card, event, 0, inst->damage_target_player,
+                    inst->damage_target_card, NULL);
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+    if (event == EVENT_DAT_ABILITY)
+      does_not_untap_effect(player, card, inst->damage_target_player, inst->damage_target_card, 0, 1);
   }
   leaves_play(player, card, event, 1, 0);
-  if ((event == EVENT_UNATTACH) || (event == EVENT_LEAVES_PLAY_ABILITY))
+  if ((event == EVENT_UNATTACH || event == EVENT_LEAVES_PLAY_ABILITY) && is_equipping(player, card))
   {
-    instance = is_equipping(player, card);
-    if (instance != NULL)
-    {
-      instance = get_card_instance(player, card);
-      if (instance->damage_target_player == player)
-      {
-        kill_card(player, instance->damage_target_card, KILL_SACRIFICE);
-      }
-    }
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player == player)
+      kill_card(player, instance->damage_target_card, KILL_SACRIFICE);
   }
   return vanilla_equipment(player, card, event, 2, 3, 3, 0, 0);
 }
@@ -6676,8 +6643,8 @@ int card_minds_dilation(int player, int card, event_t event)
       playable_or_choice = can_legally_play_iid(player, exiled_iid_or_trigger);
       if ((playable_or_choice != 0) && ((cards_data[exiled_iid_or_trigger].type & 1) == 0))
       {
-        playable_or_choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002",
-                                         "\001\003", "\001\012", exiled_iid_or_trigger,
+        playable_or_choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_RANDOM,
+                                         DLG_NO_CANCEL, DLG_FULLCARD_ID(exiled_iid_or_trigger),
                                          "Play this card", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
         if (playable_or_choice == 1)
         {

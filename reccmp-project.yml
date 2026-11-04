@@ -8,3 +8,4 @@ targets:
     source-root: config/reccmp
     data-sources:
       - config/reccmp/functions.csv
+      - config/reccmp/globals.csv

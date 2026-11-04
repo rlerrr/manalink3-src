@@ -1,0 +1,1877 @@
+{
+  "format": 1,
+  "status": "Eighteen named-call-difference leads reviewed; four source definitions reconstructed, including Din pre-callback target snapshot. One build, 15,169 fixed slots and four exact file projections pass; full instruction differences remain.",
+  "files": [
+    {
+      "source": "cards/shadowmoor.c",
+      "before_bytes_sha256": "2116c658c7e1f2300d13b02c5ee3b75b16005a06893edab05ab1f100cdc68245",
+      "after_bytes_sha256": "1a5a7da550351db8e33d7e37672e673cd2c6136892f53f121bf5b4f6caf852f2",
+      "before_sha256": "7469a86181d5df8e68525a408f9b2ab660fe8a08cbd52c5ad22bed2dc16ded47",
+      "after_sha256": "99cfeee1900f93e28de983b89c3fa41e6a4b85951e17cad7b50248505fdb3b91"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "before_bytes_sha256": "2935d8af2f8df0b3d5a0cec8c7f06bd892f92e4cfc00e443c8d1b336dd1e19c8",
+      "after_bytes_sha256": "ca178b1da2245940e3032c364eb388fe079fac6e6723fdb39bda43c3c3113273",
+      "before_sha256": "329ffc70f7f18e7ab039cdac9a6d7b368603c17b2dc8f760fe157e03a0c6859a",
+      "after_sha256": "7307081bacd3b2705517f20619424712807982acd7092204d688063b31e1f98e"
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "before_bytes_sha256": "40207ac5f6fee86ac2b6282bba324a7aeb78c1f77f110b2b02c58072b7bca0dd",
+      "after_bytes_sha256": "1d221208bbc591fc2802244ecbe17fcc6e4acdbcc8ef2fee41955b5737084528",
+      "before_sha256": "732c404451890ee1d9830731183f0d0ad2c749f63557ad04cfa721113c3df9dd",
+      "after_sha256": "d5fe5283046f909d4029463404399cb03d0b330edc5a36d12f6c68eed7ef4359"
+    },
+    {
+      "source": "cards/darksteel.c",
+      "before_bytes_sha256": "73ee5af1c57477a70603c80ff7ab6af371e41238cbe3cf39b7233b5627ea42ff",
+      "after_bytes_sha256": "519bbdd7ad694499e237356a4893cf893b308aa8e513e3bf919c0b50497044cc",
+      "before_sha256": "235614b622faa3b0b1b228df1503425e8af11766e6af314e4048baf931bc510e",
+      "after_sha256": "8e8744c956a363810e173cb57fe0c467dea83ae4b0bdc6599b0578a65c7c2e9c"
+    }
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "baseline": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "51ccb1be03d5ff434988bd284d5f25ab4d3f144ea8bb47babafc4b99298ac134",
+      "ManalinkEh.dbg": "73c73cee930d5a6e24ffcff7bd36fe9e988215225026d26fdb2a17abb9f70808"
+    },
+    "results": [
+      {
+        "name": "card_din_of_the_fireherd",
+        "matched": false,
+        "reason": "('Unbound operand', '0x278', '0x274')",
+        "ranges": [
+          {
+            "address": "0x254e810",
+            "size": 930,
+            "sha256": "98d09c0c851365fac90bfeb7beb1848d7aab42b6b72b007fdefb78fbb6bbacc3",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x24d8fa0",
+            "size": 944,
+            "sha256": "fb46491d6bed1ddac9db346c5a03e806cb9c5b57e2eea6e15c06da2b0396ecbe",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_ral_storm_conduit",
+        "matched": false,
+        "reason": "Operand type or width changed",
+        "ranges": [
+          {
+            "address": "0x21d4b70",
+            "size": 549,
+            "sha256": "4a594515940086d04e897160656b37b47c560fc6a85940488b9290b584a3e6e1",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x261b140",
+            "size": 624,
+            "sha256": "c71ca944a75e81da3bd2aac66a2661e8031a7517ed9d8452c22518094920d4de",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_calix_destinys_hand",
+        "matched": false,
+        "reason": "('Unbound operand', '0x1f4', '0x200')",
+        "ranges": [
+          {
+            "address": "0x235b4c0",
+            "size": 1612,
+            "sha256": "e4cdf35f2c3404bde36fd4ce8b57113a72e6020f76adff5b0e7638e59e18587c",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2579050",
+            "size": 1632,
+            "sha256": "fa0569e735e56eb7b743299b2e70226244277db1288d179ba73b9b053dff0eb4",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_dismantle",
+        "matched": false,
+        "reason": "('Operation changed', 'cmp', 'mov')",
+        "ranges": [
+          {
+            "address": "0x2250310",
+            "size": 1303,
+            "sha256": "c8247658a4de3c7d58c3b50a4d8794cd72a5a0679d008e1b57b8eafc8b621220",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2133680",
+            "size": 1424,
+            "sha256": "5e187ee9c615bfc68becbd5d00624e596ed3acf9da04d8758095b72b8efbf861",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      }
+    ],
+    "checker_sha256": "102e00d93a1b2a4540c7897e27f0a2632820d9bb331ae9c8846a1919dfc95fe1",
+    "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+    "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+  },
+  "scope": "Din restores a native pre-callback target snapshot. Ral, Calix and Dismantle consolidate reconstructed control flow while preserving callback ordering and native quirks; no original source spelling or gameplay/whole-DLL equivalence claim.",
+  "source_flow_reviews": [
+    {
+      "name": "card_phyrexian_revoker",
+      "source": "cards/mirrodin_besieged.c",
+      "source_definition_sha256": "24ac95967424033441b0355d35bdc03995b7aad5afdc128a911b12c8162f8820",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "new_default_test_definition"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "can_target"
+      ],
+      "ranges": [
+        {
+          "address": "0x23347a0",
+          "size": 1031,
+          "sha256": "9004b035607017b896e90d195ab4ed663b4cbda221ae656fbaa6e674710e994b",
+          "named_call_sites": {
+            "_ai_name_a_random_csvid": 2,
+            "_can_target": 1,
+            "_choose_a_card_test_ct": 1,
+            "_create_card_name_legacy": 1,
+            "_default_target_definition": 1,
+            "_default_test_definition": 1,
+            "_dialog_impl": 1,
+            "_get_card_instance": 4,
+            "_get_card_name": 1,
+            "_new_default_test_definition": 2,
+            "_new_pick_target": 1,
+            "_remove_abilities_by_test": 1
+          }
+        },
+        {
+          "address": "0x2386660",
+          "size": 960,
+          "sha256": "8504a18eb441fd8cdcfffcc8b074d572840d25e67ca760b1a8f55bb1a5f0175e",
+          "named_call_sites": {
+            "_ai_name_a_random_csvid": 2,
+            "_can_target": 2,
+            "_choose_a_card_test_ct": 1,
+            "_create_card_name_legacy": 1,
+            "_default_target_definition": 1,
+            "_default_test_definition": 1,
+            "_dialog_impl": 1,
+            "_get_card_instance": 4,
+            "_get_card_name": 1,
+            "_new_default_test_definition": 1,
+            "_new_pick_target": 1,
+            "_remove_abilities_by_test": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-pending-interface-callers/23347a0.c",
+        "sha256": "dad7dfc4d32b9ae953998e933f6c534fa45fd0ef992c90dd67c2e2988586f50d",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Preserve fresh speculation/trace-mode reads after getter, can_target and random-name callbacks. The source keeps the can_target result-to-choice fallback and the duplicate native type_flag store for player 1. Native repeats the list-test initializer on separate paths; a changed-block call-count delta is not a missing dynamic initializer."
+    },
+    {
+      "name": "card_kazarov_sengir_pureblood",
+      "source": "cards/dominaria.c",
+      "source_definition_sha256": "f7c1d3521d0a6d7af9832203b8a13e12f81beecfebf47c58e74487a48cbfa11c",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "get_card_instance"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "default_target_definition"
+      ],
+      "ranges": [
+        {
+          "address": "0x22cfb50",
+          "size": 779,
+          "sha256": "69d258f1e2d0d0a3442a2f8129b6b12c1be767be33f795067e9bd44d97b98014",
+          "named_call_sites": {
+            "_add_counters": 1,
+            "_damage_target0": 1,
+            "_default_target_definition": 1,
+            "_generic_activated_ability": 1,
+            "_get_card_instance": 6,
+            "_is_humiliated": 1,
+            "_is_what": 1,
+            "_validate_target": 1
+          }
+        },
+        {
+          "address": "0x21543a0",
+          "size": 800,
+          "sha256": "233c7d94782c335751d25fab0d585088abf6160ab4bec14c7d9916b0655b21ff",
+          "named_call_sites": {
+            "_add_counters": 1,
+            "_damage_target0": 1,
+            "_default_target_definition": 2,
+            "_generic_activated_ability": 1,
+            "_get_card_instance": 5,
+            "_is_humiliated": 1,
+            "_is_what": 1,
+            "_validate_target": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-runtime/22cfb50.c",
+        "sha256": "af2b2d3f1e0da2c59408de0a740864a553da2374cf7f906d5364ec25ae79b9aa",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Preserve the damage-record path, post-damage getter and info_slot<1 early return, and the third getter before trigger-resolution counter addition. The ordinary-event getter and damage-path getter may share a source site; no query deletion or added gameplay call inferred from static counts."
+    },
+    {
+      "name": "card_timebender",
+      "source": "cards/planar_chaos.c",
+      "source_definition_sha256": "c8ac2c7f89444bfb75dfed5493cf2ed57d8815948030152231508cbfaaf468ab",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "new_pick_target"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "morph"
+      ],
+      "ranges": [
+        {
+          "address": "0x23be760",
+          "size": 641,
+          "sha256": "5ae5ddfb16abdafb52df1f2d39ecfba642b0847e538742b9806409368005182e",
+          "named_call_sites": {
+            "_add_counters": 1,
+            "_can_target": 2,
+            "_count_counters": 2,
+            "_default_target_definition": 1,
+            "_get_card_instance": 1,
+            "_is_what": 2,
+            "_morph": 1,
+            "_new_pick_target": 2,
+            "_remove_counters": 1
+          }
+        },
+        {
+          "address": "0x2425f40",
+          "size": 720,
+          "sha256": "4126ace4be8a00d04c99b13b428b8bc2906658a3e2c7869a43c94c841fc81fb4",
+          "named_call_sites": {
+            "_add_counters": 1,
+            "_can_target": 2,
+            "_count_counters": 2,
+            "_default_target_definition": 1,
+            "_get_card_instance": 1,
+            "_is_what": 2,
+            "_morph": 2,
+            "_new_pick_target": 1,
+            "_remove_counters": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-tailcalls/23be760.c",
+        "sha256": "2e28c7bc45b8b923ce37ed0991a7f0c6b1e49ecb7097af0f8118fd99016b5fc7",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Both picker prompts are selected from the saved dialog choice before can_target/new_pick_target. Keep the native add-only-if-existing-time-counter quirk and removal-path live target reread after is_what. The extra morph return is a shared epilogue represented as an early return."
+    },
+    {
+      "name": "card_biomancers_familiar",
+      "source": "cards/ravnica_allegiance.c",
+      "source_definition_sha256": "6d67590e281fac167f1127235cde277cd5ba2b695bbd2bc5f34ccd444a30c23f",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "leaves_play"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "default_target_definition"
+      ],
+      "ranges": [
+        {
+          "address": "0x25bc6a0",
+          "size": 655,
+          "sha256": "8004ab71bc04410ac57bc68461a6a85ce6c6c10f8cc87e7949d68f87476dfad0",
+          "named_call_sites": {
+            "_create_targetted_legacy_effect": 1,
+            "_default_target_definition": 1,
+            "_default_test_definition": 2,
+            "_generic_activated_ability": 1,
+            "_get_card_instance": 2,
+            "_is_what": 1,
+            "_leaves_play": 3,
+            "_remove_cost_mod_for_activated_abilities": 1,
+            "_set_cost_mod_for_activated_abilities": 2
+          }
+        },
+        {
+          "address": "0x247aa00",
+          "size": 688,
+          "sha256": "5468a386b36b01e0b8682f76a8c0abec3bd7e488cae33f4e21903756018feb28",
+          "named_call_sites": {
+            "_create_targetted_legacy_effect": 1,
+            "_default_target_definition": 2,
+            "_default_test_definition": 2,
+            "_generic_activated_ability": 1,
+            "_get_card_instance": 2,
+            "_is_what": 1,
+            "_leaves_play": 2,
+            "_remove_cost_mod_for_activated_abilities": 1,
+            "_set_cost_mod_for_activated_abilities": 2
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-leaves-play/25bc6a0.c",
+        "sha256": "379bc8b5d27cba5b1714fc96b432018a4c320ca8fb8416255d1c372d1938f43a",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "leaves_play executes once after the resolve/cast-specific work for every event. The native compiler duplicates its site across event paths. The source retains the removal-trigger early return and two resolution getters, reading target card before target player."
+    },
+    {
+      "name": "card_din_of_the_fireherd",
+      "source": "cards/shadowmoor.c",
+      "source_definition_sha256": "02ec9be11b534df262d6c2a56ad29f2c28e15d155eacb5fedef3a7151f7842ef",
+      "edited": true,
+      "discovery_native_calls_only": [
+        "default_target_definition"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "get_card_instance"
+      ],
+      "ranges": [
+        {
+          "address": "0x254e810",
+          "size": 930,
+          "sha256": "98d09c0c851365fac90bfeb7beb1848d7aab42b6b72b007fdefb78fbb6bbacc3",
+          "named_call_sites": {
+            "_check_battlefield_for_special_card": 2,
+            "_default_target_definition": 4,
+            "_default_test_definition": 1,
+            "_default_token_definition": 1,
+            "_generate_token": 1,
+            "_generic_spell": 2,
+            "_get_card_instance": 1,
+            "_hybrid_casting": 1,
+            "_kill_card": 1,
+            "_modify_cost_for_hybrid_spells.part.0": 1,
+            "_new_default_test_definition": 2,
+            "_new_sacrifice": 2,
+            "_valid_target": 1
+          }
+        },
+        {
+          "address": "0x24d8ea0",
+          "size": 928,
+          "sha256": "bf53100e763f5edd4a7fb88480889cf9266840a843a5dc550032629793aa186b",
+          "named_call_sites": {
+            "_check_battlefield_for_special_card": 2,
+            "_default_target_definition": 3,
+            "_default_test_definition": 1,
+            "_default_token_definition": 1,
+            "_generate_token": 1,
+            "_generic_spell": 2,
+            "_get_card_instance": 1,
+            "_hybrid_casting": 1,
+            "_kill_card": 1,
+            "_modify_cost_for_hybrid_spells.part.0": 1,
+            "_new_default_test_definition": 2,
+            "_new_sacrifice": 2,
+            "_valid_target": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-short-wrapper-cards26/254e810.c",
+        "sha256": "9a8f541d45829c644d7296a91b37c46bdd72d0d7324544585c9381c0034d8fe6",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Corrected the actual source mismatch: snapshot tgt immediately after valid_target and before default_token_definition/generate_token; reuse it through both count and sacrifice passes. Do not reread targets after those callbacks."
+    },
+    {
+      "name": "card_endling",
+      "source": "cards/modern_horizons.c",
+      "source_definition_sha256": "df81558d8ed6061df204f24f1aee064081fc96f64fdc0781344ba71df63be81f",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "alternate_legacy_text"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "get_card_instance"
+      ],
+      "ranges": [
+        {
+          "address": "0x2337540",
+          "size": 1671,
+          "sha256": "cf8f13267f89660ee7c8509d1f0fa68005565074f2099767332261f1f49386d6",
+          "named_call_sites": {
+            "_alternate_legacy_text": 2,
+            "_charge_mana_for_activated_ability": 2,
+            "_create_targetted_legacy_effect": 1,
+            "_dialog_impl": 1,
+            "_generic_activated_ability": 3,
+            "_generic_shade": 1,
+            "_get_card_instance": 3,
+            "_get_special_abilities": 1,
+            "_is_sick": 1,
+            "_is_this_dying": 1,
+            "_pump_ability_until_eot": 1,
+            "_pump_until_eot_merge_previous_alt": 1
+          }
+        },
+        {
+          "address": "0x238b720",
+          "size": 1552,
+          "sha256": "8e19d6434e99dc3e0029ee80289e97cf27b4c3b669289854e7e5b98f8a331eb4",
+          "named_call_sites": {
+            "_alternate_legacy_text": 1,
+            "_charge_mana_for_activated_ability": 2,
+            "_create_targetted_legacy_effect": 1,
+            "_dialog_impl": 1,
+            "_generic_activated_ability": 3,
+            "_generic_shade": 1,
+            "_get_card_instance": 4,
+            "_get_special_abilities": 1,
+            "_is_sick": 1,
+            "_is_this_dying": 1,
+            "_pump_ability_until_eot": 1,
+            "_pump_until_eot_merge_previous_alt": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-tailcalls/2337540.c",
+        "sha256": "cd30970eb885ab79d57f60fc59fb64a01e72c6ee46d28489aaf9035f9aa10757",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Keep the signed POW_BOOST range expression, two cleanup getters, activation-only cost queries, live phase/turn reads around is_sick/is_this_dying, stored-keyword mask and < -1 reset. Native alternate_legacy_text has two resolution sites for undying versus keyword pumping; the named-call queue only compares differing blocks."
+    },
+    {
+      "name": "card_ral_storm_conduit",
+      "source": "cards/war_of_the_spark.c",
+      "source_definition_sha256": "3899e80a9f1647a5e16ec9ad70e7d10f2ca763163874030c5bc981ea378ad6bd",
+      "edited": true,
+      "discovery_native_calls_only": [
+        "count_type_in_hand(1)"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "count_type_in_hand(2)",
+        "planeswalker"
+      ],
+      "ranges": [
+        {
+          "address": "0x21d4b70",
+          "size": 549,
+          "sha256": "4a594515940086d04e897160656b37b47c560fc6a85940488b9290b584a3e6e1",
+          "named_call_sites": {
+            "_can_target": 1,
+            "_check_legend_rule": 1,
+            "_count_type_in_hand": 1,
+            "_create_legacy_effect": 1,
+            "_damage_target0": 1,
+            "_dialog_impl": 1,
+            "_get_card_instance": 3,
+            "_magecraft_trigger": 1,
+            "_new_pick_target": 1,
+            "_opponent_or_pw_target_definition": 1,
+            "_planeswalker": 1,
+            "_scry": 1
+          }
+        },
+        {
+          "address": "0x261b010",
+          "size": 576,
+          "sha256": "355c89ac8714d3113bba7038c06299b2d3680be2b103f2164f5b9f0e49097350",
+          "named_call_sites": {
+            "_can_target": 1,
+            "_check_legend_rule": 1,
+            "_count_type_in_hand.part.0": 1,
+            "_create_legacy_effect": 1,
+            "_damage_target0": 1,
+            "_dialog_impl": 1,
+            "_get_card_instance": 3,
+            "_magecraft_trigger": 1,
+            "_new_pick_target": 1,
+            "_opponent_or_pw_target_definition": 1,
+            "_planeswalker": 1,
+            "_scry": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-storm-family/21d4b70.c",
+        "sha256": "f705bd7fe28c4b590141b2490dd83093ea056024b0a56d15a566fe5a03594a5b",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Consolidated the activation-family getter and planeswalker epilogue. SPA still picks/damages before its target-count clear. Activation clears fields, counts spells, then opens the dialog. Cancellation returns zero; cleanup still acquires the instance. No added or removed count_type_in_hand query."
+    },
+    {
+      "name": "card_calix_destinys_hand",
+      "source": "cards/theros_beyond_death.c",
+      "source_definition_sha256": "c010ecf4b86c404064e546bb3871abe0160857f6336fabbb21316dd8c9c690c2",
+      "edited": true,
+      "discovery_native_calls_only": [
+        "find_attached_legacy_effect_not_full(1)"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "planeswalker",
+        "find_attached_legacy_effect_not_full(2)"
+      ],
+      "ranges": [
+        {
+          "address": "0x235b4c0",
+          "size": 1612,
+          "sha256": "e4cdf35f2c3404bde36fd4ce8b57113a72e6020f76adff5b0e7638e59e18587c",
+          "named_call_sites": {
+            "_can_target": 2,
+            "_check_legend_rule": 1,
+            "_create_targetted_legacy_effect": 1,
+            "_default_target_definition": 4,
+            "_default_test_definition": 1,
+            "_dialog_impl": 1,
+            "_find_attached_legacy_effect_not_full": 1,
+            "_get_card_instance": 4,
+            "_get_internal_card_id_from_csv_id": 2,
+            "_get_original_internal_card_id": 1,
+            "_get_owner": 2,
+            "_in_play": 1,
+            "_is_token": 1,
+            "_kill_card": 1,
+            "_new_default_test_definition": 1,
+            "_new_pick_target": 2,
+            "_new_reanimate_all": 1,
+            "_planeswalker": 1,
+            "_reveal_top_cards_of_library_and_choose": 1,
+            "_unmeld": 1,
+            "_valid_target": 1,
+            "_validate_target": 1
+          }
+        },
+        {
+          "address": "0x2578f40",
+          "size": 1600,
+          "sha256": "a7f2ac6bf446189aecfebcd9e0fedac15e2bef90cccea64713c93cd62f571924",
+          "named_call_sites": {
+            "_can_target": 2,
+            "_check_legend_rule": 1,
+            "_create_targetted_legacy_effect": 1,
+            "_default_target_definition": 4,
+            "_default_test_definition": 1,
+            "_dialog_impl": 1,
+            "_find_attached_legacy_effect_not_full.part.0": 1,
+            "_get_card_instance": 4,
+            "_get_internal_card_id_from_csv_id": 2,
+            "_get_original_internal_card_id": 1,
+            "_get_owner": 2,
+            "_in_play": 1,
+            "_is_token": 1,
+            "_kill_card": 1,
+            "_new_default_test_definition": 1,
+            "_new_pick_target": 2,
+            "_new_reanimate_all": 1,
+            "_planeswalker": 1,
+            "_reveal_top_cards_of_library_and_choose": 1,
+            "_unmeld": 1,
+            "_valid_target": 1,
+            "_validate_target": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-tailcalls/235b4c0.c",
+        "sha256": "21cfbb08d954451251f3408b8989b86ebf21c7317645141eabe64ec1dcc43902",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Consolidated activation-family constructors/getter and final planeswalker call. Preserve can_target order, short-circuited pickers, complete resolution body, saved parent/target coordinates, owner lookups and the native meld-loop reuse of csvids[0] on its second iteration. Repeated legacy-helper sites do not authorize changing that loop."
+    },
+    {
+      "name": "card_repudiate_replicate",
+      "source": "cards/ravnica_allegiance.c",
+      "source_definition_sha256": "f78b94bb39463e7547cfe0239e503727bc668760e3af6f0e16c249b78ac15853",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "can_target"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "can_counter_activated_ability",
+        "can_counter_triggered_ability"
+      ],
+      "ranges": [
+        {
+          "address": "0x25c1f60",
+          "size": 738,
+          "sha256": "da8857346235ba7a54bacdd502efdbdde3cec6bef06f794462f779faf8f7b333",
+          "named_call_sites": {
+            "_can_counter_activated_ability": 1,
+            "_can_counter_activated_or_triggered_ability": 1,
+            "_can_counter_triggered_ability": 1,
+            "_can_sorcery_be_played": 1,
+            "_can_target": 2,
+            "_cast_counter_activated_ability": 1,
+            "_cast_counter_triggered_ability": 1,
+            "_copy_token": 1,
+            "_default_target_definition": 1,
+            "_generic_spell": 1,
+            "_get_card_instance": 1,
+            "_hybrid_split_card": 1,
+            "_kill_card": 1,
+            "_resolve_counter_activated_ability": 1,
+            "_resolve_counter_triggered_ability": 1,
+            "_valid_target": 1
+          }
+        },
+        {
+          "address": "0x247bbd0",
+          "size": 784,
+          "sha256": "4db46a3eb0504613f62376fa11817260fa93b06a4a730263937ffadd3626e438",
+          "named_call_sites": {
+            "_can_counter_activated_ability": 2,
+            "_can_counter_triggered_ability": 2,
+            "_can_sorcery_be_played": 1,
+            "_can_target": 1,
+            "_cast_counter_activated_ability": 1,
+            "_cast_counter_triggered_ability": 1,
+            "_copy_token": 1,
+            "_default_target_definition": 1,
+            "_generic_spell": 1,
+            "_get_card_instance": 1,
+            "_hybrid_split_card": 1,
+            "_kill_card": 1,
+            "_resolve_counter_activated_ability": 1,
+            "_resolve_counter_triggered_ability": 1,
+            "_valid_target": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-stack-correct/25c1f60.c",
+        "sha256": "4b9a677bc48ee8639f28b27272fe9f9eff8d612da522955fca28cfcf1331ae48",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "CAN_CAST independently runs both counter-ability queries and lets the second success overwrite the marker. The later private availability helper short-circuits activated then triggered and is inlined in rebuilt code. Keep can_target before can_sorcery_be_played, then availability helper before hybrid_split_card. Resolution rereads info_slot after counter callbacks."
+    },
+    {
+      "name": "card_grand_ossuary",
+      "source": "cards/planechase.c",
+      "source_definition_sha256": "67838e2fbd9de31641bf083c987dd09890df80b208711801a720dfaff2c7a662",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "scnprintf",
+        "new_pick_target"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "generic_plane"
+      ],
+      "ranges": [
+        {
+          "address": "0x2417fe0",
+          "size": 1157,
+          "sha256": "df1981575799a709ea771924463d24a47b9d021dcb75b53e7f935020f95e5950",
+          "named_call_sites": {
+            "_add_counters": 1,
+            "_can_target": 1,
+            "_check_battlefield_for_special_card": 1,
+            "_check_for_death_trigger_removal": 1,
+            "_default_target_definition": 1,
+            "_default_test_definition": 1,
+            "_default_token_definition": 1,
+            "_generate_token": 1,
+            "_generic_plane": 1,
+            "_get_actual_plane": 1,
+            "_get_card_instance": 3,
+            "_get_new_plane": 1,
+            "_get_power": 1,
+            "_in_play": 1,
+            "_is_this_dying": 1,
+            "_is_what": 1,
+            "_new_manipulate_all": 1,
+            "_new_pick_target": 2,
+            "_planeswalk_to": 1,
+            "_resolve_gfp_ability": 2,
+            "_scnprintf": 2,
+            "_vanguard_card": 1
+          }
+        },
+        {
+          "address": "0x242d0e0",
+          "size": 1152,
+          "sha256": "51215679b492f6e2b94feb8534b388c342026bf13b4b6bfbfe80659b1643fb12",
+          "named_call_sites": {
+            "_add_counters": 1,
+            "_can_target": 1,
+            "_check_battlefield_for_special_card": 1,
+            "_check_for_death_trigger_removal": 1,
+            "_default_target_definition": 1,
+            "_default_test_definition": 1,
+            "_default_token_definition": 1,
+            "_generate_token": 1,
+            "_generic_plane": 2,
+            "_get_actual_plane": 1,
+            "_get_card_instance": 3,
+            "_get_new_plane": 1,
+            "_get_power": 1,
+            "_in_play": 1,
+            "_is_this_dying": 1,
+            "_is_what": 1,
+            "_new_manipulate_all": 1,
+            "_new_pick_target": 1,
+            "_planeswalk_to": 1,
+            "_resolve_gfp_ability": 2,
+            "_scnprintf": 1,
+            "_vanguard_card": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-planes-schemes-monarch-support/2417fe0.c",
+        "sha256": "789cb72c678702a55db8007c548b970187b74a44b5c5716734a27a65782fca5b",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Preserve zero versus low-byte-zero death-count guards, signed nonzero counter distribution, live target use after the picker, and per-iteration current_turn capture before test initialization in chaos. Native duplicates plural/singular formatting and picker paths; source uses one selected suffix. No source change from static counts."
+    },
+    {
+      "name": "card_dismantle",
+      "source": "cards/darksteel.c",
+      "source_definition_sha256": "977e78b940d3b531ed6ebda0228472d8987bafd32d0859999afc6dc91c08acc9",
+      "edited": true,
+      "discovery_native_calls_only": [
+        "count_counters"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "generic_spell",
+        "generic_spell"
+      ],
+      "ranges": [
+        {
+          "address": "0x2250310",
+          "size": 1303,
+          "sha256": "c8247658a4de3c7d58c3b50a4d8794cd72a5a0679d008e1b57b8eafc8b621220",
+          "named_call_sites": {
+            "_add_counters": 1,
+            "_can_target": 4,
+            "_count_counters": 3,
+            "_default_target_definition": 5,
+            "_generic_spell": 3,
+            "_get_card_instance": 4,
+            "_get_id": 2,
+            "_kill_card": 2,
+            "_pick_target": 1,
+            "_valid_target": 1
+          }
+        },
+        {
+          "address": "0x2133680",
+          "size": 1168,
+          "sha256": "ad8fb524a7f5d876865975ed7380c7a3011747150ab2f53c1b0c11171803167d",
+          "named_call_sites": {
+            "_add_counters": 1,
+            "_can_target": 4,
+            "_count_counters": 3,
+            "_default_target_definition": 4,
+            "_generic_spell": 2,
+            "_get_card_instance": 3,
+            "_get_id": 2,
+            "_kill_card": 2,
+            "_pick_target": 1,
+            "_valid_target": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-pending-interface-callers/2250310.c",
+        "sha256": "77f4f9539b76c6a68ffc4bb7efe32c179f805b4f13f43be3cfd554895200bda2",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Reconstructed common generic_spell epilogue with cast-only AI scoring. Keep the pre-constructor affected-card gate, second gate after constructor/getter, two cast generic_spell invocations, exact spell_fizzled==1 handling, saved target pair across get_id/constructor/count callbacks, and late ai_modifier read. Resolution query/store/callback sequence retained."
+    },
+    {
+      "name": "card_nissa_revane",
+      "source": "cards/zendikar.c",
+      "source_definition_sha256": "70ccb4aea1724c8dcf644c1ff0cf84278d079133feac37fc6dd7e7b75ea171b7",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "shuffle"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "planeswalker",
+        "planeswalker"
+      ],
+      "ranges": [
+        {
+          "address": "0x25da830",
+          "size": 1099,
+          "sha256": "e6dacc214a1f8676f0c6dd6a38d764f73fb637e9f2a1bca83168527eeff17588",
+          "named_call_sites": {
+            "_check_legend_rule": 1,
+            "_count_subtype": 2,
+            "_default_test_definition": 1,
+            "_dialog_impl": 2,
+            "_gain_life": 1,
+            "_get_card_instance": 3,
+            "_has_subtype_by_id": 1,
+            "_is_what": 1,
+            "_new_global_tutor": 2,
+            "_planeswalker": 1,
+            "_shuffle": 2
+          }
+        },
+        {
+          "address": "0x263a2a0",
+          "size": 1168,
+          "sha256": "3abc6e248b0010a53db71fe4c8301e44798dbac0aefa32f7d5114ec81e505c71",
+          "named_call_sites": {
+            "_check_legend_rule": 1,
+            "_count_subtype": 2,
+            "_default_test_definition": 1,
+            "_dialog_impl": 2,
+            "_gain_life": 1,
+            "_get_card_instance": 3,
+            "_has_subtype_by_id": 1,
+            "_is_what": 1,
+            "_new_global_tutor": 2,
+            "_planeswalker": 3,
+            "_shuffle": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-pending-interface-callers/25da830.c",
+        "sha256": "10749c1860f28591d699eac33eb03b174727219c937d904376a05b6a1a5923fb",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Preserve the original arithmetic event gate, library pointer reload after is_what before the subtype query, player-specific availability encoding, both distinct tutor/shuffle outcomes, and saved tutor result across parent-instance getter. planeswalker returns represent a common native epilogue; not missing shuffle behavior."
+    },
+    {
+      "name": "card_mass_manipulation",
+      "source": "cards/ravnica_allegiance.c",
+      "source_definition_sha256": "d487cab0251d4b70acf20daff20c2ca96bcb7d04d1c6e1cae9e69b5ddf57b0bf",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "get_internal_card_id_from_csv_id"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "target_available",
+        "pick_up_to_n_targets"
+      ],
+      "ranges": [
+        {
+          "address": "0x25c0b30",
+          "size": 1564,
+          "sha256": "57e1d5e61b0620c57790e5f1e07e989f1dc1242a08e985f68a66a5a0021d6853",
+          "named_call_sites": {
+            "_charge_mana": 1,
+            "_charge_mana_for_double_x": 1,
+            "_check_special_flags2": 5,
+            "_default_target_definition": 4,
+            "_gain_control_permanently": 1,
+            "_generic_spell": 1,
+            "_get_card_instance": 7,
+            "_get_internal_card_id_from_csv_id": 2,
+            "_is_token": 2,
+            "_kill_card": 1,
+            "_pick_up_to_n_targets": 3,
+            "_played_for_free": 3,
+            "_set_special_flags2": 3,
+            "_set_x_for_x_spells": 2,
+            "_show_deck": 1,
+            "_state_untargettable": 1,
+            "_target_available": 4,
+            "_validate_target": 1
+          }
+        },
+        {
+          "address": "0x247d4f0",
+          "size": 1680,
+          "sha256": "c3657fde84998e718885a6f27865ff361388e54e8f32178d5d16f553c13f973d",
+          "named_call_sites": {
+            "_charge_mana": 1,
+            "_charge_mana_for_double_x": 1,
+            "_check_special_flags2": 5,
+            "_default_target_definition": 4,
+            "_gain_control_permanently": 1,
+            "_generic_spell": 1,
+            "_get_card_instance": 7,
+            "_get_internal_card_id_from_csv_id": 1,
+            "_is_token": 2,
+            "_kill_card": 1,
+            "_pick_up_to_n_targets": 4,
+            "_played_for_free": 3,
+            "_set_special_flags2": 3,
+            "_set_x_for_x_spells": 2,
+            "_show_deck": 1,
+            "_state_untargettable": 1,
+            "_target_available": 5,
+            "_validate_target": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-target-vla/25c0b30.c",
+        "sha256": "ce268bcd8c8ef906d86678e2a1686814991785ef0ca23f71546c550b78ba52e9",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Preserve VLA extent versus live loop-bound reads, separate source display alternatives, short-circuited retarget flags, played_for_free before is_token, native player-specific X scaling, and both resolution getters with target card captured before target player. Static display-lookup and target-query deltas require no cost or targeting rule changes."
+    },
+    {
+      "name": "card_orcish_librarian",
+      "source": "cards/ice_age.c",
+      "source_definition_sha256": "827f18caa93660f88d4d5c4af56d297bdcb54830ff8daac379fb7c1d198572af",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "show_deck",
+        "rearrange_top_x"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "generic_activated_ability"
+      ],
+      "ranges": [
+        {
+          "address": "0x2405060",
+          "size": 811,
+          "sha256": "bd83967599f144c9059cf26c8b7bd6f6499164c0aacbdd57efaa81787e7368a8",
+          "named_call_sites": {
+            "_count_deck": 2,
+            "_generic_activated_ability": 1,
+            "_rearrange_top_x": 2,
+            "_rfg_card_in_deck": 3,
+            "_scnprintf": 4,
+            "_show_deck": 3
+          }
+        },
+        {
+          "address": "0x223b900",
+          "size": 832,
+          "sha256": "d0da278eb7d9ce3be5838e5afbabf7b49c56011039f08f486705888b900e5337",
+          "named_call_sites": {
+            "_count_deck": 2,
+            "_generic_activated_ability": 2,
+            "_rearrange_top_x": 1,
+            "_rfg_card_in_deck": 3,
+            "_scnprintf": 4,
+            "_show_deck": 2
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-tailcalls/2405060.c",
+        "sha256": "bc6945db678455d8f22acb8feca51917b45b3b3c446dbd65ae9693ad73c29803",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Keep both count_deck calls, count<=0 behavior, separate >=8 versus smaller-library exile algorithms, native random bounds and four-exile limit. show_deck and rearrange_top_x occur in both paths; multiple generic_activated_ability source returns represent the shared native epilogue. No bounds/rule correction."
+    },
+    {
+      "name": "card_urzas_saga",
+      "source": "cards/modern_horizons_2.c",
+      "source_definition_sha256": "142e0fb37d0e56f0ee0aaf5248958b0370b0d72e14144529bbe772f49aeef2b4",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "get_card_instance",
+        "inst_info"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "saga",
+        "saga"
+      ],
+      "ranges": [
+        {
+          "address": "0x2242640",
+          "size": 1289,
+          "sha256": "a36cae03df36d609594882e84e425729734531d5532da459f950b3bfeaaf2766",
+          "named_call_sites": {
+            "_add_state": 1,
+            "_default_token_definition": 1,
+            "_dialog_impl": 1,
+            "_generate_token": 1,
+            "_generic_activated_ability": 2,
+            "_get_card_instance": 3,
+            "_in_play": 2,
+            "_inst_info": 4,
+            "_mana_producer": 3,
+            "_new_default_test_definition": 1,
+            "_new_global_tutor": 1,
+            "_paying_mana": 1,
+            "_remove_state": 1,
+            "_saga": 1,
+            "_set_inst_info": 2
+          }
+        },
+        {
+          "address": "0x23a7690",
+          "size": 1296,
+          "sha256": "cfa2db53eeb300acce21c726fdec253c13c39ce2d0fdf958877200691130f37d",
+          "named_call_sites": {
+            "_add_state": 1,
+            "_default_token_definition": 1,
+            "_dialog_impl": 1,
+            "_generate_token": 1,
+            "_generic_activated_ability": 2,
+            "_get_card_instance": 2,
+            "_in_play": 2,
+            "_inst_info": 3,
+            "_mana_producer": 3,
+            "_new_default_test_definition": 1,
+            "_new_global_tutor": 1,
+            "_paying_mana": 1,
+            "_remove_state": 1,
+            "_saga": 3,
+            "_set_inst_info": 2
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-stack-correct/2242640.c",
+        "sha256": "fb9c055fac528c0b1681e2698a5fbfe6ae941c0d7f43bb40d1824bfc082a6a13",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Merged chapter source cases each execute one getter/inst_info/set_inst_info with chapter-specific bits. Retain mana availability before paying_mana, exact activation costs, mode rereads after dialog, and the construct token special_infos value. Chapter early returns represent the same final saga call; static call-site counts are not chapter execution counts."
+    },
+    {
+      "name": "card_umezawas_jitte",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "source_definition_sha256": "325c5280fea98a575d55bc6cc7c21835bf002f8904a14dc3e38d0a566e6b54b4",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "dialog_impl"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "can_target",
+        "is_equipping",
+        "can_activate_basic_equipment"
+      ],
+      "ranges": [
+        {
+          "address": "0x2570960",
+          "size": 1692,
+          "sha256": "b6701462a250eefcdf17e008fd1a52f5c312ed2fdc0d31fec39125169e93a6ef",
+          "named_call_sites": {
+            "_activate_basic_equipment": 1,
+            "_add_counters": 1,
+            "_can_activate_basic_equipment": 3,
+            "_can_target": 1,
+            "_can_use_activated_abilities": 1,
+            "_charge_mana_for_activated_ability": 2,
+            "_check_legend_rule": 1,
+            "_count_counters": 2,
+            "_default_target_definition": 2,
+            "_dialog_impl": 3,
+            "_equipped_creature_deals_damage": 1,
+            "_gain_life": 1,
+            "_get_card_instance": 2,
+            "_has_mana_for_activated_ability": 1,
+            "_is_equipping": 3,
+            "_is_unlocked": 1,
+            "_pick_target": 1,
+            "_pump_until_eot": 1,
+            "_remove_counters": 2,
+            "_resolve_activation_basic_equipment": 1,
+            "_valid_target": 1
+          }
+        },
+        {
+          "address": "0x20a33b0",
+          "size": 1776,
+          "sha256": "d7d009f3b8e95c5a9f2b33e41aac6034b9c38255ae944dd351dfbac61d347745",
+          "named_call_sites": {
+            "_activate_basic_equipment": 1,
+            "_add_counters": 1,
+            "_can_activate_basic_equipment": 4,
+            "_can_target": 2,
+            "_can_use_activated_abilities": 1,
+            "_charge_mana_for_activated_ability": 2,
+            "_check_legend_rule": 1,
+            "_count_counters": 2,
+            "_default_target_definition": 2,
+            "_dialog_impl": 2,
+            "_equipped_creature_deals_damage": 1,
+            "_gain_life": 1,
+            "_get_card_instance": 2,
+            "_has_mana_for_activated_ability": 1,
+            "_is_equipping": 4,
+            "_is_unlocked": 1,
+            "_pick_target": 1,
+            "_pump_until_eot": 1,
+            "_remove_counters": 2,
+            "_resolve_activation_basic_equipment": 1,
+            "_valid_target": 1
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-pending-interface-callers/2570960.c",
+        "sha256": "ce97ee6d40b5671495487f4d40c3013678ada5bd1a348c95fd63629d68b74a43",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Preserve the original arithmetic event gate, zero-charge bypass of can_target/is_equipping, charged-path query order can_target then is_equipping then equipment availability, and dialog on resolution. Cached charge availability and post-charge AI adjustments remain native, including the failed-payment path. No source rewrite warranted from changed-block call counts."
+    },
+    {
+      "name": "card_lutri_the_spellchaser",
+      "source": "cards/ikoria.c",
+      "source_definition_sha256": "f3e1ef058bb2031c09c1cb6cce9f7ae6337446749bc4d45ebd3181e3cc02435a",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "get_card_instance"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "hybrid",
+        "hybrid",
+        "check_legend_rule"
+      ],
+      "ranges": [
+        {
+          "address": "0x228b8f0",
+          "size": 886,
+          "sha256": "0b9b9137d3c4a1fead42dff877f21c8d03a3ac053d7c938fc1fe0cbe4cbdb5fa",
+          "named_call_sites": {
+            "_check_legend_rule": 1,
+            "_check_special_flags": 1,
+            "_copy_spell_from_stack": 1,
+            "_counterspell": 2,
+            "_counterspell_target_definition": 3,
+            "_counterspell_validate": 1,
+            "_etb_ability": 1,
+            "_get_card_instance": 6,
+            "_hybrid": 2
+          }
+        },
+        {
+          "address": "0x2245730",
+          "size": 960,
+          "sha256": "17cb5b02c825826c1a74479ca7e5ac6bfeea4d4cc8ec9ff8fb8f17350d6fba72",
+          "named_call_sites": {
+            "_check_legend_rule": 2,
+            "_check_special_flags": 1,
+            "_copy_spell_from_stack": 1,
+            "_counterspell": 2,
+            "_counterspell_target_definition": 3,
+            "_counterspell_validate": 1,
+            "_etb_ability": 1,
+            "_get_card_instance": 5,
+            "_hybrid": 4
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-stack-correct/228b8f0.c",
+        "sha256": "15f8e599e9f9f9c9de8886f31875bedd695840fabff1352e85dffbd3fa1db09b",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Preserve the query-only early return before legend processing, byte-count VLA clear, 500-slot scan, ETB validation/copy, CAN_CAST info_slot encoding and 1/99 return, repeated cast guards around hybrid and unused getter calls for resolve/change-target events. Duplicated hybrid/legend references are not evidence for adding those calls."
+    },
+    {
+      "name": "card_planewide_celebration",
+      "source": "cards/war_of_the_spark.c",
+      "source_definition_sha256": "53b04020afb1ef53e7610bd0b93113352968f74411d91efd7d7a645c009d07d9",
+      "edited": false,
+      "discovery_native_calls_only": [
+        "new_default_test_definition",
+        "get_card_instance"
+      ],
+      "discovery_rebuilt_calls_only": [
+        "basic_spell",
+        "basic_spell"
+      ],
+      "ranges": [
+        {
+          "address": "0x21d4080",
+          "size": 1748,
+          "sha256": "f72e490915883bb1b8c089c8543fd41039fb76a838ad224e934ecf0a7a252310",
+          "named_call_sites": {
+            "_basic_spell": 1,
+            "_check_special_flags2": 1,
+            "_count_graveyard_by_type": 1,
+            "_default_token_definition": 1,
+            "_dialog_impl": 1,
+            "_from_grave_to_hand": 1,
+            "_gain_life": 1,
+            "_generate_token": 1,
+            "_generic_spell": 1,
+            "_get_card_instance": 3,
+            "_kill_card": 2,
+            "_new_default_test_definition": 3,
+            "_proliferate": 1,
+            "_select_multiple_cards_from_graveyard": 1,
+            "_validate_target_from_grave": 2
+          }
+        },
+        {
+          "address": "0x261b940",
+          "size": 1552,
+          "sha256": "307c79eef46d6e090007840f2d084b0bbf25b319c10fe5101cf288bde570f561",
+          "named_call_sites": {
+            "_basic_spell": 3,
+            "_check_special_flags2": 1,
+            "_count_graveyard_by_type": 1,
+            "_default_token_definition": 1,
+            "_dialog_impl": 1,
+            "_from_grave_to_hand": 1,
+            "_gain_life": 1,
+            "_generate_token": 1,
+            "_generic_spell": 1,
+            "_get_card_instance": 2,
+            "_kill_card": 2,
+            "_new_default_test_definition": 2,
+            "_proliferate": 1,
+            "_select_multiple_cards_from_graveyard": 1,
+            "_validate_target_from_grave": 2
+          }
+        }
+      ],
+      "cached_native_decompilation": {
+        "path": ".recovery/decompiled-stack-correct/21d4080.c",
+        "sha256": "21b96ba5bbef8c7117b5ee8a4e81e53fc699b03e963d6d23e66a99e545bdf2a6",
+        "role": "Supporting source-flow reconstruction; analysis-generated names/types are not independent native symbol or ABI authority."
+      },
+      "review": "Keep four cast-dialog iterations, cached grave availability, byte additions into info_slot, and five ordered resolution passes. Mode word reloads after validation, token creation, grave return, proliferation and later life iterations remain intentional; invalid validation destroys and returns without final basic_spell. Static initializer/basic_spell deltas do not justify caching modes across callbacks."
+    }
+  ],
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "02666b7e67d5f09cf5ec67b6384cb2ba71211e30b5889f6088b723add82660d7",
+    "debug_sha256": "b8e8c3dbf8392737f1fff6f431ea847638a48bba332ccf1d7c6d507d9ad41179",
+    "build_log_sha256": "6179fa3f0912cfd325e181bf36ce0e14351485ce86d7f4ad31d458447d4d1733",
+    "exact_file_projections": 4,
+    "reviewed_call_difference_leads": 18,
+    "edited_definitions": 4,
+    "source_lines_before": 424,
+    "source_lines_after": 359,
+    "din_pre_callback_snapshot": [
+      {
+        "side": 0,
+        "range": {
+          "address": "0x254e810",
+          "size": 930,
+          "sha256": "98d09c0c851365fac90bfeb7beb1848d7aab42b6b72b007fdefb78fbb6bbacc3",
+          "named_call_sites": {
+            "_check_battlefield_for_special_card": 2,
+            "_default_target_definition": 4,
+            "_default_test_definition": 1,
+            "_default_token_definition": 1,
+            "_generate_token": 1,
+            "_generic_spell": 2,
+            "_get_card_instance": 1,
+            "_hybrid_casting": 1,
+            "_kill_card": 1,
+            "_modify_cost_for_hybrid_spells.part.0": 1,
+            "_new_default_test_definition": 2,
+            "_new_sacrifice": 2,
+            "_valid_target": 1
+          }
+        },
+        "sites": [
+          {
+            "address": "0x254ea07",
+            "context": [
+              {
+                "address": "0x254e9f6",
+                "instruction": "pop ebx"
+              },
+              {
+                "address": "0x254e9f7",
+                "instruction": "pop esi"
+              },
+              {
+                "address": "0x254e9f8",
+                "instruction": "pop edi"
+              },
+              {
+                "address": "0x254e9f9",
+                "instruction": "pop ebp"
+              },
+              {
+                "address": "0x254e9fa",
+                "instruction": "ret "
+              },
+              {
+                "address": "0x254e9fb",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x254e9ff",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x254ea00",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x254ea04",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x254ea07",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x254ea0c",
+                "instruction": "lea edi, [ebp - 0x25c]"
+              },
+              {
+                "address": "0x254ea12",
+                "instruction": "mov eax, dword ptr [eax + 0x74]"
+              },
+              {
+                "address": "0x254ea15",
+                "instruction": "mov dword ptr [esp + 0xc], edi"
+              },
+              {
+                "address": "0x254ea19",
+                "instruction": "mov dword ptr [esp + 8], 0x4926"
+              }
+            ]
+          },
+          {
+            "address": "0x254ea2e",
+            "context": [
+              {
+                "address": "0x254ea04",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x254ea07",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x254ea0c",
+                "instruction": "lea edi, [ebp - 0x25c]"
+              },
+              {
+                "address": "0x254ea12",
+                "instruction": "mov eax, dword ptr [eax + 0x74]"
+              },
+              {
+                "address": "0x254ea15",
+                "instruction": "mov dword ptr [esp + 0xc], edi"
+              },
+              {
+                "address": "0x254ea19",
+                "instruction": "mov dword ptr [esp + 8], 0x4926"
+              },
+              {
+                "address": "0x254ea21",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x254ea25",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x254ea28",
+                "instruction": "mov dword ptr [ebp - 0x260], eax"
+              },
+              {
+                "address": "0x254ea2e",
+                "instruction": "call 0x2665470"
+              },
+              {
+                "address": "0x254ea33",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x254ea36",
+                "instruction": "lea edi, [ebp - 0x1bc]"
+              },
+              {
+                "address": "0x254ea3c",
+                "instruction": "mov dword ptr [ebp - 0x244], 5"
+              },
+              {
+                "address": "0x254ea46",
+                "instruction": "mov dword ptr [ebp - 0x240], 5"
+              }
+            ]
+          },
+          {
+            "address": "0x254eb15",
+            "context": [
+              {
+                "address": "0x254eae9",
+                "instruction": "call 0x26bea60"
+              },
+              {
+                "address": "0x254eaee",
+                "instruction": "lea eax, [ebp - 0xe4]"
+              },
+              {
+                "address": "0x254eaf4",
+                "instruction": "mov dword ptr [esp + 0x10], eax"
+              },
+              {
+                "address": "0x254eaf8",
+                "instruction": "mov eax, dword ptr [ebp - 0x260]"
+              },
+              {
+                "address": "0x254eafe",
+                "instruction": "mov dword ptr [esp + 0xc], 0x21"
+              },
+              {
+                "address": "0x254eb06",
+                "instruction": "mov dword ptr [esp + 8], eax"
+              },
+              {
+                "address": "0x254eb0a",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x254eb0e",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x254eb11",
+                "instruction": "mov word ptr [ebp - 0x36], di"
+              },
+              {
+                "address": "0x254eb15",
+                "instruction": "call 0x26e4e30"
+              },
+              {
+                "address": "0x254eb1a",
+                "instruction": "jmp 0x254e88b"
+              },
+              {
+                "address": "0x254eb1f",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x254eb20",
+                "instruction": "lea edx, [ebp - 0xe4]"
+              },
+              {
+                "address": "0x254eb26",
+                "instruction": "mov dword ptr [esp + 8], 0x27534c4"
+              }
+            ]
+          },
+          {
+            "address": "0x254eb6b",
+            "context": [
+              {
+                "address": "0x254eb3e",
+                "instruction": "mov eax, dword ptr [ebp - 0x264]"
+              },
+              {
+                "address": "0x254eb44",
+                "instruction": "mov word ptr [ebp - 0x36], ax"
+              },
+              {
+                "address": "0x254eb48",
+                "instruction": "lea edx, [ebp - 0xe4]"
+              },
+              {
+                "address": "0x254eb4e",
+                "instruction": "mov eax, dword ptr [ebp - 0x260]"
+              },
+              {
+                "address": "0x254eb54",
+                "instruction": "mov dword ptr [esp + 0x10], edx"
+              },
+              {
+                "address": "0x254eb58",
+                "instruction": "mov dword ptr [esp + 0xc], 0x21"
+              },
+              {
+                "address": "0x254eb60",
+                "instruction": "mov dword ptr [esp + 8], eax"
+              },
+              {
+                "address": "0x254eb64",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x254eb68",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x254eb6b",
+                "instruction": "call 0x26e4e30"
+              },
+              {
+                "address": "0x254eb70",
+                "instruction": "jmp 0x254eaa0"
+              },
+              {
+                "address": "0x254eb75",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x254eb7d",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              },
+              {
+                "address": "0x254eb85",
+                "instruction": "mov dword ptr [esp + 0x14], 0"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "side": 1,
+        "range": {
+          "address": "0x24d8ea0",
+          "size": 928,
+          "sha256": "bf53100e763f5edd4a7fb88480889cf9266840a843a5dc550032629793aa186b",
+          "named_call_sites": {
+            "_check_battlefield_for_special_card": 2,
+            "_default_target_definition": 3,
+            "_default_test_definition": 1,
+            "_default_token_definition": 1,
+            "_generate_token": 1,
+            "_generic_spell": 2,
+            "_get_card_instance": 1,
+            "_hybrid_casting": 1,
+            "_kill_card": 1,
+            "_modify_cost_for_hybrid_spells.part.0": 1,
+            "_new_default_test_definition": 2,
+            "_new_sacrifice": 2,
+            "_valid_target": 1
+          }
+        },
+        "sites": [
+          {
+            "address": "0x24d9098",
+            "context": [
+              {
+                "address": "0x24d906f",
+                "instruction": "mov dword ptr [ebp - 0x204], 0x1000"
+              },
+              {
+                "address": "0x24d9079",
+                "instruction": "call 0x26aabb0"
+              },
+              {
+                "address": "0x24d907e",
+                "instruction": "jmp 0x24d8f19"
+              },
+              {
+                "address": "0x24d9083",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x24d9087",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x24d9088",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x24d908b",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x24d908f",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x24d9092",
+                "instruction": "lea edi, [ebp - 0x25c]"
+              },
+              {
+                "address": "0x24d9098",
+                "instruction": "call 0x266b040"
+              },
+              {
+                "address": "0x24d909d",
+                "instruction": "mov esi, dword ptr [eax + 0x74]"
+              },
+              {
+                "address": "0x24d90a0",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x24d90a3",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x24d90a6",
+                "instruction": "mov dword ptr [esp + 0xc], edi"
+              }
+            ]
+          },
+          {
+            "address": "0x24d90b6",
+            "context": [
+              {
+                "address": "0x24d908f",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x24d9092",
+                "instruction": "lea edi, [ebp - 0x25c]"
+              },
+              {
+                "address": "0x24d9098",
+                "instruction": "call 0x266b040"
+              },
+              {
+                "address": "0x24d909d",
+                "instruction": "mov esi, dword ptr [eax + 0x74]"
+              },
+              {
+                "address": "0x24d90a0",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x24d90a3",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x24d90a6",
+                "instruction": "mov dword ptr [esp + 0xc], edi"
+              },
+              {
+                "address": "0x24d90aa",
+                "instruction": "mov dword ptr [esp + 8], 0x4926"
+              },
+              {
+                "address": "0x24d90b2",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x24d90b6",
+                "instruction": "call 0x26dd070"
+              },
+              {
+                "address": "0x24d90bb",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x24d90be",
+                "instruction": "lea edi, [ebp - 0x1bc]"
+              },
+              {
+                "address": "0x24d90c4",
+                "instruction": "mov dword ptr [ebp - 0x244], 5"
+              },
+              {
+                "address": "0x24d90ce",
+                "instruction": "mov dword ptr [ebp - 0x240], 5"
+              }
+            ]
+          },
+          {
+            "address": "0x24d916f",
+            "context": [
+              {
+                "address": "0x24d9145",
+                "instruction": "mov eax, dword ptr [ebp - 0x260]"
+              },
+              {
+                "address": "0x24d914b",
+                "instruction": "mov word ptr [ebp - 0x36], ax"
+              },
+              {
+                "address": "0x24d914f",
+                "instruction": "lea edx, [ebp - 0xe4]"
+              },
+              {
+                "address": "0x24d9155",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x24d9158",
+                "instruction": "mov dword ptr [esp + 0x10], edx"
+              },
+              {
+                "address": "0x24d915c",
+                "instruction": "mov dword ptr [esp + 0xc], 0x21"
+              },
+              {
+                "address": "0x24d9164",
+                "instruction": "mov dword ptr [esp + 8], esi"
+              },
+              {
+                "address": "0x24d9168",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x24d916c",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x24d916f",
+                "instruction": "call 0x26d6670"
+              },
+              {
+                "address": "0x24d9174",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x24d9177",
+                "instruction": "mov dword ptr [esp + 0x10], edi"
+              },
+              {
+                "address": "0x24d917b",
+                "instruction": "mov dword ptr [esp + 0xc], 4"
+              },
+              {
+                "address": "0x24d9183",
+                "instruction": "mov dword ptr [esp + 8], eax"
+              }
+            ]
+          },
+          {
+            "address": "0x24d91e9",
+            "context": [
+              {
+                "address": "0x24d91c0",
+                "instruction": "call 0x26b6d50"
+              },
+              {
+                "address": "0x24d91c5",
+                "instruction": "lea eax, [ebp - 0xe4]"
+              },
+              {
+                "address": "0x24d91cb",
+                "instruction": "mov dword ptr [esp + 0x10], eax"
+              },
+              {
+                "address": "0x24d91cf",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x24d91d2",
+                "instruction": "mov dword ptr [esp + 0xc], 0x21"
+              },
+              {
+                "address": "0x24d91da",
+                "instruction": "mov dword ptr [esp + 8], esi"
+              },
+              {
+                "address": "0x24d91de",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x24d91e2",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x24d91e5",
+                "instruction": "mov word ptr [ebp - 0x36], di"
+              },
+              {
+                "address": "0x24d91e9",
+                "instruction": "call 0x26d6670"
+              },
+              {
+                "address": "0x24d91ee",
+                "instruction": "jmp 0x24d8ff0"
+              },
+              {
+                "address": "0x24d91f3",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x24d91f6",
+                "instruction": "mov dword ptr [esp + 0x1c], 0"
+              },
+              {
+                "address": "0x24d91fe",
+                "instruction": "mov dword ptr [esp + 0x18], 1"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "02666b7e67d5f09cf5ec67b6384cb2ba71211e30b5889f6088b723add82660d7",
+        "ManalinkEh.dbg": "b8e8c3dbf8392737f1fff6f431ea847638a48bba332ccf1d7c6d507d9ad41179"
+      },
+      "results": [
+        {
+          "name": "card_din_of_the_fireherd",
+          "matched": false,
+          "reason": "('Unbound operand', '0x278', '0x274')",
+          "ranges": [
+            {
+              "address": "0x254e810",
+              "size": 930,
+              "sha256": "98d09c0c851365fac90bfeb7beb1848d7aab42b6b72b007fdefb78fbb6bbacc3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24d8ea0",
+              "size": 928,
+              "sha256": "bf53100e763f5edd4a7fb88480889cf9266840a843a5dc550032629793aa186b",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_ral_storm_conduit",
+          "matched": false,
+          "reason": "Operand type or width changed",
+          "ranges": [
+            {
+              "address": "0x21d4b70",
+              "size": 549,
+              "sha256": "4a594515940086d04e897160656b37b47c560fc6a85940488b9290b584a3e6e1",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x261b010",
+              "size": 576,
+              "sha256": "355c89ac8714d3113bba7038c06299b2d3680be2b103f2164f5b9f0e49097350",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_calix_destinys_hand",
+          "matched": false,
+          "reason": "('Unbound operand', '0x1f4', '0x1fc')",
+          "ranges": [
+            {
+              "address": "0x235b4c0",
+              "size": 1612,
+              "sha256": "e4cdf35f2c3404bde36fd4ce8b57113a72e6020f76adff5b0e7638e59e18587c",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2578f40",
+              "size": 1600,
+              "sha256": "a7f2ac6bf446189aecfebcd9e0fedac15e2bef90cccea64713c93cd62f571924",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_dismantle",
+          "matched": false,
+          "reason": "Conditional instruction changed",
+          "ranges": [
+            {
+              "address": "0x2250310",
+              "size": 1303,
+              "sha256": "c8247658a4de3c7d58c3b50a4d8794cd72a5a0679d008e1b57b8eafc8b621220",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2133680",
+              "size": 1168,
+              "sha256": "ad8fb524a7f5d876865975ed7380c7a3011747150ab2f53c1b0c11171803167d",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "102e00d93a1b2a4540c7897e27f0a2632820d9bb331ae9c8846a1919dfc95fe1",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "staging": "preserved",
+    "scope": "One build after four source edits. Din native/current decoded packets prove a single pre-token target-player snapshot reused by both sacrifice calls under normal cdecl preservation. Ral, Calix and Dismantle are source-flow reconstructions; complete strict CFG checks still fail for all four, so no new binary-match claims. Eighteen scoped source-flow explanations bind current source/range hashes and supporting cached native decompilations; they are not full CFG or transitive callee/gameplay equivalence and do not reclassify the historical C686 queues. No gameplay tests or full reccmp refresh were run."
+  }
+}

@@ -1,0 +1,2801 @@
+{
+  "format": 1,
+  "status": "78 packed byte accesses named in 66 existing definitions across 43 C files; byte contracts, complete source projections, 39 unchanged runtime objects, four inspected codegen deltas, build and 15,169 fixed slots pass.",
+  "references": [
+    {
+      "source": "cards/amonkhet.c",
+      "name": "plague_belcher_effect",
+      "offset": 164375,
+      "end": 164428,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "gate_to_the_afterlife_effect",
+      "offset": 227807,
+      "end": 227860,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/battle_for_zendikar.c",
+      "name": "catacomb_sifter_effect",
+      "offset": 196784,
+      "end": 196837,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/commander_2013.c",
+      "name": "card_marath_will_of_the_wild",
+      "offset": 47506,
+      "end": 47554,
+      "before": "*(char *)((int)&ability_instance->info_slot + 1)",
+      "after": "SET_BYTE1(ability_instance->info_slot)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": true,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "name": "titania_effect",
+      "offset": 103027,
+      "end": 103080,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/commander_2015.c",
+      "name": "card_verdant_confluence",
+      "offset": 52142,
+      "end": 52182,
+      "before": "*(char *)((int)&instance->info_slot + 1)",
+      "after": "SET_BYTE1(instance->info_slot)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": true,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/commander_2015.c",
+      "name": "card_verdant_confluence",
+      "offset": 52275,
+      "end": 52315,
+      "before": "*(char *)((int)&instance->info_slot + 2)",
+      "after": "SET_BYTE2(instance->info_slot)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": true,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "name": "card_wasitora_nekoru_queen",
+      "offset": 24546,
+      "end": 24603,
+      "before": "*(unsigned char *)((int)&instance->targets[1].player + 1)",
+      "after": "SET_BYTE1(instance->targets[1].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    },
+    {
+      "source": "cards/commander_2019.c",
+      "name": "atla_palani_effect",
+      "offset": 15668,
+      "end": 15721,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "alhard_solemn_ritualist_effect",
+      "offset": 77076,
+      "end": 77129,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "ich_tekik_effect",
+      "offset": 80792,
+      "end": 80845,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "juri_master_of_the_revue_effect",
+      "offset": 86103,
+      "end": 86156,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "colfenor_effect",
+      "offset": 156968,
+      "end": 157021,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "miara_effect",
+      "offset": 235564,
+      "end": 235617,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "tiana_effect",
+      "offset": 124183,
+      "end": 124236,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "slimefoot_effect",
+      "offset": 162828,
+      "end": 162881,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "name": "card_endless_whispers",
+      "offset": 52896,
+      "end": 52953,
+      "before": "*(unsigned char *)((int)&instance->targets[i].player + 1)",
+      "after": "SET_BYTE1(instance->targets[i].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "midnight_reaper_effect",
+      "offset": 72046,
+      "end": 72099,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "the_scorpion_god_effect",
+      "offset": 116216,
+      "end": 116269,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/ixalan.c",
+      "name": "revel_in_riches_effect",
+      "offset": 113255,
+      "end": 113308,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/judgement.c",
+      "name": "soulcatchers_aerie_effect",
+      "offset": 80568,
+      "end": 80621,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/jumpstart.c",
+      "name": "kels_fight_fixer_effect",
+      "offset": 20618,
+      "end": 20671,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/jumpstart.c",
+      "name": "spiteful_prankster_legacy",
+      "offset": 27069,
+      "end": 27122,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "grim_haruspex_effect",
+      "offset": 192767,
+      "end": 192820,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "kheru_bloodsucker_effect",
+      "offset": 195459,
+      "end": 195512,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "sultai_flayer_effect",
+      "offset": 198051,
+      "end": 198104,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "abzan_ascendancy_effect",
+      "offset": 203182,
+      "end": 203235,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/lorwyn.c",
+      "name": "colfenors_urn_effect",
+      "offset": 226911,
+      "end": 226964,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/m15.c",
+      "name": "eternal_thirst_effect",
+      "offset": 168483,
+      "end": 168536,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/m19.c",
+      "name": "open_the_graves_effect",
+      "offset": 86534,
+      "end": 86587,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/m19.c",
+      "name": "pta_effect",
+      "offset": 91266,
+      "end": 91319,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/m20.c",
+      "name": "moldervine_reclamation_effect",
+      "offset": 33624,
+      "end": 33677,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/mirrodin_besieged.c",
+      "name": "fangren_marauder_effect",
+      "offset": 123223,
+      "end": 123276,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "magus_of_the_bridge_effect",
+      "offset": 170151,
+      "end": 170204,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/morningtide.c",
+      "name": "thornbite_staff_effect",
+      "offset": 127102,
+      "end": 127155,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "card_karn_liberated",
+      "offset": 26490,
+      "end": 26539,
+      "before": "*(char *)((int)&commander->targets[3].player + 1)",
+      "after": "(char)SET_BYTE1(commander->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": true,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "card_karn_liberated",
+      "offset": 31024,
+      "end": 31070,
+      "before": "*(char *)((int)&record->targets[3].player + 1)",
+      "after": "(char)SET_BYTE1(record->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": true,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "card_karn_liberated",
+      "offset": 31551,
+      "end": 31600,
+      "before": "*(uint8_t *)((int)&record->targets[3].player + 1)",
+      "after": "SET_BYTE1(record->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "card_karn_liberated",
+      "offset": 39774,
+      "end": 39825,
+      "before": "*(uint8_t *)((int)&instance->targets[3].player + 1)",
+      "after": "SET_BYTE1(instance->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "card_karn_liberated",
+      "offset": 40546,
+      "end": 40597,
+      "before": "*(uint8_t *)((int)&instance->targets[3].player + 1)",
+      "after": "SET_BYTE1(instance->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "card_karn_liberated",
+      "offset": 47082,
+      "end": 47131,
+      "before": "*(char *)((int)&commander->targets[3].player + 1)",
+      "after": "(char)SET_BYTE1(commander->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": true,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    },
+    {
+      "source": "cards/odyssey.c",
+      "name": "verdant_succession_effect",
+      "offset": 8538,
+      "end": 8591,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/origins.c",
+      "name": "shadows_of_the_past_effect",
+      "offset": 195763,
+      "end": 195816,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "judith_the_scourge_diva_effect",
+      "offset": 36790,
+      "end": 36843,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "vindictive_vampire_effect",
+      "offset": 66978,
+      "end": 67031,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "name": "card_necropolis_regent",
+      "offset": 70120,
+      "end": 70178,
+      "before": "*(unsigned char *)((int)&packed_damage_cursor->player + 1)",
+      "after": "SET_BYTE1(packed_damage_cursor->player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "name": "card_necropolis_regent",
+      "offset": 70253,
+      "end": 70311,
+      "before": "*(unsigned char *)((int)&packed_damage_cursor->player + 2)",
+      "after": "SET_BYTE2(packed_damage_cursor->player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "name": "deaths_presence_effect",
+      "offset": 100141,
+      "end": 100194,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "pitiless_plunderer_effect",
+      "offset": 105627,
+      "end": 105680,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/shadowmoor.c",
+      "name": "blowfly_infestation_effect",
+      "offset": 25342,
+      "end": 25395,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "name": "fleeting_memories_effect",
+      "offset": 271395,
+      "end": 271448,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "name": "graf_mole_effect",
+      "offset": 274699,
+      "end": 274752,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "name": "ulvenwald_mysteries_effect",
+      "offset": 277279,
+      "end": 277332,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/stronghold.c",
+      "name": "grave_pact_effect",
+      "offset": 119166,
+      "end": 119219,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/tempest.c",
+      "name": "sadistic_glee_effect",
+      "offset": 227600,
+      "end": 227653,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "daxos_effect",
+      "offset": 41262,
+      "end": 41315,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "erebos_thb_effect",
+      "offset": 46749,
+      "end": 46802,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "athreos_effect",
+      "offset": 102605,
+      "end": 102667,
+      "before": "*(uint8_t *)((int)&instance->targets[stored_count].player + 1)",
+      "after": "SET_BYTE1(instance->targets[stored_count].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_athreos_shroud_veiled",
+      "offset": 108090,
+      "end": 108152,
+      "before": "*(uint8_t *)((int)&instance->targets[stored_count].player + 1)",
+      "after": "SET_BYTE1(instance->targets[stored_count].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "trail_of_crumbs_effect",
+      "offset": 131297,
+      "end": 131350,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "name": "card_molten_hydra",
+      "offset": 36521,
+      "end": 36570,
+      "before": "*(unsigned char *)((int)&instance->info_slot + 1)",
+      "after": "SET_BYTE1(instance->info_slot)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "name": "card_molten_hydra",
+      "offset": 37933,
+      "end": 37973,
+      "before": "*(char *)((int)&instance->info_slot + 1)",
+      "after": "SET_BYTE1(instance->info_slot)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": true,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "name": "bereavement_effect",
+      "offset": 225240,
+      "end": 225293,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "name": "sporogenesis_effect",
+      "offset": 231633,
+      "end": 231686,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "legacy_edh_general",
+      "offset": 52927,
+      "end": 52980,
+      "before": "*(uint8_t *)((int)&edh_record->targets[3].player + 1)",
+      "after": "SET_BYTE1(edh_record->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "legacy_edh_general",
+      "offset": 54733,
+      "end": 54786,
+      "before": "*(uint8_t *)((int)&edh_record->targets[3].player + 1)",
+      "after": "SET_BYTE1(edh_record->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "commander_enters_the_battlefield",
+      "offset": 55680,
+      "end": 55731,
+      "before": "*(uint8_t *)((int)&instance->targets[3].player + 1)",
+      "after": "SET_BYTE1(instance->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "card_edh",
+      "offset": 84973,
+      "end": 85022,
+      "before": "*(uint8_t *)((int)&parent->targets[3].player + 1)",
+      "after": "SET_BYTE1(parent->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "card_edh",
+      "offset": 86275,
+      "end": 86323,
+      "before": "*(char *)((int)&instance->targets[3].player + 1)",
+      "after": "(char)SET_BYTE1(instance->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": true,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "card_edh",
+      "offset": 100759,
+      "end": 100810,
+      "before": "*(uint8_t *)((int)&instance->targets[3].player + 1)",
+      "after": "SET_BYTE1(instance->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "general_in_rfg_comm_zone",
+      "offset": 120203,
+      "end": 120251,
+      "before": "*(char *)((int)&instance->targets[3].player + 1)",
+      "after": "(char)SET_BYTE1(instance->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": true,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "put_commander_from_command_zone_to_impl",
+      "offset": 125012,
+      "end": 125063,
+      "before": "*(uint8_t *)((int)&instance->targets[3].player + 1)",
+      "after": "SET_BYTE1(instance->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/weatherlight.c",
+      "name": "angelic_renewal_effect",
+      "offset": 164352,
+      "end": 164405,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/zendikar.c",
+      "name": "blade_of_the_bloodchief_effect",
+      "offset": 189880,
+      "end": 189933,
+      "before": "*(uint8_t *)((int)&instance->targets[0xb].player + 2)",
+      "after": "SET_BYTE2(instance->targets[0xb].player)",
+      "macro": "SET_BYTE2",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_anowon_the_ruin_thief",
+      "offset": 3362,
+      "end": 3422,
+      "before": "*(unsigned char *)((int)&instance->targets[0x10].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0x10].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    },
+    {
+      "source": "functions/deck.c",
+      "name": "pre_counterspell",
+      "offset": 121828,
+      "end": 121894,
+      "before": "*(uint8_t *)((int)&live_spell_or_commander->targets[3].player + 1)",
+      "after": "SET_BYTE1(live_spell_or_commander->targets[3].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": false,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "count_for_gfp_ability_and_store_values_impl",
+      "offset": 599249,
+      "end": 599299,
+      "before": "*(char *)((int)&instance->targets[0xb].player + 1)",
+      "after": "SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": false,
+      "signed_standalone_store": true,
+      "store": true,
+      "mutation": false
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "count_for_gfp_ability_and_store_values_impl",
+      "offset": 599313,
+      "end": 599363,
+      "before": "*(char *)((int)&instance->targets[0xb].player + 1)",
+      "after": "(char)SET_BYTE1(instance->targets[0xb].player)",
+      "macro": "SET_BYTE1",
+      "signed_read": true,
+      "signed_standalone_store": false,
+      "store": false,
+      "mutation": false
+    }
+  ],
+  "functions": [
+    {
+      "source": "cards/amonkhet.c",
+      "name": "gate_to_the_afterlife_effect",
+      "before_sha256": "7704eda3b16891d24e3517104108b679260a639c33b5f72a0f184a4e37d00010",
+      "after_sha256": "e81f48d8d81f0635557587f02f125283fa365acc4bf92ba1e7e3eeaf13098f59"
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "plague_belcher_effect",
+      "before_sha256": "afc56f0af1d2d79628c61c1f066dde8e19d2355061ab0aebd1fd8b2687dc16f6",
+      "after_sha256": "e4ad90060a7b6024c0568efb288c5ecfbea55534afd7f58dcf0802cf3138d35e"
+    },
+    {
+      "source": "cards/battle_for_zendikar.c",
+      "name": "catacomb_sifter_effect",
+      "before_sha256": "fe2b026e296dad24da1f222aec1466a0058e13582b3eb49d827751894cfea00c",
+      "after_sha256": "f37cb4fcf453f961d044083bcfaeee178bc35b92ad441969de3d9a9abf440e6a"
+    },
+    {
+      "source": "cards/commander_2013.c",
+      "name": "card_marath_will_of_the_wild",
+      "before_sha256": "1244677d450e38725979d46936c040b99b6e5e82edc688c883afa1c6a0986134",
+      "after_sha256": "6104949399a502f0233031e9a639b614f0e148eb79e6b882a7ba361bd75637d6"
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "name": "titania_effect",
+      "before_sha256": "24af9abd28fbecf8d2642540922e1cebbdf2e65a69da9444bc18b7d969e9ab4e",
+      "after_sha256": "b997d08c6def7931ab11fbc222c045e05a003f1adbfee9eaf7fd2503e8e0f09f"
+    },
+    {
+      "source": "cards/commander_2015.c",
+      "name": "card_verdant_confluence",
+      "before_sha256": "7ee9952d96ed1573a61d67598b9b49d58deb8154eaec7fd1b4e2d3a7cbcaad8a",
+      "after_sha256": "85999b6481ba1f9877ed5cdfd3a433536df7e2b73e6066a703272ed02ab7ad4c"
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "name": "card_wasitora_nekoru_queen",
+      "before_sha256": "e179317c3fa7af7d094a853fbd32ba40092978aefa1c10e6f6de7350661a1b57",
+      "after_sha256": "c24505798bdcb0d6bccdabf8f469f205ba494a779313b3604ecba6b1580ab0f1"
+    },
+    {
+      "source": "cards/commander_2019.c",
+      "name": "atla_palani_effect",
+      "before_sha256": "35bc9ca1ba65290ccead21fe08681aa5762195d901552f82351b27d9cd514c00",
+      "after_sha256": "f748b113dd4c6e9c2cf8226ecb59aebd1bae4c491379bbff4af99be5c44a3413"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "alhard_solemn_ritualist_effect",
+      "before_sha256": "983561cdeef3c291c566cc0fa7d0d0f0e237f8a7fb0b6db0f8748ab02030a8bd",
+      "after_sha256": "8409faa6ee3cb807dd3d274b5dcbd127a2f3f0c6814a3afc407bff92db439d9c"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "colfenor_effect",
+      "before_sha256": "edf5e19adf452d61c6f1b738bab06a0f5d1bb03e81ddf9a711b15cd26c965833",
+      "after_sha256": "21a1b002876af083d227e9badb942860d69d03cd6a3db0ee5d0c315a6522a517"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "ich_tekik_effect",
+      "before_sha256": "2e3667180ad00543302cac9411d63d264b4b0737b60ead36d98d7c8e8dd2393f",
+      "after_sha256": "483c645b966a179876b075fec30ea1284961c1914fd21b87c708cb965e839e04"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "juri_master_of_the_revue_effect",
+      "before_sha256": "d236d531bc6d411f1aa981e36bcff9a1c95ba5974366f70e57a8b06c67b8d263",
+      "after_sha256": "7da15d21b411a63d40de2a9de785a4e89ec82cf1b442ca741d10abcb141b6265"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "miara_effect",
+      "before_sha256": "57d31373385c850ebf59103ad959ab086fd5d712421e1ecd8e5f07b93bd79ae4",
+      "after_sha256": "d385f7dd9cf5b8e03ca7f81d9afdd9305ce45e343026761b82ef6be442184d85"
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "slimefoot_effect",
+      "before_sha256": "5be2666fcb1272c65a847487527b96caed08863aadaf967697f36e4817e3b9cd",
+      "after_sha256": "3bf739f0aa2099f7b2502e42e40e3be8e99ba1673edfaa9eecc7db3cd01899c0"
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "tiana_effect",
+      "before_sha256": "49043b18ef861244f39b2dd1e9fb845c70e7fd414eb9ea0e30ea08afdc4266f9",
+      "after_sha256": "5cd6d2c1421b5ed14d88ccb06ed62e60b0c59ced0b7902b42a114cf9bcda00cf"
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "name": "card_endless_whispers",
+      "before_sha256": "e55ef91afd4a3a551fc06c5ab0b42b1c354fc0a013e23bdaaeb37fc8bd1c90b5",
+      "after_sha256": "32920f0a71f498518b2f6cd5998de19ff680509d6a1c1cb55fbeea5ab0d4a9a9"
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "midnight_reaper_effect",
+      "before_sha256": "09d3e923fd74c853b06e6c405d24b1368872c336309873403fe45842af2a1200",
+      "after_sha256": "20e9a64ef618fabc019fcccd7873e9c90eade150738b333564f189e79ac582b6"
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "the_scorpion_god_effect",
+      "before_sha256": "8b4f166af50fafe562388f8207f43eac72a90f9d123407c513cc8140347ba127",
+      "after_sha256": "8ada87d2d75fb57dbf3a03fbb4c31e6fca9c415a2e6c8763f60885536697dc00"
+    },
+    {
+      "source": "cards/ixalan.c",
+      "name": "revel_in_riches_effect",
+      "before_sha256": "66af9f59e810ed32571cf9aca6ee2a6f19bc8f50368310253f15d9433d0b37fe",
+      "after_sha256": "a6a527e1bfe9b0198e0d7aa84365031c07dc0e19d55a1e1d6873f39f8621e672"
+    },
+    {
+      "source": "cards/judgement.c",
+      "name": "soulcatchers_aerie_effect",
+      "before_sha256": "a5e6d306bf6ae74db545a6f487d907b509b0af8957c747712f83028ab91c7753",
+      "after_sha256": "9e3fe82959d95dea65e46031e4653fc6f66928ddd2013482aca8a7e5736c62ff"
+    },
+    {
+      "source": "cards/jumpstart.c",
+      "name": "kels_fight_fixer_effect",
+      "before_sha256": "e0f63e06591b7d4ec75ba4215777a3271dfb3f3f1ca7abb67c7c9b4579fb2b26",
+      "after_sha256": "1b4f037d0ded499874855005199048d6894f209fe616e057318700cd3324ea79"
+    },
+    {
+      "source": "cards/jumpstart.c",
+      "name": "spiteful_prankster_legacy",
+      "before_sha256": "f189d50f07794d479a366a5ffdfb73b4c395186480944e84e41bd8a617c71b98",
+      "after_sha256": "02bdb3659f3fc1d77c66c25082af6679c5bd2a5721731e444b31d9279eaacc14"
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "abzan_ascendancy_effect",
+      "before_sha256": "51b9297190b298c9422281de02111bbf9713c7c23ed98b0e62f490de57f97387",
+      "after_sha256": "d8dfc4948e9ad7a20e88c838537273d820d53632d6c2884bc37e0127c94e9924"
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "grim_haruspex_effect",
+      "before_sha256": "fa5f75265e431ca238e687babc7e1723c0e110ed0f6a2e6a79ff4b9e7946effd",
+      "after_sha256": "89262ad252fc77ca880f2c9103c5b04dbb748ef5d3e0c3879b54d5d737833cbc"
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "kheru_bloodsucker_effect",
+      "before_sha256": "2b77144658b2253baba50218f5227612629d7b10f5249a51ebf72a81cf8e1267",
+      "after_sha256": "9b397c8d5f7e9ac4af8cb8a08a5b304bf6a4442acd6d838896875ed9a7b9729a"
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "name": "sultai_flayer_effect",
+      "before_sha256": "4c10ed8576223bde1b8d604a7a44dcc3a0e531d91f8ab2badee9dcdfc21791f0",
+      "after_sha256": "865ff0a0f2be199ac5d87de81a91d827222db0c3e71f1ebaabbb18efe7f24457"
+    },
+    {
+      "source": "cards/lorwyn.c",
+      "name": "colfenors_urn_effect",
+      "before_sha256": "6cd91e366a5c62af68301d8fe4b8b35867152aeceb01fd506e0dfe37aec00626",
+      "after_sha256": "b2ccc28b4afe37f915044ac3a1a9f5dfaeedcdae244f47ecef2c3bbddf00762a"
+    },
+    {
+      "source": "cards/m15.c",
+      "name": "eternal_thirst_effect",
+      "before_sha256": "360510805bb2ac59e515271d87ed9c7e82657b45fe6a94aa2023779b916c6436",
+      "after_sha256": "07a7c4ddcd6a613ccae7ce27bcc0c0e73fcb7af953cd564653e33a0779bf7935"
+    },
+    {
+      "source": "cards/m19.c",
+      "name": "open_the_graves_effect",
+      "before_sha256": "3078f0302b677b567345ea5e18b5b3402e719782b8fd3f2668ef72717b5d34b4",
+      "after_sha256": "e9f89b2d631a9f6c5bc2a987cde1983cc3bf3690f3e2602d6403a081552f7f41"
+    },
+    {
+      "source": "cards/m19.c",
+      "name": "pta_effect",
+      "before_sha256": "266bc1c731ee51d8288c496be70f25fb841d0506e4e83d818d384f88cdb31b18",
+      "after_sha256": "664e1759ac1df654f89dddab4d99269f1472ee7ed3e2048413f7cdefa88a5124"
+    },
+    {
+      "source": "cards/m20.c",
+      "name": "moldervine_reclamation_effect",
+      "before_sha256": "640c903271769618daa80fe2108b333f553a982ee13ed5e204597f6295a02d59",
+      "after_sha256": "90faed444fb99679a2c65b02b4eba8c2320c7e8158120200be9ff5ffd4c55704"
+    },
+    {
+      "source": "cards/mirrodin_besieged.c",
+      "name": "fangren_marauder_effect",
+      "before_sha256": "6e39e0b104fa41c99e44f3e643815069fdf717321c7aeba7306052a80cb8aff3",
+      "after_sha256": "04e86f0a02241c55d2ba388239729ea9e4ff8bf0b0093c2ecab2a89a0d9bd546"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "magus_of_the_bridge_effect",
+      "before_sha256": "a65dda0b5d03a8a94ffa22b2ecbf1354b42b16821f9d09dc1b8c0ec7db07b229",
+      "after_sha256": "7f8ebedf46e156eaca21537caba2d0ae51637460b90089159e625e9a5f4dea07"
+    },
+    {
+      "source": "cards/morningtide.c",
+      "name": "thornbite_staff_effect",
+      "before_sha256": "130280474a531b923152d48cfc159342fc633e4bdf1d05f7f9c2a668adc24959",
+      "after_sha256": "4113b4e57d3958d6bd49b1407b95c1020923c0f8c2c0fc23e55904c5cc230bd3"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "card_karn_liberated",
+      "before_sha256": "a7f7a5a9576d62e7bf0b987c19b2b7c682a98175f08eaf8e7b578c4a55bb3e66",
+      "after_sha256": "6a035089895f21ff7c4fa0591c92339c3becab8afe8b2d8da2f7152ef0c8ae08"
+    },
+    {
+      "source": "cards/odyssey.c",
+      "name": "verdant_succession_effect",
+      "before_sha256": "31aecd93b102ca878d09d1d112a0620537ce401ebbd3cb751c9d647fdff85e5d",
+      "after_sha256": "602a1b18d2f5bdeba7f89fe56acdcb40cbad42718fcfdd1f20f26fb4d54f7476"
+    },
+    {
+      "source": "cards/origins.c",
+      "name": "shadows_of_the_past_effect",
+      "before_sha256": "7113644aca2ca1b2d1dc14a342a07d8ddd22a8c826745851287c8124ea431cc9",
+      "after_sha256": "d22e56377fdea0bc91d253658bb514261059d7dcf8084b46572c01e52227661f"
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "judith_the_scourge_diva_effect",
+      "before_sha256": "f688ddda8b4a7d0b7d004d5d2739984b7d58b284e4283c9f957a5ea27c62cb6c",
+      "after_sha256": "98786f19db7f48bbe5adaf46452437874ce30620ea279570a6969f37e954a227"
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "name": "vindictive_vampire_effect",
+      "before_sha256": "2ec0de5b28d401662a7ad3331372b388e5d8dc755f5ac9f0113bcea9d8adcb54",
+      "after_sha256": "03dea8f2c9820e0bae78345464eec790a91b2941b03003c631ba67f2a449f862"
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "name": "card_necropolis_regent",
+      "before_sha256": "440159d44389c5802b5378e7edbcced8ac5da75009a3c6bd7d2ed175596808f4",
+      "after_sha256": "574fb1688a9d55dc33bc63aae2a9afdbcc25521f99e9a33294873e288393d2b5"
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "name": "deaths_presence_effect",
+      "before_sha256": "dbda64a360b79e99871997852ed72882997924880f02a2948a29e53aa3bd7376",
+      "after_sha256": "266ad478a5f1792e7e62d6e27b6c1aae86a9d3b27a7aa395b81e8397210e2467"
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "pitiless_plunderer_effect",
+      "before_sha256": "acf7a4e7344f9dbd0cf0dcba073da3fbe8ccc6f68af931cb3052c23c6e0b4b9e",
+      "after_sha256": "7b25ecf2d56a8961f7e53a2020b182d45f7fc19d26588ea04ce01beaff2333ec"
+    },
+    {
+      "source": "cards/shadowmoor.c",
+      "name": "blowfly_infestation_effect",
+      "before_sha256": "5bee16026644ee41f44409ccecbfa59a40b8f32720d004750d34348b74168341",
+      "after_sha256": "4f4da9d3595a6c88cdf7fc9ed5869050c5d516cf7a511bcb674d07775b7f85be"
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "name": "fleeting_memories_effect",
+      "before_sha256": "a6e7e855db529cc07d6ce0ff9d8275ce69c0a78290f5a00fedf0c625a77e54ad",
+      "after_sha256": "a8a532fd46b335d48ae3e37ea080d4f3f2fcf56e8b502b01d0c13373aada552c"
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "name": "graf_mole_effect",
+      "before_sha256": "299395e50a7781a250e3d40b9a5506c832d41e79cc2f04264f4b7290050522ce",
+      "after_sha256": "e89a78d23403dce6f9200ad5685e06fc4bddf4b5f84c21a88fa5239e00208253"
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "name": "ulvenwald_mysteries_effect",
+      "before_sha256": "0d36b66b8952642941e92b7fda0d8e652c84ab206edf2267f72003f4efa955ab",
+      "after_sha256": "ccc4c439695ae3dad1ae4df60713886636c6d74683ade4e2782acd114fa4899a"
+    },
+    {
+      "source": "cards/stronghold.c",
+      "name": "grave_pact_effect",
+      "before_sha256": "f915c12ec17bff50f451760b294662cb4d67832e45ce456590dbd09c5e0f06f3",
+      "after_sha256": "d4f104a512f9b7816a0d2a3a954eb42cc913a3c062d9a461e9bc56d17e7448a6"
+    },
+    {
+      "source": "cards/tempest.c",
+      "name": "sadistic_glee_effect",
+      "before_sha256": "acf3ab95f743418593870cac3b3e11b7634fec5cb283cc2b5756196248606daf",
+      "after_sha256": "d7874ae7c0fa9f1d8c411c718c675e049c8c9eb69eb0d26469220471312d3577"
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "athreos_effect",
+      "before_sha256": "1fe60cb86b880969a7d2ef74604e780393f20f5ceb0c45b28481600611a7a359",
+      "after_sha256": "7a2063e5403451ee6e8f2cf24a9a0366212c4377de4dd86b92346a7734ee089c"
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_athreos_shroud_veiled",
+      "before_sha256": "208f4e57886a6cfc90ab8816fac2e5d57e702967d892cf19ba98d5b925bfec37",
+      "after_sha256": "5155d1d4631dc6ec06fd0cbeef2d97edfc749c3a953e301dd1294817cb6087c1"
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "daxos_effect",
+      "before_sha256": "0762f4bfabaf3c39383cfbbc1ccd0342549751c3412e62b2dbef06dd0d9c1f7e",
+      "after_sha256": "ff70a48abbca33bad9c79c05b799e61bd446bb5f4aa7099128a5b5123d75fa98"
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "erebos_thb_effect",
+      "before_sha256": "a826976b4cb6e89b10e8ad9103e063c17073e47ba002905efbffaf96daec4cb5",
+      "after_sha256": "ff34b235e81c6f0bde71d46b9133ecb81327328dbf4a82afa60540f10ae9b124"
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "trail_of_crumbs_effect",
+      "before_sha256": "d4b5af10e05f77736d116cbc9476ad7cef0eee5b849c5903b30148257378d9f0",
+      "after_sha256": "feb9d0a86770cc002cecee23c3ace7cb2950dc2240dcbdb62e68b1dfffbc9348"
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "name": "card_molten_hydra",
+      "before_sha256": "4554a440486493ddf8eaf3911ca8189d9aa25152d9eae9b2e9b532b273e18d02",
+      "after_sha256": "bdac57507fbc31504d2839739679a9989fad9482af6f5fe2fb1875780ffd9da9"
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "name": "bereavement_effect",
+      "before_sha256": "98e04bf5c05a68c7374791e91f90b40b367943c86fd5833a5e2915a10b793b5c",
+      "after_sha256": "2141778026be9651ca69fefa6d14d4e65dc4731250ec48529e96bb0308e146ef"
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "name": "sporogenesis_effect",
+      "before_sha256": "1dafa35df9047625be1575f6a4c09a45c3117174a9122362676a0977e5de93c5",
+      "after_sha256": "a6039fcf2eb6305454a6dd6f898574615a228ed8f67e8efe4f94b011de65ea81"
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "card_edh",
+      "before_sha256": "eb90c1589582c4af723647e6280b36991307ba049b182864421753ae9fe8a6d3",
+      "after_sha256": "d3c25ca6b8cb4019a76cf7f400197242ed8603a8ec7ef16c7bf99756b283a108"
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "commander_enters_the_battlefield",
+      "before_sha256": "0600a27fecf0dbcff52be767bab524a2746903e9f08b897d4c4e0dee51e58c35",
+      "after_sha256": "2ecce445423eb8cb413370d6c81cdbd2fe20d24ac82e07ce2559b322e899159d"
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "general_in_rfg_comm_zone",
+      "before_sha256": "248412fce1bc164d6f37091d8ea0f48dc4a3115729b34c1e5341f818908e3656",
+      "after_sha256": "a04f4695ed18087ab8d4fc112064570e96c354e6cc83a505ab9b6f0ada4271ac"
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "legacy_edh_general",
+      "before_sha256": "dae4aaa32eb814249612a3a34eaddead3541f06614dc281eaac2a5a98cfd2cf3",
+      "after_sha256": "f057cd581223b74f4c77764fd2081b6c7f80d28bf2ff441f5621b843bfc04b80"
+    },
+    {
+      "source": "cards/vanguard.c",
+      "name": "put_commander_from_command_zone_to_impl",
+      "before_sha256": "78a17388a95013db1d8a7631bc0e53b2539ce5a7c78a6f09d87c536fe61f4d66",
+      "after_sha256": "84463d75876b4e1ae45fe5b52f098dfd3f50e49dafbf1a6eb1fc7e42f4bc2b0e"
+    },
+    {
+      "source": "cards/weatherlight.c",
+      "name": "angelic_renewal_effect",
+      "before_sha256": "5810e3635f7e17e79b0f562856449dabbe063f716b3c16d850eb85fad598460b",
+      "after_sha256": "87f3e5b6f27f97d8639bb2cfba37cccafebf94e86c2172a289824ae818b820dd"
+    },
+    {
+      "source": "cards/zendikar.c",
+      "name": "blade_of_the_bloodchief_effect",
+      "before_sha256": "965c0da1088fe3410d09a2745851b8e92036d8cb9499df64c09a43616b381b11",
+      "after_sha256": "68fc5afc9b216e9325c18d6111da82894f3a4def04e8a12148b9771aad0704d7"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_anowon_the_ruin_thief",
+      "before_sha256": "5d1f5e72968101ecee1d0f40ea6b869fd01d20bb69125c96021588a2084c16f5",
+      "after_sha256": "51d0b8d958ea64ba463aad7764233043a9afebdd484085716b12fbb1917e8353"
+    },
+    {
+      "source": "functions/deck.c",
+      "name": "pre_counterspell",
+      "before_sha256": "65cf7ffc3d68c50c95b70791fd70d98137600f864bd14942a2717e64c088fda9",
+      "after_sha256": "31840972f44ed2340e5abfc7b57ee1ac2fb76edff5e35ef77d1fe4a40fbabcd1"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "count_for_gfp_ability_and_store_values_impl",
+      "before_sha256": "a958968da27059a5ffb330d17557ba7be0367ebcafe2564ad9661029b250a25b",
+      "after_sha256": "4b0dd51566a355e048a1fa118373e7fd7fcf06e17120f8dea9e49b55e5dac60a"
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/amonkhet.c",
+      "before_bytes_sha256": "7059d0bbaa3ba9768f93e832dfa393f62d8057a38478722ed647ed94684b161e",
+      "after_bytes_sha256": "75dc897f78bb06a08ab2feb446eb994a9003fc8feb8e8b79a02e26adeebc618c",
+      "before_sha256": "7173d65983daf9fe8e22782a81e7af82de082032629e9fa72696bd1b79e6731e",
+      "after_sha256": "5789c844be030ba8fcd894237c16447e4f9d9fbe576792fba84a672cbc009cfa"
+    },
+    {
+      "source": "cards/battle_for_zendikar.c",
+      "before_bytes_sha256": "7f130c9b1e17889f44559a4f86f53c581268206ea1e1f4e4e7d36ea8b3578d56",
+      "after_bytes_sha256": "3ddfb8d0a651074101c41b068c22581bfb3d9b8286b1607c3e9deb80c1869d22",
+      "before_sha256": "38f0dc138a73ad619900853c15e5c5f77fbe76282be0920379cf157f7b0bc144",
+      "after_sha256": "f30b1f01f4e9b1b0d1649d22149a4e2bc7ec64898661421b3513b429c7b64eaf"
+    },
+    {
+      "source": "cards/commander_2013.c",
+      "before_bytes_sha256": "65e4255f5c02e02bb8aa3220c56b3c0b39a030570824005ff6742da560637c28",
+      "after_bytes_sha256": "794f500fbf1cd953cfc5d9a662d7033c973039cdf722ae6961c6779fc2f15230",
+      "before_sha256": "31062d4bff426b4e53be016d11316f6cf73e85064ff0d30a52501aee00c2863c",
+      "after_sha256": "b796368b457aa323c7a90dbb155a2e110ce10e2e719c1cbed28e87df96e53904"
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "before_bytes_sha256": "197bd61f8b246623d61eb02f9d8c91e4b10b6ba6a248b7b6527d34e79f901f77",
+      "after_bytes_sha256": "22e3c840d48e5f8fa21c94b8d65764bccbe4f6702a0c5abc27aad1dccac4c358",
+      "before_sha256": "9b63607ef025c05323046bc08010903e67a688440e8231d942b5bd228816f384",
+      "after_sha256": "a161fa5598f7d9dbb114676066f0d279c1c8b977191383e9aa68c8559ed1f140"
+    },
+    {
+      "source": "cards/commander_2015.c",
+      "before_bytes_sha256": "b4fa5c840e1466ba64a2bccecccfa7551963ce3bfc24031610ce9612aacd0662",
+      "after_bytes_sha256": "a84fc2fa791cfd86ebd3408c829270b6d1dbed79070da985af5c2efc154b6b84",
+      "before_sha256": "73f7a7eae390eff0d25a697c6a6fb77ea6a1aa129055f0da6af1f5d7e3b54ca5",
+      "after_sha256": "ccefd0640e1058b424d6d2a6ef4ed31facbc64cfbfce505925f9c00918e82e7d"
+    },
+    {
+      "source": "cards/commander_2017.c",
+      "before_bytes_sha256": "341da374f7e172133bdbef1576b239d1bea55f48620fd325f79bd12e96780e65",
+      "after_bytes_sha256": "64007c0d68dcb050b22267df207402791bc42d741b15a96ee61e26c25b98dbb1",
+      "before_sha256": "e2b20221b9aa419c63ab4c3e69c82e3e21d8cc0fbebab22a34a97e0dfdf58759",
+      "after_sha256": "72cd445eb1bf50eef1adb891ba679ae9e85d780cadfe2b5b00782f3c412ea160"
+    },
+    {
+      "source": "cards/commander_2019.c",
+      "before_bytes_sha256": "26abb781a95f19d5ea53f755d444e3cd7adf8c9481ddb08bfe904736e417b3b5",
+      "after_bytes_sha256": "9ff12adf1682eab3e37e8d6888a6ba181c5a475a75e926f899ef16da6383c5d4",
+      "before_sha256": "9b6b8b723a26b266813456bcfb47a523b8c49d78d4dfa6b712b06396766a1535",
+      "after_sha256": "e27d74b5245fb6b82747b3c42b12f7bb813ac8fac0afbabdab20153d4016eee2"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "before_bytes_sha256": "cc04b14b635a409e7c2f5781928b26d5408017aade49094e9e602fed5007103d",
+      "after_bytes_sha256": "34ad9727324cacd5476781fa07a0dc76bd0a205b4b19e142fa42dad442efbf4f",
+      "before_sha256": "2be6c95b68e4cd7df41c15a3d8c4bcab0facfaf1256b6e940f71ed6a9220cd05",
+      "after_sha256": "f926f7f775d569fc2b20704bbccf495f80f0e48fa9cbb14699b68024968e0266"
+    },
+    {
+      "source": "cards/dominaria.c",
+      "before_bytes_sha256": "1adee78321cdbede3254f57bffc8243a57d49df25d4330168b6260dd34cc1323",
+      "after_bytes_sha256": "e00ef766a3266617e87dc694aa337892066edb5b71343d23f2840af8bf66fd7a",
+      "before_sha256": "e7345f8bbd042e0ff2f842d87c7b34e07a3e321965d3799c38e5c325d8c5437d",
+      "after_sha256": "5013b5fa267058be140665f60794ee76dcffce4a7a8d9f886bd54ceb580edef2"
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "before_bytes_sha256": "ce7dbacad557e4619e7ea3c7f8ca0656dda0b3446bd6496e8983db6a512be99c",
+      "after_bytes_sha256": "bcbe9d075d4734b5eea18c632a1a023c508381c7d41ca678d19fc853d864a299",
+      "before_sha256": "e1acc0095551bd6ad633524a5d82a317c8afaab35959b1bfaf660ee602dee21a",
+      "after_sha256": "7762977d8de7bb3d97ba4f5d4b73c25620c2b784377cf2846abc2186c72832c5"
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "before_bytes_sha256": "4635abb93daaaeb700a9f3f6796c40e6de05823016eade904f064effe8e1b964",
+      "after_bytes_sha256": "0a2f45eead9d4c025db76de0e6cac4bf11301a598e37789229ba4ce3b16a0343",
+      "before_sha256": "eb1b41780e1c0a7969fcb505c37b39284e6ba17d933f3797fc6738ded6feab88",
+      "after_sha256": "a0abfd942c49ef2d54723915ece32087c896700fe902108ac57511e8869aca14"
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "before_bytes_sha256": "e072a627833d2dc1eefda0427b40d91777f7b647a943f8729b1ec9c9f31d15f6",
+      "after_bytes_sha256": "33a4e14a48dc0e6d3da8c50539e934a409e4d3a0d0b0cb2727a30226b7ead9c6",
+      "before_sha256": "c7c20f03549a9c63b03d72206a0a03fab8f2f4fd7a715066f79724e20105eda9",
+      "after_sha256": "fabf845f0481e6a6f9e991464274da0bd9a5f4a6011962c36be1c844bfd8942b"
+    },
+    {
+      "source": "cards/ixalan.c",
+      "before_bytes_sha256": "9a8fbe3338843e6f241f0409cde08839957a5a978fadb3aa6af65b1a1a59e53d",
+      "after_bytes_sha256": "899351ce6a41d78da4e731ecf8bec9a820698d5bf8c2dd7acad643837c33a715",
+      "before_sha256": "bb38e0479237ee77bdf632fb3a78e9b19fff59bba7a65d2006b7eca514b378c6",
+      "after_sha256": "d0817d502c8f841f3d41ff43e8af4d9234b4054653cf05a207dabcabb5e6f962"
+    },
+    {
+      "source": "cards/judgement.c",
+      "before_bytes_sha256": "5533a0c6da88dc7ff22dfa52f294bb1e033793389bfdde9231e26a70084da657",
+      "after_bytes_sha256": "85b4628d7539989f9183a671c5f35602646adf8b65982ac4ba6e37c15ec55546",
+      "before_sha256": "17cae2198a91cc0b245e9a0c098d03da05af5255f64b43ba87bee4a7741a996d",
+      "after_sha256": "015ff9237c6d6ededd30fbb9f51e45cb37c4cd34e759b4dc5b6744fe2d23e849"
+    },
+    {
+      "source": "cards/jumpstart.c",
+      "before_bytes_sha256": "ef9d9ddde8c89bb6073e4a0183e29668b2b297b56edd00a0e8af92050a9d98ac",
+      "after_bytes_sha256": "934bc92c71c99a625cb0221c36ac6e1d10493bcd7256d6c4f4b365c4ad9ab787",
+      "before_sha256": "d8a793829645cf89607d2864d049f46227c6bc45a7cc8f5fcbc5edf37ed32cec",
+      "after_sha256": "8614440b23bee98518de675eece4485471311b378ab1bde6eb9e14360bffb31c"
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "before_bytes_sha256": "289dcaa27f893ea20b8e3723c9d57a361caed01c30f9be2f31f3c0b39d8729e3",
+      "after_bytes_sha256": "ce60f5a10ea8afb38f2da79c9c843d794e6660d085fecf1d6f75db11ba9f6cb0",
+      "before_sha256": "7cf19652b7721c19a7f356becac3f77d5a50bc2f26f70ef6f8741d822201a312",
+      "after_sha256": "81ee5d3f18cd0c8f4ace69f7b7e25e77aef2f3e7050319f687b871e50010855a"
+    },
+    {
+      "source": "cards/lorwyn.c",
+      "before_bytes_sha256": "c591b565c7b87fe68d7467189c966d3f48362a97326c9462275ae11eb4f8cbbc",
+      "after_bytes_sha256": "d46b51432492a754e65b99729ac0fae146c9e5a95772ef2519f2ae1213d658ef",
+      "before_sha256": "c607e73782b28eca3171013ef9358a42c52012e51136a2e7cfd3de58000ca72c",
+      "after_sha256": "e8f5a8194ff2bad03a41e30b0c88070ff7751ced95d12aa2643d85470ef77b89"
+    },
+    {
+      "source": "cards/m15.c",
+      "before_bytes_sha256": "7a1edd1f980d05ab0880cb58729e5d495db9e9d894c8ffd4890191b00cfb81cf",
+      "after_bytes_sha256": "fa9c2b811716867b035c2987a1d149e5caf340453e5b5a6a6e80a645aeb1c4a5",
+      "before_sha256": "6a5f6d301ba94e9a2f159879ce2cf23e0b725b73d7fefb39dbfffb5972e03c9a",
+      "after_sha256": "be3573002f27918442eece4cb53e217f9f2d832a21cc140373f99a0720efa5d9"
+    },
+    {
+      "source": "cards/m19.c",
+      "before_bytes_sha256": "28c0fa5e8fd69d7f53ef941388aca47443e19944c1932306fad5181ce1632ccb",
+      "after_bytes_sha256": "f55ddda5eccbf7b3f780108ee80db01c37063180019b0afac550f776ab3999b4",
+      "before_sha256": "6c24784221ccb3656d1665cbd0092ecb824a98cb1ac6d56efd18ad1b49997008",
+      "after_sha256": "be9116c5673283d4e4c859ed947c035d0b85512464d90bccb2a7132e16f0c19a"
+    },
+    {
+      "source": "cards/m20.c",
+      "before_bytes_sha256": "40b1b2e40e29e2096db56b6bf7af2e9060714f4784d6e093df03208d2380b35d",
+      "after_bytes_sha256": "a2cfdd6adbbf27362766da480c02f906eb4af5d41ea90013113c30c405b0dfa3",
+      "before_sha256": "41bddc2f28b9b8ca52596bbe80ea313296bce871da30d5f21a9a5f28011c7191",
+      "after_sha256": "9b827b553be61c59678880ad7222d79f0fc84bc698756c005fff47f60cd36a8c"
+    },
+    {
+      "source": "cards/mirrodin_besieged.c",
+      "before_bytes_sha256": "37316bc81a2d87c903287d53e21391ef23c9eeb8406d36245dd7fab459d5d4bb",
+      "after_bytes_sha256": "85af813ce336407c7cd97f46d2908588cc89239b39804224a5e205ee8d7fc671",
+      "before_sha256": "4cf1cabc42d555cb1f3c3eeb5dbb435419a60ecd5c1d7d99472743e92ae1db00",
+      "after_sha256": "f432d62e0fdd6d5e73183488cc3aa1b21905aced2af51609463b6971b1d88d5f"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "before_bytes_sha256": "b4a5cdfe63a8e0b9b1f5848188f30efddf547e87b72a43e11f0bf8136c033ff6",
+      "after_bytes_sha256": "b7fe84379d0d5e13d841fb26306c7e5a3be86591a8648f40e6fd5c7954bf4db9",
+      "before_sha256": "db978ce2aef1001710fa36ca60d4e39574432666ca700c71a4f114dcba40ecb9",
+      "after_sha256": "f68d3b0d5fd1a3ab95a26027ec08e0b661c6ba16383e87200c0c6edc1365110c"
+    },
+    {
+      "source": "cards/morningtide.c",
+      "before_bytes_sha256": "7f13495559ded1f5d1a209de214d64548d82916ccb888e7d5c53dd772c363716",
+      "after_bytes_sha256": "9f7645030ff6af3da44a8cf071865812850c89cb8bc308ed6642453868f01e9b",
+      "before_sha256": "6b52ea0ff514095edcfbab0d9e9cf6da597c0b5a156a5cdd9f343b565c3135f7",
+      "after_sha256": "faf55cd61aa2c3c17b8c4a8d6ec99bec6f3aa9b5fd45bc5759d0230933d4b11a"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "before_bytes_sha256": "2bc677ed520c44a394fca0512aa685b5e5b816ebb225cf3c89b8a2e8bdfe6cae",
+      "after_bytes_sha256": "eec86fe4952ecb4239f94995d61cd2cf81b7ce12d845e7a75a1e5b75b412cf96",
+      "before_sha256": "7b1d132f7fceab7faead26e7913ea62b3ec36aa84d60daa4afbf06ca2aeaabe8",
+      "after_sha256": "4739259352fabfe1a626d86c95c12f7f99027faf7d3089adedeaf92d146a7a0f"
+    },
+    {
+      "source": "cards/odyssey.c",
+      "before_bytes_sha256": "f616ef417b03ca1e7e041ad59158fa14e57fcee2a93c1a64a98ea7487d47ed1c",
+      "after_bytes_sha256": "7ae46dcf46ec0bccf2e1f8fa2d5ff895d34df776fc63e1503ebaa2e195e2a083",
+      "before_sha256": "83eac9be5510a0086798fa7e3f8d7f66702d2f7bcf8802256e3941f9f4694af6",
+      "after_sha256": "60448eff98025602d0b41affb58c8a2ad4c486e07a67ad5ea10931264a7bbcd3"
+    },
+    {
+      "source": "cards/origins.c",
+      "before_bytes_sha256": "232bf324a8b3691ee40f2c2f8222cafed43a5a7409d2d82a6606ed856a01657d",
+      "after_bytes_sha256": "0af495f9ca7155f1e341598710bbdf25bed20dd31e3e247957b3e7734c1c01b3",
+      "before_sha256": "cabfaa4621cdca01adee2b2295cdf899a2f648397ee030f2f24c5da145ea878c",
+      "after_sha256": "5e5c1ab3027aeaa6d72a7746ec493dba1ea39544c23ec34fc37a0e1c317d2685"
+    },
+    {
+      "source": "cards/ravnica_allegiance.c",
+      "before_bytes_sha256": "ecf5b4649bd974ea929281d97d60c7a1efd4697c4be7148b2b7970e93eb148ef",
+      "after_bytes_sha256": "debc7be107373bcec1d479c879b460ca3b99f805a2e81fbf7c8f98cf2c21d5e8",
+      "before_sha256": "07796d0c6163ef9397b8e5c75c2c84836ae6bc790d0a7d879cfb84e0e06bba40",
+      "after_sha256": "9ac37bfb570ffd434a61146752238fd29497b208f8228367566dd6a1b6e352b8"
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "before_bytes_sha256": "e4adc48f70ef16e4b5a0587bd79351e7c83c5a96735971c2ac3195add4eb369c",
+      "after_bytes_sha256": "9fd83182c1e667fc82a6163bb38552a694aa2e0d44cb48e102f54009f9a82fe2",
+      "before_sha256": "6ea5b29b83d65ec6431dd4c773c8fc38adfdd4755be3ed3a871749a368f25462",
+      "after_sha256": "6f84b8fb4ba4954754adb4a55c6c2e48f62ea7a75786c7f46c2de3b6b4c4c4c6"
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "before_bytes_sha256": "b26cdbe5085de68c9efe5c7a44a845d44f144d52c0d59853a03074eee3534a6a",
+      "after_bytes_sha256": "41f82b0bdb59415be0f0f03136972d52ea360be6cc23b8720830ea3435066813",
+      "before_sha256": "f61c26b8beaf18a4bb40eef4d383b3957aa99565eb1e67ecac77f95fd37ae2ee",
+      "after_sha256": "cd3e9c117076261c3c50ea996a0d6c59764de58ed1a53741d538afd9cca9989c"
+    },
+    {
+      "source": "cards/shadowmoor.c",
+      "before_bytes_sha256": "6c62618e56ea813836ed1850b4ff06f89d4a2a5416fadd6899c96c0653eb7b96",
+      "after_bytes_sha256": "2116c658c7e1f2300d13b02c5ee3b75b16005a06893edab05ab1f100cdc68245",
+      "before_sha256": "1dd9228f82bf0b91b80cf25750017d51c32bfddaa888aa0f50db7acbea1022b5",
+      "after_sha256": "7469a86181d5df8e68525a408f9b2ab660fe8a08cbd52c5ad22bed2dc16ded47"
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "before_bytes_sha256": "ac43d807919237758746bdfc4f11f567c63f3bbb0081dfaddf3c111c699dde70",
+      "after_bytes_sha256": "93f7eabf97b4e73e74e5a205e6def5675b7d9d24d4e187dc9a0935c6742161ad",
+      "before_sha256": "f4f79263018356e6826200a985700d2ab33529456aab77c98a945d3327c2c628",
+      "after_sha256": "b7646dee4dd5a5401b2fa61ad84de46b81ef9ed63f33c83f92254b5da3986de3"
+    },
+    {
+      "source": "cards/stronghold.c",
+      "before_bytes_sha256": "adbe8d6e6f8ef915b64ebb2b7affdd4db1a7dd232f532d34163a6a93612cdb45",
+      "after_bytes_sha256": "7d50a1b39c548e254b6db193c5505776eb17d6796697698f4c37ef64e8cc8a95",
+      "before_sha256": "9a31adf81004166d33cbb624f3803745c9f99cb56eb7b2bb562a515f4e030083",
+      "after_sha256": "6e5457f32175aaccfcdda7143592e5e7fc5182ad4e9851febad68abc49782f36"
+    },
+    {
+      "source": "cards/tempest.c",
+      "before_bytes_sha256": "3b0143b91bdd40db5aaa74bd2982d2caa25b5ecf85fc5554b0adf601fc47d407",
+      "after_bytes_sha256": "1d9a0cdaa4c925a40c1e587fb732a4407b1a1c81928d08269023fe21f9ba6319",
+      "before_sha256": "f65eb2e686dded9c5b30169c0dab3b61976e49156a89bf5da2efdbdddbaba57e",
+      "after_sha256": "81c88e53dbca2cb09a9e6ec0bc398373007ad0a2077a3d651dc62a479a5deec4"
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "before_bytes_sha256": "67b86b7f42f99ae656c64c2297ad226ef2a9939bc0c5f5eebdb3bb3556da3cb2",
+      "after_bytes_sha256": "92233565f4cc5cca5756ed7ba6a9f6bf51013ed7296a908f96aa1f2b9f915ae6",
+      "before_sha256": "c095a73c94ac7ce018c6a48414846f0134f06eff2ae1bd6618130e35dfd53606",
+      "after_sha256": "9be4ec10c144dbfdf4dd00a447b89757c5741f5c160d19f4926ad00b545a18ca"
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "before_bytes_sha256": "bf86721049522576dec10459d441e13a1f61480391415a695f8ac7f9239c5dc6",
+      "after_bytes_sha256": "6a528e9f036cdb5e61d45c9b0de17104f52147a6971d6cdb5640605b6676206a",
+      "before_sha256": "aad651938f2d6113366b3b22d2e636b7fa0a85109512a4c7a266b08101776169",
+      "after_sha256": "919fb7f04bcbf23528638f5cb2a499fb4121911ad12d9ec4d79f3c16fb2f66e8"
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "before_bytes_sha256": "80e94dfb18e3ca1d54ef1356903712b46cc8cd4eaa403214973684f526c0394b",
+      "after_bytes_sha256": "4cf3382cbfcebff0a2f3335068166776eb93d2c213009767c234e36a781f990c",
+      "before_sha256": "312f853d122ac574680627b1767f2a917f0425e1b4c8d9b67f1c23c0c6cb726b",
+      "after_sha256": "4b63455ec7c7013358917f85e4268ee3066d50ce3381a66f8f654276bc229bc3"
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "before_bytes_sha256": "902b577732e5f9aa5466957285df7d90b0fb485e44df5b141ca2947da4c9fa96",
+      "after_bytes_sha256": "7a85583358d1ef748eb74f99cebfeeaaca035f5c6ce33c9afe057f7894e698ae",
+      "before_sha256": "4edd2ba7939ff220671d9c480bec57c280f45c7dd41463b8b166ffa410400eed",
+      "after_sha256": "bbe9a9015aa505aef7df2cf9ecb8532e4ccc68e4eeb911afe5f1db6aa7418fd9"
+    },
+    {
+      "source": "cards/vanguard.c",
+      "before_bytes_sha256": "5589d64aaef54e4ac0f9d609fb66542a8e9c7a236b1aba2df878641f04807d42",
+      "after_bytes_sha256": "24391155317de38097b2cb3eed1dfd8b03abe5c8a0fd9d282870f9f85be9d543",
+      "before_sha256": "e0e20e9c3bc3406d0ccdc04cefa79ebb0807722042cec3ae675aa1b5ffdeb15d",
+      "after_sha256": "2b80a8301920140ca71531c354a5cd3cf82adb4635f240abcb75b4a3fbffe9df"
+    },
+    {
+      "source": "cards/weatherlight.c",
+      "before_bytes_sha256": "f1c5d192f9490aa78ecf538c8a94cec1865b0398e5b03aa21c1db194e87d4ae2",
+      "after_bytes_sha256": "498ef7e2fce9c46c2c6ab04058f0cd5cd56414d1f86cae24e5c4516d5a5eb3fa",
+      "before_sha256": "0f70ea5752961c1bc5688f17b13118e5743e472cec5035449b155323ef76419b",
+      "after_sha256": "38945d19765f4fabeb81bd4ac6c8a3626e77ca932eecd3affe8319f048ab82ee"
+    },
+    {
+      "source": "cards/zendikar.c",
+      "before_bytes_sha256": "88af672acfd0ef2c8c0521ad81c753f093dff071bf46a71968e58bf2c27c53c6",
+      "after_bytes_sha256": "409067c81748ac6faf054bd7668ef36168379d42a2c7d9d8387de981f26e9e61",
+      "before_sha256": "7fe9da6fa37b98781c0a5c8978ddd906c9408897513bba945c91dfa236aeb4f0",
+      "after_sha256": "57107f774496a558fee3675b9603c204c74279d0bc5eb0903b533d6b1cf20096"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "before_bytes_sha256": "dbe56efa27eb148a2af60dbae1af006bb71ffd5e86e6d33a5e092c7a2a3dbc43",
+      "after_bytes_sha256": "c066bf89ec3c10b87f7b6d0023fa724be2e2a30b91d715d7a445bbcb170ea2a5",
+      "before_sha256": "a1992dac8509a1be6dfc50f441c6eac4fc3083c6db82f525e833a5ff19d32db7",
+      "after_sha256": "2220e4a58ec726ea4f2cd2b31a069bdc6158fa21c0f856d5b210a43bdce03ec1"
+    },
+    {
+      "source": "functions/deck.c",
+      "before_bytes_sha256": "6ca1b68cbffd357b12c381673b833e98ccaa58b6096ea53a2c969b634df816b8",
+      "after_bytes_sha256": "6f6ce5411c75137dbfa70d34df9195436f6fc2c9099505e99fddc8b5280599f9",
+      "before_sha256": "ccfb23089028260261eeb2c55aee3212b6e934497c3cb331092e59a139bd5064",
+      "after_sha256": "677ec1637e5cabf2a1c31d85e07a1b2799101eb9794421dcaac52a1da67143ea"
+    },
+    {
+      "source": "functions/functions.c",
+      "before_bytes_sha256": "96ac63180443efe026289475dcc19fcac96934bd49c22ee70533928ec1497818",
+      "after_bytes_sha256": "936137a2709be4145a2831664990a4969d196ed4aff9f63ddbd05d14fa030be2",
+      "before_sha256": "d51b864d93173edc1f9f751fdc86a72bda09e552fd5199e64d6cbd3045c78298",
+      "after_sha256": "365287211fe25e71289109a49177733398050ec764742b3f25974d6546f2ecd8"
+    }
+  ],
+  "excluded": [],
+  "macros": {
+    "SET_BYTE2": 41,
+    "SET_BYTE1": 37
+  },
+  "plan_sha256": "9c891d57c17db1cbd12c34aab5dcdf763ce548ad4a8f73de2945b5f68b180b36",
+  "header_sha256": "8c39224fc32e84cb61cdef98a88fa100033070536240cf659f8dd0d8c20a0621",
+  "before_dll_sha256": "87d92d3fa66896826f786b65e13b9b7b024c68fb9339c3cb959d33f5580033ad",
+  "before_debug_sha256": "6115c4f69d45e89b25e71ec3ce59a94397050c550a006dd491d18ee48858ce9a",
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "scope": "Fixed offsets 0..3 in known 32-bit info_slot and target player/card fields in the canonical source-file inventory. Existing unsigned byte-lvalue macros replace integer pointer round trips. Signed reads retain explicit char conversion; signed stores are standalone assignments with discarded expression results. Dynamic offsets, pointer-valued uses and other cast shapes are not covered. No header/API changes or new handlers. Reads also use byte lvalues, retaining character-sized access instead of requiring a complete word value from packed cursor fields.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "16225240b0f12981cd77029fdef688427df8bbb43bfec985bcdac6b23b667d7c",
+    "debug_sha256": "02538edc0c82083f81ae3d38f86a2f73d7e31bed99779290588e6f82fd4b7478",
+    "build_log_sha256": "3778a6bfc1839bdc1baaed6c2dd8b71fa29febea4ba3761b1d4d7383a129731e",
+    "sites": 78,
+    "source_functions": 66,
+    "source_files": 43,
+    "full_file_projections": 43,
+    "independent_byte_range_projections": 43,
+    "preserved_line_counts_and_endings": 43,
+    "identical_runtime_object_count": 39,
+    "runtime_objects": [
+      {
+        "path": ".recovery/build-gcc93/obj/cards/amonkhet.o",
+        "runtime_sha256": "c794204af3d73ca94589f341fb081bda3880f3ab104aae9d559fb75c8142e4a3"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/battle_for_zendikar.o",
+        "runtime_sha256": "3e137de632abb392922b2b71e8db6d21c3c6af8459d5be01c43fdf4e4d0f672f"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/commander_2013.o",
+        "runtime_sha256": "91583c1b3f163425f2a109df70f54e1f84bf9fb667b454292e17c51dd34366df"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/commander_2014.o",
+        "runtime_sha256": "c4389dca9c01ea9d4dfd3e58747861cec5a56cc0e5866af5cbc083df5151776a"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/commander_2015.o",
+        "runtime_sha256": "6ca6ae6bcf24fd86a204ece4e07f36d1ca1acade8f9595921e4623da61cfebb1"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/commander_2017.o",
+        "runtime_sha256": "7330b1527dab0c0626e75817e5db98770cd644791efb3dfe912ad7ba0a1d3cec"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/commander_2019.o",
+        "runtime_sha256": "80c1ea787e67eb77a43c4f4e852caf27d835e229fcce5061e4b8ef786d79b8c6"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/commander_legends.o",
+        "runtime_sha256": "48c164a5bba89e7deef4bcb1fa4e84e00bfbc0d211cc163a7d5875d3a95f2182"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/dominaria.o",
+        "runtime_sha256": "9e7ba744cd9755815e709cdc6202e70d8ac76255ce8a786035cb01e8eb4c671b"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/fifth_dawn.o",
+        "runtime_sha256": "58f3223ce4676eda79cfcd98d016a434212814510e65c6c686c5a181818f120c"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/guilds_of_ravnica.o",
+        "runtime_sha256": "fe77a2677175a7b59729da2dc8ed19cd6f42505f6f2f1f8c76e110f7e860ac63"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/hour_of_devastation.o",
+        "runtime_sha256": "ba5df7dbea5de3b008dd09c7115e313b54f9888f7593c3af982a1686a049798c"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/ixalan.o",
+        "runtime_sha256": "209768346f0b97ed306ee93747d8cf2ed157af50b61601b232804918ec62d884"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/judgement.o",
+        "runtime_sha256": "37404e4c3ee9f58f1f2a29e0ce3d21adc4f9bf08c63189ffa9084429c014b904"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/jumpstart.o",
+        "runtime_sha256": "fac6323bd7499543dc2348187b1d4404d41b3de3714b829924cd42c40f3d9ec2"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/khans_of_tarkir.o",
+        "runtime_sha256": "c50fb49cffe16892b62f437743599d777a3f7e23ab501a42a03001dc536ee01c"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/lorwyn.o",
+        "runtime_sha256": "b6e1fccf6e932e4555547cf019055b2604e16cf0bc0127385d22a3af4f0bffac"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/m15.o",
+        "runtime_sha256": "c57a5dfa0336e3919483217189fe65a8ab62181957c4e345c9e094cb60dc572d"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/m19.o",
+        "runtime_sha256": "492443dd048fd67bc078e56a59c7226d21ccea3d4bd11af5acdcbc47e90b9c99"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/m20.o",
+        "runtime_sha256": "a2c0293bb7bb4161781d3fe52b69db0c80852c6f33bb217e247188a878e4099e"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/mirrodin_besieged.o",
+        "runtime_sha256": "fd7921761efeb8be4ab39b0171b1959a4c4e7b435a3fd7459c835a0099b0fb97"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/modern_horizons_2.o",
+        "runtime_sha256": "58357e886488d7849e52470525f84fb27ed5de0c5553e646df863803944042ef"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/morningtide.o",
+        "runtime_sha256": "e3716e3af4d70360ae954aa9f1e931e5858b12b1d9dce3f38be7711a1803c3b9"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/new_phyrexia.o",
+        "runtime_sha256": "51de67f5e0ee6aeb0e22e0893a42e0757096378c417df6abdc51d8a741a65fd9"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/odyssey.o",
+        "runtime_sha256": "5432e321a3cf30945c4f5777f8bcd6f18cfc68b0cfec5769e35922ca45a68d5a"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/origins.o",
+        "runtime_sha256": "3e702d578fa767c5a3a38bbf3f1ad85063749d08ac6b24a40f12438738533e7b"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/ravnica_allegiance.o",
+        "runtime_sha256": "09e8709e44269415bb99a9693efda1c65a1df98e85a6a46bb04a332f4b6f0a10"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/return_to_ravnica.o",
+        "runtime_sha256": "76a8a209ed9813ceab45a3be6a46cd435fe1eae42de801072d4c352fc61ad004"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/rivals_of_ixalan.o",
+        "runtime_sha256": "4b6e175e1355cac8a2fa5a26b03d83687689d9c16c58e68982fd978a32ec317e"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/shadowmoor.o",
+        "runtime_sha256": "40009dcba2e0e88018311b65904483b1eeab41d34faaa0be6efbcc4f1c745929"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/shadows_over_innistrad.o",
+        "runtime_sha256": "0823dd1430afb24c08a2b92a9bc08a628a181369cf687273564c5db001e7ab99"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/stronghold.o",
+        "runtime_sha256": "a13e97cb545050ea0b14438904ad992a0473bdd3c7e6135e5d903920d631911d"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/tempest.o",
+        "runtime_sha256": "9decbfd6a8b92fb8e448979f1e3e9226ae9207dd49cdc00dcc035b6a9b7395dd"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/theros_beyond_death.o",
+        "runtime_sha256": "3b3c70242211544012c3f8a79d2cd99385fad1ede0d8020b674c7c11b813221d"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/throne_of_eldraine.o",
+        "runtime_sha256": "f8d6301420e31ae654dc94911ded6874dae4add13acc1ef022043ba4956eed2f"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/urza_legacy.o",
+        "runtime_sha256": "456fb9129971f5924b17ab688ed236ec3a99fb897777468c7158b1799b12697f"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/urza_saga.o",
+        "runtime_sha256": "d65986a4b4a881c0701f70fc7283ee5f9012bfb1fcb0fd1e0a8f9827003af8d3"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/vanguard.o",
+        "runtime_sha256": "63abf0e048588e9285c969d74921eabdf4c6985c1745a4688cc8f9a1a24cfe66"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/weatherlight.o",
+        "runtime_sha256": "b3a1f469eeb5b3773c141859ea1b56f3c4a9c018a0960b5d3304459b2e9c5c6a"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/zendikar.o",
+        "runtime_sha256": "cb4244ea7085dc7f29a5b0b0fbfe71e9f6a7b8f23dc5bc52aae4265f672f79e4"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/cards/zendikar_rising.o",
+        "runtime_sha256": "51bdf1ac79c28085f1256a49f4d919e0be2cca55dc543c88e8bba32f51af9508"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/functions/deck.o",
+        "runtime_sha256": "573775893dc9ec51a091fc9d066389900a0f3bb310a4679515d212046a617f2f"
+      },
+      {
+        "path": ".recovery/build-gcc93/obj/functions/functions.o",
+        "runtime_sha256": "068b613266054afeb0defe0220343e68fbba0eaf472e7d4f679591bb1c8343db"
+      }
+    ],
+    "changed_runtime_objects": [
+      ".recovery/build-gcc93/obj/cards/commander_2015.o",
+      ".recovery/build-gcc93/obj/cards/fifth_dawn.o",
+      ".recovery/build-gcc93/obj/cards/new_phyrexia.o",
+      ".recovery/build-gcc93/obj/functions/functions.o"
+    ],
+    "dll_runtime_sections": [
+      {
+        "name": ".text",
+        "rva": 4096,
+        "virtual_size": 7407872,
+        "raw_size": 7408128,
+        "flags": 1616904288,
+        "sha256": "fe68626fbb2541bd1f3b96395f1cf0837a370991b5b94aab45b9374dbdc54d18"
+      },
+      {
+        "name": "/4",
+        "rva": 7413760,
+        "virtual_size": 216,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "f28d7618f1e2ad73dddf33a627001cfaa43fa90b7dc4c69b4d6e08ef75c7c12f"
+      },
+      {
+        "name": "/19",
+        "rva": 7417856,
+        "virtual_size": 64,
+        "raw_size": 512,
+        "flags": 1615855648,
+        "sha256": "d53495378aa57adb438fa40982f671446607016e459489aca28f0967a6afd39b"
+      },
+      {
+        "name": "/33",
+        "rva": 7421952,
+        "virtual_size": 64,
+        "raw_size": 512,
+        "flags": 1615855648,
+        "sha256": "32fc145a11eee4868c358da2fdef6d186ff66948abc2744363a7724b245fb631"
+      },
+      {
+        "name": "/85",
+        "rva": 7426048,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "a42e31866e6cb2bba0c91559091affd53f22c264b947bb5bf74edae6c96a20dc"
+      },
+      {
+        "name": "/129",
+        "rva": 7430144,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "172fbb87db5a3973cb4f6891e4834e356fc196221e6d0e2bd16a4a428a6b6ad7"
+      },
+      {
+        "name": "/169",
+        "rva": 7434240,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "9cfd1e8f22838176a6fd1229ddc9573ccdd82e0bc3cbd29712613cc379b244a9"
+      },
+      {
+        "name": "/208",
+        "rva": 7438336,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "03785b5ff29154012149474676c1bf81ac91ee2fc3d1dfa09cce3480da7dea67"
+      },
+      {
+        "name": "/249",
+        "rva": 7442432,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "9e539b8c0dc6c96894f350e1f01dbb0d7c9d0c2f627990b900919c2feeb93ce7"
+      },
+      {
+        "name": "/293",
+        "rva": 7446528,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "d88d505bf7dda097f41ad1721f77f32a537dea994c418f9e977449e63c7be844"
+      },
+      {
+        "name": "/338",
+        "rva": 7450624,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "d43b3bc5b886fdcff85d9441d707183290ae3dd70acd4e680ddaa1b49e07db03"
+      },
+      {
+        "name": "/387",
+        "rva": 7454720,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "081db94aba95459cf507bfece0c118bc71bde348d65cfd7477260a4476f73053"
+      },
+      {
+        "name": "/432",
+        "rva": 7458816,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "2be0182d7076b6c169843b98b766f84485a5bd11ae631b3885a0123a2fd222e3"
+      },
+      {
+        "name": "/477",
+        "rva": 7462912,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "68e177d741e6bd2fcf891d607793b8feae07a539c0a3bedb616068776ecf4774"
+      },
+      {
+        "name": "/523",
+        "rva": 7467008,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "b11289c8402ca6f4d466bc38d42cd4fc8f1d47515dcd2ceca860b2d11f1cf43c"
+      },
+      {
+        "name": "/567",
+        "rva": 7471104,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "5c3a8d68df6737b127c0982615aa3ebc00d24e3abef7145e464cb2f1c9eef67f"
+      },
+      {
+        "name": "/614",
+        "rva": 7475200,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "b2b55e223e48440082db283fbcebb7c1a88126beaf0882ad5716382117f653e5"
+      },
+      {
+        "name": "/662",
+        "rva": 7479296,
+        "virtual_size": 112,
+        "raw_size": 512,
+        "flags": 1615855648,
+        "sha256": "dc4996fef2e690601d940469faac15e9474d159e56cb13cced491b1e5e2b34d7"
+      },
+      {
+        "name": ".data",
+        "rva": 7483392,
+        "virtual_size": 7540,
+        "raw_size": 7680,
+        "flags": 3227516992,
+        "sha256": "87afa244533371e14e5a1a16eb18cec7d642f43c7bec298a3d22a777d94232c6"
+      },
+      {
+        "name": ".rdata",
+        "rva": 7491584,
+        "virtual_size": 349740,
+        "raw_size": 350208,
+        "flags": 1080033344,
+        "sha256": "689e63343650b34b2cac130a07e808e1092e62ba4933693503330b5aa95c9412"
+      },
+      {
+        "name": ".bss",
+        "rva": 7843840,
+        "virtual_size": 260092,
+        "raw_size": 0,
+        "flags": 3227517056,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": ".idata",
+        "rva": 8110080,
+        "virtual_size": 5596,
+        "raw_size": 5632,
+        "flags": 3224371264,
+        "sha256": "8cdbcc794bb4d486b1d5558e7e7af1a35a1c7cdbd8b3bc32ef0cfaaa9ec60edc"
+      },
+      {
+        "name": ".CRT",
+        "rva": 8118272,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 3224371264,
+        "sha256": "19955ea01a7b0aef7d25dd2dc43bb0b5ab754d7a0e8b6d7161019e8ddc28de34"
+      },
+      {
+        "name": ".tls",
+        "rva": 8122368,
+        "virtual_size": 8,
+        "raw_size": 512,
+        "flags": 3224371264,
+        "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+      },
+      {
+        "name": ".reloc",
+        "rva": 8126464,
+        "virtual_size": 197460,
+        "raw_size": 197632,
+        "flags": 1110442048,
+        "sha256": "337095e27b54fe1f98d46cd9577acc80e9d5c269486417e40a57b15be8511cb3"
+      }
+    ],
+    "dll_runtime_sections_identical_to_prior": false,
+    "object_reader_sha256": "fc302f92bfcc7c3374de769925f11e0dc0c121f12a7866ac506ab0f90a3edd30",
+    "reconstructed_baseline_objects": {
+      "receipt_sha256": "c1a66e1b996cc6936afbc14a0da248353810c32f9a122bf328704441896cee6a",
+      "objects": [
+        {
+          "source": "cards/commander_2015.c",
+          "path": ".recovery/byte-access-baseline-objects-c656/commander_2015.o",
+          "runtime_sha256": "8ee653edd5ee8bc92dc1c6b06daebe2becbfba2cd3ee1ab7af4019bafa3705ad",
+          "command": [
+            "C:/bin/gcc-9.3.0-no-debug/bin/gcc.exe",
+            "-m32",
+            "-O2",
+            "-ggdb2",
+            "-march=i586",
+            "-mpreferred-stack-boundary=2",
+            "-fno-omit-frame-pointer",
+            "-fno-tree-vrp",
+            "-Wall",
+            "-Wextra",
+            "-Wpointer-arith",
+            "-Wcast-qual",
+            "-Wcast-align",
+            "-Wwrite-strings",
+            "-Wshadow",
+            "-W",
+            "-Winline",
+            "-Wno-unused-parameter",
+            "-I..",
+            "-I.",
+            "-Wbad-function-cast",
+            "-Wstrict-prototypes",
+            "-Wnested-externs",
+            "-c",
+            "-o",
+            ".recovery/byte-access-baseline-objects-c656/commander_2015.o",
+            "cards/commander_2015.c"
+          ]
+        },
+        {
+          "source": "cards/fifth_dawn.c",
+          "path": ".recovery/byte-access-baseline-objects-c656/fifth_dawn.o",
+          "runtime_sha256": "03b2bd7ea7c506f55614401e01793d846e4e00cdb587140f095a6d116e5c6688",
+          "command": [
+            "C:/bin/gcc-9.3.0-no-debug/bin/gcc.exe",
+            "-m32",
+            "-O2",
+            "-ggdb2",
+            "-march=i586",
+            "-mpreferred-stack-boundary=2",
+            "-fno-omit-frame-pointer",
+            "-fno-tree-vrp",
+            "-Wall",
+            "-Wextra",
+            "-Wpointer-arith",
+            "-Wcast-qual",
+            "-Wcast-align",
+            "-Wwrite-strings",
+            "-Wshadow",
+            "-W",
+            "-Winline",
+            "-Wno-unused-parameter",
+            "-I..",
+            "-I.",
+            "-Wbad-function-cast",
+            "-Wstrict-prototypes",
+            "-Wnested-externs",
+            "-c",
+            "-o",
+            ".recovery/byte-access-baseline-objects-c656/fifth_dawn.o",
+            "cards/fifth_dawn.c"
+          ]
+        },
+        {
+          "source": "cards/new_phyrexia.c",
+          "path": ".recovery/byte-access-baseline-objects-c656/new_phyrexia.o",
+          "runtime_sha256": "d0176417781be05d7ee70ed96fca6724978c03b5766db2446fd9c9850e694651",
+          "command": [
+            "C:/bin/gcc-9.3.0-no-debug/bin/gcc.exe",
+            "-m32",
+            "-O2",
+            "-ggdb2",
+            "-march=i586",
+            "-mpreferred-stack-boundary=2",
+            "-fno-omit-frame-pointer",
+            "-fno-tree-vrp",
+            "-Wall",
+            "-Wextra",
+            "-Wpointer-arith",
+            "-Wcast-qual",
+            "-Wcast-align",
+            "-Wwrite-strings",
+            "-Wshadow",
+            "-W",
+            "-Winline",
+            "-Wno-unused-parameter",
+            "-I..",
+            "-I.",
+            "-Wbad-function-cast",
+            "-Wstrict-prototypes",
+            "-Wnested-externs",
+            "-c",
+            "-o",
+            ".recovery/byte-access-baseline-objects-c656/new_phyrexia.o",
+            "cards/new_phyrexia.c"
+          ]
+        },
+        {
+          "source": "cards/return_to_ravnica.c",
+          "path": ".recovery/byte-access-baseline-objects-c656/return_to_ravnica.o",
+          "runtime_sha256": "76a8a209ed9813ceab45a3be6a46cd435fe1eae42de801072d4c352fc61ad004",
+          "command": [
+            "C:/bin/gcc-9.3.0-no-debug/bin/gcc.exe",
+            "-m32",
+            "-O2",
+            "-ggdb2",
+            "-march=i586",
+            "-mpreferred-stack-boundary=2",
+            "-fno-omit-frame-pointer",
+            "-fno-tree-vrp",
+            "-Wall",
+            "-Wextra",
+            "-Wpointer-arith",
+            "-Wcast-qual",
+            "-Wcast-align",
+            "-Wwrite-strings",
+            "-Wshadow",
+            "-W",
+            "-Winline",
+            "-Wno-unused-parameter",
+            "-I..",
+            "-I.",
+            "-Wbad-function-cast",
+            "-Wstrict-prototypes",
+            "-Wnested-externs",
+            "-c",
+            "-o",
+            ".recovery/byte-access-baseline-objects-c656/return_to_ravnica.o",
+            "cards/return_to_ravnica.c"
+          ]
+        },
+        {
+          "source": "functions/functions.c",
+          "path": ".recovery/byte-access-baseline-objects-c656/functions.o",
+          "runtime_sha256": "ad39ff6abeb4208d761a2ae6a1699e540191c3398768a866f2d3b7dce7cb59a4",
+          "command": [
+            "C:/bin/gcc-9.3.0-no-debug/bin/gcc.exe",
+            "-m32",
+            "-O2",
+            "-ggdb2",
+            "-march=i586",
+            "-mpreferred-stack-boundary=2",
+            "-fno-omit-frame-pointer",
+            "-fno-tree-vrp",
+            "-Wall",
+            "-Wextra",
+            "-Wpointer-arith",
+            "-Wcast-qual",
+            "-Wcast-align",
+            "-Wwrite-strings",
+            "-Wshadow",
+            "-W",
+            "-Winline",
+            "-Wno-unused-parameter",
+            "-I..",
+            "-I.",
+            "-Wbad-function-cast",
+            "-Wstrict-prototypes",
+            "-Wnested-externs",
+            "-c",
+            "-o",
+            ".recovery/byte-access-baseline-objects-c656/functions.o",
+            "functions/functions.c"
+          ]
+        }
+      ],
+      "scope": "Five saved pre-edit sources recompiled at original source paths with recorded build flags into isolated objects; every reconstructed runtime hash equals its pre-edit snapshot. Current source bytes and timestamps restored before inspection."
+    },
+    "changed_codegen": {
+      "inspection_sha256": "50b8984af5e4efb89d1bf4fcf9c93c485879dcc74ebf3ec0881065659bbfe883",
+      "reader_sha256": "143ce2637d8eafefef41ed2060372f21403e18752b81a5fd0921ef2af0de86d2",
+      "functions": [
+        {
+          "source": "cards/commander_2015.c",
+          "name": "_card_verdant_confluence",
+          "diff": [
+            "--- before/_card_verdant_confluence\n",
+            "+++ after/_card_verdant_confluence\n",
+            "@@ -318,12 +318,12 @@\n",
+            " cmp edx, esi",
+            " mov dword ptr [edx - 4], eax",
+            " jne local+0x4c0",
+            "-mov edx, dword ptr [ebp - 0x140]",
+            "-mov byte ptr [ecx + 0x39], dl",
+            "-mov edx, dword ptr [ebp - 0x144]",
+            "-mov byte ptr [ecx + 0x38], dl",
+            "-mov edx, dword ptr [ebp - 0x13c]",
+            "-mov byte ptr [ecx + 0x3a], dl",
+            "+mov eax, dword ptr [ebp - 0x140]",
+            "+mov byte ptr [ecx + 0x39], al",
+            "+mov eax, dword ptr [ebp - 0x144]",
+            "+mov byte ptr [ecx + 0x38], al",
+            "+mov eax, dword ptr [ebp - 0x13c]",
+            "+mov byte ptr [ecx + 0x3a], al",
+            " jmp local+0x111",
+            " xor edx, edx",
+            " jmp local+0x4dd"
+          ],
+          "inspection_note": "Scratch EAX/EDX selection for the same three byte stores."
+        },
+        {
+          "source": "cards/fifth_dawn.c",
+          "name": "_card_endless_whispers",
+          "diff": [
+            "--- before/_card_endless_whispers\n",
+            "+++ after/_card_endless_whispers\n",
+            "@@ -18,7 +18,7 @@\n",
+            " jne local+0x54",
+            " cmp dword ptr [ebp + 0x10], 0x77",
+            " mov edx, eax",
+            "-je local+0x110",
+            "+je local+0x108",
+            " mov ecx, dword ptr [edi + 0x38]",
+            " test ecx, ecx",
+            " jle local+0x54",
+            "@@ -46,43 +46,39 @@\n",
+            " cmp dword ptr [0], ebx RELOC:_affected_card_controller:6",
+            " jne local+0x54",
+            " cmp dword ptr [ebp + 0x10], 0x7d",
+            "-je local+0x2d0",
+            "+je local+0x2c8",
+            " cmp dword ptr [ebp + 0x10], 0x7e",
+            " jne local+0x54",
+            "-lea eax, [edi + 0x74]",
+            "-mov dword ptr [ebp - 0x64], edi",
+            " mov dword ptr [ebp + 0xc], esi",
+            "-mov edi, edx",
+            "-mov esi, eax",
+            "-lea esi, [esi]",
+            "+mov esi, ebx",
+            "+mov ebx, edx",
+            "+nop ",
+            " mov eax, dword ptr [ebp + 0xc]",
+            " mov dword ptr [esp + 8], <_endless_whispers_legacy> RELOC:_endless_whispers_legacy:6",
+            " mov dword ptr [esp + 4], eax",
+            "-mov dword ptr [esp], ebx",
+            "+mov dword ptr [esp], esi",
+            " call _create_legacy_effect",
+            "-mov dword ptr [esp], ebx",
+            "+mov dword ptr [esp], esi",
+            " mov dword ptr [esp + 4], eax",
+            " call _get_card_instance",
+            " xor ecx, ecx",
+            "-cmp byte ptr [esi], 0",
+            "+cmp byte ptr [edi + ebx*8 + 0x74], 0",
+            " sete cl",
+            " mov dword ptr [eax + 0x74], ecx",
+            " xor ecx, ecx",
+            "-mov cl, byte ptr [esi + 1]",
+            "-inc edi",
+            "+mov cl, byte ptr [edi + ebx*8 + 0x75]",
+            "+inc ebx",
+            " mov dword ptr [eax + 0x7c], ecx",
+            "-mov ecx, dword ptr [ebp - 0x64]",
+            "-mov edx, dword ptr [esi + 4]",
+            "-add esi, 8",
+            "-mov ecx, dword ptr [ecx + 0x38]",
+            "+mov ecx, dword ptr [edi + 0x38]",
+            "+mov edx, dword ptr [edi + ebx*8 + 0x70]",
+            "+cmp ebx, ecx",
+            " mov dword ptr [eax + 0x80], edx",
+            "-cmp edi, ecx",
+            "-jl local+0xb0",
+            "-mov edi, dword ptr [ebp - 0x64]",
+            "+jl local+0xa8",
+            "+mov ebx, esi",
+            "+mov dword ptr [edi + 0x38], 0",
+            " mov esi, dword ptr [ebp + 0xc]",
+            "-mov dword ptr [edi + 0x38], 0",
+            " jmp local+0x54",
+            "-nop ",
+            "+lea esi, [esi]",
+            " mov dword ptr [ebp - 0x64], eax",
+            " mov eax, dword ptr [0] RELOC:_affected_card:6",
+            " mov dword ptr [esp + 4], eax",
+            "@@ -137,7 +133,7 @@\n",
+            " cmp al, 2",
+            " ja local+0x41",
+            " cmp dword ptr [edi + 0x38], 0",
+            "-jns local+0x1fa",
+            "+jns local+0x1f2",
+            " mov dword ptr [edi + 0x38], 0",
+            " mov eax, dword ptr [0] RELOC:_affected_card:6",
+            " lea ecx, [ebp - 0x60]",
+            "@@ -194,4 +190,3 @@\n",
+            " mov dword ptr [0], eax RELOC:_event_result:6",
+            " jmp local+0x54",
+            " lea esi, [esi]",
+            "-lea esi, [esi]"
+          ],
+          "inspection_note": "Packed-owner loop changes from an advancing pointer to base/index addressing; source record index, helper order and byte offset remain identical."
+        },
+        {
+          "source": "cards/new_phyrexia.c",
+          "name": "_card_karn_liberated",
+          "diff": [
+            "--- before/_card_karn_liberated\n",
+            "+++ after/_card_karn_liberated\n",
+            "@@ -640,7 +640,7 @@\n",
+            " mov edx, dword ptr [ebp - 0x680]",
+            " cmp ecx, 0x61",
+            " ja local+0xb21",
+            "-lea edi, [eax + edi - 7]",
+            "+lea edi, [edi + eax - 7]",
+            " mov eax, dword ptr [ebp - 0x67c]",
+            " mov dword ptr [0], edx RELOC:_event_result:6",
+            " mov dword ptr [0], eax RELOC:_current_turn:6"
+          ],
+          "inspection_note": "One commuted LEA base/index sum with equal unit scales."
+        },
+        {
+          "source": "functions/functions.c",
+          "name": "_count_for_gfp_ability_and_store_values_impl",
+          "diff": [
+            "--- before/_count_for_gfp_ability_and_store_values_impl\n",
+            "+++ after/_count_for_gfp_ability_and_store_values_impl\n",
+            "@@ -35,7 +35,7 @@\n",
+            " ja local+0x11",
+            " test byte ptr [ebp + 0x18], 0x20",
+            " mov eax, dword ptr [0] RELOC:_affected_card_controller:6",
+            "-jne local+0x270",
+            "+jne local+0x278",
+            " cmp dword ptr [ebp + 8], 2",
+            " je local+0x82",
+            " cmp dword ptr [ebp + 8], eax",
+            "@@ -43,25 +43,25 @@\n",
+            " mov ecx, dword ptr [ebp + 0x10]",
+            " mov edx, dword ptr [0] RELOC:_affected_card:6",
+            " test ecx, ecx",
+            "-je local+0x2a8",
+            "-mov edi, dword ptr [ebp + 0x10]",
+            "-cmp word ptr [edi + 0xaa], 1",
+            "-je local+0x2d8",
+            "+je local+0x2b0",
+            "+mov esi, dword ptr [ebp + 0x10]",
+            "+cmp word ptr [esi + 0xaa], 1",
+            "+je local+0x2e0",
+            " mov edi, dword ptr [ebp + 0xc]",
+            " test edi, edi",
+            " je local+0xd1",
+            "-mov esi, dword ptr [ebp + 0xc]",
+            "-mov dword ptr [esp + 4], edx",
+            "-mov dword ptr [esp + 8], esi",
+            "+mov edi, dword ptr [ebp + 0xc]",
+            "+mov dword ptr [esp + 4], edx",
+            "+mov dword ptr [esp + 8], edi",
+            " mov dword ptr [esp], eax",
+            " call _is_what",
+            " test eax, eax",
+            " je local+0x11",
+            " mov edx, dword ptr [0] RELOC:_affected_card:6",
+            " mov eax, dword ptr [0] RELOC:_affected_card_controller:6",
+            "-mov esi, dword ptr [ebp + 0x10]",
+            "+mov edi, dword ptr [ebp + 0x10]",
+            " mov dword ptr [esp + 8], 0xffffffff",
+            "-mov dword ptr [esp + 0xc], esi",
+            "+mov dword ptr [esp + 0xc], edi",
+            " mov dword ptr [esp + 4], edx",
+            " mov dword ptr [esp], eax",
+            " call _new_make_test_in_play",
+            "@@ -99,7 +99,7 @@\n",
+            " mov dword ptr [esp], eax",
+            " call _is_token",
+            " test eax, eax",
+            "-je local+0x2ee",
+            "+je local+0x2f6",
+            " mov eax, dword ptr [ebp + 0x18]",
+            " and eax, 0x440",
+            " cmp eax, 0x40",
+            "@@ -108,31 +108,32 @@\n",
+            " test dword ptr [ebp + 0x18], 0x189f",
+            " mov eax, dword ptr [0] RELOC:_affected_card:6",
+            " mov dword ptr [ebp - 0x20], edx",
+            "-je local+0x1f6",
+            "+je local+0x1f9",
+            " test byte ptr [ebp + 0x18], 0x10",
+            "-jne local+0x328",
+            "+jne local+0x330",
+            " mov edi, dword ptr [ebp + 0x1c]",
+            "-lea esi, [ebx + edi*8]",
+            "+mov esi, dword ptr [ebp + 0x1c]",
+            " mov edi, dword ptr [ebx + edi*8 + 0x74]",
+            "+lea esi, [ebx + esi*8]",
+            " test edi, edi",
+            "-jns local+0x1c1",
+            "+jns local+0x1c4",
+            " mov dword ptr [esi + 0x74], 0",
+            " test byte ptr [ebp + 0x18], 1",
+            "-jne local+0x5ce",
+            "+jne local+0x5d8",
+            " test byte ptr [ebp + 0x18], 2",
+            "-jne local+0x588",
+            "+jne local+0x592",
+            " test byte ptr [ebp + 0x18], 4",
+            "-jne local+0x529",
+            "+jne local+0x533",
+            " test byte ptr [ebp + 0x18], 8",
+            "-jne local+0x505",
+            "+jne local+0x50f",
+            " test dword ptr [ebp + 0x18], 0x800",
+            "-jne local+0x474",
+            "+jne local+0x47e",
+            " test dword ptr [ebp + 0x18], 0x300",
+            "-je local+0x216",
+            "+je local+0x219",
+            " test dword ptr [ebp + 0x18], 0x100",
+            "-jne local+0x300",
+            "+jne local+0x308",
+            " cmp dword ptr [ebp - 0x20], 1",
+            "-je local+0x42e",
+            "+je local+0x436",
+            " mov cl, byte ptr [ebx + 0xcc]",
+            " inc ecx",
+            " mov byte ptr [ebx + 0xcc], cl",
+            "@@ -141,9 +142,9 @@\n",
+            " mov dword ptr [esp], edx",
+            " call _is_what",
+            " test eax, eax",
+            "-je local+0x261",
+            "+je local+0x264",
+            " test byte ptr [ebp + 0x18], 0x10",
+            "-jne local+0x261",
+            "+jne local+0x264",
+            " mov esi, dword ptr [ebp - 0x1c]",
+            " mov dl, byte ptr [ebx + 0xcc]",
+            " lea eax, [esi*8]",
+            "@@ -153,6 +154,8 @@\n",
+            " mov byte ptr [ebx + 0xcc], dl",
+            " mov dword ptr [ebx + 0xd0], 0",
+            " jmp local+0x11",
+            "+lea esi, [esi]",
+            "+nop ",
+            " mov edx, dword ptr [0] RELOC:_affected_card:6",
+            " mov dword ptr [esp], eax",
+            " mov dword ptr [esp + 4], edx",
+            "@@ -169,9 +172,9 @@\n",
+            " mov esi, dword ptr [ebp + 0xc]",
+            " test esi, esi",
+            " je local+0xff",
+            "-mov edi, dword ptr [ebp + 0xc]",
+            "-mov dword ptr [esp + 4], edx",
+            "-mov dword ptr [esp + 8], edi",
+            "+mov esi, dword ptr [ebp + 0xc]",
+            "+mov dword ptr [esp + 4], edx",
+            "+mov dword ptr [esp + 8], esi",
+            " mov dword ptr [esp], eax",
+            " call _is_what",
+            " test eax, eax",
+            "@@ -196,7 +199,7 @@\n",
+            " shr ecx, 0xc",
+            " and ecx, 1",
+            " mov dword ptr [ebp - 0x20], ecx",
+            "-jmp local+0x20c",
+            "+jmp local+0x20f",
+            " movzx edi, byte ptr [ebx + 0xcc]",
+            " mov ecx, dword ptr [ebp + 0x1c]",
+            " and edi, 0xff",
+            "@@ -205,21 +208,21 @@\n",
+            " add edi, ecx",
+            " call _get_id",
+            " cmp eax, 0x3eae",
+            "-je local+0x628",
+            "+je local+0x632",
+            " mov eax, dword ptr [0] RELOC:_affected_card:6",
+            " mov dword ptr [esp + 4], eax",
+            " mov eax, dword ptr [0] RELOC:_affected_card_controller:6",
+            " mov dword ptr [esp], eax",
+            " call _get_id",
+            " cmp eax, 0x3ef4",
+            "-je local+0x628",
+            "+je local+0x632",
+            " mov eax, dword ptr [0] RELOC:_affected_card:6",
+            " mov dword ptr [esp + 4], eax",
+            " mov eax, dword ptr [0] RELOC:_affected_card_controller:6",
+            " mov dword ptr [esp], eax",
+            " call _get_id",
+            " cmp eax, 0x3efb",
+            "-je local+0x628",
+            "+je local+0x632",
+            " mov esi, 1",
+            " lea edx, [ebp - 0x10]",
+            " mov dword ptr [esp], eax",
+            "@@ -228,11 +231,11 @@\n",
+            " mov dword ptr [esp + 4], edx",
+            " call _unmeld",
+            " cmp edi, 0xa",
+            "-jg local+0x4b2",
+            "+jg local+0x4bc",
+            " cmp dword ptr [ebp + 8], 2",
+            "-je local+0x3c7",
+            "+je local+0x3cf",
+            " test byte ptr [ebp + 0x18], 0x80",
+            "-je local+0x4b2",
+            "+je local+0x4bc",
+            " mov ecx, dword ptr [ebp + 0x18]",
+            " mov eax, dword ptr [0] RELOC:_affected_card:6",
+            " and ecx, 0x1000",
+            "@@ -251,32 +254,31 @@\n",
+            " mov dword ptr [ebx + edi*8 + 0x78], eax",
+            " mov eax, dword ptr [ebp - 0x20]",
+            " test eax, eax",
+            "-jne local+0x638",
+            "+jne local+0x642",
+            " inc edi",
+            " dec esi",
+            " mov edx, dword ptr [0] RELOC:_affected_card_controller:6",
+            " mov eax, dword ptr [0] RELOC:_affected_card:6",
+            "-je local+0x426",
+            "+je local+0x42e",
+            " cmp edi, 0xa",
+            "-jle local+0x3de",
+            "-mov dword ptr [ebp - 0x20], edx",
+            "-jmp local+0x1f6",
+            "+jle local+0x3e6",
+            "+mov dword ptr [ebp - 0x20], edx",
+            "+jmp local+0x1f9",
+            " mov cl, byte ptr [ebx + 0xcd]",
+            "-lea esi, [ebx + 0xcd]",
+            " inc ecx",
+            "-mov byte ptr [esi], cl",
+            "+mov byte ptr [ebx + 0xcd], cl",
+            " mov dword ptr [esp + 8], 2",
+            " mov dword ptr [esp + 4], eax",
+            " mov dword ptr [esp], edx",
+            " call _is_what",
+            " test eax, eax",
+            "-je local+0x261",
+            "+je local+0x264",
+            " test byte ptr [ebp + 0x18], 0x10",
+            "-jne local+0x261",
+            "+jne local+0x264",
+            " imul eax, dword ptr [ebp - 0x1c], 7",
+            " mov al, byte ptr [eax + 5] RELOC:_card_counts:6",
+            "-add byte ptr [esi], al",
+            "-jmp local+0x261",
+            "+add byte ptr [ebx + 0xcd], al",
+            "+jmp local+0x264",
+            " mov dword ptr [esp], edx",
+            " mov dword ptr [esp + 8], 0x2f",
+            " mov dword ptr [esp + 4], eax",
+            "@@ -292,32 +294,32 @@\n",
+            " imul eax, edi",
+            " add dword ptr [esi + 0x74], eax",
+            " mov eax, dword ptr [0] RELOC:_affected_card:6",
+            "-jmp local+0x1f6",
+            "+jmp local+0x1f9",
+            " cmp dword ptr [ebp + 0x1c], 0xa",
+            "-jle local+0x4e7",
+            "-mov edx, dword ptr [0] RELOC:_affected_card_controller:6",
+            "-mov eax, dword ptr [0] RELOC:_affected_card:6",
+            "-mov dword ptr [ebp - 0x20], edx",
+            "-jmp local+0x1f6",
+            "+jle local+0x4f1",
+            "+mov edx, dword ptr [0] RELOC:_affected_card_controller:6",
+            "+mov eax, dword ptr [0] RELOC:_affected_card:6",
+            "+mov dword ptr [ebp - 0x20], edx",
+            "+jmp local+0x1f9",
+            " cmp dword ptr [edi + 0x78], -1",
+            "-je local+0x614",
+            "+je local+0x61e",
+            " mov edi, dword ptr [ebp + 0x1c]",
+            " dec esi",
+            " inc edi",
+            " mov dword ptr [ebp + 0x1c], edi",
+            " cmp dword ptr [ebp + 0x1c], 0xa",
+            "-jg local+0x4b8",
+            "+jg local+0x4c2",
+            " test esi, esi",
+            "-je local+0x4b8",
+            "+je local+0x4c2",
+            " mov eax, dword ptr [ebp + 0x1c]",
+            " cmp dword ptr [ebx + eax*8 + 0x74], -1",
+            " lea edi, [ebx + eax*8]",
+            "-jne local+0x4cb",
+            "+jne local+0x4d5",
+            " mov eax, dword ptr [ebp + esi*4 - 0x18]",
+            " mov dword ptr [esp], eax",
+            " call _get_internal_card_id_from_csv_id",
+            " mov dword ptr [edi + 0x74], eax",
+            "-jmp local+0x4dd",
+            "+jmp local+0x4e7",
+            " mov dword ptr [esp], edx",
+            " mov dword ptr [esp + 4], eax",
+            " call _get_color",
+            "@@ -326,7 +328,7 @@\n",
+            " or dword ptr [esi + 0x74], edx",
+            " mov edx, dword ptr [0] RELOC:_affected_card_controller:6",
+            " mov dword ptr [ebp - 0x20], edx",
+            "-jmp local+0x1e9",
+            "+jmp local+0x1ec",
+            " mov dword ptr [esp], edx",
+            " mov dword ptr [esp + 4], eax",
+            " call _get_cmc",
+            "@@ -341,7 +343,7 @@\n",
+            " mov ecx, eax",
+            " mov eax, dword ptr [0] RELOC:_affected_card:6",
+            " test ecx, ecx",
+            "-je local+0x574",
+            "+je local+0x57e",
+            " imul edx, dword ptr [ebp - 0x1c], 7",
+            " xor ecx, ecx",
+            " mov cl, byte ptr [edx + 5] RELOC:_card_counts:6",
+            "@@ -351,7 +353,7 @@\n",
+            " add dword ptr [esi + 0x74], edx",
+            " mov edx, dword ptr [0] RELOC:_affected_card_controller:6",
+            " mov dword ptr [ebp - 0x20], edx",
+            "-jmp local+0x1df",
+            "+jmp local+0x1e2",
+            " mov dword ptr [esp], edx",
+            " mov dword ptr [esp + 0xc], 0xffffffff",
+            " mov dword ptr [esp + 8], 0x33",
+            "@@ -368,7 +370,7 @@\n",
+            " imul eax, edi",
+            " add dword ptr [esi + 0x74], eax",
+            " mov eax, dword ptr [0] RELOC:_affected_card:6",
+            "-jmp local+0x1d5",
+            "+jmp local+0x1d8",
+            " mov dword ptr [esp], edx",
+            " mov dword ptr [esp + 0xc], 0xffffffff",
+            " mov dword ptr [esp + 8], 0x32",
+            "@@ -385,15 +387,15 @@\n",
+            " add dword ptr [esi + 0x74], edx",
+            " mov edx, dword ptr [0] RELOC:_affected_card_controller:6",
+            " mov dword ptr [ebp - 0x20], edx",
+            "-jmp local+0x1cb",
+            "+jmp local+0x1ce",
+            " mov eax, dword ptr [ebp + esi*4 - 0x18]",
+            " mov dword ptr [esp], eax",
+            " call _get_internal_card_id_from_csv_id",
+            " mov dword ptr [edi + 0x78], eax",
+            "-jmp local+0x4dd",
+            "+jmp local+0x4e7",
+            " inc byte ptr [ebx + 0xcc]",
+            " mov esi, 2",
+            "-jmp local+0x398",
+            "+jmp local+0x3a0",
+            " mov eax, dword ptr [0] RELOC:_affected_card:6",
+            " mov dword ptr [esp + 4], eax",
+            " mov eax, dword ptr [0] RELOC:_affected_card_controller:6",
+            "@@ -401,5 +403,7 @@\n",
+            " call _get_original_internal_card_id",
+            " shl eax, 4",
+            " or dword ptr [ebx + edi*8 + 0x74], eax",
+            "-jmp local+0x412",
+            "+jmp local+0x41a",
+            " lea esi, [esi]",
+            "+lea esi, [esi]",
+            "+nop "
+          ],
+          "inspection_note": "Register allocation, scheduling, padding and branch displacement changes around the existing byte counter; signed read conversion and modulo-byte standalone store are retained."
+        }
+      ],
+      "scope": "Relocation-aware assembly inspection, not a general equivalence checker. The replacement equivalence argument is at C byte-access level under pinned target widths/order/char conversion and valid original field addresses. No claim of full-handler execution coverage."
+    },
+    "byte_contracts": {
+      "assertions": 9,
+      "result": "passed",
+      "source_sha256": "b313354e072620d56688c41124afb83138a4287ff4b8b182e01d1be4d2c7f0e0",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "checker_sha256": "a2768344b4f343075a7e4908faf72159759c17590385ba3e66c9d2bd584bf2c1",
+    "staging": "preserved",
+    "scope": "39 edited translation units retain allocated code/data bytes, relocation targets and runtime symbols. Four translation units have inspected codegen deltas. Reads use uint8_t character lvalues, signed reads cast back to char, and signed stores have discarded expression results with identical stored byte bits on the checked GCC target. The linked runtime changes; previous native fixtures are historical rather than a full execution verdict for this build."
+  }
+}

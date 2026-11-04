@@ -302,7 +302,7 @@ int card_allosaurus_rider(int player, int card, event_t event)
   new_default_test_definition(&this_test, 0xff, "Select a green card to exile");
   this_test.color = 8;
   this_test.zone = 0x100;
-  this_test.id = 0x615a;
+  this_test.id = CARD_ID_RULES_ENGINE;
   this_test.id_flag = 1;
   return coldsnap_pitchspell(player, card, event, &this_test);
 }
@@ -1697,7 +1697,7 @@ int card_jotun_owl_keeper(int player, int card, event_t event)
 int card_juniper_order_ranger(int player, int card, event_t event)
 {
   test_definition_t test;
-  if (trigger_condition == 0xdb)
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY)
   {
     new_default_test_definition(&test, 2, "");
     test.not_me = 1;
@@ -2883,24 +2883,23 @@ At the beginning of your upkeep, put a +1/+1 counter on enchanted creature if it
 	card_instance_t* instance = in_play(player, card);
 	if ((event == EVENT_DECLARE_ATTACKERS || event == EVENT_ETB_ABILITY || event == EVENT_UPKEEP_TRIGGER_ABILITY)
 	    && instance && instance->damage_target_card >= 0 && !is_humiliated(player, card, AL_TRIG)){
-	    int p = instance->damage_target_player, c = instance->damage_target_card;
 	    if (event == EVENT_ETB_ABILITY){
-	        if (in_play(p, c)){ add_counters(player, card, p, c, COUNTER_P1_P1, 6); }
+	        if (in_play(instance->damage_target_player, instance->damage_target_card)){ add_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, 6); }
 	        upkeep_trigger_ability(player, card, event, player);
 	    } else {
 	        upkeep_trigger_ability(player, card, event, player);
 	        if (event == EVENT_UPKEEP_TRIGGER_ABILITY){
-	            if (in_play(p, c)){
+	            if (in_play(instance->damage_target_player, instance->damage_target_card)){
 	                if (instance->targets[1].player == 66){
-	                    add_counters(player, card, p, c, COUNTER_P1_P1, 1);
+	                    add_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, 1);
 	                    instance->targets[1].player = 0;
 	                } else {
-	                    remove_counters(player, card, p, c, COUNTER_P1_P1, 1);
+	                    remove_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, 1);
 	                }
 	            }
 	        } else {
-	            card_instance_t* attached = in_play(p, c);
-	            if (attached && (attached->state & STATE_ATTACKING)){ instance->targets[1].player = 66; }
+	            card_instance_t* aff = in_play(instance->damage_target_player, instance->damage_target_card);
+	            if (aff && (aff->state & STATE_ATTACKING)){ instance->targets[1].player = 66; }
 	        }
 	    }
 	}
@@ -2928,7 +2927,7 @@ static int put_p1_p1_counter_on_opp(int player, int card, int number_of_age_coun
   base_target_definition(player, card, &td, 2);
   td.extra = (int32_t)can_have_counters_placed_on_it_shim;
   td.allowed_controller = 1 - player;
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   td.allow_cancel = 0;
   td.preferred_controller = td.allowed_controller;
   instance = get_card_instance(player, card);
@@ -3701,11 +3700,11 @@ int card_commandeer(int player, int card, event_t event)
   if ((event == EVENT_CAN_CAST) || (event == EVENT_MODIFY_COST))
   {
     counterspell_target_definition(player, card, &td, 0xff);
-    td.illegal_type = 2;
+    td.illegal_type = TYPE_CREATURE;
     new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
     this_test.color = 4;
     this_test.zone = 0x100;
-    this_test.id = 0x615a;
+    this_test.id = CARD_ID_RULES_ENGINE;
     this_test.id_flag = 1;
     instance = get_card_instance(player, card);
     cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
@@ -3727,11 +3726,11 @@ int card_commandeer(int player, int card, event_t event)
         return 0;
       }
       counterspell_target_definition(player, card, &td, 0xff);
-      td.illegal_type = 2;
+      td.illegal_type = TYPE_CREATURE;
       new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
       this_test.color = 4;
       this_test.zone = 0x100;
-      this_test.id = 0x615a;
+      this_test.id = CARD_ID_RULES_ENGINE;
       this_test.id_flag = 1;
       instance = get_card_instance(player, card);
       cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
@@ -3771,22 +3770,22 @@ int card_commandeer(int player, int card, event_t event)
         return 0;
       }
       counterspell_target_definition(player, card, &td, 0xff);
-      td.illegal_type = 2;
+      td.illegal_type = TYPE_CREATURE;
       new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
       this_test.color = 4;
       this_test.zone = 0x100;
-      this_test.id = 0x615a;
+      this_test.id = CARD_ID_RULES_ENGINE;
       this_test.id_flag = 1;
       get_card_instance(player, card);
       cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CHANGE_TARGET, &this_test);
       return 0;
     }
     counterspell_target_definition(player, card, &td, 0xff);
-    td.illegal_type = 2;
+    td.illegal_type = TYPE_CREATURE;
     new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
     this_test.color = 4;
     this_test.zone = 0x100;
-    this_test.id = 0x615a;
+    this_test.id = CARD_ID_RULES_ENGINE;
     this_test.id_flag = 1;
     instance = get_card_instance(player, card);
     cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
@@ -3888,7 +3887,7 @@ int card_fury_of_the_horde(int player, int card, event_t event)
       result = -0x30;
       if (current_turn == player)
       {
-        result = ((current_phase == 0x1e) - 1 & 0xffffffa0) + 0x30;
+        result = (unsigned int)((current_phase == 0x1e) ? 48 : -48);
       }
       ai_modifier = ai_modifier + result;
       result = casting_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
@@ -3934,15 +3933,13 @@ int card_fury_of_the_horde(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x21646a0; original cards/coldsnap.c:1306. */
 int card_gristle_grinner(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
 
   if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
     count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
   }
-  result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (result != 0)
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
   {
     instance = in_play(player, card);
     if (instance != NULL)
@@ -3979,30 +3976,21 @@ int card_mishras_bauble(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
 
-  if (event == EVENT_ACTIVATE)
-  {
-    default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-    {
+  if (!IS_GAA_EVENT(event))
+    return 0;
 
-      instance = get_card_instance(player, card);
-      if (*deck_ptr[instance->targets[0].player] != -1)
-      {
-        show_deck(player, deck_ptr[instance->targets[0].player], 1,
-                  "Here\'s the first card of deck.", 0, EXE_STR(ENGINE_DONE_LABEL));
-      }
-      cantrip(player, card, 1);
+  default_target_definition(player, card, &td, 0);
+  td.zone = TARGET_ZONE_PLAYERS;
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+  {
+
+    instance = get_card_instance(player, card);
+    if (*deck_ptr[instance->targets[0].player] != -1)
+    {
+      show_deck(player, deck_ptr[instance->targets[0].player], 1,
+                "Here\'s the first card of deck.", 0, EXE_STR(ENGINE_DONE_LABEL));
     }
+    cantrip(player, card, 1);
   }
   result = generic_activated_ability(player, card, event, 0xc, 0, 0, 0, 0, 0, 0, 0, &td,
                                      "TARGET_PLAYER");

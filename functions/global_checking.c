@@ -20,262 +20,150 @@ int get_test_score(int type, int flag1, int subtype, int flag2, int color, int f
 int get_test_score(int type, int flag1, int subtype, int flag2, int color, int flag3, int id,
                    int flag4, int cc, int flag5)
 {
-  unsigned int TEST_TYPE;
-  unsigned int inverted_cmc;
-  bool type_specified;
-  bool id_unspecified;
+  unsigned int score = 0;
 
-  type_specified = type != 0;
-  TEST_TYPE = (unsigned int)(flag1 == 0 && type_specified);
-  if ((flag2 == 0) && (subtype != 0))
+  if (type != 0)
   {
-    TEST_TYPE = TEST_TYPE + 2;
-  }
-  if ((flag3 == 0) && (color != 0))
-  {
-    TEST_TYPE = TEST_TYPE + 4;
-  }
-  id_unspecified = id == 0;
-  if ((flag4 == 0) && (!id_unspecified))
-  {
-    TEST_TYPE = TEST_TYPE + 8;
-  }
-  inverted_cmc = cc ^ 0xffffffff;
-  if ((flag5 == 0) && ((int)inverted_cmc < 0))
-  {
-    TEST_TYPE = TEST_TYPE + 0x10;
-  }
-  if ((flag1 == 1) && (type_specified))
-  {
-    TEST_TYPE = TEST_TYPE + 0x20;
-  }
-  if ((0 < flag2) && (subtype != 0))
-  {
-    TEST_TYPE = TEST_TYPE + 0x40;
-  }
-  if ((flag3 == 1) && (color != 0))
-  {
-    TEST_TYPE = TEST_TYPE + 0x80;
-  }
-  if ((flag4 == 1) && (!id_unspecified))
-  {
-    TEST_TYPE = TEST_TYPE + 0x100;
-  }
-  if ((flag5 == 1) && ((int)inverted_cmc < 0))
-  {
-    TEST_TYPE = TEST_TYPE + 0x200;
-  }
-  else if ((flag5 == 2) && ((int)inverted_cmc < 0))
-  {
-    TEST_TYPE = TEST_TYPE + 0x400;
-  }
-  else if ((flag5 == 3) && ((int)inverted_cmc < 0))
-  {
-    TEST_TYPE = TEST_TYPE + 0x800;
-  }
-  if ((flag1 == 2) && (type_specified))
-  {
-    TEST_TYPE = TEST_TYPE + 0x1000;
-  }
-  else if ((flag1 == 3) && (type_specified))
-  {
-    TEST_TYPE = TEST_TYPE + 0x2000;
-  }
-  if ((flag4 != 2) || (id_unspecified))
-  {
-    if ((flag4 == 3) && (!id_unspecified))
+    switch (flag1)
     {
-      TEST_TYPE = TEST_TYPE + 0x8000;
+    case MATCH: score |= 0x1u; break;
+    case DOESNT_MATCH: score |= 0x20u; break;
+    case F1_NO_CREATURE: score |= 0x1000u; break;
+    case F1_NO_TOKEN: score |= 0x2000u; break;
+    case F1_NO_PWALKER: score |= 0x10000u; break;
+    case 5: score |= 0x40000u; break;
+    case F1_IS_TOKEN: score |= 0x80000u; break;
     }
   }
-  else
+  if (subtype != 0)
   {
-    TEST_TYPE = TEST_TYPE + 0x4000;
+    if (flag2 == MATCH)
+      score |= 0x2u;
+    else if (flag2 > 0)
+      score |= 0x40u;
   }
-  if ((flag1 == 4) && type_specified)
-    TEST_TYPE = TEST_TYPE + 0x10000;
-  if (color == 0 && flag3 == 2)
-    TEST_TYPE = TEST_TYPE + 0x20000;
-  if ((flag1 == 5) && (type_specified))
+  if (color != 0)
   {
-    TEST_TYPE = TEST_TYPE + 0x40000;
+    if (flag3 == MATCH)
+      score |= 0x4u;
+    else if (flag3 == DOESNT_MATCH)
+      score |= 0x80u;
   }
-  else if ((flag1 == 6) && (type_specified))
+  else if (flag3 == F3_MULTICOLORED)
+    score |= 0x20000u;
+
+  if (id != 0)
   {
-    return TEST_TYPE + 0x80000;
+    switch (flag4)
+    {
+    case MATCH: score |= 0x8u; break;
+    case DOESNT_MATCH: score |= 0x100u; break;
+    case 2: score |= 0x4000u; break;
+    case F4_TOKEN_W_SPECIAL_INFOS: score |= 0x8000u; break;
+    }
   }
-  return TEST_TYPE;
+  if (cc >= 0)
+  {
+    switch (flag5)
+    {
+    case MATCH: score |= 0x10u; break;
+    case DOESNT_MATCH: score |= 0x200u; break;
+    case F5_CMC_GREATER_THAN_VALUE: score |= 0x400u; break;
+    case F5_CMC_LESSER_THAN_VALUE: score |= 0x800u; break;
+    }
+  }
+  return score;
 }
 
 int new_get_test_score(test_definition_t *this_test)
 {
-  unsigned short token_type_mode;
-  uint16_t cmc_mode;
-  uint16_t noncreature_type_mode;
-  uint16_t power_equality_mode;
-  uint16_t state_mode;
-  uint16_t power_range_mode;
-  uint16_t color_count_mode;
-  unsigned int requested_type_or_keywords;
-  unsigned int requested_colors;
-  int result;
-  unsigned int test_type;
+  unsigned int score = 0;
 
-  test_type = 0;
-  requested_type_or_keywords = this_test->type;
-  if (requested_type_or_keywords != 0)
+  if (this_test->type != 0)
   {
-    test_type = (unsigned int)(this_test->type_flag == 0);
-  }
-  if ((this_test->subtype != 0) && (this_test->subtype_flag == 0))
-  {
-    test_type = test_type + 2;
-  }
-  requested_colors = this_test->color;
-  if ((requested_colors != 0) && (this_test->color_flag == 0))
-  {
-    test_type = test_type + 4;
-  }
-  result = this_test->id;
-  if ((0 < result) && (this_test->id_flag == 0))
-  {
-    test_type = test_type + 8;
-  }
-  if ((-1 < this_test->cmc) && (this_test->cmc_flag == 0))
-  {
-    test_type = test_type + 0x10;
-  }
-  if ((requested_type_or_keywords != 0) && (this_test->type_flag == 1))
-  {
-    test_type = test_type + 0x20;
-  }
-  if ((this_test->subtype != 0) && (this_test->subtype_flag == 1))
-  {
-    test_type = test_type + 0x40;
-  }
-  if ((requested_colors != 0) && (this_test->color_flag == 1))
-  {
-    test_type = test_type + 0x80;
-  }
-  if ((0 < result) && (this_test->id_flag == 1))
-  {
-    test_type = test_type + 0x100;
-  }
-  if (-1 < this_test->cmc)
-  {
-    cmc_mode = this_test->cmc_flag;
-    if (cmc_mode == 1)
+    switch (this_test->type_flag)
     {
-      test_type = test_type + 0x200;
-    }
-    else if (cmc_mode == 2)
-    {
-      test_type = test_type + 0x400;
-    }
-    else if (cmc_mode == 3)
-    {
-      test_type = test_type + 0x800;
+    case MATCH: score |= 0x1u; break;
+    case DOESNT_MATCH: score |= 0x20u; break;
+    case F1_NO_CREATURE: score |= 0x1000u; break;
+    case F1_NO_TOKEN: score |= 0x2000u; break;
+    case F1_NO_PWALKER: score |= 0x10000u; break;
+    case F1_IS_TOKEN: score |= 0x80000u; break;
     }
   }
-  if (requested_type_or_keywords != 0)
+  if (this_test->subtype != 0)
   {
-    noncreature_type_mode = this_test->type_flag;
-    if (noncreature_type_mode == 2)
-      test_type = test_type + 0x1000;
-    else if (noncreature_type_mode == 3)
-      test_type = test_type + 0x2000;
+    if (this_test->subtype_flag == MATCH)
+      score |= 0x2u;
+    else if (this_test->subtype_flag == DOESNT_MATCH)
+      score |= 0x40u;
   }
-  if (result > 0)
+  if (this_test->color != 0)
   {
-    if (this_test->id_flag == 2)
-      test_type = test_type + 0x4000;
-    else if (this_test->id_flag == 3)
-      test_type = test_type + 0x8000;
+    if (this_test->color_flag == MATCH)
+      score |= 0x4u;
+    else if (this_test->color_flag == DOESNT_MATCH)
+      score |= 0x80u;
   }
-  if (requested_type_or_keywords != 0 && this_test->type_flag == 4)
-    test_type = test_type + 0x10000;
-  if (requested_colors == 0)
+  else if (this_test->color_flag == F3_MULTICOLORED)
+    score |= 0x20000u;
+  else if (this_test->color_flag == F3_MONOCOLORED)
+    score |= 0x40000u;
+
+  if (this_test->id > 0)
   {
-    color_count_mode = this_test->color_flag;
-    if (color_count_mode == 2)
-      test_type = test_type + 0x20000;
-    else if (color_count_mode == 3)
-      test_type = test_type + 0x40000;
-  }
-  if (requested_type_or_keywords != 0)
-  {
-    token_type_mode = this_test->type_flag;
-    if (token_type_mode == 6)
-      test_type = test_type + 0x80000;
-  }
-  requested_type_or_keywords = this_test->keyword;
-  if ((requested_type_or_keywords != 0) || (this_test->keyword_flag != 0))
-  {
-    test_type = test_type + 0x100000;
-  }
-  if (-1 < this_test->power)
-  {
-    power_equality_mode = this_test->power_flag;
-    if (power_equality_mode == 0)
+    switch (this_test->id_flag)
     {
-      test_type = test_type + 0x400000;
-    }
-    else if (power_equality_mode == 1)
-    {
-      test_type = test_type + 0x800000;
+    case MATCH: score |= 0x8u; break;
+    case DOESNT_MATCH: score |= 0x100u; break;
+    case 2: score |= 0x4000u; break;
+    case F4_TOKEN_W_SPECIAL_INFOS: score |= 0x8000u; break;
     }
   }
-  if (-1 < this_test->toughness)
+  if (this_test->cmc >= 0)
   {
-    if (this_test->toughness_flag == 0)
+    switch (this_test->cmc_flag)
     {
-      test_type = test_type + 0x1000000;
+    case MATCH: score |= 0x10u; break;
+    case DOESNT_MATCH: score |= 0x200u; break;
+    case F5_CMC_GREATER_THAN_VALUE: score |= 0x400u; break;
+    case F5_CMC_LESSER_THAN_VALUE: score |= 0x800u; break;
     }
-    else if (this_test->toughness_flag == 1)
+  }
+  if (this_test->keyword != 0 || this_test->keyword_flag != 0)
+    score |= 0x100000u;
+
+  if (this_test->power >= 0)
+  {
+    switch (this_test->power_flag)
     {
-      test_type = test_type + 0x2000000;
+    case MATCH: score |= 0x400000u; break;
+    case DOESNT_MATCH: score |= 0x800000u; break;
+    case F5_POWER_GREATER_THAN_VALUE: score |= 0x10000000u; break;
+    case F5_POWER_LESSER_THAN_VALUE: score |= 0x20000000u; break;
+    }
+  }
+  if (this_test->toughness >= 0)
+  {
+    switch (this_test->toughness_flag)
+    {
+    case MATCH: score |= 0x1000000u; break;
+    case DOESNT_MATCH: score |= 0x2000000u; break;
+    case F5_TOUGHNESS_GREATER_THAN_VALUE: score |= 0x40000000u; break;
+    case F5_TOUGHNESS_LESSER_THAN_VALUE: score |= 0x80000000u; break;
     }
   }
   if (this_test->state != 0)
   {
-    state_mode = this_test->state_flag;
-    if (state_mode == 0)
-    {
-      test_type = test_type + 0x4000000;
-    }
-    else if (state_mode == 1)
-    {
-      test_type = test_type + 0x8000000;
-    }
+    if (this_test->state_flag == MATCH)
+      score |= 0x4000000u;
+    else if (this_test->state_flag == DOESNT_MATCH)
+      score |= 0x8000000u;
   }
-  if (-1 < this_test->power)
-  {
-    power_range_mode = this_test->power_flag;
-    if (power_range_mode == 2)
-    {
-      test_type = test_type + 0x10000000;
-    }
-    else if (power_range_mode == 3)
-    {
-      test_type = test_type + 0x20000000;
-    }
-  }
-  if (-1 < this_test->toughness)
-  {
-    if (this_test->toughness_flag == 2)
-    {
-      test_type = test_type + 0x40000000;
-    }
-    else if (this_test->toughness_flag == 3)
-    {
-      test_type = test_type + 0x80000000;
-    }
-  }
-  if (this_test->owner != '\x02')
-  {
-    test_type = test_type | 0x80000000;
-  }
-  return test_type;
+  // Native ownership filtering shares the high bit with the upper toughness mode.
+  if (this_test->owner != ANYBODY)
+    score |= 0x80000000u;
+  return score;
 }
 
 
@@ -1519,10 +1407,10 @@ int my_base_value(int player, int card ){
 			result-=cmc*2;
 			int i;
 			for(i=0; i<32; i++){
-				if( cards_data[iid].static_ability & (1<<i) ){
+				if( cards_data[iid].static_ability & (1U << i) ){
 					result+=4;
 				}
-				if( cards_data[iid].extra_ability & (1<<i) ){
+				if( cards_data[iid].extra_ability & (1U << i) ){
 					result+=8;
 				}
 			}
@@ -1534,7 +1422,7 @@ int my_base_value(int player, int card ){
 		if( is_what(player, card, TYPE_ARTIFACT)){
 			int i;
 			for(i=0; i<32; i++){
-				if( cards_data[iid].extra_ability & (1<<i) ){
+				if( cards_data[iid].extra_ability & (1U << i) ){
 					result+=4;
 				}
 			}
@@ -1546,7 +1434,7 @@ int my_base_value(int player, int card ){
 		if( is_what(player, card, TYPE_ENCHANTMENT) || is_planeswalker(player, card) ){
 			int i;
 			for(i=0; i<32; i++){
-				if( cards_data[iid].extra_ability & (1<<i) ){
+				if( cards_data[iid].extra_ability & (1U << i) ){
 					result+=4;
 				}
 			}
@@ -1561,7 +1449,7 @@ int my_base_value(int player, int card ){
 		if( is_what(player, card, TYPE_LAND)){
 			int i;
 			for(i=0; i<32; i++){
-				if( cards_data[iid].extra_ability & (1<<i) ){
+				if( cards_data[iid].extra_ability & (1U << i) ){
 					result+=2;
 				}
 			}
@@ -1573,7 +1461,7 @@ int my_base_value(int player, int card ){
 		if( is_what(player, card, TYPE_SPELL) && ! is_what(player, card, TYPE_CREATURE) ){
 			int i;
 			for(i=0; i<32; i++){
-				if( cards_data[iid].extra_ability & (1<<i) ){
+				if( cards_data[iid].extra_ability & (1U << i) ){
 					result+=4;
 				}
 			}
@@ -1610,7 +1498,7 @@ int check_battlefield_for_special_card(int player, int card, int t_player, int m
     td.preferred_controller = t_player;
     if (this_test->type_flag == 1)
     {
-      td.required_type = ((this_test->zone != 0x200) - 1 & 0xffffffc8) + 0x7f;
+      td.required_type = ((this_test->zone != 0x200) ? 127U : 71U);
       td.illegal_type = this_test->type | 0x80;
     }
     targeting_instance = get_card_instance(player, card);

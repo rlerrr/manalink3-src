@@ -4,6 +4,7 @@
 #include "manalink.h"
 
 EXPANSION_t hack_show_deck_force_expansion;
+char *set_legacy_effect_name_addr = NULL;
 
 color_test_t debug_addcard_last_color = COLOR_TEST_ANY;
 type_t debug_addcard_last_type = TYPE_ANY;
@@ -665,6 +666,12 @@ static const char* get_name_for_ability_icon_at_point(const RECT* rect, int play
   return NULL;
 }
 
+struct inst_and_ext_t
+{
+  card_instance_t inst;
+  card_ext_t ext;
+};
+
 LRESULT __stdcall wndproc_CardClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
   int player, card;
@@ -790,9 +797,9 @@ LRESULT __stdcall wndproc_CardClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPA
         card = GetWindowLongA(hwnd, cardclass_offset_card);
         card_instance_t *instance = get_card_instance(player, card);
         if (instance->state & STATE_SUMMON_SICK)
-          instance->state &= ~(STATE_SUMMON_SICK | STATE_SICKNESS_UNUSED);
+          instance->state &= ~(STATE_SUMMON_SICK | STATE_SUMMON_SICK_BACKUP);
         else
-          instance->state |= STATE_SUMMON_SICK | STATE_SICKNESS_UNUSED;
+          instance->state |= STATE_SUMMON_SICK | STATE_SUMMON_SICK_BACKUP;
         EXE_FN(int, 0x437ec0, int, int)(0, 0xff);
       }
       return 0;
@@ -2411,7 +2418,7 @@ void sleepms(int ms)
 
 #ifndef SHANDALAR
 #include <ctype.h>
-static char *kws_strs[32], *spkws_strs[32];
+static const char *kws_strs[32], *spkws_strs[32];
 
 
 #define display_last_hover_hwnd EXE_TYP(HWND, 0x56bec8)
@@ -2523,6 +2530,12 @@ void effect_card_text_replace_pipe_n(char *buf, int pow, int tgh)
   char *q = replacement;
   while (*p)
   {
+    if (!strchr("+-|/\\", *p))
+    {
+      *q++ = *p++;
+      continue;
+    }
+
     // Power
     if (!strncmp(p, "+|n/", 4) || !strncmp(p, "-|n/", 4) || !strncmp(p, "|n/", 3))
     {

@@ -85,40 +85,21 @@ int charge_generic_mana_with_colorless_only(int player, int generic, int amount_
 static void has_colorless_only_mana_in_casting_cost(int player, int card, event_t event,
                                                     int generic, int number_of_colorless_only_mana)
 {
-  int result;
-  if (event != EVENT_MODIFY_COST)
+  if (event == EVENT_MODIFY_COST)
   {
-    if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
-        (player == affected_card_controller))
-    {
-      result = played_for_free(player, card);
-      if (result == 0)
-      {
-        result = is_token(player, card);
-        if (result == 0)
-        {
-          result = charge_generic_mana_with_colorless_only(player, generic,
-                                                           number_of_colorless_only_mana);
-          if (result == 0)
-          {
-            spell_fizzled = 1;
-          }
-        }
-      }
-    }
-    return;
+    int generic_mana = get_updated_casting_cost(
+        player, card, -1, EVENT_CAST_SPELL, generic + number_of_colorless_only_mana);
+    generic_mana -= number_of_colorless_only_mana;
+    if (player_has_generic_and_colorless_available(
+            player, generic_mana, number_of_colorless_only_mana))
+      null_casting_cost(player, card);
+    else
+      infinite_casting_cost();
   }
-  result = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL,
-                                    generic + number_of_colorless_only_mana);
-  result = player_has_generic_and_colorless_available(
-      player, result - number_of_colorless_only_mana, number_of_colorless_only_mana);
-  if (result == 0)
-  {
-    infinite_casting_cost();
-    return;
-  }
-  null_casting_cost(player, card);
-  return;
+  else if (event == EVENT_CAST_SPELL && affect_me(player, card) &&
+           !played_for_free(player, card) && !is_token(player, card) &&
+           !charge_generic_mana_with_colorless_only(player, generic, number_of_colorless_only_mana))
+    spell_fizzled = 1;
 }
 
 void support(int player, int card, int max_targets)
@@ -128,7 +109,7 @@ void support(int player, int card, int max_targets)
   target_t saved_targets[152];
   default_target_definition(player, card, &td, 2);
   td.preferred_controller = player;
-  td.special = 0x4000;
+  td.special = TARGET_SPECIAL_NOT_ME;
   td.allow_cancel = 2;
   if (can_target(&td))
   {
@@ -689,7 +670,7 @@ int card_thought_knot_seer(int player, int card, event_t event)
     {
       target_definition_t td2;
       default_target_definition(player, card, &td2, 0);
-      td2.zone = 4096;
+      td2.zone = TARGET_ZONE_PLAYERS;
       result = would_validate_arbitrary_target(&td2, 1 - player, -1);
       if (result != 0)
       {
@@ -700,7 +681,7 @@ int card_thought_knot_seer(int player, int card, event_t event)
   }
   default_target_definition(player, card, &td, 0);
   tgt_player = 1 - player;
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   result = would_validate_arbitrary_target(&td, tgt_player, -1);
   if ((result != 0) && (0 < hand_count[tgt_player]))
   {
@@ -4171,10 +4152,10 @@ int card_fall_of_the_titans(int player, int card, event_t event){
 	    if (!check_special_flags2(player, card, SF2_COPIED_FROM_STACK)){
 	        if (played_for_free(player, card) || is_token(player, card)){ x_value = 0; }
 	        else if (get_specific_storm_count(player) && do_dialog(player, player, card, -1, -1, " Pay Surge cost\n Play normally", 0) == 0){
-	            int saved = override_xx;
+	            int old_override_xx = override_xx;
 	            override_xx = 1;
 	            int amount = charge_mana(player, COLOR_ANY, -1);
-	            override_xx = saved;
+	            override_xx = old_override_xx;
 	            x_value = amount;
 	        } else { x_value = charge_mana_for_double_x(player, COLOR_ANY) / 2; }
 	    }
@@ -4965,15 +4946,12 @@ int card_harvester_troll(int player, int card, event_t event)
 {
   int result;
 
-  char msg[100];
   test_definition_t test;
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    memset(msg, 0, sizeof(msg));
-    memcpy(msg, "Select a creature or land to sacrifice.\000", 40);
-    result = 0;
+    char msg[100] = "Select a creature or land to sacrifice.";
     new_default_test_definition(&test, 3, msg);
     result = new_can_sacrifice(player, card, player, &test);
     if (result != 0)
@@ -6315,7 +6293,7 @@ int card_ruins_of_oran_rief(int player, int card, event_t event)
       }
     }
     mana_result = 0;
-    if (((trigger_condition == 0xcd) && (card == affected_card)) &&
+    if (((trigger_condition == TRIGGER_EOT) && (card == affected_card)) &&
         (player == affected_card_controller))
     {
       if ((reason_for_trigger_controller == player) && (event == EVENT_TRIGGER))
@@ -6359,7 +6337,7 @@ int card_sea_gate_wreckage(int player, int card, event_t event){
 			can_draw = 1;
 		}
 		int can_get_mana = mana_producer(player, card, EVENT_CAN_ACTIVATE);
-		int choice = DIALOG(player, card, event, DLG_RANDOM,
+		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1,
 								"Get mana", can_get_mana, 5,
 								"Draw a card", can_draw, 10);
 		if( ! choice ){
@@ -6506,18 +6484,15 @@ int card_wastes(int player, int card, event_t event){
 /* ManalinkEh 2022: 0x2259dc0; original cards/oath_of_the_gatewatch.c:2521. */
 static int effect_flaying_tendrils(int player, int card, event_t event)
 {
-  int result;
   if (event == EVENT_CAST_SPELL)
   {
-    result = is_what(affected_card_controller, affected_card, 2);
-    if (result != 0)
+    if (is_what(affected_card_controller, affected_card, 2))
     {
       exile_if_would_be_put_into_graveyard(player, card, affected_card_controller, affected_card,
                                            1);
     }
   }
-  result = eot_trigger(player, card, event);
-  if (result == 0)
+  if (!eot_trigger(player, card, event))
   {
     return 0;
   }

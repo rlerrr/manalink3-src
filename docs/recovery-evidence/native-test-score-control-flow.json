@@ -1,0 +1,535 @@
+{
+  "format": 1,
+  "status": "Two field/mode scorers reconstructed and two native card cases named; build, 15,169 slots, 997,102 direct comparison cases and complete file projections pass.",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "before_rebuilt_sha256": "b7b1e7224159746c2bc54296f6cd34da9ff32abb78928566f3ba1e1b430ac9c4",
+  "before_debug_sha256": "820f96d892e38da5a61298459da70454445b2eda06f46150c819ecf1a839fcf7",
+  "functions": [
+    {
+      "name": "get_test_score",
+      "source": "functions/global_checking.c",
+      "native_address": "0x26be510",
+      "native_size": 453,
+      "native_body_sha256": "a0b9c071b587fc67535be77646c90e3750d32ac74ff737d89594688f407d849a",
+      "source_before_definition_sha256": "de234ed6adadf2f25b65f6d3fda01a89221895bde509ef276f57d3bb6525bb34",
+      "source_after_definition_sha256": "bbf5422a584b841805c70df4071302347a7002e41fbfdc2ed34d412eb4a8f415",
+      "before_bytes": 2023,
+      "after_bytes": 1366,
+      "before_lines": 89,
+      "after_lines": 57,
+      "reason": "Recover explicit field/mode selection and unsigned bit accumulation, removing cached mode temporaries and inverted-CMC arithmetic while preserving distinct legacy/new rules."
+    },
+    {
+      "name": "new_get_test_score",
+      "source": "functions/global_checking.c",
+      "native_address": "0x26be6e0",
+      "native_size": 891,
+      "native_body_sha256": "2a9376973eec27a684bb748406cb290f01457998464ecbc42c5a43d8e338b4dc",
+      "source_before_definition_sha256": "e90f7f2b20ff068c7c871689bd7539fcba17257468c55d08b4a79d7016dd6657",
+      "source_after_definition_sha256": "9ec65578359a3781e60176759b3125ffe5f36ea407c904ebb3cc0dadee13d32a",
+      "before_bytes": 4140,
+      "after_bytes": 2559,
+      "before_lines": 170,
+      "after_lines": 90,
+      "reason": "Recover explicit field/mode selection and unsigned bit accumulation, removing cached mode temporaries and inverted-CMC arithmetic while preserving distinct legacy/new rules."
+    },
+    {
+      "name": "is_phyrexian",
+      "source": "functions/functions.c",
+      "native_address": "0x268b460",
+      "native_size": 207,
+      "native_body_sha256": "ddc7e4bdc8197a3a83cf8671ab60b34c49b415922842aeef84323db13debff4a",
+      "source_before_definition_sha256": "4da4dc13be573f7bf43a7aaa1c11bd67b6605e7e22102aab4cbe9319cb168fa4",
+      "source_after_definition_sha256": "8505b51962a269d8ac641455504033358aa6d3e5bb7ae9792803644e59368fe7",
+      "before_bytes": 1076,
+      "after_bytes": 1035,
+      "before_lines": 21,
+      "after_lines": 21,
+      "reason": "Use the release card-ID enumerator for the existing native special case."
+    },
+    {
+      "name": "get_color_by_internal_id_no_hack",
+      "source": "functions/functions.c",
+      "native_address": "0x267eaf0",
+      "native_size": 143,
+      "native_body_sha256": "61490ea6b525ee22d2222b1d12d9ad88a32ab2f57e452320e83380c2887cbef5",
+      "source_before_definition_sha256": "d6c2f341f4e3162ac5dae4a720fcc6b841b25c892bfa91981d78b8d56ed4f6af",
+      "source_after_definition_sha256": "26812789322f7b36c84b786aea5f573aa36dd4a438984c83cc7964acc3d84ad2",
+      "before_bytes": 548,
+      "after_bytes": 564,
+      "before_lines": 19,
+      "after_lines": 19,
+      "reason": "Use the release card-ID enumerator for the existing native special case."
+    }
+  ],
+  "files": [
+    {
+      "source": "functions/global_checking.c",
+      "before_source_sha256": "c0fc1e9e1e5f125511c25c2f092aa04c84a25752e3d4ae9a49bdbb04a8385431",
+      "after_source_sha256": "a718d545895f736905dc9e83c3708d74ef03094e577ba7af3e78c8881ae54156",
+      "before_bytes_sha256": "ba0540aae51fa7267b1d14cfc609715db12ec1f16e1f9b9a948316be11f3ed78"
+    },
+    {
+      "source": "functions/functions.c",
+      "before_source_sha256": "bc156f64b596486ebbfae436e1364162723e253aedb3b9256ed1c972c6dc0df1",
+      "after_source_sha256": "079968fbd74362d66ed115dbc15b2e3baac1bbbc843b3420dd42ca1a3a5515a8",
+      "before_bytes_sha256": "7bda92b5813e45800457ab8d567baa59f8c7df2e161b9391bfbefdeaa177693f"
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "native_enumerators": {
+    "CARD_ID_KRRIK_SON_OF_YAWGMOTH": 20474,
+    "CARD_ID_JASCONIAN_ISLE": 20870,
+    "MATCH": 0,
+    "DOESNT_MATCH": 1,
+    "F1_NO_CREATURE": 2,
+    "F1_NO_TOKEN": 3,
+    "F1_NO_PWALKER": 4,
+    "F1_IS_TOKEN": 6,
+    "F3_MULTICOLORED": 2,
+    "F3_MONOCOLORED": 3,
+    "F4_TOKEN_W_SPECIAL_INFOS": 3,
+    "F5_CMC_GREATER_THAN_VALUE": 2,
+    "F5_POWER_GREATER_THAN_VALUE": 2,
+    "F5_TOUGHNESS_GREATER_THAN_VALUE": 2,
+    "F5_CMC_LESSER_THAN_VALUE": 3,
+    "F5_POWER_LESSER_THAN_VALUE": 3,
+    "F5_TOUGHNESS_LESSER_THAN_VALUE": 3
+  },
+  "record_geometry": {
+    "native": {
+      "card_instance_t": {
+        "size": 300,
+        "fields": {}
+      },
+      "test_definition_t": {
+        "size": 216,
+        "fields": {
+          "message": {
+            "offset": 0,
+            "size": 100
+          },
+          "type": {
+            "offset": 100,
+            "size": 4
+          },
+          "subtype": {
+            "offset": 104,
+            "size": 4
+          },
+          "type_flag": {
+            "offset": 108,
+            "size": 2
+          },
+          "subtype_flag": {
+            "offset": 110,
+            "size": 2
+          },
+          "color": {
+            "offset": 112,
+            "size": 4
+          },
+          "id": {
+            "offset": 116,
+            "size": 4
+          },
+          "id2": {
+            "offset": 120,
+            "size": 4
+          },
+          "color_flag": {
+            "offset": 124,
+            "size": 2
+          },
+          "id_flag": {
+            "offset": 126,
+            "size": 2
+          },
+          "cmc": {
+            "offset": 128,
+            "size": 4
+          },
+          "keyword": {
+            "offset": 132,
+            "size": 4
+          },
+          "cmc_flag": {
+            "offset": 136,
+            "size": 2
+          },
+          "keyword_flag": {
+            "offset": 138,
+            "size": 2
+          },
+          "sp_keyword": {
+            "offset": 140,
+            "size": 4
+          },
+          "sp_keyword_flag": {
+            "offset": 144,
+            "size": 2
+          },
+          "power": {
+            "offset": 148,
+            "size": 4
+          },
+          "toughness": {
+            "offset": 152,
+            "size": 4
+          },
+          "power_flag": {
+            "offset": 156,
+            "size": 2
+          },
+          "toughness_flag": {
+            "offset": 158,
+            "size": 2
+          },
+          "state": {
+            "offset": 160,
+            "size": 4
+          },
+          "zone": {
+            "offset": 164,
+            "size": 4
+          },
+          "state_flag": {
+            "offset": 168,
+            "size": 2
+          },
+          "not_me": {
+            "offset": 170,
+            "size": 2
+          },
+          "ai_selection_mode": {
+            "offset": 172,
+            "size": 2
+          },
+          "qty": {
+            "offset": 174,
+            "size": 2
+          },
+          "sub2": {
+            "offset": 176,
+            "size": 4
+          },
+          "sub3": {
+            "offset": 180,
+            "size": 4
+          },
+          "sub4": {
+            "offset": 184,
+            "size": 4
+          },
+          "sub5": {
+            "offset": 188,
+            "size": 4
+          },
+          "no_shuffle": {
+            "offset": 192,
+            "size": 2
+          },
+          "create_minideck": {
+            "offset": 194,
+            "size": 2
+          },
+          "special_selection_function": {
+            "offset": 196,
+            "size": 4
+          },
+          "value_for_special_selection_function": {
+            "offset": 200,
+            "size": 4
+          },
+          "painters_servant_hack": {
+            "offset": 204,
+            "size": 4
+          },
+          "has_mana_to_pay_cmc": {
+            "offset": 208,
+            "size": 1
+          },
+          "can_legally_play": {
+            "offset": 209,
+            "size": 1
+          },
+          "owner": {
+            "offset": 210,
+            "size": 1
+          },
+          "storage": {
+            "offset": 212,
+            "size": 4
+          }
+        }
+      }
+    },
+    "rebuilt": {
+      "card_instance_t": {
+        "size": 300,
+        "fields": {}
+      },
+      "test_definition_t": {
+        "size": 216,
+        "fields": {
+          "message": {
+            "offset": 0,
+            "size": 100
+          },
+          "type": {
+            "offset": 100,
+            "size": 4
+          },
+          "subtype": {
+            "offset": 104,
+            "size": 4
+          },
+          "type_flag": {
+            "offset": 108,
+            "size": 2
+          },
+          "subtype_flag": {
+            "offset": 110,
+            "size": 2
+          },
+          "color": {
+            "offset": 112,
+            "size": 4
+          },
+          "id": {
+            "offset": 116,
+            "size": 4
+          },
+          "id2": {
+            "offset": 120,
+            "size": 4
+          },
+          "color_flag": {
+            "offset": 124,
+            "size": 2
+          },
+          "id_flag": {
+            "offset": 126,
+            "size": 2
+          },
+          "cmc": {
+            "offset": 128,
+            "size": 4
+          },
+          "keyword": {
+            "offset": 132,
+            "size": 4
+          },
+          "cmc_flag": {
+            "offset": 136,
+            "size": 2
+          },
+          "keyword_flag": {
+            "offset": 138,
+            "size": 2
+          },
+          "sp_keyword": {
+            "offset": 140,
+            "size": 4
+          },
+          "sp_keyword_flag": {
+            "offset": 144,
+            "size": 2
+          },
+          "power": {
+            "offset": 148,
+            "size": 4
+          },
+          "toughness": {
+            "offset": 152,
+            "size": 4
+          },
+          "power_flag": {
+            "offset": 156,
+            "size": 2
+          },
+          "toughness_flag": {
+            "offset": 158,
+            "size": 2
+          },
+          "state": {
+            "offset": 160,
+            "size": 4
+          },
+          "zone": {
+            "offset": 164,
+            "size": 4
+          },
+          "state_flag": {
+            "offset": 168,
+            "size": 2
+          },
+          "not_me": {
+            "offset": 170,
+            "size": 2
+          },
+          "ai_selection_mode": {
+            "offset": 172,
+            "size": 2
+          },
+          "qty": {
+            "offset": 174,
+            "size": 2
+          },
+          "sub2": {
+            "offset": 176,
+            "size": 4
+          },
+          "sub3": {
+            "offset": 180,
+            "size": 4
+          },
+          "sub4": {
+            "offset": 184,
+            "size": 4
+          },
+          "sub5": {
+            "offset": 188,
+            "size": 4
+          },
+          "no_shuffle": {
+            "offset": 192,
+            "size": 2
+          },
+          "create_minideck": {
+            "offset": 194,
+            "size": 2
+          },
+          "special_selection_function": {
+            "offset": 196,
+            "size": 4
+          },
+          "value_for_special_selection_function": {
+            "offset": 200,
+            "size": 4
+          },
+          "painters_servant_hack": {
+            "offset": 204,
+            "size": 4
+          },
+          "has_mana_to_pay_cmc": {
+            "offset": 208,
+            "size": 1
+          },
+          "can_legally_play": {
+            "offset": 209,
+            "size": 1
+          },
+          "owner": {
+            "offset": 210,
+            "size": 1
+          },
+          "storage": {
+            "offset": 212,
+            "size": 4
+          }
+        }
+      }
+    }
+  },
+  "before_execution": {
+    "legacy_cases": 102400,
+    "new_record_cases": 887500,
+    "display_cases": 7202,
+    "total_cases": 997102,
+    "legacy_primary_classes": 2400,
+    "new_primary_classes": 787500,
+    "random_cases_per_scorer": 100000,
+    "harness_sha256": "4be0326364f624d8c6fab7e9950569aeb7766134c3724958a036b553dd0b450d",
+    "log_sha256": "5623f1db71c5b02bf8e6397d422e3d9153c3ee5d9d0ee95fd63f31bd9ee5795c"
+  },
+  "native_rules_preserved": [
+    "Legacy subtype mode accepts every positive flag; the new scorer accepts only mode 1 for exclusion.",
+    "Legacy ID tests accept nonzero IDs; the new scorer requires positive IDs.",
+    "Legacy type mode 5 sets bit 0x40000; the new scorer uses that bit for zero-color mode 3.",
+    "The new scorer ownership filter ORs bit 31, sharing it with the upper toughness mode.",
+    "Negative CMC, power and toughness omit their predicate groups; unsupported modes remain ignored."
+  ],
+  "unchanged_display_predicate": {
+    "source": "functions/engine.c",
+    "name": "card_instances_should_be_displayed_identically",
+    "definition_sha256": "0d783d9d0ecabccff874602191497c0f6076db61785a6b7a5312553ef795f727",
+    "compared_bit_mask": "ffffffff000000001010b2100000ffffffff000000000000000002000000ff0000000000ff000000000000000000000000000000ffff0000ffffffff00000000000000000000000000000000000000000000000000000000ff0000000000000000000000ffffffffff000000ffffffff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffff0000000000000000000000000000ffffffffffffffffffff00000000000000ff",
+    "scope": "Before-run native, current DLL and standalone source agree on every instance bit flipped over zero, all-ones and deterministic mixed baselines, plus same-pointer/null-pointer identity cases."
+  },
+  "scope": "Source control-flow reconstruction and native identifier recovery. No new handlers or intentional gameplay corrections are claimed. Differential execution covers representative field classes, deterministic boundary/random records and display bit/pointer fixtures; it is not all possible test-record or whole-gameplay states.",
+  "card_id_header_sha256": "3b41032de788e7a7058fee28ffcd15bf3b3a5e55e8402ee1cc6436f3b9ac73a4",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "2a87390eab7be1f1a9612d26c2c86ef69f6a3ed0e16e255edbbf6400b4fdeeed",
+    "dbg_sha256": "801f1cbb217645d1364cfbb99872b6f67db3ff3cdc872faf7910069c931c3e96",
+    "functions": [
+      {
+        "name": "get_test_score",
+        "source": "functions/global_checking.c",
+        "address": "0x26b6b60",
+        "size": 256,
+        "body_sha256": "fbbfd29d3422a4a92b3d0cbacad2a365436bbcd478fe550edead8c78887e7f23",
+        "external_calls": 0
+      },
+      {
+        "name": "new_get_test_score",
+        "source": "functions/global_checking.c",
+        "address": "0x26b6c60",
+        "size": 672,
+        "body_sha256": "faab0880f5727e281b290ec5530a049152b654be70cc5a1fd0b6d1c7a9c924c0",
+        "external_calls": 0
+      },
+      {
+        "name": "is_phyrexian",
+        "source": "functions/functions.c",
+        "address": "0x26882c0",
+        "size": 207,
+        "body_sha256": "02e60427e958cedddddbb80720cbe87d6a132aedf6a2092f4253bf4808998d4b",
+        "external_calls": 0,
+        "native_card_id_operands": [
+          {
+            "address": "0x268b4bf",
+            "instruction": "cmp eax, 0x4ffa"
+          }
+        ]
+      },
+      {
+        "name": "get_color_by_internal_id_no_hack",
+        "source": "functions/functions.c",
+        "address": "0x26928a0",
+        "size": 143,
+        "body_sha256": "cefea9272d206e03b554ed4a0cfd1c7ee6a0aa8627b0861151ce93dc354e559b",
+        "external_calls": 0,
+        "native_card_id_operands": [
+          {
+            "address": "0x267eb64",
+            "instruction": "cmp dx, 0x5186"
+          }
+        ]
+      }
+    ],
+    "legacy_cases": 102400,
+    "new_record_cases": 887500,
+    "display_cases": 7202,
+    "total_cases": 997102,
+    "actual_rebuilt_dll_checked": true,
+    "standalone_source_checked": true,
+    "matched_test_record_size": 216,
+    "matched_instance_size": 300,
+    "scorer_primary_classes": {
+      "legacy": 2400,
+      "new_record": 787500
+    },
+    "deterministic_boundary_random_cases_per_scorer": 100000,
+    "unchanged_display_predicate": true,
+    "full_file_projections": 2,
+    "staging": "preserved",
+    "harness_sha256": "97c79acd5f5e6b80f6a11a11bd66f84138380f3919f1225c989aa446b1b73246",
+    "harness_executable_sha256": "9338c1cc1a2422e456a56654650407cb05b11e9961639c5e03532be7ffa6dc4c",
+    "execution_log_sha256": "5623f1db71c5b02bf8e6397d422e3d9153c3ee5d9d0ee95fd63f31bd9ee5795c",
+    "scope": "Direct release/actual-rebuilt/standalone execution for the two scorers and unchanged display comparator. The scorer classes and deterministic boundary/random records are not every possible record. Display fixtures flip every instance bit over three baselines and include same-pointer/null-pointer identity. The two card-name edits retain their exact native enumerator values and source operands."
+  }
+}

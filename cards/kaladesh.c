@@ -30,7 +30,7 @@ static void etb_fabricate(int player, int card, event_t event, int amount, int p
   {
     scnprintf(msg1, 100, "Add %d +1/+1 counters", amount);
     scnprintf(msg2, 100, "Create %d Servo", amount);
-    result = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\003", msg1, 1,
+    result = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_NO_CANCEL, msg1, 1,
                          priority_counters, msg2, 1, priority_servo, 0, 0, 0, 0);
     if (result == 1)
     {
@@ -38,7 +38,7 @@ static void etb_fabricate(int player, int card, event_t event, int amount, int p
     }
     else if (result == 2)
     {
-      generate_tokens_by_id(player, card, 0x4980, amount);
+      generate_tokens_by_id(player, card, CARD_ID_SERVO, amount);
     }
   }
   return;
@@ -678,7 +678,7 @@ int card_ninth_bridge_patrol(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
   test_definition_t test;
-  if (trigger_condition == 0xd4)
+  if (trigger_condition == TRIGGER_LEAVE_PLAY)
   {
     instance = in_play(player, card);
     if (instance != NULL)
@@ -1994,8 +1994,8 @@ int card_aetherborn_marauder(int player, int card, event_t event)
                   {
                     if ((player == 1) ||
                         (remaining_toughness_or_choice =
-                             dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\003",
-                                         "\001\007", player, c, "Move +1/+1 counters from this", 1,
+                             dialog_impl(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_NO_CANCEL,
+                                         DLG_SMALLCARD(player, c), "Move +1/+1 counters from this", 1,
                                          1, "Decline", 1, 1, 0, 0, 0, 0),
                          remaining_toughness_or_choice != 1))
                       skip_move = true;
@@ -2011,8 +2011,8 @@ int card_aetherborn_marauder(int player, int card, event_t event)
             {
               if (!choose_amount && (player != 1) &&
                   (remaining_toughness_or_choice = dialog_impl(
-                       player, card, EVENT_CAST_SPELL, "\001\014", "\001\003", "\001\007", player,
-                       c, "Move +1/+1 counters from this", 1, 1, "Decline", 1, 1, 0, 0, 0, 0),
+                       player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_SMALLCARD(player,
+                       c), "Move +1/+1 counters from this", 1, 1, "Decline", 1, 1, 0, 0, 0, 0),
                    remaining_toughness_or_choice == 1))
                 choose_amount = true;
               if (choose_amount)
@@ -2626,7 +2626,7 @@ with that name and exile them. That player shuffles his or her library, then dra
 				csvid = new_card_from_list(player, 3, &test);
 			}
 			if( csvid > -1 ){
-				amount = lobotomy_effect(player, instance->targets[0].player, csvid, -1, LOBOTOMY_MUST_FIND_ALL_COPIES);
+				amount = lobotomy_effect(player, instance->targets[0].player, csvid, -1, LOBOTOMY_REPORT_ONLY_EXILED_FROM_HAND);
 			}
 			draw_cards(instance->targets[0].player, amount);
 		}
@@ -2780,38 +2780,26 @@ Fabricate 1 (When this creature enters the battlefield, put a +1/+1 counter on i
 
 int card_midnight_oil(int player, int card, event_t event)
 {
-  int result;
   enters_the_battlefield_with_counters(player, card, event, COUNTER_HOUR, 7);
-  if ((event == EVENT_DRAW_PHASE) && (current_turn == player))
+  if (event == EVENT_DRAW_PHASE && current_turn == player)
   {
-    result = is_humiliated(player, card, AL_TRIG);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_TRIG))
     {
-
-      event_result = event_result + 1;
-      result = count_counters(player, card, COUNTER_HOUR);
-      if (2 < result)
-      {
-        result = 2;
-      }
-      remove_counters(player, card, player, card, COUNTER_HOUR, result);
+      ++event_result;
+      int amount = count_counters(player, card, COUNTER_HOUR);
+      if (amount > 2)
+        amount = 2;
+      remove_counters(player, card, player, card, COUNTER_HOUR, amount);
     }
   }
-  else if ((event == EVENT_MAX_HAND_SIZE) && (current_turn == player))
+  else if (event == EVENT_MAX_HAND_SIZE && current_turn == player)
   {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
-    {
+    if (!is_humiliated(player, card, AL_STATIC))
       event_result = count_counters(player, card, COUNTER_HOUR);
-    }
   }
-  result = discard_trigger(player, card, event, player, 2, 0);
-  if (result != 0)
-  {
+  if (discard_trigger(player, card, event, player, 2, 0))
     lose_life(player, 1);
-  }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 // Mind Rot: reprint POR
@@ -3563,8 +3551,9 @@ Enchanted creature gets +2/+1 and has menace.
 
 static const char *ai_helper_function_for_harness_lightning(int who_chooses, int player, int card)
 {
-  if (get_toughness(player, card) - get_card_instance(player, card)->damage_on_card <=
-      ENERGY_COUNTERS(player) + 3)
+  int toughness = get_toughness(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
+  if (toughness - instance->damage_on_card <= ENERGY_COUNTERS(player) + 3)
   {
     return NULL;
   }
@@ -3588,7 +3577,11 @@ Harnessed Lightning deals that much damage to that creature.
 			int toughness = get_toughness(player, card);
 			card_instance_t* instance = get_card_instance(player, card);
 			int amount = ENERGY_COUNTERS(player);
-			if (player == AI && amount < toughness - (unsigned short)instance->damage_on_card){ amount = 0; }
+			if (player == AI){
+				td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+				td.extra = (int32_t)ai_helper_function_for_harness_lightning;
+				if (amount < toughness - (unsigned short)instance->damage_on_card){ amount = 0; }
+			}
 			else if (player == HUMAN){
 				amount = choose_a_number(player, "How much Energy you'll spend?", amount);
 				amount = MAX(0, MIN(amount, ENERGY_COUNTERS(player)));
@@ -4555,7 +4548,7 @@ int card_durable_handicraft(int player, int card, event_t event)
   int remaining_triggers_or_available;
   int payment_choice_or_available;
   test_definition_t test;
-  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if ((((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (remaining_triggers_or_available = has_mana(player, 7, 1),
        remaining_triggers_or_available != 0))
@@ -4569,8 +4562,8 @@ int card_durable_handicraft(int player, int card, event_t event)
          (payment_choice_or_available = has_mana(player, 7, 1), payment_choice_or_available != 0)))
     {
       payment_choice_or_available =
-          dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\003", "\001\007",
-                      trigger_cause_controller, trigger_cause, "Add +1/+1 counter on this", 1, 5,
+          dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_SMALLCARD(
+                      trigger_cause_controller, trigger_cause), "Add +1/+1 counter on this", 1, 5,
                       "Decline", 1, 1, 0, 0, 0, 0);
       if ((payment_choice_or_available == 1) &&
           (charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 1),
@@ -4619,7 +4612,7 @@ Fabricate 2 (When this creature enters the battlefield, put two +1/+1 counters o
 int card_fairgrounds_trumpeter(int player, int card, event_t event)
 {
   int result;
-  if (trigger_condition != 0xcd)
+  if (trigger_condition != TRIGGER_EOT)
   {
     return 0;
   }
@@ -5193,7 +5186,7 @@ Whenever Thriving Rhino attacks, you may pay |E|E. If you do, put a +1/+1 counte
 
 int card_verdurous_gearhulk(int player, int card, event_t event)
 {
-  int card_00;
+  int target_card;
   card_instance_t *instance;
   int result;
   unsigned int t_card;
@@ -5224,12 +5217,12 @@ int card_verdurous_gearhulk(int player, int card, event_t event)
         if (result != 0)
         {
           result = instance->targets[0].player;
-          card_00 = instance->targets[0].card;
+          target_card = instance->targets[0].card;
           *(unsigned char *)selection_cursor =
               (unsigned char)*selection_cursor | (unsigned char)result;
           *(unsigned char *)((int)selection_cursor + 1) =
-              *(unsigned char *)((int)selection_cursor + 1) | (unsigned char)card_00;
-          add_state(result, card_00, 0x200000);
+              *(unsigned char *)((int)selection_cursor + 1) | (unsigned char)target_card;
+          add_state(result, target_card, 0x200000);
         }
         selection_cursor = selection_cursor + 1;
         instance->number_of_targets = '\0';
@@ -7084,7 +7077,7 @@ Artifact
 	}
 	if (event == EVENT_RESOLVE_ACTIVATION){
 	    if (instance->info_slot == CHOICE_MILL){ mill(player, 2); }
-	    if (instance->info_slot == CHOICE_SHUFFLE){ shuffle(player); }
+	    else if (instance->info_slot == CHOICE_SHUFFLE){ shuffle(player); }
 	}
 	return 0;
 }
@@ -7820,7 +7813,7 @@ int card_panharmonicon(int player, int card, event_t event)
 {
   if (event == EVENT_STATIC_EFFECTS)
   {
-    card_counts[player][2] = card_counts[player][2] + '\x01';
+    card_counts[player][CCOUNTS_PANHARMONICON] = card_counts[player][CCOUNTS_PANHARMONICON] + '\x01';
   }
   return 0;
 }
@@ -7849,7 +7842,7 @@ static void fabricate(int player, int card, int amount, int priority_counters, i
   char counters[100], servo[100];
   scnprintf(counters, 100, "Add %d +1/+1 counters", amount);
   scnprintf(servo, 100, "Create %d Servo", amount);
-  int choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\003",
+  int choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_NO_CANCEL,
                            counters, 1, priority_counters, servo, 1, priority_servo, 0, 0, 0, 0);
   if (choice == CHOICE_COUNTERS)
     add_counters(player, card, player, card, COUNTER_P1_P1, amount);

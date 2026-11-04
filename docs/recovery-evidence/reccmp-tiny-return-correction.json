@@ -1,0 +1,1275 @@
+{
+  "format": 1,
+  "status": "Built native zero-return restoration; 24 bounded caller cases and complete source projection pass.",
+  "function": "card_rakdos_pit_dragon",
+  "source": "cards/dissension.c",
+  "reason": "Native activation resolution discards the +1/+0 pump helper result and returns zero; preserve the call and all seven outgoing arguments.",
+  "native_address": "0x2225ff0",
+  "native_size": 1153,
+  "native_body_sha256": "11b194e7f89c578ddf91e84fd19860db624cedbbd67048115d1570a2a6cae0ea",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "before_rebuilt_sha256": "7cd202e075de504e57c37de5cd375c4ff84b4814a10b67d3f1d31ce5aa2b920e",
+  "before_debug_sha256": "847594542546090de50abbd1c3f8de83bd79f7bccdbbf94afa956f6c3b905ce6",
+  "before_bound": {
+    "address": 34897184,
+    "size": 1153,
+    "name": "card_rakdos_pit_dragon",
+    "source": "cards/dissension.c"
+  },
+  "before_comparison": {
+    "report": ".recovery\\reccmp\\dispatch-refresh-c630.json",
+    "sha256": "7bdfae525e99b91b1b072fe59f0b577ab11b6ea854acfd9b5986105a3d62f0cb"
+  },
+  "source_before_sha256": "f295dea0fc3c95785620cebaba016ceb4c85ab2e9e69e8a29ef29d7520f57840",
+  "source_after_sha256": "fc2dd04764c8e18921ab6b9179d301596700ae1ac009ae5cef7383866241a012",
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "before_cases": [
+    {
+      "player": 0,
+      "parent_controller": 0,
+      "parent_card": 0,
+      "helper_return": 0,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      }
+    },
+    {
+      "player": 0,
+      "parent_controller": 0,
+      "parent_card": 0,
+      "helper_return": 123,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 123
+      }
+    },
+    {
+      "player": 0,
+      "parent_controller": 0,
+      "parent_card": 0,
+      "helper_return": 4294967295,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 4294967295
+      }
+    },
+    {
+      "player": 0,
+      "parent_controller": 0,
+      "parent_card": 149,
+      "helper_return": 0,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      }
+    },
+    {
+      "player": 0,
+      "parent_controller": 0,
+      "parent_card": 149,
+      "helper_return": 123,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 123
+      }
+    },
+    {
+      "player": 0,
+      "parent_controller": 0,
+      "parent_card": 149,
+      "helper_return": 4294967295,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 4294967295
+      }
+    },
+    {
+      "player": 0,
+      "parent_controller": 1,
+      "parent_card": 0,
+      "helper_return": 0,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      }
+    },
+    {
+      "player": 0,
+      "parent_controller": 1,
+      "parent_card": 0,
+      "helper_return": 123,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 123
+      }
+    },
+    {
+      "player": 0,
+      "parent_controller": 1,
+      "parent_card": 0,
+      "helper_return": 4294967295,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 4294967295
+      }
+    },
+    {
+      "player": 0,
+      "parent_controller": 1,
+      "parent_card": 149,
+      "helper_return": 0,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      }
+    },
+    {
+      "player": 0,
+      "parent_controller": 1,
+      "parent_card": 149,
+      "helper_return": 123,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 123
+      }
+    },
+    {
+      "player": 0,
+      "parent_controller": 1,
+      "parent_card": 149,
+      "helper_return": 4294967295,
+      "native": {
+        "arguments": [
+          0,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          0,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 4294967295
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 0,
+      "parent_card": 0,
+      "helper_return": 0,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 0,
+      "parent_card": 0,
+      "helper_return": 123,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 123
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 0,
+      "parent_card": 0,
+      "helper_return": 4294967295,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 4294967295
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 0,
+      "parent_card": 149,
+      "helper_return": 0,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 0,
+      "parent_card": 149,
+      "helper_return": 123,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 123
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 0,
+      "parent_card": 149,
+      "helper_return": 4294967295,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 4294967295
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 1,
+      "parent_card": 0,
+      "helper_return": 0,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 1,
+      "parent_card": 0,
+      "helper_return": 123,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 123
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 1,
+      "parent_card": 0,
+      "helper_return": 4294967295,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 4294967295
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 1,
+      "parent_card": 149,
+      "helper_return": 0,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 1,
+      "parent_card": 149,
+      "helper_return": 123,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 123
+      }
+    },
+    {
+      "player": 1,
+      "parent_controller": 1,
+      "parent_card": 149,
+      "helper_return": 4294967295,
+      "native": {
+        "arguments": [
+          1,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      "before_rebuilt": {
+        "arguments": [
+          1,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 4294967295
+      }
+    }
+  ],
+  "queue_review": {
+    "candidates": 395,
+    "patterns": {
+      "inspect_operands_and_control_flow": 239,
+      "assertion_line_numbers": 19,
+      "branch_layout_or_padding": 74,
+      "instruction_reordering": 4,
+      "callee_or_address_mapping": 17,
+      "retarget_event_comparison_order": 42
+    },
+    "patterns_are_hints_only": true
+  },
+  "scope": "One caller return-value correction. Bounded execution checks caller arguments and return handling with explicitly stubbed helper results, not gameplay effects. No broad equivalence claim for other queue entries.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "address": "0x2147d20",
+    "size": 1153,
+    "body_sha256": "49e18e460ef1c37668c3329651d02af5acb408d5daa501345b4ecdb897c09584",
+    "dll_sha256": "d26142f07c4abcfd8d02f784fc6ca81db6fbbfe852a9a2dda1f69de8a26ec748",
+    "dbg_sha256": "2972312d6f4a9e3631ca8cbe614464c8ecdf4133cdff4b345de17ab70b787daf",
+    "caller_cases": 24,
+    "cases": [
+      {
+        "player": 0,
+        "parent_controller": 0,
+        "parent_card": 0,
+        "helper_return": 0,
+        "outgoing_arguments": [
+          0,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 0,
+        "parent_controller": 0,
+        "parent_card": 0,
+        "helper_return": 123,
+        "outgoing_arguments": [
+          0,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 0,
+        "parent_controller": 0,
+        "parent_card": 0,
+        "helper_return": 4294967295,
+        "outgoing_arguments": [
+          0,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 0,
+        "parent_controller": 0,
+        "parent_card": 149,
+        "helper_return": 0,
+        "outgoing_arguments": [
+          0,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 0,
+        "parent_controller": 0,
+        "parent_card": 149,
+        "helper_return": 123,
+        "outgoing_arguments": [
+          0,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 0,
+        "parent_controller": 0,
+        "parent_card": 149,
+        "helper_return": 4294967295,
+        "outgoing_arguments": [
+          0,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 0,
+        "parent_controller": 1,
+        "parent_card": 0,
+        "helper_return": 0,
+        "outgoing_arguments": [
+          0,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 0,
+        "parent_controller": 1,
+        "parent_card": 0,
+        "helper_return": 123,
+        "outgoing_arguments": [
+          0,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 0,
+        "parent_controller": 1,
+        "parent_card": 0,
+        "helper_return": 4294967295,
+        "outgoing_arguments": [
+          0,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 0,
+        "parent_controller": 1,
+        "parent_card": 149,
+        "helper_return": 0,
+        "outgoing_arguments": [
+          0,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 0,
+        "parent_controller": 1,
+        "parent_card": 149,
+        "helper_return": 123,
+        "outgoing_arguments": [
+          0,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 0,
+        "parent_controller": 1,
+        "parent_card": 149,
+        "helper_return": 4294967295,
+        "outgoing_arguments": [
+          0,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 0,
+        "parent_card": 0,
+        "helper_return": 0,
+        "outgoing_arguments": [
+          1,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 0,
+        "parent_card": 0,
+        "helper_return": 123,
+        "outgoing_arguments": [
+          1,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 0,
+        "parent_card": 0,
+        "helper_return": 4294967295,
+        "outgoing_arguments": [
+          1,
+          3,
+          0,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 0,
+        "parent_card": 149,
+        "helper_return": 0,
+        "outgoing_arguments": [
+          1,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 0,
+        "parent_card": 149,
+        "helper_return": 123,
+        "outgoing_arguments": [
+          1,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 0,
+        "parent_card": 149,
+        "helper_return": 4294967295,
+        "outgoing_arguments": [
+          1,
+          3,
+          0,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 1,
+        "parent_card": 0,
+        "helper_return": 0,
+        "outgoing_arguments": [
+          1,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 1,
+        "parent_card": 0,
+        "helper_return": 123,
+        "outgoing_arguments": [
+          1,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 1,
+        "parent_card": 0,
+        "helper_return": 4294967295,
+        "outgoing_arguments": [
+          1,
+          3,
+          1,
+          0,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 1,
+        "parent_card": 149,
+        "helper_return": 0,
+        "outgoing_arguments": [
+          1,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 1,
+        "parent_card": 149,
+        "helper_return": 123,
+        "outgoing_arguments": [
+          1,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      },
+      {
+        "player": 1,
+        "parent_controller": 1,
+        "parent_card": 149,
+        "helper_return": 4294967295,
+        "outgoing_arguments": [
+          1,
+          3,
+          1,
+          149,
+          1,
+          0,
+          2
+        ],
+        "returned": 0
+      }
+    ],
+    "full_source_projection": "passed",
+    "index": "preserved",
+    "queue_candidates_preserved": 395,
+    "queue_tool_sha256": "7cec6e4b2d8d2a356391466181ab4b91a9648bac20cab915f760a68f1f4df0fc"
+  },
+  "reviewed_signals": [
+    {
+      "functions": [
+        "hissing_iguanar_effect",
+        "card_hissing_iguanar",
+        "magnetic_mine_effect",
+        "card_magnetic_mine",
+        "midnight_entourage_effect"
+      ],
+      "finding": "Changed signed/zero loop predicates consume masked BYTE0/BYTE1 counts in [0,255]. No source edit: the compared initial predicates agree over that domain."
+    },
+    {
+      "functions": [
+        "card_ayula_queen_among_bears"
+      ],
+      "finding": "The native mov edx,eax and rebuilt xor edx,edx reach the shared dialog path from this block only when eax is zero. No source edit."
+    },
+    {
+      "functions": [
+        "card_twilight_prophet",
+        "card_tendershoot_dryad"
+      ],
+      "finding": "Native has_the_citys_blessing retains its initial active_cards_count guard; rebuilt callers contain that guard and call a specialized worker. An apparent added caller check is not an added gameplay restriction."
+    },
+    {
+      "functions": [
+        "card_myr_welder",
+        "card_ashiok_nightmare_weaver"
+      ],
+      "finding": "Raw surrounding blocks resolve partial-diff appearances: native and rebuilt both load card IDs through the same selected source. Differences include shared tails and repeated loads. No missing source action established; no edit."
+    },
+    {
+      "functions": [
+        "card_petrified_field"
+      ],
+      "finding": "Native explicitly branches for dialog choices 1 and 2; source falls back to mana for nonzero choices other than 2. Valid dialog outputs 0/1/2 agree; no source edit based on impossible extra choices."
+    },
+    {
+      "functions": [
+        "challenge_mode_upkeep"
+      ],
+      "finding": "Native 0x26bdf2b and rebuilt 0x266007b both encode mov dword ptr [esp],0xffffffe0. The apparent OFFSET48 replacement is a report normalization/mapping signal, not a changed argument. No source edit."
+    }
+  ],
+  "after_comparison": {
+    "report": ".recovery\\reccmp\\tiny-return-refresh-c631.json",
+    "receipt": {
+      "setup_sha256": "4f31b4ee07041919b4995260a63887875dbdb30cda7502c72dab6ed9a8569e14",
+      "report_sha256": "bcd45b0dd3195f9b093b27008ed320de4e9cfd68daec3eb70f8de0dcbcbe60c5",
+      "inputs": {
+        "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "C:\\dev\\manalink3-src\\ManalinkEh.dll": "d26142f07c4abcfd8d02f784fc6ca81db6fbbfe852a9a2dda1f69de8a26ec748",
+        "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "2972312d6f4a9e3631ca8cbe614464c8ecdf4133cdff4b345de17ab70b787daf"
+      },
+      "metadata_sha256": "a34b183a945cbd64dae0e56ac61740da088d73bbf2ac092165a8e087d9e3591c",
+      "metadata_snapshot": ".recovery\\reccmp\\tiny-return-refresh-c631.metadata.csv",
+      "global_metadata_snapshot": ".recovery\\reccmp\\tiny-return-refresh-c631.globals.csv",
+      "global_metadata_sha256": "4bd078c759882fd6f758d1ec43ab13606b0e8e288c32b13ec11f52609c5142c9",
+      "global_bindings_snapshot": ".recovery\\reccmp\\tiny-return-refresh-c631.globals.json",
+      "global_bindings_sha256": "644cfb2bed5813e52a8bedbb2f0ee304eac6cf572a83548c2569d70c0775188e",
+      "verified_global_bindings": {
+        "verified": 293,
+        "bindings_sha256": "09999c1ae2e074fa31efbaa9ebebf31085cb8e8b45fdef42f1033c3a89ee4e7c"
+      },
+      "project_config_sha256": "a978a638b5f154a514be6229cd0b012f96fb8431f1bfc4c4f00c3cf13bc0d371",
+      "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+      "comparator_source_sha256": {
+        "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+        "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+        "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+        "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+        "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+        "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+        "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b",
+        "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_globals.py": "1e870d89b4afbc15950d26c59a94162aecc70bec0700f60c032373a76910f3bc",
+        "C:\\dev\\manalink3-src\\tools\\reccmp_project.py": "c63e3d0b734e532a9bf37141562308a06fd9d3327e85f02d01f67267c73876b6"
+      },
+      "command": [
+        "reccmp-reccmp",
+        "--target",
+        "MANALINK2022",
+        "--no-color",
+        "--json",
+        ".recovery/reccmp/tiny-return-refresh-c631.json",
+        "--silent"
+      ],
+      "exit_code": 0
+    },
+    "summary": {
+      "exact": 12528,
+      "different": 6027,
+      "effective": 273
+    },
+    "tiny_candidates": 394,
+    "patterns": {
+      "inspect_operands_and_control_flow": 238,
+      "assertion_line_numbers": 19,
+      "branch_layout_or_padding": 74,
+      "instruction_reordering": 4,
+      "callee_or_address_mapping": 17,
+      "retarget_event_comparison_order": 42
+    },
+    "score_changes": [
+      {
+        "name": "card_rakdos_pit_dragon",
+        "address": "0x2225ff0",
+        "before": 0.995850622406639,
+        "after": 1.0
+      }
+    ],
+    "scope": "Only Rakdos Pit Dragon changes score, becoming exact. Review patterns retain every candidate and do not certify equivalence."
+  }
+}

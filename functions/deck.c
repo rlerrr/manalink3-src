@@ -209,7 +209,7 @@ static int calc_initial_attack_rating(int player, int card)
   return rating / 8;
 }
 
-static card_instance_t card_instance_template =
+static const card_instance_t card_instance_template =
 {
   0,	// special_counters
   0,	// counters2
@@ -232,10 +232,11 @@ static card_instance_t card_instance_template =
   0,	// initial_color
   0,	// unused0x26
   KEYWORD_RECALC_ABILITIES,	// regen_status
-  {{0,0,0,0,0,0,0,0}},	// extension pointer and unused30
+  {NULL},	// ext
+  0,	// unused30
   0,	// power
   0,	// number_of_targets
-  0,	// unknown0x37
+  0,	// mode
   0,	// info_slot
   -1,	// original_internal_card_id
   {0,0,0,0,0},	// color_id[6]
@@ -273,13 +274,9 @@ static card_instance_t card_instance_template =
   0,	// counters
   0,	// counters5
   0,	// unknown0x122
-  0,	// upkeep_colorless
-  0,	// upkeep_black
-  0,	// upkeep_blue
-  0,	// upkeep_green
-  0,	// upkeep_red
-  0,	// upkeep_white
-  0,	// upkeep_artmana
+  0,	// unused0x124
+  0,	// unused0x128
+  0,	// unused0x12a
   0		// counters_m1m1	// left uninitialized
 };
 
@@ -1238,6 +1235,9 @@ void reshuffle_all_into_deck(int player, int mode)
 
 static void kill_card_impl(int player, int card, kill_t kill_mode, int flags)
 {
+  if (player < 0 || card < 0)
+    return;
+
   enum { FROM_EXE = 1, SPELL_IS_BEING_COUNTERED = 2 };
   card_instance_t* instance = get_card_instance(player, card);
   if (instance->internal_card_id == -1 || (instance->token_status & STATUS_DYING))
@@ -1725,53 +1725,31 @@ static int rfg_card_from_deck_impl(int player, int* deck, int pos)
 // Exile the card at position grave_id in player's graveyard.
 int rfg_card_from_grave(int player, int grave_id)
 {
-  int card;
-  card_instance_t *instance;
-  int c;
-
-  if ((unsigned int)grave_id < 500)
+  if ((unsigned int)grave_id >= 500)
+    return -1;
+  int iid = graveyard_ptr_mutable[player][grave_id];
+  int num_spells = cards_data[iid].type & 0x38;
+  int num_creatures = cards_data[iid].type & 2;
+  int num_cards = 1;
+  dispatch_event_with_initial_event_result(player, iid, EVENT_REMOVED_FROM_GRAVEYARD,
+      (num_spells << 8) | (num_creatures << 16) | num_cards);
+  if (graveyard_source[player][grave_id] != -1)
+    obliterate_card_from_deck_impl(graveyard_source[player], grave_id);
+  iid = rfg_card_from_deck_impl(player, graveyard_ptr_mutable[player], grave_id);
+  for (int c = 0; c < active_cards_count[player]; ++c)
   {
-    dispatch_event_with_initial_event_result(
-        player, graveyard_ptr_mutable[player][grave_id], EVENT_REMOVED_FROM_GRAVEYARD,
-        (cards_data[graveyard_ptr_mutable[player][grave_id]].type & 0x38) << 8 |
-            (cards_data[graveyard_ptr_mutable[player][grave_id]].type & 2) << 0x10 | 1);
-    if (graveyard_source[player][grave_id] != -1)
+    if (in_play(player, c))
     {
-      obliterate_card_from_deck_impl(graveyard_source[player], grave_id);
-    }
-    card = rfg_card_from_deck_impl(player, graveyard_ptr_mutable[player], grave_id);
-    if (0 < active_cards_count[player])
-    {
-      c = 0;
-      do
-      {
-        instance = in_play(player, c);
-        if (instance != NULL)
-        {
-          instance = get_card_instance(player, c);
-          if ((cards_data[instance->original_internal_card_id].id != 0x1e33) &&
-              (cards_data[instance->internal_card_id].id == 0x380a))
-          {
-            if (is_humiliated(player, c, AL_TRIG) == 0)
-            {
-              add_counters(player, c, player, c, COUNTER_P1_P1, 1);
-            }
-          }
-        }
-        c = c + 1;
-      } while (c < active_cards_count[player]);
-    }
-    if (is_what(-1, card, 2) != 0)
-    {
-      ereboss_titan_effect(1 - player);
-      return card;
+      card_instance_t *instance = get_card_instance(player, c);
+      if (cards_data[instance->original_internal_card_id].id != CARD_ID_SAKASHIMA_THE_IMPOSTOR &&
+          cards_data[instance->internal_card_id].id == CARD_ID_RAKSHASA_VIZIER &&
+          !is_humiliated(player, c, AL_TRIG))
+        add_counters(player, c, player, c, COUNTER_P1_P1, 1);
     }
   }
-  else
-  {
-    card = -1;
-  }
-  return card;
+  if (is_what(-1, iid, TYPE_CREATURE))
+    ereboss_titan_effect(1 - player);
+  return iid;
 }
 
 // Exile an arbitrary player/card.  Works for cards on the stack, in play, or oublietted, not just in hand, despite the name.
@@ -1845,8 +1823,8 @@ int rfg_whole_graveyard(int player)
       if (instance != NULL)
       {
         instance = get_card_instance(player, c);
-        if ((cards_data[instance->original_internal_card_id].id != 0x1e33) &&
-            (cards_data[instance->internal_card_id].id == 0x380a))
+        if ((cards_data[instance->original_internal_card_id].id != CARD_ID_SAKASHIMA_THE_IMPOSTOR) &&
+            (cards_data[instance->internal_card_id].id == CARD_ID_RAKSHASA_VIZIER))
         {
           if (is_humiliated(player, c, AL_TRIG) == 0)
           {
@@ -2777,7 +2755,7 @@ int new_select_target_from_grave(int player, int card, int t_player, select_grav
 
   instance = get_card_instance(player, card);
   result = new_select_a_card(player, t_player,
-                             (-(unsigned int)((mode & SFG_NOTARGET) == SFG_0) & 0xfffffffd) + 5,
+                             (((mode & SFG_NOTARGET) == SFG_0) ? 2U : 5U),
                              mode & SFG_CANNOT_CANCEL, ai_mode, -1, this_test);
   if (result != -1)
   {
@@ -2799,7 +2777,7 @@ int select_target_from_grave_source(int player, int card, int t_player, select_g
   card_instance_t *instance;
 
   result = new_select_a_card(
-      player, t_player, (-(unsigned int)((mode & SFG_NOTARGET) == SFG_0) & 0xfffffffd) + 5,
+      player, t_player, (((mode & SFG_NOTARGET) == SFG_0) ? 2U : 5U),
       mode & SFG_CANNOT_CANCEL, ai_mode, -1, this_test);
   if (result == -1)
   {
@@ -2847,7 +2825,7 @@ int select_target_from_either_grave(int player, int card, select_grave_t mode,
     if (human_grave_available && ai_grave_available)
     {
       base_target_definition(player, card, &td, 0);
-      td.zone = 0x1000;
+      td.zone = TARGET_ZONE_PLAYERS;
       td.allow_cancel = (mode ^ SFG_CANNOT_CANCEL) & SFG_CANNOT_CANCEL;
       load_text(NULL, "TARGET_GRAVEYARD");
       if (select_target(player, card + -1000, &td, text_lines[0], &tgt_gy) == 0)
@@ -3205,27 +3183,24 @@ void unmeld(int csvid, int *csvida, int *csvidb);
 /* ManalinkEh 2022: 0x26b3680; original functions/deck.c:516. */
 void unmeld(int csvid, int *csvida, int *csvidb)
 {
-  if (csvid == 0x3ef4)
+  switch (csvid)
   {
-    *csvida = 0x3ef3;
-    *csvidb = 0x3f1b;
-    return;
-  }
-  if (csvid != 0x3efb)
-  {
-    if (csvid != 0x3eae)
-    {
+    case CARD_ID_CHITTERING_HOST:
+      *csvida = CARD_ID_GRAF_RATS;
+      *csvidb = CARD_ID_MIDNIGHT_SCAVENGERS;
+      return;
+    case CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP:
+      *csvida = CARD_ID_HANWEIR_BATTLEMENTS;
+      *csvidb = CARD_ID_HANWEIR_GARRISON;
+      return;
+    case CARD_ID_BRISELA_VOICE_OF_NIGHTMARES:
+      *csvida = CARD_ID_GISELA_THE_BROKEN_BLADE;
+      *csvidb = CARD_ID_BRUNA_THE_FADING_LIGHT;
+      return;
+    default:
       *csvida = csvid;
       *csvidb = -1;
-      return;
-    }
-    *csvida = 0x3eef;
-    *csvidb = 0x3ead;
-    return;
   }
-  *csvida = 0x3efa;
-  *csvidb = 0x3efc;
-  return;
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -3234,17 +3209,17 @@ void kill_target0(int player, int card, kill_t kill_mode);
 /* ManalinkEh 2022: 0x26b5a30; original functions/deck.c:1544. */
 void kill_target0(int player, int card, kill_t kill_mode)
 {
-  int card_00;
-  int player_00;
+  int target_card;
+  int target_player;
   card_instance_t *instance;
 
   instance = get_card_instance(player, card);
-  card_00 = instance->targets[0].card;
-  player_00 = instance->targets[0].player;
+  target_card = instance->targets[0].card;
+  target_player = instance->targets[0].player;
 
-  if ((-1 < player_00) && (-1 < card_00))
+  if ((-1 < target_player) && (-1 < target_card))
   {
-    kill_card_impl(player_00, card_00, kill_mode, 0);
+    kill_card_impl(target_player, target_card, kill_mode, 0);
     return;
   }
   return;
@@ -3501,14 +3476,14 @@ int pre_counterspell(int player, int card, int to_counter_player, int to_counter
       }
       else if (live_spell_or_commander->targets[2].card == spell->original_internal_card_id)
       {
-        *(uint8_t *)((int)&live_spell_or_commander->targets[3].player + 1) = 1;
+        SET_BYTE1(live_spell_or_commander->targets[3].player) = 1;
       }
       if ((-1 < to_counter_player) && (-1 < to_counter_card))
         kill_card_impl(to_counter_player, to_counter_card, KILL_EXILE, 0);
       return -1;
     }
   }
-  if (((card_flags[player] & 4) != 0) && ((cards_data[spell_iid_or_creature].type & 1) == 0))
+  if (((card_flags[player] & CFLAGS_GUILE) != 0) && ((cards_data[spell_iid_or_creature].type & 1) == 0))
   {
     if ((-1 < to_counter_player) && (-1 < to_counter_card))
     {
@@ -3519,8 +3494,8 @@ int pre_counterspell(int player, int card, int to_counter_player, int to_counter
       return -1;
     }
     choice_or_result =
-        dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002", "\001\003", "\001\012",
-                    spell_iid_or_creature, "Play this card", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
+        dialog_impl(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_RANDOM, DLG_NO_CANCEL, DLG_FULLCARD_ID(
+                    spell_iid_or_creature), "Play this card", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
     if (choice_or_result != 1)
     {
       return -1;

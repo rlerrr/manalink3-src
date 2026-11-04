@@ -1470,6 +1470,7 @@ int card_consecrate_land(int, int, event_t);
 int card_control_magic(int, int, event_t);
 int card_counterspell(int, int, event_t);
 int card_crusade(int, int, event_t);
+int card_doublecast(int player, int card, event_t event);
 int card_drudge_skeletons(int, int, event_t);
 int card_evil_presence(int, int, event_t);
 int card_firebreathing(int, int, event_t);
@@ -1829,6 +1830,8 @@ int scnprintf(char * buf, size_t size, const char* fmt, ...);
    *                          retrieve it from there during EVENT_RESOLVE_SPELL/EVENT_RESOLVE_ACTIVATION.  If DLG_CHOOSE_TWO() is also set, store its result in
    *                          ((unsigned char*)location) + 1.
    *
+   * DLG_MODE - Store the choice in instance->mode instead of BYTE0(instance->info_slot).
+   *
    * DLG_AUTOCHOOSE_IF_1 - If only one choice is legal, choose it automatically and don't display a dialog.  Ignored for the AI or if DLG_CHOOSE_TWO.
    *
    * DLG_NO_DISPLAY_FOR_AI - If who_chooses is the AI, don't display the dialog.
@@ -1935,6 +1938,7 @@ typedef enum
   DLGIMPL_99_CH						=0x19,
 #define DLG_RANDOM_NO_SAVE	DLGIMPL	"\x1A"
   DLGIMPL_RANDOM_NO_SAVE_CH			=0x1A,
+#define DLG_MODE				DLGIMPL	"\x1B"
   DLGIMPL_MODE = 0x1B,
 } DlgImplCh;
 
@@ -2313,6 +2317,16 @@ int pump_ability_until_eot_no_repeat_alt(int player, int card, int t_player, int
                                          int ability, int sp_ability,
                                          int alternate_legacy_text_number);
 
+/* October 2022 card_counts column names. */
+enum {
+  CCOUNTS_ANCIENT_GREENWARDEN = 1,
+  CCOUNTS_PANHARMONICON = 2,
+  CCOUNTS_NABAN_ITERATION = 3,
+  CCOUNTS_YAROK_THE_DESECRATED = 4,
+  CCOUNTS_TEYSA_KARLOV = 5,
+  CCOUNTS_SANCTUM_OF_ALL = 6
+};
+
 /* October 2022 per-player card-count cache (14 bytes). */
 extern uint8_t card_counts[2][7];
 
@@ -2615,6 +2629,13 @@ int lose_1_life_thunk(int player, int card, int number_of_age_counters);
 
 /* October 2022 per-player card/counterability flags. */
 #ifndef SHANDALAR
+enum {
+  CFLAGS_MASAKO = 1,
+  CFLAGS_KRRIK = 2,
+  CFLAGS_GUILE = 4,
+  CFLAGS_ARCHELOS = 8,
+  CFLAGS_ARCHON_OF_CORONATION = 16
+};
 extern uint32_t card_flags[2];
 extern uint8_t your_spells_cant_be_countered_by_color[2];
 #endif
@@ -2760,6 +2781,7 @@ int make_test_in_play(int player, int to_examine, int test_type, int type, int f
                            int flag5);
 int new_make_test(int player, int to_examine, int test_type,
                        test_definition_t *this_test);
+int check_deck_for_test(int player, test_definition_t *test);
 int make_test(int player, int to_examine, int test_type, int type, int flag1, int subtype,
                    int flag2, int color, int flag3, int id, int flag4, int cc, int flag5);
 #endif
@@ -3504,12 +3526,6 @@ void seek_grave_to_reanimate_this_turn(int player, int t_player, int selected_ty
                                             reanimate_mode_t mode);
 int pump_until_source_is_in_play_and_tapped(int player, int card, int t_player, int t_card,
                                                  int pow, int tou, int key, int s_key, int mode);
-const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,
-                                               int targeting_player, int targeting_card);
-const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,
-                                                                      int card,
-                                                                      int targeting_player,
-                                                                      int targeting_card);
 int seek_grave_for_id_to_reanimate(int player, int card, int t_player, int id,
                                         reanimate_mode_t mode);
 #endif
@@ -3678,7 +3694,7 @@ int ai_choose_attackers(int player);
 
 /* October 2022 displayed-instance copy and legacy/keyword text helpers. */
 #ifndef SHANDALAR
-typedef struct inst_and_ext_t { card_instance_t inst; card_ext_t ext; } inst_and_ext_t;
+typedef struct inst_and_ext_t inst_and_ext_t;
 int memcpy_displayed_inst_and_ext(inst_and_ext_t *dest, int player, int card);
 void legacy_name_or_text(char *str, int player, int card, event_t event);
 void keywords_to_str(char *dest, keyword_t keywords, sp_keyword_t spkeywords);

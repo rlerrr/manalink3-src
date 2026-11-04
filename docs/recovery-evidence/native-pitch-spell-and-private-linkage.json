@@ -1,0 +1,2614 @@
+{
+  "format": 1,
+  "status": "Three native pitch-spell source blocks and two file-private helper definitions restored; build, 15,169 fixed slots, exact file projections and native/current private contracts pass. One existing strict CFG match retained; six selected functions remain instruction-nonmatching.",
+  "files": [
+    {
+      "source": "cards/alliances.c",
+      "before_bytes_sha256": "87f179b5fa1bae44126356359ee724388aa927d3d29f888dcb33d5621b3c0da7",
+      "after_bytes_sha256": "5b8f9510ea985a21da6d29e1872d937f416430bc3a730b8ba9a80c734a303eac",
+      "before_sha256": "4c5ab6aee9629157db46db72c05a25fe8e021f96d292dfc09b433d3eb7bca000",
+      "after_sha256": "94da21bd6bcb5fca1ad1366ef082e2937c65192922cdf0ba42cac0b041e2d826"
+    },
+    {
+      "source": "cards/vanguard.c",
+      "before_bytes_sha256": "194b57ac0156b7d580cdff6d72d53ff516d22a49204ff31f6553fd48a9c79159",
+      "after_bytes_sha256": "c026c5718712177c3a0e4274c4c56815e60283f2dd37328a3a10331fb1975092",
+      "before_sha256": "bac35a2fcfcb48c3778a8aabf5dae03fee528b0f98810e87b3cca6a465898ff5",
+      "after_sha256": "8fdfe4f785807c9b2e788708db285e9318291bdcd0b4665c4e9452349536ce45"
+    },
+    {
+      "source": "cards/theros.c",
+      "before_bytes_sha256": "f242185b21c0d69682a35093a90c00def2e5cd316b57e8567be61d73887631ca",
+      "after_bytes_sha256": "7bf5f58c10e9df75713f1a3006d7177c93f1639d0a21ac14ab4418080a6ddb1b",
+      "before_sha256": "3d68d3bb6e44f990907264640c12d7aa15ff066db27b46d09cdb96a4d66f8e1c",
+      "after_sha256": "3a2e06ba6bdf4cbe2896a1bbb6e3da5cda5fca51a84df1101232f1d34ae34486"
+    }
+  ],
+  "private_linkage_audit": {
+    "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+    "examined_native_definitions": 18849,
+    "native_private_source_definitions": 1537,
+    "candidates": [
+      {
+        "name": "target_must_be_permanent_or_suspend",
+        "source": "cards/time_spiral.c",
+        "address": "0x20e7ea0",
+        "die_offset": "0xd10a9d",
+        "symbols": [
+          [
+            "_target_must_be_permanent_or_suspend",
+            3
+          ]
+        ],
+        "external": false,
+        "decl_file": 1,
+        "decl_line": 1026,
+        "source_definition_sha256": "d240126aa5d274e6c94c9a1cc8a369b4eab90e794a4e1d647732f74736c2b73f",
+        "signature": "const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,\n                                               int targeting_player, int targeting_card)"
+      },
+      {
+        "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+        "source": "cards/time_spiral.c",
+        "address": "0x20ea700",
+        "die_offset": "0xd14f50",
+        "symbols": [
+          [
+            "_target_must_be_permanent_or_suspend_and_have_time_counters",
+            3
+          ]
+        ],
+        "external": false,
+        "decl_file": 1,
+        "decl_line": 3214,
+        "source_definition_sha256": "436e19fb8d6fb3963255077c62e745c5e4abbc8a363a4fdd755a50e717b28aa6",
+        "signature": "const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,\n                                                                       int card,\n                                                                       int targeting_player,\n                                                                       int targeting_card)"
+      },
+      {
+        "name": "can_play_commander",
+        "source": "cards/vanguard.c",
+        "address": "0x22c36d0",
+        "die_offset": "0x288c276",
+        "symbols": [
+          [
+            "_can_play_commander",
+            3
+          ]
+        ],
+        "external": false,
+        "decl_file": 1,
+        "decl_line": 1706,
+        "source_definition_sha256": "0169eccbc8c801cb3b8e79006527d4972cdd4f735900d40996714885df165339",
+        "signature": "int can_play_commander(int player, int card, event_t event, int commander_code)"
+      },
+      {
+        "name": "sealock_monster_legacy",
+        "source": "cards/theros.c",
+        "address": "0x262f910",
+        "die_offset": "0x5cad71f",
+        "symbols": [
+          [
+            "_sealock_monster_legacy",
+            3
+          ]
+        ],
+        "external": false,
+        "decl_file": 1,
+        "decl_line": 1775,
+        "source_definition_sha256": "da7f079e6a2e503abf317d93eabee16d778aa1cafb7132f3231698513f63dc74",
+        "signature": "int sealock_monster_legacy(int player, int card, event_t event)"
+      },
+      {
+        "name": "raw_put_iid_on_top_of_graveyard_impl",
+        "source": "functions/deck.c",
+        "address": "0x26b2790",
+        "die_offset": "0x6736dab",
+        "symbols": [
+          [
+            "_raw_put_iid_on_top_of_graveyard_impl",
+            3
+          ]
+        ],
+        "external": false,
+        "decl_file": 1,
+        "decl_line": 1752,
+        "source_definition_sha256": "3f010a6a499b185c725cdef98873384f01a1e4f5272bb90a008e1e268850ab87",
+        "signature": "case CARD_ID_ULAMOG_THE_INFINITE_GYRE\n\n// Put a newly-created card with internal_card_id iid on top of player's graveyard and return its position.  Caller's responsibility to generate source_val.\nstatic int raw_put_iid_on_top_of_graveyard_impl(int player, int iid, int position_hint, int32_t source_val)"
+      }
+    ],
+    "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d"
+  },
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "baseline": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "fa31874ab4349804a0a5c691fe58bcf09cf3abec9b2ba2995a82d5a631c6f4d4",
+      "ManalinkEh.dbg": "69698fa98dfd5c0c65203fe9fced21e6715acb5b887380be7e362f19f44eafc3"
+    },
+    "results": [
+      {
+        "name": "can_play_commander",
+        "matched": false,
+        "reason": "('Operation changed', 'mov', 'sub')",
+        "ranges": [
+          {
+            "address": "0x22c36d0",
+            "size": 1089,
+            "sha256": "16b5436d05824da997d5920076be99c3542b53b3fef1eaa74aa14242941bb963",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x25f5330",
+            "size": 1008,
+            "sha256": "ddfcfb9b0d0d663f4dca36ebae05b4b1df463645926582357e1a44bf0a2c5bca",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "sealock_monster_legacy",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x262f910",
+            "size": 281,
+            "sha256": "267a52ed8fb9ce4904d56feea5703c40d4a7a6265b9178e32df88eca673d4488",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x255ccc0",
+            "size": 288,
+            "sha256": "ea5f10436ac56eb571e7644ccc03460cdc8cb778720bbd055cf729f503de10ef",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_edh",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x22c6b40",
+            "size": 9444,
+            "sha256": "a4a9d16e968aaa5140d06907373f1cf65768fefeb0e40412fea35830f5e9645d",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x25f5720",
+            "size": 9264,
+            "sha256": "f6987f99ef256a04863d8f7b613aab8ffbffe0e91bfe0b448c9c320aa34df486",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_sealock_monster",
+        "matched": true,
+        "proof": {
+          "cfg_states": 136,
+          "reached_instruction_counts": [
+            136,
+            136
+          ],
+          "terminals": 1,
+          "equality_load_guards": [],
+          "zero_return_epilogues": [],
+          "pointer_return_tails": [],
+          "address_correspondences": [
+            {
+              "native": "0x262f910",
+              "rebuilt": "0x255ccc0",
+              "identity": "_sealock_monster_legacy"
+            },
+            {
+              "native": "0x26312d0",
+              "rebuilt": "0x255e190",
+              "identity": "_monstrosity"
+            },
+            {
+              "native": "0x2660240",
+              "rebuilt": "0x26dae40",
+              "identity": "_default_target_definition"
+            },
+            {
+              "native": "0x26604c0",
+              "rebuilt": "0x26db3f0",
+              "identity": "_can_target"
+            },
+            {
+              "native": "0x2660d50",
+              "rebuilt": "0x26dbff0",
+              "identity": "_pick_target"
+            },
+            {
+              "native": "0x267aab0",
+              "rebuilt": "0x26865f0",
+              "identity": "_create_targetted_legacy_activate"
+            },
+            {
+              "native": "0x267f8c0",
+              "rebuilt": "0x26915c0",
+              "identity": "_get_hacked_color"
+            },
+            {
+              "native": "0x2680be0",
+              "rebuilt": "0x2691bb0",
+              "identity": "_get_hacked_subtype"
+            },
+            {
+              "native": "0x26b2ab0",
+              "rebuilt": "0x266b160",
+              "identity": "_get_card_instance"
+            },
+            {
+              "native": "0x26b2e30",
+              "rebuilt": "0x266b4e0",
+              "identity": "_add_card_to_hand"
+            },
+            {
+              "native": "0x26b4510",
+              "rebuilt": "0x266c740",
+              "identity": "_obliterate_card"
+            },
+            {
+              "native": "0x26dd430",
+              "rebuilt": "0x26537a0",
+              "identity": "_is_humiliated"
+            },
+            {
+              "native": "0x275bd5c",
+              "rebuilt": "0x2755ea8",
+              "identity": "readonly-C-string:1a951792829db4daaff87f4c42969fe7e49f208af7412e3e246c4ae9923144c1"
+            }
+          ]
+        },
+        "ranges": [
+          {
+            "address": "0x2634de0",
+            "size": 586,
+            "sha256": "736ec5d1074670462298db1a5170a51f11856a0942f41c49a1896a1b598dce3b",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2561cf0",
+            "size": 592,
+            "sha256": "57be99c2291a1a70923a5c59ca8e58457c517dfcc47e8283a2a3e54b088f6019",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_pyrokinesis",
+        "matched": false,
+        "reason": "('Unbound operand', '0x400', '0x5400')",
+        "ranges": [
+          {
+            "address": "0x20a6360",
+            "size": 1053,
+            "sha256": "932cd3fe44af580e8a546db7841544ffff617b77966947ab62de25a0e1a5fa11",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x20387d0",
+            "size": 1024,
+            "sha256": "1518943e534d791292965254a0242d209e6b4a8eb9debf83007ce88c565d0195",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_bounty_of_the_hunt",
+        "matched": false,
+        "reason": "Conditional instruction changed",
+        "ranges": [
+          {
+            "address": "0x209ed60",
+            "size": 1342,
+            "sha256": "409bbbe7b82523e0bd22bc0c241e62abf7cea1f097dca0d82a931a1d3ee29e71",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2031920",
+            "size": 1280,
+            "sha256": "db400ddb5eefdaf9037f8d59261faee90f39c031b3396031812110a8597976df",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_contagion",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x209f5c0",
+            "size": 1291,
+            "sha256": "7376eec654a58032bba79c14df9ff8638920fad03c06f9ee90da354faf1e2fc1",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2032140",
+            "size": 1248,
+            "sha256": "1d5a491f48d3caf61e2690e2c0cdce970f86d69abf79c32675bef69bab75d54d",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      }
+    ],
+    "checker_sha256": "b23e9c8b5915abc0c92b734a57c7b9eafa208520e9ea25c39bc8a5e1bb19cfad",
+    "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+    "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+  },
+  "scope": "Three alternate-cost cards and two private helpers. This restores source scope and native query/lookup paths; no original macro spelling, complete binary identity, gameplay tests or whole-DLL equivalence is claimed. The two Time Spiral callback helpers remain shared across source files pending a source-placement review; the raw graveyard implementation was a span-parser false positive and is already static.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "51ccb1be03d5ff434988bd284d5f25ab4d3f144ea8bb47babafc4b99298ac134",
+    "debug_sha256": "73c73cee930d5a6e24ffcff7bd36fe9e988215225026d26fdb2a17abb9f70808",
+    "build_log_sha256": "86d55d281d7a30025e7a830564fffe0bbc21c4d78c78851e9c34f58b81f6d4f2",
+    "exact_file_projections": 3,
+    "source_definitions": 5,
+    "private_coff_dwarf_definitions": [
+      {
+        "side": 0,
+        "source": "cards/vanguard.c",
+        "name": "can_play_commander",
+        "address": "0x22c36d0",
+        "die_offset": "0x288c276",
+        "external": false
+      },
+      {
+        "side": 0,
+        "source": "cards/theros.c",
+        "name": "sealock_monster_legacy",
+        "address": "0x262f910",
+        "die_offset": "0x5cad71f",
+        "external": false
+      },
+      {
+        "side": 1,
+        "source": "cards/theros.c",
+        "name": "sealock_monster_legacy",
+        "address": "0x255cd00",
+        "die_offset": "0x4ff0417",
+        "external": false
+      },
+      {
+        "side": 1,
+        "source": "cards/vanguard.c",
+        "name": "can_play_commander",
+        "address": "0x25f25f0",
+        "die_offset": "0x5907af9",
+        "external": false
+      }
+    ],
+    "native_card_locals": [
+      {
+        "name": "card_pyrokinesis",
+        "variables": [
+          {
+            "name": "td1",
+            "depth": 0,
+            "decl_file": 1,
+            "decl_line": 2875
+          },
+          {
+            "name": "instance",
+            "depth": 1,
+            "decl_file": 1,
+            "decl_line": 2883
+          },
+          {
+            "name": "x",
+            "depth": 1,
+            "decl_file": 1,
+            "decl_line": 2918
+          },
+          {
+            "name": "t_array",
+            "depth": 2,
+            "decl_file": 1,
+            "decl_line": 2886
+          },
+          {
+            "name": "tac",
+            "depth": 2,
+            "decl_file": 1,
+            "decl_line": 2887
+          },
+          {
+            "name": "i",
+            "depth": 2,
+            "decl_file": 1,
+            "decl_line": 2888
+          }
+        ]
+      },
+      {
+        "name": "card_contagion",
+        "variables": [
+          {
+            "name": "td1",
+            "depth": 0,
+            "decl_file": 1,
+            "decl_line": 645
+          },
+          {
+            "name": "instance",
+            "depth": 0,
+            "decl_file": 1,
+            "decl_line": 648
+          },
+          {
+            "name": "x",
+            "depth": 1,
+            "decl_file": 1,
+            "decl_line": 689
+          },
+          {
+            "name": "t_array",
+            "depth": 2,
+            "decl_file": 1,
+            "decl_line": 657
+          },
+          {
+            "name": "tac",
+            "depth": 2,
+            "decl_file": 1,
+            "decl_line": 658
+          },
+          {
+            "name": "i",
+            "depth": 2,
+            "decl_file": 1,
+            "decl_line": 659
+          },
+          {
+            "name": "x",
+            "depth": 1,
+            "decl_file": 1,
+            "decl_line": 715
+          }
+        ]
+      },
+      {
+        "name": "card_bounty_of_the_hunt",
+        "variables": [
+          {
+            "name": "td1",
+            "depth": 0,
+            "decl_file": 1,
+            "decl_line": 482
+          },
+          {
+            "name": "instance",
+            "depth": 0,
+            "decl_file": 1,
+            "decl_line": 486
+          },
+          {
+            "name": "x",
+            "depth": 1,
+            "decl_file": 1,
+            "decl_line": 528
+          },
+          {
+            "name": "t_array",
+            "depth": 2,
+            "decl_file": 1,
+            "decl_line": 496
+          },
+          {
+            "name": "tac",
+            "depth": 2,
+            "decl_file": 1,
+            "decl_line": 497
+          },
+          {
+            "name": "i",
+            "depth": 2,
+            "decl_file": 1,
+            "decl_line": 498
+          },
+          {
+            "name": "x",
+            "depth": 1,
+            "decl_file": 1,
+            "decl_line": 552
+          }
+        ]
+      }
+    ],
+    "retarget_call_packets": [
+      {
+        "side": "native",
+        "name": "card_pyrokinesis",
+        "address": "0x20a6360",
+        "size": 1053,
+        "sha256": "932cd3fe44af580e8a546db7841544ffff617b77966947ab62de25a0e1a5fa11",
+        "flag_sites": [
+          {
+            "address": "0x20a643e",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x20a6424",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x20a6429",
+                "instruction": "mov dword ptr [ebp - 0x64], eax"
+              },
+              {
+                "address": "0x20a642c",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x20a6434",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20a6438",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20a643b",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20a643e",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x20a6443",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x20a6445",
+                "instruction": "je 0x20a66a8"
+              },
+              {
+                "address": "0x20a644b",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20a644f",
+                "instruction": "xor ebx, ebx"
+              },
+              {
+                "address": "0x20a6451",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              }
+            ]
+          },
+          {
+            "address": "0x20a6579",
+            "flag": "0x10000",
+            "context": [
+              {
+                "address": "0x20a655f",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "0x20a6564",
+                "instruction": "mov dword ptr [ebp - 0x64], eax"
+              },
+              {
+                "address": "0x20a6567",
+                "instruction": "mov dword ptr [esp + 8], 0x10000"
+              },
+              {
+                "address": "0x20a656f",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20a6573",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20a6576",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20a6579",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x20a657e",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x20a6580",
+                "instruction": "je 0x20a66d8"
+              },
+              {
+                "address": "0x20a6586",
+                "instruction": "mov ecx, dword ptr [ebp - 0x64]"
+              },
+              {
+                "address": "0x20a6589",
+                "instruction": "mov esi, esp"
+              },
+              {
+                "address": "0x20a658b",
+                "instruction": "mov al, byte ptr [ecx + 0x36]"
+              }
+            ]
+          },
+          {
+            "address": "0x20a66ba",
+            "flag": "0x8000",
+            "context": [
+              {
+                "address": "0x20a66a0",
+                "instruction": "ret "
+              },
+              {
+                "address": "0x20a66a1",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x20a66a8",
+                "instruction": "mov dword ptr [esp + 8], 0x8000"
+              },
+              {
+                "address": "0x20a66b0",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20a66b4",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20a66b7",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20a66ba",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x20a66bf",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x20a66c1",
+                "instruction": "je 0x20a644b"
+              },
+              {
+                "address": "0x20a66c7",
+                "instruction": "cmp dword ptr [ebp + 0x10], 0x5400"
+              },
+              {
+                "address": "0x20a66ce",
+                "instruction": "je 0x20a671c"
+              },
+              {
+                "address": "0x20a66d0",
+                "instruction": "jmp 0x20a644b"
+              }
+            ]
+          },
+          {
+            "address": "0x20a66ea",
+            "flag": "0x4000",
+            "context": [
+              {
+                "address": "0x20a66d0",
+                "instruction": "jmp 0x20a644b"
+              },
+              {
+                "address": "0x20a66d5",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x20a66d8",
+                "instruction": "mov dword ptr [esp + 8], 0x4000"
+              },
+              {
+                "address": "0x20a66e0",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20a66e4",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20a66e7",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20a66ea",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x20a66ef",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x20a66f1",
+                "instruction": "je 0x20a6701"
+              },
+              {
+                "address": "0x20a66f3",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x20a66fa",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x20a6701",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              }
+            ]
+          },
+          {
+            "address": "0x20a6713",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x20a66f3",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x20a66fa",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x20a6701",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x20a6709",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20a670d",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20a6710",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20a6713",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x20a6718",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x20a671a",
+                "instruction": "je 0x20a66a8"
+              },
+              {
+                "address": "0x20a671c",
+                "instruction": "mov eax, dword ptr [0x7a3498]"
+              },
+              {
+                "address": "0x20a6721",
+                "instruction": "mov dword ptr [ebp - 0x1c], 0"
+              },
+              {
+                "address": "0x20a6728",
+                "instruction": "mov dword ptr [ebp - 0x60], eax"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "side": "native",
+        "name": "card_bounty_of_the_hunt",
+        "address": "0x209ed60",
+        "size": 1342,
+        "sha256": "409bbbe7b82523e0bd22bc0c241e62abf7cea1f097dca0d82a931a1d3ee29e71",
+        "flag_sites": [
+          {
+            "address": "0x209edeb",
+            "flag": "0x10000",
+            "context": [
+              {
+                "address": "0x209edd1",
+                "instruction": "mov ebx, eax"
+              },
+              {
+                "address": "0x209edd3",
+                "instruction": "jne 0x209ee98"
+              },
+              {
+                "address": "0x209edd9",
+                "instruction": "mov dword ptr [esp + 8], 0x10000"
+              },
+              {
+                "address": "0x209ede1",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x209ede4",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x209ede7",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x209edeb",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x209edf0",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x209edf2",
+                "instruction": "je 0x209f1f8"
+              },
+              {
+                "address": "0x209edf8",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x209edfa",
+                "instruction": "mov dword ptr [ebp - 0x64], esp"
+              },
+              {
+                "address": "0x209edfd",
+                "instruction": "mov al, byte ptr [ebx + 0x36]"
+              }
+            ]
+          },
+          {
+            "address": "0x209f03d",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x209f01f",
+                "instruction": "cmp esi, dword ptr [0x738c84]"
+              },
+              {
+                "address": "0x209f025",
+                "instruction": "jne 0x209ee88"
+              },
+              {
+                "address": "0x209f02b",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x209f033",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x209f036",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x209f039",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x209f03d",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x209f042",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x209f044",
+                "instruction": "je 0x209f1c8"
+              },
+              {
+                "address": "0x209f04a",
+                "instruction": "mov dword ptr [ebp + 8], esi"
+              },
+              {
+                "address": "0x209f04d",
+                "instruction": "mov byte ptr [ebx + 0x36], 0"
+              },
+              {
+                "address": "0x209f051",
+                "instruction": "xor edi, edi"
+              }
+            ]
+          },
+          {
+            "address": "0x209f1da",
+            "flag": "0x8000",
+            "context": [
+              {
+                "address": "0x209f1c3",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x209f1c7",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x209f1c8",
+                "instruction": "mov dword ptr [esp + 8], 0x8000"
+              },
+              {
+                "address": "0x209f1d0",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x209f1d3",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x209f1d6",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x209f1da",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x209f1df",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x209f1e1",
+                "instruction": "je 0x209f04a"
+              },
+              {
+                "address": "0x209f1e7",
+                "instruction": "cmp dword ptr [ebp + 0x10], 0x5400"
+              },
+              {
+                "address": "0x209f1ee",
+                "instruction": "je 0x209f23c"
+              },
+              {
+                "address": "0x209f1f0",
+                "instruction": "jmp 0x209f04a"
+              }
+            ]
+          },
+          {
+            "address": "0x209f20a",
+            "flag": "0x4000",
+            "context": [
+              {
+                "address": "0x209f1f0",
+                "instruction": "jmp 0x209f04a"
+              },
+              {
+                "address": "0x209f1f5",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x209f1f8",
+                "instruction": "mov dword ptr [esp + 8], 0x4000"
+              },
+              {
+                "address": "0x209f200",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x209f203",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x209f206",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x209f20a",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x209f20f",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x209f211",
+                "instruction": "je 0x209f221"
+              },
+              {
+                "address": "0x209f213",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x209f21a",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x209f221",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              }
+            ]
+          },
+          {
+            "address": "0x209f233",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x209f213",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x209f21a",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x209f221",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x209f229",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x209f22c",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x209f22f",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x209f233",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x209f238",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x209f23a",
+                "instruction": "je 0x209f1c8"
+              },
+              {
+                "address": "0x209f23c",
+                "instruction": "mov eax, dword ptr [0x7a3498]"
+              },
+              {
+                "address": "0x209f241",
+                "instruction": "mov dword ptr [ebp - 0x1c], 0"
+              },
+              {
+                "address": "0x209f248",
+                "instruction": "mov dword ptr [ebp - 0x60], eax"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "side": "native",
+        "name": "card_contagion",
+        "address": "0x209f5c0",
+        "size": 1291,
+        "sha256": "7376eec654a58032bba79c14df9ff8638920fad03c06f9ee90da354faf1e2fc1",
+        "flag_sites": [
+          {
+            "address": "0x209f646",
+            "flag": "0x10000",
+            "context": [
+              {
+                "address": "0x209f62c",
+                "instruction": "mov ebx, eax"
+              },
+              {
+                "address": "0x209f62e",
+                "instruction": "jne 0x209f6e8"
+              },
+              {
+                "address": "0x209f634",
+                "instruction": "mov dword ptr [esp + 8], 0x10000"
+              },
+              {
+                "address": "0x209f63c",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x209f640",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x209f643",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x209f646",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x209f64b",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x209f64d",
+                "instruction": "je 0x209fa28"
+              },
+              {
+                "address": "0x209f653",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x209f655",
+                "instruction": "mov dword ptr [ebp - 0x64], esp"
+              },
+              {
+                "address": "0x209f658",
+                "instruction": "mov al, byte ptr [ebx + 0x36]"
+              }
+            ]
+          },
+          {
+            "address": "0x209f814",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x209f7f9",
+                "instruction": "cmp dword ptr [ebp + 8], eax"
+              },
+              {
+                "address": "0x209f7fc",
+                "instruction": "jne 0x209f6d8"
+              },
+              {
+                "address": "0x209f802",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x209f80a",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x209f80e",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x209f811",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x209f814",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x209f819",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x209f81b",
+                "instruction": "je 0x209f9f8"
+              },
+              {
+                "address": "0x209f821",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x209f823",
+                "instruction": "mov dword ptr [ebp + 0xc], esi"
+              },
+              {
+                "address": "0x209f826",
+                "instruction": "mov byte ptr [ebx + 0x36], 0"
+              }
+            ]
+          },
+          {
+            "address": "0x209fa0a",
+            "flag": "0x8000",
+            "context": [
+              {
+                "address": "0x209f9f6",
+                "instruction": "pop ebp"
+              },
+              {
+                "address": "0x209f9f7",
+                "instruction": "ret "
+              },
+              {
+                "address": "0x209f9f8",
+                "instruction": "mov dword ptr [esp + 8], 0x8000"
+              },
+              {
+                "address": "0x209fa00",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x209fa04",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x209fa07",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x209fa0a",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x209fa0f",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x209fa11",
+                "instruction": "je 0x209f821"
+              },
+              {
+                "address": "0x209fa17",
+                "instruction": "cmp edi, 0x5400"
+              },
+              {
+                "address": "0x209fa1d",
+                "instruction": "je 0x209fa6c"
+              },
+              {
+                "address": "0x209fa1f",
+                "instruction": "jmp 0x209f821"
+              }
+            ]
+          },
+          {
+            "address": "0x209fa3a",
+            "flag": "0x4000",
+            "context": [
+              {
+                "address": "0x209fa1f",
+                "instruction": "jmp 0x209f821"
+              },
+              {
+                "address": "0x209fa24",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x209fa28",
+                "instruction": "mov dword ptr [esp + 8], 0x4000"
+              },
+              {
+                "address": "0x209fa30",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x209fa34",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x209fa37",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x209fa3a",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x209fa3f",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x209fa41",
+                "instruction": "je 0x209fa51"
+              },
+              {
+                "address": "0x209fa43",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x209fa4a",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x209fa51",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              }
+            ]
+          },
+          {
+            "address": "0x209fa63",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x209fa43",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x209fa4a",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x209fa51",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x209fa59",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x209fa5d",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x209fa60",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x209fa63",
+                "instruction": "call 0x267a130"
+              },
+              {
+                "address": "0x209fa68",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x209fa6a",
+                "instruction": "je 0x209f9f8"
+              },
+              {
+                "address": "0x209fa6c",
+                "instruction": "mov eax, dword ptr [0x7a3498]"
+              },
+              {
+                "address": "0x209fa71",
+                "instruction": "mov dword ptr [ebp - 0x1c], 0"
+              },
+              {
+                "address": "0x209fa78",
+                "instruction": "mov dword ptr [ebp - 0x60], eax"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "side": "rebuilt",
+        "name": "card_pyrokinesis",
+        "address": "0x20387f0",
+        "size": 1056,
+        "sha256": "dea7e33f9e606904a57c2bb62498160ad8f5c054e143ea368b2a24d05b3d5d93",
+        "flag_sites": [
+          {
+            "address": "0x2038885",
+            "flag": "0x10000",
+            "context": [
+              {
+                "address": "0x203886b",
+                "instruction": "call 0x266b1a0"
+              },
+              {
+                "address": "0x2038870",
+                "instruction": "mov dword ptr [ebp - 0x64], eax"
+              },
+              {
+                "address": "0x2038873",
+                "instruction": "mov dword ptr [esp + 8], 0x10000"
+              },
+              {
+                "address": "0x203887b",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x203887f",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2038882",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2038885",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x203888a",
+                "instruction": "mov edx, dword ptr [ebp - 0x64]"
+              },
+              {
+                "address": "0x203888d",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x203888f",
+                "instruction": "je 0x2038b40"
+              },
+              {
+                "address": "0x2038895",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x2038897",
+                "instruction": "mov edi, esp"
+              }
+            ]
+          },
+          {
+            "address": "0x20389ff",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x20389e5",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20389e8",
+                "instruction": "call 0x266b1a0"
+              },
+              {
+                "address": "0x20389ed",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x20389f5",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x20389f9",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20389fc",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20389ff",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2038a04",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2038a06",
+                "instruction": "je 0x2038b20"
+              },
+              {
+                "address": "0x2038a0c",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2038a10",
+                "instruction": "xor ebx, ebx"
+              },
+              {
+                "address": "0x2038a12",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              }
+            ]
+          },
+          {
+            "address": "0x2038b32",
+            "flag": "0x8000",
+            "context": [
+              {
+                "address": "0x2038b19",
+                "instruction": "jmp 0x203891a"
+              },
+              {
+                "address": "0x2038b1e",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x2038b20",
+                "instruction": "mov dword ptr [esp + 8], 0x8000"
+              },
+              {
+                "address": "0x2038b28",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2038b2c",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2038b2f",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2038b32",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2038b37",
+                "instruction": "jmp 0x2038a0c"
+              },
+              {
+                "address": "0x2038b3c",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x2038b40",
+                "instruction": "mov dword ptr [esp + 8], 0x4000"
+              },
+              {
+                "address": "0x2038b48",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2038b4c",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              }
+            ]
+          },
+          {
+            "address": "0x2038b52",
+            "flag": "0x4000",
+            "context": [
+              {
+                "address": "0x2038b37",
+                "instruction": "jmp 0x2038a0c"
+              },
+              {
+                "address": "0x2038b3c",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x2038b40",
+                "instruction": "mov dword ptr [esp + 8], 0x4000"
+              },
+              {
+                "address": "0x2038b48",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2038b4c",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2038b4f",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2038b52",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2038b57",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2038b59",
+                "instruction": "je 0x2038b69"
+              },
+              {
+                "address": "0x2038b5b",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x2038b62",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x2038b69",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              }
+            ]
+          },
+          {
+            "address": "0x2038b7b",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x2038b5b",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x2038b62",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x2038b69",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x2038b71",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2038b75",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2038b78",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2038b7b",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2038b80",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2038b82",
+                "instruction": "je 0x2038be8"
+              },
+              {
+                "address": "0x2038b84",
+                "instruction": "mov eax, dword ptr [0x7a3498]"
+              },
+              {
+                "address": "0x2038b89",
+                "instruction": "mov dword ptr [ebp - 0x1c], 0"
+              },
+              {
+                "address": "0x2038b90",
+                "instruction": "mov dword ptr [ebp - 0x60], eax"
+              }
+            ]
+          },
+          {
+            "address": "0x2038bfa",
+            "flag": "0x8000",
+            "context": [
+              {
+                "address": "0x2038be0",
+                "instruction": "jmp 0x203891a"
+              },
+              {
+                "address": "0x2038be5",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x2038be8",
+                "instruction": "mov dword ptr [esp + 8], 0x8000"
+              },
+              {
+                "address": "0x2038bf0",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2038bf4",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2038bf7",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2038bfa",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2038bff",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2038c01",
+                "instruction": "jne 0x2038b84"
+              },
+              {
+                "address": "0x2038c03",
+                "instruction": "jmp 0x2038a0c"
+              },
+              {
+                "address": "0x2038c08",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x2038c0f",
+                "instruction": "nop "
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "side": "rebuilt",
+        "name": "card_bounty_of_the_hunt",
+        "address": "0x2031920",
+        "size": 1296,
+        "sha256": "34c93094268dba630bcc06f5499d38d11207fea61871dfc442c0614649da6918",
+        "flag_sites": [
+          {
+            "address": "0x20319ba",
+            "flag": "0x10000",
+            "context": [
+              {
+                "address": "0x20319a0",
+                "instruction": "mov ebx, eax"
+              },
+              {
+                "address": "0x20319a2",
+                "instruction": "jne 0x2031a60"
+              },
+              {
+                "address": "0x20319a8",
+                "instruction": "mov dword ptr [esp + 8], 0x10000"
+              },
+              {
+                "address": "0x20319b0",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x20319b3",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x20319b6",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x20319ba",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x20319bf",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x20319c1",
+                "instruction": "je 0x2031d68"
+              },
+              {
+                "address": "0x20319c7",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x20319c9",
+                "instruction": "mov dword ptr [ebp - 0x64], esp"
+              },
+              {
+                "address": "0x20319cc",
+                "instruction": "mov al, byte ptr [ebx + 0x36]"
+              }
+            ]
+          },
+          {
+            "address": "0x2031bc5",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x2031ba7",
+                "instruction": "cmp esi, dword ptr [0x738c84]"
+              },
+              {
+                "address": "0x2031bad",
+                "instruction": "jne 0x2031a50"
+              },
+              {
+                "address": "0x2031bb3",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x2031bbb",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2031bbe",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x2031bc1",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2031bc5",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2031bca",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2031bcc",
+                "instruction": "je 0x2031d48"
+              },
+              {
+                "address": "0x2031bd2",
+                "instruction": "mov dword ptr [ebp + 8], esi"
+              },
+              {
+                "address": "0x2031bd5",
+                "instruction": "mov byte ptr [ebx + 0x36], 0"
+              },
+              {
+                "address": "0x2031bd9",
+                "instruction": "xor edi, edi"
+              }
+            ]
+          },
+          {
+            "address": "0x2031d5a",
+            "flag": "0x8000",
+            "context": [
+              {
+                "address": "0x2031d3e",
+                "instruction": "call 0x26aad10"
+              },
+              {
+                "address": "0x2031d43",
+                "instruction": "jmp 0x2031a52"
+              },
+              {
+                "address": "0x2031d48",
+                "instruction": "mov dword ptr [esp + 8], 0x8000"
+              },
+              {
+                "address": "0x2031d50",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2031d53",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x2031d56",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2031d5a",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2031d5f",
+                "instruction": "jmp 0x2031bd2"
+              },
+              {
+                "address": "0x2031d64",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x2031d68",
+                "instruction": "mov dword ptr [esp + 8], 0x4000"
+              },
+              {
+                "address": "0x2031d70",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2031d73",
+                "instruction": "mov dword ptr [esp], esi"
+              }
+            ]
+          },
+          {
+            "address": "0x2031d7a",
+            "flag": "0x4000",
+            "context": [
+              {
+                "address": "0x2031d5f",
+                "instruction": "jmp 0x2031bd2"
+              },
+              {
+                "address": "0x2031d64",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x2031d68",
+                "instruction": "mov dword ptr [esp + 8], 0x4000"
+              },
+              {
+                "address": "0x2031d70",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2031d73",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x2031d76",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2031d7a",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2031d7f",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2031d81",
+                "instruction": "je 0x2031d91"
+              },
+              {
+                "address": "0x2031d83",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x2031d8a",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x2031d91",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              }
+            ]
+          },
+          {
+            "address": "0x2031da3",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x2031d83",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x2031d8a",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x2031d91",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x2031d99",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2031d9c",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x2031d9f",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2031da3",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2031da8",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2031daa",
+                "instruction": "je 0x2031e10"
+              },
+              {
+                "address": "0x2031dac",
+                "instruction": "mov eax, dword ptr [0x7a3498]"
+              },
+              {
+                "address": "0x2031db1",
+                "instruction": "mov dword ptr [ebp - 0x1c], 0"
+              },
+              {
+                "address": "0x2031db8",
+                "instruction": "mov dword ptr [ebp - 0x60], eax"
+              }
+            ]
+          },
+          {
+            "address": "0x2031e22",
+            "flag": "0x8000",
+            "context": [
+              {
+                "address": "0x2031e09",
+                "instruction": "jmp 0x2031a52"
+              },
+              {
+                "address": "0x2031e0e",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x2031e10",
+                "instruction": "mov dword ptr [esp + 8], 0x8000"
+              },
+              {
+                "address": "0x2031e18",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2031e1b",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x2031e1e",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2031e22",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2031e27",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2031e29",
+                "instruction": "jne 0x2031dac"
+              },
+              {
+                "address": "0x2031e2b",
+                "instruction": "jmp 0x2031bd2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "side": "rebuilt",
+        "name": "card_contagion",
+        "address": "0x2032150",
+        "size": 1264,
+        "sha256": "62271c39cf09edc59a10388d20134d580b0b7778e2922d91d21dc7755eff6715",
+        "flag_sites": [
+          {
+            "address": "0x20321e4",
+            "flag": "0x10000",
+            "context": [
+              {
+                "address": "0x20321ca",
+                "instruction": "mov esi, eax"
+              },
+              {
+                "address": "0x20321cc",
+                "instruction": "jne 0x2032280"
+              },
+              {
+                "address": "0x20321d2",
+                "instruction": "mov dword ptr [esp + 8], 0x10000"
+              },
+              {
+                "address": "0x20321da",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x20321de",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20321e1",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20321e4",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x20321e9",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x20321eb",
+                "instruction": "je 0x2032578"
+              },
+              {
+                "address": "0x20321f1",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x20321f3",
+                "instruction": "mov dword ptr [ebp - 0x64], esp"
+              },
+              {
+                "address": "0x20321f6",
+                "instruction": "mov al, byte ptr [esi + 0x36]"
+              }
+            ]
+          },
+          {
+            "address": "0x2032374",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x2032359",
+                "instruction": "cmp dword ptr [ebp + 8], eax"
+              },
+              {
+                "address": "0x203235c",
+                "instruction": "jne 0x2032270"
+              },
+              {
+                "address": "0x2032362",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x203236a",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x203236e",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2032371",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2032374",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2032379",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x203237b",
+                "instruction": "je 0x2032558"
+              },
+              {
+                "address": "0x2032381",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x2032383",
+                "instruction": "mov dword ptr [ebp + 0xc], ebx"
+              },
+              {
+                "address": "0x2032386",
+                "instruction": "mov byte ptr [esi + 0x36], 0"
+              }
+            ]
+          },
+          {
+            "address": "0x203256a",
+            "flag": "0x8000",
+            "context": [
+              {
+                "address": "0x2032550",
+                "instruction": "jmp 0x2032272"
+              },
+              {
+                "address": "0x2032555",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x2032558",
+                "instruction": "mov dword ptr [esp + 8], 0x8000"
+              },
+              {
+                "address": "0x2032560",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x2032564",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2032567",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x203256a",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x203256f",
+                "instruction": "jmp 0x2032381"
+              },
+              {
+                "address": "0x2032574",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x2032578",
+                "instruction": "mov dword ptr [esp + 8], 0x4000"
+              },
+              {
+                "address": "0x2032580",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x2032584",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              }
+            ]
+          },
+          {
+            "address": "0x203258a",
+            "flag": "0x4000",
+            "context": [
+              {
+                "address": "0x203256f",
+                "instruction": "jmp 0x2032381"
+              },
+              {
+                "address": "0x2032574",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x2032578",
+                "instruction": "mov dword ptr [esp + 8], 0x4000"
+              },
+              {
+                "address": "0x2032580",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x2032584",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2032587",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x203258a",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x203258f",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2032591",
+                "instruction": "je 0x20325a1"
+              },
+              {
+                "address": "0x2032593",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x203259a",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x20325a1",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              }
+            ]
+          },
+          {
+            "address": "0x20325b3",
+            "flag": "0x2000",
+            "context": [
+              {
+                "address": "0x2032593",
+                "instruction": "mov dword ptr [ebp - 0x54], 0x200"
+              },
+              {
+                "address": "0x203259a",
+                "instruction": "mov dword ptr [ebp - 0x50], 2"
+              },
+              {
+                "address": "0x20325a1",
+                "instruction": "mov dword ptr [esp + 8], 0x2000"
+              },
+              {
+                "address": "0x20325a9",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x20325ad",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x20325b0",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x20325b3",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x20325b8",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x20325ba",
+                "instruction": "je 0x2032620"
+              },
+              {
+                "address": "0x20325bc",
+                "instruction": "mov eax, dword ptr [0x7a3498]"
+              },
+              {
+                "address": "0x20325c1",
+                "instruction": "mov dword ptr [ebp - 0x1c], 0"
+              },
+              {
+                "address": "0x20325c8",
+                "instruction": "mov dword ptr [ebp - 0x60], eax"
+              }
+            ]
+          },
+          {
+            "address": "0x2032632",
+            "flag": "0x8000",
+            "context": [
+              {
+                "address": "0x203261b",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x203261f",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x2032620",
+                "instruction": "mov dword ptr [esp + 8], 0x8000"
+              },
+              {
+                "address": "0x2032628",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x203262c",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x203262f",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2032632",
+                "instruction": "call 0x268dc80"
+              },
+              {
+                "address": "0x2032637",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2032639",
+                "instruction": "jne 0x20325bc"
+              },
+              {
+                "address": "0x203263b",
+                "instruction": "jmp 0x2032381"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "51ccb1be03d5ff434988bd284d5f25ab4d3f144ea8bb47babafc4b99298ac134",
+        "ManalinkEh.dbg": "73c73cee930d5a6e24ffcff7bd36fe9e988215225026d26fdb2a17abb9f70808"
+      },
+      "results": [
+        {
+          "name": "can_play_commander",
+          "matched": false,
+          "reason": "Instruction prefix changed",
+          "ranges": [
+            {
+              "address": "0x22c36d0",
+              "size": 1089,
+              "sha256": "16b5436d05824da997d5920076be99c3542b53b3fef1eaa74aa14242941bb963",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25f25f0",
+              "size": 1056,
+              "sha256": "be82cbf108e69eba6ab6d70e1864ff7104f030e94185ec4ac550b7756131c940",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "sealock_monster_legacy",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x262f910",
+              "size": 281,
+              "sha256": "267a52ed8fb9ce4904d56feea5703c40d4a7a6265b9178e32df88eca673d4488",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x255cd00",
+              "size": 288,
+              "sha256": "ea5f10436ac56eb571e7644ccc03460cdc8cb778720bbd055cf729f503de10ef",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_edh",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x22c6b40",
+              "size": 9444,
+              "sha256": "a4a9d16e968aaa5140d06907373f1cf65768fefeb0e40412fea35830f5e9645d",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25f5790",
+              "size": 9216,
+              "sha256": "42e8276766b804fb8674bfc3e3dbbdb9d08766d35eaa124cc15f5db3371d0f3f",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_sealock_monster",
+          "matched": true,
+          "proof": {
+            "cfg_states": 136,
+            "reached_instruction_counts": [
+              136,
+              136
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x262f910",
+                "rebuilt": "0x255cd00",
+                "identity": "_sealock_monster_legacy"
+              },
+              {
+                "native": "0x26312d0",
+                "rebuilt": "0x255e1d0",
+                "identity": "_monstrosity"
+              },
+              {
+                "native": "0x2660240",
+                "rebuilt": "0x26dae80",
+                "identity": "_default_target_definition"
+              },
+              {
+                "native": "0x26604c0",
+                "rebuilt": "0x26db430",
+                "identity": "_can_target"
+              },
+              {
+                "native": "0x2660d50",
+                "rebuilt": "0x26dc030",
+                "identity": "_pick_target"
+              },
+              {
+                "native": "0x267aab0",
+                "rebuilt": "0x2686630",
+                "identity": "_create_targetted_legacy_activate"
+              },
+              {
+                "native": "0x267f8c0",
+                "rebuilt": "0x2691600",
+                "identity": "_get_hacked_color"
+              },
+              {
+                "native": "0x2680be0",
+                "rebuilt": "0x2691bf0",
+                "identity": "_get_hacked_subtype"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266b1a0",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b2e30",
+                "rebuilt": "0x266b520",
+                "identity": "_add_card_to_hand"
+              },
+              {
+                "native": "0x26b4510",
+                "rebuilt": "0x266c780",
+                "identity": "_obliterate_card"
+              },
+              {
+                "native": "0x26dd430",
+                "rebuilt": "0x26537e0",
+                "identity": "_is_humiliated"
+              },
+              {
+                "native": "0x275bd5c",
+                "rebuilt": "0x2755ea8",
+                "identity": "readonly-C-string:1a951792829db4daaff87f4c42969fe7e49f208af7412e3e246c4ae9923144c1"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x2634de0",
+              "size": 586,
+              "sha256": "736ec5d1074670462298db1a5170a51f11856a0942f41c49a1896a1b598dce3b",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2561d30",
+              "size": 592,
+              "sha256": "02ac4d22883f3310b455d2666b4974b175fc1b215156ea5adba1662bdba5a2ee",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_pyrokinesis",
+          "matched": false,
+          "reason": "('Unbound operand', '0x400', '0x71')",
+          "ranges": [
+            {
+              "address": "0x20a6360",
+              "size": 1053,
+              "sha256": "932cd3fe44af580e8a546db7841544ffff617b77966947ab62de25a0e1a5fa11",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x20387f0",
+              "size": 1056,
+              "sha256": "dea7e33f9e606904a57c2bb62498160ad8f5c054e143ea368b2a24d05b3d5d93",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_bounty_of_the_hunt",
+          "matched": false,
+          "reason": "Conditional instruction changed",
+          "ranges": [
+            {
+              "address": "0x209ed60",
+              "size": 1342,
+              "sha256": "409bbbe7b82523e0bd22bc0c241e62abf7cea1f097dca0d82a931a1d3ee29e71",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2031920",
+              "size": 1296,
+              "sha256": "34c93094268dba630bcc06f5499d38d11207fea61871dfc442c0614649da6918",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_contagion",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x209f5c0",
+              "size": 1291,
+              "sha256": "7376eec654a58032bba79c14df9ff8638920fad03c06f9ee90da354faf1e2fc1",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2032150",
+              "size": 1264,
+              "sha256": "62271c39cf09edc59a10388d20134d580b0b7778e2922d91d21dc7755eff6715",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "b23e9c8b5915abc0c92b734a57c7b9eafa208520e9ea25c39bc8a5e1bb19cfad",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "private_linkage_audit_after": {
+      "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "examined_native_definitions": 18849,
+      "native_private_source_definitions": 1537,
+      "candidates": [
+        {
+          "name": "target_must_be_permanent_or_suspend",
+          "source": "cards/time_spiral.c",
+          "address": "0x20e7ea0",
+          "die_offset": "0xd10a9d",
+          "symbols": [
+            [
+              "_target_must_be_permanent_or_suspend",
+              3
+            ]
+          ],
+          "external": false,
+          "decl_file": 1,
+          "decl_line": 1026,
+          "source_definition_sha256": "d240126aa5d274e6c94c9a1cc8a369b4eab90e794a4e1d647732f74736c2b73f",
+          "signature": "const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,\n                                               int targeting_player, int targeting_card)"
+        },
+        {
+          "name": "target_must_be_permanent_or_suspend_and_have_time_counters",
+          "source": "cards/time_spiral.c",
+          "address": "0x20ea700",
+          "die_offset": "0xd14f50",
+          "symbols": [
+            [
+              "_target_must_be_permanent_or_suspend_and_have_time_counters",
+              3
+            ]
+          ],
+          "external": false,
+          "decl_file": 1,
+          "decl_line": 3214,
+          "source_definition_sha256": "436e19fb8d6fb3963255077c62e745c5e4abbc8a363a4fdd755a50e717b28aa6",
+          "signature": "const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,\n                                                                       int card,\n                                                                       int targeting_player,\n                                                                       int targeting_card)"
+        }
+      ],
+      "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d"
+    },
+    "staging": "preserved",
+    "scope": "Five definitions restored with one build. Native/rebuilt COFF and DWARF prove both private helper linkages. Native locals support the display indices and Pyrokinesis scope; short-circuited queries and display branches were reviewed against decoded native control flow. Native has one REBOUND call site per card, rebuilt has two compiler-duplicated sites: static counts are explicitly not treated as dynamic query counts or equivalence. Selection/payment/cleanup/resolution tails are source-identical. Six selected functions still fail strict instruction CFG comparison; only the previously matching Sealock Monster caller retains complete CFG correspondence. No new full CFG matches, full reccmp refresh, or gameplay tests claimed."
+  }
+}

@@ -1,0 +1,3305 @@
+{
+  "format": 1,
+  "status": "Checked project-data metadata added; full comparison and matching validation passed.",
+  "receipt": {
+    "setup_sha256": "564ffec950f499dedc988022b75c7b1b84b3125b4880e50ec636dea23ac9fd7e",
+    "report_sha256": "46c325c0b819c8fc1dd27dc33a93880083c250bf07789a7a0fd4b411afc91738",
+    "inputs": {
+      "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dll": "ac236799d5e898fd8afdf3cbd798f920da722e157610fa01fed6bf7a63cb9af3",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "ffac859be789ada8c2137ef0cea49ad548355f8462d561a783043119cfa551c8"
+    },
+    "metadata_sha256": "c75be87b83402824826886e52ee913f38876f5b5af20e06ad3bcfbd4e778ff06",
+    "metadata_snapshot": ".recovery\\reccmp\\global-bindings-c626.metadata.csv",
+    "global_metadata_snapshot": ".recovery\\reccmp\\global-bindings-c626.globals.csv",
+    "global_metadata_sha256": "4bd078c759882fd6f758d1ec43ab13606b0e8e288c32b13ec11f52609c5142c9",
+    "global_bindings_snapshot": ".recovery\\reccmp\\global-bindings-c626.globals.json",
+    "global_bindings_sha256": "ef42d2ac0d117f42659e1569f46302752feb07636091f9026f8a58aa85cdac06",
+    "verified_global_bindings": {
+      "verified": 293,
+      "bindings_sha256": "552c653669d7d3a20c064c3e6d97e03a7068e36f786d92fc411a2fbf12abac86"
+    },
+    "project_config_sha256": "a978a638b5f154a514be6229cd0b012f96fb8431f1bfc4c4f00c3cf13bc0d371",
+    "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "comparator_source_sha256": {
+      "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+      "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+      "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+      "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_globals.py": "1e870d89b4afbc15950d26c59a94162aecc70bec0700f60c032373a76910f3bc",
+      "C:\\dev\\manalink3-src\\tools\\reccmp_project.py": "c63e3d0b734e532a9bf37141562308a06fd9d3327e85f02d01f67267c73876b6"
+    },
+    "command": [
+      "reccmp-reccmp",
+      "--target",
+      "MANALINK2022",
+      "--no-color",
+      "--json",
+      ".recovery/reccmp/global-bindings-c626.json",
+      "--silent"
+    ],
+    "exit_code": 0
+  },
+  "verification": {
+    "status": "passed",
+    "verified_data_bindings": 293,
+    "function_local_statics": 51,
+    "scoped_duplicate_display_names": 20,
+    "verified_explicit_function_bindings": 160,
+    "pairing_negative_probes": "Ambiguous identities, incompatible size/type/writability, overlapping storage rejected.",
+    "indexed_reference_false_positive": {
+      "name": "has_subtype_by_id",
+      "source_definition_sha256": "8a12559194cc6fe6be042b1cd4356994ce2d357b5946c3ef89598b82fa7994a6",
+      "evidence": [
+        {
+          "image": ".recovery/2022-ManalinkEh.dll",
+          "table": "0x2797020",
+          "accesses": [
+            {
+              "address": "0x26737a0",
+              "instruction": "mov ebx, dword ptr [edi + edx*8 + 0x2796ff8]",
+              "displacement_from_table": -40
+            },
+            {
+              "address": "0x26737b1",
+              "instruction": "cmp byte ptr [edi + edx*8 + 0x2796ffc], 2",
+              "displacement_from_table": -36
+            }
+          ],
+          "effective_offset": "player * 128 + (index - 5) * 8, with added_forced at +4"
+        },
+        {
+          "image": "ManalinkEh.dll",
+          "table": "0x27b8720",
+          "accesses": [
+            {
+              "address": "0x26bceca",
+              "instruction": "mov edi, dword ptr [ecx + edx*8 + 0x27b86f8]",
+              "displacement_from_table": -40
+            },
+            {
+              "address": "0x26bcedf",
+              "instruction": "cmp byte ptr [ecx + edx*8 + 0x27b86fc], 2",
+              "displacement_from_table": -36
+            }
+          ],
+          "effective_offset": "player * 128 + (index - 5) * 8, with added_forced at +4"
+        }
+      ]
+    },
+    "comparison_delta": {
+      "before": {
+        "exact": 12466,
+        "different": 6092,
+        "effective": 270
+      },
+      "after": {
+        "exact": 12467,
+        "different": 6090,
+        "effective": 271
+      },
+      "improved": 71,
+      "lower_score": 14,
+      "newly_exact": 1,
+      "no_longer_exact": 0,
+      "scope": "Combined data normalization and the preceding two source changes; not an isolated metadata experiment."
+    },
+    "formatter_score": 1.0,
+    "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+    "scope": "Metadata matching and native indexed operands only; no source edit or new compilation."
+  },
+  "inventories": {
+    "native_supported_objects": 294,
+    "rebuilt_supported_objects": 304,
+    "native_exclusions": {
+      "no named direct-address storage": 51846,
+      "unsupported fixed storage type": 2
+    },
+    "rebuilt_exclusions": {
+      "no named direct-address storage": 55822,
+      "unsupported fixed storage type": 2
+    },
+    "pairing_exclusions": {
+      "missing or ambiguous source/scope/name identity": 1,
+      "overlapping candidate storage": 0
+    },
+    "inputs": {
+      "native": {
+        "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "reader_sha256": "225c47ae13c91ae7534eadaa5d8e0df9a4ca1019957e8d623c680420a8b8da6e",
+        "dependencies": {
+          "inspect_release.py": "68d82cb0052718b1b16c25b3773aeb9fca29749b6944bb855809b67441f45dc4",
+          "helper_contracts.py": "859485a07d95e84a1dba55d3be3218a799e46ff69f639a8476f401b2be080e66",
+          "global_initializers.py": "7e1142b56ca9c8ed237aa0b28a2f51a1c5e1fe8a01b0edb8bc7013fd4c52fd62",
+          "object_initializers.py": "46a19b0923bc6db6e66665afe944dcf010a2b6260385f186a644469b4b672311"
+        }
+      },
+      "rebuilt": {
+        "debug_sha256": "ffac859be789ada8c2137ef0cea49ad548355f8462d561a783043119cfa551c8",
+        "dll_sha256": "ac236799d5e898fd8afdf3cbd798f920da722e157610fa01fed6bf7a63cb9af3",
+        "reader_sha256": "225c47ae13c91ae7534eadaa5d8e0df9a4ca1019957e8d623c680420a8b8da6e",
+        "dependencies": {
+          "inspect_release.py": "68d82cb0052718b1b16c25b3773aeb9fca29749b6944bb855809b67441f45dc4",
+          "helper_contracts.py": "859485a07d95e84a1dba55d3be3218a799e46ff69f639a8476f401b2be080e66",
+          "global_initializers.py": "7e1142b56ca9c8ed237aa0b28a2f51a1c5e1fe8a01b0edb8bc7013fd4c52fd62",
+          "object_initializers.py": "46a19b0923bc6db6e66665afe944dcf010a2b6260385f186a644469b4b672311"
+        }
+      }
+    },
+    "unmatched_native_objects": [
+      {
+        "source": "functions/functions.c",
+        "name": "words",
+        "scopes": [
+          "get_sleighted_color_text"
+        ],
+        "address": 41306368,
+        "size": 64,
+        "storage_contract": [
+          "array",
+          [
+            8,
+            2
+          ],
+          [
+            "data_pointer",
+            4,
+            [
+              "scalar",
+              1,
+              6
+            ]
+          ]
+        ],
+        "writable": false,
+        "die_offset": "0x65a1c52"
+      }
+    ],
+    "explanation": "Exclusion counts describe DWARF variable DIEs, chiefly stack locals and declarations without direct storage. They are not counts of remaining unrecovered globals. The unmatched words table belongs to get_sleighted_color_text; no guessed rebuilt storage is introduced for its shared/unemitted definition."
+  },
+  "bindings": [
+    {
+      "source": "cards/visions.c",
+      "scopes": [
+        "card_vision_charm"
+      ],
+      "name": "land_subtypes",
+      "display_name": "land_subtypes",
+      "native_address": 41040608,
+      "rebuilt_address": 41273792,
+      "size": 52,
+      "writable": false
+    },
+    {
+      "source": "cards/visions.c",
+      "scopes": [
+        "card_vision_charm"
+      ],
+      "name": "basic_land_subtypes",
+      "display_name": "basic_land_subtypes",
+      "native_address": 41040588,
+      "rebuilt_address": 41273844,
+      "size": 20,
+      "writable": false
+    },
+    {
+      "source": "cards/stronghold.c",
+      "scopes": [],
+      "name": "en_kor_card",
+      "display_name": "en_kor_card",
+      "native_address": 41029696,
+      "rebuilt_address": 41042208,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "scopes": [],
+      "name": "hack_current_event",
+      "display_name": "hack_current_event [cards/war_of_the_spark.c]",
+      "native_address": 41369616,
+      "rebuilt_address": 41394436,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/legends.c",
+      "scopes": [],
+      "name": "glyph_of_delusion_wall_card",
+      "display_name": "glyph_of_delusion_wall_card",
+      "native_address": 41369620,
+      "rebuilt_address": 41394416,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/antiquities.c",
+      "scopes": [],
+      "name": "tetra_code",
+      "display_name": "tetra_code",
+      "native_address": 41369624,
+      "rebuilt_address": 41394192,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "scopes": [],
+      "name": "charge_mana_called_from_pay_phyrexian_mana",
+      "display_name": "charge_mana_called_from_pay_phyrexian_mana",
+      "native_address": 41369628,
+      "rebuilt_address": 41533660,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "scopes": [
+        "charge_phyrexian_mana_impl"
+      ],
+      "name": "words",
+      "display_name": "words [cards/new_phyrexia.c::charge_phyrexian_mana_impl]",
+      "native_address": 41131096,
+      "rebuilt_address": 41193108,
+      "size": 24,
+      "writable": false
+    },
+    {
+      "source": "cards/vanguard.c",
+      "scopes": [],
+      "name": "mulligans_complete",
+      "display_name": "mulligans_complete",
+      "native_address": 41508944,
+      "rebuilt_address": 41533664,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "cards/vanguard.c",
+      "scopes": [
+        "get_horde_cards"
+      ],
+      "name": "zombie_horde_special_cards",
+      "display_name": "zombie_horde_special_cards",
+      "native_address": 41143360,
+      "rebuilt_address": 41270880,
+      "size": 120,
+      "writable": false
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "scopes": [],
+      "name": "lc_unaccent_map",
+      "display_name": "lc_unaccent_map",
+      "native_address": 41153280,
+      "rebuilt_address": 41261088,
+      "size": 256,
+      "writable": false
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "scopes": [],
+      "name": "txtfx_not_found",
+      "display_name": "txtfx_not_found",
+      "native_address": 41153260,
+      "rebuilt_address": 41261064,
+      "size": 4,
+      "writable": false
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "scopes": [],
+      "name": "number_bits_set",
+      "display_name": "number_bits_set",
+      "native_address": 41369632,
+      "rebuilt_address": 41394464,
+      "size": 64,
+      "writable": true
+    },
+    {
+      "source": "cards/eventide.c",
+      "scopes": [],
+      "name": "mirror_sheen_player",
+      "display_name": "mirror_sheen_player",
+      "native_address": 41369696,
+      "rebuilt_address": 41394400,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/mirage.c",
+      "scopes": [
+        "untap_phasing"
+      ],
+      "name": "shimmer_subtypes",
+      "display_name": "shimmer_subtypes",
+      "native_address": 41174944,
+      "rebuilt_address": 41178080,
+      "size": 56,
+      "writable": false
+    },
+    {
+      "source": "cards/kaladesh.c",
+      "scopes": [],
+      "name": "rashmi_triggering",
+      "display_name": "rashmi_triggering",
+      "native_address": 41369700,
+      "rebuilt_address": 41394412,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/ice_age.c",
+      "scopes": [],
+      "name": "balduvian_hydra_player",
+      "display_name": "balduvian_hydra_player",
+      "native_address": 41369708,
+      "rebuilt_address": 41394408,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/ice_age.c",
+      "scopes": [],
+      "name": "balduvian_hydra_card",
+      "display_name": "balduvian_hydra_card",
+      "native_address": 41369704,
+      "rebuilt_address": 41394404,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/planechase.c",
+      "scopes": [
+        "get_new_plane"
+      ],
+      "name": "plane_csvids",
+      "display_name": "plane_csvids",
+      "native_address": 41369716,
+      "rebuilt_address": 41394424,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/planechase.c",
+      "scopes": [
+        "get_new_plane"
+      ],
+      "name": "num_plane_csvids",
+      "display_name": "num_plane_csvids",
+      "native_address": 41369712,
+      "rebuilt_address": 41394420,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/unlimited.c",
+      "scopes": [],
+      "name": "aff_player",
+      "display_name": "aff_player",
+      "native_address": 41030048,
+      "rebuilt_address": 41042220,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/unlimited.c",
+      "scopes": [],
+      "name": "aff_card",
+      "display_name": "aff_card",
+      "native_address": 41030044,
+      "rebuilt_address": 41042216,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/unlimited.c",
+      "scopes": [],
+      "name": "hack_illusionary_mask_event",
+      "display_name": "hack_illusionary_mask_event",
+      "native_address": 41030040,
+      "rebuilt_address": 41042212,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/unlimited.c",
+      "scopes": [
+        "card_mana_vault"
+      ],
+      "name": "hack_dont_tap_to_pay_for_other_vaults",
+      "display_name": "hack_dont_tap_to_pay_for_other_vaults",
+      "native_address": 41369720,
+      "rebuilt_address": 41394428,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/betrayers_of_kamigawa.c",
+      "scopes": [],
+      "name": "opal_eye_card",
+      "display_name": "opal_eye_card",
+      "native_address": 41030052,
+      "rebuilt_address": 41041924,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/archenemy.c",
+      "scopes": [],
+      "name": "schemes",
+      "display_name": "schemes",
+      "native_address": 41369892,
+      "rebuilt_address": 41394372,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/archenemy.c",
+      "scopes": [],
+      "name": "num_schemes",
+      "display_name": "num_schemes",
+      "native_address": 41369888,
+      "rebuilt_address": 41394368,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "cards/archenemy.c",
+      "scopes": [],
+      "name": "arch_deck",
+      "display_name": "arch_deck",
+      "native_address": 41369728,
+      "rebuilt_address": 41394208,
+      "size": 160,
+      "writable": true
+    },
+    {
+      "source": "cards/unstable.c",
+      "scopes": [],
+      "name": "watermarks",
+      "display_name": "watermarks",
+      "native_address": 41369920,
+      "rebuilt_address": 41394432,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/tutors.c",
+      "scopes": [],
+      "name": "hack_override_show_deck_done_button_label",
+      "display_name": "hack_override_show_deck_done_button_label",
+      "native_address": 41369924,
+      "rebuilt_address": 41528384,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [],
+      "name": "bmp_abilities_pic",
+      "display_name": "bmp_abilities_pic",
+      "native_address": 41371636,
+      "rebuilt_address": 41530068,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [],
+      "name": "ability_tooltip_names",
+      "display_name": "ability_tooltip_names",
+      "native_address": 41371328,
+      "rebuilt_address": 41529760,
+      "size": 308,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [],
+      "name": "counter_names",
+      "display_name": "counter_names",
+      "native_address": 41369984,
+      "rebuilt_address": 41528416,
+      "size": 752,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [],
+      "name": "hack_show_deck_force_expansion",
+      "display_name": "hack_show_deck_force_expansion",
+      "native_address": 41369956,
+      "rebuilt_address": 41654256,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [],
+      "name": "debug_addcard_last_color",
+      "display_name": "debug_addcard_last_color",
+      "native_address": 41030252,
+      "rebuilt_address": 41048172,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [],
+      "name": "debug_addcard_last_type",
+      "display_name": "debug_addcard_last_type",
+      "native_address": 41030248,
+      "rebuilt_address": 41048168,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [],
+      "name": "wav_filenames",
+      "display_name": "wav_filenames",
+      "native_address": 41278304,
+      "rebuilt_address": 41376000,
+      "size": 356,
+      "writable": false
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [],
+      "name": "set_legacy_effect_name_addr",
+      "display_name": "set_legacy_effect_name_addr",
+      "native_address": 41369952,
+      "rebuilt_address": 41529168,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [],
+      "name": "kws_strs",
+      "display_name": "kws_strs",
+      "native_address": 41371200,
+      "rebuilt_address": 41529632,
+      "size": 128,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [],
+      "name": "spkws_strs",
+      "display_name": "spkws_strs",
+      "native_address": 41371072,
+      "rebuilt_address": 41529504,
+      "size": 128,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [
+        "localtime_date"
+      ],
+      "name": "buf",
+      "display_name": "buf [functions/windows.c::localtime_date]",
+      "native_address": 41370736,
+      "rebuilt_address": 41529176,
+      "size": 18,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [
+        "wndproc_FullCardClass_hook"
+      ],
+      "name": "hack_force_expansion",
+      "display_name": "hack_force_expansion",
+      "native_address": 41370756,
+      "rebuilt_address": 41529172,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [
+        "draw_smallcard_special_effect_card"
+      ],
+      "name": "card_name",
+      "display_name": "card_name",
+      "native_address": 41370784,
+      "rebuilt_address": 41529216,
+      "size": 100,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [
+        "draw_smallcard_activation_card"
+      ],
+      "name": "name",
+      "display_name": "name",
+      "native_address": 41370912,
+      "rebuilt_address": 41529344,
+      "size": 128,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [
+        "draw_smallcard_activation_card"
+      ],
+      "name": "emptystr",
+      "display_name": "emptystr",
+      "native_address": 41370884,
+      "rebuilt_address": 41529316,
+      "size": 1,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [
+        "set_smallcard_size"
+      ],
+      "name": "setting_smallcard_size",
+      "display_name": "setting_smallcard_size",
+      "native_address": 41371040,
+      "rebuilt_address": 41529472,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [
+        "get_bmp_experience"
+      ],
+      "name": "bmp_experience_pic",
+      "display_name": "bmp_experience_pic",
+      "native_address": 41371048,
+      "rebuilt_address": 41529480,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [
+        "get_bmp_energy"
+      ],
+      "name": "bmp_energy_pic",
+      "display_name": "bmp_energy_pic",
+      "native_address": 41371044,
+      "rebuilt_address": 41529476,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/windows.c",
+      "scopes": [
+        "draw_abilities"
+      ],
+      "name": "once",
+      "display_name": "once [functions/windows.c::draw_abilities]",
+      "native_address": 41030244,
+      "rebuilt_address": 41048164,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/targets.c",
+      "scopes": [],
+      "name": "hack_gpf_player",
+      "display_name": "hack_gpf_player",
+      "native_address": 41030280,
+      "rebuilt_address": 41048072,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/targets.c",
+      "scopes": [],
+      "name": "hack_gpf_card",
+      "display_name": "hack_gpf_card",
+      "native_address": 41030276,
+      "rebuilt_address": 41048068,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/targets.c",
+      "scopes": [],
+      "name": "protection_mode",
+      "display_name": "protection_mode",
+      "native_address": 41030272,
+      "rebuilt_address": 41048064,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/targets.c",
+      "scopes": [],
+      "name": "hack_prepend_prompt",
+      "display_name": "hack_prepend_prompt",
+      "native_address": 41371652,
+      "rebuilt_address": 41528164,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/targets.c",
+      "scopes": [],
+      "name": "auto_targets",
+      "display_name": "auto_targets",
+      "native_address": 41510976,
+      "rebuilt_address": 41652256,
+      "size": 2000,
+      "writable": true
+    },
+    {
+      "source": "functions/targets.c",
+      "scopes": [],
+      "name": "auto_targets_target",
+      "display_name": "auto_targets_target",
+      "native_address": 41508960,
+      "rebuilt_address": 41650240,
+      "size": 2000,
+      "writable": true
+    },
+    {
+      "source": "functions/targets.c",
+      "scopes": [],
+      "name": "read_auto_target_file",
+      "display_name": "read_auto_target_file",
+      "native_address": 41371648,
+      "rebuilt_address": 41528160,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/targets.c",
+      "scopes": [
+        "any_becomes_target"
+      ],
+      "name": "arr",
+      "display_name": "arr",
+      "native_address": 41371680,
+      "rebuilt_address": 41528192,
+      "size": 160,
+      "writable": true
+    },
+    {
+      "source": "functions/targets.c",
+      "scopes": [
+        "becomes_target_of_spell_or_effect"
+      ],
+      "name": "rval",
+      "display_name": "rval [functions/targets.c::becomes_target_of_spell_or_effect]",
+      "native_address": 41371840,
+      "rebuilt_address": 41528352,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/targets.c",
+      "scopes": [
+        "becomes_target_of_subtype_spell"
+      ],
+      "name": "rval",
+      "display_name": "rval [functions/targets.c::becomes_target_of_subtype_spell]",
+      "native_address": 41371848,
+      "rebuilt_address": 41528168,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/targets.c",
+      "scopes": [
+        "becomes_target_of_spell"
+      ],
+      "name": "rval",
+      "display_name": "rval [functions/targets.c::becomes_target_of_spell]",
+      "native_address": 41371856,
+      "rebuilt_address": 41528360,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/gain_control_and_legend_rule.c",
+      "scopes": [],
+      "name": "suppress_legend_rule",
+      "display_name": "suppress_legend_rule",
+      "native_address": 41371872,
+      "rebuilt_address": 41524768,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "scopes": [],
+      "name": "free_spell_card",
+      "display_name": "free_spell_card",
+      "native_address": 41030296,
+      "rebuilt_address": 41047884,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "scopes": [],
+      "name": "free_spell_player",
+      "display_name": "free_spell_player",
+      "native_address": 41030292,
+      "rebuilt_address": 41047880,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "scopes": [],
+      "name": "totally_bletcherous_hack_dont_reset_x_value",
+      "display_name": "totally_bletcherous_hack_dont_reset_x_value",
+      "native_address": 41030284,
+      "rebuilt_address": 41047872,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/produce_mana.c",
+      "scopes": [],
+      "name": "tapped_for_mana",
+      "display_name": "tapped_for_mana",
+      "native_address": 41371884,
+      "rebuilt_address": 41527716,
+      "size": 28,
+      "writable": true
+    },
+    {
+      "source": "functions/produce_mana.c",
+      "scopes": [],
+      "name": "always_prompt_for_color",
+      "display_name": "always_prompt_for_color",
+      "native_address": 41371880,
+      "rebuilt_address": 41527712,
+      "size": 1,
+      "writable": true
+    },
+    {
+      "source": "functions/produce_mana.c",
+      "scopes": [],
+      "name": "chosen_colors",
+      "display_name": "chosen_colors",
+      "native_address": 41371876,
+      "rebuilt_address": 41527708,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [],
+      "name": "arr_from_hardcoded_subtype_to_subtype",
+      "display_name": "arr_from_hardcoded_subtype_to_subtype",
+      "native_address": 41284352,
+      "rebuilt_address": 41350784,
+      "size": 932,
+      "writable": false
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [],
+      "name": "added_subtypes_not_in_play",
+      "display_name": "added_subtypes_not_in_play",
+      "native_address": 41512992,
+      "rebuilt_address": 41649952,
+      "size": 256,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [],
+      "name": "strs_creature_type",
+      "display_name": "strs_creature_type",
+      "native_address": 41373376,
+      "rebuilt_address": 41526240,
+      "size": 1104,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [],
+      "name": "strs_type_type",
+      "display_name": "strs_type_type",
+      "native_address": 41373312,
+      "rebuilt_address": 41526176,
+      "size": 60,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [],
+      "name": "strs_supertype_type",
+      "display_name": "strs_supertype_type",
+      "native_address": 41373280,
+      "rebuilt_address": 41526144,
+      "size": 32,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [],
+      "name": "strs_artifact_type",
+      "display_name": "strs_artifact_type",
+      "native_address": 41373216,
+      "rebuilt_address": 41526080,
+      "size": 44,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [],
+      "name": "strs_enchantment_type",
+      "display_name": "strs_enchantment_type",
+      "native_address": 41373056,
+      "rebuilt_address": 41525920,
+      "size": 132,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [],
+      "name": "strs_land_type",
+      "display_name": "strs_land_type",
+      "native_address": 41372992,
+      "rebuilt_address": 41525856,
+      "size": 56,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [],
+      "name": "strs_instant_sorcery_type",
+      "display_name": "strs_instant_sorcery_type",
+      "native_address": 41372968,
+      "rebuilt_address": 41525832,
+      "size": 16,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [],
+      "name": "strs_planeswalker_type",
+      "display_name": "strs_planeswalker_type",
+      "native_address": 41372672,
+      "rebuilt_address": 41525536,
+      "size": 296,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [],
+      "name": "strs_plane_type",
+      "display_name": "strs_plane_type",
+      "native_address": 41372448,
+      "rebuilt_address": 41525312,
+      "size": 196,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [
+        "get_subtype_text"
+      ],
+      "name": "buf",
+      "display_name": "buf [functions/has_creature_type.c::get_subtype_text]",
+      "native_address": 41371936,
+      "rebuilt_address": 41524800,
+      "size": 500,
+      "writable": true
+    },
+    {
+      "source": "functions/has_creature_type.c",
+      "scopes": [
+        "has_subtype"
+      ],
+      "name": "depth",
+      "display_name": "depth",
+      "native_address": 41372436,
+      "rebuilt_address": 41525300,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/load_text.c",
+      "scopes": [],
+      "name": "loadtexts",
+      "display_name": "loadtexts",
+      "native_address": 41374796,
+      "rebuilt_address": 41527660,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/load_text.c",
+      "scopes": [],
+      "name": "num_loadtexts",
+      "display_name": "num_loadtexts",
+      "native_address": 41374792,
+      "rebuilt_address": 41527656,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/load_text.c",
+      "scopes": [],
+      "name": "last_loadtext_from_file",
+      "display_name": "last_loadtext_from_file",
+      "native_address": 41374528,
+      "rebuilt_address": 41527392,
+      "size": 262,
+      "writable": true
+    },
+    {
+      "source": "functions/load_text.c",
+      "scopes": [],
+      "name": "loadtexts_from_file",
+      "display_name": "loadtexts_from_file",
+      "native_address": 41374500,
+      "rebuilt_address": 41527364,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/load_text.c",
+      "scopes": [],
+      "name": "num_loadtexts_from_file",
+      "display_name": "num_loadtexts_from_file",
+      "native_address": 41374496,
+      "rebuilt_address": 41527360,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [],
+      "name": "discard_controller",
+      "display_name": "discard_controller",
+      "native_address": 41374836,
+      "rebuilt_address": 41523216,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [],
+      "name": "card_is_being_cycled",
+      "display_name": "card_is_being_cycled",
+      "native_address": 41374832,
+      "rebuilt_address": 41523200,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [],
+      "name": "dont_account_for_trinisphere",
+      "display_name": "dont_account_for_trinisphere",
+      "native_address": 41374828,
+      "rebuilt_address": 41523212,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [],
+      "name": "havengul_lich_hack",
+      "display_name": "havengul_lich_hack",
+      "native_address": 41374824,
+      "rebuilt_address": 41523208,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [],
+      "name": "life_to_lose_on_gain_life",
+      "display_name": "life_to_lose_on_gain_life",
+      "native_address": 41513248,
+      "rebuilt_address": 41649932,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [],
+      "name": "hack_what_was_sacced_for_gaa",
+      "display_name": "hack_what_was_sacced_for_gaa",
+      "native_address": 41374820,
+      "rebuilt_address": 41523204,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [],
+      "name": "suspend_cannot_lose_the_game",
+      "display_name": "suspend_cannot_lose_the_game",
+      "native_address": 41374816,
+      "rebuilt_address": 41649928,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [],
+      "name": "hack_current_event",
+      "display_name": "hack_current_event [functions/functions.c]",
+      "native_address": 41376372,
+      "rebuilt_address": 41524756,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [
+        "get_hacked_subtype"
+      ],
+      "name": "subtypes",
+      "display_name": "subtypes",
+      "native_address": 41305952,
+      "rebuilt_address": 41349280,
+      "size": 96,
+      "writable": false
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [
+        "get_hacked_land_text"
+      ],
+      "name": "buf",
+      "display_name": "buf [functions/functions.c::get_hacked_land_text]",
+      "native_address": 41374848,
+      "rebuilt_address": 41524256,
+      "size": 500,
+      "writable": true
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [
+        "get_hacked_land_text"
+      ],
+      "name": "words",
+      "display_name": "words [functions/functions.c::get_hacked_land_text]",
+      "native_address": 41306176,
+      "rebuilt_address": 41349184,
+      "size": 96,
+      "writable": false
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [
+        "get_sleighted_color_text2"
+      ],
+      "name": "buf",
+      "display_name": "buf [functions/functions.c::get_sleighted_color_text2]",
+      "native_address": 41375360,
+      "rebuilt_address": 41523744,
+      "size": 500,
+      "writable": true
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [
+        "get_sleighted_color_text2"
+      ],
+      "name": "words",
+      "display_name": "words [functions/functions.c::get_sleighted_color_text2]",
+      "native_address": 41306368,
+      "rebuilt_address": 41348992,
+      "size": 64,
+      "writable": false
+    },
+    {
+      "source": "functions/functions.c",
+      "scopes": [
+        "get_sleighted_color_text"
+      ],
+      "name": "buf",
+      "display_name": "buf [functions/functions.c::get_sleighted_color_text]",
+      "native_address": 41375872,
+      "rebuilt_address": 41523232,
+      "size": 500,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "add_to_die_rolls",
+      "display_name": "add_to_die_rolls",
+      "native_address": 41513360,
+      "rebuilt_address": 41649776,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "roll_extra_dice",
+      "display_name": "roll_extra_dice",
+      "native_address": 41513368,
+      "rebuilt_address": 41649784,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "card_counts",
+      "display_name": "card_counts",
+      "native_address": 41513472,
+      "rebuilt_address": 41649892,
+      "size": 14,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "card_flags",
+      "display_name": "card_flags",
+      "native_address": 41513496,
+      "rebuilt_address": 41649916,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "your_spells_cant_be_countered_by_color",
+      "display_name": "your_spells_cant_be_countered_by_color",
+      "native_address": 41513376,
+      "rebuilt_address": 41649792,
+      "size": 2,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "hack_force_effect_change_source",
+      "display_name": "hack_force_effect_change_source",
+      "native_address": 41030304,
+      "rebuilt_address": 41044948,
+      "size": 16,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "hack_xx",
+      "display_name": "hack_xx",
+      "native_address": 41030300,
+      "rebuilt_address": 41044944,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "override_xx",
+      "display_name": "override_xx",
+      "native_address": 41376384,
+      "rebuilt_address": 41649888,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "mana_colors_added",
+      "display_name": "mana_colors_added",
+      "native_address": 41513488,
+      "rebuilt_address": 41649908,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "mana_color_override",
+      "display_name": "mana_color_override",
+      "native_address": 41513280,
+      "rebuilt_address": 41649696,
+      "size": 64,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "mana_quantity_override",
+      "display_name": "mana_quantity_override",
+      "native_address": 41513408,
+      "rebuilt_address": 41649824,
+      "size": 64,
+      "writable": true
+    },
+    {
+      "source": "functions/engine.c",
+      "scopes": [],
+      "name": "multi_mana_transmutation",
+      "display_name": "multi_mana_transmutation",
+      "native_address": 41513344,
+      "rebuilt_address": 41649760,
+      "size": 16,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_card_ext",
+      "display_name": "backup_card_ext",
+      "native_address": 41443072,
+      "rebuilt_address": 41460864,
+      "size": 57600,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_graveyard_source",
+      "display_name": "backup_graveyard_source",
+      "native_address": 41439072,
+      "rebuilt_address": 41398688,
+      "size": 4000,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_next_graveyard_source_id",
+      "display_name": "backup_next_graveyard_source_id",
+      "native_address": 41439060,
+      "rebuilt_address": 41398664,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_turn_count",
+      "display_name": "backup_turn_count",
+      "native_address": 41439056,
+      "rebuilt_address": 41398660,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_always_prompt_for_color",
+      "display_name": "backup_always_prompt_for_color",
+      "native_address": 41439052,
+      "rebuilt_address": 41398656,
+      "size": 1,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_mulligans_complete",
+      "display_name": "backup_mulligans_complete",
+      "native_address": 41439044,
+      "rebuilt_address": 41398648,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_challenge_round",
+      "display_name": "backup_challenge_round",
+      "native_address": 41439040,
+      "rebuilt_address": 41398644,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_challenge1",
+      "display_name": "backup_challenge1",
+      "native_address": 41439036,
+      "rebuilt_address": 41398640,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_challenge2",
+      "display_name": "backup_challenge2",
+      "native_address": 41439032,
+      "rebuilt_address": 41398636,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_challenge3",
+      "display_name": "backup_challenge3",
+      "native_address": 41439028,
+      "rebuilt_address": 41398632,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_challenge4",
+      "display_name": "backup_challenge4",
+      "native_address": 41439024,
+      "rebuilt_address": 41398628,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_counters_added",
+      "display_name": "backup_counters_added",
+      "native_address": 41439020,
+      "rebuilt_address": 41398624,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_counters_added_type",
+      "display_name": "backup_counters_added_type",
+      "native_address": 41439016,
+      "rebuilt_address": 41394568,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_mana_colors_added",
+      "display_name": "backup_mana_colors_added",
+      "native_address": 41439008,
+      "rebuilt_address": 41518784,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_mana_color_override",
+      "display_name": "backup_mana_color_override",
+      "native_address": 41438944,
+      "rebuilt_address": 41518720,
+      "size": 64,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_mana_quantity_override",
+      "display_name": "backup_mana_quantity_override",
+      "native_address": 41438880,
+      "rebuilt_address": 41518656,
+      "size": 64,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_multi_mana_transmutation",
+      "display_name": "backup_multi_mana_transmutation",
+      "native_address": 41438860,
+      "rebuilt_address": 41518632,
+      "size": 16,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_card_counts",
+      "display_name": "backup_card_counts",
+      "native_address": 41438844,
+      "rebuilt_address": 41402704,
+      "size": 14,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_card_flags",
+      "display_name": "backup_card_flags",
+      "native_address": 41438836,
+      "rebuilt_address": 41518808,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_your_spells_cant_be_countered_by_color",
+      "display_name": "backup_your_spells_cant_be_countered_by_color",
+      "native_address": 41438832,
+      "rebuilt_address": 41518804,
+      "size": 2,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_roll_extra_dice",
+      "display_name": "backup_roll_extra_dice",
+      "native_address": 41438824,
+      "rebuilt_address": 41403248,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_add_to_die_rolls",
+      "display_name": "backup_add_to_die_rolls",
+      "native_address": 41438816,
+      "rebuilt_address": 41403256,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup_added_subtypes_not_in_play",
+      "display_name": "backup_added_subtypes_not_in_play",
+      "native_address": 41438560,
+      "rebuilt_address": 41402976,
+      "size": 256,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_card_ext",
+      "display_name": "backup0_card_ext",
+      "native_address": 41380960,
+      "rebuilt_address": 41403264,
+      "size": 57600,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_graveyard_source",
+      "display_name": "backup0_graveyard_source",
+      "native_address": 41376960,
+      "rebuilt_address": 41394624,
+      "size": 4000,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_next_graveyard_source_id",
+      "display_name": "backup0_next_graveyard_source_id",
+      "native_address": 41376948,
+      "rebuilt_address": 41394612,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_turn_count",
+      "display_name": "backup0_turn_count",
+      "native_address": 41376944,
+      "rebuilt_address": 41394608,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_always_prompt_for_color",
+      "display_name": "backup0_always_prompt_for_color",
+      "native_address": 41376940,
+      "rebuilt_address": 41394604,
+      "size": 1,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_mulligans_complete",
+      "display_name": "backup0_mulligans_complete",
+      "native_address": 41376932,
+      "rebuilt_address": 41394596,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_challenge_round",
+      "display_name": "backup0_challenge_round",
+      "native_address": 41376928,
+      "rebuilt_address": 41394592,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_challenge1",
+      "display_name": "backup0_challenge1",
+      "native_address": 41376924,
+      "rebuilt_address": 41394588,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_challenge2",
+      "display_name": "backup0_challenge2",
+      "native_address": 41376920,
+      "rebuilt_address": 41394584,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_challenge3",
+      "display_name": "backup0_challenge3",
+      "native_address": 41376916,
+      "rebuilt_address": 41394580,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_challenge4",
+      "display_name": "backup0_challenge4",
+      "native_address": 41376912,
+      "rebuilt_address": 41394576,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_counters_added",
+      "display_name": "backup0_counters_added",
+      "native_address": 41376908,
+      "rebuilt_address": 41394572,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_counters_added_type",
+      "display_name": "backup0_counters_added_type",
+      "native_address": 41376904,
+      "rebuilt_address": 41394564,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_mana_colors_added",
+      "display_name": "backup0_mana_colors_added",
+      "native_address": 41376896,
+      "rebuilt_address": 41518624,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_mana_color_override",
+      "display_name": "backup0_mana_color_override",
+      "native_address": 41376832,
+      "rebuilt_address": 41518560,
+      "size": 64,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_mana_quantity_override",
+      "display_name": "backup0_mana_quantity_override",
+      "native_address": 41376768,
+      "rebuilt_address": 41518496,
+      "size": 64,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_multi_mana_transmutation",
+      "display_name": "backup0_multi_mana_transmutation",
+      "native_address": 41376748,
+      "rebuilt_address": 41518464,
+      "size": 16,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_card_counts",
+      "display_name": "backup0_card_counts",
+      "native_address": 41376732,
+      "rebuilt_address": 41402688,
+      "size": 14,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_card_flags",
+      "display_name": "backup0_card_flags",
+      "native_address": 41376724,
+      "rebuilt_address": 41518796,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_your_spells_cant_be_countered_by_color",
+      "display_name": "backup0_your_spells_cant_be_countered_by_color",
+      "native_address": 41376720,
+      "rebuilt_address": 41518792,
+      "size": 2,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_roll_extra_dice",
+      "display_name": "backup0_roll_extra_dice",
+      "native_address": 41376712,
+      "rebuilt_address": 41403232,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_add_to_die_rolls",
+      "display_name": "backup0_add_to_die_rolls",
+      "native_address": 41376704,
+      "rebuilt_address": 41403240,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "backup0_added_subtypes_not_in_play",
+      "display_name": "backup0_added_subtypes_not_in_play",
+      "native_address": 41376448,
+      "rebuilt_address": 41402720,
+      "size": 256,
+      "writable": true
+    },
+    {
+      "source": "functions/ai.c",
+      "scopes": [],
+      "name": "hack_ai_decision_phase_upkeep",
+      "display_name": "hack_ai_decision_phase_upkeep",
+      "native_address": 41376416,
+      "rebuilt_address": 41394560,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "card_ext_buffer1",
+      "display_name": "card_ext_buffer1",
+      "native_address": 41628704,
+      "rebuilt_address": 41649120,
+      "size": 192,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "card_ext",
+      "display_name": "card_ext",
+      "native_address": 41571104,
+      "rebuilt_address": 41591520,
+      "size": 57600,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "card_ext_buffer2",
+      "display_name": "card_ext_buffer2",
+      "native_address": 41628896,
+      "rebuilt_address": 41649312,
+      "size": 192,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "disp_card_ext",
+      "display_name": "disp_card_ext",
+      "native_address": 41513504,
+      "rebuilt_address": 41533920,
+      "size": 57600,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "card_ext_buffer3",
+      "display_name": "card_ext_buffer3",
+      "native_address": 41629088,
+      "rebuilt_address": 41649504,
+      "size": 192,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "graveyard_source",
+      "display_name": "graveyard_source",
+      "native_address": 41500704,
+      "rebuilt_address": 41518880,
+      "size": 4000,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "next_graveyard_source_id",
+      "display_name": "next_graveyard_source_id",
+      "native_address": 41030328,
+      "rebuilt_address": 41044940,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "card_instance_template",
+      "display_name": "card_instance_template",
+      "native_address": 41308320,
+      "rebuilt_address": 41332544,
+      "size": 300,
+      "writable": false
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "card_ext_template",
+      "display_name": "card_ext_template",
+      "native_address": 41308128,
+      "rebuilt_address": 41332864,
+      "size": 192,
+      "writable": false
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "csvid_to_iid",
+      "display_name": "csvid_to_iid",
+      "native_address": 41504964,
+      "rebuilt_address": 41523140,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "gy_from_anywhere_pos",
+      "display_name": "gy_from_anywhere_pos",
+      "native_address": 41030324,
+      "rebuilt_address": 41044936,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "gy_from_anywhere_source",
+      "display_name": "gy_from_anywhere_source",
+      "native_address": 41030320,
+      "rebuilt_address": 41044932,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "replace_milled",
+      "display_name": "replace_milled",
+      "native_address": 41500680,
+      "rebuilt_address": 41518856,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "cards_milled",
+      "display_name": "cards_milled",
+      "native_address": 41500676,
+      "rebuilt_address": 41518852,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [],
+      "name": "num_cards_milled",
+      "display_name": "num_cards_milled",
+      "native_address": 41500672,
+      "rebuilt_address": 41518848,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/deck.c",
+      "scopes": [
+        "draw_a_card"
+      ],
+      "name": "buf",
+      "display_name": "buf [functions/deck.c::draw_a_card]",
+      "native_address": 41504704,
+      "rebuilt_address": 41522880,
+      "size": 260,
+      "writable": true
+    },
+    {
+      "source": "functions/challenge_mode.c",
+      "scopes": [],
+      "name": "challenge_round",
+      "display_name": "challenge_round",
+      "native_address": 41504992,
+      "rebuilt_address": 41518816,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/challenge_mode.c",
+      "scopes": [],
+      "name": "unlocked",
+      "display_name": "unlocked",
+      "native_address": 41629280,
+      "rebuilt_address": 41533696,
+      "size": 200,
+      "writable": true
+    },
+    {
+      "source": "functions/challenge_mode.c",
+      "scopes": [],
+      "name": "challenge1",
+      "display_name": "challenge1",
+      "native_address": 41032892,
+      "rebuilt_address": 41044924,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/challenge_mode.c",
+      "scopes": [],
+      "name": "challenge2",
+      "display_name": "challenge2",
+      "native_address": 41032888,
+      "rebuilt_address": 41044920,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/challenge_mode.c",
+      "scopes": [],
+      "name": "challenge3",
+      "display_name": "challenge3",
+      "native_address": 41032884,
+      "rebuilt_address": 41044916,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/challenge_mode.c",
+      "scopes": [],
+      "name": "challenge4",
+      "display_name": "challenge4",
+      "native_address": 41032880,
+      "rebuilt_address": 41044912,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/challenge_mode.c",
+      "scopes": [],
+      "name": "challenge_names",
+      "display_name": "challenge_names",
+      "native_address": 41030880,
+      "rebuilt_address": 41042912,
+      "size": 2000,
+      "writable": true
+    },
+    {
+      "source": "functions/challenge_mode.c",
+      "scopes": [],
+      "name": "unlock_codes",
+      "display_name": "unlock_codes",
+      "native_address": 41030464,
+      "rebuilt_address": 41042496,
+      "size": 400,
+      "writable": true
+    },
+    {
+      "source": "functions/challenge_mode.c",
+      "scopes": [],
+      "name": "lock_ids",
+      "display_name": "lock_ids",
+      "native_address": 41316160,
+      "rebuilt_address": 41318080,
+      "size": 200,
+      "writable": false
+    },
+    {
+      "source": "functions/challenge_mode.c",
+      "scopes": [],
+      "name": "cd_list",
+      "display_name": "cd_list",
+      "native_address": 41310368,
+      "rebuilt_address": 41312288,
+      "size": 5776,
+      "writable": false
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "hack_allow_sorcery_if_rules_engine_is_only_effect",
+      "display_name": "hack_allow_sorcery_if_rules_engine_is_only_effect",
+      "native_address": 41505024,
+      "rebuilt_address": 41527744,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "other_game_mode",
+      "display_name": "other_game_mode",
+      "native_address": 41629480,
+      "rebuilt_address": 41650208,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "vanguard_avatar",
+      "display_name": "vanguard_avatar",
+      "native_address": 41505312,
+      "rebuilt_address": 41528032,
+      "size": 80,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "vcount",
+      "display_name": "vcount",
+      "native_address": 41505296,
+      "rebuilt_address": 41528016,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "companion",
+      "display_name": "companion",
+      "native_address": 41505216,
+      "rebuilt_address": 41527936,
+      "size": 80,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "ccount",
+      "display_name": "ccount",
+      "native_address": 41505180,
+      "rebuilt_address": 41527900,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "settings",
+      "display_name": "settings",
+      "native_address": 41505056,
+      "rebuilt_address": 41527776,
+      "size": 124,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "challenge",
+      "display_name": "challenge",
+      "native_address": 41505036,
+      "rebuilt_address": 41527756,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "rules_engine_card",
+      "display_name": "rules_engine_card",
+      "native_address": 41033040,
+      "rebuilt_address": 41048048,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "deadbox_card",
+      "display_name": "deadbox_card",
+      "native_address": 41033032,
+      "rebuilt_address": 41048040,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "starting_life_total",
+      "display_name": "starting_life_total",
+      "native_address": 41033024,
+      "rebuilt_address": 41048032,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [],
+      "name": "force_init_upkeep",
+      "display_name": "force_init_upkeep",
+      "native_address": 41505032,
+      "rebuilt_address": 41527752,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/rules_engine.c",
+      "scopes": [
+        "limit_allowed_in_deck"
+      ],
+      "name": "unlimited_list",
+      "display_name": "unlimited_list",
+      "native_address": 41319872,
+      "rebuilt_address": 41369792,
+      "size": 68,
+      "writable": false
+    },
+    {
+      "source": "functions/events.c",
+      "scopes": [],
+      "name": "event_rval",
+      "display_name": "event_rval",
+      "native_address": 41629484,
+      "rebuilt_address": 41649924,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/events.c",
+      "scopes": [],
+      "name": "xtrigger_impl_value_dont_use_directly",
+      "display_name": "xtrigger_impl_value_dont_use_directly",
+      "native_address": 41505412,
+      "rebuilt_address": 41523172,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/events.c",
+      "scopes": [],
+      "name": "enable_xtrigger_flags",
+      "display_name": "enable_xtrigger_flags",
+      "native_address": 41505408,
+      "rebuilt_address": 41523168,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/events.c",
+      "scopes": [],
+      "name": "raw_base_pt",
+      "display_name": "raw_base_pt",
+      "native_address": 41033060,
+      "rebuilt_address": 41044968,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/events.c",
+      "scopes": [],
+      "name": "raw_characteristic_pt",
+      "display_name": "raw_characteristic_pt",
+      "native_address": 41033056,
+      "rebuilt_address": 41044964,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/counters.c",
+      "scopes": [],
+      "name": "hack_silent_counters",
+      "display_name": "hack_silent_counters",
+      "native_address": 41505420,
+      "rebuilt_address": 41518824,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/counters.c",
+      "scopes": [],
+      "name": "counters_added",
+      "display_name": "counters_added",
+      "native_address": 41505416,
+      "rebuilt_address": 41518820,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/counters.c",
+      "scopes": [],
+      "name": "counters_added_type",
+      "display_name": "counters_added_type",
+      "native_address": 41033064,
+      "rebuilt_address": 41044928,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/abilities.c",
+      "scopes": [],
+      "name": "can_block_target_player",
+      "display_name": "can_block_target_player",
+      "native_address": 41505432,
+      "rebuilt_address": 41394536,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/abilities.c",
+      "scopes": [],
+      "name": "can_block_target_card",
+      "display_name": "can_block_target_card",
+      "native_address": 41505428,
+      "rebuilt_address": 41394532,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/abilities.c",
+      "scopes": [
+        "regeneration_shield_legacy"
+      ],
+      "name": "regeneration_from_shield_in_progress",
+      "display_name": "regeneration_from_shield_in_progress",
+      "native_address": 41505424,
+      "rebuilt_address": 41394528,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "scopes": [],
+      "name": "sacrifice_test",
+      "display_name": "sacrifice_test",
+      "native_address": 41505436,
+      "rebuilt_address": 41528128,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/auras.c",
+      "scopes": [
+        "this_effect_doesnt_remove_this"
+      ],
+      "name": "recalculating_ward",
+      "display_name": "recalculating_ward",
+      "native_address": 41033068,
+      "rebuilt_address": 41042336,
+      "size": 8,
+      "writable": true
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "no_boosters",
+      "display_name": "no_boosters",
+      "native_address": 41348424,
+      "rebuilt_address": 41364904,
+      "size": 8,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "no_starters",
+      "display_name": "no_starters",
+      "native_address": 41348416,
+      "rebuilt_address": 41364896,
+      "size": 8,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_15_cur",
+      "display_name": "booster_15_cur",
+      "native_address": 41348384,
+      "rebuilt_address": 41364864,
+      "size": 32,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_15_lcur",
+      "display_name": "booster_15_lcur",
+      "native_address": 41348320,
+      "rebuilt_address": 41364800,
+      "size": 40,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_15_l2cur",
+      "display_name": "booster_15_l2cur",
+      "native_address": 41348256,
+      "rebuilt_address": 41364736,
+      "size": 40,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_15_lcurm71",
+      "display_name": "booster_15_lcurm71",
+      "native_address": 41348192,
+      "rebuilt_address": 41364672,
+      "size": 56,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_15_lcurm74",
+      "display_name": "booster_15_lcurm74",
+      "native_address": 41348128,
+      "rebuilt_address": 41364608,
+      "size": 56,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_15_curm71a",
+      "display_name": "booster_15_curm71a",
+      "native_address": 41348064,
+      "rebuilt_address": 41364544,
+      "size": 56,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "starter_l22_cur",
+      "display_name": "starter_l22_cur",
+      "native_address": 41348000,
+      "rebuilt_address": 41364480,
+      "size": 40,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "starter_l30_cur",
+      "display_name": "starter_l30_cur",
+      "native_address": 41347936,
+      "rebuilt_address": 41364416,
+      "size": 40,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "starter_l30_curm",
+      "display_name": "starter_l30_curm",
+      "native_address": 41347872,
+      "rebuilt_address": 41364352,
+      "size": 56,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_alpha",
+      "display_name": "booster_alpha",
+      "native_address": 41347776,
+      "rebuilt_address": 41364256,
+      "size": 80,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "starter_alpha",
+      "display_name": "starter_alpha",
+      "native_address": 41347680,
+      "rebuilt_address": 41364160,
+      "size": 80,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_beta",
+      "display_name": "booster_beta",
+      "native_address": 41347584,
+      "rebuilt_address": 41364064,
+      "size": 80,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "starter_beta",
+      "display_name": "starter_beta",
+      "native_address": 41347488,
+      "rebuilt_address": 41363968,
+      "size": 80,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_arabian_nights",
+      "display_name": "booster_arabian_nights",
+      "native_address": 41347448,
+      "rebuilt_address": 41363928,
+      "size": 24,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_antiquities",
+      "display_name": "booster_antiquities",
+      "native_address": 41347424,
+      "rebuilt_address": 41363904,
+      "size": 24,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_revised",
+      "display_name": "booster_revised",
+      "native_address": 41347360,
+      "rebuilt_address": 41363840,
+      "size": 64,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "starter_revised",
+      "display_name": "starter_revised",
+      "native_address": 41347296,
+      "rebuilt_address": 41363776,
+      "size": 64,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_legends",
+      "display_name": "booster_legends",
+      "native_address": 41347264,
+      "rebuilt_address": 41363744,
+      "size": 32,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_the_dark",
+      "display_name": "booster_the_dark",
+      "native_address": 41347240,
+      "rebuilt_address": 41363720,
+      "size": 24,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_fallen_empires",
+      "display_name": "booster_fallen_empires",
+      "native_address": 41347216,
+      "rebuilt_address": 41363696,
+      "size": 24,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_chronicles",
+      "display_name": "booster_chronicles",
+      "native_address": 41347192,
+      "rebuilt_address": 41363672,
+      "size": 24,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_homelands",
+      "display_name": "booster_homelands",
+      "native_address": 41347168,
+      "rebuilt_address": 41363648,
+      "size": 24,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_alliances",
+      "display_name": "booster_alliances",
+      "native_address": 41347136,
+      "rebuilt_address": 41363616,
+      "size": 32,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "starter_ice_age",
+      "display_name": "starter_ice_age",
+      "native_address": 41347072,
+      "rebuilt_address": 41363552,
+      "size": 40,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_unglued",
+      "display_name": "booster_unglued",
+      "native_address": 41347008,
+      "rebuilt_address": 41363488,
+      "size": 40,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_portal3k",
+      "display_name": "booster_portal3k",
+      "native_address": 41346944,
+      "rebuilt_address": 41363424,
+      "size": 40,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_time_spiral",
+      "display_name": "booster_time_spiral",
+      "native_address": 41346880,
+      "rebuilt_address": 41363360,
+      "size": 40,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "starter_time_spiral",
+      "display_name": "starter_time_spiral",
+      "native_address": 41346816,
+      "rebuilt_address": 41363296,
+      "size": 48,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_planar_chaos",
+      "display_name": "booster_planar_chaos",
+      "native_address": 41346752,
+      "rebuilt_address": 41363232,
+      "size": 64,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_innistrad",
+      "display_name": "booster_innistrad",
+      "native_address": 41346656,
+      "rebuilt_address": 41363136,
+      "size": 80,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_dragons_maze",
+      "display_name": "booster_dragons_maze",
+      "native_address": 41346592,
+      "rebuilt_address": 41363072,
+      "size": 56,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_conspiracy",
+      "display_name": "booster_conspiracy",
+      "native_address": 41346528,
+      "rebuilt_address": 41363008,
+      "size": 48,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_shadows_over_innistrad",
+      "display_name": "booster_shadows_over_innistrad",
+      "native_address": 41346400,
+      "rebuilt_address": 41362880,
+      "size": 104,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_ixalan",
+      "display_name": "booster_ixalan",
+      "native_address": 41346336,
+      "rebuilt_address": 41362816,
+      "size": 56,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_unstable",
+      "display_name": "booster_unstable",
+      "native_address": 41346272,
+      "rebuilt_address": 41362752,
+      "size": 64,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_guilds_of_ravnica",
+      "display_name": "booster_guilds_of_ravnica",
+      "native_address": 41346208,
+      "rebuilt_address": 41362688,
+      "size": 56,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_jumpstart",
+      "display_name": "booster_jumpstart",
+      "native_address": 41346112,
+      "rebuilt_address": 41362592,
+      "size": 80,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_commander_legends",
+      "display_name": "booster_commander_legends",
+      "native_address": 41346048,
+      "rebuilt_address": 41362528,
+      "size": 64,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_strixhaven",
+      "display_name": "booster_strixhaven",
+      "native_address": 41345984,
+      "rebuilt_address": 41362464,
+      "size": 64,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_mid_vow",
+      "display_name": "booster_mid_vow",
+      "native_address": 41345920,
+      "rebuilt_address": 41362400,
+      "size": 64,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "booster_kamigawa_neo",
+      "display_name": "booster_kamigawa_neo",
+      "native_address": 41345856,
+      "rebuilt_address": 41362336,
+      "size": 64,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "pack_contents",
+      "display_name": "pack_contents",
+      "native_address": 41033568,
+      "rebuilt_address": 41045472,
+      "size": 2376,
+      "writable": true
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_common_arabian_nights",
+      "display_name": "copies_common_arabian_nights",
+      "native_address": 41345632,
+      "rebuilt_address": 41362112,
+      "size": 224,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_uncommon_arabian_nights",
+      "display_name": "copies_uncommon_arabian_nights",
+      "native_address": 41345216,
+      "rebuilt_address": 41361696,
+      "size": 416,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_common_antiquities",
+      "display_name": "copies_common_antiquities",
+      "native_address": 41344928,
+      "rebuilt_address": 41361408,
+      "size": 264,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_uncommon_antiquities",
+      "display_name": "copies_uncommon_antiquities",
+      "native_address": 41344480,
+      "rebuilt_address": 41360960,
+      "size": 448,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_common_the_dark",
+      "display_name": "copies_common_the_dark",
+      "native_address": 41344128,
+      "rebuilt_address": 41360608,
+      "size": 336,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_uncommon_the_dark",
+      "display_name": "copies_uncommon_the_dark",
+      "native_address": 41343488,
+      "rebuilt_address": 41359968,
+      "size": 632,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_common_fallen_empires",
+      "display_name": "copies_common_fallen_empires",
+      "native_address": 41343168,
+      "rebuilt_address": 41359648,
+      "size": 296,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_uncommon_fallen_empires",
+      "display_name": "copies_uncommon_fallen_empires",
+      "native_address": 41342624,
+      "rebuilt_address": 41359104,
+      "size": 536,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_common_chronicles",
+      "display_name": "copies_common_chronicles",
+      "native_address": 41342240,
+      "rebuilt_address": 41358720,
+      "size": 368,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_uncommon_chronicles",
+      "display_name": "copies_uncommon_chronicles",
+      "native_address": 41341664,
+      "rebuilt_address": 41358144,
+      "size": 576,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_common_homelands",
+      "display_name": "copies_common_homelands",
+      "native_address": 41341312,
+      "rebuilt_address": 41357792,
+      "size": 336,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_uncommon_homelands",
+      "display_name": "copies_uncommon_homelands",
+      "native_address": 41340704,
+      "rebuilt_address": 41357184,
+      "size": 600,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_common_alliances",
+      "display_name": "copies_common_alliances",
+      "native_address": 41340288,
+      "rebuilt_address": 41356768,
+      "size": 408,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_uncommon_alliances",
+      "display_name": "copies_uncommon_alliances",
+      "native_address": 41339904,
+      "rebuilt_address": 41356384,
+      "size": 368,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_rare_alliances",
+      "display_name": "copies_rare_alliances",
+      "native_address": 41339488,
+      "rebuilt_address": 41355968,
+      "size": 400,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_guildgate_or_shockland",
+      "display_name": "copies_guildgate_or_shockland",
+      "native_address": 41339296,
+      "rebuilt_address": 41355776,
+      "size": 176,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_mystical_archive",
+      "display_name": "copies_mystical_archive",
+      "native_address": 41338784,
+      "rebuilt_address": 41355264,
+      "size": 512,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [],
+      "name": "copies_neo_land",
+      "display_name": "copies_neo_land",
+      "native_address": 41338656,
+      "rebuilt_address": 41355136,
+      "size": 128,
+      "writable": false
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [
+        "choose_packs"
+      ],
+      "name": "idx",
+      "display_name": "idx",
+      "native_address": 41033240,
+      "rebuilt_address": 41045144,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [
+        "dlgproc_choose_a_pack"
+      ],
+      "name": "winbk_questn",
+      "display_name": "winbk_questn",
+      "native_address": 41505460,
+      "rebuilt_address": 41527696,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [
+        "dlgproc_choose_a_pack"
+      ],
+      "name": "expansion_names",
+      "display_name": "expansion_names",
+      "native_address": 41505440,
+      "rebuilt_address": 41527680,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [
+        "dlgproc_choose_a_pack"
+      ],
+      "name": "brush",
+      "display_name": "brush",
+      "native_address": 41505456,
+      "rebuilt_address": 41527692,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [
+        "dlgproc_choose_a_pack"
+      ],
+      "name": "pen1",
+      "display_name": "pen1",
+      "native_address": 41505452,
+      "rebuilt_address": 41527688,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [
+        "dlgproc_choose_a_pack"
+      ],
+      "name": "pen2",
+      "display_name": "pen2",
+      "native_address": 41505448,
+      "rebuilt_address": 41527684,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [
+        "dlgproc_choose_a_pack"
+      ],
+      "name": "args",
+      "display_name": "args [functions/packs.c::dlgproc_choose_a_pack]",
+      "native_address": 41505444,
+      "rebuilt_address": 41527700,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [
+        "generate_choose_a_pack_dlg_template"
+      ],
+      "name": "templ",
+      "display_name": "templ [functions/packs.c::generate_choose_a_pack_dlg_template]",
+      "native_address": 41033248,
+      "rebuilt_address": 41045148,
+      "size": 294,
+      "writable": true
+    },
+    {
+      "source": "functions/packs.c",
+      "scopes": [
+        "test_packs"
+      ],
+      "name": "once",
+      "display_name": "once [functions/packs.c::test_packs]",
+      "native_address": 41505464,
+      "rebuilt_address": 41527704,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [],
+      "name": "choose_a_card_strcsvids",
+      "display_name": "choose_a_card_strcsvids",
+      "native_address": 41505520,
+      "rebuilt_address": 41530132,
+      "size": 12,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [],
+      "name": "last_btn_color",
+      "display_name": "last_btn_color",
+      "native_address": 41505516,
+      "rebuilt_address": 41530128,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [],
+      "name": "last_btn_type",
+      "display_name": "last_btn_type",
+      "native_address": 41505512,
+      "rebuilt_address": 41530124,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [
+        "generate_choose_a_card_dlg_template"
+      ],
+      "name": "templ",
+      "display_name": "templ [functions/choose_a_card.cpp::generate_choose_a_card_dlg_template]",
+      "native_address": 41035968,
+      "rebuilt_address": 41048260,
+      "size": 990,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [
+        "dlgproc_choose_a_card"
+      ],
+      "name": "args",
+      "display_name": "args [functions/choose_a_card.cpp::dlgproc_choose_a_card]",
+      "native_address": 41505484,
+      "rebuilt_address": 41530096,
+      "size": 28,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [
+        "dlgproc_choose_a_card"
+      ],
+      "name": "origcolors",
+      "display_name": "origcolors",
+      "native_address": 41505480,
+      "rebuilt_address": 41530092,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [
+        "dlgproc_choose_a_card"
+      ],
+      "name": "origtypes",
+      "display_name": "origtypes",
+      "native_address": 41505476,
+      "rebuilt_address": 41530088,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [
+        "dlgproc_choose_a_card"
+      ],
+      "name": "winbk_chooseacard",
+      "display_name": "winbk_chooseacard",
+      "native_address": 41505472,
+      "rebuilt_address": 41530084,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [
+        "dlgproc_choose_a_card"
+      ],
+      "name": "keys_input_storage",
+      "display_name": "keys_input_storage",
+      "native_address": 41505468,
+      "rebuilt_address": 41530080,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [
+        "dlgproc_choose_a_card"
+      ],
+      "name": "reset_keys_input",
+      "display_name": "reset_keys_input",
+      "native_address": 41036968,
+      "rebuilt_address": 41048256,
+      "size": 1,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [
+        "dlgproc_choose_a_card"
+      ],
+      "name": "prev_selected",
+      "display_name": "prev_selected",
+      "native_address": 41036964,
+      "rebuilt_address": 41048252,
+      "size": 4,
+      "writable": true
+    },
+    {
+      "source": "functions/choose_a_card.cpp",
+      "scopes": [
+        "dlgproc_choose_a_card"
+      ],
+      "name": "prev_drawn_selected",
+      "display_name": "prev_drawn_selected",
+      "native_address": 41036960,
+      "rebuilt_address": 41048248,
+      "size": 4,
+      "writable": true
+    }
+  ],
+  "queue": {
+    "summary": {
+      "exact": 12467,
+      "different": 6090,
+      "effective": 271
+    },
+    "candidates": 393,
+    "report": ".recovery\\reccmp\\global-bindings-c626.json",
+    "inputs_current": true,
+    "report_sha256": "46c325c0b819c8fc1dd27dc33a93880083c250bf07789a7a0fd4b411afc91738",
+    "historical_report_compatible": true,
+    "historical_report_inputs_current": false
+  },
+  "review": {
+    "whole_range_global_reference_screen": {
+      "functions": [
+        {
+          "name": "has_subtype_by_id",
+          "source": "functions/has_creature_type.c",
+          "address": "0x26736e0",
+          "score": 0.3732394366197183,
+          "native_only": {
+            "auto_targets": [
+              {
+                "address": "0x26737a0",
+                "instruction": "mov ebx, dword ptr [edi + edx*8 + 0x2796ff8]",
+                "offset": 1976
+              },
+              {
+                "address": "0x26737b1",
+                "instruction": "cmp byte ptr [edi + edx*8 + 0x2796ffc], 2",
+                "offset": 1980
+              }
+            ]
+          },
+          "rebuilt_only": {
+            "mana_colors_added": [
+              {
+                "address": "0x26bceca",
+                "instruction": "mov edi, dword ptr [ecx + edx*8 + 0x27b86f8]",
+                "offset": 4
+              }
+            ],
+            "card_flags": [
+              {
+                "address": "0x26bcedf",
+                "instruction": "cmp byte ptr [ecx + edx*8 + 0x27b86fc], 2",
+                "offset": 0
+              }
+            ]
+          }
+        }
+      ],
+      "screened": 6090,
+      "inputs": {
+        "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "C:\\dev\\manalink3-src\\ManalinkEh.dll": "ac236799d5e898fd8afdf3cbd798f920da722e157610fa01fed6bf7a63cb9af3",
+        "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "ffac859be789ada8c2137ef0cea49ad548355f8462d561a783043119cfa551c8"
+      },
+      "scope": "Whole-range operand inventory using verified data extents; absent/extra identities are discovery hints, not proof that a call, compiler inlining or source global is wrong."
+    },
+    "resolution": "The single candidate has_subtype_by_id is a displacement-only false positive. Both binaries shift the player index by seven, start the element index at five, and load the subtype and added_forced fields using the table base minus 40 and 36 respectively. No wrong-global source edit is justified.",
+    "additional_small_diff_spot_checks": [
+      "can_activate_basic_equipment: arithmetic versus logical shift followed by masking to eight bits gives the same stored color requirement.",
+      "miara_trigger: the source already rejects amount below one; native test/return placement alone does not justify a source change.",
+      "card_trench_gorger: native explicit count four is on the four-lands/player-one exit path; the reconstructed counter already has that value on that path."
+    ],
+    "score_regressions": "Fourteen functions score lower after naming/alignment changes and the preceding two source edits, without losing an exact match. The scores remain discovery signals; the pass does not certify every residual block as equivalent."
+  },
+  "current_build": {
+    "reused": true,
+    "build_log": ".recovery/reccmp/filter-fastpath-build-c625.log",
+    "build_log_sha256": "6d170b12c1c36c2d08fbd04a67c228881b635a2007cfd386e43e55dc79b582af",
+    "fixed_slots": 15169,
+    "source_changed_in_this_pass": false
+  },
+  "source_input_pins_sha256": "e657282d6216bd4212a81d0f35d7130e941059975d7212fe913eafc68e050b35",
+  "implementation_inputs": {
+    "tools/reccmp_project.py": "c63e3d0b734e532a9bf37141562308a06fd9d3327e85f02d01f67267c73876b6",
+    "tools/recovery/reccmp_globals.py": "1e870d89b4afbc15950d26c59a94162aecc70bec0700f60c032373a76910f3bc",
+    "tools/recovery/small_diff_queue.py": "4c42a4946443c8a479223e978920206ca98a64a0e4b8e68433dea7c16bae8a76",
+    "reccmp-project.yml": "a978a638b5f154a514be6229cd0b012f96fb8431f1bfc4c4f00c3cf13bc0d371",
+    "config/reccmp/globals.csv": "4bd078c759882fd6f758d1ec43ab13606b0e8e288c32b13ec11f52609c5142c9"
+  },
+  "scope": "DLL-owned direct-address project objects and comparison metadata. Does not cover EXE-owned absolute globals or CRT data, prove initializer/full record ABI equality, or establish gameplay equivalence from an instruction score. No new source recovery count is claimed. Existing successful build is reused because C/header inputs are unchanged."
+}

@@ -99,46 +99,48 @@ void planeswalk_to(int player, int target_plane, int override){
 static void casting_the_planar_dice(int player, int card, int result)
 {
   int cp = get_actual_plane(player);
-  if (cp > -1)
+  if (cp < 0)
+    return;
+  if (player == AI)
+    do_dialog(HUMAN, player, card, -1, -1, "Opponent is casting the Planar Dice.", 0);
+  if (result == 1)
   {
-    if (player == AI)
+    int np = get_new_plane(cp);
+    card_ptr_t *c = cards_ptr[cp];
+    card_ptr_t *c1 = cards_ptr[np];
+    char buffer[100];
+    scnprintf(buffer, 100, "Planeswalking away from %s\nto %s", c->name, c1->name);
+    do_dialog(HUMAN, player, card, -1, -1, buffer, 0);
+    int se_card = check_for_special_effect_card(player, CARD_ID_ELOREN_WILDS);
+    kill_card(player, se_card, KILL_EXILE);
+    planeswalk_to(player, np, 0);
+    return;
+  }
+  /* The native non-walk path performs these additional ID lookups. */
+  if (get_id(player, card) != CARD_ID_PLANECHASE)
+    get_id(player, card);
+  bool chaos = result == 6;
+  if (!chaos)
+  {
+    int id = get_id(player, card);
+    chaos = result == 5 && id != CARD_ID_PLANECHASE;
+  }
+  if (chaos)
+  {
+    card_ptr_t *c = cards_ptr[cp];
+    char buffer[100];
+    scnprintf(buffer, 100, "The power of %s\nis unleashed!", c->name);
+    do_dialog(HUMAN, player, card, -1, -1, buffer, 0);
+    int plane = locate_id(player, cp);
+    if (plane >= 0)
     {
-      do_dialog(HUMAN, player, card, -1, -1, "Opponent is casting the Planar Dice.", 0);
-    }
-    if (result == 1)
-    {
-      int np = get_new_plane(cp);
-      card_ptr_t *c = cards_ptr[cp];
-      card_ptr_t *c1 = cards_ptr[np];
-      char buffer[100];
-      scnprintf(buffer, 100, "Planeswalking away from %s\nto %s", c->name, c1->name);
-      do_dialog(HUMAN, player, card, -1, -1, buffer, 0);
-      int se_card = check_for_special_effect_card(player, CARD_ID_ELOREN_WILDS);
-      if (result > -1)
-      {
-        kill_card(player, se_card, KILL_EXILE);
-      }
-      planeswalk_to(player, np, 0);
-    }
-    else if (result == 6 || (get_id(player, card) != CARD_ID_PLANECHASE && result == 5))
-    {
-      card_ptr_t *c = cards_ptr[cp];
-      char buffer[100];
-      scnprintf(buffer, 100, "The power of %s\nis unleashed!", c->name);
-      do_dialog(HUMAN, player, card, -1, -1, buffer, 0);
-      int plane = locate_id(player, cp);
-      if (plane > -1)
-      {
-        card_instance_t *instance = get_card_instance(player, plane);
-        CardFunction ptFunction = cards_data[instance->internal_card_id].code_pointer;
-        ptFunction(player, plane, EVENT_CHAOS);
-      }
-    }
-    else
-    {
-      do_dialog(HUMAN, player, card, -1, -1, "Nothing happened.", 0);
+      card_instance_t *instance = get_card_instance(player, plane);
+      CardFunction ptFunction = cards_data[instance->internal_card_id].code_pointer;
+      ptFunction(player, plane, EVENT_CHAOS);
     }
   }
+  else
+    do_dialog(HUMAN, player, card, -1, -1, "Nothing happened.", 0);
 }
 
 static int generic_plane(int player, int card, event_t event)
@@ -214,11 +216,11 @@ Totem armor (If enchanted creature would be destroyed, instead remove all damage
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.allowed_controller = td.preferred_controller = player;
+		card_instance_t* instance = get_card_instance(player, card);
 		if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE){
 			return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST_XW(1, 1), 0, &td, "Select target creature you control to attach this.");
 		}
 		if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td)){
-			card_instance_t* instance = get_card_instance(player, card);
 			attach_aura_to_target(player, instance->parent_card, event, instance->targets[0].player, instance->targets[0].card);
 		}
 	}
@@ -576,7 +578,7 @@ int card_vela_the_night_clad(int player, int card, event_t event)
       intimidate(affected_card_controller, affected_card, EVENT_ABILITIES);
     }
     leaves_play(player, card, EVENT_ABILITIES, 1, 1);
-    if (trigger_condition != 0xd4)
+    if (trigger_condition != TRIGGER_LEAVE_PLAY)
     {
       return 0;
     }
@@ -585,7 +587,7 @@ int card_vela_the_night_clad(int player, int card, event_t event)
   {
     leaves_play(player, card, event, 1, 1);
   }
-  if (trigger_condition == 0xd4 &&
+  if (trigger_condition == TRIGGER_LEAVE_PLAY &&
       (((card == affected_card) && (player == affected_card_controller)) &&
        ((trigger_cause_controller == player &&
          ((trigger_cause != card && (reason_for_trigger_controller == player)))))) &&
@@ -2458,7 +2460,7 @@ int card_grand_ossuary(int player, int card, event_t event)
   if (event == EVENT_CHAOS)
   {
     token_generation_t token;
-    default_token_definition(player, card, 0x497d, &token);
+    default_token_definition(player, card, CARD_ID_SAPROLING, &token);
     death_count_or_turn_offset = 0;
     do
     {
@@ -2543,9 +2545,9 @@ int card_jund2(int player, int card, event_t event)
   vanguard_card(player, card, event, 7, 0x14, 0);
   if (event == EVENT_CHAOS)
   {
-    generate_tokens_by_id(player, card, 0x493a, 2);
+    generate_tokens_by_id(player, card, CARD_ID_GOBLIN, 2);
   }
-  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if ((((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
@@ -2835,7 +2837,7 @@ int card_norns_dominion(int player, int card, event_t event)
   else if (event == EVENT_CHAOS)
   {
     default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = 1;
+    td.illegal_type = TYPE_LAND;
     td.preferred_controller = player;
     td.allow_cancel = 0;
     instance = get_card_instance(player, card);
@@ -3151,7 +3153,7 @@ int card_stensia(int player, int card, event_t event)
     }
   }
   instance = get_card_instance(player, card);
-  if (instance->targets[0x10].player > 0 && trigger_condition == 0xd7)
+  if (instance->targets[0x10].player > 0 && trigger_condition == TRIGGER_DEAL_DAMAGE)
   {
     if (((card == affected_card) && (player == affected_card_controller)) &&
         (reason_for_trigger_controller == player))
@@ -3282,7 +3284,7 @@ int card_talon_gates(int player, int card, event_t event)
     {
       choice_or_selected_card = has_mana(player, 0, count_counters(player, card, COUNTER_VORTEX));
       choice = dialog_impl(
-          player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Cast the Planar Dice",
+          player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, "Cast the Planar Dice",
           choice_or_selected_card, 1, "Suspend a card",
           check_battlefield_for_special_card(player, card, player, 0, suspend_test), 1, 0, 0, 0, 0);
       if (choice == 0)
@@ -3333,7 +3335,7 @@ int card_talon_gates(int player, int card, event_t event)
       while ((instance = in_play(player, choice_or_selected_card),
               instance == NULL || (((instance->internal_card_id != LEGACY_EFFECT_CUSTOM ||
                                      (instance->info_slot_fn != generic_suspend_legacy)) &&
-                                    (cards_data[instance->internal_card_id].id != 0x2178)))))
+                                    (cards_data[instance->internal_card_id].id != CARD_ID_GREATER_GARGADON_SUSPENDED)))))
       {
         choice_or_selected_card = choice_or_selected_card + 1;
         if (active_cards_count[player] <= choice_or_selected_card)

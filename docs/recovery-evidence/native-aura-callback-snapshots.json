@@ -1,0 +1,5887 @@
+{
+  "format": 1,
+  "batch": "C732",
+  "status": "94 scoped source/native reviews; two callback corrections; grouped build passes 15,169 fixed slots.",
+  "changed_definitions": 2,
+  "reviewed_leads": 94,
+  "priority_indices": [
+    5,
+    17,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    76,
+    77,
+    78,
+    79,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    135,
+    145,
+    162,
+    173,
+    198,
+    200,
+    212,
+    217,
+    566,
+    568,
+    583,
+    599,
+    613,
+    632,
+    664,
+    671,
+    676,
+    679,
+    703,
+    724,
+    732,
+    777,
+    818,
+    830,
+    837,
+    840,
+    843,
+    847,
+    860,
+    863,
+    873,
+    899,
+    905,
+    911,
+    938,
+    943,
+    945,
+    961,
+    969,
+    986,
+    1004,
+    1008,
+    1024,
+    1025,
+    1027,
+    1035,
+    1038,
+    1050,
+    1065,
+    1073,
+    1083,
+    1105,
+    1107,
+    1117,
+    1121,
+    1122,
+    1130,
+    1132,
+    1141,
+    1153,
+    1154,
+    1155,
+    1168,
+    1176,
+    1181,
+    1198,
+    1219,
+    1242
+  ],
+  "source_reviews": [
+    {
+      "name": "card_aquitects_will",
+      "source": "cards/lorwyn.c",
+      "address": "0x258fed0",
+      "before": "int card_aquitects_will(int player, int card, event_t event){\n\n\t/* Aquitect's Will\t|U\n\t * Tribal Sorcery - Merfolk\n\t * Put a flood counter on target land. That land is |Han Island in addition to its other types for as long as it has a flood counter on it. If you control a\n\t * Merfolk, draw a card. */\n\n\tif( ! IS_GS_EVENT(player, card, event) ){\n\t\treturn 0;\n\t}\n\n\ttarget_definition_t td;\n\tdefault_target_definition(player, card, &td, TYPE_LAND);\n\n\tcard_instance_t *instance = get_card_instance(player, card);\n\n\tif( event == EVENT_CAST_SPELL && affect_me(player, card) ){\n\t\tai_modifier += (check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_MERFOLK) ? 48 : 0);\n\t}\n\n\tif( event == EVENT_RESOLVE_SPELL ){\n\t\tif( valid_target(&td) ){\n\t\t\tadd_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_FLOOD, 1);\n\t\t\tif( instance->targets[0].player == player ){\n\t\t\t\tint legacy = create_targetted_legacy_activate(player, card, &effect_aquitects_will,\n\t\t\t\t\t\t\t\t\t\t\t\tinstance->targets[0].player, instance->targets[0].card);\n\t\t\t\tget_card_instance(instance->targets[0].player, legacy)->targets[1].card = get_hacked_subtype(player, card, SUBTYPE_ISLAND);\n\t\t\t}\n\t\t\telse{\n\t\t\t\tint fake = add_card_to_hand(instance->targets[0].player, instance->internal_card_id);\n\t\t\t\thand_count[instance->targets[0].player]--;\n\t\t\t\tint legacy = create_targetted_legacy_activate(instance->targets[0].player, fake, &effect_aquitects_will,\n\t\t\t\t\t\t\t\t\t\t\t\tinstance->targets[0].player, instance->targets[0].card);\n\t\t\t\tget_card_instance(instance->targets[0].player, legacy)->targets[1].card = get_hacked_subtype(player, card, SUBTYPE_ISLAND);\n\t\t\t\tobliterate_card(instance->targets[0].player, fake);\n\t\t\t}\n\t\t\tif( check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_MERFOLK) ){\n\t\t\t\tdraw_cards(player, 1);\n\t\t\t}\n\t\t}\n\t\tkill_card(player, card, KILL_DESTROY);\n\t}\n\n\treturn generic_spell(player, card, event, GS_CAN_TARGET, &td, \"TARGET_LAND\", 1, NULL);\n}",
+      "after": "int card_aquitects_will(int player, int card, event_t event){\n\n\t/* Aquitect's Will\t|U\n\t * Tribal Sorcery - Merfolk\n\t * Put a flood counter on target land. That land is |Han Island in addition to its other types for as long as it has a flood counter on it. If you control a\n\t * Merfolk, draw a card. */\n\n\tif( ! IS_GS_EVENT(player, card, event) ){\n\t\treturn 0;\n\t}\n\n\ttarget_definition_t td;\n\tdefault_target_definition(player, card, &td, TYPE_LAND);\n\n\tcard_instance_t *instance = get_card_instance(player, card);\n\n\tif( event == EVENT_CAST_SPELL && affect_me(player, card) ){\n\t\tai_modifier += (check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_MERFOLK) ? 48 : 0);\n\t}\n\n\tif( event == EVENT_RESOLVE_SPELL ){\n\t\tif( valid_target(&td) ){\n\t\t\tadd_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_FLOOD, 1);\n\t\t\tif( instance->targets[0].player == player ){\n\t\t\t\tint legacy = create_targetted_legacy_activate(player, card, &effect_aquitects_will,\n\t\t\t\t\t\t\t\t\t\t\t\tinstance->targets[0].player, instance->targets[0].card);\n\t\t\t\tcard_instance_t *legacy_instance = get_card_instance(player, legacy);\n\t\t\t\tlegacy_instance->targets[1].card = get_hacked_subtype(player, card, SUBTYPE_ISLAND);\n\t\t\t}\n\t\t\telse{\n\t\t\t\tint fake = add_card_to_hand(instance->targets[0].player, instance->internal_card_id);\n\t\t\t\thand_count[instance->targets[0].player]--;\n\t\t\t\tint legacy = create_targetted_legacy_activate(instance->targets[0].player, fake, &effect_aquitects_will,\n\t\t\t\t\t\t\t\t\t\t\t\tinstance->targets[0].player, instance->targets[0].card);\n\t\t\t\tcard_instance_t *legacy_instance = get_card_instance(instance->targets[0].player, legacy);\n\t\t\t\tlegacy_instance->targets[1].card = get_hacked_subtype(player, card, SUBTYPE_ISLAND);\n\t\t\t\tobliterate_card(instance->targets[0].player, fake);\n\t\t\t}\n\t\t\tif( check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_MERFOLK) ){\n\t\t\t\tdraw_cards(player, 1);\n\t\t\t}\n\t\t}\n\t\tkill_card(player, card, KILL_DESTROY);\n\t}\n\n\treturn generic_spell(player, card, event, GS_CAN_TARGET, &td, \"TARGET_LAND\", 1, NULL);\n}",
+      "before_sha256": "a2751edaebf42ffd668805898d10f62329551a5d2a3c0ef711a90df375827cf4",
+      "after_sha256": "caed054780e59e2f3fc1f1c2852dc6d851988aff9a24edee5879881dd363b3d9",
+      "kind": "native_callback_snapshot_correction",
+      "reason": "Self-controlled branch: native 0x2590187 passes original player (ESI) to get_card_instance after legacy creation; rebuilt previously reloaded targets[0].player at 0x22e1436. Restore original player and explicitly sequence legacy lookup before get_hacked_subtype in both branches. Foreign branch retains fresh target-controller reads after creation and before obliteration.",
+      "native_aura_callback_snapshots": "docs/recovery-evidence/native-aura-callback-snapshots.json"
+    },
+    {
+      "name": "card_shielded_by_faith",
+      "source": "cards/commander_2015.c",
+      "address": "0x2353320",
+      "before": "int card_shielded_by_faith(int player, int card, event_t event){\n\t/* Shielded by Faith\t|1|W|W\t0x200e33c\n\t * Enchantment - Aura\n\t * Enchant creature\n\t * Enchanted creature has indestructible.\n\t * Whenever a creature enters the battlefield, you may attach ~ to that creature. */\n\n\tcard_instance_t* instance = get_card_instance(player, card);\n\tif (trigger_cause_controller != player || trigger_cause != card){\n\t\tint mode = RESOLVE_TRIGGER_OPTIONAL;\n\t\tif (player == AI){\n\t\t\tmode = trigger_cause_controller == player && get_cmc(player, trigger_cause) > get_cmc(instance->damage_target_player, instance->damage_target_card) ? RESOLVE_TRIGGER_MANDATORY : 0;\n\t\t}\n\t\tetb_ability_global(ANYBODY, event, mode, TYPE_CREATURE, NULL, player, card);\n\t}\n\tif (event == EVENT_ETB_ABILITY){\n\t\tinstance = get_card_instance(player, card);\n\t\tinstance->targets[0].player = trigger_cause_controller;\n\t\tinstance->targets[0].card = trigger_cause;\n\t\treturn call_card_function_i(instance, player, card, EVENT_RESOLVE_MOVING_AURA);\n\t}\n\treturn generic_aura(player, card, event, player, 0, 0, 0, SP_KEYWORD_INDESTRUCTIBLE, 0, 0, 0);\n}",
+      "after": "int card_shielded_by_faith(int player, int card, event_t event){\n\t/* Shielded by Faith\t|1|W|W\t0x200e33c\n\t * Enchantment - Aura\n\t * Enchant creature\n\t * Enchanted creature has indestructible.\n\t * Whenever a creature enters the battlefield, you may attach ~ to that creature. */\n\n\tcard_instance_t* instance = get_card_instance(player, card);\n\tif (trigger_cause_controller != player || trigger_cause != card){\n\t\tint mode = RESOLVE_TRIGGER_OPTIONAL;\n\t\tif (player == AI){\n\t\t\tmode = 0;\n\t\t\tif (trigger_cause_controller == player){\n\t\t\t\tint attached_player = instance->damage_target_player;\n\t\t\t\tint attached_card = instance->damage_target_card;\n\t\t\t\tint entering_cmc = get_cmc(player, trigger_cause);\n\t\t\t\tint attached_cmc = get_cmc(attached_player, attached_card);\n\t\t\t\tif (entering_cmc > attached_cmc){\n\t\t\t\t\tmode = RESOLVE_TRIGGER_MANDATORY;\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\tetb_ability_global(ANYBODY, event, mode, TYPE_CREATURE, NULL, player, card);\n\t}\n\tif (event == EVENT_ETB_ABILITY){\n\t\tinstance = get_card_instance(player, card);\n\t\tinstance->targets[0].player = trigger_cause_controller;\n\t\tinstance->targets[0].card = trigger_cause;\n\t\treturn call_card_function_i(instance, player, card, EVENT_RESOLVE_MOVING_AURA);\n\t}\n\treturn generic_aura(player, card, event, player, 0, 0, 0, SP_KEYWORD_INDESTRUCTIBLE, 0, 0, 0);\n}",
+      "before_sha256": "72e6fddc702464db503d57206f353920577fa245b9254173a0ea1f1196abec37",
+      "after_sha256": "794c4348729a12933d676fe65132f0cc1098d06e1f6f556f0aeddd8d3ad26878",
+      "kind": "native_callback_snapshot_correction",
+      "reason": "Native 0x2353460/0x2353466 saves attached player/card before first get_cmc at 0x2353477; rebuilt previously read both after first call (0x20e3e11/0x20e3e18). Restore attachment snapshot and entering-CMC-before-attached-CMC order; retain optional human trigger, zero AI mode for foreign creature, ETB requery and aura continuation.",
+      "native_aura_callback_snapshots": "docs/recovery-evidence/native-aura-callback-snapshots.json"
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/commander_2015.c",
+      "before_bytes_sha256": "5d0d300e17b9af065f74e832f9f1d3a6436b049021f62013b4bf0551fb1358d4",
+      "after_bytes_sha256": "546370f69afedce8ca180930dc154369963afeb9d0861bbe116243ca042a2969"
+    },
+    {
+      "source": "cards/lorwyn.c",
+      "before_bytes_sha256": "c310bf0b9f7aef824936a805864c16b932239663a6753b1f52fa81b700d2329a",
+      "after_bytes_sha256": "102548ea81e48d2f81d0d1f06edb93aa58d71147db3b58b150190cc5df279614"
+    }
+  ],
+  "observations": [
+    {
+      "index": 5,
+      "name": "remove_eot_unless_cb",
+      "source": "cards/rivals_of_ixalan.c",
+      "address": "0x218f5b0",
+      "source_definition_sha256": "ed19b0dcb8376949fe7fc98c08d4b6702a899b2fa5c8a55353cd7fcc414ed199",
+      "changed": false
+    },
+    {
+      "index": 17,
+      "name": "card_soul_channeling",
+      "source": "cards/mercadian_masques.c",
+      "address": "0x2183ee0",
+      "source_definition_sha256": "1ade02e7538789b4b9cbf12ef4d22e1e94b95a1ab2174eaa3b064be3126db060",
+      "changed": false
+    },
+    {
+      "index": 65,
+      "name": "card_rebel_informer",
+      "source": "cards/prophecy.c",
+      "address": "0x2605770",
+      "source_definition_sha256": "6c4285a7ce7e7ccc28a630009e3e6fce4b21f3356e1facf530cc7662d6dfe979",
+      "changed": false
+    },
+    {
+      "index": 66,
+      "name": "card_late_to_dinner",
+      "source": "cards/modern_horizons_2.c",
+      "address": "0x2238a10",
+      "source_definition_sha256": "ab55e0a1d9d73442a182cb264ac5591a4548118815d45629c64c043160f8aeeb",
+      "changed": false
+    },
+    {
+      "index": 67,
+      "name": "card_roast",
+      "source": "cards/dragons_of_tarkir.c",
+      "address": "0x23228e0",
+      "source_definition_sha256": "5b2f2dda5879962174353c1e2eabfe66c2853d80450cf86ffbfebcf80da9f84b",
+      "changed": false
+    },
+    {
+      "index": 68,
+      "name": "card_halt_order",
+      "source": "cards/scars_of_mirrodin.c",
+      "address": "0x2444260",
+      "source_definition_sha256": "071b1721a5a4392dba42d930f7a7e52992f4715e25f4e11465ec8bf4c2392fbb",
+      "changed": false
+    },
+    {
+      "index": 69,
+      "name": "card_rescue",
+      "source": "cards/urza_destiny.c",
+      "address": "0x2109e10",
+      "source_definition_sha256": "eed114a88d37d1b5e7fc051ad0d3198346ffc449b9331ac79534eec5314560fc",
+      "changed": false
+    },
+    {
+      "index": 70,
+      "name": "load_text_nocopy",
+      "source": "functions/load_text.c",
+      "address": "0x2676360",
+      "source_definition_sha256": "e5ecd6efac463e7741b4f9412579899b7ba9e95a97ed2e943ce7d10b0daccb93",
+      "changed": false
+    },
+    {
+      "index": 71,
+      "name": "card_makeshift_mannequin",
+      "source": "cards/lorwyn.c",
+      "address": "0x2599030",
+      "source_definition_sha256": "812d4ae60d8a508c3d85bac1de296bfbddd4cca5bdf0e3b495aab03947ce6042",
+      "changed": false
+    },
+    {
+      "index": 72,
+      "name": "card_breath_of_life",
+      "source": "cards/portal_1_2_3k.c",
+      "address": "0x21b9270",
+      "source_definition_sha256": "3f19d52dac1af306e1ca872bc86b7160d1999a6023a179101cc303d76d4c0daf",
+      "changed": false
+    },
+    {
+      "index": 73,
+      "name": "card_argivian_restoration",
+      "source": "cards/weatherlight.c",
+      "address": "0x22ec2e0",
+      "source_definition_sha256": "29dcc8fb8e768be8a0c6b818bd1eff823decb45f0f5223698b40a71ca4f79625",
+      "changed": false
+    },
+    {
+      "index": 74,
+      "name": "card_archfiend_of_despair",
+      "source": "cards/battlebond.c",
+      "address": "0x2026390",
+      "source_definition_sha256": "646769dfddd9d3463a97db2ed3e06edef1b954a008d44a669b80e41c251cc413",
+      "changed": false
+    },
+    {
+      "index": 76,
+      "name": "generate_tokens_by_id",
+      "source": "functions/token_generation.c",
+      "address": "0x2666720",
+      "source_definition_sha256": "3023f249c515e7cca65c5bf618e4597400ee76c4069f4568829ddb60f2b914bc",
+      "changed": false
+    },
+    {
+      "index": 77,
+      "name": "select_a_subtype_impl",
+      "source": "functions/has_creature_type.c",
+      "address": "0x2674ae0",
+      "source_definition_sha256": "c422b81d6a246b9150f69c61db176405cae3d7f32e3edba528099ce42712da57",
+      "changed": false
+    },
+    {
+      "index": 78,
+      "name": "shrouded_lore_impl",
+      "source": "cards/planar_chaos.c",
+      "address": "0x23bd870",
+      "source_definition_sha256": "b24f9719dd3a925e9de028b7bd8039f680cbc913126869593a764a4abba4a594",
+      "changed": false
+    },
+    {
+      "index": 79,
+      "name": "card_dragonshift",
+      "source": "cards/dragons_maze.c",
+      "address": "0x2295540",
+      "source_definition_sha256": "80719e2809f149e9eaf8d73650d1428319702cd28e70ce628550b531a8ac1721",
+      "changed": false
+    },
+    {
+      "index": 81,
+      "name": "card_wrench_mind",
+      "source": "cards/mirrodin.c",
+      "address": "0x25491b0",
+      "source_definition_sha256": "aae24020be412cc739df764ba05b29e124f0ddf56c71587fa337bf70ed8222f6",
+      "changed": false
+    },
+    {
+      "index": 82,
+      "name": "card_malicious_intent",
+      "source": "cards/avacyn_restored.c",
+      "address": "0x234ba20",
+      "source_definition_sha256": "927f6a463c7f143722e6102e32e4c8328252d0754dcaa948b429efbb6c64f88b",
+      "changed": false
+    },
+    {
+      "index": 83,
+      "name": "card_hunters_insight",
+      "source": "cards/m12.c",
+      "address": "0x24a0d50",
+      "source_definition_sha256": "95c6bf6e4d68b2bbe92f3707fdf71b76ebe8f34b0421ed3a97c09bd0330ff7c2",
+      "changed": false
+    },
+    {
+      "index": 84,
+      "name": "card_power_leak",
+      "source": "cards/unlimited.c",
+      "address": "0x24cad80",
+      "source_definition_sha256": "1f383b094284dcf6698535c28eee32f4adc567453e068c9d947b11d2cd39c5b2",
+      "changed": false
+    },
+    {
+      "index": 85,
+      "name": "card_sleep",
+      "source": "cards/m11.c",
+      "address": "0x208f8a0",
+      "source_definition_sha256": "c4f83acbbc4b4aef635165ec5ec15e76e24552ba95431d31c1be62b4ca90eb73",
+      "changed": false
+    },
+    {
+      "index": 86,
+      "name": "card_savage_beating",
+      "source": "cards/darksteel.c",
+      "address": "0x2255190",
+      "source_definition_sha256": "d803153968810b70e14485ed70939ea3d473a236ced85af5654234df6fac6e5d",
+      "changed": false
+    },
+    {
+      "index": 87,
+      "name": "card_dual_casting",
+      "source": "cards/avacyn_restored.c",
+      "address": "0x234b060",
+      "source_definition_sha256": "e2e27e88db01afe1c8d1765881a4163ad841596f201908fe08374a1efc0ffbef",
+      "changed": false
+    },
+    {
+      "index": 88,
+      "name": "card_quicksilver_dagger",
+      "source": "cards/apocalypse.c",
+      "address": "0x2067e50",
+      "source_definition_sha256": "d7e35a9ac16d3c4fba749cbae9b2c2939b7e1d59d081fce0f2136b949773db50",
+      "changed": false
+    },
+    {
+      "index": 89,
+      "name": "card_spawning_grounds",
+      "source": "cards/commander_2013.c",
+      "address": "0x23c25c0",
+      "source_definition_sha256": "3bd30a068de60f42e76e2176d1744041bf985b4827d8892982c4b74db0c4c0b1",
+      "changed": false
+    },
+    {
+      "index": 90,
+      "name": "card_blast_of_genius",
+      "source": "cards/dragons_maze.c",
+      "address": "0x22949b0",
+      "source_definition_sha256": "f8d2f7b05ad11ccf8ff90f3fd99fb5bf5a53eb20494d354c0aaef6e9de26fe1b",
+      "changed": false
+    },
+    {
+      "index": 135,
+      "name": "card_worms_of_the_earth",
+      "source": "cards/the_dark.c",
+      "address": "0x2436710",
+      "source_definition_sha256": "64dddee709ed4d62ef5bd5f811043d49fd81eb71935c4b40ee87d4c3dd53f551",
+      "changed": false
+    },
+    {
+      "index": 145,
+      "name": "copy_token_characteristics_for_clone",
+      "source": "functions/token_generation.c",
+      "address": "0x2665690",
+      "source_definition_sha256": "b7675465de95c06f21afa6d4ad83be12f46f4cb3da474ab2be7ae05554d56638",
+      "changed": false
+    },
+    {
+      "index": 162,
+      "name": "card_godhead_of_awe",
+      "source": "cards/shadowmoor.c",
+      "address": "0x2551320",
+      "source_definition_sha256": "b07e78d1d28ddee231663119837287e901b09a8f9ae6b7d927101433c8c534df",
+      "changed": false
+    },
+    {
+      "index": 173,
+      "name": "card_tidehollow_sculler",
+      "source": "cards/shards_of_alara.c",
+      "address": "0x2146270",
+      "source_definition_sha256": "4608a09d4750ac9178c07e5d74c19100ae78464681ded20e565d4d8e3d7c5cb2",
+      "changed": false
+    },
+    {
+      "index": 198,
+      "name": "card_consuming_aberration",
+      "source": "cards/gatecrash.c",
+      "address": "0x2521ec0",
+      "source_definition_sha256": "2fbf294065ca021717e85a12f4fc890942406457fe4bce76fe66ce602ee75070",
+      "changed": false
+    },
+    {
+      "index": 200,
+      "name": "card_ancient_ooze",
+      "source": "cards/scourge.c",
+      "address": "0x24f72e0",
+      "source_definition_sha256": "b36f8f482347650acf6ffa858d04d6369a70c4ba2c93af28f8c7d7bfd47bb5bd",
+      "changed": false
+    },
+    {
+      "index": 212,
+      "name": "od_land",
+      "source": "cards/odissey.c",
+      "address": "0x2501890",
+      "source_definition_sha256": "84b7078d45369a9064e0c6d535b2adacc4a0b09f1817cd8ea7cbd5575e1fb9e5",
+      "changed": false
+    },
+    {
+      "index": 217,
+      "name": "card_oonas_blackguard",
+      "source": "cards/morningtide.c",
+      "address": "0x2283c20",
+      "source_definition_sha256": "b73d0c11f58659fa07fd5f006416b81d859a37e019e42713364d8defd39c7f10",
+      "changed": false
+    },
+    {
+      "index": 566,
+      "name": "card_teshar_ancestors_apostle",
+      "source": "cards/dominaria.c",
+      "address": "0x22d4230",
+      "source_definition_sha256": "f6dbf6615e03ba8d506b4744df6cd49b63d8ac8a26bb898f60ca5a0df49b4e54",
+      "changed": false
+    },
+    {
+      "index": 568,
+      "name": "card_festerhide_boar",
+      "source": "cards/innistrad.c",
+      "address": "0x207b450",
+      "source_definition_sha256": "76dd0354ad893437243c5ce7178f6fcf869a5fa28dc1f491b70d27493ecd92bd",
+      "changed": false
+    },
+    {
+      "index": 583,
+      "name": "card_mirror_of_the_forebears",
+      "source": "cards/commander_2017.c",
+      "address": "0x2290700",
+      "source_definition_sha256": "271eabe71e823950e5f6cc74d01c4f3a0e1f1fe1571e9b541962d34844deabb8",
+      "changed": false
+    },
+    {
+      "index": 599,
+      "name": "mirror_strike_effect",
+      "source": "cards/prophecy.c",
+      "address": "0x25facb0",
+      "source_definition_sha256": "15c233432f7f309be80356c1539e145d5c661a14e2671a603e8403736427493b",
+      "changed": false
+    },
+    {
+      "index": 613,
+      "name": "card_aquitects_will",
+      "source": "cards/lorwyn.c",
+      "address": "0x258fed0",
+      "source_definition_sha256": "a2751edaebf42ffd668805898d10f62329551a5d2a3c0ef711a90df375827cf4",
+      "changed": true
+    },
+    {
+      "index": 632,
+      "name": "pyromancers_goggles_legacy",
+      "source": "cards/origins.c",
+      "address": "0x20d9b40",
+      "source_definition_sha256": "b7147f2d6677fe2ad294139a70d24202d938051a54bc96f4315ee92a2c739b06",
+      "changed": false
+    },
+    {
+      "index": 664,
+      "name": "count_harmonic_prodigy",
+      "source": "functions/functions.c",
+      "address": "0x26780e0",
+      "source_definition_sha256": "acf491968f8e9ecea70a63b01098181f885d897f23b39295d5d03fc30512d2f1",
+      "changed": false
+    },
+    {
+      "index": 671,
+      "name": "setup_ai_combat_data",
+      "source": "functions/engine.c",
+      "address": "0x26ac0a0",
+      "source_definition_sha256": "5c1356335453518f734aea028790452d534a7bec6c04d87402d239e8766e0134",
+      "changed": false
+    },
+    {
+      "index": 676,
+      "name": "deflect_multi_targets",
+      "source": "functions/functions.c",
+      "address": "0x2693670",
+      "source_definition_sha256": "61cde26adab9cd4af955b0aeef816b16ef0160949b6081a32da71b48960cf0ab",
+      "changed": false
+    },
+    {
+      "index": 679,
+      "name": "card_purphoros_bronze_blooded",
+      "source": "cards/theros_beyond_death.c",
+      "address": "0x235fd40",
+      "source_definition_sha256": "6885196aa40d420a4020cd1561ec447a5b2e0682db4dc4d2626730e5eb003c86",
+      "changed": false
+    },
+    {
+      "index": 703,
+      "name": "is_target",
+      "source": "functions/functions.c",
+      "address": "0x267f6d0",
+      "source_definition_sha256": "fea758bd23288b09a93a8fcdaf82b8060ddf9b1123dd3bd80020a8bceba77dbc",
+      "changed": false
+    },
+    {
+      "index": 724,
+      "name": "card_rebbec_architect_of_ascension",
+      "source": "cards/commander_legends.c",
+      "address": "0x25ae850",
+      "source_definition_sha256": "fddf4c0a9b84d20726ff2147da38d5db66039165ffa6567d6763eb82f9a63b79",
+      "changed": false
+    },
+    {
+      "index": 732,
+      "name": "find_legacy_effect",
+      "source": "functions/functions.c",
+      "address": "0x267b020",
+      "source_definition_sha256": "38eac0250ad6ead98f297dd41f3343d97732669d401407c7aae89123a5eff93f",
+      "changed": false
+    },
+    {
+      "index": 777,
+      "name": "card_vraska_swarms_eminence",
+      "source": "cards/war_of_the_spark.c",
+      "address": "0x21d9130",
+      "source_definition_sha256": "3ceae33b0bd882f14214708a75e9b7ecccc412626ce532f462d58092dc5b0ea6",
+      "changed": false
+    },
+    {
+      "index": 818,
+      "name": "card_thoughtleech",
+      "source": "cards/ice_age.c",
+      "address": "0x240a9f0",
+      "source_definition_sha256": "7c2224ff4345d38e84eb8e87d894696238516cb680ba40dda30d13ee37dca7a6",
+      "changed": false
+    },
+    {
+      "index": 830,
+      "name": "card_syr_carah_the_bold",
+      "source": "cards/throne_of_eldraine.c",
+      "address": "0x25d4b90",
+      "source_definition_sha256": "cedeade77d0a6220573ad4a07c9d7a0f453441859aa12e8f84b0c0c0580ea42a",
+      "changed": false
+    },
+    {
+      "index": 837,
+      "name": "card_scale_blessing",
+      "source": "cards/dragons_of_tarkir.c",
+      "address": "0x231bd00",
+      "source_definition_sha256": "c58b2955a19d817275995cb45ba90c0be89d57a68f063114afa801569e46d488",
+      "changed": false
+    },
+    {
+      "index": 840,
+      "name": "card_etali_primal_storm",
+      "source": "cards/rivals_of_ixalan.c",
+      "address": "0x2191d00",
+      "source_definition_sha256": "c47b09c51375162bbe6501224045e07a38114e650779e09bd8e6c688b1647f26",
+      "changed": false
+    },
+    {
+      "index": 843,
+      "name": "card_shielded_by_faith",
+      "source": "cards/commander_2015.c",
+      "address": "0x2353320",
+      "source_definition_sha256": "72e6fddc702464db503d57206f353920577fa245b9254173a0ea1f1196abec37",
+      "changed": true
+    },
+    {
+      "index": 847,
+      "name": "card_merfolk_spy",
+      "source": "cards/m11.c",
+      "address": "0x208f710",
+      "source_definition_sha256": "0e36fef050ffb250ef52de883e0559e59a078824817b67ea042ed6d0a039d721",
+      "changed": false
+    },
+    {
+      "index": 860,
+      "name": "card_heat_shimmer",
+      "source": "cards/lorwyn.c",
+      "address": "0x25962a0",
+      "source_definition_sha256": "157be42fbc7db112c470d4c357ae06fa55ba6fe30be268905022bbaba626b8cb",
+      "changed": false
+    },
+    {
+      "index": 863,
+      "name": "card_zurzoth_chaos_rider",
+      "source": "cards/jumpstart.c",
+      "address": "0x2375ee0",
+      "source_definition_sha256": "5cae6f540d43fcc7dde440e795aadf4258bbd44631da5057f8d73f20d1e945e8",
+      "changed": false
+    },
+    {
+      "index": 873,
+      "name": "card_the_monarch",
+      "source": "cards/conspiracy-take-the-crown.c",
+      "address": "0x220d520",
+      "source_definition_sha256": "9f314af48d4b75c6ff5b8ef540a1975b772dfbbefec455c1526aa229a6d9b266",
+      "changed": false
+    },
+    {
+      "index": 899,
+      "name": "card_colfenors_urn",
+      "source": "cards/lorwyn.c",
+      "address": "0x2592940",
+      "source_definition_sha256": "bf6383b22f5feba8ae4e8d7336dea0d9c1e6fec46d3194203d9c6422d6ec2617",
+      "changed": false
+    },
+    {
+      "index": 905,
+      "name": "card_omnath_locus_of_the_roil",
+      "source": "cards/m20.c",
+      "address": "0x2398f10",
+      "source_definition_sha256": "89d42f8fe15d64faf82d1d8a60b8237318fbbb004147e5a7cf4f5cec81924beb",
+      "changed": false
+    },
+    {
+      "index": 911,
+      "name": "card_prison_term",
+      "source": "cards/shadowmoor.c",
+      "address": "0x2557570",
+      "source_definition_sha256": "1ba45813484a7ece24ebca49772b9bbcb60b4e812a31bc95b1b14304cd904c51",
+      "changed": false
+    },
+    {
+      "index": 938,
+      "name": "card_orcish_farmer",
+      "source": "cards/ice_age.c",
+      "address": "0x2404320",
+      "source_definition_sha256": "f2bdf3848c377a9d189d08cb360b2d2691c005d6d340a48829a9fe093ba8ddd1",
+      "changed": false
+    },
+    {
+      "index": 943,
+      "name": "card_crazed_armodon",
+      "source": "cards/tempest.c",
+      "address": "0x214ca20",
+      "source_definition_sha256": "927103fc3372b5fff61d58f5a8d13bacb343daadcc9ec82e633cf690e9f6d413",
+      "changed": false
+    },
+    {
+      "index": 945,
+      "name": "card_justice",
+      "source": "cards/ice_age.c",
+      "address": "0x23fe430",
+      "source_definition_sha256": "e8034203a0d08f038c04572c1467f9d38e0c92e7fa8ca19c4e52f77a105c9766",
+      "changed": false
+    },
+    {
+      "index": 961,
+      "name": "card_path_of_ancestry",
+      "source": "cards/commander_2017.c",
+      "address": "0x2290a90",
+      "source_definition_sha256": "ec0f6f72bec92f0b5d72f0fd9ef715e9f95081f4427bd98e42abf5217bd4d6e8",
+      "changed": false
+    },
+    {
+      "index": 969,
+      "name": "card_moonlight_geist",
+      "source": "cards/avacyn_restored.c",
+      "address": "0x2342bf0",
+      "source_definition_sha256": "5faa09a60a1a9c7fb7f6df7187a9bf9a33ce1096ffbbcaae2fcb7e487772c48b",
+      "changed": false
+    },
+    {
+      "index": 986,
+      "name": "card_tishana_voice_of_thunder",
+      "source": "cards/ixalan.c",
+      "address": "0x2217cd0",
+      "source_definition_sha256": "9695c38f4132a2de47dbf31f20decef8f77db5ba60d2374cfe16fb15afc9674a",
+      "changed": false
+    },
+    {
+      "index": 1004,
+      "name": "card_illusionists_strategem",
+      "source": "cards/aether_revolt.c",
+      "address": "0x20c2b30",
+      "source_definition_sha256": "9e3e8530f769027683ac1d916483dcb92a4fe8f8df451fc4a5173a2c615dbec7",
+      "changed": false
+    },
+    {
+      "index": 1008,
+      "name": "card_inviolability",
+      "source": "cards/mercadian_masques.c",
+      "address": "0x21811e0",
+      "source_definition_sha256": "3e037678eabfe09c6aed44c1c3afa9c9c643ee943f5a2ce513e4cde86be69240",
+      "changed": false
+    },
+    {
+      "index": 1024,
+      "name": "ninjutsu_custom_target_part",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "address": "0x2569100",
+      "source_definition_sha256": "b51b16ddf49e057349341932eb993268e642dce9dd4cc8e947520dbfc397f217",
+      "changed": false
+    },
+    {
+      "index": 1025,
+      "name": "not_playable_lands_legacy",
+      "source": "cards/visions.c",
+      "address": "0x20147c0",
+      "source_definition_sha256": "9f76e84523111f0b904b1614732e449b4cc404754400f6e4d6626e6aa87a65b2",
+      "changed": false
+    },
+    {
+      "index": 1027,
+      "name": "card_ichneumon_druid",
+      "source": "cards/legends.c",
+      "address": "0x21f6710",
+      "source_definition_sha256": "18674d4226777ec0825e2654b377f25282562fad73e72797c9ba219b9b459036",
+      "changed": false
+    },
+    {
+      "index": 1035,
+      "name": "hexpr_ub_legacy",
+      "source": "cards/m20.c",
+      "address": "0x2394850",
+      "source_definition_sha256": "58a0d5ee3f5a54c1474db710a6a2fff15a21bac3d6a80ad9ace6c687422ef922",
+      "changed": false
+    },
+    {
+      "index": 1038,
+      "name": "spell_puts_up_to_x_target_cards_from_graveyard_on_top_of_deck",
+      "source": "functions/functions.c",
+      "address": "0x26a5f50",
+      "source_definition_sha256": "3e8f593238185294897fe7949112b671c6ba83a12ea162fff916293dc39a4acf",
+      "changed": false
+    },
+    {
+      "index": 1050,
+      "name": "card_yennett_cryptic_sovereign",
+      "source": "cards/commander_2018.c",
+      "address": "0x25663f0",
+      "source_definition_sha256": "cbcf3b768269967fdca066a81254e0844c2d16df988e33ffbedbd483537a5bb3",
+      "changed": false
+    },
+    {
+      "index": 1065,
+      "name": "get_cmc",
+      "source": "functions/functions.c",
+      "address": "0x2694100",
+      "source_definition_sha256": "3814d94476e7d5e29e1c0e4b48f86fe8b7b450a8451e38f5be6731fa50d20f2e",
+      "changed": false
+    },
+    {
+      "index": 1073,
+      "name": "card_ineffable_blessing_f",
+      "source": "cards/unstable.c",
+      "address": "0x25c8210",
+      "source_definition_sha256": "09393ccfe7c2bb3b39e505dd9c2ca9c86ceae562c1716ae2237164496e5ae2ec",
+      "changed": false
+    },
+    {
+      "index": 1083,
+      "name": "card_temple_of_aclazotz",
+      "source": "cards/ixalan.c",
+      "address": "0x2214540",
+      "source_definition_sha256": "80d1dd4b307c6ade742f106fc595ac129caecbcdaaaa8d02b85d86df67e1536b",
+      "changed": false
+    },
+    {
+      "index": 1105,
+      "name": "card_goblin_tutor",
+      "source": "cards/unglued_unhinged.c",
+      "address": "0x23039c0",
+      "source_definition_sha256": "e71aef2afc5b6d4b16a720552940ace217b7e60974dd59d2314ff81c01a976d5",
+      "changed": false
+    },
+    {
+      "index": 1107,
+      "name": "card_well_of_lost_dreams",
+      "source": "cards/darksteel.c",
+      "address": "0x2258f00",
+      "source_definition_sha256": "d8b8c564427cdbf89a807c1630c62ab6d2813e7cea50fa335040a33225570d52",
+      "changed": false
+    },
+    {
+      "index": 1117,
+      "name": "charge_mana_for_activated_ability",
+      "source": "functions/functions.c",
+      "address": "0x268e850",
+      "source_definition_sha256": "74bf4a141bcf60a6763917b78c47c266c969aeb01cd73796c2bc934e14b05d07",
+      "changed": false
+    },
+    {
+      "index": 1121,
+      "name": "card_ritual_of_subdual",
+      "source": "cards/ice_age.c",
+      "address": "0x24071f0",
+      "source_definition_sha256": "ed35cf0fe85865a690a2cd865932d468dd49ac82b09a74b05a05a0520e2e4d66",
+      "changed": false
+    },
+    {
+      "index": 1122,
+      "name": "card_infernal_darkness",
+      "source": "cards/ice_age.c",
+      "address": "0x23fd160",
+      "source_definition_sha256": "c3bc8b3a96cf690551aee12ec6eb8df2f4b1be0140e1adf44940dd3ac6498a6a",
+      "changed": false
+    },
+    {
+      "index": 1130,
+      "name": "update_alter_remove_subtype",
+      "source": "functions/has_creature_type.c",
+      "address": "0x2672d90",
+      "source_definition_sha256": "b6545ae026be796745123237d317006add94b6cd72a23a811116276451f7fd6d",
+      "changed": false
+    },
+    {
+      "index": 1132,
+      "name": "fx_change_types",
+      "source": "functions/has_creature_type.c",
+      "address": "0x2672980",
+      "source_definition_sha256": "b148596d5213f0e22d7c03b854c4c7f61d443d31178b04d788ddf2e00b17b50f",
+      "changed": false
+    },
+    {
+      "index": 1141,
+      "name": "card_ravens_run",
+      "source": "cards/planechase.c",
+      "address": "0x2415d50",
+      "source_definition_sha256": "08e3f4de598172e08b584b47dce6222e3ab9d0ed5350185bac64c9f4e440c46d",
+      "changed": false
+    },
+    {
+      "index": 1153,
+      "name": "card_serra_the_benevolent_emblem",
+      "source": "cards/modern_horizons.c",
+      "address": "0x233c290",
+      "source_definition_sha256": "8ece55695514c84eddf6c70b685e0958e603a430647a009b9a1e65967e4a8c54",
+      "changed": false
+    },
+    {
+      "index": 1154,
+      "name": "card_barrins_spite",
+      "source": "cards/invasion.c",
+      "address": "0x248a150",
+      "source_definition_sha256": "f7b1f8a394a49412fc33ffcf6c8b71132939f643756a521fe5566526142cb896",
+      "changed": false
+    },
+    {
+      "index": 1155,
+      "name": "card_ghastly_conscripts",
+      "source": "cards/fate_reforged.c",
+      "address": "0x2628ac0",
+      "source_definition_sha256": "b88c6e2cdd33f9aeabfa9ea08d5d976aeffd6a718670a8baeb5b769fba0f73eb",
+      "changed": false
+    },
+    {
+      "index": 1168,
+      "name": "effect_nettling_imp",
+      "source": "cards/unlimited.c",
+      "address": "0x24bc200",
+      "source_definition_sha256": "4b8004b467a1684c7f76edb690b3c30a93aadc0adc0bed003f66fc658a1e9c30",
+      "changed": false
+    },
+    {
+      "index": 1176,
+      "name": "card_the_cauldron_of_eternity",
+      "source": "cards/throne_of_eldraine.c",
+      "address": "0x25d52b0",
+      "source_definition_sha256": "429abc6ff6342ce1b663de9d4f8f4b275b6cff923667b06bcd9d05b649d754bf",
+      "changed": false
+    },
+    {
+      "index": 1181,
+      "name": "card_guild_summit",
+      "source": "cards/guilds_of_ravnica.c",
+      "address": "0x261d5f0",
+      "source_definition_sha256": "b0211bb3c4be8f28297026832ed2c664c808e23e959e5d5edcbc57546621b68f",
+      "changed": false
+    },
+    {
+      "index": 1198,
+      "name": "card_majestic_myriarch",
+      "source": "cards/hour_of_devastation.c",
+      "address": "0x20d1930",
+      "source_definition_sha256": "4a20ef139e830eb9ee52cb86725d279a32c1c2d3cdc51574df6a82e366dcfe08",
+      "changed": false
+    },
+    {
+      "index": 1219,
+      "name": "after_damage",
+      "source": "functions/damage_effects.c",
+      "address": "0x26e3030",
+      "source_definition_sha256": "899bfb2750a16d54b710b592ee13c1bc571d4a1dd7bf89d10413bfd0399bd4fe",
+      "changed": false
+    },
+    {
+      "index": 1242,
+      "name": "card_garruk_relentless",
+      "source": "cards/innistrad.c",
+      "address": "0x2076000",
+      "source_definition_sha256": "cf39bd799304c69e4ec62745cbc2b35c7d4f57bed306d80e3d06822a89b48114",
+      "changed": false
+    }
+  ],
+  "native_and_before_sites": {
+    "stage": "before",
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "f0bf74c3cfef30dfea8bc7c9c1add79cda3c8093963b68ba4ea77d128509c85b",
+      "ManalinkEh.dbg": "8c1a850557762a1fcd68a0c74ee08c670e224e4d92d6118adc6e57fbb9e98e42"
+    },
+    "collector_sha256": "d81920206179d5b63b9a5fac07a59b13b2433e5278c08ac33ffabf305f4e6f96",
+    "functions": [
+      {
+        "side": "native",
+        "name": "card_aquitects_will",
+        "address": "0x258fed0",
+        "size": 751,
+        "sha256": "4b660c0ca735e4153349be039496e489f1820e6a7f64b535c4e57325eb06a70e",
+        "bytes_hex": "5589e557565383c480837d10748b75088b5d0c742e837d106c0f8491000000837d10710f840f010000817d10000400000f8402010000817d10005400000f85a50200008d7da0c744240c01000000897c2408895c2404893424e812030d00895c2404893424e8762b12008b4510c744241c00000000c744241801000000c7442414b45b7502897c2410c744240c0100000089442408895c2404893424e8df02110083ec805b5e5f5dc38db4260000000031c03b1d8c397a0075e73b35848c730075df8d7da0c744240c01000000897c2408895c2404893424e893020d00895c2404893424e8f72a12003b1d8c397a000f8575ffffff3b35848c73000f8569ffffffc744240874000000c744240447000000893424e8472d0f0085c07405b8300000008b15a8317a0001c28915a8317a00e935ffffff8d76008d7da0c744240c01000000897c2408895c2404893424e81d020d00895c2404893424e8812a1200837d107189c20f85fffeffff893c2489559ce80a170d008b559c85c0751bc744240802000000895c2404893424e89f591200e9d4feffff6690c744241401000000c74424102e0000008b42788944240c8b4274895c240489442408893424e8ae4714008b559c8b427439f00f84c80000008b4a6c890424894c240489559ce87e2d12008b559c89c18b427489459c894d94ff0c85c4f14e008b4278894424108b459c894c24048944240cc744240820c55802890424895598e8c4a90e008b5598894424048b4274890424e8b2291200c744240802500000895c240489342489459ce8cb0a0f008b4d9c8b55988981800000008b4d94894c24048b4274890424e8dd431200c744240874000000c744240447000000893424e8e52b0f0085c00f84fafeffffc744240401000000893424e8ed3e1200e9e5feffff8b42788974240c89442410c744240820c55802895c2404893424e829a90e0089342489442404e81d291200c744240802500000895c240489342489459ce8360a0f008b559c898280000000e97bffffff31c0e9b2fdffff",
+        "instructions": [
+          {
+            "address": "0x258fed0",
+            "instruction": "push ebp"
+          },
+          {
+            "address": "0x258fed1",
+            "instruction": "mov ebp, esp"
+          },
+          {
+            "address": "0x258fed3",
+            "instruction": "push edi"
+          },
+          {
+            "address": "0x258fed4",
+            "instruction": "push esi"
+          },
+          {
+            "address": "0x258fed5",
+            "instruction": "push ebx"
+          },
+          {
+            "address": "0x258fed6",
+            "instruction": "add esp, -0x80"
+          },
+          {
+            "address": "0x258fed9",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x74"
+          },
+          {
+            "address": "0x258fedd",
+            "instruction": "mov esi, dword ptr [ebp + 8]"
+          },
+          {
+            "address": "0x258fee0",
+            "instruction": "mov ebx, dword ptr [ebp + 0xc]"
+          },
+          {
+            "address": "0x258fee3",
+            "instruction": "je 0x258ff13"
+          },
+          {
+            "address": "0x258fee5",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x6c"
+          },
+          {
+            "address": "0x258fee9",
+            "instruction": "je 0x258ff80"
+          },
+          {
+            "address": "0x258feef",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x71"
+          },
+          {
+            "address": "0x258fef3",
+            "instruction": "je 0x2590008"
+          },
+          {
+            "address": "0x258fef9",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x400"
+          },
+          {
+            "address": "0x258ff00",
+            "instruction": "je 0x2590008"
+          },
+          {
+            "address": "0x258ff06",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x5400"
+          },
+          {
+            "address": "0x258ff0d",
+            "instruction": "jne 0x25901b8"
+          },
+          {
+            "address": "0x258ff13",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x258ff16",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x258ff1e",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x258ff22",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x258ff26",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ff29",
+            "instruction": "call 0x2660240",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x258ff2e",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x258ff32",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ff35",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x258ff3a",
+            "instruction": "mov eax, dword ptr [ebp + 0x10]"
+          },
+          {
+            "address": "0x258ff3d",
+            "instruction": "mov dword ptr [esp + 0x1c], 0"
+          },
+          {
+            "address": "0x258ff45",
+            "instruction": "mov dword ptr [esp + 0x18], 1"
+          },
+          {
+            "address": "0x258ff4d",
+            "instruction": "mov dword ptr [esp + 0x14], 0x2755bb4"
+          },
+          {
+            "address": "0x258ff55",
+            "instruction": "mov dword ptr [esp + 0x10], edi"
+          },
+          {
+            "address": "0x258ff59",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x258ff61",
+            "instruction": "mov dword ptr [esp + 8], eax"
+          },
+          {
+            "address": "0x258ff65",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x258ff69",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ff6c",
+            "instruction": "call 0x26a0250",
+            "callee": [
+              "_generic_spell"
+            ]
+          },
+          {
+            "address": "0x258ff71",
+            "instruction": "sub esp, -0x80"
+          },
+          {
+            "address": "0x258ff74",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x258ff75",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x258ff76",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x258ff77",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x258ff78",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x258ff79",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x258ff80",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x258ff82",
+            "instruction": "cmp ebx, dword ptr [0x7a398c]"
+          },
+          {
+            "address": "0x258ff88",
+            "instruction": "jne 0x258ff71"
+          },
+          {
+            "address": "0x258ff8a",
+            "instruction": "cmp esi, dword ptr [0x738c84]"
+          },
+          {
+            "address": "0x258ff90",
+            "instruction": "jne 0x258ff71"
+          },
+          {
+            "address": "0x258ff92",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x258ff95",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x258ff9d",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x258ffa1",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x258ffa5",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ffa8",
+            "instruction": "call 0x2660240",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x258ffad",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x258ffb1",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ffb4",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x258ffb9",
+            "instruction": "cmp ebx, dword ptr [0x7a398c]"
+          },
+          {
+            "address": "0x258ffbf",
+            "instruction": "jne 0x258ff3a"
+          },
+          {
+            "address": "0x258ffc5",
+            "instruction": "cmp esi, dword ptr [0x738c84]"
+          },
+          {
+            "address": "0x258ffcb",
+            "instruction": "jne 0x258ff3a"
+          },
+          {
+            "address": "0x258ffd1",
+            "instruction": "mov dword ptr [esp + 8], 0x74"
+          },
+          {
+            "address": "0x258ffd9",
+            "instruction": "mov dword ptr [esp + 4], 0x47"
+          },
+          {
+            "address": "0x258ffe1",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ffe4",
+            "instruction": "call 0x2682d30",
+            "callee": [
+              "_check_battlefield_for_subtype"
+            ]
+          },
+          {
+            "address": "0x258ffe9",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x258ffeb",
+            "instruction": "je 0x258fff2"
+          },
+          {
+            "address": "0x258ffed",
+            "instruction": "mov eax, 0x30"
+          },
+          {
+            "address": "0x258fff2",
+            "instruction": "mov edx, dword ptr [0x7a31a8]"
+          },
+          {
+            "address": "0x258fff8",
+            "instruction": "add edx, eax"
+          },
+          {
+            "address": "0x258fffa",
+            "instruction": "mov dword ptr [0x7a31a8], edx"
+          },
+          {
+            "address": "0x2590000",
+            "instruction": "jmp 0x258ff3a"
+          },
+          {
+            "address": "0x2590005",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x2590008",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x259000b",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x2590013",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x2590017",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x259001b",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259001e",
+            "instruction": "call 0x2660240",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x2590023",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x2590027",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259002a",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x259002f",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x71"
+          },
+          {
+            "address": "0x2590033",
+            "instruction": "mov edx, eax"
+          },
+          {
+            "address": "0x2590035",
+            "instruction": "jne 0x258ff3a"
+          },
+          {
+            "address": "0x259003b",
+            "instruction": "mov dword ptr [esp], edi"
+          },
+          {
+            "address": "0x259003e",
+            "instruction": "mov dword ptr [ebp - 0x64], edx"
+          },
+          {
+            "address": "0x2590041",
+            "instruction": "call 0x2661750",
+            "callee": [
+              "_valid_target"
+            ]
+          },
+          {
+            "address": "0x2590046",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x2590049",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x259004b",
+            "instruction": "jne 0x2590068"
+          },
+          {
+            "address": "0x259004d",
+            "instruction": "mov dword ptr [esp + 8], 2"
+          },
+          {
+            "address": "0x2590055",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x2590059",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259005c",
+            "instruction": "call 0x26b5a00",
+            "callee": [
+              "_kill_card"
+            ]
+          },
+          {
+            "address": "0x2590061",
+            "instruction": "jmp 0x258ff3a"
+          },
+          {
+            "address": "0x2590066",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x2590068",
+            "instruction": "mov dword ptr [esp + 0x14], 1"
+          },
+          {
+            "address": "0x2590070",
+            "instruction": "mov dword ptr [esp + 0x10], 0x2e"
+          },
+          {
+            "address": "0x2590078",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x259007b",
+            "instruction": "mov dword ptr [esp + 0xc], eax"
+          },
+          {
+            "address": "0x259007f",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x2590082",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x2590086",
+            "instruction": "mov dword ptr [esp + 8], eax"
+          },
+          {
+            "address": "0x259008a",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259008d",
+            "instruction": "call 0x26d4840",
+            "callee": [
+              "_add_counters"
+            ]
+          },
+          {
+            "address": "0x2590092",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x2590095",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x2590098",
+            "instruction": "cmp eax, esi"
+          },
+          {
+            "address": "0x259009a",
+            "instruction": "je 0x2590168"
+          },
+          {
+            "address": "0x25900a0",
+            "instruction": "mov ecx, dword ptr [edx + 0x6c]"
+          },
+          {
+            "address": "0x25900a3",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x25900a6",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x25900aa",
+            "instruction": "mov dword ptr [ebp - 0x64], edx"
+          },
+          {
+            "address": "0x25900ad",
+            "instruction": "call 0x26b2e30",
+            "callee": [
+              "_add_card_to_hand"
+            ]
+          },
+          {
+            "address": "0x25900b2",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x25900b5",
+            "instruction": "mov ecx, eax"
+          },
+          {
+            "address": "0x25900b7",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x25900ba",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x25900bd",
+            "instruction": "mov dword ptr [ebp - 0x6c], ecx"
+          },
+          {
+            "address": "0x25900c0",
+            "instruction": "dec dword ptr [eax*4 + 0x4ef1c4]"
+          },
+          {
+            "address": "0x25900c7",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x25900ca",
+            "instruction": "mov dword ptr [esp + 0x10], eax"
+          },
+          {
+            "address": "0x25900ce",
+            "instruction": "mov eax, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x25900d1",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x25900d5",
+            "instruction": "mov dword ptr [esp + 0xc], eax"
+          },
+          {
+            "address": "0x25900d9",
+            "instruction": "mov dword ptr [esp + 8], 0x258c520"
+          },
+          {
+            "address": "0x25900e1",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x25900e4",
+            "instruction": "mov dword ptr [ebp - 0x68], edx"
+          },
+          {
+            "address": "0x25900e7",
+            "instruction": "call 0x267aab0",
+            "callee": [
+              "_create_targetted_legacy_activate"
+            ]
+          },
+          {
+            "address": "0x25900ec",
+            "instruction": "mov edx, dword ptr [ebp - 0x68]"
+          },
+          {
+            "address": "0x25900ef",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x25900f3",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x25900f6",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x25900f9",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x25900fe",
+            "instruction": "mov dword ptr [esp + 8], 0x5002"
+          },
+          {
+            "address": "0x2590106",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x259010a",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259010d",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x2590110",
+            "instruction": "call 0x2680be0",
+            "callee": [
+              "_get_hacked_subtype"
+            ]
+          },
+          {
+            "address": "0x2590115",
+            "instruction": "mov ecx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x2590118",
+            "instruction": "mov edx, dword ptr [ebp - 0x68]"
+          },
+          {
+            "address": "0x259011b",
+            "instruction": "mov dword ptr [ecx + 0x80], eax"
+          },
+          {
+            "address": "0x2590121",
+            "instruction": "mov ecx, dword ptr [ebp - 0x6c]"
+          },
+          {
+            "address": "0x2590124",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x2590128",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x259012b",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x259012e",
+            "instruction": "call 0x26b4510",
+            "callee": [
+              "_obliterate_card"
+            ]
+          },
+          {
+            "address": "0x2590133",
+            "instruction": "mov dword ptr [esp + 8], 0x74"
+          },
+          {
+            "address": "0x259013b",
+            "instruction": "mov dword ptr [esp + 4], 0x47"
+          },
+          {
+            "address": "0x2590143",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x2590146",
+            "instruction": "call 0x2682d30",
+            "callee": [
+              "_check_battlefield_for_subtype"
+            ]
+          },
+          {
+            "address": "0x259014b",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x259014d",
+            "instruction": "je 0x259004d"
+          },
+          {
+            "address": "0x2590153",
+            "instruction": "mov dword ptr [esp + 4], 1"
+          },
+          {
+            "address": "0x259015b",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259015e",
+            "instruction": "call 0x26b4050",
+            "callee": [
+              "_draw_cards"
+            ]
+          },
+          {
+            "address": "0x2590163",
+            "instruction": "jmp 0x259004d"
+          },
+          {
+            "address": "0x2590168",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x259016b",
+            "instruction": "mov dword ptr [esp + 0xc], esi"
+          },
+          {
+            "address": "0x259016f",
+            "instruction": "mov dword ptr [esp + 0x10], eax"
+          },
+          {
+            "address": "0x2590173",
+            "instruction": "mov dword ptr [esp + 8], 0x258c520"
+          },
+          {
+            "address": "0x259017b",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x259017f",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x2590182",
+            "instruction": "call 0x267aab0",
+            "callee": [
+              "_create_targetted_legacy_activate"
+            ]
+          },
+          {
+            "address": "0x2590187",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259018a",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x259018e",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x2590193",
+            "instruction": "mov dword ptr [esp + 8], 0x5002"
+          },
+          {
+            "address": "0x259019b",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x259019f",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x25901a2",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x25901a5",
+            "instruction": "call 0x2680be0",
+            "callee": [
+              "_get_hacked_subtype"
+            ]
+          },
+          {
+            "address": "0x25901aa",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x25901ad",
+            "instruction": "mov dword ptr [edx + 0x80], eax"
+          },
+          {
+            "address": "0x25901b3",
+            "instruction": "jmp 0x2590133"
+          },
+          {
+            "address": "0x25901b8",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x25901ba",
+            "instruction": "jmp 0x258ff71"
+          }
+        ]
+      },
+      {
+        "side": "native",
+        "name": "card_shielded_by_faith",
+        "address": "0x2353320",
+        "size": 389,
+        "sha256": "68e1d62b5f528d82c61adc40ef6b6b435d945614e86870db89366817ef767cb0",
+        "bytes_hex": "5589e557565383ec388b5d088b750c89742404891c248b7d10e872f735008b157cc1620039da0f84ac000000b90100000083fb010f848e00000089742418895c2414c744241000000000c744240c02000000894c2408897c2404c7042402000000e8da26350081ff005100000f8486000000895c240c897c240889742404891c24c744242800000000c744242400000000c744242000000000c744241c00080000c744241800000000c744241400000000c744241000000000e86253390083c4385b5e5f5dc366904a746b31c9e968ffffff8db6000000008b15209a730039f2748483fb017459b901000000e949ffffff8db4260000000089742404891c24e88cf635008b157cc162008950748b15209a730089507889742408895c2404c744240c00080000890424e8127c370083c4385b5e5f5dc38b15209a73008d7426008a4850884df38b480489542404c7042401000000894de8e8840c34008945ec8b4de80fbe45f3894c2404890424e86e0c34003945ec0f8e50ffffffb902000000e9b5feffff",
+        "instructions": [
+          {
+            "address": "0x2353320",
+            "instruction": "push ebp"
+          },
+          {
+            "address": "0x2353321",
+            "instruction": "mov ebp, esp"
+          },
+          {
+            "address": "0x2353323",
+            "instruction": "push edi"
+          },
+          {
+            "address": "0x2353324",
+            "instruction": "push esi"
+          },
+          {
+            "address": "0x2353325",
+            "instruction": "push ebx"
+          },
+          {
+            "address": "0x2353326",
+            "instruction": "sub esp, 0x38"
+          },
+          {
+            "address": "0x2353329",
+            "instruction": "mov ebx, dword ptr [ebp + 8]"
+          },
+          {
+            "address": "0x235332c",
+            "instruction": "mov esi, dword ptr [ebp + 0xc]"
+          },
+          {
+            "address": "0x235332f",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2353333",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x2353336",
+            "instruction": "mov edi, dword ptr [ebp + 0x10]"
+          },
+          {
+            "address": "0x2353339",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x235333e",
+            "instruction": "mov edx, dword ptr [0x62c17c]"
+          },
+          {
+            "address": "0x2353344",
+            "instruction": "cmp edx, ebx"
+          },
+          {
+            "address": "0x2353346",
+            "instruction": "je 0x23533f8"
+          },
+          {
+            "address": "0x235334c",
+            "instruction": "mov ecx, 1"
+          },
+          {
+            "address": "0x2353351",
+            "instruction": "cmp ebx, 1"
+          },
+          {
+            "address": "0x2353354",
+            "instruction": "je 0x23533e8"
+          },
+          {
+            "address": "0x235335a",
+            "instruction": "mov dword ptr [esp + 0x18], esi"
+          },
+          {
+            "address": "0x235335e",
+            "instruction": "mov dword ptr [esp + 0x14], ebx"
+          },
+          {
+            "address": "0x2353362",
+            "instruction": "mov dword ptr [esp + 0x10], 0"
+          },
+          {
+            "address": "0x235336a",
+            "instruction": "mov dword ptr [esp + 0xc], 2"
+          },
+          {
+            "address": "0x2353372",
+            "instruction": "mov dword ptr [esp + 8], ecx"
+          },
+          {
+            "address": "0x2353376",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x235337a",
+            "instruction": "mov dword ptr [esp], 2"
+          },
+          {
+            "address": "0x2353381",
+            "instruction": "call 0x26a5a60",
+            "callee": [
+              "_etb_ability_global"
+            ]
+          },
+          {
+            "address": "0x2353386",
+            "instruction": "cmp edi, 0x5100"
+          },
+          {
+            "address": "0x235338c",
+            "instruction": "je 0x2353418"
+          },
+          {
+            "address": "0x2353392",
+            "instruction": "mov dword ptr [esp + 0xc], ebx"
+          },
+          {
+            "address": "0x2353396",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x235339a",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x235339e",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x23533a1",
+            "instruction": "mov dword ptr [esp + 0x28], 0"
+          },
+          {
+            "address": "0x23533a9",
+            "instruction": "mov dword ptr [esp + 0x24], 0"
+          },
+          {
+            "address": "0x23533b1",
+            "instruction": "mov dword ptr [esp + 0x20], 0"
+          },
+          {
+            "address": "0x23533b9",
+            "instruction": "mov dword ptr [esp + 0x1c], 0x800"
+          },
+          {
+            "address": "0x23533c1",
+            "instruction": "mov dword ptr [esp + 0x18], 0"
+          },
+          {
+            "address": "0x23533c9",
+            "instruction": "mov dword ptr [esp + 0x14], 0"
+          },
+          {
+            "address": "0x23533d1",
+            "instruction": "mov dword ptr [esp + 0x10], 0"
+          },
+          {
+            "address": "0x23533d9",
+            "instruction": "call 0x26e8740",
+            "callee": [
+              "_generic_aura"
+            ]
+          },
+          {
+            "address": "0x23533de",
+            "instruction": "add esp, 0x38"
+          },
+          {
+            "address": "0x23533e1",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x23533e2",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x23533e3",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x23533e4",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x23533e5",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x23533e6",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x23533e8",
+            "instruction": "dec edx"
+          },
+          {
+            "address": "0x23533e9",
+            "instruction": "je 0x2353456"
+          },
+          {
+            "address": "0x23533eb",
+            "instruction": "xor ecx, ecx"
+          },
+          {
+            "address": "0x23533ed",
+            "instruction": "jmp 0x235335a"
+          },
+          {
+            "address": "0x23533f2",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x23533f8",
+            "instruction": "mov edx, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x23533fe",
+            "instruction": "cmp edx, esi"
+          },
+          {
+            "address": "0x2353400",
+            "instruction": "je 0x2353386"
+          },
+          {
+            "address": "0x2353402",
+            "instruction": "cmp ebx, 1"
+          },
+          {
+            "address": "0x2353405",
+            "instruction": "je 0x2353460"
+          },
+          {
+            "address": "0x2353407",
+            "instruction": "mov ecx, 1"
+          },
+          {
+            "address": "0x235340c",
+            "instruction": "jmp 0x235335a"
+          },
+          {
+            "address": "0x2353411",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x2353418",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x235341c",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x235341f",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x2353424",
+            "instruction": "mov edx, dword ptr [0x62c17c]"
+          },
+          {
+            "address": "0x235342a",
+            "instruction": "mov dword ptr [eax + 0x74], edx"
+          },
+          {
+            "address": "0x235342d",
+            "instruction": "mov edx, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x2353433",
+            "instruction": "mov dword ptr [eax + 0x78], edx"
+          },
+          {
+            "address": "0x2353436",
+            "instruction": "mov dword ptr [esp + 8], esi"
+          },
+          {
+            "address": "0x235343a",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x235343e",
+            "instruction": "mov dword ptr [esp + 0xc], 0x800"
+          },
+          {
+            "address": "0x2353446",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x2353449",
+            "instruction": "call 0x26cb060",
+            "callee": [
+              "_call_card_function_i"
+            ]
+          },
+          {
+            "address": "0x235344e",
+            "instruction": "add esp, 0x38"
+          },
+          {
+            "address": "0x2353451",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x2353452",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x2353453",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x2353454",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x2353455",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x2353456",
+            "instruction": "mov edx, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x235345c",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x2353460",
+            "instruction": "mov cl, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x2353463",
+            "instruction": "mov byte ptr [ebp - 0xd], cl"
+          },
+          {
+            "address": "0x2353466",
+            "instruction": "mov ecx, dword ptr [eax + 4]"
+          },
+          {
+            "address": "0x2353469",
+            "instruction": "mov dword ptr [esp + 4], edx"
+          },
+          {
+            "address": "0x235346d",
+            "instruction": "mov dword ptr [esp], 1"
+          },
+          {
+            "address": "0x2353474",
+            "instruction": "mov dword ptr [ebp - 0x18], ecx"
+          },
+          {
+            "address": "0x2353477",
+            "instruction": "call 0x2694100",
+            "callee": [
+              "_get_cmc"
+            ]
+          },
+          {
+            "address": "0x235347c",
+            "instruction": "mov dword ptr [ebp - 0x14], eax"
+          },
+          {
+            "address": "0x235347f",
+            "instruction": "mov ecx, dword ptr [ebp - 0x18]"
+          },
+          {
+            "address": "0x2353482",
+            "instruction": "movsx eax, byte ptr [ebp - 0xd]"
+          },
+          {
+            "address": "0x2353486",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x235348a",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x235348d",
+            "instruction": "call 0x2694100",
+            "callee": [
+              "_get_cmc"
+            ]
+          },
+          {
+            "address": "0x2353492",
+            "instruction": "cmp dword ptr [ebp - 0x14], eax"
+          },
+          {
+            "address": "0x2353495",
+            "instruction": "jle 0x23533eb"
+          },
+          {
+            "address": "0x235349b",
+            "instruction": "mov ecx, 2"
+          },
+          {
+            "address": "0x23534a0",
+            "instruction": "jmp 0x235335a"
+          }
+        ]
+      },
+      {
+        "side": "rebuilt",
+        "name": "card_aquitects_will",
+        "address": "0x22e1160",
+        "size": 784,
+        "sha256": "d45cfc309a184ad150de2e527148c7d0b33ed196e74f144090c6fccfd473dee2",
+        "bytes_hex": "5589e557565383c480837d10748b75088b5d0c0f8437010000837d106c0f84a5000000837d10710f95c2817d10005400000f95c084c275788d7da0c744240c01000000897c2408895c2404893424e83d903f00895c2404893424e8e1943800837d107189c20f84150100008b4510c744241c00000000c744241801000000c7442414d4e07302897c2410c744240c0100000089442408895c2404893424e8ce8f3c0083ec805b5e5f5dc38db600000000817d10000400000f847bffffff31c0ebe18db4260000000031c03b1d8c397a0075d03b35848c730075c88d7da0c744240c01000000897c2408895c2404893424e89b8f3f00895c2404893424e83f9438003b1d8c397a000f855effffff3b35848c73000f8552ffffffc744240874000000c744240447000000893424e85fe93b0085c07405b8300000008b15a8317a0001c28915a8317a00e91effffff8d76008d7da0c744240c01000000897c2408895c2404893424e8258f3f00895c2404893424e8c9933800e9effeffff8d742600893c2489559ce865983f008b559c85c0751ec744240802000000895c2404893424e8dabd3800e9c0feffff8d74260090c744241401000000c74424102e0000008b42788944240c8b4274895c240489442408893424e8a64d38008b559c8b427439f00f84c80000008b4a6c890424894c240489559ce8c69638008b559c89c18b427489459c894d94ff0c85c4f14e008b4278894424108b459c894c24048944240cc744240890d72d02890424895598e83c473a008b5598894424048b4274890424e8fa923800c744240802500000895c240489342489459ce8f3fc3a008b4d9c8b55988981800000008b4d94894c24048b4274890424e895a83800c744240874000000c744240447000000893424e8fde73b0085c00f84f7feffffc744240401000000893424e8d5a33800e9e2feffff8b42788974240c89442410c744240890d72d02895c2404893424e8a1463a008b559c894424048b4274890424e85f923800c744240802500000895c240489342489459ce858fc3a008b559c898280000000e975ffffff8db426000000008d7600",
+        "instructions": [
+          {
+            "address": "0x22e1160",
+            "instruction": "push ebp"
+          },
+          {
+            "address": "0x22e1161",
+            "instruction": "mov ebp, esp"
+          },
+          {
+            "address": "0x22e1163",
+            "instruction": "push edi"
+          },
+          {
+            "address": "0x22e1164",
+            "instruction": "push esi"
+          },
+          {
+            "address": "0x22e1165",
+            "instruction": "push ebx"
+          },
+          {
+            "address": "0x22e1166",
+            "instruction": "add esp, -0x80"
+          },
+          {
+            "address": "0x22e1169",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x74"
+          },
+          {
+            "address": "0x22e116d",
+            "instruction": "mov esi, dword ptr [ebp + 8]"
+          },
+          {
+            "address": "0x22e1170",
+            "instruction": "mov ebx, dword ptr [ebp + 0xc]"
+          },
+          {
+            "address": "0x22e1173",
+            "instruction": "je 0x22e12b0"
+          },
+          {
+            "address": "0x22e1179",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x6c"
+          },
+          {
+            "address": "0x22e117d",
+            "instruction": "je 0x22e1228"
+          },
+          {
+            "address": "0x22e1183",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x71"
+          },
+          {
+            "address": "0x22e1187",
+            "instruction": "setne dl"
+          },
+          {
+            "address": "0x22e118a",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x5400"
+          },
+          {
+            "address": "0x22e1191",
+            "instruction": "setne al"
+          },
+          {
+            "address": "0x22e1194",
+            "instruction": "test dl, al"
+          },
+          {
+            "address": "0x22e1196",
+            "instruction": "jne 0x22e1210"
+          },
+          {
+            "address": "0x22e1198",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x22e119b",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x22e11a3",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x22e11a7",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e11ab",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e11ae",
+            "instruction": "call 0x26da1f0",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x22e11b3",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e11b7",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e11ba",
+            "instruction": "call 0x266a6a0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x22e11bf",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x71"
+          },
+          {
+            "address": "0x22e11c3",
+            "instruction": "mov edx, eax"
+          },
+          {
+            "address": "0x22e11c5",
+            "instruction": "je 0x22e12e0"
+          },
+          {
+            "address": "0x22e11cb",
+            "instruction": "mov eax, dword ptr [ebp + 0x10]"
+          },
+          {
+            "address": "0x22e11ce",
+            "instruction": "mov dword ptr [esp + 0x1c], 0"
+          },
+          {
+            "address": "0x22e11d6",
+            "instruction": "mov dword ptr [esp + 0x18], 1"
+          },
+          {
+            "address": "0x22e11de",
+            "instruction": "mov dword ptr [esp + 0x14], 0x273e0d4"
+          },
+          {
+            "address": "0x22e11e6",
+            "instruction": "mov dword ptr [esp + 0x10], edi"
+          },
+          {
+            "address": "0x22e11ea",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x22e11f2",
+            "instruction": "mov dword ptr [esp + 8], eax"
+          },
+          {
+            "address": "0x22e11f6",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e11fa",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e11fd",
+            "instruction": "call 0x26aa1d0",
+            "callee": [
+              "_generic_spell"
+            ]
+          },
+          {
+            "address": "0x22e1202",
+            "instruction": "sub esp, -0x80"
+          },
+          {
+            "address": "0x22e1205",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x22e1206",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x22e1207",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x22e1208",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x22e1209",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x22e120a",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x22e1210",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x400"
+          },
+          {
+            "address": "0x22e1217",
+            "instruction": "je 0x22e1198"
+          },
+          {
+            "address": "0x22e121d",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x22e121f",
+            "instruction": "jmp 0x22e1202"
+          },
+          {
+            "address": "0x22e1221",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x22e1228",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x22e122a",
+            "instruction": "cmp ebx, dword ptr [0x7a398c]"
+          },
+          {
+            "address": "0x22e1230",
+            "instruction": "jne 0x22e1202"
+          },
+          {
+            "address": "0x22e1232",
+            "instruction": "cmp esi, dword ptr [0x738c84]"
+          },
+          {
+            "address": "0x22e1238",
+            "instruction": "jne 0x22e1202"
+          },
+          {
+            "address": "0x22e123a",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x22e123d",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x22e1245",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x22e1249",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e124d",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e1250",
+            "instruction": "call 0x26da1f0",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x22e1255",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e1259",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e125c",
+            "instruction": "call 0x266a6a0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x22e1261",
+            "instruction": "cmp ebx, dword ptr [0x7a398c]"
+          },
+          {
+            "address": "0x22e1267",
+            "instruction": "jne 0x22e11cb"
+          },
+          {
+            "address": "0x22e126d",
+            "instruction": "cmp esi, dword ptr [0x738c84]"
+          },
+          {
+            "address": "0x22e1273",
+            "instruction": "jne 0x22e11cb"
+          },
+          {
+            "address": "0x22e1279",
+            "instruction": "mov dword ptr [esp + 8], 0x74"
+          },
+          {
+            "address": "0x22e1281",
+            "instruction": "mov dword ptr [esp + 4], 0x47"
+          },
+          {
+            "address": "0x22e1289",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e128c",
+            "instruction": "call 0x269fbf0",
+            "callee": [
+              "_check_battlefield_for_subtype"
+            ]
+          },
+          {
+            "address": "0x22e1291",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x22e1293",
+            "instruction": "je 0x22e129a"
+          },
+          {
+            "address": "0x22e1295",
+            "instruction": "mov eax, 0x30"
+          },
+          {
+            "address": "0x22e129a",
+            "instruction": "mov edx, dword ptr [0x7a31a8]"
+          },
+          {
+            "address": "0x22e12a0",
+            "instruction": "add edx, eax"
+          },
+          {
+            "address": "0x22e12a2",
+            "instruction": "mov dword ptr [0x7a31a8], edx"
+          },
+          {
+            "address": "0x22e12a8",
+            "instruction": "jmp 0x22e11cb"
+          },
+          {
+            "address": "0x22e12ad",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x22e12b0",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x22e12b3",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x22e12bb",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x22e12bf",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e12c3",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e12c6",
+            "instruction": "call 0x26da1f0",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x22e12cb",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e12cf",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e12d2",
+            "instruction": "call 0x266a6a0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x22e12d7",
+            "instruction": "jmp 0x22e11cb"
+          },
+          {
+            "address": "0x22e12dc",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x22e12e0",
+            "instruction": "mov dword ptr [esp], edi"
+          },
+          {
+            "address": "0x22e12e3",
+            "instruction": "mov dword ptr [ebp - 0x64], edx"
+          },
+          {
+            "address": "0x22e12e6",
+            "instruction": "call 0x26dab50",
+            "callee": [
+              "_valid_target"
+            ]
+          },
+          {
+            "address": "0x22e12eb",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e12ee",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x22e12f0",
+            "instruction": "jne 0x22e1310"
+          },
+          {
+            "address": "0x22e12f2",
+            "instruction": "mov dword ptr [esp + 8], 2"
+          },
+          {
+            "address": "0x22e12fa",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e12fe",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e1301",
+            "instruction": "call 0x266d0e0",
+            "callee": [
+              "_kill_card"
+            ]
+          },
+          {
+            "address": "0x22e1306",
+            "instruction": "jmp 0x22e11cb"
+          },
+          {
+            "address": "0x22e130b",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x22e130f",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x22e1310",
+            "instruction": "mov dword ptr [esp + 0x14], 1"
+          },
+          {
+            "address": "0x22e1318",
+            "instruction": "mov dword ptr [esp + 0x10], 0x2e"
+          },
+          {
+            "address": "0x22e1320",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x22e1323",
+            "instruction": "mov dword ptr [esp + 0xc], eax"
+          },
+          {
+            "address": "0x22e1327",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x22e132a",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e132e",
+            "instruction": "mov dword ptr [esp + 8], eax"
+          },
+          {
+            "address": "0x22e1332",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e1335",
+            "instruction": "call 0x26660e0",
+            "callee": [
+              "_add_counters"
+            ]
+          },
+          {
+            "address": "0x22e133a",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e133d",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x22e1340",
+            "instruction": "cmp eax, esi"
+          },
+          {
+            "address": "0x22e1342",
+            "instruction": "je 0x22e1410"
+          },
+          {
+            "address": "0x22e1348",
+            "instruction": "mov ecx, dword ptr [edx + 0x6c]"
+          },
+          {
+            "address": "0x22e134b",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x22e134e",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x22e1352",
+            "instruction": "mov dword ptr [ebp - 0x64], edx"
+          },
+          {
+            "address": "0x22e1355",
+            "instruction": "call 0x266aa20",
+            "callee": [
+              "_add_card_to_hand"
+            ]
+          },
+          {
+            "address": "0x22e135a",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e135d",
+            "instruction": "mov ecx, eax"
+          },
+          {
+            "address": "0x22e135f",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x22e1362",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x22e1365",
+            "instruction": "mov dword ptr [ebp - 0x6c], ecx"
+          },
+          {
+            "address": "0x22e1368",
+            "instruction": "dec dword ptr [eax*4 + 0x4ef1c4]"
+          },
+          {
+            "address": "0x22e136f",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x22e1372",
+            "instruction": "mov dword ptr [esp + 0x10], eax"
+          },
+          {
+            "address": "0x22e1376",
+            "instruction": "mov eax, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e1379",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x22e137d",
+            "instruction": "mov dword ptr [esp + 0xc], eax"
+          },
+          {
+            "address": "0x22e1381",
+            "instruction": "mov dword ptr [esp + 8], 0x22dd790"
+          },
+          {
+            "address": "0x22e1389",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x22e138c",
+            "instruction": "mov dword ptr [ebp - 0x68], edx"
+          },
+          {
+            "address": "0x22e138f",
+            "instruction": "call 0x2685ad0",
+            "callee": [
+              "_create_targetted_legacy_activate"
+            ]
+          },
+          {
+            "address": "0x22e1394",
+            "instruction": "mov edx, dword ptr [ebp - 0x68]"
+          },
+          {
+            "address": "0x22e1397",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22e139b",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x22e139e",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x22e13a1",
+            "instruction": "call 0x266a6a0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x22e13a6",
+            "instruction": "mov dword ptr [esp + 8], 0x5002"
+          },
+          {
+            "address": "0x22e13ae",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e13b2",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e13b5",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x22e13b8",
+            "instruction": "call 0x26910b0",
+            "callee": [
+              "_get_hacked_subtype"
+            ]
+          },
+          {
+            "address": "0x22e13bd",
+            "instruction": "mov ecx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e13c0",
+            "instruction": "mov edx, dword ptr [ebp - 0x68]"
+          },
+          {
+            "address": "0x22e13c3",
+            "instruction": "mov dword ptr [ecx + 0x80], eax"
+          },
+          {
+            "address": "0x22e13c9",
+            "instruction": "mov ecx, dword ptr [ebp - 0x6c]"
+          },
+          {
+            "address": "0x22e13cc",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x22e13d0",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x22e13d3",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x22e13d6",
+            "instruction": "call 0x266bc70",
+            "callee": [
+              "_obliterate_card"
+            ]
+          },
+          {
+            "address": "0x22e13db",
+            "instruction": "mov dword ptr [esp + 8], 0x74"
+          },
+          {
+            "address": "0x22e13e3",
+            "instruction": "mov dword ptr [esp + 4], 0x47"
+          },
+          {
+            "address": "0x22e13eb",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e13ee",
+            "instruction": "call 0x269fbf0",
+            "callee": [
+              "_check_battlefield_for_subtype"
+            ]
+          },
+          {
+            "address": "0x22e13f3",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x22e13f5",
+            "instruction": "je 0x22e12f2"
+          },
+          {
+            "address": "0x22e13fb",
+            "instruction": "mov dword ptr [esp + 4], 1"
+          },
+          {
+            "address": "0x22e1403",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e1406",
+            "instruction": "call 0x266b7e0",
+            "callee": [
+              "_draw_cards"
+            ]
+          },
+          {
+            "address": "0x22e140b",
+            "instruction": "jmp 0x22e12f2"
+          },
+          {
+            "address": "0x22e1410",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x22e1413",
+            "instruction": "mov dword ptr [esp + 0xc], esi"
+          },
+          {
+            "address": "0x22e1417",
+            "instruction": "mov dword ptr [esp + 0x10], eax"
+          },
+          {
+            "address": "0x22e141b",
+            "instruction": "mov dword ptr [esp + 8], 0x22dd790"
+          },
+          {
+            "address": "0x22e1423",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e1427",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e142a",
+            "instruction": "call 0x2685ad0",
+            "callee": [
+              "_create_targetted_legacy_activate"
+            ]
+          },
+          {
+            "address": "0x22e142f",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e1432",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22e1436",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x22e1439",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x22e143c",
+            "instruction": "call 0x266a6a0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x22e1441",
+            "instruction": "mov dword ptr [esp + 8], 0x5002"
+          },
+          {
+            "address": "0x22e1449",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e144d",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e1450",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x22e1453",
+            "instruction": "call 0x26910b0",
+            "callee": [
+              "_get_hacked_subtype"
+            ]
+          },
+          {
+            "address": "0x22e1458",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e145b",
+            "instruction": "mov dword ptr [edx + 0x80], eax"
+          },
+          {
+            "address": "0x22e1461",
+            "instruction": "jmp 0x22e13db"
+          },
+          {
+            "address": "0x22e1466",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x22e146d",
+            "instruction": "lea esi, [esi]"
+          }
+        ]
+      },
+      {
+        "side": "rebuilt",
+        "name": "card_shielded_by_faith",
+        "address": "0x20e3cc0",
+        "size": 384,
+        "sha256": "e716b49170493fb2cae9e6639317809c96e0aad824067c1f2ad56dd9b185b0cb",
+        "bytes_hex": "5589e557565383ec348b5d088b750c89742404891c248b7d10e8c269580089c2a17cc1620039d80f84ab000000b90100000083fb010f848d00000089742418895c2414c744241000000000c744240c02000000894c2408897c2404c7042402000000e869815b0081ff005100000f847d000000895c240c897c240889742404891c24c744242800000000c744242400000000c744242000000000c744241c00080000c744241800000000c744241400000000c744241000000000e8e174570083c4345b5e5f5dc39048746331c9e969ffffff8db600000000a1209a730039f0748683fb017452b901000000e94bffffff89742404891c24e8e46858008b157cc162008950748b15209a730089507889742408895c2404c744240c00080000890424e8fab5590083c4345b5e5f5dc3a1209a73008d7426009089442404c70424010000008955ece855315c008b55ec8945f08b4204894424040fbe4250890424e83c315c003945f00f8e5effffffb902000000e9c4feffff8db426000000006690",
+        "instructions": [
+          {
+            "address": "0x20e3cc0",
+            "instruction": "push ebp"
+          },
+          {
+            "address": "0x20e3cc1",
+            "instruction": "mov ebp, esp"
+          },
+          {
+            "address": "0x20e3cc3",
+            "instruction": "push edi"
+          },
+          {
+            "address": "0x20e3cc4",
+            "instruction": "push esi"
+          },
+          {
+            "address": "0x20e3cc5",
+            "instruction": "push ebx"
+          },
+          {
+            "address": "0x20e3cc6",
+            "instruction": "sub esp, 0x34"
+          },
+          {
+            "address": "0x20e3cc9",
+            "instruction": "mov ebx, dword ptr [ebp + 8]"
+          },
+          {
+            "address": "0x20e3ccc",
+            "instruction": "mov esi, dword ptr [ebp + 0xc]"
+          },
+          {
+            "address": "0x20e3ccf",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e3cd3",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x20e3cd6",
+            "instruction": "mov edi, dword ptr [ebp + 0x10]"
+          },
+          {
+            "address": "0x20e3cd9",
+            "instruction": "call 0x266a6a0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x20e3cde",
+            "instruction": "mov edx, eax"
+          },
+          {
+            "address": "0x20e3ce0",
+            "instruction": "mov eax, dword ptr [0x62c17c]"
+          },
+          {
+            "address": "0x20e3ce5",
+            "instruction": "cmp eax, ebx"
+          },
+          {
+            "address": "0x20e3ce7",
+            "instruction": "je 0x20e3d98"
+          },
+          {
+            "address": "0x20e3ced",
+            "instruction": "mov ecx, 1"
+          },
+          {
+            "address": "0x20e3cf2",
+            "instruction": "cmp ebx, 1"
+          },
+          {
+            "address": "0x20e3cf5",
+            "instruction": "je 0x20e3d88"
+          },
+          {
+            "address": "0x20e3cfb",
+            "instruction": "mov dword ptr [esp + 0x18], esi"
+          },
+          {
+            "address": "0x20e3cff",
+            "instruction": "mov dword ptr [esp + 0x14], ebx"
+          },
+          {
+            "address": "0x20e3d03",
+            "instruction": "mov dword ptr [esp + 0x10], 0"
+          },
+          {
+            "address": "0x20e3d0b",
+            "instruction": "mov dword ptr [esp + 0xc], 2"
+          },
+          {
+            "address": "0x20e3d13",
+            "instruction": "mov dword ptr [esp + 8], ecx"
+          },
+          {
+            "address": "0x20e3d17",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x20e3d1b",
+            "instruction": "mov dword ptr [esp], 2"
+          },
+          {
+            "address": "0x20e3d22",
+            "instruction": "call 0x269be90",
+            "callee": [
+              "_etb_ability_global"
+            ]
+          },
+          {
+            "address": "0x20e3d27",
+            "instruction": "cmp edi, 0x5100"
+          },
+          {
+            "address": "0x20e3d2d",
+            "instruction": "je 0x20e3db0"
+          },
+          {
+            "address": "0x20e3d33",
+            "instruction": "mov dword ptr [esp + 0xc], ebx"
+          },
+          {
+            "address": "0x20e3d37",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x20e3d3b",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e3d3f",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x20e3d42",
+            "instruction": "mov dword ptr [esp + 0x28], 0"
+          },
+          {
+            "address": "0x20e3d4a",
+            "instruction": "mov dword ptr [esp + 0x24], 0"
+          },
+          {
+            "address": "0x20e3d52",
+            "instruction": "mov dword ptr [esp + 0x20], 0"
+          },
+          {
+            "address": "0x20e3d5a",
+            "instruction": "mov dword ptr [esp + 0x1c], 0x800"
+          },
+          {
+            "address": "0x20e3d62",
+            "instruction": "mov dword ptr [esp + 0x18], 0"
+          },
+          {
+            "address": "0x20e3d6a",
+            "instruction": "mov dword ptr [esp + 0x14], 0"
+          },
+          {
+            "address": "0x20e3d72",
+            "instruction": "mov dword ptr [esp + 0x10], 0"
+          },
+          {
+            "address": "0x20e3d7a",
+            "instruction": "call 0x265b260",
+            "callee": [
+              "_generic_aura"
+            ]
+          },
+          {
+            "address": "0x20e3d7f",
+            "instruction": "add esp, 0x34"
+          },
+          {
+            "address": "0x20e3d82",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x20e3d83",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x20e3d84",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x20e3d85",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x20e3d86",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x20e3d87",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x20e3d88",
+            "instruction": "dec eax"
+          },
+          {
+            "address": "0x20e3d89",
+            "instruction": "je 0x20e3dee"
+          },
+          {
+            "address": "0x20e3d8b",
+            "instruction": "xor ecx, ecx"
+          },
+          {
+            "address": "0x20e3d8d",
+            "instruction": "jmp 0x20e3cfb"
+          },
+          {
+            "address": "0x20e3d92",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x20e3d98",
+            "instruction": "mov eax, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x20e3d9d",
+            "instruction": "cmp eax, esi"
+          },
+          {
+            "address": "0x20e3d9f",
+            "instruction": "je 0x20e3d27"
+          },
+          {
+            "address": "0x20e3da1",
+            "instruction": "cmp ebx, 1"
+          },
+          {
+            "address": "0x20e3da4",
+            "instruction": "je 0x20e3df8"
+          },
+          {
+            "address": "0x20e3da6",
+            "instruction": "mov ecx, 1"
+          },
+          {
+            "address": "0x20e3dab",
+            "instruction": "jmp 0x20e3cfb"
+          },
+          {
+            "address": "0x20e3db0",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e3db4",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x20e3db7",
+            "instruction": "call 0x266a6a0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x20e3dbc",
+            "instruction": "mov edx, dword ptr [0x62c17c]"
+          },
+          {
+            "address": "0x20e3dc2",
+            "instruction": "mov dword ptr [eax + 0x74], edx"
+          },
+          {
+            "address": "0x20e3dc5",
+            "instruction": "mov edx, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x20e3dcb",
+            "instruction": "mov dword ptr [eax + 0x78], edx"
+          },
+          {
+            "address": "0x20e3dce",
+            "instruction": "mov dword ptr [esp + 8], esi"
+          },
+          {
+            "address": "0x20e3dd2",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x20e3dd6",
+            "instruction": "mov dword ptr [esp + 0xc], 0x800"
+          },
+          {
+            "address": "0x20e3dde",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x20e3de1",
+            "instruction": "call 0x267f3e0",
+            "callee": [
+              "_call_card_function_i"
+            ]
+          },
+          {
+            "address": "0x20e3de6",
+            "instruction": "add esp, 0x34"
+          },
+          {
+            "address": "0x20e3de9",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x20e3dea",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x20e3deb",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x20e3dec",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x20e3ded",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x20e3dee",
+            "instruction": "mov eax, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x20e3df3",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x20e3df7",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x20e3df8",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x20e3dfc",
+            "instruction": "mov dword ptr [esp], 1"
+          },
+          {
+            "address": "0x20e3e03",
+            "instruction": "mov dword ptr [ebp - 0x14], edx"
+          },
+          {
+            "address": "0x20e3e06",
+            "instruction": "call 0x26a6f60",
+            "callee": [
+              "_get_cmc"
+            ]
+          },
+          {
+            "address": "0x20e3e0b",
+            "instruction": "mov edx, dword ptr [ebp - 0x14]"
+          },
+          {
+            "address": "0x20e3e0e",
+            "instruction": "mov dword ptr [ebp - 0x10], eax"
+          },
+          {
+            "address": "0x20e3e11",
+            "instruction": "mov eax, dword ptr [edx + 4]"
+          },
+          {
+            "address": "0x20e3e14",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x20e3e18",
+            "instruction": "movsx eax, byte ptr [edx + 0x50]"
+          },
+          {
+            "address": "0x20e3e1c",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x20e3e1f",
+            "instruction": "call 0x26a6f60",
+            "callee": [
+              "_get_cmc"
+            ]
+          },
+          {
+            "address": "0x20e3e24",
+            "instruction": "cmp dword ptr [ebp - 0x10], eax"
+          },
+          {
+            "address": "0x20e3e27",
+            "instruction": "jle 0x20e3d8b"
+          },
+          {
+            "address": "0x20e3e2d",
+            "instruction": "mov ecx, 2"
+          },
+          {
+            "address": "0x20e3e32",
+            "instruction": "jmp 0x20e3cfb"
+          },
+          {
+            "address": "0x20e3e37",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x20e3e3e",
+            "instruction": "nop "
+          }
+        ]
+      }
+    ],
+    "scope": "Native and rebuilt byte packets with disassembly for selected event, instance-query and unsigned high-bit sites. Bounds are native C725 metadata or unique rebuilt COFF entry through next function. Site observations do not by themselves establish full CFG or gameplay equivalence."
+  },
+  "staged_diff_sha256": "365ee6cd7b44fbac2e4d753edaa9c1d8419e6b2fd17844a371e021b58d1ed3d8",
+  "review_notes": [
+    "Scoped source/native reviews; unchanged candidates receive compact observations, not full-function closure.",
+    "Temple of Aclazotz cancellation calls share a rebuilt continuation; Cauldron and Mirror call counts differ through duplicated dispatch layout. Cached native/source control flow agrees; no patch.",
+    "Yennett native logical sign shift plus addition equals rebuilt arithmetic sign shift plus subtraction for all 32-bit inputs; signed remainder expression retained.",
+    "Ravens Run retains native counter indices 3,2,1 despite selecting target indices 0,1,2; Syr Carah retains saved damage values and live target-count bounds.",
+    "Etali cross-object spill read remains deferred; this batch does not certify or repair its undefined source representation.",
+    "Field and constant scratch rankings only prioritize historical C730 deltas; no inferred equivalence is applied automatically."
+  ],
+  "scope": "Two native callback corrections after broad field/constant triage. No readability-only edits, strict per-function CFG replay, full report refresh or gameplay tests.",
+  "selected_native_current_sites": [
+    {
+      "side": "native",
+      "name": "card_aquitects_will",
+      "create": "0x2590182",
+      "original_player_argument": "0x2590187",
+      "legacy_lookup": "0x259018e"
+    },
+    {
+      "side": "native",
+      "name": "card_shielded_by_faith",
+      "attachment_loads": [
+        "0x2353460",
+        "0x2353466"
+      ],
+      "entering_cmc": "0x2353477",
+      "attached_cmc": "0x235348d"
+    },
+    {
+      "side": "rebuilt",
+      "name": "card_aquitects_will",
+      "create": "0x22e142a",
+      "original_player_argument": "0x22e142f",
+      "legacy_lookup": "0x22e1436"
+    },
+    {
+      "side": "rebuilt",
+      "name": "card_shielded_by_faith",
+      "attachment_loads": [
+        "0x20e3df8",
+        "0x20e3dfc"
+      ],
+      "entering_cmc": "0x20e3e10",
+      "attached_cmc": "0x20e3e25"
+    }
+  ],
+  "native_and_after_sites": {
+    "stage": "after",
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "f120ce62b6fdf38b81aeab0f7e264d8999ab74a1acafe31d87c2a765c46e9fd2",
+      "ManalinkEh.dbg": "6b39de4bed7ece53202f51288346d4745609376fde0f6fc1741a96a74597915e"
+    },
+    "collector_sha256": "d81920206179d5b63b9a5fac07a59b13b2433e5278c08ac33ffabf305f4e6f96",
+    "functions": [
+      {
+        "side": "native",
+        "name": "card_aquitects_will",
+        "address": "0x258fed0",
+        "size": 751,
+        "sha256": "4b660c0ca735e4153349be039496e489f1820e6a7f64b535c4e57325eb06a70e",
+        "bytes_hex": "5589e557565383c480837d10748b75088b5d0c742e837d106c0f8491000000837d10710f840f010000817d10000400000f8402010000817d10005400000f85a50200008d7da0c744240c01000000897c2408895c2404893424e812030d00895c2404893424e8762b12008b4510c744241c00000000c744241801000000c7442414b45b7502897c2410c744240c0100000089442408895c2404893424e8df02110083ec805b5e5f5dc38db4260000000031c03b1d8c397a0075e73b35848c730075df8d7da0c744240c01000000897c2408895c2404893424e893020d00895c2404893424e8f72a12003b1d8c397a000f8575ffffff3b35848c73000f8569ffffffc744240874000000c744240447000000893424e8472d0f0085c07405b8300000008b15a8317a0001c28915a8317a00e935ffffff8d76008d7da0c744240c01000000897c2408895c2404893424e81d020d00895c2404893424e8812a1200837d107189c20f85fffeffff893c2489559ce80a170d008b559c85c0751bc744240802000000895c2404893424e89f591200e9d4feffff6690c744241401000000c74424102e0000008b42788944240c8b4274895c240489442408893424e8ae4714008b559c8b427439f00f84c80000008b4a6c890424894c240489559ce87e2d12008b559c89c18b427489459c894d94ff0c85c4f14e008b4278894424108b459c894c24048944240cc744240820c55802890424895598e8c4a90e008b5598894424048b4274890424e8b2291200c744240802500000895c240489342489459ce8cb0a0f008b4d9c8b55988981800000008b4d94894c24048b4274890424e8dd431200c744240874000000c744240447000000893424e8e52b0f0085c00f84fafeffffc744240401000000893424e8ed3e1200e9e5feffff8b42788974240c89442410c744240820c55802895c2404893424e829a90e0089342489442404e81d291200c744240802500000895c240489342489459ce8360a0f008b559c898280000000e97bffffff31c0e9b2fdffff",
+        "instructions": [
+          {
+            "address": "0x258fed0",
+            "instruction": "push ebp"
+          },
+          {
+            "address": "0x258fed1",
+            "instruction": "mov ebp, esp"
+          },
+          {
+            "address": "0x258fed3",
+            "instruction": "push edi"
+          },
+          {
+            "address": "0x258fed4",
+            "instruction": "push esi"
+          },
+          {
+            "address": "0x258fed5",
+            "instruction": "push ebx"
+          },
+          {
+            "address": "0x258fed6",
+            "instruction": "add esp, -0x80"
+          },
+          {
+            "address": "0x258fed9",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x74"
+          },
+          {
+            "address": "0x258fedd",
+            "instruction": "mov esi, dword ptr [ebp + 8]"
+          },
+          {
+            "address": "0x258fee0",
+            "instruction": "mov ebx, dword ptr [ebp + 0xc]"
+          },
+          {
+            "address": "0x258fee3",
+            "instruction": "je 0x258ff13"
+          },
+          {
+            "address": "0x258fee5",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x6c"
+          },
+          {
+            "address": "0x258fee9",
+            "instruction": "je 0x258ff80"
+          },
+          {
+            "address": "0x258feef",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x71"
+          },
+          {
+            "address": "0x258fef3",
+            "instruction": "je 0x2590008"
+          },
+          {
+            "address": "0x258fef9",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x400"
+          },
+          {
+            "address": "0x258ff00",
+            "instruction": "je 0x2590008"
+          },
+          {
+            "address": "0x258ff06",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x5400"
+          },
+          {
+            "address": "0x258ff0d",
+            "instruction": "jne 0x25901b8"
+          },
+          {
+            "address": "0x258ff13",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x258ff16",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x258ff1e",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x258ff22",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x258ff26",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ff29",
+            "instruction": "call 0x2660240",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x258ff2e",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x258ff32",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ff35",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x258ff3a",
+            "instruction": "mov eax, dword ptr [ebp + 0x10]"
+          },
+          {
+            "address": "0x258ff3d",
+            "instruction": "mov dword ptr [esp + 0x1c], 0"
+          },
+          {
+            "address": "0x258ff45",
+            "instruction": "mov dword ptr [esp + 0x18], 1"
+          },
+          {
+            "address": "0x258ff4d",
+            "instruction": "mov dword ptr [esp + 0x14], 0x2755bb4"
+          },
+          {
+            "address": "0x258ff55",
+            "instruction": "mov dword ptr [esp + 0x10], edi"
+          },
+          {
+            "address": "0x258ff59",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x258ff61",
+            "instruction": "mov dword ptr [esp + 8], eax"
+          },
+          {
+            "address": "0x258ff65",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x258ff69",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ff6c",
+            "instruction": "call 0x26a0250",
+            "callee": [
+              "_generic_spell"
+            ]
+          },
+          {
+            "address": "0x258ff71",
+            "instruction": "sub esp, -0x80"
+          },
+          {
+            "address": "0x258ff74",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x258ff75",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x258ff76",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x258ff77",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x258ff78",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x258ff79",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x258ff80",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x258ff82",
+            "instruction": "cmp ebx, dword ptr [0x7a398c]"
+          },
+          {
+            "address": "0x258ff88",
+            "instruction": "jne 0x258ff71"
+          },
+          {
+            "address": "0x258ff8a",
+            "instruction": "cmp esi, dword ptr [0x738c84]"
+          },
+          {
+            "address": "0x258ff90",
+            "instruction": "jne 0x258ff71"
+          },
+          {
+            "address": "0x258ff92",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x258ff95",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x258ff9d",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x258ffa1",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x258ffa5",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ffa8",
+            "instruction": "call 0x2660240",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x258ffad",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x258ffb1",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ffb4",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x258ffb9",
+            "instruction": "cmp ebx, dword ptr [0x7a398c]"
+          },
+          {
+            "address": "0x258ffbf",
+            "instruction": "jne 0x258ff3a"
+          },
+          {
+            "address": "0x258ffc5",
+            "instruction": "cmp esi, dword ptr [0x738c84]"
+          },
+          {
+            "address": "0x258ffcb",
+            "instruction": "jne 0x258ff3a"
+          },
+          {
+            "address": "0x258ffd1",
+            "instruction": "mov dword ptr [esp + 8], 0x74"
+          },
+          {
+            "address": "0x258ffd9",
+            "instruction": "mov dword ptr [esp + 4], 0x47"
+          },
+          {
+            "address": "0x258ffe1",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x258ffe4",
+            "instruction": "call 0x2682d30",
+            "callee": [
+              "_check_battlefield_for_subtype"
+            ]
+          },
+          {
+            "address": "0x258ffe9",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x258ffeb",
+            "instruction": "je 0x258fff2"
+          },
+          {
+            "address": "0x258ffed",
+            "instruction": "mov eax, 0x30"
+          },
+          {
+            "address": "0x258fff2",
+            "instruction": "mov edx, dword ptr [0x7a31a8]"
+          },
+          {
+            "address": "0x258fff8",
+            "instruction": "add edx, eax"
+          },
+          {
+            "address": "0x258fffa",
+            "instruction": "mov dword ptr [0x7a31a8], edx"
+          },
+          {
+            "address": "0x2590000",
+            "instruction": "jmp 0x258ff3a"
+          },
+          {
+            "address": "0x2590005",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x2590008",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x259000b",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x2590013",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x2590017",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x259001b",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259001e",
+            "instruction": "call 0x2660240",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x2590023",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x2590027",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259002a",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x259002f",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x71"
+          },
+          {
+            "address": "0x2590033",
+            "instruction": "mov edx, eax"
+          },
+          {
+            "address": "0x2590035",
+            "instruction": "jne 0x258ff3a"
+          },
+          {
+            "address": "0x259003b",
+            "instruction": "mov dword ptr [esp], edi"
+          },
+          {
+            "address": "0x259003e",
+            "instruction": "mov dword ptr [ebp - 0x64], edx"
+          },
+          {
+            "address": "0x2590041",
+            "instruction": "call 0x2661750",
+            "callee": [
+              "_valid_target"
+            ]
+          },
+          {
+            "address": "0x2590046",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x2590049",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x259004b",
+            "instruction": "jne 0x2590068"
+          },
+          {
+            "address": "0x259004d",
+            "instruction": "mov dword ptr [esp + 8], 2"
+          },
+          {
+            "address": "0x2590055",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x2590059",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259005c",
+            "instruction": "call 0x26b5a00",
+            "callee": [
+              "_kill_card"
+            ]
+          },
+          {
+            "address": "0x2590061",
+            "instruction": "jmp 0x258ff3a"
+          },
+          {
+            "address": "0x2590066",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x2590068",
+            "instruction": "mov dword ptr [esp + 0x14], 1"
+          },
+          {
+            "address": "0x2590070",
+            "instruction": "mov dword ptr [esp + 0x10], 0x2e"
+          },
+          {
+            "address": "0x2590078",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x259007b",
+            "instruction": "mov dword ptr [esp + 0xc], eax"
+          },
+          {
+            "address": "0x259007f",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x2590082",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x2590086",
+            "instruction": "mov dword ptr [esp + 8], eax"
+          },
+          {
+            "address": "0x259008a",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259008d",
+            "instruction": "call 0x26d4840",
+            "callee": [
+              "_add_counters"
+            ]
+          },
+          {
+            "address": "0x2590092",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x2590095",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x2590098",
+            "instruction": "cmp eax, esi"
+          },
+          {
+            "address": "0x259009a",
+            "instruction": "je 0x2590168"
+          },
+          {
+            "address": "0x25900a0",
+            "instruction": "mov ecx, dword ptr [edx + 0x6c]"
+          },
+          {
+            "address": "0x25900a3",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x25900a6",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x25900aa",
+            "instruction": "mov dword ptr [ebp - 0x64], edx"
+          },
+          {
+            "address": "0x25900ad",
+            "instruction": "call 0x26b2e30",
+            "callee": [
+              "_add_card_to_hand"
+            ]
+          },
+          {
+            "address": "0x25900b2",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x25900b5",
+            "instruction": "mov ecx, eax"
+          },
+          {
+            "address": "0x25900b7",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x25900ba",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x25900bd",
+            "instruction": "mov dword ptr [ebp - 0x6c], ecx"
+          },
+          {
+            "address": "0x25900c0",
+            "instruction": "dec dword ptr [eax*4 + 0x4ef1c4]"
+          },
+          {
+            "address": "0x25900c7",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x25900ca",
+            "instruction": "mov dword ptr [esp + 0x10], eax"
+          },
+          {
+            "address": "0x25900ce",
+            "instruction": "mov eax, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x25900d1",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x25900d5",
+            "instruction": "mov dword ptr [esp + 0xc], eax"
+          },
+          {
+            "address": "0x25900d9",
+            "instruction": "mov dword ptr [esp + 8], 0x258c520"
+          },
+          {
+            "address": "0x25900e1",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x25900e4",
+            "instruction": "mov dword ptr [ebp - 0x68], edx"
+          },
+          {
+            "address": "0x25900e7",
+            "instruction": "call 0x267aab0",
+            "callee": [
+              "_create_targetted_legacy_activate"
+            ]
+          },
+          {
+            "address": "0x25900ec",
+            "instruction": "mov edx, dword ptr [ebp - 0x68]"
+          },
+          {
+            "address": "0x25900ef",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x25900f3",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x25900f6",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x25900f9",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x25900fe",
+            "instruction": "mov dword ptr [esp + 8], 0x5002"
+          },
+          {
+            "address": "0x2590106",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x259010a",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259010d",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x2590110",
+            "instruction": "call 0x2680be0",
+            "callee": [
+              "_get_hacked_subtype"
+            ]
+          },
+          {
+            "address": "0x2590115",
+            "instruction": "mov ecx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x2590118",
+            "instruction": "mov edx, dword ptr [ebp - 0x68]"
+          },
+          {
+            "address": "0x259011b",
+            "instruction": "mov dword ptr [ecx + 0x80], eax"
+          },
+          {
+            "address": "0x2590121",
+            "instruction": "mov ecx, dword ptr [ebp - 0x6c]"
+          },
+          {
+            "address": "0x2590124",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x2590128",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x259012b",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x259012e",
+            "instruction": "call 0x26b4510",
+            "callee": [
+              "_obliterate_card"
+            ]
+          },
+          {
+            "address": "0x2590133",
+            "instruction": "mov dword ptr [esp + 8], 0x74"
+          },
+          {
+            "address": "0x259013b",
+            "instruction": "mov dword ptr [esp + 4], 0x47"
+          },
+          {
+            "address": "0x2590143",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x2590146",
+            "instruction": "call 0x2682d30",
+            "callee": [
+              "_check_battlefield_for_subtype"
+            ]
+          },
+          {
+            "address": "0x259014b",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x259014d",
+            "instruction": "je 0x259004d"
+          },
+          {
+            "address": "0x2590153",
+            "instruction": "mov dword ptr [esp + 4], 1"
+          },
+          {
+            "address": "0x259015b",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259015e",
+            "instruction": "call 0x26b4050",
+            "callee": [
+              "_draw_cards"
+            ]
+          },
+          {
+            "address": "0x2590163",
+            "instruction": "jmp 0x259004d"
+          },
+          {
+            "address": "0x2590168",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x259016b",
+            "instruction": "mov dword ptr [esp + 0xc], esi"
+          },
+          {
+            "address": "0x259016f",
+            "instruction": "mov dword ptr [esp + 0x10], eax"
+          },
+          {
+            "address": "0x2590173",
+            "instruction": "mov dword ptr [esp + 8], 0x258c520"
+          },
+          {
+            "address": "0x259017b",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x259017f",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x2590182",
+            "instruction": "call 0x267aab0",
+            "callee": [
+              "_create_targetted_legacy_activate"
+            ]
+          },
+          {
+            "address": "0x2590187",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x259018a",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x259018e",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x2590193",
+            "instruction": "mov dword ptr [esp + 8], 0x5002"
+          },
+          {
+            "address": "0x259019b",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x259019f",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x25901a2",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x25901a5",
+            "instruction": "call 0x2680be0",
+            "callee": [
+              "_get_hacked_subtype"
+            ]
+          },
+          {
+            "address": "0x25901aa",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x25901ad",
+            "instruction": "mov dword ptr [edx + 0x80], eax"
+          },
+          {
+            "address": "0x25901b3",
+            "instruction": "jmp 0x2590133"
+          },
+          {
+            "address": "0x25901b8",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x25901ba",
+            "instruction": "jmp 0x258ff71"
+          }
+        ]
+      },
+      {
+        "side": "native",
+        "name": "card_shielded_by_faith",
+        "address": "0x2353320",
+        "size": 389,
+        "sha256": "68e1d62b5f528d82c61adc40ef6b6b435d945614e86870db89366817ef767cb0",
+        "bytes_hex": "5589e557565383ec388b5d088b750c89742404891c248b7d10e872f735008b157cc1620039da0f84ac000000b90100000083fb010f848e00000089742418895c2414c744241000000000c744240c02000000894c2408897c2404c7042402000000e8da26350081ff005100000f8486000000895c240c897c240889742404891c24c744242800000000c744242400000000c744242000000000c744241c00080000c744241800000000c744241400000000c744241000000000e86253390083c4385b5e5f5dc366904a746b31c9e968ffffff8db6000000008b15209a730039f2748483fb017459b901000000e949ffffff8db4260000000089742404891c24e88cf635008b157cc162008950748b15209a730089507889742408895c2404c744240c00080000890424e8127c370083c4385b5e5f5dc38b15209a73008d7426008a4850884df38b480489542404c7042401000000894de8e8840c34008945ec8b4de80fbe45f3894c2404890424e86e0c34003945ec0f8e50ffffffb902000000e9b5feffff",
+        "instructions": [
+          {
+            "address": "0x2353320",
+            "instruction": "push ebp"
+          },
+          {
+            "address": "0x2353321",
+            "instruction": "mov ebp, esp"
+          },
+          {
+            "address": "0x2353323",
+            "instruction": "push edi"
+          },
+          {
+            "address": "0x2353324",
+            "instruction": "push esi"
+          },
+          {
+            "address": "0x2353325",
+            "instruction": "push ebx"
+          },
+          {
+            "address": "0x2353326",
+            "instruction": "sub esp, 0x38"
+          },
+          {
+            "address": "0x2353329",
+            "instruction": "mov ebx, dword ptr [ebp + 8]"
+          },
+          {
+            "address": "0x235332c",
+            "instruction": "mov esi, dword ptr [ebp + 0xc]"
+          },
+          {
+            "address": "0x235332f",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x2353333",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x2353336",
+            "instruction": "mov edi, dword ptr [ebp + 0x10]"
+          },
+          {
+            "address": "0x2353339",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x235333e",
+            "instruction": "mov edx, dword ptr [0x62c17c]"
+          },
+          {
+            "address": "0x2353344",
+            "instruction": "cmp edx, ebx"
+          },
+          {
+            "address": "0x2353346",
+            "instruction": "je 0x23533f8"
+          },
+          {
+            "address": "0x235334c",
+            "instruction": "mov ecx, 1"
+          },
+          {
+            "address": "0x2353351",
+            "instruction": "cmp ebx, 1"
+          },
+          {
+            "address": "0x2353354",
+            "instruction": "je 0x23533e8"
+          },
+          {
+            "address": "0x235335a",
+            "instruction": "mov dword ptr [esp + 0x18], esi"
+          },
+          {
+            "address": "0x235335e",
+            "instruction": "mov dword ptr [esp + 0x14], ebx"
+          },
+          {
+            "address": "0x2353362",
+            "instruction": "mov dword ptr [esp + 0x10], 0"
+          },
+          {
+            "address": "0x235336a",
+            "instruction": "mov dword ptr [esp + 0xc], 2"
+          },
+          {
+            "address": "0x2353372",
+            "instruction": "mov dword ptr [esp + 8], ecx"
+          },
+          {
+            "address": "0x2353376",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x235337a",
+            "instruction": "mov dword ptr [esp], 2"
+          },
+          {
+            "address": "0x2353381",
+            "instruction": "call 0x26a5a60",
+            "callee": [
+              "_etb_ability_global"
+            ]
+          },
+          {
+            "address": "0x2353386",
+            "instruction": "cmp edi, 0x5100"
+          },
+          {
+            "address": "0x235338c",
+            "instruction": "je 0x2353418"
+          },
+          {
+            "address": "0x2353392",
+            "instruction": "mov dword ptr [esp + 0xc], ebx"
+          },
+          {
+            "address": "0x2353396",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x235339a",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x235339e",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x23533a1",
+            "instruction": "mov dword ptr [esp + 0x28], 0"
+          },
+          {
+            "address": "0x23533a9",
+            "instruction": "mov dword ptr [esp + 0x24], 0"
+          },
+          {
+            "address": "0x23533b1",
+            "instruction": "mov dword ptr [esp + 0x20], 0"
+          },
+          {
+            "address": "0x23533b9",
+            "instruction": "mov dword ptr [esp + 0x1c], 0x800"
+          },
+          {
+            "address": "0x23533c1",
+            "instruction": "mov dword ptr [esp + 0x18], 0"
+          },
+          {
+            "address": "0x23533c9",
+            "instruction": "mov dword ptr [esp + 0x14], 0"
+          },
+          {
+            "address": "0x23533d1",
+            "instruction": "mov dword ptr [esp + 0x10], 0"
+          },
+          {
+            "address": "0x23533d9",
+            "instruction": "call 0x26e8740",
+            "callee": [
+              "_generic_aura"
+            ]
+          },
+          {
+            "address": "0x23533de",
+            "instruction": "add esp, 0x38"
+          },
+          {
+            "address": "0x23533e1",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x23533e2",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x23533e3",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x23533e4",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x23533e5",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x23533e6",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x23533e8",
+            "instruction": "dec edx"
+          },
+          {
+            "address": "0x23533e9",
+            "instruction": "je 0x2353456"
+          },
+          {
+            "address": "0x23533eb",
+            "instruction": "xor ecx, ecx"
+          },
+          {
+            "address": "0x23533ed",
+            "instruction": "jmp 0x235335a"
+          },
+          {
+            "address": "0x23533f2",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x23533f8",
+            "instruction": "mov edx, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x23533fe",
+            "instruction": "cmp edx, esi"
+          },
+          {
+            "address": "0x2353400",
+            "instruction": "je 0x2353386"
+          },
+          {
+            "address": "0x2353402",
+            "instruction": "cmp ebx, 1"
+          },
+          {
+            "address": "0x2353405",
+            "instruction": "je 0x2353460"
+          },
+          {
+            "address": "0x2353407",
+            "instruction": "mov ecx, 1"
+          },
+          {
+            "address": "0x235340c",
+            "instruction": "jmp 0x235335a"
+          },
+          {
+            "address": "0x2353411",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x2353418",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x235341c",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x235341f",
+            "instruction": "call 0x26b2ab0",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x2353424",
+            "instruction": "mov edx, dword ptr [0x62c17c]"
+          },
+          {
+            "address": "0x235342a",
+            "instruction": "mov dword ptr [eax + 0x74], edx"
+          },
+          {
+            "address": "0x235342d",
+            "instruction": "mov edx, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x2353433",
+            "instruction": "mov dword ptr [eax + 0x78], edx"
+          },
+          {
+            "address": "0x2353436",
+            "instruction": "mov dword ptr [esp + 8], esi"
+          },
+          {
+            "address": "0x235343a",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x235343e",
+            "instruction": "mov dword ptr [esp + 0xc], 0x800"
+          },
+          {
+            "address": "0x2353446",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x2353449",
+            "instruction": "call 0x26cb060",
+            "callee": [
+              "_call_card_function_i"
+            ]
+          },
+          {
+            "address": "0x235344e",
+            "instruction": "add esp, 0x38"
+          },
+          {
+            "address": "0x2353451",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x2353452",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x2353453",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x2353454",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x2353455",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x2353456",
+            "instruction": "mov edx, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x235345c",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x2353460",
+            "instruction": "mov cl, byte ptr [eax + 0x50]"
+          },
+          {
+            "address": "0x2353463",
+            "instruction": "mov byte ptr [ebp - 0xd], cl"
+          },
+          {
+            "address": "0x2353466",
+            "instruction": "mov ecx, dword ptr [eax + 4]"
+          },
+          {
+            "address": "0x2353469",
+            "instruction": "mov dword ptr [esp + 4], edx"
+          },
+          {
+            "address": "0x235346d",
+            "instruction": "mov dword ptr [esp], 1"
+          },
+          {
+            "address": "0x2353474",
+            "instruction": "mov dword ptr [ebp - 0x18], ecx"
+          },
+          {
+            "address": "0x2353477",
+            "instruction": "call 0x2694100",
+            "callee": [
+              "_get_cmc"
+            ]
+          },
+          {
+            "address": "0x235347c",
+            "instruction": "mov dword ptr [ebp - 0x14], eax"
+          },
+          {
+            "address": "0x235347f",
+            "instruction": "mov ecx, dword ptr [ebp - 0x18]"
+          },
+          {
+            "address": "0x2353482",
+            "instruction": "movsx eax, byte ptr [ebp - 0xd]"
+          },
+          {
+            "address": "0x2353486",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x235348a",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x235348d",
+            "instruction": "call 0x2694100",
+            "callee": [
+              "_get_cmc"
+            ]
+          },
+          {
+            "address": "0x2353492",
+            "instruction": "cmp dword ptr [ebp - 0x14], eax"
+          },
+          {
+            "address": "0x2353495",
+            "instruction": "jle 0x23533eb"
+          },
+          {
+            "address": "0x235349b",
+            "instruction": "mov ecx, 2"
+          },
+          {
+            "address": "0x23534a0",
+            "instruction": "jmp 0x235335a"
+          }
+        ]
+      },
+      {
+        "side": "rebuilt",
+        "name": "card_aquitects_will",
+        "address": "0x22e1160",
+        "size": 768,
+        "sha256": "352158b43de68d7fce78ec12acb32f6f785f78fcd25a762407b17f49b2ddc139",
+        "bytes_hex": "5589e557565383c480837d10748b75088b5d0c0f8437010000837d106c0f84a5000000837d10710f95c2817d10005400000f95c084c275788d7da0c744240c01000000897c2408895c2404893424e82d903f00895c2404893424e8d1943800837d107189c20f84150100008b4510c744241c00000000c744241801000000c7442414d4e07302897c2410c744240c0100000089442408895c2404893424e8be8f3c0083ec805b5e5f5dc38db600000000817d10000400000f847bffffff31c0ebe18db4260000000031c03b1d8c397a0075d03b35848c730075c88d7da0c744240c01000000897c2408895c2404893424e88b8f3f00895c2404893424e82f9438003b1d8c397a000f855effffff3b35848c73000f8552ffffffc744240874000000c744240447000000893424e84fe93b0085c07405b8300000008b15a8317a0001c28915a8317a00e91effffff8d76008d7da0c744240c01000000897c2408895c2404893424e8158f3f00895c2404893424e8b9933800e9effeffff8d742600893c2489559ce855983f008b559c85c0751ec744240802000000895c2404893424e8cabd3800e9c0feffff8d74260090c744241401000000c74424102e0000008b42788944240c8b4274895c240489442408893424e8964d38008b559c8b427439f00f84c80000008b4a6c890424894c240489559ce8b69638008b559c89c18b427489459c894d94ff0c85c4f14e008b4278894424108b459c894c24048944240cc744240890d72d02890424895598e82c473a008b5598894424048b4274890424e8ea923800c744240802500000895c240489342489459ce8e3fc3a008b4d9c8b55988981800000008b4d94894c24048b4274890424e885a83800c744240874000000c744240447000000893424e8ede73b0085c00f84f7feffffc744240401000000893424e8c5a33800e9e2feffff8b42788974240c89442410c744240890d72d02895c2404893424e891463a0089342489442404e855923800c744240802500000895c240489342489459ce84efc3a008b559c898280000000e97bffffff",
+        "instructions": [
+          {
+            "address": "0x22e1160",
+            "instruction": "push ebp"
+          },
+          {
+            "address": "0x22e1161",
+            "instruction": "mov ebp, esp"
+          },
+          {
+            "address": "0x22e1163",
+            "instruction": "push edi"
+          },
+          {
+            "address": "0x22e1164",
+            "instruction": "push esi"
+          },
+          {
+            "address": "0x22e1165",
+            "instruction": "push ebx"
+          },
+          {
+            "address": "0x22e1166",
+            "instruction": "add esp, -0x80"
+          },
+          {
+            "address": "0x22e1169",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x74"
+          },
+          {
+            "address": "0x22e116d",
+            "instruction": "mov esi, dword ptr [ebp + 8]"
+          },
+          {
+            "address": "0x22e1170",
+            "instruction": "mov ebx, dword ptr [ebp + 0xc]"
+          },
+          {
+            "address": "0x22e1173",
+            "instruction": "je 0x22e12b0"
+          },
+          {
+            "address": "0x22e1179",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x6c"
+          },
+          {
+            "address": "0x22e117d",
+            "instruction": "je 0x22e1228"
+          },
+          {
+            "address": "0x22e1183",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x71"
+          },
+          {
+            "address": "0x22e1187",
+            "instruction": "setne dl"
+          },
+          {
+            "address": "0x22e118a",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x5400"
+          },
+          {
+            "address": "0x22e1191",
+            "instruction": "setne al"
+          },
+          {
+            "address": "0x22e1194",
+            "instruction": "test dl, al"
+          },
+          {
+            "address": "0x22e1196",
+            "instruction": "jne 0x22e1210"
+          },
+          {
+            "address": "0x22e1198",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x22e119b",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x22e11a3",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x22e11a7",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e11ab",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e11ae",
+            "instruction": "call 0x26da1e0",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x22e11b3",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e11b7",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e11ba",
+            "instruction": "call 0x266a690",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x22e11bf",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x71"
+          },
+          {
+            "address": "0x22e11c3",
+            "instruction": "mov edx, eax"
+          },
+          {
+            "address": "0x22e11c5",
+            "instruction": "je 0x22e12e0"
+          },
+          {
+            "address": "0x22e11cb",
+            "instruction": "mov eax, dword ptr [ebp + 0x10]"
+          },
+          {
+            "address": "0x22e11ce",
+            "instruction": "mov dword ptr [esp + 0x1c], 0"
+          },
+          {
+            "address": "0x22e11d6",
+            "instruction": "mov dword ptr [esp + 0x18], 1"
+          },
+          {
+            "address": "0x22e11de",
+            "instruction": "mov dword ptr [esp + 0x14], 0x273e0d4"
+          },
+          {
+            "address": "0x22e11e6",
+            "instruction": "mov dword ptr [esp + 0x10], edi"
+          },
+          {
+            "address": "0x22e11ea",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x22e11f2",
+            "instruction": "mov dword ptr [esp + 8], eax"
+          },
+          {
+            "address": "0x22e11f6",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e11fa",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e11fd",
+            "instruction": "call 0x26aa1c0",
+            "callee": [
+              "_generic_spell"
+            ]
+          },
+          {
+            "address": "0x22e1202",
+            "instruction": "sub esp, -0x80"
+          },
+          {
+            "address": "0x22e1205",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x22e1206",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x22e1207",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x22e1208",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x22e1209",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x22e120a",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x22e1210",
+            "instruction": "cmp dword ptr [ebp + 0x10], 0x400"
+          },
+          {
+            "address": "0x22e1217",
+            "instruction": "je 0x22e1198"
+          },
+          {
+            "address": "0x22e121d",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x22e121f",
+            "instruction": "jmp 0x22e1202"
+          },
+          {
+            "address": "0x22e1221",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x22e1228",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x22e122a",
+            "instruction": "cmp ebx, dword ptr [0x7a398c]"
+          },
+          {
+            "address": "0x22e1230",
+            "instruction": "jne 0x22e1202"
+          },
+          {
+            "address": "0x22e1232",
+            "instruction": "cmp esi, dword ptr [0x738c84]"
+          },
+          {
+            "address": "0x22e1238",
+            "instruction": "jne 0x22e1202"
+          },
+          {
+            "address": "0x22e123a",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x22e123d",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x22e1245",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x22e1249",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e124d",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e1250",
+            "instruction": "call 0x26da1e0",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x22e1255",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e1259",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e125c",
+            "instruction": "call 0x266a690",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x22e1261",
+            "instruction": "cmp ebx, dword ptr [0x7a398c]"
+          },
+          {
+            "address": "0x22e1267",
+            "instruction": "jne 0x22e11cb"
+          },
+          {
+            "address": "0x22e126d",
+            "instruction": "cmp esi, dword ptr [0x738c84]"
+          },
+          {
+            "address": "0x22e1273",
+            "instruction": "jne 0x22e11cb"
+          },
+          {
+            "address": "0x22e1279",
+            "instruction": "mov dword ptr [esp + 8], 0x74"
+          },
+          {
+            "address": "0x22e1281",
+            "instruction": "mov dword ptr [esp + 4], 0x47"
+          },
+          {
+            "address": "0x22e1289",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e128c",
+            "instruction": "call 0x269fbe0",
+            "callee": [
+              "_check_battlefield_for_subtype"
+            ]
+          },
+          {
+            "address": "0x22e1291",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x22e1293",
+            "instruction": "je 0x22e129a"
+          },
+          {
+            "address": "0x22e1295",
+            "instruction": "mov eax, 0x30"
+          },
+          {
+            "address": "0x22e129a",
+            "instruction": "mov edx, dword ptr [0x7a31a8]"
+          },
+          {
+            "address": "0x22e12a0",
+            "instruction": "add edx, eax"
+          },
+          {
+            "address": "0x22e12a2",
+            "instruction": "mov dword ptr [0x7a31a8], edx"
+          },
+          {
+            "address": "0x22e12a8",
+            "instruction": "jmp 0x22e11cb"
+          },
+          {
+            "address": "0x22e12ad",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x22e12b0",
+            "instruction": "lea edi, [ebp - 0x60]"
+          },
+          {
+            "address": "0x22e12b3",
+            "instruction": "mov dword ptr [esp + 0xc], 1"
+          },
+          {
+            "address": "0x22e12bb",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x22e12bf",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e12c3",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e12c6",
+            "instruction": "call 0x26da1e0",
+            "callee": [
+              "_default_target_definition"
+            ]
+          },
+          {
+            "address": "0x22e12cb",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e12cf",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e12d2",
+            "instruction": "call 0x266a690",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x22e12d7",
+            "instruction": "jmp 0x22e11cb"
+          },
+          {
+            "address": "0x22e12dc",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x22e12e0",
+            "instruction": "mov dword ptr [esp], edi"
+          },
+          {
+            "address": "0x22e12e3",
+            "instruction": "mov dword ptr [ebp - 0x64], edx"
+          },
+          {
+            "address": "0x22e12e6",
+            "instruction": "call 0x26dab40",
+            "callee": [
+              "_valid_target"
+            ]
+          },
+          {
+            "address": "0x22e12eb",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e12ee",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x22e12f0",
+            "instruction": "jne 0x22e1310"
+          },
+          {
+            "address": "0x22e12f2",
+            "instruction": "mov dword ptr [esp + 8], 2"
+          },
+          {
+            "address": "0x22e12fa",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e12fe",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e1301",
+            "instruction": "call 0x266d0d0",
+            "callee": [
+              "_kill_card"
+            ]
+          },
+          {
+            "address": "0x22e1306",
+            "instruction": "jmp 0x22e11cb"
+          },
+          {
+            "address": "0x22e130b",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x22e130f",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x22e1310",
+            "instruction": "mov dword ptr [esp + 0x14], 1"
+          },
+          {
+            "address": "0x22e1318",
+            "instruction": "mov dword ptr [esp + 0x10], 0x2e"
+          },
+          {
+            "address": "0x22e1320",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x22e1323",
+            "instruction": "mov dword ptr [esp + 0xc], eax"
+          },
+          {
+            "address": "0x22e1327",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x22e132a",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e132e",
+            "instruction": "mov dword ptr [esp + 8], eax"
+          },
+          {
+            "address": "0x22e1332",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e1335",
+            "instruction": "call 0x26660d0",
+            "callee": [
+              "_add_counters"
+            ]
+          },
+          {
+            "address": "0x22e133a",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e133d",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x22e1340",
+            "instruction": "cmp eax, esi"
+          },
+          {
+            "address": "0x22e1342",
+            "instruction": "je 0x22e1410"
+          },
+          {
+            "address": "0x22e1348",
+            "instruction": "mov ecx, dword ptr [edx + 0x6c]"
+          },
+          {
+            "address": "0x22e134b",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x22e134e",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x22e1352",
+            "instruction": "mov dword ptr [ebp - 0x64], edx"
+          },
+          {
+            "address": "0x22e1355",
+            "instruction": "call 0x266aa10",
+            "callee": [
+              "_add_card_to_hand"
+            ]
+          },
+          {
+            "address": "0x22e135a",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e135d",
+            "instruction": "mov ecx, eax"
+          },
+          {
+            "address": "0x22e135f",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x22e1362",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x22e1365",
+            "instruction": "mov dword ptr [ebp - 0x6c], ecx"
+          },
+          {
+            "address": "0x22e1368",
+            "instruction": "dec dword ptr [eax*4 + 0x4ef1c4]"
+          },
+          {
+            "address": "0x22e136f",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x22e1372",
+            "instruction": "mov dword ptr [esp + 0x10], eax"
+          },
+          {
+            "address": "0x22e1376",
+            "instruction": "mov eax, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e1379",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x22e137d",
+            "instruction": "mov dword ptr [esp + 0xc], eax"
+          },
+          {
+            "address": "0x22e1381",
+            "instruction": "mov dword ptr [esp + 8], 0x22dd790"
+          },
+          {
+            "address": "0x22e1389",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x22e138c",
+            "instruction": "mov dword ptr [ebp - 0x68], edx"
+          },
+          {
+            "address": "0x22e138f",
+            "instruction": "call 0x2685ac0",
+            "callee": [
+              "_create_targetted_legacy_activate"
+            ]
+          },
+          {
+            "address": "0x22e1394",
+            "instruction": "mov edx, dword ptr [ebp - 0x68]"
+          },
+          {
+            "address": "0x22e1397",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22e139b",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x22e139e",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x22e13a1",
+            "instruction": "call 0x266a690",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x22e13a6",
+            "instruction": "mov dword ptr [esp + 8], 0x5002"
+          },
+          {
+            "address": "0x22e13ae",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e13b2",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e13b5",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x22e13b8",
+            "instruction": "call 0x26910a0",
+            "callee": [
+              "_get_hacked_subtype"
+            ]
+          },
+          {
+            "address": "0x22e13bd",
+            "instruction": "mov ecx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e13c0",
+            "instruction": "mov edx, dword ptr [ebp - 0x68]"
+          },
+          {
+            "address": "0x22e13c3",
+            "instruction": "mov dword ptr [ecx + 0x80], eax"
+          },
+          {
+            "address": "0x22e13c9",
+            "instruction": "mov ecx, dword ptr [ebp - 0x6c]"
+          },
+          {
+            "address": "0x22e13cc",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x22e13d0",
+            "instruction": "mov eax, dword ptr [edx + 0x74]"
+          },
+          {
+            "address": "0x22e13d3",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x22e13d6",
+            "instruction": "call 0x266bc60",
+            "callee": [
+              "_obliterate_card"
+            ]
+          },
+          {
+            "address": "0x22e13db",
+            "instruction": "mov dword ptr [esp + 8], 0x74"
+          },
+          {
+            "address": "0x22e13e3",
+            "instruction": "mov dword ptr [esp + 4], 0x47"
+          },
+          {
+            "address": "0x22e13eb",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e13ee",
+            "instruction": "call 0x269fbe0",
+            "callee": [
+              "_check_battlefield_for_subtype"
+            ]
+          },
+          {
+            "address": "0x22e13f3",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x22e13f5",
+            "instruction": "je 0x22e12f2"
+          },
+          {
+            "address": "0x22e13fb",
+            "instruction": "mov dword ptr [esp + 4], 1"
+          },
+          {
+            "address": "0x22e1403",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e1406",
+            "instruction": "call 0x266b7d0",
+            "callee": [
+              "_draw_cards"
+            ]
+          },
+          {
+            "address": "0x22e140b",
+            "instruction": "jmp 0x22e12f2"
+          },
+          {
+            "address": "0x22e1410",
+            "instruction": "mov eax, dword ptr [edx + 0x78]"
+          },
+          {
+            "address": "0x22e1413",
+            "instruction": "mov dword ptr [esp + 0xc], esi"
+          },
+          {
+            "address": "0x22e1417",
+            "instruction": "mov dword ptr [esp + 0x10], eax"
+          },
+          {
+            "address": "0x22e141b",
+            "instruction": "mov dword ptr [esp + 8], 0x22dd790"
+          },
+          {
+            "address": "0x22e1423",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e1427",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e142a",
+            "instruction": "call 0x2685ac0",
+            "callee": [
+              "_create_targetted_legacy_activate"
+            ]
+          },
+          {
+            "address": "0x22e142f",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e1432",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x22e1436",
+            "instruction": "call 0x266a690",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x22e143b",
+            "instruction": "mov dword ptr [esp + 8], 0x5002"
+          },
+          {
+            "address": "0x22e1443",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x22e1447",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x22e144a",
+            "instruction": "mov dword ptr [ebp - 0x64], eax"
+          },
+          {
+            "address": "0x22e144d",
+            "instruction": "call 0x26910a0",
+            "callee": [
+              "_get_hacked_subtype"
+            ]
+          },
+          {
+            "address": "0x22e1452",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x22e1455",
+            "instruction": "mov dword ptr [edx + 0x80], eax"
+          },
+          {
+            "address": "0x22e145b",
+            "instruction": "jmp 0x22e13db"
+          }
+        ]
+      },
+      {
+        "side": "rebuilt",
+        "name": "card_shielded_by_faith",
+        "address": "0x20e3cc0",
+        "size": 384,
+        "sha256": "d1c6cd5c3a8730271a1c3d4301040c30822b0234ebd434f26bd7425725703323",
+        "bytes_hex": "5589e557565383ec388b5d088b750c89742404891c248b7d10e8b269580089c1a17cc1620039d80f84ab000000ba0100000083fb010f848d00000089742418895c2414c744241000000000c744240c0200000089542408897c2404c7042402000000e859815b0081ff005100000f847d000000895c240c897c240889742404891c24c744242800000000c744242400000000c744242000000000c744241c00080000c744241800000000c744241400000000c744241000000000e8d174570083c4385b5e5f5dc39048746331d2e969ffffff8db600000000a1209a730039f0748683fb017452ba01000000e94bffffff89742404891c24e8d46858008b157cc162008950748b15209a730089507889742408895c2404c744240c00080000890424e8eab5590083c4385b5e5f5dc3a1209a73008d742600900fbe51508b490489442404c70424010000008955e8894dece83b315c008b55e88b4dec891424894c24048945f0e826315c00ba020000003945f00f8fc3feffff31d2e9bcfeffff90",
+        "instructions": [
+          {
+            "address": "0x20e3cc0",
+            "instruction": "push ebp"
+          },
+          {
+            "address": "0x20e3cc1",
+            "instruction": "mov ebp, esp"
+          },
+          {
+            "address": "0x20e3cc3",
+            "instruction": "push edi"
+          },
+          {
+            "address": "0x20e3cc4",
+            "instruction": "push esi"
+          },
+          {
+            "address": "0x20e3cc5",
+            "instruction": "push ebx"
+          },
+          {
+            "address": "0x20e3cc6",
+            "instruction": "sub esp, 0x38"
+          },
+          {
+            "address": "0x20e3cc9",
+            "instruction": "mov ebx, dword ptr [ebp + 8]"
+          },
+          {
+            "address": "0x20e3ccc",
+            "instruction": "mov esi, dword ptr [ebp + 0xc]"
+          },
+          {
+            "address": "0x20e3ccf",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e3cd3",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x20e3cd6",
+            "instruction": "mov edi, dword ptr [ebp + 0x10]"
+          },
+          {
+            "address": "0x20e3cd9",
+            "instruction": "call 0x266a690",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x20e3cde",
+            "instruction": "mov ecx, eax"
+          },
+          {
+            "address": "0x20e3ce0",
+            "instruction": "mov eax, dword ptr [0x62c17c]"
+          },
+          {
+            "address": "0x20e3ce5",
+            "instruction": "cmp eax, ebx"
+          },
+          {
+            "address": "0x20e3ce7",
+            "instruction": "je 0x20e3d98"
+          },
+          {
+            "address": "0x20e3ced",
+            "instruction": "mov edx, 1"
+          },
+          {
+            "address": "0x20e3cf2",
+            "instruction": "cmp ebx, 1"
+          },
+          {
+            "address": "0x20e3cf5",
+            "instruction": "je 0x20e3d88"
+          },
+          {
+            "address": "0x20e3cfb",
+            "instruction": "mov dword ptr [esp + 0x18], esi"
+          },
+          {
+            "address": "0x20e3cff",
+            "instruction": "mov dword ptr [esp + 0x14], ebx"
+          },
+          {
+            "address": "0x20e3d03",
+            "instruction": "mov dword ptr [esp + 0x10], 0"
+          },
+          {
+            "address": "0x20e3d0b",
+            "instruction": "mov dword ptr [esp + 0xc], 2"
+          },
+          {
+            "address": "0x20e3d13",
+            "instruction": "mov dword ptr [esp + 8], edx"
+          },
+          {
+            "address": "0x20e3d17",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x20e3d1b",
+            "instruction": "mov dword ptr [esp], 2"
+          },
+          {
+            "address": "0x20e3d22",
+            "instruction": "call 0x269be80",
+            "callee": [
+              "_etb_ability_global"
+            ]
+          },
+          {
+            "address": "0x20e3d27",
+            "instruction": "cmp edi, 0x5100"
+          },
+          {
+            "address": "0x20e3d2d",
+            "instruction": "je 0x20e3db0"
+          },
+          {
+            "address": "0x20e3d33",
+            "instruction": "mov dword ptr [esp + 0xc], ebx"
+          },
+          {
+            "address": "0x20e3d37",
+            "instruction": "mov dword ptr [esp + 8], edi"
+          },
+          {
+            "address": "0x20e3d3b",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e3d3f",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x20e3d42",
+            "instruction": "mov dword ptr [esp + 0x28], 0"
+          },
+          {
+            "address": "0x20e3d4a",
+            "instruction": "mov dword ptr [esp + 0x24], 0"
+          },
+          {
+            "address": "0x20e3d52",
+            "instruction": "mov dword ptr [esp + 0x20], 0"
+          },
+          {
+            "address": "0x20e3d5a",
+            "instruction": "mov dword ptr [esp + 0x1c], 0x800"
+          },
+          {
+            "address": "0x20e3d62",
+            "instruction": "mov dword ptr [esp + 0x18], 0"
+          },
+          {
+            "address": "0x20e3d6a",
+            "instruction": "mov dword ptr [esp + 0x14], 0"
+          },
+          {
+            "address": "0x20e3d72",
+            "instruction": "mov dword ptr [esp + 0x10], 0"
+          },
+          {
+            "address": "0x20e3d7a",
+            "instruction": "call 0x265b250",
+            "callee": [
+              "_generic_aura"
+            ]
+          },
+          {
+            "address": "0x20e3d7f",
+            "instruction": "add esp, 0x38"
+          },
+          {
+            "address": "0x20e3d82",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x20e3d83",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x20e3d84",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x20e3d85",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x20e3d86",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x20e3d87",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x20e3d88",
+            "instruction": "dec eax"
+          },
+          {
+            "address": "0x20e3d89",
+            "instruction": "je 0x20e3dee"
+          },
+          {
+            "address": "0x20e3d8b",
+            "instruction": "xor edx, edx"
+          },
+          {
+            "address": "0x20e3d8d",
+            "instruction": "jmp 0x20e3cfb"
+          },
+          {
+            "address": "0x20e3d92",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x20e3d98",
+            "instruction": "mov eax, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x20e3d9d",
+            "instruction": "cmp eax, esi"
+          },
+          {
+            "address": "0x20e3d9f",
+            "instruction": "je 0x20e3d27"
+          },
+          {
+            "address": "0x20e3da1",
+            "instruction": "cmp ebx, 1"
+          },
+          {
+            "address": "0x20e3da4",
+            "instruction": "je 0x20e3df8"
+          },
+          {
+            "address": "0x20e3da6",
+            "instruction": "mov edx, 1"
+          },
+          {
+            "address": "0x20e3dab",
+            "instruction": "jmp 0x20e3cfb"
+          },
+          {
+            "address": "0x20e3db0",
+            "instruction": "mov dword ptr [esp + 4], esi"
+          },
+          {
+            "address": "0x20e3db4",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x20e3db7",
+            "instruction": "call 0x266a690",
+            "callee": [
+              "_get_card_instance"
+            ]
+          },
+          {
+            "address": "0x20e3dbc",
+            "instruction": "mov edx, dword ptr [0x62c17c]"
+          },
+          {
+            "address": "0x20e3dc2",
+            "instruction": "mov dword ptr [eax + 0x74], edx"
+          },
+          {
+            "address": "0x20e3dc5",
+            "instruction": "mov edx, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x20e3dcb",
+            "instruction": "mov dword ptr [eax + 0x78], edx"
+          },
+          {
+            "address": "0x20e3dce",
+            "instruction": "mov dword ptr [esp + 8], esi"
+          },
+          {
+            "address": "0x20e3dd2",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x20e3dd6",
+            "instruction": "mov dword ptr [esp + 0xc], 0x800"
+          },
+          {
+            "address": "0x20e3dde",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x20e3de1",
+            "instruction": "call 0x267f3d0",
+            "callee": [
+              "_call_card_function_i"
+            ]
+          },
+          {
+            "address": "0x20e3de6",
+            "instruction": "add esp, 0x38"
+          },
+          {
+            "address": "0x20e3de9",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x20e3dea",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x20e3deb",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x20e3dec",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x20e3ded",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x20e3dee",
+            "instruction": "mov eax, dword ptr [0x739a20]"
+          },
+          {
+            "address": "0x20e3df3",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x20e3df7",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x20e3df8",
+            "instruction": "movsx edx, byte ptr [ecx + 0x50]"
+          },
+          {
+            "address": "0x20e3dfc",
+            "instruction": "mov ecx, dword ptr [ecx + 4]"
+          },
+          {
+            "address": "0x20e3dff",
+            "instruction": "mov dword ptr [esp + 4], eax"
+          },
+          {
+            "address": "0x20e3e03",
+            "instruction": "mov dword ptr [esp], 1"
+          },
+          {
+            "address": "0x20e3e0a",
+            "instruction": "mov dword ptr [ebp - 0x18], edx"
+          },
+          {
+            "address": "0x20e3e0d",
+            "instruction": "mov dword ptr [ebp - 0x14], ecx"
+          },
+          {
+            "address": "0x20e3e10",
+            "instruction": "call 0x26a6f50",
+            "callee": [
+              "_get_cmc"
+            ]
+          },
+          {
+            "address": "0x20e3e15",
+            "instruction": "mov edx, dword ptr [ebp - 0x18]"
+          },
+          {
+            "address": "0x20e3e18",
+            "instruction": "mov ecx, dword ptr [ebp - 0x14]"
+          },
+          {
+            "address": "0x20e3e1b",
+            "instruction": "mov dword ptr [esp], edx"
+          },
+          {
+            "address": "0x20e3e1e",
+            "instruction": "mov dword ptr [esp + 4], ecx"
+          },
+          {
+            "address": "0x20e3e22",
+            "instruction": "mov dword ptr [ebp - 0x10], eax"
+          },
+          {
+            "address": "0x20e3e25",
+            "instruction": "call 0x26a6f50",
+            "callee": [
+              "_get_cmc"
+            ]
+          },
+          {
+            "address": "0x20e3e2a",
+            "instruction": "mov edx, 2"
+          },
+          {
+            "address": "0x20e3e2f",
+            "instruction": "cmp dword ptr [ebp - 0x10], eax"
+          },
+          {
+            "address": "0x20e3e32",
+            "instruction": "jg 0x20e3cfb"
+          },
+          {
+            "address": "0x20e3e38",
+            "instruction": "xor edx, edx"
+          },
+          {
+            "address": "0x20e3e3a",
+            "instruction": "jmp 0x20e3cfb"
+          },
+          {
+            "address": "0x20e3e3f",
+            "instruction": "nop "
+          }
+        ]
+      }
+    ],
+    "scope": "Native and rebuilt byte packets with disassembly for selected event, instance-query and unsigned high-bit sites. Bounds are native C725 metadata or unique rebuilt COFF entry through next function. Site observations do not by themselves establish full CFG or gameplay equivalence."
+  },
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "f120ce62b6fdf38b81aeab0f7e264d8999ab74a1acafe31d87c2a765c46e9fd2",
+    "debug_sha256": "6b39de4bed7ece53202f51288346d4745609376fde0f6fc1741a96a74597915e",
+    "build_log_sha256": "96e9883cb2894ded1c44a837e9a0058e9678acaf98b723311d6e979e12dd1bf8",
+    "scope": "One grouped incremental build; exact two-file source projections. Focused callback argument and field-load sites reviewed separately; no full-function or gameplay proof."
+  }
+}

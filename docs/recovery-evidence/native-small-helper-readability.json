@@ -1,0 +1,599 @@
+{
+  "format": 1,
+  "status": "Eight existing bodies reconstructed from 191 to 127 lines. Two attachment getter corrections now pass strict native/rebuilt CFG comparison; three other simplified definitions retain identical runtime objects. Combined build, 15,169 fixed slots and seven raw/canonical projections pass.",
+  "files": [
+    {
+      "source": "cards/modern_horizons_2.c",
+      "before_bytes_sha256": "47245fd011f20d19be0dbe61aebf753e0be77c4d3548c24a00f86c973b59f9df",
+      "after_bytes_sha256": "e0344c01f90db04af3179723b6b2ce779a81661ad440ec1acfefb4f4d2bed7b4",
+      "before_sha256": "3c79209a952b943276cb121eb4759cee41a5522617ba81d345e3a7546ee707de",
+      "after_sha256": "baf4dfb497a5d2f6b407ed72fe18cac18844e4cffcb365e57a518d338742f65c"
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "before_bytes_sha256": "532301b46ffb0f411c2690a6531e8fd1ff521fa2d54f41e6f9d05e74f9f6ecc8",
+      "after_bytes_sha256": "43f5a47c1fa0c244c751ca1053f9bacf5020f827890607c6a1b90f23dbefc1be",
+      "before_sha256": "b4b8e5b3cc814e33a8fac1e64c3cb46fd81adfee364b255c181ee88a19c6df98",
+      "after_sha256": "8e1db8fdb62e040a75aef1d4a5e19b6eacd03074d16736a946b209fd85490947"
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "before_bytes_sha256": "b4b1be62a9456b21e51a5e22d776f924ff97f0f1500c5a039168abbba40c4b5a",
+      "after_bytes_sha256": "9a53c448d2cdb28bc2d80a80148fd9a5c433f4787d6c1d3f40eed52fc388c116",
+      "before_sha256": "8e202c0e60b66f8c77fe655b5c7a5b1362fa22d4f56b7fbeb4960366d88754e2",
+      "after_sha256": "2a4efab2bafa5b25ecae85eada08dd9cb860dc5d06fa7b7cff113837d8dd7d42"
+    },
+    {
+      "source": "cards/theros.c",
+      "before_bytes_sha256": "0b69e524c5c5c4090cb341c4911161e90816630b271fd8933b4d689ba15025ba",
+      "after_bytes_sha256": "f242185b21c0d69682a35093a90c00def2e5cd316b57e8567be61d73887631ca",
+      "before_sha256": "b5ac3854116988a022257c3187585898320f70b760b8d1ec3639a1affce010ae",
+      "after_sha256": "3d68d3bb6e44f990907264640c12d7aa15ff066db27b46d09cdb96a4d66f8e1c"
+    },
+    {
+      "source": "cards/unstable.c",
+      "before_bytes_sha256": "9fcfaee99b95346d61c797612141005fd06fc6de6228707e187c88c0bac580b1",
+      "after_bytes_sha256": "f7c2788476eeefbb6a97c3c13abbf47c05cb0ac1a761920d7346ea93a5a0d9b1",
+      "before_sha256": "07b8d8a596cf446614f733b43dd21d643dfde3aaee7c1494613f89a753276acf",
+      "after_sha256": "77253123dfe309a2f3e76a3f653e992917e6fd689773551a5b5083536b3e5915"
+    },
+    {
+      "source": "functions/functions.c",
+      "before_bytes_sha256": "a41a4364576ef9c3a69edfd8a60d0e89fc6ea195b6617366634f1e9cd0463330",
+      "after_bytes_sha256": "061c04ade476b9a3e205b5fca298154caba6d0de1613bf94a85ef067d866e057",
+      "before_sha256": "69d61a7b88e79e26367d9cc0da9475715c1bfdc1e9bbc4b4acb1a0dc02679b50",
+      "after_sha256": "b28f452179f172bca7d955d4cae5d1a229044608e722f01da347e630e8569543"
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "before_bytes_sha256": "9d05b80658b98304369f1a5dd04c641531bc5a190e9987c78678002ff3c9cb9f",
+      "after_bytes_sha256": "90e758bd8dada2493063496f689f3d1f2ab330baf862faac167b62a370a2b047",
+      "before_sha256": "72e80d54c929c073435ce8d9f4b5f06338d143bbbb372ba3ad4f1d75c54d7a96",
+      "after_sha256": "8614bb516f0e6b51ffbe3a01f008ae7e024c29cb43b9b92a171c78fb7bed8731"
+    }
+  ],
+  "names": [
+    "new_card_from_list",
+    "test_has_any_watermark",
+    "has_mana_cost_0_or_1",
+    "has_the_citys_blessing",
+    "can_cause_sacrifice",
+    "card_capital_offense",
+    "card_aqueous_form",
+    "card_pursuit_of_flight"
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "before_objects": [
+    {
+      "source": "cards/modern_horizons_2.c",
+      "path": ".recovery/build-gcc93/obj/cards/modern_horizons_2.o",
+      "runtime_sha256": "f459adb7a96e37a212ccccb9d1f3881f13e2bf51fa80c08b7fc2f1b5342c304a"
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "path": ".recovery/build-gcc93/obj/cards/return_to_ravnica.o",
+      "runtime_sha256": "f8b29fe774b7ac018022fca9a5172a1e2cd6275a3666deb8504fa94c83fd8ea2"
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "path": ".recovery/build-gcc93/obj/cards/rivals_of_ixalan.o",
+      "runtime_sha256": "4b6e175e1355cac8a2fa5a26b03d83687689d9c16c58e68982fd978a32ec317e"
+    },
+    {
+      "source": "cards/theros.c",
+      "path": ".recovery/build-gcc93/obj/cards/theros.o",
+      "runtime_sha256": "f5dc48ffeaae360683e449983b656a073989f0b773b691d8160773922760eb7e"
+    },
+    {
+      "source": "cards/unstable.c",
+      "path": ".recovery/build-gcc93/obj/cards/unstable.o",
+      "runtime_sha256": "fe1d9c59e7376d37c9e3174d5502989b1389713907bf036409b887914add0747"
+    },
+    {
+      "source": "functions/functions.c",
+      "path": ".recovery/build-gcc93/obj/functions/functions.o",
+      "runtime_sha256": "eedf6f4ff983080400528a15cb567bca88430e5ab9bdf57452990ca43831cf50"
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "path": ".recovery/build-gcc93/obj/functions/sacrifices.o",
+      "runtime_sha256": "f98f96c531290c8d5d57da928a9a36abfa47714ee2d8c83159bc5d57ac13fd33"
+    }
+  ],
+  "scope": "Two native attachment getter sequences restored; six existing bodies simplified into ordinary C with descriptive locals, native type flags and named card/type constants. Preserve chooser color sentinels -2/-1, mode conversion even for a negative choice, the zero return for an absent Citys Blessing marker, and the original watermark callback ignoring iid/val. No rule corrections or new handlers.",
+  "native_ranges": [
+    {
+      "name": "new_card_from_list",
+      "source": "functions/functions.c",
+      "address": "0x268ecf0",
+      "size": 194,
+      "sha256": "3b2cc1fc9aa4c346f1976680b2bb924b99809452dbc91157ed92c96356286a0e"
+    },
+    {
+      "name": "test_has_any_watermark",
+      "source": "cards/unstable.c",
+      "address": "0x25c4a60",
+      "size": 60,
+      "sha256": "cf47120551d52e46c2c9a7d2f65eff918ed62baf14495d3e9410fff9c68e747d"
+    },
+    {
+      "name": "has_mana_cost_0_or_1",
+      "source": "cards/modern_horizons_2.c",
+      "address": "0x222b7b0",
+      "size": 141,
+      "sha256": "d5f28605df0ccf99805ec40d08778c6dec37b95bfd853c40cbd00edcc8519a1d"
+    },
+    {
+      "name": "has_the_citys_blessing",
+      "source": "cards/rivals_of_ixalan.c",
+      "address": "0x218ed50",
+      "size": 79,
+      "sha256": "a67efc22b29ff8d0b7333d512c462cc4c4810d070a32fdc660f33fdeafa01539"
+    },
+    {
+      "name": "can_cause_sacrifice",
+      "source": "functions/sacrifices.c",
+      "address": "0x26e3c70",
+      "size": 31,
+      "sha256": "abc56e6806099278d6f5cda3ecb27d8628a7c4baff996e714dc9d8e9faf6d763"
+    },
+    {
+      "name": "card_capital_offense",
+      "source": "cards/unstable.c",
+      "address": "0x25c6880",
+      "size": 329,
+      "sha256": "ff71d9c1afe135dd6d689394a28040bb2102771080caae80e6cddb19373e866d"
+    },
+    {
+      "name": "card_aqueous_form",
+      "source": "cards/theros.c",
+      "address": "0x2633b70",
+      "size": 244,
+      "sha256": "c8378d59c4a15bf9bcb23ec506fd81c8f8153955544fbbc826b022d37aa5ed88"
+    },
+    {
+      "name": "card_pursuit_of_flight",
+      "source": "cards/return_to_ravnica.c",
+      "address": "0x24630f0",
+      "size": 462,
+      "sha256": "b4a9e219333ddb7401d6701b79f45c2cd391c0ab8def8b1b9024d3e4a4423676"
+    }
+  ],
+  "counts": {
+    "definitions": 8,
+    "source_files": 7,
+    "before_lines": 191,
+    "after_lines": 127,
+    "attachment_query_corrections": 2,
+    "readability_only": 6
+  },
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "1b342c261dc08bf0f798b8df29b059e55a125842cf4500811a3a35943683462e",
+    "debug_sha256": "317704450399bb5dd9d5d91de25faa6080341ae5aa6d14062e2a754475011279",
+    "build_log_sha256": "572aebf1beab3062d9042f4635877a26cd8e99c6063a4e6a71bcb249502b85e0",
+    "canonical_and_raw_file_projections": 7,
+    "strict_cfg_before": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "1aeba9cff94a78bf3985cbd7e41fb7e718d50609000715fddd4ff7775f6f8402",
+        "ManalinkEh.dbg": "1ba36fa87efc2d12188577a6369effa154c69468bcf9a7b45e2a2bae3abc0fe3"
+      },
+      "results": [
+        {
+          "name": "card_aqueous_form",
+          "matched": false,
+          "reason": "('Operation changed', 'cmp', 'movsx')",
+          "ranges": [
+            {
+              "address": "0x2633b70",
+              "size": 244,
+              "sha256": "c8378d59c4a15bf9bcb23ec506fd81c8f8153955544fbbc826b022d37aa5ed88",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2560810",
+              "size": 240,
+              "sha256": "9e9a09f57cff523a67de44f0cb1d437bb93979b881525c9e4bf928320457ee78",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_pursuit_of_flight",
+          "matched": false,
+          "reason": "('Operation changed', 'cmp', 'movsx')",
+          "ranges": [
+            {
+              "address": "0x24630f0",
+              "size": 462,
+              "sha256": "b4a9e219333ddb7401d6701b79f45c2cd391c0ab8def8b1b9024d3e4a4423676",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2485bf0",
+              "size": 448,
+              "sha256": "2928ffb316eea048e5a521a65a304f80c0449e6c9b8a60370aa0ecbd9c2a66f3",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "new_card_from_list",
+          "matched": false,
+          "reason": "('Unbound operand', '0xffffffbf', '0xffffffbd')",
+          "ranges": [
+            {
+              "address": "0x268ecf0",
+              "size": 194,
+              "sha256": "3b2cc1fc9aa4c346f1976680b2bb924b99809452dbc91157ed92c96356286a0e",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x268ff50",
+              "size": 208,
+              "sha256": "28e6c88255427876468379ffd1c3e302be693c50321e1432a68d3302ebcb0a0f",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "test_has_any_watermark",
+          "matched": false,
+          "reason": "Instruction prefix changed",
+          "ranges": [
+            {
+              "address": "0x25c4a60",
+              "size": 60,
+              "sha256": "cf47120551d52e46c2c9a7d2f65eff918ed62baf14495d3e9410fff9c68e747d",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25c43a0",
+              "size": 64,
+              "sha256": "6978a5b312ca4d7b3259f853b446900925276537458e1742e81d2d3e87b19aa7",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "has_mana_cost_0_or_1",
+          "matched": false,
+          "reason": "('Operation changed', 'cmp', 'test')",
+          "ranges": [
+            {
+              "address": "0x222b7b0",
+              "size": 141,
+              "sha256": "d5f28605df0ccf99805ec40d08778c6dec37b95bfd853c40cbd00edcc8519a1d",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2391f10",
+              "size": 144,
+              "sha256": "3d1b5ea79c0a33c94b55dff40ea4976d5415871642c25ec9bf3f7abe2d5e2830",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "can_cause_sacrifice",
+          "matched": false,
+          "reason": "('Operation changed', 'pop', 'mov')",
+          "ranges": [
+            {
+              "address": "0x26e3c70",
+              "size": 31,
+              "sha256": "abc56e6806099278d6f5cda3ecb27d8628a7c4baff996e714dc9d8e9faf6d763",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x26d5290",
+              "size": 48,
+              "sha256": "ea0eeb07460934660d8fd6b850b8c70c863d6ee7fb620b0284c21c9f85cd5491",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_capital_offense",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x25c6880",
+              "size": 329,
+              "sha256": "ff71d9c1afe135dd6d689394a28040bb2102771080caae80e6cddb19373e866d",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25c8410",
+              "size": 352,
+              "sha256": "d95dba8ab75a417b2177d18b6508d34406b5b4b849c77d381044648c89170c05",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "2520dbb8ae428c09d890736dceece352cbbc7b76149ad3deb49b7b2517e7bd3d",
+      "cfg_reviewer_sha256": "ac4635b540e5155d36807b065c9a3c10d46bd965e19728f919ae287f309d384b",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "1b342c261dc08bf0f798b8df29b059e55a125842cf4500811a3a35943683462e",
+        "ManalinkEh.dbg": "317704450399bb5dd9d5d91de25faa6080341ae5aa6d14062e2a754475011279"
+      },
+      "results": [
+        {
+          "name": "card_aqueous_form",
+          "matched": true,
+          "proof": {
+            "cfg_states": 57,
+            "reached_instruction_counts": [
+              57,
+              57
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x26544a0",
+                "rebuilt": "0x26e2860",
+                "identity": "_scry"
+              },
+              {
+                "native": "0x268d340",
+                "rebuilt": "0x268f1a0",
+                "identity": "_store_attackers"
+              },
+              {
+                "native": "0x268d9a0",
+                "rebuilt": "0x26a02b0",
+                "identity": "_dat_ability"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266ae40",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26e8740",
+                "rebuilt": "0x265bae0",
+                "identity": "_generic_aura"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x2633b70",
+              "size": 244,
+              "sha256": "c8378d59c4a15bf9bcb23ec506fd81c8f8153955544fbbc826b022d37aa5ed88",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2560780",
+              "size": 256,
+              "sha256": "523425d5470bf51bddb1ee843c7e5b3d2cf2f73738aeaf0a839c41b37edc0b5c",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_pursuit_of_flight",
+          "matched": true,
+          "proof": {
+            "cfg_states": 122,
+            "reached_instruction_counts": [
+              122,
+              122
+            ],
+            "terminals": 4,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x267b300",
+                "rebuilt": "0x26ad660",
+                "identity": "_pump_ability_until_eot_no_repeat"
+              },
+              {
+                "native": "0x269c8c0",
+                "rebuilt": "0x26b01e0",
+                "identity": "_granted_generic_activated_ability"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266ae40",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b32d0",
+                "rebuilt": "0x266b610",
+                "identity": "_in_play"
+              },
+              {
+                "native": "0x26e8740",
+                "rebuilt": "0x265bae0",
+                "identity": "_generic_aura"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x24630f0",
+              "size": 462,
+              "sha256": "b4a9e219333ddb7401d6701b79f45c2cd391c0ab8def8b1b9024d3e4a4423676",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2485bf0",
+              "size": 464,
+              "sha256": "065a2f541da65336cc7b0ed92ca72e000419bb3b2d1618d4e3ec8df668b8db22",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "new_card_from_list",
+          "matched": false,
+          "reason": "('Unbound operand', '0xffffffbf', '0xffffffbd')",
+          "ranges": [
+            {
+              "address": "0x268ecf0",
+              "size": 194,
+              "sha256": "3b2cc1fc9aa4c346f1976680b2bb924b99809452dbc91157ed92c96356286a0e",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x268fed0",
+              "size": 208,
+              "sha256": "1ac2ad6eaf42fe9fe2d63f2dbbe743f5fe199c183bf336441e6dc3535ae97809",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "test_has_any_watermark",
+          "matched": false,
+          "reason": "Instruction prefix changed",
+          "ranges": [
+            {
+              "address": "0x25c4a60",
+              "size": 60,
+              "sha256": "cf47120551d52e46c2c9a7d2f65eff918ed62baf14495d3e9410fff9c68e747d",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25c4320",
+              "size": 64,
+              "sha256": "6978a5b312ca4d7b3259f853b446900925276537458e1742e81d2d3e87b19aa7",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "has_mana_cost_0_or_1",
+          "matched": false,
+          "reason": "Instruction prefix changed",
+          "ranges": [
+            {
+              "address": "0x222b7b0",
+              "size": 141,
+              "sha256": "d5f28605df0ccf99805ec40d08778c6dec37b95bfd853c40cbd00edcc8519a1d",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2391f10",
+              "size": 144,
+              "sha256": "584c2d5f7cf2be5bacbec42e86ceac543525ef4e03d5b58759139c11bd67cbc3",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "can_cause_sacrifice",
+          "matched": false,
+          "reason": "('Operation changed', 'pop', 'mov')",
+          "ranges": [
+            {
+              "address": "0x26e3c70",
+              "size": 31,
+              "sha256": "abc56e6806099278d6f5cda3ecb27d8628a7c4baff996e714dc9d8e9faf6d763",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x26d5210",
+              "size": 48,
+              "sha256": "ea0eeb07460934660d8fd6b850b8c70c863d6ee7fb620b0284c21c9f85cd5491",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_capital_offense",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x25c6880",
+              "size": 329,
+              "sha256": "ff71d9c1afe135dd6d689394a28040bb2102771080caae80e6cddb19373e866d",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25c8390",
+              "size": 352,
+              "sha256": "d95dba8ab75a417b2177d18b6508d34406b5b4b849c77d381044648c89170c05",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "2520dbb8ae428c09d890736dceece352cbbc7b76149ad3deb49b7b2517e7bd3d",
+      "cfg_reviewer_sha256": "ac4635b540e5155d36807b065c9a3c10d46bd965e19728f919ae287f309d384b",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "object_review": [
+      {
+        "source": "cards/modern_horizons_2.c",
+        "before_sha256": "f459adb7a96e37a212ccccb9d1f3881f13e2bf51fa80c08b7fc2f1b5342c304a",
+        "after_sha256": "a745ce4236e36b64602fc676162847e7e93d6643084e38016fb0717a0cf0893e",
+        "identical": false
+      },
+      {
+        "source": "cards/return_to_ravnica.c",
+        "before_sha256": "f8b29fe774b7ac018022fca9a5172a1e2cd6275a3666deb8504fa94c83fd8ea2",
+        "after_sha256": "cd0666df381fe20fefca48477629ed6a484079adab130d255309ee8928862161",
+        "identical": false
+      },
+      {
+        "source": "cards/rivals_of_ixalan.c",
+        "before_sha256": "4b6e175e1355cac8a2fa5a26b03d83687689d9c16c58e68982fd978a32ec317e",
+        "after_sha256": "59913ad4216dfe1c7041d0b61faf5eb282fb93038ebb82dadf5a650fc0e0acea",
+        "identical": false
+      },
+      {
+        "source": "cards/theros.c",
+        "before_sha256": "f5dc48ffeaae360683e449983b656a073989f0b773b691d8160773922760eb7e",
+        "after_sha256": "52059f7c44bd3ecbe6fd5aa01ae928920e322a9aaad8f0aee14be31fb27cff83",
+        "identical": false
+      },
+      {
+        "source": "cards/unstable.c",
+        "before_sha256": "fe1d9c59e7376d37c9e3174d5502989b1389713907bf036409b887914add0747",
+        "after_sha256": "fe1d9c59e7376d37c9e3174d5502989b1389713907bf036409b887914add0747",
+        "identical": true
+      },
+      {
+        "source": "functions/functions.c",
+        "before_sha256": "eedf6f4ff983080400528a15cb567bca88430e5ab9bdf57452990ca43831cf50",
+        "after_sha256": "a065e61adeeed375b52c7c38583e6081a3a4e8c8a6b65ad367d0e089948a4317",
+        "identical": false
+      },
+      {
+        "source": "functions/sacrifices.c",
+        "before_sha256": "f98f96c531290c8d5d57da928a9a36abfa47714ee2d8c83159bc5d57ac13fd33",
+        "after_sha256": "f98f96c531290c8d5d57da928a9a36abfa47714ee2d8c83159bc5d57ac13fd33",
+        "identical": true
+      }
+    ],
+    "checker_sha256": "6e0bb75f144ada9a7b3175f82fa4d550d757ec90c576f9b3c753fa1c13c8cc76",
+    "staging": "preserved",
+    "scope": "The two aura CFGs match the complete entry-reachable release flow with strict operations/operand widths/predicates after failing before. Three readability-only definitions in unstable.c and sacrifices.c retain identical allocated object code/data/relocations/symbols. The other three source simplifications were reviewed against native operations; compiler output still differs and no native whole-function equivalence is claimed for them. No full reccmp refresh or gameplay fixture was run."
+  },
+  "review_notes": [
+    "Aqueous Form re-queries after the signed nonnegative attachment guard, then reads the attached pair from that fresh result.",
+    "Pursuit of Flight re-queries after its not-minus-one attachment guard during GAA dispatch before testing can-activate/activate. Resolve and cleanup preserve that getter call too.",
+    "new_card_from_list preserves every uint16 type-flag case, negative color sentinels, speculating early return, cancellation choice and mode-dependent ID conversion; it does not add filtering for other flags.",
+    "has_mana_cost_0_or_1 snapshots the printed ID before helper calls, retains their short-circuit order, then checks generic cost and all five colored fields; neighboring reserved identity bits are unused.",
+    "has_the_citys_blessing keeps a live active-card count and returns the marker card index, including the native zero/absent ambiguity.",
+    "The watermark callback still ignores iid/val and reads the current or backup instance ID; Capital Offense counts the same byte range A through Z; same-player sacrifice returns raw one."
+  ]
+}

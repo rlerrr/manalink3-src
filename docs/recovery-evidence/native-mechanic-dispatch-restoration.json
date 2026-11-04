@@ -1,0 +1,4504 @@
+{
+  "format": 1,
+  "status": "Fifteen native mechanic delegations built and checked; fresh full comparison has 12,527 exact, 273 effective and 6,028 different ranges, with sixty newly exact and no lost exact match.",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "before_rebuilt_sha256": "26e2b974c74099a3868ed55631dabbe30ed3800694e49c0c936d85bd4ef0f9af",
+  "before_debug_sha256": "3930be6f51808230457bad6efd7a0528b3dc8157ae7bd195d75e2501bf569880",
+  "functions": [
+    {
+      "source": "cards/dominaria.c",
+      "name": "give_token_haste",
+      "native_address": "0x22c95e0",
+      "native_size": 76,
+      "native_body_sha256": "b9f518fef64dd97a02268f89a9d4001113cae361f4db5c53b0aa359dc2bd219f",
+      "native_checks": [
+        {
+          "callee": "add_status",
+          "target": "0x2687d40",
+          "sites": [
+            {
+              "address": "0x22c9627",
+              "instruction": "jmp 0x2687d40"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "399819d5c70b55f8af84b76637858b1db977e766b33cd3175348c6579b06fe1c",
+      "source_after_definition_sha256": "3381b2244a7803fdb7739b945be8c33183b62594c4eb9b902ce7aeae54feabac",
+      "reason": "Restore native add_status with the original target-player/legacy slot and 0x10000 invisible-effect status; remove only its expanded instance lookup/store."
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "card_wizards_retort",
+      "native_address": "0x22d62a0",
+      "native_size": 89,
+      "native_body_sha256": "8488ca5438d14e75efc8d56ab9012a8eb74f6df510f99a730f6ed58edc58616a",
+      "native_checks": [
+        {
+          "callee": "card_counterspell",
+          "target": "0x24c1280",
+          "sites": [
+            {
+              "address": "0x22d62ca",
+              "instruction": "jmp 0x24c1280"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "bd113cc7f5f716e1ed0af619e7956031d678e9d43c4b754e652f2961722ff5da",
+      "source_after_definition_sha256": "80e8c2eaa99a8027c4c7ab3048a605a1584943ed4430a2a72dedc01efe253df8",
+      "reason": "Restore native Counterspell reuse while retaining the Wizard cost reduction."
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "name": "card_iron_will",
+      "native_address": "0x25ba050",
+      "native_size": 146,
+      "native_body_sha256": "de378f5b0071270525da4f2764e9e5944088dd7148f63d6f7af9e8420071de48",
+      "native_checks": [
+        {
+          "callee": "us_cycling",
+          "target": "0x20447f0",
+          "sites": [
+            {
+              "address": "0x25ba0c9",
+              "instruction": "jmp 0x20447f0"
+            }
+          ]
+        },
+        {
+          "callee": "vanilla_instant_pump",
+          "target": "0x26a1900",
+          "sites": [
+            {
+              "address": "0x25ba0ac",
+              "instruction": "call 0x26a1900"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "5eda58db35ddca1bb33bb2aaeb5438772fadf26819e2cd5dd3e1986f6a17ff2f",
+      "source_after_definition_sha256": "b89ba0d2ec3ea94b7e9b6d7bfcb3f3972ad2ec4e5da01c5c6fcee3e7a6d3d3e1",
+      "reason": "Recover the native cycling/pump event routing through the existing casting predicate; remove the cycling goto and expanded fixed-cost wrapper."
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_censor",
+      "native_address": "0x22d9e20",
+      "native_size": 110,
+      "native_body_sha256": "6cbdc2adaabfdb41f04ff0351a80d2b1fa654a88154bc420f69ac36a174c2733",
+      "native_checks": [
+        {
+          "callee": "card_force_spike",
+          "target": "0x21f3270",
+          "sites": [
+            {
+              "address": "0x22d9e40",
+              "instruction": "jmp 0x21f3270"
+            }
+          ]
+        },
+        {
+          "callee": "cycling",
+          "target": "0x2699590",
+          "sites": [
+            {
+              "address": "0x22d9e83",
+              "instruction": "call 0x2699590"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "d523c1c0d64fd735783dbeb2d005307154448f9c20576c374dc72942e3963e8a",
+      "source_after_definition_sha256": "996971b9793d6e972982cfbd59b39c0a4405651c6b43e9d5b19852fb2ae97c01",
+      "reason": "Restore native Force Spike delegation outside the three hand-activation events; preserve the blue cycling cost."
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_haze_of_pollen",
+      "native_address": "0x22e0850",
+      "native_size": 110,
+      "native_body_sha256": "de6beba6b043671a73880fc47417c2e94cb832e47b9da8885bec535fc6a182d5",
+      "native_checks": [
+        {
+          "callee": "card_fog",
+          "target": "0x24c4050",
+          "sites": [
+            {
+              "address": "0x22e0870",
+              "instruction": "jmp 0x24c4050"
+            }
+          ]
+        },
+        {
+          "callee": "cycling",
+          "target": "0x2699590",
+          "sites": [
+            {
+              "address": "0x22e08b3",
+              "instruction": "call 0x2699590"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "38cda7d568275ad6f7badd99c6b028831a39142a25374cfa164818e2f5d79de4",
+      "source_after_definition_sha256": "2fcd20444e814c3432f9c2ed7d23ba22cffe23df85c36aa6444d0aa7a40f6ef5",
+      "reason": "Restore native Fog delegation outside the three hand-activation events; preserve the colorless cycling cost and the shared Fog AI/damage logic."
+    },
+    {
+      "source": "cards/eventide.c",
+      "name": "card_rendclaw_trow",
+      "native_address": "0x236d3e0",
+      "native_size": 71,
+      "native_body_sha256": "74d6eca35a5315100a1d41ecc81348c834ea5e7990bd383e40dc77455395a868",
+      "native_checks": [
+        {
+          "callee": "hybrid",
+          "target": "0x254b7d0",
+          "sites": [
+            {
+              "address": "0x236d422",
+              "instruction": "jmp 0x254b7d0"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "3235bb7f0aac9b5362f5017f17cdeb3d0445b6380bdb34d098a07eba0f449989",
+      "source_after_definition_sha256": "e878b1ac1415ddb91f25f415bae00ffffe88ddc88a463711eec7146247a96fb3",
+      "reason": "Restore native hybrid delegation, preserving the card-specific keyword or token-generation work."
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "card_pitiless_gorgon",
+      "native_address": "0x261f880",
+      "native_size": 55,
+      "native_body_sha256": "09cd10a5d63c51fc68f02bd43b34839c89c621614d5736d8232addb71d32e14a",
+      "native_checks": [
+        {
+          "callee": "hybrid",
+          "target": "0x254b7d0",
+          "sites": [
+            {
+              "address": "0x261f8b2",
+              "instruction": "jmp 0x254b7d0"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "051992458f1727741600e0936574092aea3c4da39906311216052c3d16eabe52",
+      "source_after_definition_sha256": "a8c05c251ff702be320e1ae880c290ae7a7cec5cb2b272721a45a550f5f3c49c",
+      "reason": "Restore native hybrid delegation, preserving the card-specific keyword or token-generation work."
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_inkling_summoning",
+      "native_address": "0x23d1330",
+      "native_size": 91,
+      "native_body_sha256": "c84622b99382c3631ac246a64596daf974c5f3885507b447fee3dd537dc0dc4e",
+      "native_checks": [
+        {
+          "callee": "hybrid",
+          "target": "0x254b7d0",
+          "sites": [
+            {
+              "address": "0x23d1357",
+              "instruction": "jmp 0x254b7d0"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "5da53ede13edf31990b6ab9cd79735a10b52dd40cbb3a855d87a92cdc02ef2c9",
+      "source_after_definition_sha256": "0c1548e06cfab6d120a55520559c2f25675dbf54d91c1d0b72a3a415fcf61eb8",
+      "reason": "Restore native hybrid delegation, preserving the card-specific keyword or token-generation work."
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_teach_by_example",
+      "native_address": "0x23dd6a0",
+      "native_size": 38,
+      "native_body_sha256": "37170a72eb8ffcfce997b935c99cd0ee29f6be431e2717f1221f2ceb449afb99",
+      "native_checks": [
+        {
+          "callee": "basic_spell",
+          "target": "0x26a1bd0",
+          "sites": [
+            {
+              "address": "0x23dd6c1",
+              "instruction": "jmp 0x26a1bd0"
+            }
+          ]
+        },
+        {
+          "callee": "card_doublecast",
+          "target": "0x2207ef0",
+          "sites": [
+            {
+              "address": "0x23dd6b9",
+              "instruction": "jmp 0x2207ef0"
+            }
+          ]
+        },
+        {
+          "callee": "hybrid",
+          "target": "0x254b7d0",
+          "sites": [
+            {
+              "address": "0x23dd6b1",
+              "instruction": "jmp 0x254b7d0"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "ea56510d2e9a5d4463f6c241126ae10040e1698dfed59b535142a5361302bc36",
+      "source_after_definition_sha256": "4e52ed9475064463c02739059076a1ae07f267e76f9119d76294795524dc79ed",
+      "reason": "Restore the three native routes exactly: basic_spell on the cast query, Doublecast on resolution, hybrid on all other events. Doublecast is reused only for its resolution path."
+    },
+    {
+      "source": "cards/invasion.c",
+      "name": "card_urborg_skeleton",
+      "native_address": "0x249e270",
+      "native_size": 185,
+      "native_body_sha256": "9ce8257717a92de0e955602e21b26e801f7d3e4046c2f75f8d73b334a8d81f8b",
+      "native_checks": [
+        {
+          "callee": "card_drudge_skeletons",
+          "target": "0x24c2e20",
+          "sites": [
+            {
+              "address": "0x249e2cf",
+              "instruction": "jmp 0x24c2e20"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "8c6e413fb8dd2ca4283a806b101eb9b889a14fa8e0538f6e6a96592118422cef",
+      "source_after_definition_sha256": "c1bfe744aa8af4f2a9c44a4e1d6034d54ab412a17c8323999d2b23767efebaea",
+      "reason": "Restore native Drudge Skeletons regeneration delegation while retaining kicker and entry-counter handling."
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_rift_sower",
+      "native_address": "0x223c800",
+      "native_size": 178,
+      "native_body_sha256": "3dc3bce2d7698ee8cb835d66c5f0ddb572328aa4a2385d297e37e8388749a750",
+      "native_checks": [
+        {
+          "callee": "suspend",
+          "target": "0x20eac90",
+          "sites": [
+            {
+              "address": "0x223c886",
+              "instruction": "call 0x20eac90"
+            }
+          ]
+        },
+        {
+          "callee": "card_generic_noncombat_1_mana_producing_creature",
+          "target": "0x24bd840",
+          "sites": [
+            {
+              "address": "0x223c8a2",
+              "instruction": "jmp 0x24bd840"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "1f591df31625f3ba8a647d1067534c1ec405f73f9cfbc48537d215a98e94cdf2",
+      "source_after_definition_sha256": "c0d622eab11d507aaa84fe7f065014110b54ee995eba9935aee2e1631232c4e3",
+      "reason": "Restore native suspend-versus-mana-creature dispatch; remove the expanded color-count helper and its goto without changing suspend operands."
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "card_arboretum_elemental",
+      "native_address": "0x261a000",
+      "native_size": 55,
+      "native_body_sha256": "858f802e426e07d58dac014929f232d3ea8ccf031a4a03cf745631021f4331f9",
+      "native_checks": [
+        {
+          "callee": "generic_spell_with_convoke",
+          "target": "0x21aa630",
+          "sites": [
+            {
+              "address": "0x261a032",
+              "instruction": "jmp 0x21aa630"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "30d1ea69ff980c586289b01d0e6eff9e03523c4579122dd0581584fd01b748e7",
+      "source_after_definition_sha256": "919da23377764525e1aa7bf8da2b8d028a50439344ba37d0e3d4179e127ff127",
+      "reason": "Restore native shared convoke handling after the card-specific keyword/devour call; retain native cost, cancellation and info-slot behavior through the existing helper."
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "name": "card_impervious_greatwurm",
+      "native_address": "0x261d8b0",
+      "native_size": 55,
+      "native_body_sha256": "5dd8e916ffc2e20062eb63fcd93f2b54f80754126471507b9bfbcabeaecb584f",
+      "native_checks": [
+        {
+          "callee": "generic_spell_with_convoke",
+          "target": "0x21aa630",
+          "sites": [
+            {
+              "address": "0x261d8e2",
+              "instruction": "jmp 0x21aa630"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "85526706b162f857636bafee807712baae74d23e9ed46a849a96079c2c71a704",
+      "source_after_definition_sha256": "edc80cd8ba9b68a30ad99843be03f598be7eb1b643701709c8ebef51b4513ccc",
+      "reason": "Restore native shared convoke handling after the card-specific keyword/devour call; retain native cost, cancellation and info-slot behavior through the existing helper."
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "name": "card_feaster_of_fools",
+      "native_address": "0x2338130",
+      "native_size": 63,
+      "native_body_sha256": "a6245f8e633c9788855460caa30051e5f89e66d18176ef60386f4e66d2d34aad",
+      "native_checks": [
+        {
+          "callee": "generic_spell_with_convoke",
+          "target": "0x21aa630",
+          "sites": [
+            {
+              "address": "0x233816a",
+              "instruction": "jmp 0x21aa630"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "9a356da7398f8705eae40803125fc3d9c17b2bfef2c216e1df8fc27fa2a8591d",
+      "source_after_definition_sha256": "8820993fa52d4123429551139a984f6fc349cacfe364ecc176df250c5283b9dd",
+      "reason": "Restore native shared convoke handling after the card-specific keyword/devour call; retain native cost, cancellation and info-slot behavior through the existing helper."
+    },
+    {
+      "source": "cards/ikoria.c",
+      "name": "has_counter",
+      "native_address": "0x22884c0",
+      "native_size": 28,
+      "native_body_sha256": "657746d116ed4e96b93ef9e269353896559430e3140cf40fa671d768c3ebeb31",
+      "native_checks": [
+        {
+          "callee": "count_counters",
+          "target": "0x26d1730",
+          "sites": [
+            {
+              "address": "0x22884d7",
+              "instruction": "jmp 0x26d1730"
+            }
+          ]
+        }
+      ],
+      "source_before_definition_sha256": "c6dd33c4a7651945f4f4efcb081bc6843244c949189d81b8b5142877cc2e8039",
+      "source_after_definition_sha256": "50a0d80a5e4b6c32451e425892eb1d08470329b56caf05b833480e654f0225ab",
+      "reason": "Restore native total-counter delegation with the -1 total-count selector, preserving the numeric total rather than booleanizing it and removing raw alias-byte accesses."
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/dominaria.c",
+      "before_source_sha256": "1131be86bb39db7a864a68916871624712717bbbf8172c6278563b5a60488e8d",
+      "after_source_sha256": "eba35a922dd47fa75a4b57914ce7f2ae27bbd76c843a9041475455c63db0ff23",
+      "before_bytes_sha256": "cb501bf49cf1cc370cdd75e782fd97a5c81e4e74f60309f05751955b67a71c8a"
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "before_source_sha256": "a5cde8dcb021a2932fe730f42f33fd0a0cf57cc42e8d5e381edb9f46901efe24",
+      "after_source_sha256": "3b030883d684bb77cbd657c83061b44a42823dd66d433aa09368343ddfbace6c",
+      "before_bytes_sha256": "bf1f0bfa921a8e5e37a9f304780e442b9be95033b0da08a72a6f9685800caa5d"
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "before_source_sha256": "b788a46435e39b690327c14972f13319d581fca20f41b585b7bb124a9643856f",
+      "after_source_sha256": "ef22b6c152dd94f2816a7b0e2a8a648652fea7c94b6ef7fb0db18e438292ed2a",
+      "before_bytes_sha256": "d96201ca78f7a68be6ac1282fece7aabb732514ed450c781a85bca36c8ade5ee"
+    },
+    {
+      "source": "cards/eventide.c",
+      "before_source_sha256": "e8c93b952e73ea14cf472ef7e03cccb50cfa16471f36d557db545aff3e452a70",
+      "after_source_sha256": "00f132fadfbb715cc6267789bf40d385b1a4474fb2f41e5490016461af423835",
+      "before_bytes_sha256": "831eefb9d4fd3cd7c79304887d84a03129b0a9c6a537dcfcf09c1eb71085627a"
+    },
+    {
+      "source": "cards/guilds_of_ravnica.c",
+      "before_source_sha256": "7737f5b4c08aec2304ab421e1a2b77eb469a7a41fab78c041725cf87caf44b78",
+      "after_source_sha256": "f5df354bbebf04defa928e4a448f7d7b49d57c75c63ccbab9959be1af045c85d",
+      "before_bytes_sha256": "2953ce221f24f6b41e80bea4417b0f39706e6ff422a9df7bbcbdcef25896344d"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "before_source_sha256": "1ec0402d80f56b6c7078a01fe3818e1dc3e0a75bf122268b3b64e31280bb2898",
+      "after_source_sha256": "2fc92ffeaca2caf2fc94be56481600f2f128cfcb91206e6f4e28238d53beca4b",
+      "before_bytes_sha256": "fa53f48319842428cbf7a090b26934147f3f3ecab87ea665fda012068af822ee"
+    },
+    {
+      "source": "cards/invasion.c",
+      "before_source_sha256": "0ea556161ce6004bc7e5a7bf9a4d3fa3392ec100405b33c8f92a222a04b25cf6",
+      "after_source_sha256": "ae4ba6196526c3b3f0ce8447df24317d626faa92dfa564c5aa80d34729aa3e55",
+      "before_bytes_sha256": "8d60f3bfed7edc5886b173561360e4ce6ed0ec10ddc442ba040065acd96c6528"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "before_source_sha256": "da1c116fbd942623e27d6f9fcebcb973f5c5baf80a75eaba9917d86764a823b6",
+      "after_source_sha256": "8bc1aa19ddaac9aac7fea01a4e3a49824b5a02f1992db342d44e8b28dc0cfe39",
+      "before_bytes_sha256": "2afb69f049e71d8b47e1780d2bc31b2d6f0d331eb8e8fa2f244762b893edd355"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "before_source_sha256": "87b3e413aab04af6855b8812cf9b7c1495fc17c5c62b411ad5bcb73817df4327",
+      "after_source_sha256": "f5781278db47949aff6e050f7c4b457782bb03d29f9ff550dbaebda1efff34f5",
+      "before_bytes_sha256": "b7d0b1fe2a42c6ff0fb8aaaabd57bd6c2322d915575c6f383547bb7d028caf72"
+    },
+    {
+      "source": "cards/ikoria.c",
+      "before_source_sha256": "4c6c497f380b13e235f5ecfe66a476ed9cdca6ea9ef711eabad59b81f94870cc",
+      "after_source_sha256": "630eb906cb805fb7900266afccbc939325cbd777b0efc1e84adacef90741de23",
+      "before_bytes_sha256": "f7e07c6347befbc6937797f3987fa96896537352b3fadbba650c737fd0d151f3"
+    },
+    {
+      "source": "manalink.h",
+      "before_source_sha256": "38bf3f54dd4701eb81fca5c3fa40a2beb21a1e3287c954cfbdcb6d7310b1d52d",
+      "after_source_sha256": "78d4f9ce866bbcada80cca8821b286b1e5e3e121215a9b02a022a2d139361c46",
+      "before_bytes_sha256": "0df572bece37efcbdd469305edabb9fcd3acb119f201ab674b60217080a4d259"
+    }
+  ],
+  "reused_helpers": [
+    {
+      "source": "functions/functions.c",
+      "name": "add_status",
+      "definition_sha256": "11a14bc0852a0d0249649c35e4e129d8626d805d609406cf5acc442416166527",
+      "native_address": "0x2687d40"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "basic_spell",
+      "definition_sha256": "baa735e7882fba03829af033cd0512c19cd2627bb1f1f9bc7a480400f04045e3",
+      "native_address": "0x26a1bd0"
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_counterspell",
+      "definition_sha256": "c95ec8443c1ea0012bd59b4acfe29206ce71b805733253908acff43f2c1b7c56",
+      "native_address": "0x24c1280"
+    },
+    {
+      "source": "cards/m19.c",
+      "name": "card_doublecast",
+      "definition_sha256": "b3df55bea1693dc0cc7c8ceae170baeebf2046b140241c2f6373f785f103c800",
+      "native_address": "0x2207ef0"
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_drudge_skeletons",
+      "definition_sha256": "06c615461a2c3d5ccbe1ea7cbee3b909742a622e9fb8068474d3e149024a6b53",
+      "native_address": "0x24c2e20"
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_fog",
+      "definition_sha256": "ffd94381a3936d33f4113b041206a99e639ec7853db350d3bae74da00531540b",
+      "native_address": "0x24c4050"
+    },
+    {
+      "source": "cards/legends.c",
+      "name": "card_force_spike",
+      "definition_sha256": "9ff42aed6a1c540630c66862e5144d1579abd2a556d2f33b0e54f4b1051f8a99",
+      "native_address": "0x21f3270"
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_generic_noncombat_1_mana_producing_creature",
+      "definition_sha256": "b8359e4c867d53a46785cd85a49c406f58e983d5314b1ea8649f1e33550c813d",
+      "native_address": "0x24bd840"
+    },
+    {
+      "source": "functions/counters.c",
+      "name": "count_counters",
+      "definition_sha256": "ee6724ecdbf02ce9543c8345fb2adad5b4bd81b40e858aae1c08223cfd8d7f36",
+      "native_address": "0x26d1730"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "cycling",
+      "definition_sha256": "97b1db74423d5231ea8948f039fb8d9967bc0dc6c024273130891f368c582abd",
+      "native_address": "0x2699590"
+    },
+    {
+      "source": "cards/m15.c",
+      "name": "generic_spell_with_convoke",
+      "definition_sha256": "9788615dc32dde3c1eeb110da57c04bbba75d24f99026d2318021396b46ef14f",
+      "native_address": "0x21aa630"
+    },
+    {
+      "source": "cards/shadowmoor.c",
+      "name": "hybrid",
+      "definition_sha256": "8fc4657f20421a9d0464be91f36e46f1b76ff1d4e686a6e3f13375cb5a786b8e",
+      "native_address": "0x254b7d0"
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "name": "suspend",
+      "definition_sha256": "0e4ff0f8b8805835516f199eac8a198a0e2402e333bc70189a293ceb170de071",
+      "native_address": "0x20eac90"
+    },
+    {
+      "source": "cards/urza_saga.c",
+      "name": "us_cycling",
+      "definition_sha256": "061c63c6f3a7356c3dc8a5d2fd54f8f4716634f58117af08c0f2f7578b6e47c5",
+      "native_address": "0x20447f0"
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "vanilla_instant_pump",
+      "definition_sha256": "d933d7d3e4da0d41e55d89e7c23c0dfc6cdc8b0717d1231db662ecd57a2f41e9",
+      "native_address": "0x26a1900"
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "scope": "Source-level recovery of native shared mechanic dispatch and event selectors. Two gotos and expanded counter-storage/color/cost logic are removed; no new handler or intentional gameplay bug fix is claimed. Dead native event paths are preserved rather than activated.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "verified_source_owners": 15,
+    "compiled_callee_edges": 21,
+    "functions": [
+      {
+        "source": "cards/dominaria.c",
+        "name": "give_token_haste",
+        "address": "0x214d4e0",
+        "size": 76,
+        "body_sha256": "f273a32b7cc22e54edc852cc536b0a19c47108ae86861ea9d6ceeccbace0fd1d",
+        "callees": [
+          {
+            "callee": "add_status",
+            "target": "0x26ac070",
+            "sites": [
+              {
+                "address": "0x214d527",
+                "instruction": "jmp 0x26ac070"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/dominaria.c",
+        "name": "card_wizards_retort",
+        "address": "0x2150980",
+        "size": 89,
+        "body_sha256": "6b96c7f64f4f38d2d98b00cd3fe38db5714187b5c206a285decb20af1c600f8b",
+        "callees": [
+          {
+            "callee": "card_counterspell",
+            "target": "0x25b4fb0",
+            "sites": [
+              {
+                "address": "0x21509aa",
+                "instruction": "jmp 0x25b4fb0"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/urza_legacy.c",
+        "name": "card_iron_will",
+        "address": "0x25da4c0",
+        "size": 162,
+        "body_sha256": "56cc5adc8d76f3526c058e2e8e9233235fb732731fad3fb27806e527c6f72a4d",
+        "callees": [
+          {
+            "callee": "us_cycling",
+            "target": "0x25dd700",
+            "sites": [
+              {
+                "address": "0x25da546",
+                "instruction": "jmp 0x25dd700"
+              }
+            ]
+          },
+          {
+            "callee": "vanilla_instant_pump",
+            "target": "0x26ad460",
+            "sites": [
+              {
+                "address": "0x25da524",
+                "instruction": "call 0x26ad460"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/amonkhet.c",
+        "name": "card_censor",
+        "address": "0x2044010",
+        "size": 114,
+        "body_sha256": "39c4808c3d0a3d2a245e86591ad5b66ceb85961d695b4cc1d86ff8345ae36323",
+        "callees": [
+          {
+            "callee": "card_force_spike",
+            "target": "0x22c5370",
+            "sites": [
+              {
+                "address": "0x204407d",
+                "instruction": "jmp 0x22c5370"
+              }
+            ]
+          },
+          {
+            "callee": "cycling",
+            "target": "0x26a3590",
+            "sites": [
+              {
+                "address": "0x2044066",
+                "instruction": "call 0x26a3590"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/amonkhet.c",
+        "name": "card_haze_of_pollen",
+        "address": "0x2045cd0",
+        "size": 114,
+        "body_sha256": "398fd7f1440ae0be2af82819e9cf11955eaa29cf868b236625357fc59037048c",
+        "callees": [
+          {
+            "callee": "card_fog",
+            "target": "0x25b7bb0",
+            "sites": [
+              {
+                "address": "0x2045d3d",
+                "instruction": "jmp 0x25b7bb0"
+              }
+            ]
+          },
+          {
+            "callee": "cycling",
+            "target": "0x26a3590",
+            "sites": [
+              {
+                "address": "0x2045d26",
+                "instruction": "call 0x26a3590"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/eventide.c",
+        "name": "card_rendclaw_trow",
+        "address": "0x219bcf0",
+        "size": 71,
+        "body_sha256": "cfa498ea5758aaabc3be3fd209a0e00ddf366790c4ed5ff4bbf3b0b861b05930",
+        "callees": [
+          {
+            "callee": "hybrid",
+            "target": "0x24d5fb0",
+            "sites": [
+              {
+                "address": "0x219bd32",
+                "instruction": "jmp 0x24d5fb0"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/guilds_of_ravnica.c",
+        "name": "card_pitiless_gorgon",
+        "address": "0x2200c50",
+        "size": 55,
+        "body_sha256": "a8a11554e6336b73e76b51592bafd5c0f2a19489f5d98d3ca64136c5ae4a6eef",
+        "callees": [
+          {
+            "callee": "hybrid",
+            "target": "0x24d5fb0",
+            "sites": [
+              {
+                "address": "0x2200c82",
+                "instruction": "jmp 0x24d5fb0"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/strixhaven.c",
+        "name": "card_inkling_summoning",
+        "address": "0x25150c0",
+        "size": 91,
+        "body_sha256": "89455f566e6d656e7ba520852574c223ab420360e7e785788aa98d7ce7b925af",
+        "callees": [
+          {
+            "callee": "hybrid",
+            "target": "0x24d5fb0",
+            "sites": [
+              {
+                "address": "0x25150e7",
+                "instruction": "jmp 0x24d5fb0"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/strixhaven.c",
+        "name": "card_teach_by_example",
+        "address": "0x2514b10",
+        "size": 38,
+        "body_sha256": "cf2f36316cb7dc090cb1ee56d807ccf41292eafa735d1735b2672b76b8f25de6",
+        "callees": [
+          {
+            "callee": "basic_spell",
+            "target": "0x26ab230",
+            "sites": [
+              {
+                "address": "0x2514b31",
+                "instruction": "jmp 0x26ab230"
+              }
+            ]
+          },
+          {
+            "callee": "card_doublecast",
+            "target": "0x2324110",
+            "sites": [
+              {
+                "address": "0x2514b29",
+                "instruction": "jmp 0x2324110"
+              }
+            ]
+          },
+          {
+            "callee": "hybrid",
+            "target": "0x24d5fb0",
+            "sites": [
+              {
+                "address": "0x2514b21",
+                "instruction": "jmp 0x24d5fb0"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/invasion.c",
+        "name": "card_urborg_skeleton",
+        "address": "0x226d580",
+        "size": 189,
+        "body_sha256": "c196f5e030877b66a3f7a109d8ad9bceb253b369370556b369fbe4333a325f99",
+        "callees": [
+          {
+            "callee": "card_drudge_skeletons",
+            "target": "0x25b6bd0",
+            "sites": [
+              {
+                "address": "0x226d5bf",
+                "instruction": "jmp 0x25b6bd0"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_rift_sower",
+        "address": "0x2395110",
+        "size": 178,
+        "body_sha256": "a725c1e2efa72b1d1655a73be79e049022c4d8e6961dd75ea267301d4eb1ee9e",
+        "callees": [
+          {
+            "callee": "suspend",
+            "target": "0x258a180",
+            "sites": [
+              {
+                "address": "0x2395196",
+                "instruction": "call 0x258a180"
+              }
+            ]
+          },
+          {
+            "callee": "card_generic_noncombat_1_mana_producing_creature",
+            "target": "0x25b1a00",
+            "sites": [
+              {
+                "address": "0x23951b2",
+                "instruction": "jmp 0x25b1a00"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/guilds_of_ravnica.c",
+        "name": "card_arboretum_elemental",
+        "address": "0x2201bc0",
+        "size": 55,
+        "body_sha256": "26f99e24c1c9d1ebc406c4fab824decd2cc58d31b47aa2fe5e7426e2dd53be6e",
+        "callees": [
+          {
+            "callee": "generic_spell_with_convoke",
+            "target": "0x2314a20",
+            "sites": [
+              {
+                "address": "0x2201bf2",
+                "instruction": "jmp 0x2314a20"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/guilds_of_ravnica.c",
+        "name": "card_impervious_greatwurm",
+        "address": "0x2201c00",
+        "size": 55,
+        "body_sha256": "cb749f4a8988a1ed58061950ba1e76f45a8229169f706333cb9c919020dc9ae7",
+        "callees": [
+          {
+            "callee": "generic_spell_with_convoke",
+            "target": "0x2314a20",
+            "sites": [
+              {
+                "address": "0x2201c32",
+                "instruction": "jmp 0x2314a20"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/modern_horizons.c",
+        "name": "card_feaster_of_fools",
+        "address": "0x238a140",
+        "size": 63,
+        "body_sha256": "e33538019afbbf21f582a1cef3a60d725a25bf6657ac5952c5e536a7a007fd34",
+        "callees": [
+          {
+            "callee": "generic_spell_with_convoke",
+            "target": "0x2314a20",
+            "sites": [
+              {
+                "address": "0x238a17a",
+                "instruction": "jmp 0x2314a20"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/ikoria.c",
+        "name": "has_counter",
+        "address": "0x2241370",
+        "size": 28,
+        "body_sha256": "5152c0dfcee2ed192fa56ce348781b6f3d995b646f7ace1eefa88623c59614ba",
+        "callees": [
+          {
+            "callee": "count_counters",
+            "target": "0x2663be0",
+            "sites": [
+              {
+                "address": "0x2241387",
+                "instruction": "jmp 0x2663be0"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "native_event_enum": {
+      "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "source": "cards/strixhaven.c",
+      "function": "card_teach_by_example",
+      "enum_die": "0x39342bc",
+      "values": {
+        "EVENT_0": 0,
+        "EVENT_UNTAP_PHASE": 1,
+        "EVENT_UPKEEP_PHASE": 4,
+        "EVENT_UPKEEP": 4,
+        "EVENT_DRAW_PHASE": 10,
+        "EVENT_MAIN_PHASE1": 20,
+        "EVENT_DECLARE_ATTACKERS": 21,
+        "EVENT_DECLARE_BLOCKERS": 26,
+        "EVENT_MAIN_PHASE2": 30,
+        "EVENT_MAX_HAND_SIZE": 31,
+        "EVENT_PREVENT_DAMAGE": 33,
+        "EVENT_CLEANUP": 34,
+        "EVENT_DAMAGE_PREVENTION": 37,
+        "EVENT_DAMAGE_REDUCTION": 38,
+        "EVENT_POWER": 50,
+        "EVENT_TOUGHNESS": 51,
+        "EVENT_ABILITIES": 52,
+        "EVENT_RECALC_DAMAGE": 53,
+        "EVENT_SET_COLOR": 54,
+        "EVENT_CAN_COUNTER": 56,
+        "EVENT_POW_BOOST": 57,
+        "EVENT_TOU_BOOST": 58,
+        "EVENT_CHECK_PUMP": 59,
+        "EVENT_CHANGE_TYPE": 60,
+        "EVENT_CAN_SKIP_TURN": 106,
+        "EVENT_CAST_SPELL": 108,
+        "EVENT_ACTIVATE": 109,
+        "EVENT_DEAL_DAMAGE": 110,
+        "EVENT_REGENERATE": 112,
+        "EVENT_RESOLVE_SPELL": 113,
+        "EVENT_RESOLVE_ACTIVATION": 114,
+        "EVENT_CAN_ACTIVATE": 115,
+        "EVENT_CAN_CAST": 116,
+        "EVENT_GRAVEYARD_FROM_PLAY": 119,
+        "EVENT_BLOCK_LEGALITY": 120,
+        "EVENT_ATTACK_LEGALITY": 121,
+        "EVENT_TRIGGER": 125,
+        "EVENT_RESOLVE_TRIGGER": 126,
+        "EVENT_COUNT_MANA": 127,
+        "EVENT_UNKNOWN80": 128,
+        "EVENT_TAP_CARD": 129,
+        "EVENT_UNTAP": 130,
+        "EVENT_UNTAP_CARD": 131,
+        "EVENT_MUST_ATTACK": 137,
+        "EVENT_BEGIN_COMBAT": 137,
+        "EVENT_ATTACK_RATING": 138,
+        "EVENT_BLOCK_RATING": 139,
+        "EVENT_CHECK_ABILITIES": 140,
+        "EVENT_DISCARD": 141,
+        "EVENT_UNKNOWN8E": 142,
+        "EVENT_CAN_WASTE_MANA": 143,
+        "EVENT_GET_SELECTED_CARD": 144,
+        "EVENT_PLAY_ABILITY": 145,
+        "EVENT_BEFORE_COMBAT": 146,
+        "EVENT_VARIABLE_MANA_SRC": 147,
+        "EVENT_CARDCONTROLLED": 148,
+        "EVENT_DISABLE_ABILITIES": 160,
+        "EVENT_ENABLE_ABILITIES": 161,
+        "EVENT_MODIFY_COST_GLOBAL": 162,
+        "EVENT_MODIFY_AB_COST_GL": 163,
+        "EVENT_MODIFY_COST": 164,
+        "EVENT_PAY_MODIFIED_COST": 165,
+        "EVENT_MODIFY_MANA_PROD": 166,
+        "EVENT_AFTER_DAMAGE": 167,
+        "EVENT_GRAVEYARD_ABILITY": 176,
+        "EVENT_CAN_ACTIVATE_FROM_HAND": 177,
+        "EVENT_ACTIVATE_FROM_HAND": 178,
+        "EVENT_RESOLVE_ACTIVATION_FROM_HAND": 179,
+        "EVENT_GRAVEYARD_ABILITY_UPKEEP": 180,
+        "EVENT_PAY_FLASHBACK_COSTS": 181,
+        "EVENT_CAN_SPLICE": 182,
+        "EVENT_SPLICE": 183,
+        "EVENT_CAN_UNMORPH": 184,
+        "EVENT_UNMORPH": 185,
+        "EVENT_HAUNT": 186,
+        "EVENT_TURNED_FACE_UP": 187,
+        "EVENT_CAN_PAY_MADNESS_COST": 188,
+        "EVENT_PAY_MADNESS_COST": 189,
+        "EVENT_CHAOS": 191,
+        "EVENT_PLANESWALK_IN": 192,
+        "EVENT_PLANESWALK_OUT": 193,
+        "EVENT_RESOLVE_SPLICE": 194,
+        "EVENT_SHOULD_AI_PLAY": 199,
+        "EVENT_SET_LEGACY_EFFECT_NAME": 256,
+        "EVENT_SET_LEGACY_EFFECT_TEXT": 512,
+        "EVENT_TRIGGER_RESOLVED": 768,
+        "EVENT_CAN_CHANGE_TARGET": 1024,
+        "EVENT_GRAVEYARD_ABILITY_EOT": 1280,
+        "EVENT_CAN_MOVE_AURA": 1536,
+        "EVENT_MOVE_AURA": 1792,
+        "EVENT_RESOLVE_MOVING_AURA": 2048,
+        "EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE": 2304,
+        "EVENT_UPKEEP_TRIGGER_ABILITY": 2560,
+        "EVENT_RESOLVE_THIS_DIES_TRIGGER": 2816,
+        "EVENT_TAPPED_TO_PLAY_ABILITY": 3072,
+        "EVENT_RESOLVE_ACTIVATED_GRAVEYARD_ABILITY": 3328,
+        "EVENT_RETURN_TO_PLAY_FROM_GRAVE_MODIFIED": 3584,
+        "EVENT_ANOTHER_PERMANENT_HAS_TRANSFORMED": 3840,
+        "EVENT_PLAY_FIRST_HALF": 4096,
+        "EVENT_PLAY_SECOND_HALF": 4352,
+        "EVENT_HAS_MORPH": 4608,
+        "EVENT_SUBTYPE": 4864,
+        "EVENT_UNATTACH": 5120,
+        "EVENT_EQUIPMENT_ATTACHED": 5376,
+        "EVENT_DAMAGE_TRIGGER_ABILITY": 5632,
+        "EVENT_CAN_ACTIVATE_HIDEAWAY_LAND": 5888,
+        "EVENT_CHAPTER1": 6144,
+        "EVENT_CHAPTER2": 6400,
+        "EVENT_CHAPTER3": 6656,
+        "EVENT_CHAPTER4": 6912,
+        "EVENT_COMMANDER_TO_COMMAND_ZONE": 7168,
+        "EVENT_CANT_CREW": 7424,
+        "EVENT_SP_ABILITY": 7680,
+        "EVENT_SPA": 7680,
+        "EVENT_DAT_ABILITY": 7936,
+        "EVENT_CARD_TO_EXILE": 8192,
+        "EVENT_BECAME_MONSTROUS": 16384,
+        "EVENT_PHASING": 16640,
+        "EVENT_END_TRIGGER": 16896,
+        "EVENT_END_OF_UNTAP_STEP": 17152,
+        "EVENT_PHASE_CHANGED": 17408,
+        "EVENT_CHECK_DESTROY_IF_BLOCKED": 17664,
+        "EVENT_BEGIN_TURN": 17920,
+        "EVENT_STATIC_EFFECTS": 18176,
+        "EVENT_MANA_POOL_DRAINING": 18432,
+        "EVENT_CHOOSING_TO_UNTAP": 18688,
+        "EVENT_TRANSFORMED": 18944,
+        "EVENT_EFFECT_CREATED": 19200,
+        "EVENT_RESOLVE_GENERAL_EFFECT": 19456,
+        "EVENT_FIGHT": 19712,
+        "EVENT_QUERY_AWAKEN": 19968,
+        "EVENT_HIDDEN_AGENDA": 20480,
+        "EVENT_ETB_ABILITY": 20736,
+        "EVENT_ETB": 20736,
+        "EVENT_DREDGE": 20992,
+        "EVENT_SURVEIL": 21248,
+        "EVENT_CHANGE_TARGET": 21504,
+        "EVENT_SET_IN_MOTION": 21760,
+        "EVENT_COUNTERSPELL": 22016,
+        "EVENT_EXPLORE": 22272,
+        "EVENT_COUNTERS": 22528,
+        "EVENT_QUERY_CUMULATIVE_UPKEEP": 22784,
+        "EVENT_REMOVED_FROM_GRAVEYARD": 23040,
+        "EVENT_COIN_FLIP_WON_OR_LOST": 23296,
+        "EVENT_SPELL_COPIED": 23552,
+        "EVENT_QUERY": 23808,
+        "EVENT_QUERY_AFF": 24064,
+        "EVENT_LEAVES_PLAY_ABILITY": 24320,
+        "EVENT_LTB": 24320,
+        "EVENT_ATTACK_LEGALITY_ALL": 24576,
+        "EVENT_PROT_MISC": 24832,
+        "EVENT_SPELL_CAST": 25088,
+        "EVENT_LAND_PLAYED": 25344,
+        "EVENT_THIS_SPELL_CAST": 25600
+      }
+    },
+    "event_route_checks": [
+      {
+        "name": "card_iron_will",
+        "tested_event_values": 322,
+        "cases": 2576,
+        "outcomes": {
+          "us_cycling": 2542,
+          "vanilla_instant_pump": 34
+        },
+        "cases_sha256": "11e4af1cc4b0a75c228536f51c0b69535424fe3f4b9558d2b33cc3b1641c1b41",
+        "representative_paths": {
+          "us_cycling": {
+            "event": 0,
+            "player": 0,
+            "player_match": false,
+            "card_match": false,
+            "native_trace": [
+              "0x25ba050",
+              "0x25ba051",
+              "0x25ba053",
+              "0x25ba056",
+              "0x25ba059",
+              "0x25ba05c",
+              "0x25ba05f",
+              "0x25ba062",
+              "0x25ba064",
+              "0x25ba067",
+              "0x25ba069",
+              "0x25ba06c",
+              "0x25ba06e",
+              "0x25ba073",
+              "0x25ba0b8",
+              "0x25ba0bd",
+              "0x25ba0bf",
+              "0x25ba0c2",
+              "0x25ba0c5",
+              "0x25ba0c8",
+              "0x25ba0c9"
+            ],
+            "rebuilt_trace": [
+              "0x25da4c0",
+              "0x25da4c1",
+              "0x25da4c3",
+              "0x25da4c4",
+              "0x25da4c5",
+              "0x25da4c8",
+              "0x25da4cb",
+              "0x25da4ce",
+              "0x25da4d1",
+              "0x25da4d4",
+              "0x25da4d6",
+              "0x25da4d9",
+              "0x25da4db",
+              "0x25da4de",
+              "0x25da4e1",
+              "0x25da4e6",
+              "0x25da4e9",
+              "0x25da4eb",
+              "0x25da530",
+              "0x25da535",
+              "0x25da537",
+              "0x25da53a",
+              "0x25da53d",
+              "0x25da540",
+              "0x25da543",
+              "0x25da544",
+              "0x25da545",
+              "0x25da546"
+            ],
+            "arguments": [
+              0,
+              3,
+              0
+            ]
+          },
+          "vanilla_instant_pump": {
+            "event": 108,
+            "player": 0,
+            "player_match": true,
+            "card_match": true,
+            "native_trace": [
+              "0x25ba050",
+              "0x25ba051",
+              "0x25ba053",
+              "0x25ba056",
+              "0x25ba059",
+              "0x25ba05c",
+              "0x25ba05f",
+              "0x25ba062",
+              "0x25ba064",
+              "0x25ba067",
+              "0x25ba0d0",
+              "0x25ba0d6",
+              "0x25ba0d8",
+              "0x25ba0de",
+              "0x25ba0e0",
+              "0x25ba075",
+              "0x25ba07d",
+              "0x25ba085",
+              "0x25ba08d",
+              "0x25ba095",
+              "0x25ba099",
+              "0x25ba0a1",
+              "0x25ba0a5",
+              "0x25ba0a9",
+              "0x25ba0ac"
+            ],
+            "rebuilt_trace": [
+              "0x25da4c0",
+              "0x25da4c1",
+              "0x25da4c3",
+              "0x25da4c4",
+              "0x25da4c5",
+              "0x25da4c8",
+              "0x25da4cb",
+              "0x25da4ce",
+              "0x25da4d1",
+              "0x25da4d4",
+              "0x25da4d6",
+              "0x25da4d9",
+              "0x25da550",
+              "0x25da556",
+              "0x25da558",
+              "0x25da55e",
+              "0x25da560",
+              "0x25da4ed",
+              "0x25da4f1",
+              "0x25da4f9",
+              "0x25da501",
+              "0x25da509",
+              "0x25da511",
+              "0x25da515",
+              "0x25da51d",
+              "0x25da521",
+              "0x25da524"
+            ],
+            "arguments": [
+              0,
+              3,
+              108,
+              2,
+              0,
+              0,
+              4,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "name": "card_censor",
+        "tested_event_values": 322,
+        "cases": 2576,
+        "outcomes": {
+          "card_force_spike": 2552,
+          "cycling": 24
+        },
+        "cases_sha256": "9e71eb81afa32934c7471b91c6cacfa08ae266ff6a338e0ffcc33bfae7342bf3",
+        "representative_paths": {
+          "card_force_spike": {
+            "event": 0,
+            "player": 0,
+            "player_match": false,
+            "card_match": false,
+            "native_trace": [
+              "0x22d9e20",
+              "0x22d9e21",
+              "0x22d9e23",
+              "0x22d9e24",
+              "0x22d9e27",
+              "0x22d9e2a",
+              "0x22d9e2d",
+              "0x22d9e30",
+              "0x22d9e36",
+              "0x22d9e39",
+              "0x22d9e3b",
+              "0x22d9e3e",
+              "0x22d9e3f",
+              "0x22d9e40"
+            ],
+            "rebuilt_trace": [
+              "0x2044010",
+              "0x2044011",
+              "0x2044013",
+              "0x2044014",
+              "0x2044017",
+              "0x204401a",
+              "0x204401d",
+              "0x2044020",
+              "0x2044026",
+              "0x2044029",
+              "0x2044078",
+              "0x204407b",
+              "0x204407c",
+              "0x204407d"
+            ],
+            "arguments": [
+              0,
+              3,
+              0
+            ]
+          },
+          "cycling": {
+            "event": 177,
+            "player": 0,
+            "player_match": false,
+            "card_match": false,
+            "native_trace": [
+              "0x22d9e20",
+              "0x22d9e21",
+              "0x22d9e23",
+              "0x22d9e24",
+              "0x22d9e27",
+              "0x22d9e2a",
+              "0x22d9e2d",
+              "0x22d9e30",
+              "0x22d9e36",
+              "0x22d9e39",
+              "0x22d9e48",
+              "0x22d9e4c",
+              "0x22d9e54",
+              "0x22d9e5c",
+              "0x22d9e64",
+              "0x22d9e6c",
+              "0x22d9e74",
+              "0x22d9e7c",
+              "0x22d9e80",
+              "0x22d9e83"
+            ],
+            "rebuilt_trace": [
+              "0x2044010",
+              "0x2044011",
+              "0x2044013",
+              "0x2044014",
+              "0x2044017",
+              "0x204401a",
+              "0x204401d",
+              "0x2044020",
+              "0x2044026",
+              "0x2044029",
+              "0x204402b",
+              "0x204402f",
+              "0x2044037",
+              "0x204403f",
+              "0x2044047",
+              "0x204404f",
+              "0x2044057",
+              "0x204405f",
+              "0x2044063",
+              "0x2044066"
+            ],
+            "arguments": [
+              0,
+              3,
+              177,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "name": "card_haze_of_pollen",
+        "tested_event_values": 322,
+        "cases": 2576,
+        "outcomes": {
+          "card_fog": 2552,
+          "cycling": 24
+        },
+        "cases_sha256": "c0b14127aef5594f9a119dde2ebe97c674ae55d8c47352d153294f68cd3e620e",
+        "representative_paths": {
+          "card_fog": {
+            "event": 0,
+            "player": 0,
+            "player_match": false,
+            "card_match": false,
+            "native_trace": [
+              "0x22e0850",
+              "0x22e0851",
+              "0x22e0853",
+              "0x22e0854",
+              "0x22e0857",
+              "0x22e085a",
+              "0x22e085d",
+              "0x22e0860",
+              "0x22e0866",
+              "0x22e0869",
+              "0x22e086b",
+              "0x22e086e",
+              "0x22e086f",
+              "0x22e0870"
+            ],
+            "rebuilt_trace": [
+              "0x2045cd0",
+              "0x2045cd1",
+              "0x2045cd3",
+              "0x2045cd4",
+              "0x2045cd7",
+              "0x2045cda",
+              "0x2045cdd",
+              "0x2045ce0",
+              "0x2045ce6",
+              "0x2045ce9",
+              "0x2045d38",
+              "0x2045d3b",
+              "0x2045d3c",
+              "0x2045d3d"
+            ],
+            "arguments": [
+              0,
+              3,
+              0
+            ]
+          },
+          "cycling": {
+            "event": 177,
+            "player": 0,
+            "player_match": false,
+            "card_match": false,
+            "native_trace": [
+              "0x22e0850",
+              "0x22e0851",
+              "0x22e0853",
+              "0x22e0854",
+              "0x22e0857",
+              "0x22e085a",
+              "0x22e085d",
+              "0x22e0860",
+              "0x22e0866",
+              "0x22e0869",
+              "0x22e0878",
+              "0x22e087c",
+              "0x22e0884",
+              "0x22e088c",
+              "0x22e0894",
+              "0x22e089c",
+              "0x22e08a4",
+              "0x22e08ac",
+              "0x22e08b0",
+              "0x22e08b3"
+            ],
+            "rebuilt_trace": [
+              "0x2045cd0",
+              "0x2045cd1",
+              "0x2045cd3",
+              "0x2045cd4",
+              "0x2045cd7",
+              "0x2045cda",
+              "0x2045cdd",
+              "0x2045ce0",
+              "0x2045ce6",
+              "0x2045ce9",
+              "0x2045ceb",
+              "0x2045cef",
+              "0x2045cf7",
+              "0x2045cff",
+              "0x2045d07",
+              "0x2045d0f",
+              "0x2045d17",
+              "0x2045d1f",
+              "0x2045d23",
+              "0x2045d26"
+            ],
+            "arguments": [
+              0,
+              3,
+              177,
+              3,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "name": "card_teach_by_example",
+        "tested_event_values": 322,
+        "cases": 2576,
+        "outcomes": {
+          "hybrid": 2560,
+          "card_doublecast": 8,
+          "basic_spell": 8
+        },
+        "cases_sha256": "c23f51935e6d963df050edaa241d1a95dc1c55c900da5a4d9bfc9ece1073bd49",
+        "representative_paths": {
+          "hybrid": {
+            "event": 0,
+            "player": 0,
+            "player_match": false,
+            "card_match": false,
+            "native_trace": [
+              "0x23dd6a0",
+              "0x23dd6a1",
+              "0x23dd6a3",
+              "0x23dd6a6",
+              "0x23dd6a9",
+              "0x23dd6ab",
+              "0x23dd6ae",
+              "0x23dd6b0",
+              "0x23dd6b1"
+            ],
+            "rebuilt_trace": [
+              "0x2514b10",
+              "0x2514b11",
+              "0x2514b13",
+              "0x2514b16",
+              "0x2514b19",
+              "0x2514b1b",
+              "0x2514b1e",
+              "0x2514b20",
+              "0x2514b21"
+            ],
+            "arguments": [
+              0,
+              3,
+              0
+            ]
+          },
+          "card_doublecast": {
+            "event": 113,
+            "player": 0,
+            "player_match": false,
+            "card_match": false,
+            "native_trace": [
+              "0x23dd6a0",
+              "0x23dd6a1",
+              "0x23dd6a3",
+              "0x23dd6a6",
+              "0x23dd6a9",
+              "0x23dd6ab",
+              "0x23dd6ae",
+              "0x23dd6b8",
+              "0x23dd6b9"
+            ],
+            "rebuilt_trace": [
+              "0x2514b10",
+              "0x2514b11",
+              "0x2514b13",
+              "0x2514b16",
+              "0x2514b19",
+              "0x2514b1b",
+              "0x2514b1e",
+              "0x2514b28",
+              "0x2514b29"
+            ],
+            "arguments": [
+              0,
+              3,
+              113
+            ]
+          },
+          "basic_spell": {
+            "event": 116,
+            "player": 0,
+            "player_match": false,
+            "card_match": false,
+            "native_trace": [
+              "0x23dd6a0",
+              "0x23dd6a1",
+              "0x23dd6a3",
+              "0x23dd6a6",
+              "0x23dd6a9",
+              "0x23dd6c0",
+              "0x23dd6c1"
+            ],
+            "rebuilt_trace": [
+              "0x2514b10",
+              "0x2514b11",
+              "0x2514b13",
+              "0x2514b16",
+              "0x2514b19",
+              "0x2514b30",
+              "0x2514b31"
+            ],
+            "arguments": [
+              0,
+              3,
+              116
+            ]
+          }
+        }
+      },
+      {
+        "name": "card_rift_sower",
+        "tested_event_values": 322,
+        "cases": 2576,
+        "outcomes": {
+          "card_generic_noncombat_1_mana_producing_creature": 2534,
+          "suspend": 42
+        },
+        "cases_sha256": "0d8ce17c181fcfe0992ee4306c1b8850f1c28a8fbc36aa1504f1dc3d914f8731",
+        "representative_paths": {
+          "card_generic_noncombat_1_mana_producing_creature": {
+            "event": 0,
+            "player": 0,
+            "player_match": false,
+            "card_match": false,
+            "native_trace": [
+              "0x223c800",
+              "0x223c801",
+              "0x223c803",
+              "0x223c806",
+              "0x223c809",
+              "0x223c80c",
+              "0x223c80f",
+              "0x223c812",
+              "0x223c814",
+              "0x223c819",
+              "0x223c81b",
+              "0x223c81e",
+              "0x223c820",
+              "0x223c823",
+              "0x223c825",
+              "0x223c82a",
+              "0x223c82c",
+              "0x223c831",
+              "0x223c898",
+              "0x223c89b",
+              "0x223c89e",
+              "0x223c8a1",
+              "0x223c8a2"
+            ],
+            "rebuilt_trace": [
+              "0x2395110",
+              "0x2395111",
+              "0x2395113",
+              "0x2395116",
+              "0x2395119",
+              "0x239511c",
+              "0x239511f",
+              "0x2395122",
+              "0x2395124",
+              "0x2395127",
+              "0x2395129",
+              "0x239512c",
+              "0x239512e",
+              "0x2395133",
+              "0x2395135",
+              "0x239513a",
+              "0x239513c",
+              "0x2395141",
+              "0x23951a8",
+              "0x23951ab",
+              "0x23951ae",
+              "0x23951b1",
+              "0x23951b2"
+            ],
+            "arguments": [
+              0,
+              3,
+              0
+            ]
+          },
+          "suspend": {
+            "event": 108,
+            "player": 0,
+            "player_match": true,
+            "card_match": true,
+            "native_trace": [
+              "0x223c800",
+              "0x223c801",
+              "0x223c803",
+              "0x223c806",
+              "0x223c809",
+              "0x223c80c",
+              "0x223c80f",
+              "0x223c812",
+              "0x223c814",
+              "0x223c819",
+              "0x223c81b",
+              "0x223c81e",
+              "0x223c890",
+              "0x223c896",
+              "0x223c8a8",
+              "0x223c8ae",
+              "0x223c8b0",
+              "0x223c833",
+              "0x223c83b",
+              "0x223c843",
+              "0x223c84b",
+              "0x223c853",
+              "0x223c85b",
+              "0x223c863",
+              "0x223c86b",
+              "0x223c873",
+              "0x223c87b",
+              "0x223c87f",
+              "0x223c883",
+              "0x223c886"
+            ],
+            "rebuilt_trace": [
+              "0x2395110",
+              "0x2395111",
+              "0x2395113",
+              "0x2395116",
+              "0x2395119",
+              "0x239511c",
+              "0x239511f",
+              "0x2395122",
+              "0x2395124",
+              "0x2395127",
+              "0x23951a0",
+              "0x23951a6",
+              "0x23951b8",
+              "0x23951be",
+              "0x23951c0",
+              "0x2395143",
+              "0x239514b",
+              "0x2395153",
+              "0x239515b",
+              "0x2395163",
+              "0x239516b",
+              "0x2395173",
+              "0x239517b",
+              "0x2395183",
+              "0x239518b",
+              "0x239518f",
+              "0x2395193",
+              "0x2395196"
+            ],
+            "arguments": [
+              0,
+              3,
+              108,
+              2,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    ],
+    "validated_route_cases": 12880,
+    "total_counter_forwarding": [
+      {
+        "player": 0,
+        "card": 0,
+        "native": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            0,
+            0,
+            4294967295
+          ],
+          "trace": [
+            "0x22884c0",
+            "0x22884c1",
+            "0x22884c3",
+            "0x22884c6",
+            "0x22884c9",
+            "0x22884d0",
+            "0x22884d3",
+            "0x22884d6",
+            "0x22884d7"
+          ],
+          "prefix": []
+        },
+        "rebuilt": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            0,
+            0,
+            4294967295
+          ],
+          "trace": [
+            "0x2241370",
+            "0x2241371",
+            "0x2241373",
+            "0x2241376",
+            "0x2241379",
+            "0x2241380",
+            "0x2241383",
+            "0x2241386",
+            "0x2241387"
+          ],
+          "prefix": []
+        }
+      },
+      {
+        "player": 0,
+        "card": 3,
+        "native": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            0,
+            3,
+            4294967295
+          ],
+          "trace": [
+            "0x22884c0",
+            "0x22884c1",
+            "0x22884c3",
+            "0x22884c6",
+            "0x22884c9",
+            "0x22884d0",
+            "0x22884d3",
+            "0x22884d6",
+            "0x22884d7"
+          ],
+          "prefix": []
+        },
+        "rebuilt": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            0,
+            3,
+            4294967295
+          ],
+          "trace": [
+            "0x2241370",
+            "0x2241371",
+            "0x2241373",
+            "0x2241376",
+            "0x2241379",
+            "0x2241380",
+            "0x2241383",
+            "0x2241386",
+            "0x2241387"
+          ],
+          "prefix": []
+        }
+      },
+      {
+        "player": 0,
+        "card": 149,
+        "native": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            0,
+            149,
+            4294967295
+          ],
+          "trace": [
+            "0x22884c0",
+            "0x22884c1",
+            "0x22884c3",
+            "0x22884c6",
+            "0x22884c9",
+            "0x22884d0",
+            "0x22884d3",
+            "0x22884d6",
+            "0x22884d7"
+          ],
+          "prefix": []
+        },
+        "rebuilt": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            0,
+            149,
+            4294967295
+          ],
+          "trace": [
+            "0x2241370",
+            "0x2241371",
+            "0x2241373",
+            "0x2241376",
+            "0x2241379",
+            "0x2241380",
+            "0x2241383",
+            "0x2241386",
+            "0x2241387"
+          ],
+          "prefix": []
+        }
+      },
+      {
+        "player": 1,
+        "card": 0,
+        "native": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            1,
+            0,
+            4294967295
+          ],
+          "trace": [
+            "0x22884c0",
+            "0x22884c1",
+            "0x22884c3",
+            "0x22884c6",
+            "0x22884c9",
+            "0x22884d0",
+            "0x22884d3",
+            "0x22884d6",
+            "0x22884d7"
+          ],
+          "prefix": []
+        },
+        "rebuilt": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            1,
+            0,
+            4294967295
+          ],
+          "trace": [
+            "0x2241370",
+            "0x2241371",
+            "0x2241373",
+            "0x2241376",
+            "0x2241379",
+            "0x2241380",
+            "0x2241383",
+            "0x2241386",
+            "0x2241387"
+          ],
+          "prefix": []
+        }
+      },
+      {
+        "player": 1,
+        "card": 3,
+        "native": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            1,
+            3,
+            4294967295
+          ],
+          "trace": [
+            "0x22884c0",
+            "0x22884c1",
+            "0x22884c3",
+            "0x22884c6",
+            "0x22884c9",
+            "0x22884d0",
+            "0x22884d3",
+            "0x22884d6",
+            "0x22884d7"
+          ],
+          "prefix": []
+        },
+        "rebuilt": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            1,
+            3,
+            4294967295
+          ],
+          "trace": [
+            "0x2241370",
+            "0x2241371",
+            "0x2241373",
+            "0x2241376",
+            "0x2241379",
+            "0x2241380",
+            "0x2241383",
+            "0x2241386",
+            "0x2241387"
+          ],
+          "prefix": []
+        }
+      },
+      {
+        "player": 1,
+        "card": 149,
+        "native": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            1,
+            149,
+            4294967295
+          ],
+          "trace": [
+            "0x22884c0",
+            "0x22884c1",
+            "0x22884c3",
+            "0x22884c6",
+            "0x22884c9",
+            "0x22884d0",
+            "0x22884d3",
+            "0x22884d6",
+            "0x22884d7"
+          ],
+          "prefix": []
+        },
+        "rebuilt": {
+          "kind": "jmp",
+          "callee": "count_counters",
+          "arguments": [
+            1,
+            149,
+            4294967295
+          ],
+          "trace": [
+            "0x2241370",
+            "0x2241371",
+            "0x2241373",
+            "0x2241376",
+            "0x2241379",
+            "0x2241380",
+            "0x2241383",
+            "0x2241386",
+            "0x2241387"
+          ],
+          "prefix": []
+        }
+      }
+    ],
+    "token_callback_fields": {
+      "size": 76,
+      "fields": {
+        "s_player": 4,
+        "s_card": 8,
+        "t_player": 20
+      }
+    },
+    "invisible_legacy_status": [
+      {
+        "source_player": 0,
+        "target_player": 0,
+        "native": {
+          "kind": "jmp",
+          "callee": "add_status",
+          "arguments": [
+            0,
+            7,
+            65536
+          ],
+          "trace": [
+            "0x22c95e0",
+            "0x22c95e1",
+            "0x22c95e3",
+            "0x22c95e4",
+            "0x22c95e7",
+            "0x22c95ea",
+            "0x22c95ed",
+            "0x22c95f1",
+            "0x22c95f4",
+            "0x22c95fc",
+            "0x22c9600",
+            "0x22c9603",
+            "0x22c9607",
+            "0x22c960a",
+            "0x22c960d",
+            "0x22c9612",
+            "0x22c9619",
+            "0x22c961c",
+            "0x22c961f",
+            "0x22c9622",
+            "0x22c9625",
+            "0x22c9626",
+            "0x22c9627"
+          ],
+          "prefix": [
+            "create_targetted_legacy_effect"
+          ]
+        },
+        "rebuilt": {
+          "kind": "jmp",
+          "callee": "add_status",
+          "arguments": [
+            0,
+            7,
+            65536
+          ],
+          "trace": [
+            "0x214d4e0",
+            "0x214d4e1",
+            "0x214d4e3",
+            "0x214d4e4",
+            "0x214d4e7",
+            "0x214d4ea",
+            "0x214d4ed",
+            "0x214d4f1",
+            "0x214d4f4",
+            "0x214d4fc",
+            "0x214d500",
+            "0x214d503",
+            "0x214d507",
+            "0x214d50a",
+            "0x214d50d",
+            "0x214d512",
+            "0x214d519",
+            "0x214d51c",
+            "0x214d51f",
+            "0x214d522",
+            "0x214d525",
+            "0x214d526",
+            "0x214d527"
+          ],
+          "prefix": [
+            "create_targetted_legacy_effect"
+          ]
+        }
+      },
+      {
+        "source_player": 0,
+        "target_player": 1,
+        "native": {
+          "kind": "jmp",
+          "callee": "add_status",
+          "arguments": [
+            1,
+            7,
+            65536
+          ],
+          "trace": [
+            "0x22c95e0",
+            "0x22c95e1",
+            "0x22c95e3",
+            "0x22c95e4",
+            "0x22c95e7",
+            "0x22c95ea",
+            "0x22c95ed",
+            "0x22c95f1",
+            "0x22c95f4",
+            "0x22c95fc",
+            "0x22c9600",
+            "0x22c9603",
+            "0x22c9607",
+            "0x22c960a",
+            "0x22c960d",
+            "0x22c9612",
+            "0x22c9619",
+            "0x22c961c",
+            "0x22c961f",
+            "0x22c9622",
+            "0x22c9625",
+            "0x22c9626",
+            "0x22c9627"
+          ],
+          "prefix": [
+            "create_targetted_legacy_effect"
+          ]
+        },
+        "rebuilt": {
+          "kind": "jmp",
+          "callee": "add_status",
+          "arguments": [
+            1,
+            7,
+            65536
+          ],
+          "trace": [
+            "0x214d4e0",
+            "0x214d4e1",
+            "0x214d4e3",
+            "0x214d4e4",
+            "0x214d4e7",
+            "0x214d4ea",
+            "0x214d4ed",
+            "0x214d4f1",
+            "0x214d4f4",
+            "0x214d4fc",
+            "0x214d500",
+            "0x214d503",
+            "0x214d507",
+            "0x214d50a",
+            "0x214d50d",
+            "0x214d512",
+            "0x214d519",
+            "0x214d51c",
+            "0x214d51f",
+            "0x214d522",
+            "0x214d525",
+            "0x214d526",
+            "0x214d527"
+          ],
+          "prefix": [
+            "create_targetted_legacy_effect"
+          ]
+        }
+      },
+      {
+        "source_player": 1,
+        "target_player": 0,
+        "native": {
+          "kind": "jmp",
+          "callee": "add_status",
+          "arguments": [
+            0,
+            7,
+            65536
+          ],
+          "trace": [
+            "0x22c95e0",
+            "0x22c95e1",
+            "0x22c95e3",
+            "0x22c95e4",
+            "0x22c95e7",
+            "0x22c95ea",
+            "0x22c95ed",
+            "0x22c95f1",
+            "0x22c95f4",
+            "0x22c95fc",
+            "0x22c9600",
+            "0x22c9603",
+            "0x22c9607",
+            "0x22c960a",
+            "0x22c960d",
+            "0x22c9612",
+            "0x22c9619",
+            "0x22c961c",
+            "0x22c961f",
+            "0x22c9622",
+            "0x22c9625",
+            "0x22c9626",
+            "0x22c9627"
+          ],
+          "prefix": [
+            "create_targetted_legacy_effect"
+          ]
+        },
+        "rebuilt": {
+          "kind": "jmp",
+          "callee": "add_status",
+          "arguments": [
+            0,
+            7,
+            65536
+          ],
+          "trace": [
+            "0x214d4e0",
+            "0x214d4e1",
+            "0x214d4e3",
+            "0x214d4e4",
+            "0x214d4e7",
+            "0x214d4ea",
+            "0x214d4ed",
+            "0x214d4f1",
+            "0x214d4f4",
+            "0x214d4fc",
+            "0x214d500",
+            "0x214d503",
+            "0x214d507",
+            "0x214d50a",
+            "0x214d50d",
+            "0x214d512",
+            "0x214d519",
+            "0x214d51c",
+            "0x214d51f",
+            "0x214d522",
+            "0x214d525",
+            "0x214d526",
+            "0x214d527"
+          ],
+          "prefix": [
+            "create_targetted_legacy_effect"
+          ]
+        }
+      },
+      {
+        "source_player": 1,
+        "target_player": 1,
+        "native": {
+          "kind": "jmp",
+          "callee": "add_status",
+          "arguments": [
+            1,
+            7,
+            65536
+          ],
+          "trace": [
+            "0x22c95e0",
+            "0x22c95e1",
+            "0x22c95e3",
+            "0x22c95e4",
+            "0x22c95e7",
+            "0x22c95ea",
+            "0x22c95ed",
+            "0x22c95f1",
+            "0x22c95f4",
+            "0x22c95fc",
+            "0x22c9600",
+            "0x22c9603",
+            "0x22c9607",
+            "0x22c960a",
+            "0x22c960d",
+            "0x22c9612",
+            "0x22c9619",
+            "0x22c961c",
+            "0x22c961f",
+            "0x22c9622",
+            "0x22c9625",
+            "0x22c9626",
+            "0x22c9627"
+          ],
+          "prefix": [
+            "create_targetted_legacy_effect"
+          ]
+        },
+        "rebuilt": {
+          "kind": "jmp",
+          "callee": "add_status",
+          "arguments": [
+            1,
+            7,
+            65536
+          ],
+          "trace": [
+            "0x214d4e0",
+            "0x214d4e1",
+            "0x214d4e3",
+            "0x214d4e4",
+            "0x214d4e7",
+            "0x214d4ea",
+            "0x214d4ed",
+            "0x214d4f1",
+            "0x214d4f4",
+            "0x214d4fc",
+            "0x214d500",
+            "0x214d503",
+            "0x214d507",
+            "0x214d50a",
+            "0x214d50d",
+            "0x214d512",
+            "0x214d519",
+            "0x214d51c",
+            "0x214d51f",
+            "0x214d522",
+            "0x214d525",
+            "0x214d526",
+            "0x214d527"
+          ],
+          "prefix": [
+            "create_targetted_legacy_effect"
+          ]
+        }
+      }
+    ],
+    "preserved_dead_paths": [
+      {
+        "name": "card_shape_of_the_wiitigo",
+        "cases": [
+          {
+            "player": 0,
+            "in_play_result": 0,
+            "native": {
+              "kind": "return",
+              "value": 0,
+              "trace": [
+                "0x21691d0",
+                "0x21691d1",
+                "0x21691d3",
+                "0x21691d4",
+                "0x21691d5",
+                "0x21691d6",
+                "0x21691d9",
+                "0x21691dc",
+                "0x21691df",
+                "0x21691e3",
+                "0x21691e6",
+                "0x21691e9",
+                "0x21691ee",
+                "0x21691f4",
+                "0x21691f6",
+                "0x21691f9",
+                "0x21691ff",
+                "0x2169202",
+                "0x2169204",
+                "0x2169207",
+                "0x2169209",
+                "0x216920b",
+                "0x2169222",
+                "0x2169225",
+                "0x2169227",
+                "0x216922a",
+                "0x216922c",
+                "0x216922f",
+                "0x2169231",
+                "0x2169237",
+                "0x2169338",
+                "0x216933e",
+                "0x2169344",
+                "0x216926c",
+                "0x216926e",
+                "0x2169271",
+                "0x2169276",
+                "0x2169278",
+                "0x216927b",
+                "0x216927e",
+                "0x2169280",
+                "0x2169286",
+                "0x2169288",
+                "0x216928b",
+                "0x216928d",
+                "0x2169290",
+                "0x2169292",
+                "0x2169298",
+                "0x216929a",
+                "0x216929c",
+                "0x21692a2",
+                "0x2169254",
+                "0x2169257",
+                "0x2169258",
+                "0x2169259",
+                "0x216925a",
+                "0x216925b"
+              ],
+              "prefix": [
+                "in_play"
+              ]
+            },
+            "rebuilt": {
+              "kind": "return",
+              "value": 0,
+              "trace": [
+                "0x20cb530",
+                "0x20cb531",
+                "0x20cb533",
+                "0x20cb534",
+                "0x20cb535",
+                "0x20cb536",
+                "0x20cb539",
+                "0x20cb53c",
+                "0x20cb53f",
+                "0x20cb543",
+                "0x20cb546",
+                "0x20cb549",
+                "0x20cb54e",
+                "0x20cb551",
+                "0x20cb553",
+                "0x20cb556",
+                "0x20cb55c",
+                "0x20cb55f",
+                "0x20cb561",
+                "0x20cb563",
+                "0x20cb569",
+                "0x20cb57a",
+                "0x20cb57d",
+                "0x20cb57f",
+                "0x20cb582",
+                "0x20cb584",
+                "0x20cb587",
+                "0x20cb589",
+                "0x20cb58f",
+                "0x20cb6d8",
+                "0x20cb6da",
+                "0x20cb6dd",
+                "0x20cb6e2",
+                "0x20cb6e8",
+                "0x20cb5c6",
+                "0x20cb5c8",
+                "0x20cb5cb",
+                "0x20cb5d0",
+                "0x20cb5d2",
+                "0x20cb5d8",
+                "0x20cb5da",
+                "0x20cb5dd",
+                "0x20cb5e0",
+                "0x20cb5e2",
+                "0x20cb5e5",
+                "0x20cb5e7",
+                "0x20cb5ea",
+                "0x20cb5ec",
+                "0x20cb5ee",
+                "0x20cb5f4",
+                "0x20cb5f6",
+                "0x20cb5af",
+                "0x20cb5b2",
+                "0x20cb5b3",
+                "0x20cb5b4",
+                "0x20cb5b5",
+                "0x20cb5b6"
+              ],
+              "prefix": [
+                "in_play"
+              ]
+            }
+          },
+          {
+            "player": 0,
+            "in_play_result": 1073741824,
+            "native": {
+              "kind": "return",
+              "value": 0,
+              "trace": [
+                "0x21691d0",
+                "0x21691d1",
+                "0x21691d3",
+                "0x21691d4",
+                "0x21691d5",
+                "0x21691d6",
+                "0x21691d9",
+                "0x21691dc",
+                "0x21691df",
+                "0x21691e3",
+                "0x21691e6",
+                "0x21691e9",
+                "0x21691ee",
+                "0x21691f4",
+                "0x21691f6",
+                "0x21691f9",
+                "0x21691ff",
+                "0x2169202",
+                "0x2169204",
+                "0x2169207",
+                "0x2169209",
+                "0x216920b",
+                "0x2169222",
+                "0x2169225",
+                "0x2169227",
+                "0x216922a",
+                "0x216922c",
+                "0x216922f",
+                "0x2169231",
+                "0x2169237",
+                "0x2169338",
+                "0x216933e",
+                "0x2169344",
+                "0x216926c",
+                "0x216926e",
+                "0x2169271",
+                "0x2169276",
+                "0x2169278",
+                "0x216927b",
+                "0x216927e",
+                "0x2169280",
+                "0x2169286",
+                "0x2169288",
+                "0x216928b",
+                "0x216928d",
+                "0x2169290",
+                "0x2169292",
+                "0x2169298",
+                "0x216929a",
+                "0x216929c",
+                "0x21692a2",
+                "0x2169254",
+                "0x2169257",
+                "0x2169258",
+                "0x2169259",
+                "0x216925a",
+                "0x216925b"
+              ],
+              "prefix": [
+                "in_play"
+              ]
+            },
+            "rebuilt": {
+              "kind": "return",
+              "value": 0,
+              "trace": [
+                "0x20cb530",
+                "0x20cb531",
+                "0x20cb533",
+                "0x20cb534",
+                "0x20cb535",
+                "0x20cb536",
+                "0x20cb539",
+                "0x20cb53c",
+                "0x20cb53f",
+                "0x20cb543",
+                "0x20cb546",
+                "0x20cb549",
+                "0x20cb54e",
+                "0x20cb551",
+                "0x20cb553",
+                "0x20cb556",
+                "0x20cb55c",
+                "0x20cb55f",
+                "0x20cb561",
+                "0x20cb563",
+                "0x20cb569",
+                "0x20cb57a",
+                "0x20cb57d",
+                "0x20cb57f",
+                "0x20cb582",
+                "0x20cb584",
+                "0x20cb587",
+                "0x20cb589",
+                "0x20cb58f",
+                "0x20cb6d8",
+                "0x20cb6da",
+                "0x20cb6dd",
+                "0x20cb6e2",
+                "0x20cb6e8",
+                "0x20cb5c6",
+                "0x20cb5c8",
+                "0x20cb5cb",
+                "0x20cb5d0",
+                "0x20cb5d2",
+                "0x20cb5d8",
+                "0x20cb5da",
+                "0x20cb5dd",
+                "0x20cb5e0",
+                "0x20cb5e2",
+                "0x20cb5e5",
+                "0x20cb5e7",
+                "0x20cb5ea",
+                "0x20cb5ec",
+                "0x20cb5ee",
+                "0x20cb5f4",
+                "0x20cb5f6",
+                "0x20cb5af",
+                "0x20cb5b2",
+                "0x20cb5b3",
+                "0x20cb5b4",
+                "0x20cb5b5",
+                "0x20cb5b6"
+              ],
+              "prefix": [
+                "in_play"
+              ]
+            }
+          },
+          {
+            "player": 1,
+            "in_play_result": 0,
+            "native": {
+              "kind": "return",
+              "value": 0,
+              "trace": [
+                "0x21691d0",
+                "0x21691d1",
+                "0x21691d3",
+                "0x21691d4",
+                "0x21691d5",
+                "0x21691d6",
+                "0x21691d9",
+                "0x21691dc",
+                "0x21691df",
+                "0x21691e3",
+                "0x21691e6",
+                "0x21691e9",
+                "0x21691ee",
+                "0x21691f4",
+                "0x21691f6",
+                "0x21691f9",
+                "0x21691ff",
+                "0x2169202",
+                "0x2169204",
+                "0x2169207",
+                "0x2169209",
+                "0x216920b",
+                "0x2169222",
+                "0x2169225",
+                "0x2169227",
+                "0x216922a",
+                "0x216922c",
+                "0x216922f",
+                "0x2169231",
+                "0x2169237",
+                "0x2169338",
+                "0x216933e",
+                "0x2169344",
+                "0x216926c",
+                "0x216926e",
+                "0x2169271",
+                "0x2169276",
+                "0x2169278",
+                "0x216927b",
+                "0x216927e",
+                "0x2169280",
+                "0x2169286",
+                "0x2169288",
+                "0x216928b",
+                "0x216928d",
+                "0x2169290",
+                "0x2169292",
+                "0x2169298",
+                "0x216929a",
+                "0x216929c",
+                "0x21692a2",
+                "0x2169254",
+                "0x2169257",
+                "0x2169258",
+                "0x2169259",
+                "0x216925a",
+                "0x216925b"
+              ],
+              "prefix": [
+                "in_play"
+              ]
+            },
+            "rebuilt": {
+              "kind": "return",
+              "value": 0,
+              "trace": [
+                "0x20cb530",
+                "0x20cb531",
+                "0x20cb533",
+                "0x20cb534",
+                "0x20cb535",
+                "0x20cb536",
+                "0x20cb539",
+                "0x20cb53c",
+                "0x20cb53f",
+                "0x20cb543",
+                "0x20cb546",
+                "0x20cb549",
+                "0x20cb54e",
+                "0x20cb551",
+                "0x20cb553",
+                "0x20cb556",
+                "0x20cb55c",
+                "0x20cb55f",
+                "0x20cb561",
+                "0x20cb563",
+                "0x20cb569",
+                "0x20cb57a",
+                "0x20cb57d",
+                "0x20cb57f",
+                "0x20cb582",
+                "0x20cb584",
+                "0x20cb587",
+                "0x20cb589",
+                "0x20cb58f",
+                "0x20cb6d8",
+                "0x20cb6da",
+                "0x20cb6dd",
+                "0x20cb6e2",
+                "0x20cb6e8",
+                "0x20cb5c6",
+                "0x20cb5c8",
+                "0x20cb5cb",
+                "0x20cb5d0",
+                "0x20cb5d2",
+                "0x20cb5d8",
+                "0x20cb5da",
+                "0x20cb5dd",
+                "0x20cb5e0",
+                "0x20cb5e2",
+                "0x20cb5e5",
+                "0x20cb5e7",
+                "0x20cb5ea",
+                "0x20cb5ec",
+                "0x20cb5ee",
+                "0x20cb5f4",
+                "0x20cb5f6",
+                "0x20cb5af",
+                "0x20cb5b2",
+                "0x20cb5b3",
+                "0x20cb5b4",
+                "0x20cb5b5",
+                "0x20cb5b6"
+              ],
+              "prefix": [
+                "in_play"
+              ]
+            }
+          },
+          {
+            "player": 1,
+            "in_play_result": 1073741824,
+            "native": {
+              "kind": "return",
+              "value": 0,
+              "trace": [
+                "0x21691d0",
+                "0x21691d1",
+                "0x21691d3",
+                "0x21691d4",
+                "0x21691d5",
+                "0x21691d6",
+                "0x21691d9",
+                "0x21691dc",
+                "0x21691df",
+                "0x21691e3",
+                "0x21691e6",
+                "0x21691e9",
+                "0x21691ee",
+                "0x21691f4",
+                "0x21691f6",
+                "0x21691f9",
+                "0x21691ff",
+                "0x2169202",
+                "0x2169204",
+                "0x2169207",
+                "0x2169209",
+                "0x216920b",
+                "0x2169222",
+                "0x2169225",
+                "0x2169227",
+                "0x216922a",
+                "0x216922c",
+                "0x216922f",
+                "0x2169231",
+                "0x2169237",
+                "0x2169338",
+                "0x216933e",
+                "0x2169344",
+                "0x216926c",
+                "0x216926e",
+                "0x2169271",
+                "0x2169276",
+                "0x2169278",
+                "0x216927b",
+                "0x216927e",
+                "0x2169280",
+                "0x2169286",
+                "0x2169288",
+                "0x216928b",
+                "0x216928d",
+                "0x2169290",
+                "0x2169292",
+                "0x2169298",
+                "0x216929a",
+                "0x216929c",
+                "0x21692a2",
+                "0x2169254",
+                "0x2169257",
+                "0x2169258",
+                "0x2169259",
+                "0x216925a",
+                "0x216925b"
+              ],
+              "prefix": [
+                "in_play"
+              ]
+            },
+            "rebuilt": {
+              "kind": "return",
+              "value": 0,
+              "trace": [
+                "0x20cb530",
+                "0x20cb531",
+                "0x20cb533",
+                "0x20cb534",
+                "0x20cb535",
+                "0x20cb536",
+                "0x20cb539",
+                "0x20cb53c",
+                "0x20cb53f",
+                "0x20cb543",
+                "0x20cb546",
+                "0x20cb549",
+                "0x20cb54e",
+                "0x20cb551",
+                "0x20cb553",
+                "0x20cb556",
+                "0x20cb55c",
+                "0x20cb55f",
+                "0x20cb561",
+                "0x20cb563",
+                "0x20cb569",
+                "0x20cb57a",
+                "0x20cb57d",
+                "0x20cb57f",
+                "0x20cb582",
+                "0x20cb584",
+                "0x20cb587",
+                "0x20cb589",
+                "0x20cb58f",
+                "0x20cb6d8",
+                "0x20cb6da",
+                "0x20cb6dd",
+                "0x20cb6e2",
+                "0x20cb6e8",
+                "0x20cb5c6",
+                "0x20cb5c8",
+                "0x20cb5cb",
+                "0x20cb5d0",
+                "0x20cb5d2",
+                "0x20cb5d8",
+                "0x20cb5da",
+                "0x20cb5dd",
+                "0x20cb5e0",
+                "0x20cb5e2",
+                "0x20cb5e5",
+                "0x20cb5e7",
+                "0x20cb5ea",
+                "0x20cb5ec",
+                "0x20cb5ee",
+                "0x20cb5f4",
+                "0x20cb5f6",
+                "0x20cb5af",
+                "0x20cb5b2",
+                "0x20cb5b3",
+                "0x20cb5b4",
+                "0x20cb5b5",
+                "0x20cb5b6"
+              ],
+              "prefix": [
+                "in_play"
+              ]
+            }
+          }
+        ],
+        "resolution": "Preserve the native event gate. A physically present blocking/sound call is not an executed action on the candidate event."
+      },
+      {
+        "name": "card_sanctum_of_the_sun",
+        "cases": [
+          {
+            "player": 0,
+            "in_play_result": 0,
+            "native": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                0,
+                3,
+                113
+              ],
+              "trace": [
+                "0x21969f0",
+                "0x21969f1",
+                "0x21969f3",
+                "0x21969f4",
+                "0x21969f5",
+                "0x21969f6",
+                "0x21969f9",
+                "0x21969fc",
+                "0x21969ff",
+                "0x2196a02",
+                "0x2196a06",
+                "0x2196a0a",
+                "0x2196a0d",
+                "0x2196a12",
+                "0x2196a16",
+                "0x2196a1a",
+                "0x2196a1d",
+                "0x2196a22",
+                "0x2196a25",
+                "0x2196a27",
+                "0x2196a2a",
+                "0x2196a2c",
+                "0x2196a2f",
+                "0x2196a35",
+                "0x2196a38",
+                "0x2196a3e",
+                "0x2196a41",
+                "0x2196a57",
+                "0x2196a5a",
+                "0x2196a5d",
+                "0x2196a60",
+                "0x2196a63",
+                "0x2196a64",
+                "0x2196a65",
+                "0x2196a66",
+                "0x2196a67"
+              ],
+              "prefix": [
+                "double_faced_card",
+                "check_legend_rule"
+              ]
+            },
+            "rebuilt": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                0,
+                3,
+                113
+              ],
+              "trace": [
+                "0x24ab150",
+                "0x24ab151",
+                "0x24ab153",
+                "0x24ab154",
+                "0x24ab155",
+                "0x24ab156",
+                "0x24ab159",
+                "0x24ab15c",
+                "0x24ab15f",
+                "0x24ab162",
+                "0x24ab166",
+                "0x24ab16a",
+                "0x24ab16d",
+                "0x24ab172",
+                "0x24ab176",
+                "0x24ab17a",
+                "0x24ab17d",
+                "0x24ab182",
+                "0x24ab185",
+                "0x24ab18b",
+                "0x24ab18e",
+                "0x24ab194",
+                "0x24ab197",
+                "0x24ab19d",
+                "0x24ab1a0",
+                "0x24ab1a6",
+                "0x24ab1a9",
+                "0x24ab1b3",
+                "0x24ab1b6",
+                "0x24ab1b9",
+                "0x24ab1bc",
+                "0x24ab1bf",
+                "0x24ab1c0",
+                "0x24ab1c1",
+                "0x24ab1c2",
+                "0x24ab1c3"
+              ],
+              "prefix": [
+                "double_faced_card",
+                "check_legend_rule"
+              ]
+            }
+          },
+          {
+            "player": 1,
+            "in_play_result": 0,
+            "native": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                1,
+                3,
+                113
+              ],
+              "trace": [
+                "0x21969f0",
+                "0x21969f1",
+                "0x21969f3",
+                "0x21969f4",
+                "0x21969f5",
+                "0x21969f6",
+                "0x21969f9",
+                "0x21969fc",
+                "0x21969ff",
+                "0x2196a02",
+                "0x2196a06",
+                "0x2196a0a",
+                "0x2196a0d",
+                "0x2196a12",
+                "0x2196a16",
+                "0x2196a1a",
+                "0x2196a1d",
+                "0x2196a22",
+                "0x2196a25",
+                "0x2196a27",
+                "0x2196a2a",
+                "0x2196a2c",
+                "0x2196a2f",
+                "0x2196a35",
+                "0x2196a38",
+                "0x2196a3e",
+                "0x2196a41",
+                "0x2196a57",
+                "0x2196a5a",
+                "0x2196a5d",
+                "0x2196a60",
+                "0x2196a63",
+                "0x2196a64",
+                "0x2196a65",
+                "0x2196a66",
+                "0x2196a67"
+              ],
+              "prefix": [
+                "double_faced_card",
+                "check_legend_rule"
+              ]
+            },
+            "rebuilt": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                1,
+                3,
+                113
+              ],
+              "trace": [
+                "0x24ab150",
+                "0x24ab151",
+                "0x24ab153",
+                "0x24ab154",
+                "0x24ab155",
+                "0x24ab156",
+                "0x24ab159",
+                "0x24ab15c",
+                "0x24ab15f",
+                "0x24ab162",
+                "0x24ab166",
+                "0x24ab16a",
+                "0x24ab16d",
+                "0x24ab172",
+                "0x24ab176",
+                "0x24ab17a",
+                "0x24ab17d",
+                "0x24ab182",
+                "0x24ab185",
+                "0x24ab18b",
+                "0x24ab18e",
+                "0x24ab194",
+                "0x24ab197",
+                "0x24ab19d",
+                "0x24ab1a0",
+                "0x24ab1a6",
+                "0x24ab1a9",
+                "0x24ab1b3",
+                "0x24ab1b6",
+                "0x24ab1b9",
+                "0x24ab1bc",
+                "0x24ab1bf",
+                "0x24ab1c0",
+                "0x24ab1c1",
+                "0x24ab1c2",
+                "0x24ab1c3"
+              ],
+              "prefix": [
+                "double_faced_card",
+                "check_legend_rule"
+              ]
+            }
+          }
+        ],
+        "resolution": "Preserve the native event gate. A physically present blocking/sound call is not an executed action on the candidate event."
+      },
+      {
+        "name": "card_lost_vale",
+        "cases": [
+          {
+            "player": 0,
+            "in_play_result": 0,
+            "native": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                0,
+                3,
+                113
+              ],
+              "trace": [
+                "0x2218ab0",
+                "0x2218ab1",
+                "0x2218ab3",
+                "0x2218ab4",
+                "0x2218ab5",
+                "0x2218ab6",
+                "0x2218ab9",
+                "0x2218abc",
+                "0x2218abf",
+                "0x2218ac2",
+                "0x2218ac6",
+                "0x2218aca",
+                "0x2218acd",
+                "0x2218ad2",
+                "0x2218ad5",
+                "0x2218ad7",
+                "0x2218ada",
+                "0x2218adc",
+                "0x2218adf",
+                "0x2218ae5",
+                "0x2218ae8",
+                "0x2218aee",
+                "0x2218af1",
+                "0x2218b07",
+                "0x2218b0a",
+                "0x2218b0d",
+                "0x2218b10",
+                "0x2218b13",
+                "0x2218b14",
+                "0x2218b15",
+                "0x2218b16",
+                "0x2218b17"
+              ],
+              "prefix": [
+                "double_faced_card"
+              ]
+            },
+            "rebuilt": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                0,
+                3,
+                113
+              ],
+              "trace": [
+                "0x227ac30",
+                "0x227ac31",
+                "0x227ac33",
+                "0x227ac34",
+                "0x227ac35",
+                "0x227ac36",
+                "0x227ac39",
+                "0x227ac3c",
+                "0x227ac3f",
+                "0x227ac42",
+                "0x227ac46",
+                "0x227ac4a",
+                "0x227ac4d",
+                "0x227ac52",
+                "0x227ac55",
+                "0x227ac5b",
+                "0x227ac5e",
+                "0x227ac64",
+                "0x227ac67",
+                "0x227ac6d",
+                "0x227ac70",
+                "0x227ac76",
+                "0x227ac79",
+                "0x227ac83",
+                "0x227ac86",
+                "0x227ac89",
+                "0x227ac8c",
+                "0x227ac8f",
+                "0x227ac90",
+                "0x227ac91",
+                "0x227ac92",
+                "0x227ac93"
+              ],
+              "prefix": [
+                "double_faced_card"
+              ]
+            }
+          },
+          {
+            "player": 1,
+            "in_play_result": 0,
+            "native": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                1,
+                3,
+                113
+              ],
+              "trace": [
+                "0x2218ab0",
+                "0x2218ab1",
+                "0x2218ab3",
+                "0x2218ab4",
+                "0x2218ab5",
+                "0x2218ab6",
+                "0x2218ab9",
+                "0x2218abc",
+                "0x2218abf",
+                "0x2218ac2",
+                "0x2218ac6",
+                "0x2218aca",
+                "0x2218acd",
+                "0x2218ad2",
+                "0x2218ad5",
+                "0x2218ad7",
+                "0x2218ada",
+                "0x2218adc",
+                "0x2218adf",
+                "0x2218ae5",
+                "0x2218ae8",
+                "0x2218aee",
+                "0x2218af1",
+                "0x2218b07",
+                "0x2218b0a",
+                "0x2218b0d",
+                "0x2218b10",
+                "0x2218b13",
+                "0x2218b14",
+                "0x2218b15",
+                "0x2218b16",
+                "0x2218b17"
+              ],
+              "prefix": [
+                "double_faced_card"
+              ]
+            },
+            "rebuilt": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                1,
+                3,
+                113
+              ],
+              "trace": [
+                "0x227ac30",
+                "0x227ac31",
+                "0x227ac33",
+                "0x227ac34",
+                "0x227ac35",
+                "0x227ac36",
+                "0x227ac39",
+                "0x227ac3c",
+                "0x227ac3f",
+                "0x227ac42",
+                "0x227ac46",
+                "0x227ac4a",
+                "0x227ac4d",
+                "0x227ac52",
+                "0x227ac55",
+                "0x227ac5b",
+                "0x227ac5e",
+                "0x227ac64",
+                "0x227ac67",
+                "0x227ac6d",
+                "0x227ac70",
+                "0x227ac76",
+                "0x227ac79",
+                "0x227ac83",
+                "0x227ac86",
+                "0x227ac89",
+                "0x227ac8c",
+                "0x227ac8f",
+                "0x227ac90",
+                "0x227ac91",
+                "0x227ac92",
+                "0x227ac93"
+              ],
+              "prefix": [
+                "double_faced_card"
+              ]
+            }
+          }
+        ],
+        "resolution": "Preserve the native event gate. A physically present blocking/sound call is not an executed action on the candidate event."
+      },
+      {
+        "name": "multimana_producer_per_type_count",
+        "cases": [
+          {
+            "player": 0,
+            "in_play_result": 0,
+            "native": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                0,
+                3,
+                113
+              ],
+              "trace": [
+                "0x2044260",
+                "0x2044261",
+                "0x2044263",
+                "0x2044264",
+                "0x2044265",
+                "0x2044266",
+                "0x2044269",
+                "0x204426c",
+                "0x204426f",
+                "0x2044272",
+                "0x2044275",
+                "0x2044278",
+                "0x204427b",
+                "0x204427d",
+                "0x2044280",
+                "0x2044282",
+                "0x2044285",
+                "0x2044287",
+                "0x204428a",
+                "0x204428c",
+                "0x204428f",
+                "0x20442a1",
+                "0x20442a4",
+                "0x20442a7",
+                "0x20442aa",
+                "0x20442ad",
+                "0x20442ae",
+                "0x20442af",
+                "0x20442b0",
+                "0x20442b1"
+              ],
+              "prefix": []
+            },
+            "rebuilt": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                0,
+                3,
+                113
+              ],
+              "trace": [
+                "0x25f0a50",
+                "0x25f0a51",
+                "0x25f0a53",
+                "0x25f0a54",
+                "0x25f0a55",
+                "0x25f0a56",
+                "0x25f0a59",
+                "0x25f0a5c",
+                "0x25f0a5f",
+                "0x25f0a62",
+                "0x25f0a65",
+                "0x25f0a68",
+                "0x25f0a6b",
+                "0x25f0a6d",
+                "0x25f0a70",
+                "0x25f0a76",
+                "0x25f0a79",
+                "0x25f0a7b",
+                "0x25f0a7e",
+                "0x25f0a80",
+                "0x25f0a83",
+                "0x25f0ac8",
+                "0x25f0acb",
+                "0x25f0ace",
+                "0x25f0ad1",
+                "0x25f0ad4",
+                "0x25f0ad5",
+                "0x25f0ad6",
+                "0x25f0ad7",
+                "0x25f0ad8"
+              ],
+              "prefix": []
+            }
+          },
+          {
+            "player": 1,
+            "in_play_result": 0,
+            "native": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                1,
+                3,
+                113
+              ],
+              "trace": [
+                "0x2044260",
+                "0x2044261",
+                "0x2044263",
+                "0x2044264",
+                "0x2044265",
+                "0x2044266",
+                "0x2044269",
+                "0x204426c",
+                "0x204426f",
+                "0x2044272",
+                "0x2044275",
+                "0x2044278",
+                "0x204427b",
+                "0x204427d",
+                "0x2044280",
+                "0x2044282",
+                "0x2044285",
+                "0x2044287",
+                "0x204428a",
+                "0x204428c",
+                "0x204428f",
+                "0x20442a1",
+                "0x20442a4",
+                "0x20442a7",
+                "0x20442aa",
+                "0x20442ad",
+                "0x20442ae",
+                "0x20442af",
+                "0x20442b0",
+                "0x20442b1"
+              ],
+              "prefix": []
+            },
+            "rebuilt": {
+              "kind": "jmp",
+              "callee": "mana_producer",
+              "arguments": [
+                1,
+                3,
+                113
+              ],
+              "trace": [
+                "0x25f0a50",
+                "0x25f0a51",
+                "0x25f0a53",
+                "0x25f0a54",
+                "0x25f0a55",
+                "0x25f0a56",
+                "0x25f0a59",
+                "0x25f0a5c",
+                "0x25f0a5f",
+                "0x25f0a62",
+                "0x25f0a65",
+                "0x25f0a68",
+                "0x25f0a6b",
+                "0x25f0a6d",
+                "0x25f0a70",
+                "0x25f0a76",
+                "0x25f0a79",
+                "0x25f0a7b",
+                "0x25f0a7e",
+                "0x25f0a80",
+                "0x25f0a83",
+                "0x25f0ac8",
+                "0x25f0acb",
+                "0x25f0ace",
+                "0x25f0ad1",
+                "0x25f0ad4",
+                "0x25f0ad5",
+                "0x25f0ad6",
+                "0x25f0ad7",
+                "0x25f0ad8"
+              ],
+              "prefix": []
+            }
+          }
+        ],
+        "resolution": "Preserve the native event gate. A physically present blocking/sound call is not an executed action on the candidate event."
+      }
+    ],
+    "unchanged_shared_helpers": 15,
+    "full_file_projections": 11,
+    "dll_sha256": "7cd202e075de504e57c37de5cd375c4ff84b4814a10b67d3f1d31ce5aa2b920e",
+    "dbg_sha256": "847594542546090de50abbd1c3f8de83bd79f7bccdbbf94afa956f6c3b905ce6",
+    "staging": "preserved",
+    "scope": "Native/current helper edges, all declared native event values and neighboring/sentinel integers with both players and four affected-card/controller combinations for five event selectors, original numeric total-counter forwarding, four dead-path audits, and complete source projections. Selected helpers and prefix stubs are not gameplay simulations; no whole-program equivalence is claimed."
+  },
+  "current_source_check": {
+    "canonical_functions": 738,
+    "accepted_function_names": 735,
+    "auxiliary_functions": [
+      {
+        "recovery_name": "exile_at_end_of_combat_2022",
+        "canonical_name": "innistrad_exile_at_end_of_combat_legacy",
+        "kind": "retained_public_native_helper",
+        "native_ranges": 1
+      },
+      {
+        "recovery_name": "reset_storm_count_2022",
+        "canonical_name": "reset_storm_count",
+        "kind": "native_inline_fragment",
+        "native_ranges": 14
+      },
+      {
+        "recovery_name": "keep_storm_count_2022",
+        "canonical_name": "keep_storm_count",
+        "kind": "native_inline_fragment",
+        "native_ranges": 21
+      }
+    ],
+    "changed_files": 171,
+    "verification": "current source hashes and canonical name/ledger references",
+    "historical_provenance_replayed": false,
+    "historical_artifacts_retired": true,
+    "scope": "Current configuration inputs only. Historical source-edit replay, archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json."
+  },
+  "build_log_sha256": "5b83975dabfc3f4ce436eafdaa877f731923c6b4720fae4488d447af8e3cadf9",
+  "focused_check_implementation": {
+    ".recovery/check_mechanic_dispatch_c630.py": "4b896491ce1a64c4bb11d2638b9e9d4fce04f1831754c4d28e4695ee97c18c4e",
+    ".recovery/dispatch_selector_c630.py": "1690f2ec3503e0a47a9bb0ff228aef48e220d336b69a53323d933df3a0c2fee5"
+  },
+  "review": [
+    "The previous goal turn restored shared native calls in eighty card owners and Takklemaggot's missing removal path; that was verified progress. This pass restores fifteen additional mechanic delegations and checks selected event predicates directly against native instructions.",
+    "Convoke cards reuse generic_spell_with_convoke after their keyword/devour effects. Hybrid cards reuse hybrid after their individual effects. Wizards Retort reuses Counterspell; Censor reuses Force Spike; Haze of Pollen reuses Fog; Urborg Skeleton reuses Drudge Skeletons. Existing helper definitions remain unchanged.",
+    "Iron Will uses the casting-event predicate to choose between its native pump and us_cycling helpers. Rift Sower chooses suspend for casting/cost events and its native mana-creature helper otherwise. Their two compiler-shaped gotos and expanded cost/color logic are removed.",
+    "Teach by Example has three native routes, verified from raw code: basic_spell on EVENT_CAN_CAST, card_doublecast on EVENT_RESOLVE_SPELL, hybrid otherwise. A three-argument public card helper declaration is added to manalink.h. Doublecast is reused only for its resolution subset; its historical whole-function comparison score is not treated as exact.",
+    "The Ikoria counter predicate now calls count_counters(player,card,-1), preserving the complete numeric return and activation-parent handling. COUNTER_ANY is a different enum selector and is deliberately not substituted for -1. Raw aliased counter-byte accesses are removed.",
+    "The token-haste callback restores add_status with the native target-player/legacy slot and STATUS_INVISIBLE_FX (0x10000). Native/rebuilt token-record sizes and three accessed field offsets agree; four controller combinations verify the actual outgoing status operands after an explicitly stubbed legacy allocation.",
+    "The native event_t has 154 names and 149 distinct values. Each of five route selectors is executed up to its selected helper for 322 distinct native/neighboring/sentinel event integers, two players and four affected-card/controller combinations: 12,880 native/current comparisons. Full outgoing operands agree, including cycling, pump and suspend costs. This is a bounded dispatch check, not execution of the gameplay helpers.",
+    "Shape of the Wiitigo's physical blocking call is behind an outer event gate that excludes EVENT_DECLARE_BLOCKERS. Three physical land-sound calls are similarly unreachable on EVENT_RESOLVE_SPELL; the real path delegates to mana_producer. Native/current path execution confirms these facts without enabling the dead actions or replacing the real fallback.",
+    "One combined build, all 15,169 fixed slots and eleven complete source-file projections pass. Fifteen reused helper definitions remain unchanged. Existing staging is preserved; no post-edit full similarity or transitive gameplay-equivalence claim is made.",
+    "The post-batch full report covers all 18,828 configured ranges and verifies all 160 explicit function-address bindings plus 293 live data bindings. Relative to C626, 105 scores improve, three decrease, sixty become exact and none cease to be exact. Ten of this batch's fifteen owners now compare exactly. The current tiny-diff queue has 395 candidates; stronger scores can bring formerly larger-diff cases into that queue."
+  ],
+  "comparison_after_batches": {
+    "receipt": {
+      "setup_sha256": "5f8287b29ca3abccb0fe8d09aeb92ed115011cff7e10e14f82e2e81043996bcc",
+      "report_sha256": "7bdfae525e99b91b1b072fe59f0b577ab11b6ea854acfd9b5986105a3d62f0cb",
+      "inputs": {
+        "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "C:\\dev\\manalink3-src\\ManalinkEh.dll": "7cd202e075de504e57c37de5cd375c4ff84b4814a10b67d3f1d31ce5aa2b920e",
+        "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "847594542546090de50abbd1c3f8de83bd79f7bccdbbf94afa956f6c3b905ce6"
+      },
+      "metadata_sha256": "a34b183a945cbd64dae0e56ac61740da088d73bbf2ac092165a8e087d9e3591c",
+      "metadata_snapshot": ".recovery\\reccmp\\dispatch-refresh-c630.metadata.csv",
+      "global_metadata_snapshot": ".recovery\\reccmp\\dispatch-refresh-c630.globals.csv",
+      "global_metadata_sha256": "4bd078c759882fd6f758d1ec43ab13606b0e8e288c32b13ec11f52609c5142c9",
+      "global_bindings_snapshot": ".recovery\\reccmp\\dispatch-refresh-c630.globals.json",
+      "global_bindings_sha256": "3f5fd09c3da23f7433199e383e3fddf5e15387fa5e6dc00b05a25ed013ccf5fe",
+      "verified_global_bindings": {
+        "verified": 293,
+        "bindings_sha256": "15ab7533766e79852acedc3d91bc4bbc23d451c8a8f9d51e05fb76e217631c24"
+      },
+      "project_config_sha256": "a978a638b5f154a514be6229cd0b012f96fb8431f1bfc4c4f00c3cf13bc0d371",
+      "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+      "comparator_source_sha256": {
+        "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+        "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+        "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+        "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+        "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+        "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+        "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b",
+        "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_globals.py": "1e870d89b4afbc15950d26c59a94162aecc70bec0700f60c032373a76910f3bc",
+        "C:\\dev\\manalink3-src\\tools\\reccmp_project.py": "c63e3d0b734e532a9bf37141562308a06fd9d3327e85f02d01f67267c73876b6"
+      },
+      "command": [
+        "reccmp-reccmp",
+        "--target",
+        "MANALINK2022",
+        "--no-color",
+        "--json",
+        ".recovery/reccmp/dispatch-refresh-c630.json",
+        "--silent"
+      ],
+      "exit_code": 0
+    },
+    "configured_ranges": 18828,
+    "verified_explicit_function_bindings": 160,
+    "verified_global_bindings": 293,
+    "before_summary": {
+      "exact": 12467,
+      "different": 6090,
+      "effective": 271
+    },
+    "after_summary": {
+      "exact": 12527,
+      "different": 6028,
+      "effective": 273
+    },
+    "tiny_diff_candidates": 395,
+    "inputs_current": true,
+    "improved": 105,
+    "lower_score": 3,
+    "newly_exact": 60,
+    "no_longer_exact": 0,
+    "distinct_source_owners": 108,
+    "batch_scores": [
+      {
+        "evidence": "docs/recovery-evidence/reccmp-caller-mode-corrections.json",
+        "source_owners": 8,
+        "now_exact": 1,
+        "now_effective": 0
+      },
+      {
+        "evidence": "docs/recovery-evidence/native-buffer-initializer-restoration.json",
+        "source_owners": 5,
+        "now_exact": 4,
+        "now_effective": 0
+      },
+      {
+        "evidence": "docs/recovery-evidence/native-shared-dispatch-restoration.json",
+        "source_owners": 81,
+        "now_exact": 46,
+        "now_effective": 2
+      },
+      {
+        "evidence": "docs/recovery-evidence/native-mechanic-dispatch-restoration.json",
+        "source_owners": 15,
+        "now_exact": 10,
+        "now_effective": 0
+      }
+    ],
+    "source_owner_scores": [
+      {
+        "source": "cards/hour_of_devastation.c",
+        "name": "card_abandoned_sarcophagus",
+        "address": "0x20d5330",
+        "before": 0.5417439703153989,
+        "after": 0.549165120593692,
+        "effective": false
+      },
+      {
+        "source": "cards/amonkhet.c",
+        "name": "card_as_foretold",
+        "address": "0x22d9770",
+        "before": 0.4463087248322148,
+        "after": 0.44966442953020136,
+        "effective": false
+      },
+      {
+        "source": "cards/ikoria.c",
+        "name": "card_lurrus_of_the_dream_den",
+        "address": "0x228b340",
+        "before": 0.43567251461988304,
+        "after": 0.43567251461988304,
+        "effective": false
+      },
+      {
+        "source": "cards/throne_of_eldraine.c",
+        "name": "card_fires_of_invention",
+        "address": "0x25cf1b0",
+        "before": 0.32038834951456313,
+        "after": 0.32362459546925565,
+        "effective": false
+      },
+      {
+        "source": "cards/kaladesh.c",
+        "name": "card_lost_legacy",
+        "address": "0x23a2960",
+        "before": 0.6296296296296297,
+        "after": 0.6358024691358025,
+        "effective": false
+      },
+      {
+        "source": "functions/tutors.c",
+        "name": "new_global_tutor",
+        "address": "0x2651990",
+        "before": 0.20349967595593,
+        "after": 0.20349967595593,
+        "effective": false
+      },
+      {
+        "source": "cards/unlimited.c",
+        "name": "card_chaos_orb",
+        "address": "0x24c00a0",
+        "before": 0.5382932166301969,
+        "after": 0.5782608695652174,
+        "effective": false
+      },
+      {
+        "source": "cards/commander.c",
+        "name": "card_zedruu_the_greathearted",
+        "address": "0x23e5d00",
+        "before": 0.8439897698209718,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/conspiracy-take-the-crown.c",
+        "name": "card_liutenants_of_the_guard",
+        "address": "0x220e570",
+        "before": 0.8023255813953488,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/conspiracy-take-the-crown.c",
+        "name": "card_messenger_jays",
+        "address": "0x220f260",
+        "before": 0.7558139534883721,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/conspiracy-take-the-crown.c",
+        "name": "card_orchard_elemental",
+        "address": "0x22105b0",
+        "before": 0.8275862068965517,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/mercadian_masques.c",
+        "name": "card_quagmire_lamprey",
+        "address": "0x2182280",
+        "before": 0.6555555555555556,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/ice_age.c",
+        "name": "card_breath_of_dreams",
+        "address": "0x23f1bf0",
+        "before": 0.4311377245508982,
+        "after": 0.48659003831417624,
+        "effective": false
+      },
+      {
+        "source": "cards/amonkhet.c",
+        "name": "card_sweltering_suns",
+        "address": "0x22df3b0",
+        "before": 0.8181818181818182,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/urza_saga.c",
+        "name": "card_brand",
+        "address": "0x2054b70",
+        "before": 0.8076923076923077,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/amonkhet.c",
+        "name": "card_hieroglyphic_illumination",
+        "address": "0x22da2d0",
+        "before": 0.803921568627451,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/tokens.c",
+        "name": "card_food",
+        "address": "0x2583130",
+        "before": 0.8,
+        "after": 0.82,
+        "effective": false
+      },
+      {
+        "source": "cards/theros_beyond_death.c",
+        "name": "card_dryad_of_the_ilysian_grove",
+        "address": "0x235c4a0",
+        "before": 0.7761194029850746,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/portal_1_2_3k.c",
+        "name": "card_valorous_charge",
+        "address": "0x21c2950",
+        "before": 0.7619047619047619,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/portal_1_2_3k.c",
+        "name": "card_natures_cloak",
+        "address": "0x21c2fe0",
+        "before": 0.7619047619047619,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/mirage.c",
+        "name": "card_nocturnal_raid",
+        "address": "0x238f6b0",
+        "before": 0.7619047619047619,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/urza_destiny.c",
+        "name": "card_magnify",
+        "address": "0x2109550",
+        "before": 0.7435897435897436,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/stronghold.c",
+        "name": "card_crossbow_ambush",
+        "address": "0x2135220",
+        "before": 0.7368421052631579,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/portal_1_2_3k.c",
+        "name": "card_steadfastness",
+        "address": "0x21c2770",
+        "before": 0.7368421052631579,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/portal_1_2_3k.c",
+        "name": "card_desperate_charge",
+        "address": "0x21c5990",
+        "before": 0.7368421052631579,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/commander_2015.c",
+        "name": "card_illusory_ambusher",
+        "address": "0x2353520",
+        "before": 0.7,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/strixhaven.c",
+        "name": "card_crushing_disappointment",
+        "address": "0x23cba70",
+        "before": 0.7,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/dominaria.c",
+        "name": "card_garna_the_bloodflame",
+        "address": "0x22ce170",
+        "before": 0.6923076923076923,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_dihadas_ploy",
+        "address": "0x2233220",
+        "before": 0.6851851851851852,
+        "after": 0.7878787878787878,
+        "effective": false
+      },
+      {
+        "source": "cards/amonkhet.c",
+        "name": "card_blazing_volley",
+        "address": "0x22ddbe0",
+        "before": 0.6842105263157895,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/ravnica_allegiance.c",
+        "name": "card_sphinxs_insight",
+        "address": "0x25c37a0",
+        "before": 0.6818181818181818,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_hard_evidence",
+        "address": "0x2237ea0",
+        "before": 0.6756756756756757,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/urza_saga.c",
+        "name": "card_unnerve",
+        "address": "0x20580b0",
+        "before": 0.6666666666666666,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/portal_1_2_3k.c",
+        "name": "card_desert_sandstorm",
+        "address": "0x21c5de0",
+        "before": 0.6666666666666666,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/strixhaven.c",
+        "name": "card_environmental_sciences",
+        "address": "0x23ce830",
+        "before": 0.6666666666666666,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/invasion.c",
+        "name": "card_wandering_stream",
+        "address": "0x249e690",
+        "before": 0.6666666666666666,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/zendikar_rising.c",
+        "name": "card_maddening_cacophony",
+        "address": "0x230ba50",
+        "before": 0.6607142857142857,
+        "after": 0.7162790697674418,
+        "effective": false
+      },
+      {
+        "source": "cards/legends.c",
+        "name": "card_takklemaggot",
+        "address": "0x2201750",
+        "before": 0.6581740976645435,
+        "after": 0.6960167714884696,
+        "effective": false
+      },
+      {
+        "source": "cards/aether_revolt.c",
+        "name": "card_inspiring_roar",
+        "address": "0x20c3a50",
+        "before": 0.6571428571428571,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_blossoming_calm",
+        "address": "0x222e9d0",
+        "before": 0.6571428571428571,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/tokens.c",
+        "name": "card_satyr",
+        "address": "0x25831f0",
+        "before": 0.6557377049180327,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_fractured_sanity",
+        "address": "0x2235800",
+        "before": 0.6511627906976745,
+        "after": 0.7419354838709677,
+        "effective": false
+      },
+      {
+        "source": "cards/mercadian_masques.c",
+        "name": "card_deepwood_legate",
+        "address": "0x217ee30",
+        "before": 0.650887573964497,
+        "after": 0.9517241379310345,
+        "effective": false
+      },
+      {
+        "source": "cards/m19.c",
+        "name": "card_revitalize",
+        "address": "0x220b140",
+        "before": 0.6470588235294118,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_faithless_salvaging",
+        "address": "0x2234150",
+        "before": 0.6470588235294118,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_lucid_dreams",
+        "address": "0x2239920",
+        "before": 0.6470588235294118,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/aether_revolt.c",
+        "name": "card_hidden_stockpile",
+        "address": "0x20c1fc0",
+        "before": 0.6382978723404256,
+        "after": 0.6875,
+        "effective": false
+      },
+      {
+        "source": "cards/strixhaven.c",
+        "name": "card_pest_summoning",
+        "address": "0x23d5d30",
+        "before": 0.6363636363636364,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/portal_1_2_3k.c",
+        "name": "card_spring_of_eternal_peace",
+        "address": "0x21c6130",
+        "before": 0.625,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/mirage.c",
+        "name": "card_mangaras_blessing",
+        "address": "0x238f0a0",
+        "before": 0.625,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/commander_legends.c",
+        "name": "card_aesi_tyrant_of_gyre_strait",
+        "address": "0x25a2a30",
+        "before": 0.6185567010309279,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/guilds_of_ravnica.c",
+        "name": "card_camaraderie",
+        "address": "0x261a6e0",
+        "before": 0.6086956521739131,
+        "after": 0.6222222222222222,
+        "effective": false
+      },
+      {
+        "source": "cards/hour_of_devastation.c",
+        "name": "card_oketras_last_mercy",
+        "address": "0x20cdf20",
+        "before": 0.578125,
+        "after": 0.592,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_mystic_redaction",
+        "address": "0x223a780",
+        "before": 0.576271186440678,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/aether_revolt.c",
+        "name": "card_srams_expertise",
+        "address": "0x20ca3b0",
+        "before": 0.575,
+        "after": 0.8378378378378378,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_strike_it_rich",
+        "address": "0x223fa00",
+        "before": 0.573170731707317,
+        "after": 0.6329113924050633,
+        "effective": false
+      },
+      {
+        "source": "cards/jumpstart.c",
+        "name": "card_immolating_gyre",
+        "address": "0x2373780",
+        "before": 0.5714285714285714,
+        "after": 0.5853658536585366,
+        "effective": false
+      },
+      {
+        "source": "cards/aether_revolt.c",
+        "name": "card_rishkars_expertise",
+        "address": "0x20c8930",
+        "before": 0.5645161290322581,
+        "after": 0.5901639344262295,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons.c",
+        "name": "card_echo_of_eons",
+        "address": "0x2337400",
+        "before": 0.5562130177514792,
+        "after": 0.6390532544378699,
+        "effective": false
+      },
+      {
+        "source": "cards/ixalan.c",
+        "name": "card_chart_a_course",
+        "address": "0x2213730",
+        "before": 0.5254237288135594,
+        "after": 0.6607142857142857,
+        "effective": false
+      },
+      {
+        "source": "cards/ravnica.c",
+        "name": "card_perilous_forays",
+        "address": "0x24ed720",
+        "before": 0.5217391304347826,
+        "after": 0.803921568627451,
+        "effective": false
+      },
+      {
+        "source": "cards/ixalan.c",
+        "name": "card_arguels_blood_fast",
+        "address": "0x22143b0",
+        "before": 0.5145228215767634,
+        "after": 0.49361702127659574,
+        "effective": false
+      },
+      {
+        "source": "cards/m19.c",
+        "name": "card_psychic_corrosion",
+        "address": "0x220ac80",
+        "before": 0.5,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_sanctum_weaver",
+        "address": "0x223d910",
+        "before": 0.5,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/m19.c",
+        "name": "card_one_with_the_machine",
+        "address": "0x220a580",
+        "before": 0.49019607843137253,
+        "after": 0.6458333333333334,
+        "effective": false
+      },
+      {
+        "source": "cards/ravnica_allegiance.c",
+        "name": "card_smothering_tithe",
+        "address": "0x25c34e0",
+        "before": 0.4854368932038835,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/portal_1_2_3k.c",
+        "name": "card_renewing_dawn",
+        "address": "0x21c2470",
+        "before": 0.47761194029850745,
+        "after": 0.6046511627906976,
+        "effective": false
+      },
+      {
+        "source": "cards/war_of_the_spark.c",
+        "name": "card_heartwarming_redemption",
+        "address": "0x21cef20",
+        "before": 0.46875,
+        "after": 0.592,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons.c",
+        "name": "card_ransack_the_lab",
+        "address": "0x233bee0",
+        "before": 0.46774193548387094,
+        "after": 0.47540983606557374,
+        "effective": false
+      },
+      {
+        "source": "cards/urza_saga.c",
+        "name": "card_tolarian_winds",
+        "address": "0x2058040",
+        "before": 0.4657534246575342,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/invasion.c",
+        "name": "card_savage_offensive",
+        "address": "0x249b890",
+        "before": 0.455026455026455,
+        "after": 0.47674418604651164,
+        "effective": false
+      },
+      {
+        "source": "cards/commander_legends.c",
+        "name": "card_pride_of_the_perfect",
+        "address": "0x25adff0",
+        "before": 0.4411764705882353,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/ravnica_allegiance.c",
+        "name": "card_wilderness_reclamation",
+        "address": "0x25c4680",
+        "before": 0.43902439024390244,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/amonkhet.c",
+        "name": "card_new_perspectives",
+        "address": "0x22da7b0",
+        "before": 0.4383561643835616,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/ixalan.c",
+        "name": "card_vances_blasting_cannons",
+        "address": "0x2215c10",
+        "before": 0.43010752688172044,
+        "after": 0.7857142857142857,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_terramorph2",
+        "address": "0x2240950",
+        "before": 0.4158415841584158,
+        "after": 0.5208333333333334,
+        "effective": false
+      },
+      {
+        "source": "cards/invasion.c",
+        "name": "card_well_laid_plans",
+        "address": "0x249e780",
+        "before": 0.40540540540540543,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/unstable.c",
+        "name": "card_crow_storm",
+        "address": "0x25c5700",
+        "before": 0.4036697247706422,
+        "after": 0.5523809523809524,
+        "effective": false
+      },
+      {
+        "source": "cards/commander_legends.c",
+        "name": "card_demonic_lore",
+        "address": "0x25a6e60",
+        "before": 0.3925233644859813,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/ravnica_allegiance.c",
+        "name": "card_precognitive_perception",
+        "address": "0x25c1410",
+        "before": 0.3875968992248062,
+        "after": 0.5669291338582677,
+        "effective": false
+      },
+      {
+        "source": "cards/ravnica_allegiance.c",
+        "name": "card_shimmer_of_possibility",
+        "address": "0x25c2df0",
+        "before": 0.3853211009174312,
+        "after": 0.5,
+        "effective": false
+      },
+      {
+        "source": "cards/battlebond.c",
+        "name": "card_bonus_round",
+        "address": "0x20267c0",
+        "before": 0.38181818181818183,
+        "after": 0.42592592592592593,
+        "effective": false
+      },
+      {
+        "source": "cards/m19.c",
+        "name": "card_doublecast",
+        "address": "0x2207ef0",
+        "before": 0.38181818181818183,
+        "after": 0.42592592592592593,
+        "effective": false
+      },
+      {
+        "source": "cards/guilds_of_ravnica.c",
+        "name": "card_chemisters_insight",
+        "address": "0x261a8f0",
+        "before": 0.3816793893129771,
+        "after": 0.4316546762589928,
+        "effective": false
+      },
+      {
+        "source": "cards/tempest.c",
+        "name": "card_chill",
+        "address": "0x215a260",
+        "before": 0.3684210526315789,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/portal_1_2_3k.c",
+        "name": "card_fruition",
+        "address": "0x21c1900",
+        "before": 0.3652173913043478,
+        "after": 0.45454545454545453,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_fae_offering",
+        "address": "0x2233f70",
+        "before": 0.358974358974359,
+        "after": 0.9591836734693877,
+        "effective": true
+      },
+      {
+        "source": "cards/tokens.c",
+        "name": "card_dinosaur_token",
+        "address": "0x2582eb0",
+        "before": 0.3561643835616438,
+        "after": 0.9444444444444444,
+        "effective": true
+      },
+      {
+        "source": "cards/throne_of_eldraine.c",
+        "name": "card_into_the_story",
+        "address": "0x25d0a20",
+        "before": 0.3333333333333333,
+        "after": 0.676056338028169,
+        "effective": false
+      },
+      {
+        "source": "cards/guilds_of_ravnica.c",
+        "name": "card_radical_idea",
+        "address": "0x261fcf0",
+        "before": 0.33112582781456956,
+        "after": 0.41509433962264153,
+        "effective": false
+      },
+      {
+        "source": "cards/m19.c",
+        "name": "card_colossal_majesty",
+        "address": "0x22078d0",
+        "before": 0.32558139534883723,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/strixhaven.c",
+        "name": "card_teach_by_example",
+        "address": "0x23dd6a0",
+        "before": 0.1111111111111111,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/unglued_unhinged.c",
+        "name": "card_strategy_schmategy",
+        "address": "0x2303df0",
+        "before": 0.0,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/commander_legends.c",
+        "name": "card_salamander_warrior",
+        "address": "0x25afc40",
+        "before": 0.0,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/dominaria.c",
+        "name": "give_token_haste",
+        "address": "0x22c95e0",
+        "before": 0.7755102040816326,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/dominaria.c",
+        "name": "card_wizards_retort",
+        "address": "0x22d62a0",
+        "before": 0.5161290322580645,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/urza_legacy.c",
+        "name": "card_iron_will",
+        "address": "0x25ba050",
+        "before": 0.5116279069767442,
+        "after": 0.4835164835164835,
+        "effective": false
+      },
+      {
+        "source": "cards/amonkhet.c",
+        "name": "card_censor",
+        "address": "0x22d9e20",
+        "before": 0.4186046511627907,
+        "after": 0.7931034482758621,
+        "effective": false
+      },
+      {
+        "source": "cards/amonkhet.c",
+        "name": "card_haze_of_pollen",
+        "address": "0x22e0850",
+        "before": 0.34615384615384615,
+        "after": 0.7931034482758621,
+        "effective": false
+      },
+      {
+        "source": "cards/eventide.c",
+        "name": "card_rendclaw_trow",
+        "address": "0x236d3e0",
+        "before": 0.34146341463414637,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/guilds_of_ravnica.c",
+        "name": "card_pitiless_gorgon",
+        "address": "0x261f880",
+        "before": 0.32432432432432434,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/strixhaven.c",
+        "name": "card_inkling_summoning",
+        "address": "0x23d1330",
+        "before": 0.25,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/invasion.c",
+        "name": "card_urborg_skeleton",
+        "address": "0x249e270",
+        "before": 0.3389830508474576,
+        "after": 0.7083333333333334,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons_2.c",
+        "name": "card_rift_sower",
+        "address": "0x223c800",
+        "before": 0.2459016393442623,
+        "after": 0.9111111111111111,
+        "effective": false
+      },
+      {
+        "source": "cards/guilds_of_ravnica.c",
+        "name": "card_arboretum_elemental",
+        "address": "0x261a000",
+        "before": 0.21238938053097345,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/guilds_of_ravnica.c",
+        "name": "card_impervious_greatwurm",
+        "address": "0x261d8b0",
+        "before": 0.21238938053097345,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/modern_horizons.c",
+        "name": "card_feaster_of_fools",
+        "address": "0x2338130",
+        "before": 0.20869565217391303,
+        "after": 1.0,
+        "effective": false
+      },
+      {
+        "source": "cards/ikoria.c",
+        "name": "has_counter",
+        "address": "0x22884c0",
+        "before": 0.10666666666666667,
+        "after": 1.0,
+        "effective": false
+      }
+    ],
+    "lower_score_names": [
+      "card_arguels_blood_fast",
+      "card_thran_temporal_gateway",
+      "card_iron_will"
+    ],
+    "scope": "Current full comparison after four source batches. Teach by Example occurs in two batches and is counted once in the 108 distinct owners. Function scores classify normalized assembly rather than gameplay equivalence; increased tiny-queue membership can result from improved functions crossing the threshold.",
+    "score_changes_outside_modified_owners": [
+      {
+        "name": "card_game_plan",
+        "source": "cards/battlebond.c",
+        "definition_sha256": "9e4e66d1bfea350754b30f0be5a3d40352062ebddff4936a5452b20487298325",
+        "before_c629_definition_sha256": "9e4e66d1bfea350754b30f0be5a3d40352062ebddff4936a5452b20487298325"
+      },
+      {
+        "name": "card_thran_temporal_gateway",
+        "source": "cards/dominaria.c",
+        "definition_sha256": "f49e563dca733b5828b60cce8ca2054f98a54366107e1a854a77cc4b44c9e27a",
+        "before_c629_definition_sha256": "f49e563dca733b5828b60cce8ca2054f98a54366107e1a854a77cc4b44c9e27a"
+      }
+    ],
+    "score_review": "Arguels Blood Fast, Thran Temporal Gateway and Iron Will score lower, with no lost exact match. Iron Will passes all 2,576 selector cases and full outgoing operands; Arguels uses its checked native enchantment delegation with all other source preserved. Thran and Game Plan bodies are unchanged from the pre-C629 source but their compiled comparison scores move after rebuilding their units. Do not steer code layout to improve a score or infer whole-function equivalence from these observations."
+  }
+}

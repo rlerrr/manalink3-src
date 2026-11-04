@@ -4,6 +4,286 @@ The goal remains best-effort recovery of October 2022 card handlers and their
 helpers into their original source units. Native linking, initializer coverage,
 and downstream gameplay verification have separate evidence.
 
+The [C742 constant/event review](recovery-evidence/reccmp-constant-and-shared-event-review.json.gz)
+checks 50 small handlers/helpers selected from unmatched instruction constants,
+skipping earlier queue hints. Native/current event sets and inspected arguments
+agree: most leads are aura or double-faced-card dispatch folding. Native public
+and private experience-counter entries confirm that the source's positive-count
+guard remains required. No game-source edit or rebuild is indicated. Scoped
+cursors end in `progress-c742.json`: 301 priority observations and 518 named-call
+observations; these are not full-function equivalence or missing-body counts.
+C740 remains the latest source/build receipt and C736/C735 the full-score snapshot.
+
+The [C741 shared-dispatch review](recovery-evidence/native-spell-hand-and-graveyard-dispatch-review.json.gz)
+inspects generic spell handling, hand/graveyard/exile activations, static
+graveyard abilities and Glissa's autotap logic: 2,089 source lines across four
+large bodies. A fifth scoped review covers the tutor's reveal-call lead.
+Native instructions confirm Ghidra-omitted test-field stores and sprintf
+arguments; apparent missing calls come from shared/duplicated compiler tails.
+No game-source change or rebuild is indicated. These are scoped observations,
+not full-function or gameplay proofs. C740 remains the latest source/build
+receipt; named-call cursors end in `progress-c741.json` with 518 observations
+and 474 pending leads. Pending leads are not missing functions.
+
+The [C740 interval and shared-caller batch](recovery-evidence/native-attacker-slot-wrap-and-interval-review.json.gz)
+adds opt-in 32-bit field checks and callback-address normalization to
+`tools/recovery/rank_interval_leads.py`. On 5,673 selected non-exact functions,
+170 raw interval leads reduce to 26 after 144 public callback-address-only
+leads are filtered by unique function identity. Eighteen residual dispositions
+retain their preceding source hashes; eight new interval-site reviews include
+two additional private callback relocations. Another 27 small-caller/shared-cost
+reviews bring this batch to 35 new scoped manual observations. These counts
+are review scope, not missing bodies or full-function equivalence proofs.
+
+Four attacker-list handlers now perform their initial slot subtraction in
+`uint32_t`, then convert to `int32_t` before the sign check: Caught in the
+Brights, Lost in the Woods, Marchesa and Stonehoof Chieftain. This preserves
+the native wrapping subtraction instead of allowing signed-overflow
+simplification. The differing input was INT32_MIN, outside ordinary attacker
+counts; this is a fidelity correction, not a newly fixed normal-gameplay case.
+One grouped build passes all 15,169 fixed slots; all four selected rebuilt
+partitions now agree with native instructions. The scanner passes 32 focused
+checks. Full comparison scores remain the historical C736/C735 snapshot.
+The scoped queue cursors now end in `progress-c740.json`. Staging is preserved.
+
+The preceding [C739 call-argument and mana review](recovery-evidence/native-call-argument-and-mana-review.json.gz)
+records 17 scoped observations without source changes. The [C738 interval
+triage](recovery-evidence/reccmp-interval-triage.json.gz) preserves the initial
+byte/word/return scanner results. The [C737 shared-helper fix](recovery-evidence/native-death-trigger-kill-range.json)
+restores the native death-counter kill-code interval to 1..3. Their own
+evidence and build receipts remain historical.
+
+The preceding [C735 batch](recovery-evidence/native-caller-and-operand-triage.json)
+reviewed 67 candidates and corrected both Kiora tutor-success predicates; Kiora
+is exact in the subsequent C736 report. Earlier [C734](recovery-evidence/native-imprint-and-shared-query-flow.json),
+[C733](recovery-evidence/native-attacker-and-instance-query-placement.json),
+[C732](recovery-evidence/native-aura-callback-snapshots.json) and
+[C731](recovery-evidence/native-tutor-predicate-and-scan-roles.json) retain their
+own build and selected-site evidence. C736 comparison scores describe the C735
+build and are historical after the C737 guard correction.
+
+The preceding source work is the [C730 batch](recovery-evidence/native-query-placement-and-structured-continuations.json):
+119 new scoped candidate reviews, 14 refined definitions across 13 source units.
+Brutal Hordechief, Star Compass and Elite Scaleguard restore native instance-query
+placement. Unsubstantiate and the scry-like helper make native evaluation order
+explicit; their previous GCC output already used that order. Nine other handlers
+replace duplicated dispatch/returns or decompiler loops with structured source.
+One grouped build passes all 15,169 fixed entry slots. Selected instruction sites
+confirm the query changes; per-function strict CFG checks are deferred. The saved
+call-lead cursor now has 352 scoped observations/corrections and 640 pending.
+These are prioritization counts, not missing bodies or full-function closures.
+
+The latest [C736 full comparison](recovery-evidence/reccmp-behavior-priority-refresh.json.gz)
+describes the C735 build: **18,837 ranges: 12,790 exact, 287 effective and 5,760
+different**. Since C730, five source batches refine 32 definitions across 25
+source units. Twelve ranges become exact and two become effective; thirty
+scores/categories change, with no previous exact/effective category regressing.
+All fourteen comparator-source hashes are unchanged. The fresh priority packet
+`.recovery/reccmp/current-priority-c736.json` has 3,044 candidates in 2,359 textual
+groups. It retains all differences while lowering priority for 1,715 unchanged
+historical textual deltas and 245 unchanged recent scoped source observations;
+1,077 source-owned candidates have neither hint. These are ordering hints with
+overlap, not renewed equivalence proofs. No game-source changes, rebuild or
+historical semantic-audit replay occurred during the refresh. Gameplay testing
+remains downstream. Earlier [C730 comparison](recovery-evidence/reccmp-structured-source-priority-refresh.json.gz)
+counts and priorities are historical.
+
+The preceding [C725 full comparison](recovery-evidence/reccmp-indexed-arrays-and-public-call-refresh.json.gz)
+of C724 covers **18,837 ranges: 12,768 exact, 284 effective and 5,785 different**.
+Categories are unchanged from C721/C720; five different-to-different scores
+change, with no added or removed ranges. The intervening batches refine 51
+existing definitions across 34 units: 42 exact literal/enum-only changes and
+nine native-supported refinements. No new bodies or header/ABI edits. The C724
+build passes all 15,169 fixed entry slots; no game source changes or rebuilds
+during this refresh. All 14 comparator-source hashes and existing automatic
+review models remain unchanged.
+
+Manual renewal retains 1,177 identical-context observations, four through exact
+card-ID projections. Two callback/linker relocations have fresh identities; nine
+source refinements have fresh strict entry packets and retain their differences.
+The optional spell checker examines 1,156 remaining eligible cards and adds two
+scoped observations: Traitorous Instinct and Spell Pierce. It binds plain public
+C helpers only when pinned native/current entry traces overwrite arithmetic
+flags before any use or call, and keeps the existing argument/register/width
+and control-flow checks. Return-only, logical-operation, flag-reading and
+unknown entries do not receive that additional contract. Callee/data/ordinary
+C ABI/memory assumptions remain; no callee-implementation or gameplay proof.
+
+The standard wider queue has **2,607 entries: 1,692 annotated and 915 without
+site observations**, down from 917. All **575 tiny candidates** have scoped
+observations. The separate 40-instruction-per-side queue has 3,042 entries,
+1,721 annotated and 1,321 pending. Thresholds and raw comparison scores are
+unchanged. Twelve comparison-mapping follow-ups remain separate. These are
+review leads, not missing-source or gameplay-bug counts.
+
+The preceding game-source work is the [C729 batch](recovery-evidence/native-cycling-and-aura-query-flow.json):
+74 functions reviewed together, with six corrected handlers across four units.
+Gaea's Embrace and Ghostly Touch restore fresh attached-instance queries.
+Resounding Scream, Silence and Wave initialize targets on both target-change
+events; Wave also queries targets before reading the live disable flag.
+Chandra's Revolution restores the release's zero-return CAN_CHANGE_TARGET path,
+keeping actual CHANGE_TARGET selection. One incremental build passes all 15,169
+fixed slots and four exact source projections. Selected native/rebuilt query,
+constructor and call-order sites are recorded; all six strict entry checks still
+retain event, operand or branch differences. Actual Merrow instructions preserve
+a color-field store omitted by Ghidra, and Hatred already snapshots life before
+its attack-power query; both sources stay unchanged. Sixty-eight scoped read-only
+notes advance the worklist to 233 observed/corrected packet leads and 759 pending.
+These are not full-range closures, bug counts or missing-body counts. C725 remains
+a historical C724 comparison; gameplay verification stays downstream.
+
+The preceding game-source work is the [C728 batch](recovery-evidence/native-spell-event-and-convoke-flow.json):
+73 functions reviewed together, including 67 call-difference leads and six related
+convoke callers. Fifteen definitions across eight source units are refined:
+Resounding Thunder restores target setup on both target-change events, Felidar
+Umbra queries before activation dispatch/validation, and Stasis Cell reloads its
+attached instance. Eight convoke callers use defined unsigned high-bit predicates;
+four handlers consolidate duplicated event continuations. One grouped build
+passes all 15,169 fixed slots. Felidar Umbra, Endless Obedience and Tin Street
+Dodger pass strict caller CFG checks under the existing identity/callee/data
+assumptions; other functions retain differences. Selected raw sites confirm the
+three event/query changes and all eight native/rebuilt high-bit predicates.
+Fifty-eight read-only topology notes and the new worklist cursor avoid repeating
+this review: 160 packet leads observed/corrected, 832 pending. These are scoped
+observations, not full comparison closures or missing-body counts. C725 remains
+the C724 comparison snapshot; gameplay verification stays downstream.
+
+The preceding game-source work is the [C727 batch](recovery-evidence/native-attachment-query-and-argument-snapshots.json):
+71 call-difference leads reviewed together, with eight corrections across eight
+source units. Time to Feed, Burn Away, Searing Blood and The Brute restore fresh
+attachment queries before event filtering; Roots restores its card snapshot then
+fresh player query. Traveler's Cloak keeps the pre-validation instance through
+the color chooser and still queries afresh for the aura continuation. Constricting
+Sliver snapshots its attachment before the AI-mode helper; Creature Bond removes
+an extra pre-count getter while retaining a fresh query per damage iteration.
+One incremental build passes all 15,169 fixed slots. Four strict CFG checks now
+match (the three death legacies and Constricting Sliver); four retain compiler
+layout/ordering differences. These remain scoped caller checks, not callee or
+gameplay proof. The other 63 leads have read-only topology notes. A compact
+worklist cursor records 88 C726/C727 observations/corrections and 904 remaining
+leads from the historical C725 call packet; these are not missing-body counts.
+No full comparison refresh, staging or publication in this batch.
+
+The preceding game-source work is the [C726 batch](recovery-evidence/native-spell-instance-query-placement.json):
+Volcanic Awakening, Tendrils of Agony, Astral Steel, Ground Rift and Bitter Ordeal
+restore the native instance query on every accepted GS event, before resolution
+and validation. Early storm-query and unaffected-cast guards remain. Lobotomy
+re-reads its final target player after enumeration/selection callbacks rather
+than using the hand scan's saved target. One grouped build passes all 15,169
+entry slots, four exact source projections and selected getter/field checks:
+twelve native and twelve compiled getter sites, including the final Lobotomy
+getter-to-effect target load. Six strict checks retain event/operation/register
+differences. Eleven further leads have scoped read-only notes. Actual random-hand
+packet instructions store payload before kind, matching existing source; cached
+Ghidra statements reverse those independent stores. No network I/O is executed.
+No new bodies or broad gameplay proof. C725 queues remain C724 snapshots and
+are now explicitly labeled historical after this build.
+
+The preceding game-source work is the [C724 batch](recovery-evidence/native-type-worker-and-color-query-order.json):
+Amaug's private worker uses seven indexed stored-card slots and separate IID,
+type-mask, legality, count, selection and dialog roles. CAN-only initialization,
+early 99, the TYPE_EFFECT tribal surrogate, live post-dialog mask writes and
+fresh final playable-array IID remain. Phyrexian Boon, Serra's Boon and Chandra
+Ablaze sequence four source color/sleight pairs explicitly; six native and six
+compiled physical sites confirm color-before-sleight ordering. Chandra's parent
+fields are read after the color query, and priority legality uses a fresh grave
+IID after the callbacks. One grouped build passes all 15,169 entry slots and
+four exact source projections. Four strict entry checks retain frame/local or
+aura-event-order differences; no new body or gameplay fix is claimed. Nicol
+Bolas's fourteen name queries match the existing descending label loop and need
+no source edit. C721 remains a C720 comparison snapshot.
+
+The preceding game-source work is the [C723 batch](recovery-evidence/native-indexed-meld-and-cascade-flow.json):
+the two large Colfenor implementations use indexed compact/clear/meld rows,
+removing flat int-pointer walks across inner arrays. Slot starts zero and one,
+16-bit death snapshots, untouched column zero, repeated ID queries and sticky
+test exclusions remain distinct. Multi-cascade uses explicit deck-tail and
+compaction indices, removing stack-address cancellation and reused scalar roles.
+Native instructions confirm the destination is saved before RNG and deck_ptr is
+loaded afterward. The unusual reveal stop check, two land queries, 500 limit,
+last shift read, unconditional post-play deck count and reverse Aurora scan are
+preserved. One grouped build passes all 15,169 entry slots and two exact source
+file projections. Three strict comparisons retain register/branch/frame changes;
+no new body, native invalid-boundary repair or gameplay proof is claimed. C721
+remains a C720 comparison snapshot.
+
+The preceding game-source work is the [C722 batch](recovery-evidence/named-card-ids-and-activation-local-roles.json):
+44 existing definitions across 31 units, comprising 42 mechanical-only changes
+and two native-supported activation local-role refinements. Sixty-two card-ID
+literals use exact existing header names in known CSV-ID arguments or typed
+test fields; reversal reproduces every original token. The scanner passes three
+positive and 19 negative controls, including declaration-before-use and shadow
+cases. Asmoran separates cost predicates, packed Food choices and creature
+coordinates; mana battery separates availability, dialog choice, amount and
+prompt card ID. Native callback order, cancellation and counter snapshots remain.
+One grouped build passes all 15,169 fixed slots and 31 exact file projections.
+Two strict entry checks retain frame/register differences. No new body or
+behavior fix is claimed. C721 reports and queues remain C720 snapshots and are
+explicitly labeled historical after this build.
+
+The preceding game-source work is the [C720 batch](recovery-evidence/fixed-argument-and-selection-loop-review.json):
+Descent into Madness, Orcish Librarian and Development/Research have disjoint
+selection/count/prompt scopes and restored native local roles. Six numeric card
+IDs use their verified header names. Native quirks remain: Descent carries its
+reduced amount into the second player, Librarian's eight-card branch makes two
+random picks then exiles positions one and zero, and Research retains its second
+IID conversion. One grouped build passes all 15,169 fixed entry slots; 4,056
+isolated before/after Librarian traces match. These tests use stubs, not the
+original DLL or gameplay. Three strict checks retain stack/register differences.
+A read-only scan of 5,693 functions produced no conflicting singleton scalar
+argument leads under its narrow straight-line public-API model; this does not
+cover arbitrary values, joins or complete caller/ABI behavior. No new bodies or
+behavioral fixes are claimed. C721 subsequently refreshes this C720 build.
+
+The preceding [C719 batch](recovery-evidence/exclusive-int-predicate-restoration.json):
+111 explicit numeric predicates across 31 existing definitions in 24 files.
+Private int temporaries used only by adjacent helper/test pairs are removed;
+numeric-only comma RHSs, all-use accounting, helper int contracts and supported
+macro inventory prevent changing callback/read order or hidden local uses.
+Call syntax/order and exact source byte projections are checked. One grouped
+incremental build passes all 15,169 fixed entry slots. This is mechanical source
+cleanup, not new bodies, native behavior fixes or fresh CFG/gameplay validation.
+Seven selected call-surplus observations explain duplicated native branches and
+loop entry/latch sites; their scopes remain separate. C718 scores at that checkpoint describe C717; C721 above supersedes that
+comparison with the C720 build.
+
+The preceding [C717 batch](recovery-evidence/native-live-fields-and-shared-calls.json):
+30 existing definitions across 22 source units plus one shared-helper declaration.
+Legion's Initiative restores native conditional card-ID re-queries; Shape of the
+Wiitigo restores fresh attachment coordinates after callbacks; Bogbrew Witch
+calls the existing deck matcher instead of duplicating its scan. Two mana
+helpers receive local-role refinements, and 25 other definitions receive only
+mechanical cleanup of exclusive int predicate temporaries. The completed-batch
+build passes all 15,169 entry slots. The reused check_deck_for_test helper passes
+strict native/current CFG comparison (42 states); five refined handlers retain
+instruction differences. Source/header byte projections are verified after an
+interrupted application was resumed atomically; the preliminary partial-state
+build is not final verification.
+
+The preceding [C716 batch](recovery-evidence/native-protection-trigger-and-network-flow.json)
+refined 34 existing definitions, including planar-die query order and structured
+Hot Fix flow. [C715](recovery-evidence/native-predicates-and-local-roles.json)
+refined 205 definitions, including 166 mechanical-only cleanups. None of these
+batches adds new bodies. The C718 report now includes all three accumulated source batches.
+
+All **575 tiny candidates** in 421 groups have scoped observations (364 at the
+default score cutoff). The wider queue has **2,607 entries** in 1,938 groups:
+**1,530 annotated and 1,077 without site observations** (468 at the default
+score cutoff). These are current C718/C717 review leads, not missing-source or
+gameplay-bug counts. Queues are `.recovery/reccmp/current-tiny-reviewed-c718.json`
+and `.recovery/reccmp/current-wide-reviewed-c718.json`. A separate fresh packet
+contains 128 lexical native/source call-surplus leads with cached native output;
+inlining, branch duplication and unreachable arms can also create these signals.
+Twelve comparison-mapping follow-ups remain separate.
+
+The helper representation scan accounts for 1,609 source-owned private native
+entries through emitted/inline code, an exact COFF-only body or an existing
+native equivalence. This is representation accounting, not complete semantic
+coverage. The historical 240-handler C697 entry-fragment proofs remain separate;
+they do not establish full-function equivalence on the latest build. Earlier
+coverage categories below retain their historical scope. See [reccmp](reccmp.md)
+for current queues and batching cadence.
+
 ## Current chooser status
 
 The initial 2026-10-22 deferral of the built-in Wish/card-picker UI is historical.
@@ -3126,3 +3406,1313 @@ The older arithmetic initializer report remains a historical snapshot; no full
 comparison or historical audit replay was run. The master recovery ledger is
 serialized compactly to remain below GitHub's per-file limit; its JSON content
 and all evidence entries are preserved.
+
+The data-declaration batch restores 32 native objects across 11 units. Twenty
+AI byte banks regain char storage, including flat 14-byte card-count snapshots.
+Four objects regain their original function-local scope or owning source unit.
+Eight more declarations restore native constness, string-pointee types or
+external linkage. Source consumers and initializers remain intact apart from
+identifier substitution and the original static declarations. See
+[batch record](recovery-evidence/native-data-declaration-restoration.json).
+
+One combined GCC 9.3 build and all 15,169 fixed entry slots pass. Focused checks
+match all 32 source identities, qualified types, array dimensions and linkage;
+initializers match exact bytes or six string targets and 396 pack-table object
+pointers. The original declaration screen covered 296 native static/global
+objects. Nine apparent enum differences preserve every native name/value and
+require no edit; the sleighted-color words tables already exist in both source
+functions despite compiler-shared emitted storage. Aggregate field types and
+runtime state remain outside this screen. Full comparison remains deferred.
+
+The record-field follow-up removes three synthetic card-instance compatibility
+unions. It restores the native four-byte anonymous extension union followed by
+unused30, the direct mode byte, and the native unused0x124/unused0x128/unused0x12a
+tail fields. The template initializer follows those declarations; both token
+keyword uses now refer to the original uint32_t unused0x124 field. The genuine
+native extension, info-slot and eot-toughness unions remain. count_and_card_t
+also restores its card_id_t csvid member across eighteen collation tables. See
+[batch record](recovery-evidence/native-card-collation-record-fields.json).
+
+The combined GCC 9.3 build and all 15,169 fixed entry slots pass. A nested
+record/pointer/array declaration screen compares 120 emitted objects with no
+differences, allowing compatible additional enum names and limiting recursion
+to eight levels. The one compiler-shared color table already has both original
+source declarations. The complete 300-byte card template and all eighteen
+collation arrays retain exact native initializer bytes; token statements change
+only by field-name substitution. This is source/storage recovery, not a new
+function-body or runtime-equivalence claim. Full comparison remains deferred.
+
+The Memorial ai signature was revisited using concrete native parameter
+locations, all five GNU call sites and the 2020 Dominaria card file. Folly's
+original ai value remains absent; the earlier source only has card stubs.
+No arbitrary source argument was inserted.
+
+The private-record pass restores five original declarations: Karn's local
+edh_data_t name, the engine's file-scope PotentialAttacker and ai_combat_data_t,
+the complete windows.c inst_and_ext_t definition, and the original unused
+dialog_args_t declaration. The two copied local combat-data definitions become
+one shared record; the public displayed-instance pointer API keeps an opaque
+typedef. All executable statement tokens remain unchanged, apart from Karn's
+type-name substitution. See
+[batch record](recovery-evidence/native-private-record-identities.json).
+
+The discovery screen found 48 native project-owned named records. Forty-one
+already matched; the five changes above explain the recoverable differences.
+The other two are SafeBool specializations whose existing source templates and
+enum operators are retained without forced uses. The combined GCC 9.3 build and
+all 15,169 fixed entry slots pass. Focused checks match the four emitted records'
+original owners, scopes and depth-eight nested field contracts; dialog_args_t
+remains an unused source declaration, as no typed variable or formal references
+it in the native debug data. No extra objects or debug-only probes were added.
+Full comparison and historical replay remain deferred.
+
+The renewed reccmp pass ranks full JSON instruction deltas instead of treating
+prior body-review coverage as an absence of small source differences. The fresh
+pre-correction comparison has 18,725 configured ranges: 12,280 exact, 261 effective
+and 6,184 different. A reusable small_diff_queue.py tool identifies 494 candidates
+with scores >=90% and at most eight changed instructions per side. Report/CSV
+receipts are checked and stale binary snapshots are labeled explicitly. See
+[batch record](recovery-evidence/reccmp-small-diff-corrections.json).
+
+Thirteen source corrections restore native mana-color indices, GFP owner/grave
+flags, regeneration and literal-prompt flags, forced token color, removal modes
+and range bounds, Inquisitor Exarch's dialog event, and Foster/Genesis Wave text.
+The combined GCC 9.3 build and all 15,169 fixed entry slots pass. Fourteen changed
+instruction sites now match exact native numeric instructions or readonly strings
+within fresh compiled function bounds. This is a focused delta check, not a new
+full-match score or a statement that all remaining differences are harmless.
+
+Equivalent masked shifts/byte-width tests and nonnegative byte-counter loop tests
+were left alone. Oath of Nissa's apparent zero/99 mismatch was a moved-block
+alignment artifact: both return blocks exist natively. No enum was globally
+renumbered; GAA_NONSICK and the kill-code values already match native DWARF.
+
+Routine chooser coverage now binds current source pins rather than obsolete
+initial-recovery body hashes, retaining the original hashes and explicit
+historical verification. Setup bounds caches bind input debug bytes, reader code
+and inclusion mode, avoiding repeated parsing of unchanged inputs. The older
+helper/card triage reports remain body-coverage snapshots; their reconstructed
+classification does not close this finer instruction-difference queue.
+
+The follow-up reccmp pass restores Dromar's native "Target creature gets -2/-2"
+chooser label and resolves ambiguous C names by source compilation unit or an
+exact public COFF entry on both sides. All 160 explicit address bindings are
+checked against the actual fresh comparison, adding 103 formerly excluded
+ranges and strengthening 57 existing pairings. Private split ranges and C++
+overloads remain outside this automatic mapping rule. See the
+[binding record](recovery-evidence/reccmp-source-bindings.json).
+
+The combined build and all 15,169 fixed slots pass. The report now contains
+18,828 ranges: 12,453 exact, 270 effective and 6,105 different. On the original
+18,725 ranges alone, exact matches increase from 12,280 to 12,370, with none
+losing exact status. Twelve of the fourteen corrected function owners now score
+exactly; the other two improve but retain differences. The small-diff queue
+falls from 494 to 399 through source corrections and better reference mapping.
+Three lower nonexact scores were inspected: their instruction inventories differ
+only in resolved call/callback labels, which changed grouped-diff alignment.
+No gameplay equivalence is inferred from these scores. Each JSON comparison now
+keeps its matching CSV snapshot so later metadata changes do not invalidate
+historical queue inspection. Existing staged changes remain untouched.
+
+The next JSON operand pass corrects ten functions across nine source files:
+Azure/Jade Mage request native 3U costs; fe_chant passes its Swamp condition to
+the native green upkeep argument; the permanent-subtype helper checks both
+additional subtype cursors as unsigned values in 1..4095; and Golgari Germination
+uses the extended GFP collector with its explicit skip-token flag. Null Brooch
+sets tapped state directly and clears the mana marker without dispatching a tap
+event. Deep Water sets the shared 0x40 mana-override flag for newly cast lands.
+Lich's Mastery's chooser receives native EVENT_RESOLVE_ACTIVATION (0x72).
+Rishadan Port and Sea Gate Wreckage regain DLG_AUTOCHOOSE_IF_1. Printed card rules
+are not substituted for these release behaviors; in particular Jade Mage's
+native cost is 3U. See the
+[operand correction record](recovery-evidence/reccmp-operand-corrections.json).
+
+The final GCC 9.3 build and all 15,169 fixed slots pass. Focused checks use fresh
+DWARF function bounds to verify the actual callee identities, outgoing constant
+arguments, upkeep slots, unsigned range branches, direct-tap marker write and
+readonly chooser control strings for all ten functions. They caught and resolved
+a duplicated source replacement and an incorrect event-name assumption before
+this checkpoint. No global enum was renumbered. Source and definition hashes,
+compiled receipts and existing staged changes are checked. A new full comparison
+is deferred; the preceding 18,828-range report and its 399-item queue remain
+historical snapshots after this build, not current scores or proof of remaining
+behavioral equivalence.
+
+The next caller pass restores eleven native call sites across seven functions.
+check_battlefield_for_targettable_id and pick_targets_for_multidamage now use
+is_protected_from with protected/source arguments in native order and IPF_TARGET
+(5), replacing six calls to the deprecated card-specific restriction helper.
+Thought Prison uses sp_ability_trigger with controller ANYBODY and type TYPE_ANY;
+the old new_specific_spell_played call incorrectly supplied TYPE_ANY as a player
+selector and used a different resolution path. Natural Order uses native
+GS_SAC_PERMANENT_AS_COST (0x8000) with its existing green-creature test.
+See the [caller record](recovery-evidence/reccmp-native-callers.json).
+
+Three additional caller restorations improve source fidelity while preserving
+the existing behavior for their operands: both Graven Dominator functions call
+real_set_pt directly with mode 1, and Dispossess calls the native three-argument
+choose_a_card interface. The native Graven marked-value target indexing is kept.
+The two remaining deprecated protection calls belong to unbuilt recoded_cards.c,
+which has no current emitted DWARF ranges; no unsupported rewrite of that file
+or global removal of its helper is included.
+
+The combined build and all 15,169 fixed slots pass. Fresh DWARF bounds, native
+COFF callee identities, outgoing constants, chooser text and forbidden old
+callee checks verify all eleven sites. The checks also distinguished Thought
+Prison's native TYPE_ANY filter from TYPE_NONE before the final checkpoint.
+Current source/definition pins and existing staging are checked. The full C622
+comparison remains a historical discovery snapshot, and a new full comparison
+is deferred. Repeated Aura event masks, compensated card-table offsets and
+equivalent branch layouts were inspected without forced code-generation edits.
+
+The subsequent full comparison covers 18,828 ranges: 12,466 exact, 270 effective
+and 6,092 different. Thirteen of the preceding seventeen changed function owners
+now compare exactly, and all 160 explicit source-address bindings are checked
+against actual report addresses. No previous exact match is lost. The tiny-diff
+queue contains 395 candidates. These are the scores before the two source
+changes in the [filter/formatter record](recovery-evidence/reccmp-filter-text-fastpath.json).
+
+Cruel Revival's graveyard selection now uses native TYPE_ANY (0xff) with its
+Zombie subtype test, instead of restricting the selection to permanents. The
+effect-card formatter regains its native strchr fast path for ordinary characters
+before checking its nine format-token prefixes. All replacement rules, signed-zero
+handling and buffer setup remain unchanged. Native operands and callees are
+checked before editing; the final build and all 15,169 fixed slots pass. Focused
+checks confirm the compiled filter, prompt, selector bytes and branch consuming
+the strchr result, plus exact projections preserving all other source statements.
+
+The repeated-call screen now stops at incoming branch targets. Shared call blocks
+had produced false positives in Goblin Tutor, damage_effects and Timecrafting;
+their native streams already contain the allegedly missing operands. The string
+screen separately skips 75 diagnostic line-number differences. No source change
+is made from a call-site constant count without checking the actual control flow.
+Current source pins and existing staging pass. The full report is retained as a
+historical snapshot after this latest build; no post-edit full score is claimed.
+
+The [project-data comparison pass](recovery-evidence/reccmp-global-bindings.json)
+adds 293 checked DLL-owned object bindings, including 51 function-local statics.
+Source/scope/name identities, coarse storage contracts and nonoverlapping extents
+select the pairs; the live comparator verifies their actual rebuilt addresses.
+The local adapter uses the existing fork interface without modifying its checkout.
+It preserves source-qualified labels for repeated data names and saves checked
+global CSV/binding snapshots alongside each JSON report. Initializer equality,
+complete record ABI, EXE-owned absolute globals and CRT data are outside this pass.
+
+The fresh full comparison has 18,828 ranges: 12,467 exact, 271 effective and
+6,090 different. All 160 explicit function bindings remain verified, the formatter
+now compares exactly, and no previous exact match is lost. There are 393 tiny-diff
+candidates. Relative to the prior report, 71 scores improve and 14 decrease; that
+comparison combines new data normalization with the preceding two source edits.
+Named operands can change diff alignment, so these scores order review work.
+
+A whole-range global-reference screen of all 6,090 nonexact functions produces
+one candidate, has_subtype_by_id. Native and rebuilt indexed operands both use
+added_subtypes_not_in_play with a minus-five index bias. The raw displacement
+lands inside different neighboring globals; interpreting it without its index
+produces a false wrong-global report. Both full effective addresses are checked,
+and no source edit is made. Historical JSON remains readable with its matching
+snapshots and is correctly marked stale after a rebuild. No C/header input changes
+in this pass; the successful build and 15,169 fixed slots are reused. Existing
+staging remains unchanged.
+
+The [next caller-mode batch](recovery-evidence/reccmp-caller-mode-corrections.json)
+restores fourteen native call sites in seven cards and one helper. Abandoned
+Sarcophagus, As Foretold, Lurrus and Fires of Invention now pass EVENT_ACTIVATE
+while constructing activation choices, retaining EVENT_CAN_ACTIVATE in query
+paths. Lost Legacy uses hand-only exile reporting instead of requiring every
+copy. The Opposition Agent tutor destination grants mana-value payment instead
+of free casting. Chaos Orb uses the native literal-prompt select_target call,
+and Zedruu reuses the native ownership-count helper with the opponent and permanent
+mask, preserving that helper's existing native behavior.
+
+The widened constant screen examines 6,076 eligible nonexact functions and finds
+eleven candidates. Five outlast findings are rejected: rebuilt GCC moves the
+first three formals into registers and omits constant-zero color arguments, while
+the native private helper uses stack arguments. Comparing matching stack offsets
+without checking the private ABI gives false mana-cost differences. Hand checks,
+protection dispatch and prowess differences are also retained where they reflect
+inlining rather than a demonstrated source discrepancy.
+
+One combined build and all 15,169 fixed slots pass. Fresh DWARF ranges and actual
+callee identities verify 24 native/current sites, including all ten changed
+activation-event operands and ten unchanged query-event operands. Eight full-file
+source projections preserve every statement outside the recorded fragments.
+Current source pins and existing staging pass. The C626 full report is now a
+pre-batch snapshot; no post-batch whole-function score is claimed.
+
+The [native buffer-initializer pass](recovery-evidence/native-buffer-initializer-restoration.json)
+reconstructs five functions in three source units. The three council-vote cards
+use ordinary initialized 100-byte text arrays; all 600 emitted text/padding bytes
+match the native buffers before the council call, including the native Strenght
+spelling. Breath of Dreams and Quagmire Lamprey replace expanded alignment peels,
+word loops and tails with whole-array memset operations on their 151-byte and
+2x151-byte marked arrays. Six private clearing-bookkeeping locals are removed.
+Trigger, payment, vote and creature-iteration behavior remains outside the edits.
+
+The build, all 15,169 fixed entry slots, fresh native/rebuilt array geometry and
+three full-file source projections pass. The generic constant-frame analysis
+cannot resolve alignment-dependent clears. A bounded instruction executor instead
+runs each native/rebuilt clear region for all four low address-bit combinations:
+sixteen runs cover the full typed objects and preserve neighboring sentinels.
+Together with the text arrays, checks cover 1,053 buffer bytes. No code-generation
+workaround is introduced to satisfy the analyzer; existing staging is preserved.
+
+Discovery uses refreshed C627 bounds and binary hashes; C626 scores only order
+review. A whole-function constant screen yields 625 candidates across 6,349
+eligible ranges. A register-aware public-callee screen finds no additional complete
+basic-block constant-argument discrepancies under its conservative model. Private
+or unresolved layouts remain outside that result. A cross-unit public call-count
+screen yields 1,129 signals; GCC's duplicated/shared branches mean static counts
+alone cannot establish omitted runtime work. Leading predicate/mask/stride cases
+are inspected without forced source edits. These screens do not close all remaining
+instruction differences, and no new full reccmp score is claimed after this build.
+
+The [shared-dispatch restoration](recovery-evidence/native-shared-dispatch-restoration.json)
+restores native API reuse in eighty card owners: 55 basic_spell, 17 global_enchantment,
+four generic_token, two flash, and one each for card_exploration and card_nantuko_shade.
+The decompiled source had expanded those common implementations. Existing shared
+helper definitions remain unchanged; native COFF names and actual call instructions
+identify the intended delegation. These are eighty source-sharing restorations,
+not eighty newly recovered handlers or independently established gameplay bugs.
+
+The same batch corrects Takklemaggot: native is_this_dying precedes the death-removal
+check. A positive removal check kills the Aura with KILL_STATE_BASED_ACTION (17)
+and returns zero; the other path creates the legacy. The previous source reversed
+the checks and omitted the kill/early-return path. Focused native/rebuilt conditional
+next-call traces and the actual outgoing kill operand verify the restored behavior.
+
+The second apparently absent mutating action, new_damage_all's damage_creature
+call, is a compiler-worker false positive. Its fresh 55-byte public entry directly
+jumps to a 557-byte same-source .part.0 range containing that call. No source edit
+is made there. Absence checks must follow verified worker edges before treating
+a missing entry-range call as missing behavior.
+
+One combined build and all 15,169 fixed slots pass. Fresh DWARF public/worker
+bounds and callee identities verify 81 emitted native-style API edges. Thirty-two
+complete source-file projections preserve all unrecorded statements, six reused
+helper definitions remain unchanged, and existing staging is preserved. No new
+full reccmp comparison or transitive gameplay-equivalence claim is made.
+
+The [mechanic-dispatch restoration](recovery-evidence/native-mechanic-dispatch-restoration.json)
+recovers fifteen more shared native implementations across eleven source files,
+including the shared-header prototype. Convoke, hybrid, Counterspell, Force Spike,
+Fog, cycling, regeneration and mana-creature logic now reuse their existing APIs.
+Iron Will and Rift Sower lose their compiler-shaped gotos. The Ikoria predicate
+returns count_counters(player,card,-1), preserving a numeric total and activation
+parent handling while removing raw aliased counter-byte reads. The token-haste
+callback uses add_status with the native target player and invisible-effect bit.
+
+Teach by Example preserves three raw native routes: basic_spell on the cast query,
+card_doublecast on resolution, hybrid otherwise. The existing Doublecast function
+receives its public three-argument declaration. Its reuse here is resolution-only;
+no whole-function exactness is inferred from its historical comparison score.
+
+A combined build and all 15,169 fixed slots pass. Fresh emitted bounds/callee
+identities verify 21 edges. Five native/rebuilt selectors agree for all 149 distinct
+native event enum values plus neighboring/sentinel inputs (322 event integers),
+both players and four affected-card/controller combinations: 12,880 cases, including
+outgoing cost operands. Six total-counter forwarding cases and four legacy-status
+controller cases pass, with matching native/rebuilt token-record fields. Fifteen
+shared helper definitions remain unchanged, eleven full-file projections and
+current source/name pins pass, and existing staging is preserved.
+
+Four suspicious native call-count cases are deliberately left behaviorally alone.
+Shape of the Wiitigo's outer event gate excludes EVENT_DECLARE_BLOCKERS, so its
+physical blocking call is not executed there. Three physical land-sound branches
+are likewise unreachable on resolution; the actual native/current route calls
+mana_producer. The bounded selector checks preserve these paths rather than
+activating dormant native code or bypassing the real mana fallback. Selected
+helpers/prefix stubs are not whole-gameplay simulations. The subsequent full comparison records the current snapshot below.
+
+The post-batch full comparison covers 18,828 ranges: 12,527 exact, 273 effective
+and 6,028 different. All 160 explicit function bindings and 293 actual data matches
+are verified against the input-pinned report. Relative to the first C626 data-binding
+snapshot, 105 scores improve, three decrease, sixty become exact and no previous
+exact match is lost. The four source batches affect 108 distinct owners (Teach by
+Example occurs twice); ten of the latest fifteen owners now compare exactly.
+The current tiny-diff queue has 395 entries. Improved functions can enter that
+threshold queue, so candidate count alone is not a remaining-bug measure.
+
+Arguel's Blood Fast, Thran Temporal Gateway and Iron Will score lower. Iron Will's
+2,576 event/affected-card combinations and outgoing operands agree with native code;
+Arguel's retains the checked native enchantment delegation and all other source.
+Game Plan and Thran's function bodies are unchanged from the pre-C629 snapshot,
+although their scores move after their units are rebuilt. Those observations do
+not close their residual full-body differences or justify code-layout steering.
+The full snapshot describes the current build, and existing staging is preserved.
+
+The next [tiny-diff pass](recovery-evidence/reccmp-tiny-return-correction.json)
+adds review-pattern hints to the JSON queue without excluding any candidate.
+Changed branch conditions remain in the operand/control-flow group. It restores
+Rakdos Pit Dragon's native zero return after its +1/+0 pump action; the earlier
+source returned the helper's effect value. All seven outgoing arguments remain
+unchanged. One incremental build, all 15,169 slots and 24 bounded native/rebuilt
+caller cases pass, and existing staging is preserved. The source projection
+contains only that return removal. The refreshed full comparison now
+covers 18,828 ranges: 12,528 exact, 273 effective and 6,027 different, with 394
+tiny-diff candidates. Rakdos Pit Dragon becomes exact and every other function
+retains its prior score. All 293 actual data bindings pass. The current pattern
+counts are 19 assertion-line, 42 retarget-comparison-order, four instruction-order,
+74 branch-layout/padding, seventeen callee/address-mapping and 238 operand/control-
+flow signals. These hints do not establish equivalence or remove any candidate.
+
+The [target/trigger dispatch pass](recovery-evidence/native-target-trigger-dispatch.json)
+restores native caller interfaces in Betrayal of Flesh, Maze of Ith, Slave of Bolas
+and Chrome Mox. The first three use the native explicit player/card validator and
+target index zero. Chrome Mox selects optional/mandatory mode through
+RESOLVE_TRIGGER_AI(player) before entering etb_ability, preserving the native
+duh_mode observation after the cost-query checks. This restores the evaluation
+location; the previous deferred mode was already understood by the shared helper.
+No new gameplay fix is inferred from these call-count differences.
+
+One combined build and all 15,169 fixed slots pass. Eight bounded native/rebuilt
+validation routes preserve player, card and target index. Chrome Mox's four
+outgoing trigger operands and prefix call order agree for 322 native event and
+neighbor/sentinel integers, both players, speculation/trace states, eligibility
+results and explicit duh_mode results: 15,456 cases. Four shared definitions remain
+unchanged, three full-file projections and current source/name pins pass, and
+existing staging is preserved. The focused caller stubs do not simulate gameplay.
+The prior full comparison is now a pre-batch snapshot; no further full refresh is
+needed to establish these recorded caller contracts.
+
+The [split-card ID map](recovery-evidence/native-split-id-table.json) reconstructs
+one existing helper as 75 named cases, with fifteen fusable combined-ID returns.
+Its 225 card enumerators are checked against release DWARF. The 11,074-byte
+decision tree becomes an 8,114-byte switch, removing compiler-shaped arithmetic
+and branches without adding handlers or changing half-selection rules.
+
+The release function, actual rebuilt DLL function and standalone named source
+agree in 983,145 calls: every 16-bit card ID with fifteen zero/nonzero, low/high-bit
+and signed flag values, plus seven additional signed/out-of-range IDs. The helper
+has no external calls. The harness maps the DLLs without resolving imports or
+running their entry points and calls only that integer helper. The complete
+source-file projection, combined build, all 15,169 fixed slots and current source
+pins pass; existing staging is preserved. This is a bounded functional check,
+not a whole-program equivalence claim. The last full reccmp report is still a
+pre-batch snapshot.
+
+Broader discovery also checks 131 unique nonlocal scalar/array initializers with
+no differences. Four Prismatic Vista activation-query routes reject its static
+constant-call-count signal without a source edit. The preliminary counter-selector
+signal was a stale-address mapping artifact; fresh DWARF/COFF locates the correct
+helper. The refreshed partial-argument scan covers 6,276 functions. Unknown call
+operands, private ABIs and record/pointer initializers remain separate review work.
+
+The [DFC/counter lookup pass](recovery-evidence/native-dfc-counter-id-tables.json)
+flattens both native face-ID helpers into named switches for 294 paired fronts
+and backs. Outputs are captured independently from both release functions; the
+inverse relationship is checked rather than assumed. The two 951-line decision
+trees become 596-line switches. Eighty-four numeric card cases in the counter
+map gain their native names. All 776 selected enum values match release DWARF;
+the existing 721 nondefault counter mappings remain unchanged.
+
+The release DLL, actual rebuilt DLL and standalone named source agree in 196,629
+calls over every 16-bit card ID and seven additional signed/out-of-range IDs for
+all three helpers. The call-free routines are invoked in DLLs mapped without
+import resolution or entry-point execution. The build, all 15,169 fixed slots,
+two full-file projections and current source/name pins pass. Existing staging
+is preserved. This is source reconstruction and bounded lookup verification,
+not new card implementation or a gameplay bug fix.
+
+The [completed-edit archive](recovery-evidence/completed-source-edit-archive.json)
+moves 18,964 finished projection records into a tracked, lossless gzip JSON.
+Round-trip equality and byte-exact reconstruction of the prior entire manifest
+pass before writing. The active manifest falls from 104,792,543 to 1,049,740 bytes;
+the current 86 projections, the live Windows-hook receipt, 171 source pins and
+all canonical identities remain active. Routine verification checks the archive's hash without decompressing
+old records. This compacts evidence; it does not discard source or proof data or
+re-enable the already retired historical compiler/runtime audit.
+
+The full post-lookup comparison now describes the current build: 18,828 ranges,
+12,531 exact, 273 effective and 6,024 different, with 394 tiny-diff candidates.
+Seven scores improve relative to the tiny-return snapshot and none decreases.
+Chrome Mox and both face-ID helpers become exact. All 160 explicit function
+bindings and 293 actual data matches pass. Scores remain normalized assembly
+classifications; the lookup execution checks separately establish the recorded
+functional domain. The compacted manifest and its retained live hook receipt
+pass routine setup and all fixed-slot checks.
+
+The [test-score control-flow pass](recovery-evidence/native-test-score-control-flow.json)
+reconstructs get_test_score and new_get_test_score as field/mode switches with
+unsigned bit accumulation. Their combined source shrinks from 6,163 to 3,925
+bytes. Cached mode variables and inverted-CMC arithmetic are removed. Native
+differences remain explicit: legacy positive subtype modes versus new mode 1,
+legacy nonzero versus new positive IDs, legacy type mode 5 versus new zero-color
+mode 3, and the ownership bit shared with the upper toughness mode. The K'rrik
+and Jasconian Isle cases also gain their release-verified card names.
+
+Direct release DLL, actual rebuilt DLL and standalone source agree in 997,102
+cases. These include 2,400 legacy and 787,500 record-based representative field
+classes, 100,000 deterministic boundary/random cases per scorer and 7,202 display
+bit/pointer fixtures. Native/current test records have matching member geometry
+and size 216; card instances have size 300. The display predicate remains unchanged
+after matching every flipped bit over three baselines and pointer-identity cases.
+The source-name cases retain exact native numeric values. This does not exhaust
+all possible records or whole-gameplay states. One build, all 15,169 fixed slots,
+two full-file projections and current source/name/archive pins pass, with existing
+staging preserved. The last full comparison is now a pre-batch snapshot.
+
+The [card-ID naming pass](recovery-evidence/native-card-id-references.json)
+names 628 existing numeric references in 422 functions across 90 original source
+files. All 351 selected enumerators match release DWARF and compiler-evaluated
+literal values. Independent projections verify that only the selected numeric
+tokens change. All 90 allocated-object code/data/symbol/relocation snapshots and
+the DLL's runtime sections remain identical, excluding debug/export metadata.
+The build and all 15,169 fixed slots pass separately. Source/name/archive pins
+pass and existing staging is preserved. This is identifier recovery, with no new
+handlers or runtime changes; the last full reccmp report remains historical.
+
+The [next full JSON refresh](recovery-evidence/reccmp-small-diff-refresh.json)
+includes the score and card-ID naming passes. It retains 12,531 exact, 273
+effective and 6,024 differing ranges, with all 160 explicit function entries and
+293 data bindings verified. The two scorer scores decrease after their readable
+switch reconstruction; the independent 997,102-case behavior evidence remains
+the recorded functional check. The queue now groups repeated textual deltas,
+retaining every candidate and its original order. The default 394 candidates
+form 300 groups. Without the percentage-score cutoff, 617 candidates form 440
+groups, still bounded to eight changed instructions per side. Grouping masks
+only branch destinations and comparator-local OFFSET numbers and makes no
+equivalence or completion claim.
+
+The expanded queue led to a named reconstruction of
+[get_partner_with_id](recovery-evidence/native-partner-id-table.json) in its
+original source. All eleven native mappings remain, including Krav-to-Regna
+without a Regna-to-Krav reverse case. The -1 default is preserved. One build,
+all 15,169 fixed slots, complete source projection and 65,543 direct release/
+actual-rebuilt/source cases pass. The rebuilt instruction sequence and complete
+118-byte table also match after relocating the table/branch base. This is one
+existing helper reconstructed, not eleven new handlers. Existing staging is
+preserved. The full report above precedes this partner-table edit, whose compiled
+verification is recorded separately.
+
+The [counter/commander decision pass](recovery-evidence/native-counter-decision-control-flow.json)
+flattens five counter-card trees and the 18 commander exceptions, expands 36
+Boolean-mask priority expressions into explicit choices, and names counter/type
+checks using 165 release-verified enum values. The counter scorer shrinks from
+1,827 to 1,602 lines. Native quest-level queries, growth-counter rejection,
+owner-sensitive priorities, hand-count read ordering and the commander card-ID
+reload remain intact.
+
+One combined build, all 15,169 fixed slots and full projections of both original
+source files pass. Direct native/actual-rebuilt/old/new-source checks agree on
+13,241,664 counter fixtures and 1,048,576 commander fixtures, including ordered
+leaf-helper argument traces. A separate native-backed map extraction covers
+458,752 fixtures. The DLLs run without entry points/import resolution, with
+explicit leaf-call/data fixtures; these results establish the recorded caller
+domain rather than engine behavior or all game states. Staging is preserved.
+The last full JSON comparison precedes this batch; no full historical audit is
+replayed.
+
+The [typed Boolean-choice pass](recovery-evidence/native-boolean-choices.json)
+reconstructs 173 explicit two-way values in 138 existing functions across 62
+original files. It preserves each expression's int/unsigned-int type and both
+Boolean outcomes, including unsigned wraparound; selected signed arithmetic
+cannot overflow. GCC executes 346 typed outcome checks and verifies 173 type
+contracts in their original scopes. Assertion/stringification/preprocessor
+contexts are excluded, and all source line counts are preserved.
+
+One combined build, all 15,169 fixed entries, 62 full-file projections and source/
+name/archive pins pass. Twenty-eight allocated runtime objects are identical;
+34 have different code generation. This pass establishes typed expression
+equivalence to the predecessor source, not whole-function native equivalence
+or new card handlers. It does not chase instruction-layout scores. Existing
+staging is preserved and the latest full reccmp JSON remains historical.
+
+The [counter-wrapper pass](recovery-evidence/native-counter-wrapper-control-flow.json)
+reconstructs nine existing placement/cost/add/remove/clear wrappers, reducing
+154 lines to 91. Four blocker-card IDs and counter/type constants receive their
+release-verified names. The remove-all sentinel explicitly uses the low byte.
+The shared counter-storage core is unchanged. Positive/negative/zero costs,
+predoubled guard ordering, activation-parent redirection and native callback
+amount-discard behavior remain intact.
+
+One combined build, 15,169 fixed entries, full source projection and current
+source/name/archive checks pass. Ten interfaces agree in 360,502 native/rebuilt/
+old/new fixtures, comparing four complete 300-byte records per fixture, globals,
+returns, aborts and ordered leaf-helper traces. Fixtures cover slot reuse and
+overflow, saturation/wraparound boundaries, callbacks that alter globals/counter
+bytes, all 16-bit placement IDs and low-byte sentinel aliases. Engine helpers are
+stubbed; this does not establish all gameplay states. The predecessor cost worker
+used a checked hoisted-guard adapter; both compiled callers had a dominating
+nonzero guard. The new build emits the full cost body without that adapter.
+Existing staging is preserved. The last full reccmp JSON remains the earlier
+snapshot.
+
+The [next comparison refresh](recovery-evidence/reccmp-counter-refresh.json)
+contains 18,828 ranges: 12,538 exact, 274 effective and 6,016 different. Seven
+ranges become exact and one effective, with no existing exact lost. Sixty-six
+scores rise and ten fall. All 160 explicit entries and 293 data bindings pass.
+The tiny queues now contain 393 default candidates in 299 groups, or 612
+candidates in 435 groups without the percentage cutoff. Three fixed external
+forwarders have identical decoded targets despite zero matching scores, so
+external-target identity needs comparison-tool review before further decompilation.
+
+The [residual-choice pass](recovery-evidence/native-residual-choices.json)
+then recovers nine remaining pack/ward/mana expressions in six existing functions
+across five files. Both Boolean outcomes, exact integer type and single evaluation
+are preserved. One pack expression uses a checked preceding assignment that
+restricts its input to 0/1. The artifact/colorless names match release DWARF.
+Eighteen typed outcome checks, nine scope type contracts, five full-file
+projections, unchanged line counts, one build and 15,169 fixed slots pass.
+Existing staging is preserved. The full comparison above predates this final
+expression batch; its pinned receipt remains the discovery snapshot.
+
+The [fixed-engine identity pass](recovery-evidence/reccmp-external-identities.json)
+validates 64 native COFF function identities at the same absolute addresses in
+both debug files and executable storage in the pinned release Magic.exe. Ten
+rebuilt assembler symbols are untyped; this does not validate their prototypes.
+Lookup labels add no DLL entities or inferred ranges. All 18,828 native metadata
+rows retain their names and bounds; 117 explicit rebuilt mappings refresh after
+the preceding source build. The same-binary control compares all ranges, with
+2,047 referencing the new labels. Of 266 changed scores, 259 rise and seven fall;
+23 become exact and none lose exact status. The falling-score functions reference
+the same external address sets on both sides; their score changes alone establish
+no new source defect. Full baseline diffs remain in pinned local report sidecars.
+
+The fresh report contains 12,561 exact, 274 effective and 5,993 differing ranges.
+Tiny queues contain 374 default candidates in 299 groups, or 590 candidates in
+435 groups without the percentage cutoff. Focused positive and negative parser
+controls pass, including distinct callees, unknown/indirect addresses, data
+exclusion and conflicting identities. No C/header source changes or new build
+were needed. Current source checks and all existing staged changes are preserved.
+
+The [target/byte walk pass](recovery-evidence/native-target-walks.json) reconstructs
+five existing handlers selected from that JSON: Deepglow Skate, freeze-on-damage,
+Venomous Fangs, Rakish Heir and Oona's Blackguard. Three loops use direct target
+values in place of duplicate pointer aliases. Rakish Heir names its two-byte
+damage-source encoding without casts from pointers to integers; Oona's counters
+use explicit low-byte access while retaining modulo-256 wrapping and upper bytes.
+Event gates, helper arguments, dynamic bounds and callback order are preserved.
+
+The release and actual rebuilt DLL agree over 983,040 bounded fixtures comparing
+ordered helper arguments, return values and complete card/extension records.
+Leaf helpers are stubbed, including callbacks that mutate remaining loop bounds;
+this does not establish unrestricted gameplay equivalence. Another 3,276,800
+packing cases, five complete source projections, the build and all 15,169 fixed
+slots pass. All five objects generate different code, so no byte-identity claim is
+made. The full reccmp report above remains the pre-edit discovery snapshot; its
+regenerated queues explicitly have `inputs_current: false`. Existing staging is
+preserved and a further full comparison is deferred.
+
+The [target-mask naming pass](recovery-evidence/native-target-masks.json) restores
+1,152 release-valued enum expressions in 671 existing functions across 102 source
+files: 529 zones, 348 special restrictions, 158 required/illegal states and 117
+required/illegal type masks. All thirty selected enum names come from release
+DWARF. Each replacement is compiled in its original scope to check the receiver
+record, exact integer type and numeric value. Only literal tokens change, and
+all source line counts are retained. Conditional/preprocessor functions and
+unresolved contexts remain outside this batch; zeros retain their plain spelling.
+
+The combined build and all 15,169 fixed slots pass. All 102 allocated objects
+retain identical code/data bytes, relocation targets and runtime symbols. DLL
+runtime sections, including relocation data, also remain identical to the prior
+target-walk build; debug/export metadata are excluded from that section comparison.
+This preserves the runtime covered by the preceding focused execution checks.
+Full-file and independent literal-range projections both pass for all 102 files.
+These are named operands in existing functions, not new handlers or newly
+decompiled bodies. Existing staging is preserved; a full reccmp rerun is deferred.
+
+The [event-guard review](recovery-evidence/reccmp-event-guard-review.json) checks
+42 swapped `EVENT_CAN_CHANGE_TARGET`/`EVENT_CHANGE_TARGET` predicate sites against
+the actual release and current DLL instructions. The two equality constants and
+their complement partition the full 32-bit input domain. An instruction-level
+guard interpreter checks 31,491 cases, including every incoming byte pattern,
+matching continuation addresses and dead scratch/flag state. Default stack-ABI
+public C calls in other source units are explicit liveness boundaries. This is a
+local predicate review, not execution of the full handlers or a gameplay proof.
+
+The queues retain all 374 default or 590 all-score candidates, with identical
+scores, changes, ordering and groups. Forty-two sites now have current, pinned
+annotations, leaving 332 or 548 candidates without that specific site review.
+Positive and negative guard controls and both queue-integrity checks pass;
+changed inputs, duplicate identities, wrong reports and changed sites are refused.
+No C/header edits or rebuild were needed; staging is preserved. The older full
+report remains marked as a discovery snapshot against the newer build.
+
+The [card-data address review](recovery-evidence/reccmp-card-data-address-review.json)
+checks 18 additional difference sets in existing functions. A table-base increase
+of 32 or 48 bytes cancels an equal field-offset decrease. Release and rebuilt
+DWARF agree on the 72-byte card-data record and its id/static/extra-ability fields.
+The CFG review follows 3,899 register/stack relation states, 21 affected accesses
+and 24 spill operations in 11 functions. Fixed frame objects delimit address-taken
+locals; their declared bounds and the GCC i386 calling convention are assumptions.
+Four named public C helper boundaries discharge caller-saved temporaries. Other
+callee/global correspondences and whole-handler behavior remain outside this
+local review. Shirei's mixed instruction reordering remains unresolved.
+
+Eight positive controls and twenty deliberately invalid address/alias/control-flow
+cases pass, as do six rejection controls for review annotations. Both queues keep
+the same candidates, scores, ordering, changes and groups. Combining the event and
+address reviews annotates 60 difference sets: 314 default or 530 all-score
+candidates still lack an annotation. These counts concern this tiny-diff queue,
+not all unresolved functions. No C/header edits or rebuild were needed; existing
+staging remains intact.
+
+The [diagnostic-line review](recovery-evidence/reccmp-diagnostic-line-review.json)
+checks another 19 candidate difference sets at 28 pointer-store sites. Reading
+both DLLs confirms identical paths and complete assertion expressions, with only
+the decimal source line changed. The store encoding also agrees apart from its
+string address. Native/current entries use exact COFF identities, including two
+compiler clones; display suffixes are not treated as source identities.
+
+These are diagnostic-only annotations, not byte or whole-handler equivalence:
+the failure message's line number still differs on the assertion path. Four
+positive controls, thirteen invalid diagnostic/instruction cases and six invalid
+annotation cases pass. Both queues preserve all earlier annotations, candidates,
+scores, ordering, original diffs and groups. The cumulative annotations cover 79
+candidates, leaving 295 default or 511 all-score candidates unannotated. The
+older full comparison remains a discovery snapshot; no C/header edits, rebuild,
+full comparison rerun or staging changes were needed.
+
+The [direct-CFG review](recovery-evidence/reccmp-branch-layout-review.json) checks
+121 more candidates against the current successful build: 49 branch-layout,
+34 callee/address-mapping and 38 other discovery patterns. A paired CFG walk
+matches 9,833 relation states and 814 per-function operand bindings. It skips
+architectural no-ops and direct internal jump trampolines, permits paired inverse
+branch predicates, and follows both edges. Shared and duplicated return tails
+can correlate without imposing the compiler's block order.
+
+Ordinary operations, registers, widths, prefixes and edge predicates must agree.
+Relocated operands require exact COFF names, pinned source/name function bindings,
+PE import identities, or equal read-only literal contents. Short DIALOG tokens
+use the pinned header's declared encodings. These are comparison identities;
+callee implementations, data contents, literal pointer identity and aliasing
+remain assumptions. Only entry-reachable direct edges and normal call returns
+are covered; indirect jumps, exception/unwind edges and arbitrary return-address
+inspection are outside this review. It does not certify whole-handler semantics.
+
+Ten positive CFG controls, eighteen invalid/unsupported CFG controls, nine literal
+controls and six annotation-rejection controls pass. Both queues retain every
+candidate, raw score, original diff, textual group, ordering and earlier annotation.
+The cumulative annotations cover 200 of 590 all-score candidates (390 unannotated)
+or 150 of 374 default candidates (224 unannotated). The full instruction snapshot
+remains historical; current native/rebuilt ranges are pinned separately. No game
+source edits, rebuild, full comparison rerun or staging changes were needed.
+
+The [broader direct-CFG pass](recovery-evidence/reccmp-broad-cfg-review.json)
+applies the same model to all 5,993 differing ranges in the discovery report,
+using a 50,000-instruction selection ceiling (the largest changed side is 4,173).
+It finds 343 normalized CFG correspondences: the prior 121 results agree exactly,
+plus 222 additional ranges, including 164 card-named ranges and 58 others. The
+combined walk covers 29,684 relation states. Larger examples include Invasion's
+apprentices, Liliana of the Veil, Aetherworks Marvel and Prince of Thralls' effect.
+These are comparison results for existing source, not newly recovered handlers.
+
+Combined with the earlier local reviews, 422 of the 5,993 differing ranges now
+have annotations; 5,571 remain unannotated. The tiny queue remains separately at
+200 of 590 annotated (390 unannotated), or 150 of 374 default candidates (224
+unannotated). Every raw score, difference, candidate, ordering, textual group and
+prior local annotation is retained. The report remains its historical snapshot;
+matched current ranges and source/debug inputs are pinned in the new evidence.
+
+The model and its earlier positive/negative controls are unchanged. Current queue
+integrity and exact agreement of all 121 prior CFG results are checked separately.
+The complete new review is stored as a pinned gzip archive to avoid duplicating
+a large JSON receipt. Callee/data/literal-identity assumptions and normal-return,
+direct-edge limits remain. Five narrow branch cases still need switch-table or
+zero-byte/empty-string reasoning. No code edits, rebuild, full reccmp rerun or
+staging changes were needed.
+
+The [DIALOG token naming pass](recovery-evidence/native-dialog-token-names.json)
+names 1,051 exact flag arguments in 432 existing source definitions across 86 C
+files. It uses ten flag names, including 47 `DLG_MODE` uses. The public mode macro
+and its documentation expose the existing native `DLGIMPL_MODE` value 27 and
+parser case; they introduce no new dialog behavior. Native DWARF provides the
+flag enum values. Argument-taking flag sequences and other contexts remain
+outside this object-like flag pass.
+
+Thirteen compile-time contracts check each public object-like token's exact
+array type, size, three bytes including NUL, and native enum value. Full-file
+edit replay and independent raw byte-range projections agree for all 87 changed
+files. All 86 C files preserve their original line endings and line counts. The
+combined build and all 15,169 fixed entries pass; every one of the 168 compiled
+objects retains identical allocated code/data, relocation targets and runtime
+symbols. DLL runtime sections, including relocation data, are also identical to
+the prior successful build; debug/export metadata are excluded. This preserves
+the compiled runtime covered by the earlier focused native/rebuilt checks.
+
+The CFG reader now accepts the declared native mode token alongside the other
+DIALOG flags; actual native/rebuilt read-only data both contain its exact byte
+encoding. Its other CFG rules are unchanged. Earlier comparison/annotation
+receipts retain their historical input hashes after this source/debug rebuild;
+regenerate them before reusing the annotation commands. Runtime identity carries
+forward their machine-code observations, without claiming a fresh comparison
+score or whole-handler equivalence. No full reccmp rerun was needed, and existing
+staging remains intact.
+
+The [DIALOG argument-macro pass](recovery-evidence/native-dialog-argument-macros.json)
+restores 101 flag-and-payload groups plus five local token selections in 51
+existing definitions across 32 C files. Named forms now express mana costs,
+targets, who chooses, headers, card displays, choice pairs and storage locations.
+All original argument expressions and ordering remain; the header is unchanged.
+Combined with the preceding object-token pass, no recognized unprefixed two-byte
+DIALOG token string literals remain in the authored C source census. Concatenated
+or other spellings, C++ and headers are outside that census.
+
+Thirteen compile-time macro contracts check flag bytes/types/native enum values,
+arity and representative scalar argument order/types. Full-file edit replay and
+independent raw byte-range projections pass for all 32 files; original line counts
+and endings are preserved. The single combined build and all 15,169 fixed slots
+pass. All 168 runtime objects and DLL runtime sections remain identical to the
+preceding successful build, including code/data bytes and relocation targets.
+Debug/export metadata are excluded from that runtime section comparison.
+
+The earlier focused runtime and machine-code observations therefore remain
+applicable to the same compiled runtime. Input-pinned comparison receipts remain
+historical after the debug/source rebuild and need regeneration before reuse.
+No full reccmp rerun or gameplay change was needed; existing staging is preserved.
+
+The [event/record cleanup](recovery-evidence/native-event-record-control-flow.json)
+structures Dream Trawler's event dispatch, uses Urza's Saga's typed chapter flags
+and names its activation priorities, and expresses Verdant Command's native
+integer-array byte-fill. The release's unreachable Dream Trawler reset and
+Verdant Command's `0x01010101` values and uninitialized human-path priorities
+remain intact. These are three existing definitions across two source files.
+
+The combined build, all 15,169 fixed slots and twelve ABI/constant contracts pass.
+Actual native/rebuilt Dream Trawler and Urza's Saga machine code agrees in
+458,752 post-change fixture comparisons (the same count also passed before the
+edits). The fixtures execute the real record-access helpers, stub other leaves,
+and compare call traces, return values, complete fixture card records/extensions
+and AI/fizzle state. This is bounded caller evidence, not full gameplay testing
+or a whole-handler verdict for Verdant Command. This batch can change generated
+runtime code; the preceding byte-identity claims do not extend to this build.
+
+The [renewed JSON triage](recovery-evidence/reccmp-tutor-return-guards.json) uses
+the event/record build as a fresh discovery snapshot: 18,828 ranges, with 12,561
+exact, 274 effective and 5,993 different. There are 369 candidates at the default
+90% score cutoff and eight changed instructions per side, or 585 without the
+score cutoff. Fresh event/address/diagnostic/CFG reviews annotate 200 of those
+585 candidates; 385 remain unannotated. An annotation covers its stated changed
+sites and assumptions, not whole-function or gameplay equivalence.
+
+The same report exposed three tutor loops that treated only `-1` as failure,
+whereas the native code stops for every negative return. Sarkhan Unbroken,
+Drafna's Restoration and Denying Wind now use `>= 0` in their original source
+files. Denying Wind came from a broader instruction-delta scan of the same JSON.
+One combined build, all 15,169 fixed slots and inspection of all three rebuilt
+tutor-call/sign-branch sequences pass. Other negative returns' practical gameplay
+impact has not been established. Byte-bounded loop guards and layout-only
+differences were left alone.
+
+The discovery JSON and its annotation counts describe the build before these
+three corrections. No second full comparison was run. Regenerate setup before
+the next comparison because the DLL/debug input hashes changed. The latest
+successful build receipt is the tutor-return pass; the preceding receipts retain
+their historical input pins. Existing staging remains untouched.
+
+The [native card-helper dispatch pass](recovery-evidence/native-card-helper-dispatch.json)
+clarifies six existing definitions across five files. Petrified Field now accepts
+only dialog choices 1 and 2 after handling cancellation, matching the native
+default return instead of sending unexpected choices to mana production.
+Implement of Improvement again calls `aer_implement` on its native fallback
+events, and Spring // Mind uses `basic_spell` at both native call boundaries.
+The other edits structure Inspiring Statuary's predicates, name Trench Gorger's
+operations and Herald of Anafenza's cost/token fields, and remove temporary locals.
+The casting-card capture, repeated aftermath queries, four-land AI limit and
+zero-land effect creation are preserved.
+
+One combined build and all 15,169 fixed slots pass. Source projections cover all
+five files. Bounded interpretation of the native/rebuilt chooser instructions
+agrees for 517 return-value cases on the next helper destination and cancellation
+write; it does not execute callees or prove final handler return values/gameplay.
+The two `basic_spell` boundaries and the shared `aer_implement` boundary are also
+present in both actual binaries. The existing full JSON remains a pre-edit
+discovery snapshot; no extra full comparison or historical replay was run.
+
+The [subtype-record family pass](recovery-evidence/native-subtype-record-walks.json)
+restructures nine existing helpers in `functions/has_creature_type.c` and removes
+one unused compatibility wrapper. The report builder now traverses typed
+eight-byte modifier records directly, replacing integer pointer casts and byte
+offsets. Related add/force/query helpers use named flags and structured loops.
+Native limits remain: only fifteen of sixteen modifier slots, first-invalid
+termination, complete clears for forced subtypes, Grist's final Insect append,
+and the ID query's second modifier pass and twenty-entry search. The live report
+builder retains its native append bounds, including its possible overrun of the
+26-entry report; fixture storage includes trailing canaries to observe those writes.
+
+The combined build, all 15,169 fixed slots, twelve ABI/constant contracts and
+source projections pass. Actual native/rebuilt code agrees in 81,920 post-change
+fixture comparisons, with the same count passing before the edits. The fixtures
+execute all nine bodies and selected real callees, substitute deterministic leaf
+calls and four data objects, and compare complete output/card/extension/modifier
+records, flags, ordered call arguments and integer results. Invalid live-card
+abort paths and full gameplay are outside the fixture. No full comparison or
+historical replay was needed, and existing staging is unchanged.
+
+The [packed-byte access pass](recovery-evidence/native-packed-byte-access.json)
+replaces 78 fixed-offset byte accesses in 66 existing definitions across 43 C
+files. Existing `SET_BYTE1`/`SET_BYTE2` lvalues remove integer pointer round trips
+for both reads and writes. Six signed reads retain explicit `char` conversion;
+five signed writes are standalone assignments with discarded expression values.
+All touched fields are native 32-bit info/target words. Dynamic offsets,
+pointer-valued uses and other cast shapes remain outside this pass.
+
+Nine target/type contracts, complete source and independent byte-range
+projections pass, including unchanged line counts/endings. The build and all
+15,169 fixed slots pass. Thirty-nine edited runtime objects are identical; four
+have inspected generated-code differences involving register selection, loop
+addressing, scheduling/padding and one commuted LEA sum. Isolated recompilation
+of saved pre-edit sources reproduced their exact pre-edit runtime hashes for
+the focused inspection. This is C byte-access reasoning plus assembly inspection,
+not full-handler execution coverage. The linked runtime changes, and earlier
+native fixture receipts remain historical. Initial value-extraction macros were
+refined to character lvalues so packed accesses retain byte-sized source access
+semantics. Existing staging remains unchanged.
+
+The [packed-record consumer pass](recovery-evidence/native-packed-record-consumers.json)
+restructures fourteen existing definitions across nine original source files.
+Tracked attackers are explicit unsigned byte lists with reverse index loops;
+Necropolis Regent uses three-byte hit records rather than an advancing
+`target_t*`. Two remaining fixed pointer-valued byte accesses use existing byte
+lvalues. The source retains fresh attacker/current-turn reads after helpers,
+the live pending-count check during Regent resolution, its cap/upper-only damage
+saturation/recomputed write offsets, and the Ur-Dragon's repeated draw/tutor
+behavior. No new ABI records or compatibility wrappers are introduced.
+
+The build, all 15,169 fixed slots, twelve ABI/constant contracts and complete
+source projections pass. Actual native/rebuilt Master Symmetrist, Reyav and
+Necropolis Regent code agrees in 36,864 post-change fixture comparisons, with
+the same count passing before the edits. Deterministic leaf stubs include
+mutations of attacker bytes, current turn and the pending count; snapshots
+compare complete card records, ordered arguments, returns and fixture/global
+state. This is bounded evidence for those three bodies; the other eleven have
+source/control-flow/address review and build coverage, not full execution or
+gameplay proof. The prior full JSON remains a discovery snapshot. Existing
+staging was updated externally after the checks; the recovery tools made no index writes.
+
+The [native local-name pass](recovery-evidence/native-local-identifier-restoration.json)
+restores twenty original identifiers at 95 sites in twenty existing definitions
+across fourteen C files. Names such as `selected`, `legacy_id`, `legacy_card` and
+`t_player` come from the release DWARF. Each accepted mapping has a unique equal
+type/location signature, equal function extent, and complete native/current
+instruction alignment at the same relative offsets with identical widths and
+registers. Changed addresses use explicit unique COFF identities or complete
+readonly literal contents. Four candidates with different instructions/registers
+or widths were rejected; shared storage and scores alone do not justify a rename.
+
+The build, all 15,169 fixed slots and independent source projections pass. All
+fourteen edited runtime objects and DLL runtime sections are unchanged, including
+code/data and relocation targets; debug/export metadata are excluded. Earlier
+bounded execution observations remain evidence for the unchanged runtime under
+their original scope. No new gameplay claim or full comparison is made.
+
+The remaining Righteous Indignation pointer-to-integer argument is intentional:
+native DWARF gives both the generic iterator's `arg2` and the callback's `val`
+signed four-byte integer types. The callback recovers its pointer from that
+payload. Their original API is retained; this is not another packed byte walk.
+No staging commands were issued.
+
+The [signed-result and JSON refresh pass](recovery-evidence/reccmp-signed-result-guards.json)
+restores two more native tutor guards in Praetor's Grasp and Nightmare Incursion:
+`>= 0` accepts card IDs and rejects both `-1` and the tutor's explicit `-2`
+cancellation result. Nightmare Incursion retains its counted-loop continuation.
+The combined build, all 15,169 fixed slots, exact file projections and both
+rebuilt tutor-call/sign-branch checks pass.
+
+The fresh post-correction full JSON covers 18,828 ranges: 12,570 exact, 273
+effective and 5,985 different. Its tiny queue has 581 candidates in 425 textual
+groups without a score cutoff. Event/address/diagnostic/CFG reviews annotate
+224 candidates; 357 remain unannotated. These are triage counts, not remaining
+bugs or unrecovered bodies. The full report remains in ignored scratch storage;
+the [compressed review archive](recovery-evidence/reccmp-tiny-equality-review.json.gz)
+retains its receipt, decoder/input pins, reviews and focused checker.
+
+The optional CFG `--equality-guards` check reviews swapped global/parameter
+equality loads only when EAX and differing flags die before use on both paths.
+It raises the CFG review count from 121 to 144 on the same queue: 23 additional
+functions, with no loss of previous matches. Eight focused acceptance/rejection
+cases pass. Other register, width, live-value and unsupported differences remain
+unresolved. The review assumes ordinary disjoint stack/global memory and the
+listed C calling conventions; it is structural evidence, not full execution or
+callee-content proof. No source changes were made for these 23 matches. Staging
+remains untouched.
+
+The [small shared-caller pass](recovery-evidence/native-small-caller-restoration.json)
+restores four existing definitions across three files, reducing 110 lines to 44.
+Implement of Examination delegates its non-activation events to `aer_implement`;
+Marisi's Twinclaws and Sewn-Eye Drake use `arb_new_hybrid` with the native colors,
+with haste first for the Drake. Weather the Storm uses `basic_spell` for its
+can-cast event and retains the native cast guard, cancellation/not-cast checks,
+fresh storm-count read after every gain-life call, and resolve gain/kill order.
+The shared helper definitions are unchanged.
+
+The combined build, all 15,169 fixed slots, three full/raw source projections
+and inspection of the relevant native/rebuilt call and tail-call counts pass.
+These checks establish the restored shared boundaries, not whole-handler or
+gameplay equivalence. The wider JSON scan found 53 named-callee and 18 argument
+groups without score/instruction cutoffs; many reflect inlining or argument
+placement. They are investigation hints, not confirmed defects. A strict scan
+for immediate positive-return/zero-equality mismatches found no candidates among
+4,262 source owners. The preceding full JSON and 581/224/357 tiny-queue counts
+remain the pre-edit discovery snapshot; no second comparison was run. Staging
+is unchanged.
+
+The [wider return-epilogue review](recovery-evidence/reccmp-wide-return-review.json.gz)
+checks actual native/current ranges from the four-caller build against candidates
+in the preceding C659 JSON. With no score cutoff and at most 32 changed
+instructions per side, the queue has 2,789 candidates in 2,098 textual groups.
+Scoped reviews annotate 463; 2,326 remain unannotated. The eight-instruction tiny
+queue still has 581 candidates, now with 239 annotated and 342 unannotated.
+
+The optional CFG `--return-epilogues` check permits a single `xor eax,eax` to
+move among identical ordered stack restores ending in a plain return. EAX uses,
+flag consumers, different restores/adjustments, calls and other operations are
+rejected. It raises the wider CFG count from 353 to 383 on the same inputs,
+adding 30 functions without losing earlier matches. Ten focused positive/negative
+cases and the eight equality-review regression cases pass. The address reader
+also keeps unsupported display-name ordinals unresolved without aborting other
+frame reviews. No game source changes or new build were needed; the successful
+four-caller build remains current. The discovery report is older, while all four
+reviewers' input pins and actual checked ranges are current. No candidate or
+score was removed, and these are not remaining-bug counts. Staging is unchanged.
+
+The [native and role-name pass](recovery-evidence/native-and-role-local-names.json)
+clarifies 131 placeholder locals at 752 identifier sites in 119 definitions
+across 58 C files. One spelling, Heroes' Bane's `pc`, comes from a unique native
+DWARF type/storage lifetime matched through complete CFG instruction pairs.
+This name proof preserves ordinary operations, registers and widths and does
+not use the equality-load or return-epilogue normalizations. The strict scan
+matches 48 of 409 eligible placeholder-owning functions; matching only variable
+read sites establishes no further names confidently.
+
+The other 130 names (`target_player`, `target_card`, `opponent`, `parent_card`,
+`legacy_card` and `selected`) describe their sole direct assignment. They are
+inferred cleanup names, not claims of original source spelling or new recovered
+function bodies. Each has one local declaration and assignment, no other direct
+writes/address-taking, no member-name confusion and no new identifier collision.
+Only identifier tokens change; expressions, types, order, literals, comments,
+line counts and endings are preserved.
+
+One combined build, all 15,169 fixed slots and independent whole-file/raw-token
+projections pass. All 58 edited runtime objects and the DLL's runtime sections
+are identical, including code/data and relocation targets; debug/export metadata
+are excluded. The latest successful build receipt is this pass. Earlier bounded
+runtime observations retain their original scopes on the unchanged bytes, while
+their source/debug input pins remain historical. No full comparison or gameplay
+test was repeated. Regenerate setup before the next comparison. Staging is
+unchanged.
+
+The [common-caller restoration](recovery-evidence/native-common-caller-restoration.json)
+organizes seven definitions in three files around their native shared workers.
+`how_much_life_can_i_pay_impl` replaces the misleading `for_mana` identity: the
+surviving flags=1 specialization serves both the ordinary life query and two
+mana-availability callers. The public life query now delegates to it. The source
+retains the native flags/event parameters even when the compiled worker drops
+them; no behavior for other flags is invented. `txtfx` now delegates name events
+to `txtfx_name`, which is moved before its caller. Shared bodies are available
+where the earlier expanded public bodies were compiled; no forward declarations
+or public API changes are needed. The corresponding CSV row uses the restored
+life-helper name while retaining its native address and size.
+
+Lightning Dart now has a structured five-event dispatch and common generic-spell
+tail. It retains the affected-card check both before and after target setup,
+captured target/color values across opaque calls, the native one/four damage
+selection, and the generic-spell call after resolve/kill. One combined build,
+all 15,169 fixed slots, three exact file projections, the one-row CSV projection
+and six native/rebuilt shared call boundaries pass. The life worker has a strict
+CFG match; the text worker matches after one explicitly checked independent
+argument-store/card-byte-load swap under ordinary disjoint record/stack memory.
+This is scoped structural evidence, not a full-game proof.
+
+There are also 40,960 post-change native/rebuilt Lightning Dart comparisons:
+2,048 environments, ten events and both players, with ten opaque cdecl leaves
+and three globals rebound. Ordered arguments, returns, full card records, AI and
+affected globals agree, including callbacks that change state between helper
+calls. Leaf behavior and arbitrary memory aliases are outside the fixture.
+The latest successful build receipt is this pass; the earlier full report and
+239/342 tiny-queue counts remain historical discovery/review snapshots. No
+second full comparison was run. Regenerate setup before comparing this build.
+Staging is unchanged.
+
+The [land and mode dispatch pass](recovery-evidence/native-land-and-mode-dispatch.json)
+restores four existing cards: Cabal Stronghold, Ghost Town, Repudiate // Replicate
+and Borrowed Grace. Borrowed Grace now returns the native constant can-cast result
+and makes at most two mode selections, retaining the final ignored mana query
+and exact cancellation reset. The other callers preserve separate live payment
+queries, post-charge land recounts, stale counter markers and callback-sensitive
+record reads. The source retains native behavior rather than repairing game rules.
+
+One combined build, all 15,169 fixed slots and four canonical/raw file projections
+pass. A bounded fixture executes the four actual native/rebuilt card bodies and
+available private counter workers over 524,288 observations with no mismatches.
+It compares ordered calls, arguments, complete records, returns and globals;
+opaque leaves are stubbed, so this does not establish whole-game equivalence.
+This is the latest successful build receipt. The earlier full comparison and
+239/342 tiny-queue counts remain historical snapshots pending a refresh.
+Staging is unchanged.
+
+The [current tiny-diff refresh](recovery-evidence/reccmp-current-tiny-refresh.json.gz)
+compares the four-card build across 18,828 ranges: 12,575 exact, 273 effective
+and 5,980 different. The all-score eight-instruction queue contains 581 functions
+in 425 textual groups. Current event/address/diagnostic/CFG reviews annotate
+239 change sites, leaving 342 unannotated; these are not remaining-bug counts.
+The full report includes instructions and pins its CSV, data and external maps.
+Reuse this discovery baseline across several source batches, inspecting edited
+functions directly; refresh the full report after enough changes accumulate.
+This avoids treating register, layout and masked-width differences as required
+source rewrites. No source edit or rebuild was needed for this refresh.
+
+The [negative-index guard correction](recovery-evidence/reccmp-kill-card-index-guards.json)
+is the first source fix from that refreshed tiny-diff queue. Native `kill_card`
+and `kill_card_exe` return when either signed player/card index is negative;
+the rebuilt entries previously reached the shared worker unconditionally.
+The early return now lives in `kill_card_impl`, covering both wrappers and its
+direct callers without inventing an upper-bound check. Both rebuilt public
+wrapper CFGs match native. Another 1,024 bounded comparisons execute their
+actual bodies with only the outlined worker replaced by an argument recorder;
+negative inputs skip it, while nonnegative inputs preserve indices, mode and
+the wrapper-specific flags. The worker body is outside this fixture.
+
+The combined build, all 15,169 fixed slots and exact canonical/raw source
+projection pass. This is the latest successful build receipt; the full JSON
+above is the immediately preceding discovery baseline. Inspect edited functions
+directly between full refreshes. Staging remains unchanged.
+
+The [small-caller event pass](recovery-evidence/native-small-caller-event-paths.json)
+reconstructs six existing card handlers in their original files, reducing their
+definitions from 182 to 119 lines. Battletide Alchemist restores the release's
+damage-target recheck after the planeswalker helper and captures its target
+player before the automatic-choice query. Its native 500-byte formatting bound
+and 100-byte local are retained. Leyline of Vitality, Court of Ambition, Blood
+Pet, Razaketh's Rite and Strike It Rich gain clearer event dispatch and shared
+tails. Their ignored probes, live/cached reads, raw helper return values and
+mana query ordering remain unchanged; new role names are descriptive rather
+than claims about original DWARF spellings.
+
+One combined build, all 15,169 fixed slots and six exact canonical/raw source
+projections pass. The same fixture runs 1,572,864 observations before and after
+the changes against the actual native/current caller bodies, binding 30 opaque
+leaves and seven globals. Its 128 Battletide post-helper-target differences fall
+to zero; the five other callers agree in both runs. This is bounded caller
+evidence, not helper-leaf or whole-game equivalence. This pass supplies the latest
+build receipt; the C665 full JSON remains the discovery baseline. No second full
+comparison was run, and staging is unchanged.
+
+The [counterspell caller pass](recovery-evidence/native-counterspell-caller-flow.json)
+flattens Intervene, Delay, Memory Lapse and Spell Swindle from 122 to 66 lines.
+Intervene now uses one live-count target loop and preserves its positive-only
+availability check and raw success value. The other three share their cast
+dispatch while retaining different instance-getter timing, resolution-time
+target rereads and zero returns for retarget events. Spell Swindle still caches
+mana value before countering and truncates Treasure quantity to eight bits.
+This is reconstruction of already-agreeing flow, not a new gameplay bug claim.
+
+One combined build, all 15,169 fixed slots, four exact source projections and
+655,360 bounded actual native/rebuilt caller observations pass before and after
+the rewrite. Fourteen leaves and four globals are bound; leaf behavior and
+whole-game equivalence are outside the fixture. This is the latest build receipt.
+The C665 full JSON remains the discovery baseline; staging is unchanged.
+
+The [pointer-return review](recovery-evidence/reccmp-pointer-return-review.json.gz)
+adds a conservative optional `--pointer-return-tails` CFG model. It checks native
+DWARF four-byte pointer returns against current C declarations, then compares
+read-only symbolic return trees and preserved registers/stack. Calls, writes,
+cycles, unsupported operations and predicates remain unresolved. Numeric masks
+and comparison constants cannot borrow address identities. This adds 28 tiny
+and 33 wider CFG matches, losing none of the same-input baseline matches.
+
+The tiny queue now has 269 scoped annotations and 312 unannotated candidates;
+the 2,787-entry wider queue has 502 and 2,285. These are review counts, not bugs.
+Twenty-three focused pointer checks, ten diagnostic-drift checks and the earlier
+ten return/eight equality regressions pass. The diagnostic reviewer also permits
+current rebuilt line-number drift while keeping the path, expression, destination
+and native discovery text exact. All review pins are current; C665 remains the
+historical discovery JSON. No game source change or rebuild was needed. The
+counterspell-caller build remains current, and staging is unchanged.
+
+The [header enum pass](recovery-evidence/native-header-enum-completion.json)
+uses the small-difference JSON to identify a real Chancellor of the Tangle
+storage mismatch: `TRAP_COT_FLAG` was 0x408, sharing the noncreature-spell
+slot; native code and DWARF use 0x40B (the high nibble at card offset 0xF1).
+The header now matches. Thirty-four missing native enumerator names are also
+restored, with 90 equal-valued state, card-count and card-flag references named.
+All 26,968 header enumerators exposed by the native `functions/functions.c`
+compilation unit now agree with the active compiler. This scope does not claim
+that every enum in every compilation unit has been inventoried.
+
+The combined build and 15,169 fixed slots pass. The actual native/rebuilt trap
+helpers and private workers agree in 577,536 bounded comparisons, including
+the Chancellor nibble, neighboring bits, missing caches and clamp boundaries.
+Only the getter leaf and rules-engine cache are bound; this is not a whole-upkeep
+or whole-game proof. Across 166 objects, 148 runtime snapshots are identical,
+17 differ only in compiler-generated symbol suffixes, and rules_engine.c has
+the expected trap-access code changes. All 38 raw/canonical source projections
+pass. This is the latest build receipt; staging is preserved.
+
+The C665 JSON remains a historical discovery baseline. The C669 counts of
+269/581 tiny and 502/2,787 wider scoped annotations describe its review against
+the preceding C668 build, not the new header build. Prioritize small literal,
+argument, return and predicate differences from that queue, checking current
+function ranges directly and batching source fixes before another full refresh.
+Annotations are reviewed differences, not recovered-function or bug counts.
+
+The [tiny caller-order pass](recovery-evidence/native-tiny-call-order.json)
+closes two differences found in the C665 JSON and revalidated against C670.
+Curse of Echoes now explicitly snapshots the enchanted player before calling
+`duh_mode()`, preserving the release's argument observation order. The
+`graveyard_from_play()` helper restores the second instance-getter call before
+reading its extension's exile flag. This records native call sequences without
+assuming the getter changes its return value in ordinary gameplay.
+
+Both complete entry-reachable CFGs now pass the strict native/current comparison;
+both failed the same comparison before the edits. Only padding, direct jump
+trampolines and pinned symbol addresses are normalized. No optional symbolic
+tail or equality models are enabled. Callee behavior and whole-game equivalence
+remain outside this check. Two canonical/raw source projections, the combined
+build and all 15,169 fixed slots pass. This is the latest build receipt.
+The full JSON and C669 annotation counts remain historical; the two additional
+matches are recorded here without regenerating those queues. Staging is intact.
+
+The [small helper and aura pass](recovery-evidence/native-small-helper-readability.json)
+reconstructs eight existing definitions from 191 to 127 lines. Aqueous Form and
+Pursuit of Flight restore a second attachment getter present in the release;
+both now pass the strict comparison of their complete entry-reachable CFGs.
+Pursuit preserves the query on resolve/cleanup dispatch as well as activation.
+
+Six readability-only changes simplify the card chooser, watermark callback,
+mana-cost predicate, City's Blessing lookup, Capital Offense and sacrifice
+availability wrapper. Named fields/constants and ordinary control flow replace
+packed identity arithmetic, redundant temporaries and nested conditions.
+Chooser sentinels and mode conversion, live card counts, callback argument
+behavior, byte capitalization and the native zero/absent blessing ambiguity
+are preserved. Three of these definitions retain identical runtime objects;
+the other three were reviewed against native operations but still have compiler
+differences and are not claimed as whole-function matches.
+
+The combined build, all 15,169 fixed slots and seven exact canonical/raw file
+projections pass. This is the latest build receipt; the C665 full JSON and C669
+queue totals remain historical. This pass adds two focused strict CFG matches
+without refreshing those counts. Staging is preserved.
+
+The [spell-interaction and trigger pass](recovery-evidence/native-spell-creature-flow.json)
+flattens six existing bodies from 320 to 202 lines: Mizzium Meddler, Frilled
+Mystic, Muck Drubb, Naru Meha, Sweet-Gum Recluse and Quest for Ancient Secrets.
+Four similar CAN_CAST paths now state their native 1/99 returns and stored
+availability directly. The handlers retain their different ETB timing, live
+target/index rereads, raw madness/flash/quest returns, prompt formatting and
+post-dialog stack reads. Sweet-Gum keeps preexisting targets and the ten-target
+selection cutoff; Quest keeps both graveyard-trigger paths. This is readable
+reconstruction of already-agreeing flow, not a new handler or gameplay-bug count.
+
+The combined build, 15,169 fixed slots and five exact raw/canonical file
+projections pass. Six actual native/current bodies agree in 786,432 bounded
+comparisons before and after the rewrite, with 35 opaque helper/callback
+bindings and fourteen globals. Calls can mutate targets and stack globals;
+complete records, ordered arguments, raw returns and globals are observed.
+Helper behavior, UI, unrestricted memory aliases and whole-game equivalence
+remain outside the fixture. This is the latest build receipt; the full C665
+JSON and C669 queue annotation counts remain historical. Staging is preserved.
+
+The [permanent-event flow pass](recovery-evidence/native-permanent-event-flow.json)
+reconstructs eight existing bodies from 473 to 289 lines: Ashiok, Dream Render;
+Arlinn, Voice of the Pack; Angrath, Captain of Chaos; Garruk Relentless;
+Timebender; Simic Ascendancy; Kiora Bests the Sea God; and Unquenchable Fury's
+legacy. It replaces nested event dispatch and reused scalar temporaries with
+ordinary branches, loops and descriptive locals/constants. Getter calls on
+cleanup, repeated loyalty checks, live target/parent/loop-bound reads and the
+release's counter/AI quirks remain explicit. This is readable reconstruction
+of already-agreeing bodies, not a new gameplay-bug or recovered-handler count.
+
+The combined build, 15,169 fixed slots and six raw/canonical source projections
+pass. All eight native/current callers agree in 1,179,648 bounded observations
+before and after the rewrite, under 43 opaque helper/callback bindings and
+fourteen globals. The fixture observes complete records, ordered arguments,
+raw returns and globals, with callbacks changing target/parent pairs, query
+results and battlefield bounds. Helper behavior, actual dialogs and whole-game
+equivalence remain outside this check. This is the latest build receipt;
+historical full JSON and queue annotation totals are unchanged. Staging is intact.
+
+The [post-cleanup full refresh](recovery-evidence/reccmp-post-cleanup-refresh.json.gz)
+is the current C674 discovery snapshot: 18,828 ranges, with 12,596 exact,
+275 effective and 5,957 different. It gains 21 exact and two effective matches
+against C665, with no previously exact/effective ranges moving backward between
+categories. Individual scores remain instruction similarity rather than
+behavioral proof. The refresh updates 146 metadata rows' rebuilt-entry mapping
+addresses; the CSV's native identities and compared coverage stay intact.
+
+The all-score tiny queue contains 577 functions in 422 textual groups.
+Event/address/diagnostic/CFG reviews annotate 266 sites, leaving 311 unannotated.
+The wider queue contains 2,767 functions in 2,077 groups, with 496 annotations
+and 2,271 unannotated entries. Every prior annotation on a still-listed candidate
+passes again. Prior annotated functions that left the queues became exact;
+the refreshed wider queue also gains two annotations. Candidates and raw scores
+are retained, with each annotation limited to its own proof scope.
+
+Setup verifies 160 explicit function bindings, 293 globals, 64 engine targets
+and 15,169 fixed slots. Zero source stubs are included. Its 21 excluded ranges
+are recorded for mapping follow-up: ten lack a standalone current name, nine
+have ambiguous native names, one is a verified merged helper and one has an
+ambiguous rebuilt C++ name. This is not a missing-source inventory. No game
+source edit or rebuild was needed. The permanent-event pass remains the latest
+successful build; staging is preserved. Reuse this full JSON for subsequent
+batches, checking changed functions directly between full refreshes.
+
+The retained-helper mapping refresh (C677) restores two renamed landcycling
+identities to reccmp through an explicit address/name/source alias manifest.
+It uses the unchanged C674 build and compares 18,830 ranges: 12,599 exact,
+275 effective and 5,956 different. The Commander helper and two existing
+card callers are exact; no previous exact/effective category regresses.
+The [mapping evidence](recovery-evidence/reccmp-retained-helper-aliases.json)
+records rejection checks for conflicting/ambiguous aliases, one strict helper
+CFG match and the manually explained Conflux compiler differences. Existing
+scoped annotations transfer only for identical complete function report rows
+on identical binary/debug/global/external inputs. The tiny queue now has 576
+entries, 284 annotated and 292 unannotated; the wider queue has 2,766 entries,
+514 annotated and 2,252 unannotated. Nineteen excluded ranges remain mapping
+follow-ups. This pass changes comparison identities and tooling, with no game
+source changes or rebuild. Staging is preserved.
+
+The void-return and field-width pass (C678) adds 20 scoped helper CFG
+correspondences, 19 within the tiny queue. Native DWARF and current source
+both establish a void result before the checker permits residual EAX at an
+ordinary return. Earlier scratch uses and live condition flags remain rejected.
+All 20 fail the same checker with the option disabled; 20 regression checks
+pass. Five further manual reviews explain discarded high bits of wider
+record-field loads. The [evidence](recovery-evidence/reccmp-void-and-width-review.json)
+records the native contracts, range hashes, control-flow correspondences and
+manual assumptions. The current tiny queue has 576 entries, 308 annotated and
+268 unannotated; the wider queue has 2,766 entries, 539 annotated and 2,227
+unannotated. The C677 comparison scores and C674 game build remain unchanged.
+No game source edit or rebuild was needed. Staging is preserved.
+
+The equal-edge and compiler-worker pass (C679) adds 28 complete entry-reachable
+CFG correspondences, 14 within the tiny queue. Reversed equality loads have
+the same EAX and CMP flags on their equal successor; unequal successors retain
+the scratch/flag liveness checks. Twenty existing and 13 path-sensitive
+regression cases pass. The [evidence](recovery-evidence/reccmp-equal-edge-and-worker-review.json)
+also confirms Miara's compiler split: the native positive-count body strictly
+matches the rebuilt worker, and both direct callers guard its count to 1..255.
+The original source guard remains present. Two manual argument-site reviews
+confirm unchanged pump-result arguments in Paragon of the Amesha and Dragonsoul
+Knight. The tiny queue now has 325 scoped annotations and 251 unannotated
+entries; the wider queue has 570 annotations and 2,196 unannotated entries.
+No game source edit, score change or rebuild was needed. Staging is preserved.
+
+The Totem color-query order pass (C680) provided the preceding game build. Weatherseed,
+Phyrexian and Foriysian Totem now call get_sleighted_color_test before modifying
+the animation legacy's metadata. Their native subtype/color store order is
+preserved, including Foriysian's color-first sequence and live parent query.
+All three final complete entry-reachable CFGs correspond under unique symbol
+identities and complete read-only C-string/DIALOG-token contents, with none of
+the optional predicate/return-tail relaxations enabled. The [evidence](recovery-evidence/native-totem-color-order.json)
+distinguishes the stricter baseline address binder from the final read-only
+literal-content binder. The combined build, 15,169 slots and exact raw/canonical
+file projection pass. Chronatog and Thunder Totem were already exact in the
+C677 discovery baseline. That full report and the C679 queue counts remain
+historical; no full comparison refresh or gameplay fixture was run for this
+small source batch. Staging is preserved.
+
+The token and marking-buffer pass (C681) is the latest game build. Crawling
+Sensation's private make_insect helper explicitly resets no_sleight after the
+conditional default initializer, as the release does. The complete caller CFG
+now corresponds under the same strict checker that rejected it before.
+Five other handlers reconstruct scoped zero-initialized char buffers at their
+existing clear points: Kindred Charge, Symbol Status, Scale Blessing, Drana,
+Liberator of Malakir and Saheeli, the Gifted. Native DWARF confirms their names
+and all 802 declared bytes. Initializer spelling is inferred, and remaining
+function differences stay unresolved. The [evidence](recovery-evidence/native-token-marking-initializers.json)
+records these limits, six exact raw/canonical source projections and the
+successful build with 15,169 fixed slots. The C677 full report and C679 queue
+counts remain historical. No full comparison refresh or gameplay fixture was
+run for this source batch. Staging is preserved.

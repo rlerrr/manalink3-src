@@ -16,7 +16,7 @@ static int is_renowned(int player, int card)
 void renown(int player, int card, event_t event, int n)
 {
   int result;
-  if ((event == EVENT_DEAL_DAMAGE) || (trigger_condition == 0xd7))
+  if ((event == EVENT_DEAL_DAMAGE) || (trigger_condition == TRIGGER_DEAL_DAMAGE))
   {
     result = check_special_flags3(player, card, 0x10);
     if (result == 0)
@@ -849,7 +849,7 @@ int card_suppression_bonds(int player, int card, event_t event)
   disable_attached(player, card, event, 0x38);
   attached_gets_kw(player, card, event, KEYWORD_0, SP_KEYWORD_CANNOT_BLOCK);
   default_target_definition(player, card, &td, 0x47);
-  td.illegal_type = 1;
+  td.illegal_type = TYPE_LAND;
   result = aura_literal_prompt(player, card, event, &td, "Select target nonland permanent.");
   disabling_aura_ai(player, card, event);
   return result;
@@ -1528,8 +1528,9 @@ int card_jace_telepath_unbound(int player, int card, event_t event)
 				else{
 					int selected = select_card_from_zone(player, player, spell_playable[0], spc, 0, AI_MAX_VALUE, -1, &test);
 					if( selected != -1 ){
-						instance->targets[0].player = spell_playable[1][selected];
-						instance->targets[0].card = graveyard_source[player][spell_playable[1][selected]];
+						int grave_position = spell_playable[1][selected];
+						instance->targets[0].player = grave_position;
+						instance->targets[0].card = graveyard_source[player][grave_position];
 					}
 					else{
 						spell_fizzled = 1;
@@ -4826,7 +4827,7 @@ int card_alhammarrets_archive(int player, int card, event_t event)
   card_instance_t *instance;
   check_legend_rule(player, card, event);
   current_trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     current_trigger = xtrigger_impl_value_dont_use_directly;
   }
@@ -4842,8 +4843,9 @@ int card_alhammarrets_archive(int player, int card, event_t event)
   {
     if ((event == EVENT_DRAW_PHASE) && (current_phase == 10))
     {
+      unsigned int amount = cards_drawn_this_turn[player];
       instance = get_card_instance(player, card);
-      instance->eot_toughness = (uint16_t)cards_drawn_this_turn[player];
+      instance->eot_toughness = amount;
       if (1 < event_result)
       {
         event_result = event_result * 3 + -2;
@@ -4851,7 +4853,7 @@ int card_alhammarrets_archive(int player, int card, event_t event)
     }
     else
     {
-      if ((((trigger_condition == 0xcf) && (card == affected_card)) &&
+      if ((((trigger_condition == TRIGGER_REPLACE_CARD_DRAW) && (card == affected_card)) &&
            (player == affected_card_controller)) &&
           ((reason_for_trigger_controller == player &&
             (((current_phase != 10 || (draw_count = cards_drawn_this_turn[player],
@@ -5310,7 +5312,7 @@ int card_mage_ring_network(int player, int card, event_t event)
                                                               2, 0, 0, 0, 0, 0, 0, NULL, NULL);
       charge_available = (unsigned int)(selected_counters_or_result != 0);
     }
-    choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "Produce mana",
+    choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, "Produce mana",
                          mana_producer(player, card, EVENT_CAN_ACTIVATE), 2, "Add a counter",
                          charge_available, 5, "Remove X and produce X", storage_counters_or_result,
                          (unsigned int)(1 < storage_counters_or_result) * 9 + 1, 0, 0, 0, 0);
@@ -5574,7 +5576,6 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
   card_instance_t *instance;
   unsigned int death_count;
   card_instance_t *dying_permanent;
-  int result;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -5583,8 +5584,7 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       if ((-1 < instance->damage_target_player) &&
-          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           result != 0x3b6f))
+          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x3b6f))
       {
         kill_card(player, card, KILL_EXILE);
       }
@@ -5592,7 +5592,7 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
   }
   instance = get_card_instance(player, card);
   if ((-1 < instance->damage_target_player) &&
-      (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+      (effect_follows_control_of_attachment(player, card, event) != 0))
   {
     return 0;
   }
@@ -5601,7 +5601,7 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     dying_permanent = in_play(affected_card_controller, affected_card);
     if ((dying_permanent != NULL) &&
-        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+        (is_this_dying(affected_card_controller, affected_card) != 0))
     {
 
       if ((instance->damage_target_card == affected_card) &&
@@ -5614,7 +5614,7 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }
@@ -5624,8 +5624,7 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
     return 0;
   if (death_count != 0)
   {
-    result = check_status(player, card, 0x10000);
-    if (result == 0)
+    if (!check_status(player, card, 0x10000))
     {
 
       death_count = death_count & 0xff;
@@ -5640,7 +5639,7 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
       kill_card(player, card, KILL_EXILE);
     }
   }
-  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
   {
     kill_card(player, card, KILL_EXILE);
   }

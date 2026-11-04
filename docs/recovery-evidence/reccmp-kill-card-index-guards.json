@@ -1,0 +1,288 @@
+{
+  "format": 1,
+  "status": "Shared negative-index early return restored; combined build, 15,169 fixed slots, exact canonical/raw source projection, two strict public-wrapper CFG matches and 1,024 native/rebuilt guard-dispatch comparisons pass.",
+  "source": "functions/deck.c",
+  "name": "kill_card_impl",
+  "before_sha256": "66e92c8599fec3aea98774361352111d9aad97edcf9dd95c7636e0742838af29",
+  "after_sha256": "6bc02b7d1d3b3eecbeb434b5ba47250122f19ee32e8eecb510d0784a94336c2b",
+  "before_bytes_sha256": "06ea3cfa8aadf8f39705dc260891dd2ecc711ae9ecb1111ee8bf32e6a8797475",
+  "after_bytes_sha256": "5721d0550ab6aab7c78f5413658cfeb4395dd843bb71e75cbc610fab5e8acffd",
+  "before_definition_sha256": "beefcbc05a944d8e0d9a70abdd87c3fa03709bf3abc65ca78c230f7084f60c51",
+  "after_definition_sha256": "bb76c2c7288816088f39ba5996b2d48c426c160e677cd2a1f2d03421288bc54f",
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "functions": [
+    {
+      "name": "kill_card",
+      "native_range": {
+        "address": "0x26b5a00",
+        "size": 42,
+        "sha256": "dee7135eeb14272fb5e3a58790077c13b77ad26acab604e3f8c03d0d319cf522"
+      },
+      "rebuilt_range": {
+        "address": "0x266da80",
+        "size": 48,
+        "sha256": "15226e0e721cc8c6c80283652c7847732d9c8b017ec54000ac44d24866904725"
+      }
+    },
+    {
+      "name": "kill_card_exe",
+      "native_range": {
+        "address": "0x26b6470",
+        "size": 42,
+        "sha256": "ba762e7529d0b29e3c96465d03821da4be2bf0270cda4c03f2f81c25f4f12081"
+      },
+      "rebuilt_range": {
+        "address": "0x266e6a0",
+        "size": 48,
+        "sha256": "01f54a382a8b3fb96da8bbbfde834890f56bbc4d6910426bb1bf1de6aca275f0"
+      }
+    }
+  ],
+  "discovery": {
+    "path": "docs/recovery-evidence/reccmp-current-tiny-refresh.json.gz",
+    "sha256": "b385f52e4f0d2396ec5cbdbd057478e8c304b53e68f1dbc0ffb6c36e03f3c847",
+    "rows": [
+      {
+        "address": "0x26b5a00",
+        "name": "kill_card",
+        "matching": 0.6086956521739131,
+        "recomp": "0x266da80",
+        "type": 1,
+        "source": "functions/deck.c",
+        "native_name": "kill_card",
+        "native_size": 42,
+        "removed": 8,
+        "added": 1,
+        "changed_lines": 9,
+        "changes": [
+          {
+            "original": [],
+            "rebuilt": [
+              [
+                "0x266da86",
+                "mov ecx, dword ptr [ebp + 0x10]"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x26b5a09",
+                "mov ecx, dword ptr [ebp + 0x10]"
+              ],
+              [
+                "0x26b5a0c",
+                "test eax, eax"
+              ],
+              [
+                "0x26b5a0e",
+                "js 0x18"
+              ],
+              [
+                "0x26b5a10",
+                "test edx, edx"
+              ],
+              [
+                "0x26b5a12",
+                "js 0x14"
+              ]
+            ],
+            "rebuilt": []
+          },
+          {
+            "original": [
+              [
+                "0x26b5a21",
+                "lea esi, [esi]"
+              ],
+              [
+                "0x26b5a28",
+                "pop ebp"
+              ],
+              [
+                "0x26b5a29",
+                "ret "
+              ]
+            ],
+            "rebuilt": []
+          }
+        ],
+        "review_pattern": "inspect_operands_and_control_flow",
+        "change_group": "cfba55db65d9d1bf289d51920b5dfc57937e63da51d18677323b3277b36aff08"
+      },
+      {
+        "address": "0x26b6470",
+        "name": "kill_card_exe",
+        "matching": 0.6086956521739131,
+        "recomp": "0x266e640",
+        "type": 1,
+        "source": "functions/deck.c",
+        "native_name": "kill_card_exe",
+        "native_size": 42,
+        "removed": 8,
+        "added": 1,
+        "changed_lines": 9,
+        "changes": [
+          {
+            "original": [],
+            "rebuilt": [
+              [
+                "0x266e646",
+                "mov ecx, dword ptr [ebp + 0x10]"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x26b6479",
+                "mov ecx, dword ptr [ebp + 0x10]"
+              ],
+              [
+                "0x26b647c",
+                "test eax, eax"
+              ],
+              [
+                "0x26b647e",
+                "js 0x18"
+              ],
+              [
+                "0x26b6480",
+                "test edx, edx"
+              ],
+              [
+                "0x26b6482",
+                "js 0x14"
+              ]
+            ],
+            "rebuilt": []
+          },
+          {
+            "original": [
+              [
+                "0x26b6491",
+                "lea esi, [esi]"
+              ],
+              [
+                "0x26b6498",
+                "pop ebp"
+              ],
+              [
+                "0x26b6499",
+                "ret "
+              ]
+            ],
+            "rebuilt": []
+          }
+        ],
+        "review_pattern": "inspect_operands_and_control_flow",
+        "change_group": "cfba55db65d9d1bf289d51920b5dfc57937e63da51d18677323b3277b36aff08"
+      }
+    ]
+  },
+  "scope": "Native kill_card and kill_card_exe return before entering the shared worker when either signed index is negative. Restore the guard in their shared source implementation, also covering its direct callers. No upper-bound policy is invented. Compiled source may outline the guarded worker as a .part.0 specialization; public wrappers and signatures are unchanged.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "3fb37a88e3cba000e70355769f784a80470d6eebfc6ccf31dd1c5ebf8906752f",
+    "debug_sha256": "14adec2a05c9b66438cb21398ef8bc76cadf8a36b29b99688dbb15dd2e4809ff",
+    "build_log_sha256": "63adf6dd9afe3930b5cd7e665046c04a0ae6042f6f265e4c5183a4b050ce8753",
+    "source_definitions": 1,
+    "full_file_projections": 1,
+    "raw_file_projections": 1,
+    "wrapper_cfg": [
+      {
+        "name": "kill_card",
+        "cfg": {
+          "cfg_states": 14,
+          "reached_instruction_counts": [
+            14,
+            14
+          ],
+          "terminals": 2,
+          "equality_load_guards": [],
+          "zero_return_epilogues": [],
+          "address_correspondences": [
+            {
+              "native": "0x26b53d0",
+              "rebuilt": "0x266d450",
+              "identity": "_kill_card_impl.part.0"
+            }
+          ]
+        }
+      },
+      {
+        "name": "kill_card_exe",
+        "cfg": {
+          "cfg_states": 14,
+          "reached_instruction_counts": [
+            14,
+            14
+          ],
+          "terminals": 2,
+          "equality_load_guards": [],
+          "zero_return_epilogues": [],
+          "address_correspondences": [
+            {
+              "native": "0x26b53d0",
+              "rebuilt": "0x266d450",
+              "identity": "_kill_card_impl.part.0"
+            }
+          ]
+        }
+      }
+    ],
+    "wrapper_fixture": {
+      "cases": 1024,
+      "mismatches": 0,
+      "patched_worker_transfers": [
+        {
+          "side": 0,
+          "index": 0,
+          "entry": "0x26b5a00",
+          "offset": 29,
+          "worker": "0x26b53d0",
+          "aliases": [
+            "_kill_card_impl.part.0"
+          ]
+        },
+        {
+          "side": 0,
+          "index": 1,
+          "entry": "0x26b6470",
+          "offset": 29,
+          "worker": "0x26b53d0",
+          "aliases": [
+            "_kill_card_impl.part.0"
+          ]
+        },
+        {
+          "side": 1,
+          "index": 0,
+          "entry": "0x266da80",
+          "offset": 29,
+          "worker": "0x266d450",
+          "aliases": [
+            "_kill_card_impl.part.0"
+          ]
+        },
+        {
+          "side": 1,
+          "index": 1,
+          "entry": "0x266e6a0",
+          "offset": 29,
+          "worker": "0x266d450",
+          "aliases": [
+            "_kill_card_impl.part.0"
+          ]
+        }
+      ],
+      "source_sha256": "6f8edecea29d48bfbe929d0a05209fde54b6f90c422c0589fd0f400f89343f28",
+      "log_sha256": "a8c128da4fac51671a774791bdef6d0f9aa745c4d0ae04b2fbef7b7f5342bfdb",
+      "compiler_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Actual native/rebuilt public wrappers, with only the outlined regparm(3) worker replaced by an argument recorder. Negative indices produce no worker call; nonnegative values preserve both indices, mode and wrapper-specific flags, including INT_MIN/INT_MAX. Does not exercise the worker body."
+    },
+    "checker_sha256": "9ea2c1360ba51ba6b3d3465abc3646fa4e3d94d2ccc9a814ce830542c3d1aede",
+    "staging": "preserved"
+  }
+}

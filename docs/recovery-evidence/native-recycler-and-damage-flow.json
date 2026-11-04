@@ -1,0 +1,858 @@
+{
+  "format": 1,
+  "status": "Two native operations restored; combined build, 15,169 entry slots, two exact file projections and Wing Storm complete CFG comparison pass.",
+  "files": [
+    {
+      "source": "cards/torment.c",
+      "before_bytes_sha256": "98f935327267880c3cebd8f35d7f3f9919327b3326cee693d25c5c58f2edbe88",
+      "after_bytes_sha256": "94252e58158f20103bc76a4b6cb0945411ea146d7cd5dfc02b7e8c7c7fd781ce",
+      "before_sha256": "f63f9a6899fad7d31515f9650463ec0b4ef58630ed9d0c2190a085cdb7d25db9",
+      "after_sha256": "fbc92b157fda2a2d51433bba7de885288416f1d8b8296991b4759e4ca00ea196"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "before_bytes_sha256": "3f0b1aa455456a8523dea240551ea7bc9ce671b69a36ccd5fe89f656b2f472e4",
+      "after_bytes_sha256": "bdef7c5ae46ada45ff137f665bea8e86afbaf30c2c2c6b33362bbdb6e309b46f",
+      "before_sha256": "640d58590e78427ccde284a22614308cfa03df2b8161208a42c8424ee9918a68",
+      "after_sha256": "7d1823253a66f0a55e493af27b8c474ac02c8574d2d445057ba8fd2e616212fb"
+    }
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "before_cfg": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "a10d5628a3bf3696bbc50a9f9e6221c2688fc52a6b65fc232c25ed2966b96613",
+      "ManalinkEh.dbg": "87359b0b460cda99f99854c07bb0c09f0ab577cdeee971d572f4941a90f7b4ba"
+    },
+    "results": [
+      {
+        "name": "card_wing_storm",
+        "matched": false,
+        "reason": "('Operation changed', 'add', 'test')",
+        "ranges": [
+          {
+            "address": "0x26085e0",
+            "size": 204,
+            "sha256": "eed2be7e97dfb858fc16460d67a47fca388f32fb00a2bf1e4d5e159427e2bfc4",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2459e30",
+            "size": 208,
+            "sha256": "5b1530ad0cdc37d217b5a471f8512b063c6b594e2d008774a68d27be76730f83",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      }
+    ],
+    "checker_sha256": "c356e7313bedf7c11c0266e8ca7291a5ac2f95972fb67b00b89bf179a1610ef7",
+    "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+    "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+  },
+  "scope": "Source fidelity changes based on native grave_recycler at 0x2310cb0 and Wing Storm at 0x26085e0. The recycler still checks graveyard size against crds, allows cancellation of the first selection and disallows it for the second, and sacrifices on failure; it is not generalized beyond two tutor attempts. Both direct callers supply 1 or 2, so this is not a demonstrated gameplay bug. Wing Storm preserves the native 32-bit ADD-before-branch even for overflow bit patterns, using the pinned i386 GCC toolchain conversion of uint32 to int. Normal callbacks, valid storage and existing helper identities remain assumptions. No whole-game equivalence claim.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "1574551d85b3748b10535a4b70557faa46f22528dba3caffb9e058dff8bef2e7",
+    "debug_sha256": "32e18d16826215d723b3b3f9ea07ee0939d4d1dc756b9a3ed00b811cc893a36f",
+    "build_log_sha256": "8be5c2dbda6168db26c08927b6f71afc842e39c763b36be4225f564a4bda25e6",
+    "source_definitions": 2,
+    "canonical_and_raw_file_projections": 2,
+    "strict_cfg_before": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "a10d5628a3bf3696bbc50a9f9e6221c2688fc52a6b65fc232c25ed2966b96613",
+        "ManalinkEh.dbg": "87359b0b460cda99f99854c07bb0c09f0ab577cdeee971d572f4941a90f7b4ba"
+      },
+      "results": [
+        {
+          "name": "card_wing_storm",
+          "matched": false,
+          "reason": "('Operation changed', 'add', 'test')",
+          "ranges": [
+            {
+              "address": "0x26085e0",
+              "size": 204,
+              "sha256": "eed2be7e97dfb858fc16460d67a47fca388f32fb00a2bf1e4d5e159427e2bfc4",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2459e30",
+              "size": 208,
+              "sha256": "5b1530ad0cdc37d217b5a471f8512b063c6b594e2d008774a68d27be76730f83",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "c356e7313bedf7c11c0266e8ca7291a5ac2f95972fb67b00b89bf179a1610ef7",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "1574551d85b3748b10535a4b70557faa46f22528dba3caffb9e058dff8bef2e7",
+        "ManalinkEh.dbg": "32e18d16826215d723b3b3f9ea07ee0939d4d1dc756b9a3ed00b811cc893a36f"
+      },
+      "results": [
+        {
+          "name": "card_wing_storm",
+          "matched": true,
+          "proof": {
+            "cfg_states": 57,
+            "reached_instruction_counts": [
+              57,
+              57
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x4a68a0",
+                "rebuilt": "0x4a68a0",
+                "identity": "fixed:0x4a68a0"
+              },
+              {
+                "native": "0x26a1bd0",
+                "rebuilt": "0x26abbd0",
+                "identity": "_basic_spell"
+              },
+              {
+                "native": "0x26b5a00",
+                "rebuilt": "0x266d820",
+                "identity": "_kill_card"
+              },
+              {
+                "native": "0x26bebb0",
+                "rebuilt": "0x26b6bf0",
+                "identity": "_default_test_definition"
+              },
+              {
+                "native": "0x26c0860",
+                "rebuilt": "0x26b88d0",
+                "identity": "_check_battlefield_for_special_card"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x26085e0",
+              "size": 204,
+              "sha256": "eed2be7e97dfb858fc16460d67a47fca388f32fb00a2bf1e4d5e159427e2bfc4",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2459e30",
+              "size": 208,
+              "sha256": "b7aaa24d531877f31dcc403b119185c45711b327241925d7b538e63c7a0f8621",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "c356e7313bedf7c11c0266e8ca7291a5ac2f95972fb67b00b89bf179a1610ef7",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "recycler_ranges": [
+      {
+        "side": "native",
+        "symbol": "_grave_recycler",
+        "address": "0x2310cb0",
+        "size": 258,
+        "sha256": "fe6a4d6a0eb623e4b7a106753a8bb2c8f0de2efe71dc034f5deb31d5aef23c5e",
+        "instructions": [
+          {
+            "address": "0x2310cb0",
+            "instruction": "push ebp"
+          },
+          {
+            "address": "0x2310cb1",
+            "instruction": "mov ebp, esp"
+          },
+          {
+            "address": "0x2310cb3",
+            "instruction": "push edi"
+          },
+          {
+            "address": "0x2310cb4",
+            "instruction": "push esi"
+          },
+          {
+            "address": "0x2310cb5",
+            "instruction": "mov esi, ecx"
+          },
+          {
+            "address": "0x2310cb7",
+            "instruction": "push ebx"
+          },
+          {
+            "address": "0x2310cb8",
+            "instruction": "mov edi, edx"
+          },
+          {
+            "address": "0x2310cba",
+            "instruction": "sub esp, 0xf4"
+          },
+          {
+            "address": "0x2310cc0",
+            "instruction": "mov ebx, eax"
+          },
+          {
+            "address": "0x2310cc2",
+            "instruction": "mov dword ptr [esp + 0xc], eax"
+          },
+          {
+            "address": "0x2310cc6",
+            "instruction": "mov dword ptr [esp + 8], ecx"
+          },
+          {
+            "address": "0x2310cca",
+            "instruction": "mov dword ptr [esp + 4], edx"
+          },
+          {
+            "address": "0x2310cce",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x2310cd1",
+            "instruction": "call 0x2695450"
+          },
+          {
+            "address": "0x2310cd6",
+            "instruction": "cmp esi, 0xa00"
+          },
+          {
+            "address": "0x2310cdc",
+            "instruction": "je 0x2310cf0"
+          },
+          {
+            "address": "0x2310cde",
+            "instruction": "add esp, 0xf4"
+          },
+          {
+            "address": "0x2310ce4",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x2310ce6",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x2310ce7",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x2310ce8",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x2310ce9",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x2310cea",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x2310ceb",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x2310cef",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x2310cf0",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x2310cf3",
+            "instruction": "call 0x26e5da0"
+          },
+          {
+            "address": "0x2310cf8",
+            "instruction": "cmp eax, dword ptr [ebp + 8]"
+          },
+          {
+            "address": "0x2310cfb",
+            "instruction": "jl 0x2310d91"
+          },
+          {
+            "address": "0x2310d01",
+            "instruction": "lea esi, [ebp - 0xe4]"
+          },
+          {
+            "address": "0x2310d07",
+            "instruction": "mov dword ptr [esp + 8], 0x273fa74"
+          },
+          {
+            "address": "0x2310d0f",
+            "instruction": "mov dword ptr [esp + 4], 0xff"
+          },
+          {
+            "address": "0x2310d17",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x2310d1a",
+            "instruction": "call 0x26bea60"
+          },
+          {
+            "address": "0x2310d1f",
+            "instruction": "mov dword ptr [esp + 0x18], esi"
+          },
+          {
+            "address": "0x2310d23",
+            "instruction": "mov dword ptr [esp + 0x14], 1"
+          },
+          {
+            "address": "0x2310d2b",
+            "instruction": "mov dword ptr [esp + 0x10], 0"
+          },
+          {
+            "address": "0x2310d33",
+            "instruction": "mov dword ptr [esp + 0xc], 0xa"
+          },
+          {
+            "address": "0x2310d3b",
+            "instruction": "mov dword ptr [esp + 8], 2"
+          },
+          {
+            "address": "0x2310d43",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x2310d47",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x2310d4a",
+            "instruction": "call 0x2651990"
+          },
+          {
+            "address": "0x2310d4f",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x2310d51",
+            "instruction": "js 0x2310d91"
+          },
+          {
+            "address": "0x2310d53",
+            "instruction": "cmp dword ptr [ebp + 8], 1"
+          },
+          {
+            "address": "0x2310d57",
+            "instruction": "je 0x2310cde"
+          },
+          {
+            "address": "0x2310d59",
+            "instruction": "mov dword ptr [esp + 0x18], esi"
+          },
+          {
+            "address": "0x2310d5d",
+            "instruction": "mov dword ptr [esp + 0x14], 1"
+          },
+          {
+            "address": "0x2310d65",
+            "instruction": "mov dword ptr [esp + 0x10], 1"
+          },
+          {
+            "address": "0x2310d6d",
+            "instruction": "mov dword ptr [esp + 0xc], 0xa"
+          },
+          {
+            "address": "0x2310d75",
+            "instruction": "mov dword ptr [esp + 8], 2"
+          },
+          {
+            "address": "0x2310d7d",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x2310d81",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x2310d84",
+            "instruction": "call 0x2651990"
+          },
+          {
+            "address": "0x2310d89",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x2310d8b",
+            "instruction": "jns 0x2310cde"
+          },
+          {
+            "address": "0x2310d91",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x2310d95",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x2310d98",
+            "instruction": "mov dword ptr [esp + 8], 3"
+          },
+          {
+            "address": "0x2310da0",
+            "instruction": "call 0x26b5a00"
+          },
+          {
+            "address": "0x2310da5",
+            "instruction": "add esp, 0xf4"
+          },
+          {
+            "address": "0x2310dab",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x2310dac",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x2310dae",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x2310daf",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x2310db0",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x2310db1",
+            "instruction": "ret "
+          }
+        ]
+      },
+      {
+        "side": "rebuilt event-body worker",
+        "symbol": "_grave_recycler.part.0",
+        "address": "0x25a1e20",
+        "size": 224,
+        "sha256": "333d09e6fdc1d9c2f9732e9753d59a70a04b617170b5863ebca56b1285a9355a",
+        "instructions": [
+          {
+            "address": "0x25a1e20",
+            "instruction": "push ebp"
+          },
+          {
+            "address": "0x25a1e21",
+            "instruction": "mov ebp, esp"
+          },
+          {
+            "address": "0x25a1e23",
+            "instruction": "push edi"
+          },
+          {
+            "address": "0x25a1e24",
+            "instruction": "push esi"
+          },
+          {
+            "address": "0x25a1e25",
+            "instruction": "mov edi, edx"
+          },
+          {
+            "address": "0x25a1e27",
+            "instruction": "push ebx"
+          },
+          {
+            "address": "0x25a1e28",
+            "instruction": "mov esi, ecx"
+          },
+          {
+            "address": "0x25a1e2a",
+            "instruction": "sub esp, 0xf4"
+          },
+          {
+            "address": "0x25a1e30",
+            "instruction": "mov ebx, eax"
+          },
+          {
+            "address": "0x25a1e32",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x25a1e35",
+            "instruction": "call 0x2660340"
+          },
+          {
+            "address": "0x25a1e3a",
+            "instruction": "cmp eax, esi"
+          },
+          {
+            "address": "0x25a1e3c",
+            "instruction": "jl 0x25a1ed8"
+          },
+          {
+            "address": "0x25a1e42",
+            "instruction": "lea eax, [ebp - 0xe4]"
+          },
+          {
+            "address": "0x25a1e48",
+            "instruction": "mov dword ptr [esp + 8], 0x2758088"
+          },
+          {
+            "address": "0x25a1e50",
+            "instruction": "mov dword ptr [esp], eax"
+          },
+          {
+            "address": "0x25a1e53",
+            "instruction": "mov dword ptr [esp + 4], 0xff"
+          },
+          {
+            "address": "0x25a1e5b",
+            "instruction": "call 0x26b6aa0"
+          },
+          {
+            "address": "0x25a1e60",
+            "instruction": "lea eax, [ebp - 0xe4]"
+          },
+          {
+            "address": "0x25a1e66",
+            "instruction": "mov dword ptr [esp + 0x18], eax"
+          },
+          {
+            "address": "0x25a1e6a",
+            "instruction": "mov dword ptr [esp + 0x14], 1"
+          },
+          {
+            "address": "0x25a1e72",
+            "instruction": "mov dword ptr [esp + 0x10], 0"
+          },
+          {
+            "address": "0x25a1e7a",
+            "instruction": "mov dword ptr [esp + 0xc], 0xa"
+          },
+          {
+            "address": "0x25a1e82",
+            "instruction": "mov dword ptr [esp + 8], 2"
+          },
+          {
+            "address": "0x25a1e8a",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x25a1e8e",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x25a1e91",
+            "instruction": "call 0x26e14c0"
+          },
+          {
+            "address": "0x25a1e96",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x25a1e98",
+            "instruction": "js 0x25a1ed8"
+          },
+          {
+            "address": "0x25a1e9a",
+            "instruction": "dec esi"
+          },
+          {
+            "address": "0x25a1e9b",
+            "instruction": "je 0x25a1eec"
+          },
+          {
+            "address": "0x25a1e9d",
+            "instruction": "lea eax, [ebp - 0xe4]"
+          },
+          {
+            "address": "0x25a1ea3",
+            "instruction": "mov dword ptr [esp + 0x14], 1"
+          },
+          {
+            "address": "0x25a1eab",
+            "instruction": "mov dword ptr [esp + 0x18], eax"
+          },
+          {
+            "address": "0x25a1eaf",
+            "instruction": "mov dword ptr [esp + 0x10], 1"
+          },
+          {
+            "address": "0x25a1eb7",
+            "instruction": "mov dword ptr [esp + 0xc], 0xa"
+          },
+          {
+            "address": "0x25a1ebf",
+            "instruction": "mov dword ptr [esp + 8], 2"
+          },
+          {
+            "address": "0x25a1ec7",
+            "instruction": "mov dword ptr [esp + 4], ebx"
+          },
+          {
+            "address": "0x25a1ecb",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x25a1ece",
+            "instruction": "call 0x26e14c0"
+          },
+          {
+            "address": "0x25a1ed3",
+            "instruction": "test eax, eax"
+          },
+          {
+            "address": "0x25a1ed5",
+            "instruction": "jns 0x25a1eec"
+          },
+          {
+            "address": "0x25a1ed7",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x25a1ed8",
+            "instruction": "mov dword ptr [esp + 8], 3"
+          },
+          {
+            "address": "0x25a1ee0",
+            "instruction": "mov dword ptr [esp + 4], edi"
+          },
+          {
+            "address": "0x25a1ee4",
+            "instruction": "mov dword ptr [esp], ebx"
+          },
+          {
+            "address": "0x25a1ee7",
+            "instruction": "call 0x266d820"
+          },
+          {
+            "address": "0x25a1eec",
+            "instruction": "add esp, 0xf4"
+          },
+          {
+            "address": "0x25a1ef2",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x25a1ef3",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x25a1ef4",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x25a1ef5",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x25a1ef6",
+            "instruction": "ret "
+          },
+          {
+            "address": "0x25a1ef7",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x25a1efe",
+            "instruction": "nop "
+          }
+        ]
+      }
+    ],
+    "recycler_packet_checks": [
+      {
+        "side": 0,
+        "tutor_arguments": [
+          {
+            "ordinal": 1,
+            "call_address": "0x2310d4a",
+            "stack_arguments": {
+              "dword ptr [esp + 0x18]": "esi",
+              "dword ptr [esp + 0x14]": "1",
+              "dword ptr [esp + 0x10]": "0",
+              "dword ptr [esp + 0xc]": "0xa",
+              "dword ptr [esp + 8]": "2",
+              "dword ptr [esp + 4]": "ebx",
+              "dword ptr [esp]": "ebx"
+            }
+          },
+          {
+            "ordinal": 2,
+            "call_address": "0x2310d84",
+            "stack_arguments": {
+              "dword ptr [esp + 0x18]": "esi",
+              "dword ptr [esp + 0x14]": "1",
+              "dword ptr [esp + 0x10]": "1",
+              "dword ptr [esp + 0xc]": "0xa",
+              "dword ptr [esp + 8]": "2",
+              "dword ptr [esp + 4]": "ebx",
+              "dword ptr [esp]": "ebx"
+            }
+          }
+        ],
+        "first_failure": "0x2310d91",
+        "count_guard": [
+          "cmp dword ptr [ebp + 8], 1",
+          "je 0x2310cde"
+        ],
+        "success_return": "0x2310cde"
+      },
+      {
+        "side": 1,
+        "tutor_arguments": [
+          {
+            "ordinal": 1,
+            "call_address": "0x25a1e91",
+            "stack_arguments": {
+              "dword ptr [esp + 0x18]": "eax",
+              "dword ptr [esp + 0x14]": "1",
+              "dword ptr [esp + 0x10]": "0",
+              "dword ptr [esp + 0xc]": "0xa",
+              "dword ptr [esp + 8]": "2",
+              "dword ptr [esp + 4]": "ebx",
+              "dword ptr [esp]": "ebx"
+            }
+          },
+          {
+            "ordinal": 2,
+            "call_address": "0x25a1ece",
+            "stack_arguments": {
+              "dword ptr [esp + 0x14]": "1",
+              "dword ptr [esp + 0x18]": "eax",
+              "dword ptr [esp + 0x10]": "1",
+              "dword ptr [esp + 0xc]": "0xa",
+              "dword ptr [esp + 8]": "2",
+              "dword ptr [esp + 4]": "ebx",
+              "dword ptr [esp]": "ebx"
+            }
+          }
+        ],
+        "first_failure": "0x25a1ed8",
+        "count_guard": [
+          "dec esi",
+          "je 0x25a1eec"
+        ],
+        "success_return": "0x25a1eec"
+      }
+    ],
+    "direct_source_callers": [
+      {
+        "name": "card_anurid_scavenger",
+        "source_definition_sha256": "f6aa4aef14cdb7dd1eb5cf46d552f38e9f9431ccad84467a36ac7e92b570624f",
+        "crds": 1,
+        "worker_call_context": [
+          {
+            "address": "0x25a2a26",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x25a2a28",
+            "instruction": "mov eax, ebx"
+          },
+          {
+            "address": "0x25a2a2a",
+            "instruction": "mov edx, dword ptr [ebp + 0xc]"
+          },
+          {
+            "address": "0x25a2a2d",
+            "instruction": "mov ecx, 1"
+          },
+          {
+            "address": "0x25a2a32",
+            "instruction": "call 0x25a1e20"
+          },
+          {
+            "address": "0x25a2a37",
+            "instruction": "add esp, 0x10"
+          },
+          {
+            "address": "0x25a2a3a",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x25a2a3b",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x25a2a3d",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x25a2a3e",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x25a2a3f",
+            "instruction": "ret "
+          }
+        ]
+      },
+      {
+        "name": "card_gurzigost",
+        "source_definition_sha256": "0fe900894b6a311ced968d6e242cbe30624dd6d6641882fe4fc9a0a67d649ae8",
+        "crds": 2,
+        "worker_call_context": [
+          {
+            "address": "0x25a56d6",
+            "instruction": "nop "
+          },
+          {
+            "address": "0x25a56d8",
+            "instruction": "mov eax, esi"
+          },
+          {
+            "address": "0x25a56da",
+            "instruction": "mov edx, edi"
+          },
+          {
+            "address": "0x25a56dc",
+            "instruction": "mov ecx, 2"
+          },
+          {
+            "address": "0x25a56e1",
+            "instruction": "call 0x25a1e20"
+          },
+          {
+            "address": "0x25a56e6",
+            "instruction": "add esp, 0x1c"
+          },
+          {
+            "address": "0x25a56e9",
+            "instruction": "pop ebx"
+          },
+          {
+            "address": "0x25a56ea",
+            "instruction": "xor eax, eax"
+          },
+          {
+            "address": "0x25a56ec",
+            "instruction": "pop esi"
+          },
+          {
+            "address": "0x25a56ed",
+            "instruction": "pop edi"
+          },
+          {
+            "address": "0x25a56ee",
+            "instruction": "pop ebp"
+          },
+          {
+            "address": "0x25a56ef",
+            "instruction": "ret "
+          }
+        ]
+      }
+    ],
+    "staging": "preserved",
+    "scope": "Wing Storm passes the same strict complete entry-reachable CFG checker that rejected its previous body, using unique COFF/engine identities and read-only literal contents. The recycler retains a compiler-generated event-body worker, so it is not claimed as a complete-helper CFG match. Its two actual tutor argument packets, negative-result failure path, crds==1 success shortcut, second-result success path and caller constants are inspected against native code. No new gameplay fixture or full comparison refresh; source projection and pinned build checks cover this two-function edit."
+  }
+}

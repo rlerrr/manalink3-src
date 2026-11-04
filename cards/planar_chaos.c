@@ -620,6 +620,7 @@ int cautery_sliver_shared_ability(int player, int card, event_t event)
   card_instance_t *instance = get_card_instance(player, card);
   if (instance->targets[1].player >= 0)
   {
+    instance = get_card_instance(player, card);
     int p = instance->targets[1].player;
     int c = instance->targets[1].card;
     leaves_play(p, c, event, 0, 0);
@@ -1712,7 +1713,7 @@ int card_fury_charm(int player, int card, event_t event)
     td1.preferred_controller = player;
     default_target_definition(player, card, &td2, 199);
     td2.preferred_controller = 2;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)is_permanent_or_suspend_legacy;
     get_card_instance(player, card);
     if (basic_spell(player, card, EVENT_CAN_CAST) != 0)
@@ -1741,7 +1742,7 @@ int card_fury_charm(int player, int card, event_t event)
       td1.preferred_controller = player;
       default_target_definition(player, card, &td2, 199);
       td2.preferred_controller = 2;
-      td.special = 0x8000;
+      td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
       td.extra = (int32_t)is_permanent_or_suspend_legacy;
       instance = get_card_instance(player, card);
       if ((card == affected_card) && (player == affected_card_controller))
@@ -1749,7 +1750,7 @@ int card_fury_charm(int player, int card, event_t event)
         target_player_or_result = can_target(&td2);
         combat_damage_phase = current_phase == 0x18;
         pump_available = can_target(td_00);
-        choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "Destroy artifact",
+        choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, "Destroy artifact",
                              can_target(&td), 1, "+1/+1 and Trample", pump_available,
                              (unsigned int)combat_damage_phase * 9 + 1, "Remove 2 Time Counters",
                              target_player_or_result, 5, 0, 0, 0, 0);
@@ -1787,7 +1788,7 @@ int card_fury_charm(int player, int card, event_t event)
             {
               target_player_or_result = is_what(player, instance->targets[0].card, 0x80);
               ai_modifier =
-                  ai_modifier + (-(unsigned int)(target_player_or_result == 0) & 0xffffffa0) + 0x30;
+                  ai_modifier + (unsigned int)((target_player_or_result == 0) ? -96 : 0) + 0x30;
               target_player_or_result = instance->targets[0].player;
               if (target_player_or_result == player)
               {
@@ -1797,7 +1798,7 @@ int card_fury_charm(int player, int card, event_t event)
             target_player_or_result =
                 is_what(target_player_or_result, instance->targets[0].card, 0x80);
             ai_modifier =
-                ai_modifier + ((-(unsigned int)(target_player_or_result == 0) & 0x60) - 0x30);
+                ai_modifier + ((unsigned int)((target_player_or_result == 0) ? 48 : -48));
             return 0;
           }
           prompt = "TARGET_CREATURE";
@@ -1814,7 +1815,7 @@ int card_fury_charm(int player, int card, event_t event)
     td1.preferred_controller = player;
     default_target_definition(player, card, &td2, 199);
     td2.preferred_controller = 2;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)is_permanent_or_suspend_legacy;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
@@ -3024,7 +3025,9 @@ int card_serras_boon(int player, int card, event_t event)
 		  || (event != EVENT_SHOULD_AI_PLAY && !affect_me(instance->damage_target_player, instance->damage_target_card)))
 		return 0;
 
-	  int white = get_color(instance->damage_target_player, instance->damage_target_card) & get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
+	  int creature_color = get_color(instance->damage_target_player, instance->damage_target_card);
+	  int sleighted_color = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
+	  int white = creature_color & sleighted_color;
 	  switch (event)
 		{
 		  case EVENT_SHOULD_AI_PLAY:
@@ -3942,8 +3945,7 @@ int card_ghost_tactician(int player, int card, event_t event)
     pump_subtype_until_eot(instance->parent_controller, instance->parent_card, player, -1, 1, 0, 0,
                            0);
   }
-  result = generic_activated_ability(player, card, event, 0x21, 0, 0, 0, 0, 0, 1, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 0x21, 0, 0, 0, 0, 0, 1, 0, NULL, NULL);
 }
 
 /* ManalinkEh 2022: 0x23c0360; original cards/planar_chaos.c:3815. */
@@ -3967,7 +3969,7 @@ static char *is_permanent_or_suspended_legacy(int who_chooses, int player, int c
     instance = get_card_instance(player, card);
     result = is_what(player, card, 0x80);
     if (((result == 0) || (instance->info_slot_fn != generic_suspend_legacy)) &&
-        (cards_data[instance->internal_card_id].id != 0x2178))
+        (cards_data[instance->internal_card_id].id != CARD_ID_GREATER_GARGADON_SUSPENDED))
     {
       return "must be a permanent or a Suspend legacy card.";
     }
@@ -3980,80 +3982,94 @@ static char *is_permanent_or_suspended_legacy(int who_chooses, int player, int c
 /* ManalinkEh 2022: 0x23be760; original cards/planar_chaos.c:3321. */
 int card_timebender(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  int card_00;
-  target_definition_t td;
-
   if (event == EVENT_TURNED_FACE_UP)
   {
-
-    default_target_definition(player, card, &td, 199);
-    td.preferred_controller = 2;
-    td.special = 0x8000;
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_PERMANENT | TYPE_EFFECT);
+    td.preferred_controller = ANYBODY;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)is_permanent_or_suspended_legacy;
-    instance = get_card_instance(player, card);
-    result =
-        do_dialog(player, player, card, -1, -1, " Add 2 Time Counters\n Remove 2 Time Counters", 0);
-    if (result == 0)
+    card_instance_t *instance = get_card_instance(player, card);
+    int choice = do_dialog(player, player, card, -1, -1,
+                            " Add 2 Time Counters\n Remove 2 Time Counters", 0);
+    const char *prompt = choice == 0
+                          ? "Select target permanent or suspended legacy with a time counter."
+                          : "Select target permanent or Suspend legacy card-remove counters.";
+    if (can_target(&td) && new_pick_target(&td, prompt, 0, 0x80))
     {
-      result = can_target(&td);
-      if (result != 0)
+      if (choice == 0)
       {
-        result = new_pick_target(
-            &td, "Select target permanent or suspended legacy with a time counter.", 0, 0x80);
-        if (result != 0)
-        {
-          result =
-              count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_TIME);
-          if (0 < result)
-          {
-            add_counters(player, card, instance->targets[0].player,
-                                     instance->targets[0].card, COUNTER_TIME, 2);
-          }
-        }
+        if (count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_TIME) > 0)
+          add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                       COUNTER_TIME, 2);
       }
-    }
-    else
-    {
-      result = can_target(&td);
-      if (result != 0)
+      else
       {
-        result = new_pick_target(
-            &td, "Select target permanent or Suspend legacy card-remove counters.", 0, 0x80);
-        if (result != 0)
+        remove_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                          COUNTER_TIME, 2);
+        if (count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_TIME) == 0)
+          ai_modifier -= 96;
+        int target_player = instance->targets[0].player;
+        int target_card = instance->targets[0].card;
+        if (target_player == player)
         {
-          remove_counters(player, card, instance->targets[0].player,
-                                      instance->targets[0].card, COUNTER_TIME, 2);
-          result =
-              count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_TIME);
-          if (result == 0)
-          {
-            ai_modifier = ai_modifier + -0x60;
-          }
-          result = instance->targets[0].player;
-          card_00 = instance->targets[0].card;
-          if (result == player)
-          {
-            result = is_what(player, card_00, 0x80);
-            ai_modifier = ai_modifier + (-(unsigned int)(result == 0) & 0xffffffa0) + 0x30;
-            result = instance->targets[0].player;
-            if (result == player)
-              return morph(player, card, event, 0, 0, 1, 0, 0, 0);
-            card_00 = instance->targets[0].card;
-          }
-          result = is_what(result, card_00, 0x80);
-          ai_modifier = ai_modifier + ((-(unsigned int)(result == 0) & 0x60) - 0x30);
+          ai_modifier += is_what(player, target_card, TYPE_EFFECT) ? 48 : -48;
+          target_player = instance->targets[0].player;
+          if (target_player == player)
+            return morph(player, card, event, MANACOST_U(1));
+          target_card = instance->targets[0].card;
         }
+        ai_modifier += is_what(target_player, target_card, TYPE_EFFECT) ? -48 : 48;
       }
     }
   }
-  return morph(player, card, event, 0, 0, 1, 0, 0, 0);
+  return morph(player, card, event, MANACOST_U(1));
 }
 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x23be9f0; original cards/planar_chaos.c:3388. */
+static const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,
+                                               int targeting_player, int targeting_card)
+{
+  int result;
+  card_instance_t *instance;
+
+  result = is_what(player, card, 0x47);
+  if (result == 0)
+  {
+    instance = get_card_instance(player, card);
+    if (((instance->internal_card_id != LEGACY_EFFECT_CUSTOM) ||
+         (instance->info_slot_fn != generic_suspend_legacy)) &&
+        (cards_data[instance->internal_card_id].id != CARD_ID_GREATER_GARGADON_SUSPENDED))
+    {
+      return (char *)EXE_STR(0x728f6c);
+    }
+  }
+  return NULL;
+}
+
+static const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,
+                                                                       int card,
+                                                                       int targeting_player,
+                                                                       int targeting_card)
+{
+  const char *requirement_error;
+  int result;
+
+  requirement_error = target_must_be_permanent_or_suspend(who_chooses, player, card,
+                                                          targeting_player, targeting_card);
+  if (requirement_error == NULL)
+  {
+    result = count_counters(player, card, COUNTER_TIME);
+    if (result == 0)
+    {
+      return "must have counters";
+    }
+  }
+  return requirement_error;
+}
+
 int card_timecrafting(int player, int card, event_t event)
 {
   enum
@@ -4072,7 +4088,7 @@ int card_timecrafting(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 199);
     td.preferred_controller = 2;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters;
     get_card_instance(player, card);
     return generic_spell(player, card, EVENT_CAN_CAST, 5, &td, NULL, 1, NULL);
@@ -4089,14 +4105,14 @@ int card_timecrafting(int player, int card, event_t event)
     }
     default_target_definition(player, card, &td, 199);
     td.preferred_controller = 2;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters;
     instance = get_card_instance(player, card);
     choice_or_result = check_special_flags2(player, card, -0x80000000);
     if ((choice_or_result == 0) && (spell_fizzled != 1))
     {
       choice_or_result = can_target(&td);
-      choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014",
+      choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE,
                            "Remove X Time Counters", can_target(&td), 10, "Add X Time Counters",
                            choice_or_result, 5, 0, 0, 0, 0);
       if (choice == 0)
@@ -4122,7 +4138,7 @@ int card_timecrafting(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 199);
     td.preferred_controller = 2;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
@@ -4153,7 +4169,7 @@ int card_timecrafting(int player, int card, event_t event)
     }
     default_target_definition(player, card, &td, 199);
     td.preferred_controller = 2;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters;
     get_card_instance(player, card);
   }

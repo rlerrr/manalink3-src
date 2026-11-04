@@ -242,7 +242,7 @@ void attached_is_additional_subtype(int player, int card, event_t event, subtype
   card_instance_t *instance;
   int result;
   int id;
-  int player_00;
+  int target_player;
 
   if (event != EVENT_CHANGE_TYPE)
   {
@@ -265,13 +265,13 @@ void attached_is_additional_subtype(int player, int card, event_t event, subtype
        (result = is_humiliated(player, card, AL_STATIC), subtype != SUBTYPE_INVALID)) &&
       (result == 0))
   {
-    player_00 = (int)instance->damage_target_player;
+    target_player = (int)instance->damage_target_player;
     result = instance->damage_target_card;
-    add_a_subtype(player_00, result, subtype);
+    add_a_subtype(target_player, result, subtype);
     if (subtype == SUBTYPE_LEGEND)
     {
-      id = get_card_name(player_00, result);
-      verify_legend_rule(player_00, result, id);
+      id = get_card_name(target_player, result);
+      verify_legend_rule(target_player, result, id);
       return;
     }
   }
@@ -284,7 +284,7 @@ void attached_is_forced_subtype(int player, int card, event_t event, subtype_t s
   card_instance_t *instance;
   int result;
   int id;
-  int player_00;
+  int target_player;
 
   if (event != EVENT_CHANGE_TYPE)
   {
@@ -307,13 +307,13 @@ void attached_is_forced_subtype(int player, int card, event_t event, subtype_t s
        (result = is_humiliated(player, card, AL_STATIC), subtype != SUBTYPE_INVALID)) &&
       (result == 0))
   {
-    player_00 = (int)instance->damage_target_player;
+    target_player = (int)instance->damage_target_player;
     result = instance->damage_target_card;
-    force_a_subtype(player_00, result, subtype);
+    force_a_subtype(target_player, result, subtype);
     if (subtype == SUBTYPE_LEGEND)
     {
-      id = get_card_name(player_00, result);
-      verify_legend_rule(player_00, result, id);
+      id = get_card_name(target_player, result);
+      verify_legend_rule(target_player, result, id);
       return;
     }
   }
@@ -579,7 +579,7 @@ static void disabling_aura_ai_part(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       target_instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
       ai_modifier =
-          ((instance->targets[0].player == 1 - player) - 1 & 0xffffffd0) + 0x18 + ai_modifier;
+          (unsigned int)((instance->targets[0].player == 1 - player) ? 24 : -24) + ai_modifier;
       if (((target_instance->regen_status & 0x800000) != 0) && ((target_instance->token_status & 0x800) == 0))
       {
         ai_modifier = ai_modifier + -0x30;
@@ -921,48 +921,26 @@ static int targeted_aura_impl(int player, int card, event_t event,
 int aura_attached_to_me(int player, int card, event_t event, resolve_trigger_t trigger_mode,
                              test_definition_t *test2)
 {
-  int result;
-  card_instance_t *instance;
+  if (trigger_condition != TRIGGER_COMES_INTO_PLAY || card != affected_card ||
+      player != affected_card_controller || reason_for_trigger_controller != player ||
+      is_humiliated(player, card, AL_TRIG))
+    return 0;
   test_definition_t this_test;
-  if ((((trigger_condition != 0xdb) || (card != affected_card)) ||
-       (player != affected_card_controller)) ||
-      ((reason_for_trigger_controller != player ||
-        (result = is_humiliated(player, card, AL_TRIG), result != 0))))
-  {
-    return 0;
-  }
-  default_test_definition(&this_test, 4);
+  default_test_definition(&this_test, TYPE_ENCHANTMENT);
   this_test.subtype = 0x4000;
-  result = new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, &this_test);
-  if (result == 0)
-  {
+  if (!new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, &this_test))
     return 0;
-  }
-  instance = get_card_instance(trigger_cause_controller, trigger_cause);
-  if (instance->damage_target_player != player)
-  {
+  card_instance_t *aura = get_card_instance(trigger_cause_controller, trigger_cause);
+  if (aura->damage_target_player != player || aura->damage_target_card != card)
     return 0;
-  }
-  if (instance->damage_target_card != card)
-  {
+  if (test2 && !new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, test2))
     return 0;
-  }
-  if ((test2 != NULL) &&
-      (result = new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, test2),
-       result == 0))
-  {
-    return 0;
-  }
   if (event == EVENT_TRIGGER)
   {
-    event_result = event_result | trigger_mode;
+    event_result |= trigger_mode;
     return 0;
   }
-  if (event != EVENT_RESOLVE_TRIGGER)
-  {
-    return 0;
-  }
-  return 1;
+  return event == EVENT_RESOLVE_TRIGGER;
 }
 
 
@@ -1697,11 +1675,10 @@ int generic_animating_aura_with_added_subtype(int player, int card, event_t even
 
 
 #ifndef SHANDALAR
-/* Recovered October 2022 protection-Aura recursion guard. */
-static target_t ward_recalculation = {-1, -1};
 /* ManalinkEh 2022: 0x26e7fd0; original functions/auras.c:213. */
 int this_effect_doesnt_remove_this(int player, int card, event_t event)
 {
+  static target_t recalculating_ward = {-1, -1};
   int enchanted_card;
   card_instance_t *aura_instance;
   card_instance_t *enchanted_instance;
@@ -1714,7 +1691,7 @@ int this_effect_doesnt_remove_this(int player, int card, event_t event)
     aura_instance = in_play(player, card);
     if ((aura_instance != NULL) && (aura_instance->damage_target_player != -1))
     {
-      if (ward_recalculation.card != card)
+      if (recalculating_ward.card != card)
       {
         enchanted_instance = in_play((int)aura_instance->damage_target_player, aura_instance->damage_target_card);
         if (enchanted_instance == NULL)
@@ -1722,17 +1699,17 @@ int this_effect_doesnt_remove_this(int player, int card, event_t event)
           kill_card(player, card, KILL_STATE_BASED_ACTION);
           return 1;
         }
-        ward_recalculation.player = player;
+        recalculating_ward.player = player;
         enchanted_player = (int)aura_instance->damage_target_player;
-        ward_recalculation.card = card;
+        recalculating_ward.card = card;
         enchanted_card = aura_instance->damage_target_card;
         enchanted_instance->regen_status = enchanted_instance->regen_status | 0x8000000;
         get_abilities(enchanted_player, enchanted_card, EVENT_ABILITIES, -1);
         default_target_definition(player, card, &td, 2);
         td.flags = td.flags | 3;
         result = validate_arbitrary_target(&td, enchanted_player, enchanted_card);
-        ward_recalculation.player = -1;
-        ward_recalculation.card = -1;
+        recalculating_ward.player = -1;
+        recalculating_ward.card = -1;
         enchanted_instance->regen_status = enchanted_instance->regen_status | 0x8000000;
         if (result == 0)
         {
@@ -1746,9 +1723,9 @@ int this_effect_doesnt_remove_this(int player, int card, event_t event)
       return 1;
     }
   }
-  else if ((event == EVENT_ABILITIES) && (ward_recalculation.player == player))
+  else if ((event == EVENT_ABILITIES) && (recalculating_ward.player == player))
   {
-    return (unsigned int)(ward_recalculation.card == card);
+    return (unsigned int)(recalculating_ward.card == card);
   }
   return 0;
 }

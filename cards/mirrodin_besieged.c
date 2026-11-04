@@ -2192,7 +2192,7 @@ int card_gnathosaur(int player, int card, event_t event){
 
 int card_gore_vassal(int player, int card, event_t event)
 {
-  int card_00;
+  int target_card;
   card_instance_t *instance;
   unsigned int favorable_target;
   int result;
@@ -2224,7 +2224,7 @@ int card_gore_vassal(int player, int card, event_t event)
     {
       if ((((unsigned int)land_can_be_played >> 8 & 0xff) & 2) != 0)
       {
-        td.required_state = 0x4000;
+        td.required_state = TARGET_STATE_DESTROYED;
       }
       generic_activated_ability(player, card, EVENT_ACTIVATE, 0xc, 0, 0, 0, 0, 0, 0, 0, &td,
                                 "TARGET_CREATURE");
@@ -2239,15 +2239,15 @@ int card_gore_vassal(int player, int card, event_t event)
       }
       else
       {
-        card_00 = instance->targets[0].card;
+        target_card = instance->targets[0].card;
         if (player == result)
         {
-          result = get_toughness(player, card_00);
+          result = get_toughness(player, target_card);
           favorable_target = (unsigned int)(1 < result);
         }
         else
         {
-          result = get_toughness(result, card_00);
+          result = get_toughness(result, target_card);
           favorable_target = (unsigned int)(result < 2);
         }
       }
@@ -2984,7 +2984,7 @@ int card_nested_ghoul(int player, int card, event_t event ){
 
 	int result = resolve_damage_trigger(player, card, event, 0, player, card);
 	if( result ){
-		generate_tokens_by_id(player, card, 22242, result); /* October 2022 token id. */
+		generate_tokens_by_id(player, card, CARD_ID_PHYREXIAN_ZOMBIE, result); /* October 2022 token id. */
 	}
 
 	return 0;
@@ -3590,7 +3590,7 @@ int card_vedalken_infuser(int player, int card, event_t event)
     {
       result = get_id(instance->targets[0].player, instance->targets[0].card);
       result = get_counter_type_by_id(result);
-      ai_modifier = ai_modifier + ((result == 0x7b) - 1 & 0xffffffa0) + 0x30;
+      ai_modifier = ai_modifier + (unsigned int)((result == 0x7b) ? 0 : -96) + 0x30;
       add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_CHARGE, 1);
     }
@@ -3700,11 +3700,11 @@ int card_phyrexian_revoker(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0x47);
-  td.illegal_type = 1;
+  td.illegal_type = TYPE_LAND;
   td.illegal_abilities = 0;
   td.allow_cancel = 0;
   if (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0))
-    td.special = 0x4000;
+    td.special = TARGET_SPECIAL_NOT_ME;
   instance = get_card_instance(player, card);
   bool automatic = ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0);
   choice = 0;
@@ -3716,7 +3716,7 @@ int card_phyrexian_revoker(int player, int card, event_t event)
   }
   if (choice == 0)
     choice =
-        dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014", "\001\003",
+        dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
                     "Select a card in play", 1, 1, "Choose a card from a list", 1, 1, 0, 0, 0, 0);
   chosen_csv_id = -1;
   if (choice == 1)
@@ -3815,7 +3815,7 @@ static int fangren_marauder_effect(int player, int card, event_t event)
           {
             instance->targets[0xb].player = 0;
           }
-          *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+          SET_BYTE2(instance->targets[0xb].player) = 1;
         }
         count_for_gfp_ability(player, card, 0x77, 2, 0x40, NULL);
       }

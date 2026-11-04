@@ -1,0 +1,337 @@
+{
+  "format": 1,
+  "status": "Native filter and formatter fast path built; both focused compiled/source checks passed.",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "comparison_before_this_edit": {
+    "inputs": {
+      "setup_sha256": "60f0daa4a620ddc8a18302a21cef1de88342d0cdeb244f92dda4fd54863f6675",
+      "report_sha256": "f1379ec8bc4e10fce1580546a5e46fc5027d9cd33e7e70e4d8370744f93c6802",
+      "inputs": {
+        "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "C:\\dev\\manalink3-src\\ManalinkEh.dll": "c074bc8ffe14d98439387ea8e3efff34963b2175908e033028e76d761aaabed9",
+        "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "8d823fc57e598465c3fae4ef0b6f213e445c447e1d7fd057250dd603569a6bdb"
+      },
+      "metadata_sha256": "c75be87b83402824826886e52ee913f38876f5b5af20e06ad3bcfbd4e778ff06",
+      "metadata_snapshot": ".recovery\\reccmp\\refresh-c625.metadata.csv",
+      "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+      "comparator_source_sha256": {
+        "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+        "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+        "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+        "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+        "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+        "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+        "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b"
+      },
+      "command": [
+        "reccmp-reccmp",
+        "--target",
+        "MANALINK2022",
+        "--no-color",
+        "--json",
+        ".recovery/reccmp/refresh-c625.json",
+        "--silent"
+      ],
+      "exit_code": 0
+    },
+    "configured_ranges": 18828,
+    "before_summary": {
+      "exact": 12453,
+      "different": 6105,
+      "effective": 270
+    },
+    "after_summary": {
+      "exact": 12466,
+      "different": 6092,
+      "effective": 270
+    },
+    "improved": 17,
+    "lower_score": 0,
+    "newly_exact": 13,
+    "no_longer_exact": 0,
+    "verified_explicit_bindings": 160,
+    "preceding_batch_function_scores": [
+      {
+        "name": "card_azure_mage",
+        "address": "0x249f9d0",
+        "before": 0.9512195121951219,
+        "after": 1.0
+      },
+      {
+        "name": "card_jade_mage",
+        "address": "0x24a1450",
+        "before": 0.9459459459459459,
+        "after": 1.0
+      },
+      {
+        "name": "fe_chant",
+        "address": "0x241c960",
+        "before": 0.9863013698630136,
+        "after": 1.0
+      },
+      {
+        "name": "add_force_a_subtype_permanently_legacy",
+        "address": "0x26726f0",
+        "before": 0.9122807017543859,
+        "after": 1.0
+      },
+      {
+        "name": "golgari_germination_effect",
+        "address": "0x24df500",
+        "before": 0.884393063583815,
+        "after": 1.0
+      },
+      {
+        "name": "card_null_brooch",
+        "address": "0x26464b0",
+        "before": 0.8979591836734694,
+        "after": 1.0
+      },
+      {
+        "name": "card_deep_water",
+        "address": "0x242cb80",
+        "before": 0.7341772151898734,
+        "after": 0.7468354430379747
+      },
+      {
+        "name": "lichs_mastery_lifeloss_trigger",
+        "address": "0x22d0100",
+        "before": 0.8293838862559242,
+        "after": 0.8341232227488151
+      },
+      {
+        "name": "card_rishadan_port",
+        "address": "0x2179550",
+        "before": 0.8972431077694235,
+        "after": 1.0
+      },
+      {
+        "name": "card_sea_gate_wreckage",
+        "address": "0x226c580",
+        "before": 0.8589341692789969,
+        "after": 1.0
+      },
+      {
+        "name": "check_battlefield_for_targettable_id",
+        "address": "0x26819a0",
+        "before": 0.7414634146341463,
+        "after": 1.0
+      },
+      {
+        "name": "pick_targets_for_multidamage",
+        "address": "0x2687e00",
+        "before": 0.8397435897435898,
+        "after": 1.0
+      },
+      {
+        "name": "card_thought_prison",
+        "address": "0x25474e0",
+        "before": 0.8910411622276029,
+        "after": 1.0
+      },
+      {
+        "name": "graven_dominator_legacy",
+        "address": "0x252aa10",
+        "before": 0.925,
+        "after": 1.0
+      },
+      {
+        "name": "card_graven_dominator",
+        "address": "0x252e2a0",
+        "before": 0.8907103825136612,
+        "after": 1.0
+      },
+      {
+        "name": "card_dispossess",
+        "address": "0x22dbd60",
+        "before": 0.5179856115107914,
+        "after": 0.5192307692307693
+      },
+      {
+        "name": "card_natural_order",
+        "address": "0x201c310",
+        "before": 0.47058823529411764,
+        "after": 0.4803921568627451
+      }
+    ],
+    "preceding_batch_exact": 13,
+    "small_diff_candidates": 395
+  },
+  "functions": [
+    {
+      "source": "cards/onslaught.c",
+      "name": "card_cruel_revival",
+      "native_address": "0x25ed330",
+      "native_size": 837,
+      "native_body_sha256": "832905e0ce01434beb6b05ec7b2a96b4bf95d378666c7383f3841193cd7fedf9",
+      "before_rebuilt_address": "0x2400060",
+      "before_rebuilt_size": 757,
+      "before_rebuilt_body_sha256": "bb5fe7dd198625755130e4d25911645c4bdbc3060d3e4fdbc91490ec63333254",
+      "before_rebuilt_bytes": "5589e557565381ec50010000837d10748b5d088b750c0f8434020000837d106c0f849a000000837d10710f95c2817d10005400000f95c084c275758dbdc8feffffc744240c02000000897c240889742404891c24e8a7b62d0089742404891c24c785f4feffffde000000c78500ffffff00100000e877c62600817d10000400008985c4feffff0f8402020000817d10005400000f848f000000837d10710f844d01000081c45001000031c05b5e5f5dc3817d10000400007482ebe88d742600903b358c397a0075db3b1d848c730075d38dbdc8feffffc744240c02000000897c240889742404891c24e812b62d0089742404891c24c785f4feffffde000000c78500ffffff00100000e8e2c526003b358c397a008985c4feffff75873b1d848c73000f857bffffff8b4510c744241c00000000c744241801000000c7442414a8a67402897c2410c744240c810000008944240889742404891c24e8c1b22a00833d94f14e00010f8437ffffff8d851cffffffc74424088aa67402890424c744240447000000e846762b00c7442404de000000891c24c74584de000000e80f1f260085c00f84f0feffff891c24e81f0a270085c00f85e0feffff8d851cffffffc74424180100000089442414c744241001000000c744240c04000000895c240889742404891c24e8650c2700e9a9feffff893c24e868be2d0085c00f85d0000000c744240c01000000895c240889742404891c24e8580f270083f8ff7414c74424080100000089442404891c24e86f102700c74424080200000089742404891c24e83bef2600e959feffff8db6000000008dbdc8feffffc744240c02000000897c240889742404891c24e892b42d0089742404891c24c785f4feffffde000000c78500ffffff00100000e862c426008b4510897c241089742404891c24c744241c00000000c744241801000000c744241400000000c744240c0100000089442408e85bb12a0081c4500100005b5e5f5dc38b8dc4feffffc7442408020000008b4178894424048b4174890424e890ee2600e90bffffff",
+      "before_reccmp_score": 0.7447447447447447,
+      "source_before_definition_sha256": "84b781cbd96873d0afa476eb805c0a9aa25ecddd672d349c43c08eeb2ff75376",
+      "source_after_definition_sha256": "2d961368ca2c8a145baa5746ddf9ec35ac2e29e9b112ef9d816cb2f5b133d092",
+      "contract": {
+        "callee": "new_default_test_definition",
+        "slot": 4,
+        "value": 255,
+        "native_site": "0x25ed4a2",
+        "native_call": "0x25ed4aa",
+        "kind": "graveyard_type_filter"
+      },
+      "reason": "Restore native type mask 0xff for the Zombie graveyard selection, retaining the subtype and shroud checks. The permanent-only filter excluded other Zombie card types."
+    },
+    {
+      "source": "functions/windows.c",
+      "name": "effect_card_text_replace_pipe_n",
+      "native_address": "0x2659740",
+      "native_size": 995,
+      "native_body_sha256": "18a12776b1bb33ac07c38de870b09330735060fba3889661acfcd86b15b13a4b",
+      "before_rebuilt_address": "0x26ea660",
+      "before_rebuilt_size": 763,
+      "before_rebuilt_body_sha256": "b240e539787c084fdc93beac5d8b4910147ee9a1c676dbb7657aa184f7358ad4",
+      "before_rebuilt_bytes": "5589e557565381ecb40100008b5d08c74424049c537702891c24e8a156010085c00f849201000083e804899d58feffff39c30f82100200008b9d58feffff8d8564feffff898554feffff898560feffff8a1384d20f843e0100008b4510c1e81f89855cfeffff8b450cc1e81f898550feffff8db600000000b90400000089debf9f537702f3a60f97c01c0084c00f8445010000bfa4537702b90400000089def3a60f97c01c0084c00f842a0100008a033c7c750a807b016e0f840a010000b904000000bfad53770289def3a60f97c180d90084c9747ab904000000bfb253770289def3a60f97c180d90084c974623c2f744eb905000000bfbc53770289def3a60f97c180d90084c90f84a30100003c5c0f847c010000803b7c0f85c6010000807b016e0f85bc01000083c3028b451089442408c7442404c8537702e937010000807b017c75ac807b026e75a68d742600807b017c0f84fe0000008b451083c30485c00f850001000080bd50feffff000f84f30000008b8560feffff8a1383c003c740fd2f2d3000898560feffff84d20f85e3feffff8d76008b8560feffffc600008b8554feffff894424048b8558feffff890424e83755010081c4b40100005b5e5f5dc38d742600807b022f0f85ecfeffff8db60000000080fa7c746383c3038b550c85d2753180bd5cfeffff0074288b8560feffff83c00266c740fe2d30c60000898560feffff8a1384d20f8566feffffeb848d7426008bb560feffff8b450c89342489442408c7442404a9537702e8db54010001c689b560feffffebc99083c302eb9b8d7600898558feffffe9e5fdffff8d742600908b451083c30385c00f8402ffffff66908b4510c7442404b7537702894424088bbd60feffff893c24e88b54010001c789bd60feffffe976ffffff807b017c0f857afeffff807b026e0f8570feffff83c3038b450ce97efeffff8b45108bbd60feffff8944240c8b450c893c2489442408c7442404c253770283c305e83854010001c789bd60feffffe923ffffff8b8560feffff43408850ff898560feffffe90dffffff",
+      "before_reccmp_score": 0.367816091954023,
+      "source_before_definition_sha256": "971b38814d42078e8ae19a9a0465a620db64e42ea026fd71527fdd84e7ef5b87",
+      "source_after_definition_sha256": "820c49b4c1e08f75f6220fea9e94f9db707187c283f2de1401a18007572422e7",
+      "contract": {
+        "callee": "strchr",
+        "slot": 0,
+        "string_bytes": [
+          43,
+          45,
+          124,
+          47,
+          92,
+          0
+        ],
+        "native_site": "0x26597bf",
+        "native_call": "0x26597c6",
+        "kind": "text_format_fastpath"
+      },
+      "reason": "Restore the native strchr fast path: ordinary characters are copied directly before testing format-token prefixes. All recognized patterns start with one of the five selector characters; retain every existing replacement rule."
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/onslaught.c",
+      "before_source_sha256": "3d9b40f30e56810661cd9d0f95ec6af2dbb74a9c6f853a042357cb4d07da122f",
+      "after_source_sha256": "7fee338e1237ce36cf64069ea78d1b248db8fe95186c15219798c382892ed8f2",
+      "before_bytes_sha256": "8b1ef16e81efb593302572d5e24425b3474abe3ebb09b2b7bc2ad3b7d8c809b8"
+    },
+    {
+      "source": "functions/windows.c",
+      "before_source_sha256": "e1ba14adc556dcaccb1d9648bbc4bfd3d9eb51fa298a580f2349a7b5a260daad",
+      "after_source_sha256": "c18edd51c79752f6c835a62fe43522d8d824324610a199b90776e55fd7a6822b",
+      "before_bytes_sha256": "07068f12a1d9779a85e6a5129d40e2ae46f848c3fa6ec431c0b5d6f2c4666c7d"
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "review": [
+    "Previous goal turn restored eleven native calls and verified their compiled operands; it was progress. This turn refreshes the full report and validates all 160 explicit source-address bindings before further edits.",
+    "The fresh report has 18,828 ranges: 12,466 exact, 270 effective, 6,092 different. Thirteen of the preceding seventeen source owners now compare exactly; the tiny-diff discovery queue has 395 entries. These scores precede the two changes in this record.",
+    "The repeated-caller scan examines all 6,078 eligible nonexact ranges. It stops at incoming branch targets as well as outgoing branches/calls. A linear predecessor can prepare values for a different path into a shared call; complete per-call-site counts do not prove path equivalence.",
+    "Goblin Tutor, damage_effects and Timecrafting were false positives from shared call blocks. Their allegedly absent 0x38, 0x76 and 0x85 operands already occur in the native code. The block-aware scan retains only Cruel Revival, which also has the native prompt and one unambiguous call.",
+    "The readonly-string scan ignores 75 diagnostic line-number changes and finds the formatter selector absent from both current literals and current function immediates. The captured typed decompilation is a reading aid; the native call and selector bytes are checked before editing.",
+    "Every formatter token starts with +, -, |, / or backslash. Native strchr excludes only ordinary-copy characters; all signed-zero and single-number formatting paths are retained. This restores a source-level fast path rather than introducing stack/register matching tricks.",
+    "The branch survey leaves byte-derived nonnegative loops and paired predicate inversions unchanged. resolve_gfp_ability explicitly returns either zero or a positive pending value, so Midnight Entourage's unsigned/nonzero spelling is not treated as a new bug.",
+    "One combined build and focused checks follow. The fresh full comparison becomes a historical snapshot after that build; no post-edit full-match score is claimed."
+  ],
+  "scope": "Two native-backed source changes plus a hash-pinned full comparison of the preceding seventeen changes. Reccmp classifications are not gameplay-equivalence proofs.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "ac236799d5e898fd8afdf3cbd798f920da722e157610fa01fed6bf7a63cb9af3",
+    "dbg_sha256": "ffac859be789ada8c2137ef0cea49ad548355f8462d561a783043119cfa551c8",
+    "functions": [
+      {
+        "source": "cards/onslaught.c",
+        "name": "card_cruel_revival",
+        "address": "0x2400060",
+        "size": 757,
+        "body_sha256": "30a7f7d84613e1df51e3cb7c85b7138f80ceeba535908e75fbb5e61138eeb642",
+        "proof": {
+          "callee": "new_default_test_definition",
+          "native_call": "0x25ed4aa",
+          "current_call": "0x24001e5",
+          "native_argument": {
+            "address": "0x25ed4a2",
+            "instruction": "mov dword ptr [esp + 4], 0xff",
+            "value": 255
+          },
+          "current_argument": {
+            "address": "0x24001dd",
+            "instruction": "mov dword ptr [esp + 4], 0xff",
+            "value": 255
+          },
+          "prompt": "Select target Zombie card.",
+          "source_change": "Only the native test type mask changes."
+        }
+      },
+      {
+        "source": "functions/windows.c",
+        "name": "effect_card_text_replace_pipe_n",
+        "address": "0x26ea660",
+        "size": 995,
+        "body_sha256": "8a97ab6839e11f0c0a81bf5fcd0c18e0d9f0d35d3b8e85ce4bf1e167c2690633",
+        "proof": {
+          "callee": "strchr",
+          "native_call": "0x26597c6",
+          "current_call": "0x26ea6e6",
+          "native_argument": {
+            "address": "0x26597bf",
+            "instruction": "mov dword ptr [esp], 0x275d5c7",
+            "value": 41276871
+          },
+          "current_argument": {
+            "address": "0x26ea6df",
+            "instruction": "mov dword ptr [esp], 0x277539f",
+            "value": 41374623
+          },
+          "selector_bytes": [
+            43,
+            45,
+            124,
+            47,
+            92,
+            0
+          ],
+          "result_branches": {
+            "native": {
+              "test": "0x26597cb",
+              "branch": "0x26597cd",
+              "instructions": [
+                "test eax, eax",
+                "je 0x2659980"
+              ]
+            },
+            "current": {
+              "test": "0x26ea6eb",
+              "branch": "0x26ea6ed",
+              "instructions": [
+                "test eax, eax",
+                "je 0x26ea8a0"
+              ]
+            }
+          },
+          "source_projection": "Removing only the ordinary-character guard reproduces the entire previous function definition byte-for-byte after newline normalization.",
+          "recognized_prefixes": [
+            "+|n/",
+            "-|n/",
+            "|n/",
+            "/+|n",
+            "/-|n",
+            "/|n",
+            "|n\\|n",
+            "\\|n",
+            "|n"
+          ]
+        }
+      }
+    ],
+    "staging": "preserved",
+    "scope": "Native filter argument and formatter selector/returned-pointer guard verified in fresh compiled bounds. Source projections preserve all other statements and nine recognized formatter prefixes. No post-edit whole-function similarity or gameplay-equivalence claim."
+  },
+  "build_log_sha256": "6d170b12c1c36c2d08fbd04a67c228881b635a2007cfd386e43e55dc79b582af"
+}

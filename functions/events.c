@@ -18,8 +18,9 @@ int call_card_function(int player, int card, event_t event)
   int iid = instance->internal_card_id;
   if (iid == -1)
     iid = instance->backup_internal_card_id;
-  return call_card_fn(cards_data[iid].code_pointer, get_card_instance(player, card), player, card,
-                      event);
+  CardFunction fn = cards_data[iid].code_pointer;
+  instance = get_card_instance(player, card);
+  return call_card_fn(fn, instance, player, card, event);
 }
 
 // A frontend for call_card_fn() where address should be computed from instance.
@@ -1232,12 +1233,13 @@ void set_characteristic_pt(int newval);
 /* ManalinkEh 2022: 0x26cd650; original functions/events.c:1190. */
 void set_base_pt(int newval)
 {
-  int result;
+  int old_base_pt;
 
-  result = raw_base_pt;
+  old_base_pt = raw_base_pt;
   raw_base_pt = newval;
   raw_characteristic_pt = raw_characteristic_pt & 0xffffbfff;
-  event_result = event_result + (newval - result);
+  event_result = (int32_t)((uint32_t)event_result +
+                          ((uint32_t)newval - (uint32_t)old_base_pt));
   return;
 }
 

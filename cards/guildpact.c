@@ -25,7 +25,7 @@ static int haunt_legacy(int player, int card, event_t event)
   int check = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (check)
   {
-    int amount = check == 67 ? card_counts[player][5] + 1 : 1;
+    int amount = check == 67 ? card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1 : 1;
     do
     {
       call_card_function(player, card, EVENT_HAUNT);
@@ -1047,7 +1047,7 @@ static int graven_dominator_legacy(int player, int card, event_t event){
 					int c;
 					for(c = 150; c>-1; c--)
 						if( marked[p][c] )
-							set_pt_and_abilities_until_eot(player, card, p, marked[p][c], 1, 1, 0, 0, 0);
+							real_set_pt(player, card, p, marked[p][c], 1, 1, 1);
 				};
 		);
 	}
@@ -1082,7 +1082,7 @@ int card_graven_dominator(int player, int card, event_t event){
 					int c;
 					for(c = 150; c>-1; c--)
 						if( marked[p][c] )
-							set_pt_and_abilities_until_eot(player, card, p, marked[p][c], 1, 1, 0, 0, 0);
+							real_set_pt(player, card, p, marked[p][c], 1, 1, 1);
 				};
 		);
 	}
@@ -2370,7 +2370,7 @@ int card_pyromatics(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
     return result;
   }
@@ -2379,7 +2379,7 @@ int card_pyromatics(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
       default_target_definition(player, card, &td, 0x102);
-      td.zone = 0x1200;
+      td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
       if ((card == affected_card) && (player == affected_card_controller))
       {
         generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ANY", 1, NULL);
@@ -2393,7 +2393,7 @@ int card_pyromatics(int player, int card, event_t event)
   else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     if (event == EVENT_RESOLVE_SPELL)
     {
       result = validate_target(player, card, &td, 0);
@@ -3382,9 +3382,9 @@ Whenever you cast a red spell, Tibor and Lumia deals 1 damage to each creature w
 	check_legend_rule(player, card, event);
 	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
 	    test_definition_t test;
-	    default_test_definition(&test, TYPE_ANY);
 	    int c1 = get_sleighted_color_test(player, card, COLOR_TEST_BLUE);
 	    int c2 = get_sleighted_color_test(player, card, COLOR_TEST_RED);
+	    default_test_definition(&test, TYPE_ANY);
 	    test.color = c1 | c2;
 	    sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, 0, &test, player, card);
 	}
@@ -3445,7 +3445,6 @@ int card_tin_street_hooligan(int player, int card, event_t event){
 
 int card_train_of_thoughts(int player, int card, event_t event)
 {
-  int result;
   if (event == EVENT_CAST_SPELL)
   {
     if ((card == affected_card) && (player == affected_card_controller))
@@ -3458,8 +3457,7 @@ int card_train_of_thoughts(int player, int card, event_t event)
     draw_cards(player, 1);
     kill_card(player, card, KILL_DESTROY);
   }
-  result = basic_spell(player, card, event);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 int card_ulasht(int player, int card, event_t event){
@@ -3786,7 +3784,7 @@ int card_ink_treader_nephilim(int player, int card, event_t event)
   int mc[2];
   target_t targ;
   int marked[2][151];
-  if (((((trigger_condition == 0xd3) && (card == affected_card)) &&
+  if (((((trigger_condition == TRIGGER_SPELL_CAST) && (card == affected_card)) &&
         (player == affected_card_controller)) &&
        ((reason_for_trigger_controller == player &&
          (target_index_or_trigger_check =

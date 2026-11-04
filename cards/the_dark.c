@@ -763,32 +763,32 @@ int card_curse_artifact(int player, int card, event_t event){
 
 static int dance_of_many_legacy(int player, int card, event_t event)
 {
-  int card_00;
+  int target_card;
   int t_card;
   card_instance_t *instance;
   int t_player;
-  int player_00;
+  int target_player;
   instance = get_card_instance(player, card);
   if (-1 < instance->damage_target_player)
   {
     instance = get_card_instance(player, card);
-    player_00 = (int)instance->damage_target_player;
-    card_00 = instance->damage_target_card;
-    instance = get_card_instance(player_00, card_00);
+    target_player = (int)instance->damage_target_player;
+    target_card = instance->damage_target_card;
+    instance = get_card_instance(target_player, target_card);
     t_player = (int)instance->damage_source_player;
     t_card = instance->damage_source_card;
     other_leaves_play(player, card, t_player, t_card, event, 0, 0);
     if (event != EVENT_LEAVES_PLAY_ABILITY)
     {
-      other_leaves_play(player, card, player_00, card_00, event, 0, 0);
+      other_leaves_play(player, card, target_player, target_card, event, 0, 0);
       return 0;
     }
     if ((t_player == trigger_cause_controller) && (t_card == trigger_cause))
     {
-      kill_card(player_00, card_00, KILL_EXILE);
+      kill_card(target_player, target_card, KILL_EXILE);
     }
-    other_leaves_play(player, card, player_00, card_00, EVENT_LEAVES_PLAY_ABILITY, 0, 0);
-    if ((player_00 == trigger_cause_controller) && (card_00 == trigger_cause))
+    other_leaves_play(player, card, target_player, target_card, EVENT_LEAVES_PLAY_ABILITY, 0, 0);
+    if ((target_player == trigger_cause_controller) && (target_card == trigger_cause))
     {
       kill_card(t_player, t_card, KILL_SACRIFICE);
     }
@@ -892,7 +892,8 @@ int card_deep_water(int player, int card, event_t event){
 
 	if (event == EVENT_CAST_SPELL){
 		if (affected_card_controller == player && is_what(player, affected_card, TYPE_LAND)){
-			set_special_flags2(affected_card_controller, affected_card, SF2_DEEP_WATER);
+			// The native mana-override path shares this flag with Contamination.
+			set_special_flags2(affected_card_controller, affected_card, SF2_CONTAMINATION);
 		}
 	}else if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE){
 		return generic_activated_ability(player, card, event, player == AI ? GAA_ONCE_PER_TURN : 0, MANACOST_U(1), 0, NULL, NULL);
@@ -2273,7 +2274,7 @@ Land
       mana_producer(player, card, event);
     }
   }
-  else if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == CHOICE_ABILITY && valid_target(&td))
+  else if (event == EVENT_RESOLVE_ACTIVATION && instance->info_slot == CHOICE_ABILITY && validate_target(player, card, &td, 0))
   {
     untap_card(instance->targets[0].player, instance->targets[0].card);
     create_targetted_legacy_effect(player, instance->parent_card, maze_of_ith_legacy,
@@ -4162,8 +4163,8 @@ int card_worms_of_the_earth(int player, int card, event_t event)
     sacrifice_priority = count_subtype(current_turn, 1, -1);
     land_count = count_subtype(current_turn, 1, -1);
     choice =
-        dialog_impl(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, "\001\002", "\001\014", "\001\010",
-                    current_turn, "Sac two lands", land_count, sacrifice_priority * 5,
+        dialog_impl(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, DLG_RANDOM, DLG_NO_STORAGE, DLG_WHO_CHOOSES(
+                    current_turn), "Sac two lands", land_count, sacrifice_priority * 5,
                     "Take 5 damage", 1, life_or_land_limit * 2, 0, 0, 0, 0);
     if (choice == 1)
     {

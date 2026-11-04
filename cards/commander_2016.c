@@ -211,9 +211,8 @@ Return all nonland permanents to their owners' hands.
 
 int card_deepglow_skate(int player, int card, event_t event)
 {
-  target_t *target_player_entry;
+  target_t target;
   int t_card;
-  target_t *target_card_entry;
   card_instance_t *instance;
   int target_player;
   int i;
@@ -234,10 +233,9 @@ int card_deepglow_skate(int player, int card, event_t event)
       break;
     if (new_pick_target(&td, "TARGET_PERMANENT", i, 0) == 0)
       break;
-    target_card_entry = instance->targets + i;
-    target_player_entry = instance->targets + i;
-    i = i + 1;
-    state_untargettable(target_player_entry->player, target_card_entry->card, 1);
+    target = instance->targets[i];
+    ++i;
+    state_untargettable(target.player, target.card, 1);
   } while (i != 10);
   i = 0;
   if (instance->number_of_targets != '\0')
@@ -488,43 +486,29 @@ Destroy target creature. You draw X cards and you lose X life, where X is the nu
 // Red
 int card_charging_cinderhorn(int player, int card, event_t event)
 {
-  card_instance_t *attacker;
-  card_instance_t *instance;
-  int result;
   haste(player, card, event);
   if (event == EVENT_DECLARE_ATTACKERS)
   {
     if (number_of_attackers_declared == 0)
-    {
       return 0;
-    }
-    instance = get_card_instance(player, card);
-    if (0 < active_cards_count[current_turn])
+    card_instance_t *instance = get_card_instance(player, card);
+    for (int c = 0; c < active_cards_count[current_turn]; ++c)
     {
-      result = 0;
-      do
-      {
-        attacker = in_play_and_attacking(current_turn, result);
-        if (attacker != NULL)
-        {
-          instance->info_slot = instance->info_slot + 1;
-        }
-        result = result + 1;
-      } while (result < active_cards_count[current_turn]);
+      if (in_play_and_attacking(current_turn, c))
+        ++instance->info_slot;
     }
   }
-  if ((((trigger_condition == 0xcd) && (card == affected_card)) &&
-       (player == affected_card_controller)) &&
-      (reason_for_trigger_controller == player))
+  if (trigger_condition == TRIGGER_EOT && card == affected_card &&
+      player == affected_card_controller && reason_for_trigger_controller == player)
   {
-    instance = get_card_instance(player, card);
-    result = instance->info_slot;
+    card_instance_t *instance = get_card_instance(player, card);
+    int trig = instance->info_slot;
     instance->info_slot = 0;
-    if ((result == 0) && (result = eot_trigger(player, card, event), result != 0))
+    if (trig == 0 && eot_trigger(player, card, event))
     {
       add_counters(player, card, player, card, COUNTER_FURY, 1);
-      result = count_counters(player, card, COUNTER_FURY);
-      damage_player(current_turn, result, player, card);
+      int amount = count_counters(player, card, COUNTER_FURY);
+      damage_player(current_turn, amount, player, card);
     }
   }
   return 0;
@@ -815,7 +799,7 @@ int card_stonehoof_chieftain(int player, int card, event_t event)
   if (event == EVENT_DAT_ABILITY)
   {
     instance = get_card_instance(player, card);
-    attacker_index = instance->info_slot + -1;
+    attacker_index = (int32_t)((uint32_t)instance->info_slot - 1U);
     if (-1 < (int)attacker_index)
     {
       do
@@ -1222,14 +1206,13 @@ int card_migratory_route(int player, int card, event_t event)
   {
     if (event == EVENT_RESOLVE_SPELL)
     {
-      generate_tokens_by_id(player, card, 0x4908, 4);
+      generate_tokens_by_id(player, card, CARD_ID_BIRD, 4);
       kill_card(player, card, KILL_DESTROY);
     }
     result = basic_spell(player, card, event);
     return result;
   }
-  result = commander_basic_landcycling(player, card, event);
-  return result;
+  return commander_basic_landcycling(player, card, event);
 }
 
 int card_ravos_soultender(int player, int card, event_t event){
@@ -1340,12 +1323,12 @@ static int reyhan_last_of_the_abzan_effect(int player, int card, event_t event)
 
     card_instance_t *instance = get_card_instance(player, card);
     int recorded = BYTE0(result);
-    int stored[20 * card_counts[player][5]];
+    int stored[20 * card_counts[player][CCOUNTS_TEYSA_KARLOV]];
     int sc = 0;
     int i;
     for (i = 1; i < recorded && i < 11; ++i)
     {
-      int repeat = card_counts[player][5] + 1;
+      int iterations = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
       do
       {
         int amount = instance->targets[i].player;
@@ -1358,7 +1341,7 @@ static int reyhan_last_of_the_abzan_effect(int player, int card, event_t event)
           break;
         stored[sc++] = amount;
         instance->targets[i].card = -1;
-      } while (--repeat > 0);
+      } while (--iterations > 0);
     }
     target_definition_t td;
     default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -1473,12 +1456,12 @@ int card_reyhan_last_of_the_abzan(int player, int card, event_t event)
     {
       card_instance_t *instance = get_card_instance(player, card);
       int recorded = BYTE0(result);
-      int stored[20 * card_counts[player][5]];
+      int stored[20 * card_counts[player][CCOUNTS_TEYSA_KARLOV]];
       int sc = 0;
       int i;
       for (i = 0; i < recorded && i < 11; ++i)
       {
-        int repeat = card_counts[player][5] + 1;
+        int repeat = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
         do
         {
           int amount = instance->targets[i].player;
@@ -1785,20 +1768,15 @@ Partner (You can have two commanders if both have partner.)
 
 int card_treacherous_terrain(int player, int card, event_t event)
 {
-  int result;
-  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  if (event - EVENT_CAN_ACTIVATE_FROM_HAND < 3)
+    return commander_basic_landcycling(player, card, event);
+  if (event == EVENT_RESOLVE_SPELL)
   {
-    if (event == EVENT_RESOLVE_SPELL)
-    {
-      result = count_subtype(1 - player, 1, -1);
-      damage_player(1 - player, result, player, card);
-      kill_card(player, card, KILL_DESTROY);
-    }
-    result = basic_spell(player, card, event);
-    return result;
+    int lands = count_subtype(1 - player, TYPE_LAND, -1);
+    damage_player(1 - player, lands, player, card);
+    kill_card(player, card, KILL_DESTROY);
   }
-  result = commander_basic_landcycling(player, card, event);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 int card_vial_smasher_the_fierce(int player, int card, event_t event){

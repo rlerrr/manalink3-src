@@ -1,0 +1,2028 @@
+{
+  "format": 1,
+  "status": "Three existing event/record definitions cleaned up; combined build, 15,169 fixed entry slots, twelve ABI/constant contracts and 458,752 post-change native/rebuilt fixture comparisons pass.",
+  "functions": [
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_dream_trawler",
+      "before_sha256": "825069b092fc83c8c4d6c5781dd2ac828a8b5c31de5434dc0cfa4d7de6ffb4a6",
+      "after_sha256": "0b7299c3082e2229737fe4da22779e7b3c2ff5dd30396a596f676d3ded5a4c0f",
+      "before_lines": 65,
+      "after_lines": 45
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_urzas_saga",
+      "before_sha256": "b043a70e7286416be0741072bbe892eaea6d8a6fa87840d1789fc2ac7c70db96",
+      "after_sha256": "142e0fb37d0e56f0ee0aaf5248958b0370b0d72e14144529bbe772f49aeef2b4",
+      "before_lines": 104,
+      "after_lines": 87
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_verdant_command",
+      "before_sha256": "a8c4bcb0f53edf16c9bd0171b22a1476b564d2a9c03854524c550d9493216738",
+      "after_sha256": "80c817ff09fa71266810f8c4c7cd5b549041e21575fc70d008733f4eae86314a",
+      "before_lines": 170,
+      "after_lines": 167
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/theros_beyond_death.c",
+      "before_bytes_sha256": "3b8804580117e3bd2a7c9892bbc45d6d34e0fdb31d465217f83019a22773b308",
+      "after_bytes_sha256": "67b86b7f42f99ae656c64c2297ad226ef2a9939bc0c5f5eebdb3bb3556da3cb2",
+      "before_sha256": "f814f2a101c0576473027dcf98c57aeb593d180206b933377e5b976d99d1f87e",
+      "after_sha256": "c095a73c94ac7ce018c6a48414846f0134f06eff2ae1bd6618130e35dfd53606"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "before_bytes_sha256": "5d517caa0d7bad845fd67d301981b184684687348b3b9798a8743611ef7d24c9",
+      "after_bytes_sha256": "b4a5cdfe63a8e0b9b1f5848188f30efddf547e87b72a43e11f0bf8136c033ff6",
+      "before_sha256": "13428078a6eddca855d8b7d1de25a19f2936a581f8481fc92e5b5754958047f5",
+      "after_sha256": "db978ce2aef1001710fa36ca60d4e39574432666ca700c71a4f114dcba40ecb9"
+    }
+  ],
+  "before_dll_sha256": "0bb438319eb93526e79d1bf7dc7b3fb411a315605a3982e790d9fd5a4f54a5a8",
+  "before_debug_sha256": "bc2043ba7bf48e2fdbb4a5d51f84128b0be0a6c7701e497b2f7a2b54a56c5e5a",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "before_fixture": {
+    "plan_sha256": "8b1fb6c2a8962e4ac88de017e9e7418defd80f897e725d077fedc124e9cb7287",
+    "log_sha256": "aaf12b25b6b790c5daeb7a5e735a4f9bf3076bb814a21c2c5acef00aa870a22a",
+    "cases": 458752,
+    "mismatches": 0,
+    "fixture_base_sha256": "6ed5ad10b9ae71af24128c4dc5a3e5a66c371e89814a6bbf99560c7d8a5324d7"
+  },
+  "native_quirks": [
+    "Dream Trawler does not execute the static-effects reset: the emitted reset block is behind incompatible event constraints.",
+    "Verdant Command uses native int[5] byte-fill values 0x01010101; legality/priority arguments and uninitialized human-path priorities remain unchanged."
+  ],
+  "native_array": {
+    "source": "cards/modern_horizons_2.c",
+    "function": "card_verdant_command",
+    "name": "abils",
+    "die": "0x1f6244d",
+    "bytes": 20,
+    "contract": [
+      "array",
+      [
+        5
+      ],
+      [
+        "scalar",
+        4,
+        5
+      ]
+    ]
+  },
+  "scope": "Three existing definitions, not new handlers. Native/rebuilt binary fixtures cover Dream Trawler and Urza's Saga with opaque leaf helpers and actual inst_info/set_inst_info code. Verdant initialization is a bounded native int-array byte-fill reconstruction, not a whole-handler verdict.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "8c4850eb6911e13489a195931bcb97bbcbcc073239c2b89d79cf40a69493f542",
+    "debug_sha256": "0b29df86deb139f6e220c04f74080facc59b80b53c36e86b427d47b9bff8f0de",
+    "build_log_sha256": "cc0872e4268117853e6fd3d49f09fe9c8008d00b7999ac76aad3a1299326bf24",
+    "full_file_projections": 2,
+    "raw_file_projections": 2,
+    "source_definitions": 3,
+    "contracts": {
+      "assertions": 12,
+      "result": "passed",
+      "source_sha256": "23c87aacc8dfd4f9596fdebd4b9661b71c652503e704c082a87308cd33967147",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiler": "GCC 9.3.0, -m32 -std=gnu11 -fsyntax-only"
+    },
+    "fixtures": {
+      "before": {
+        "plan": {
+          "entries": [
+            {
+              "side": 0,
+              "index": 0,
+              "name": "card_dream_trawler",
+              "address": "0x235c210",
+              "size": 643,
+              "sha256": "c4ac6a827b4cc45b15b9c21367819c009fe1a0b344def916bc7656c7c0cd5256"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "name": "card_urzas_saga",
+              "address": "0x2242640",
+              "size": 1289,
+              "sha256": "a36cae03df36d609594882e84e425729734531d5532da459f950b3bfeaaf2766"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "name": "card_dream_trawler",
+              "address": "0x2577ec0",
+              "size": 880,
+              "sha256": "a73f3bf7eee5f7548bf6934f877f6054780625cbacf374245050e29da856884a"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "name": "card_urzas_saga",
+              "address": "0x23a7750",
+              "size": 1296,
+              "sha256": "ea1061776d1f49621e22dc510ed47980bfdef7ab2f10d194517368c3eadb3d64"
+            }
+          ],
+          "patches": [
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 30,
+              "kind": "call",
+              "target": "lifelink",
+              "instruction": "0x235c22d",
+              "original": "0x26de600"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 58,
+              "kind": "call",
+              "target": "card_drawn_trigger",
+              "instruction": "0x235c249",
+              "original": "0x26977b0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 98,
+              "kind": "call",
+              "target": "dat_ability",
+              "instruction": "0x235c271",
+              "original": "0x268d9a0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 149,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c2a4",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 203,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "instruction": "0x235c2da",
+              "original": "0x267b300"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 221,
+              "kind": "call",
+              "target": "tap_card",
+              "instruction": "0x235c2ec",
+              "original": "0x2679c30"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 239,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c2fe",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 251,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x235c309",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 260,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x235c312",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 286,
+              "kind": "call",
+              "target": "check_for_special_ability",
+              "instruction": "0x235c32d",
+              "original": "0x26df890"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 296,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x235c336",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 305,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x235c33f",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 323,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c352",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 368,
+              "kind": "call",
+              "target": "pump_until_eot_merge_previous",
+              "instruction": "0x235c37f",
+              "original": "0x267ad30"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 506,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x235c409",
+              "original": "0x269db00"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 524,
+              "kind": "call",
+              "target": "draw_a_card",
+              "instruction": "0x235c41b",
+              "original": "0x26b3d00"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 552,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c437",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 592,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c45f",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 607,
+              "kind": "data",
+              "target": "stack_size",
+              "instruction": "0x235c46e",
+              "original": "0x5057a8"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 627,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c482",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 65,
+              "kind": "data",
+              "target": "affected_card",
+              "instruction": "0x224267f",
+              "original": "0x7a398c"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 113,
+              "kind": "call",
+              "target": "saga",
+              "instruction": "0x22426b0",
+              "original": "0x22cabe0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 154,
+              "kind": "call",
+              "target": "new_default_test_definition",
+              "instruction": "0x22426d9",
+              "original": "0x26bea60"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 210,
+              "kind": "callback",
+              "target": "has_mana_cost_0_or_1",
+              "instruction": "0x224270f",
+              "original": "0x222b7b0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 215,
+              "kind": "call",
+              "target": "new_global_tutor",
+              "instruction": "0x2242716",
+              "original": "0x2651990"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 232,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x2242727",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 320,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x224277f",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 416,
+              "kind": "call",
+              "target": "in_play",
+              "instruction": "0x22427df",
+              "original": "0x26b32d0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 477,
+              "kind": "call",
+              "target": "paying_mana",
+              "instruction": "0x224281c",
+              "original": "0x267ee80"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 609,
+              "kind": "call",
+              "target": "dialog_impl",
+              "instruction": "0x22428a0",
+              "original": "0x26e9c50"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 662,
+              "kind": "call",
+              "target": "add_state",
+              "instruction": "0x22428d5",
+              "original": "0x2687990"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 762,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x2242939",
+              "original": "0x269db00"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 768,
+              "kind": "data",
+              "target": "spell_fizzled",
+              "instruction": "0x224293e",
+              "original": "0x4ef194"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 781,
+              "kind": "data",
+              "target": "current_turn",
+              "instruction": "0x224294b",
+              "original": "0x628670"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 813,
+              "kind": "data",
+              "target": "current_phase",
+              "instruction": "0x224296b",
+              "original": "0x4ef184"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 830,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x224297c",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 838,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x2242984",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 856,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x2242997",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 896,
+              "kind": "call",
+              "target": "default_token_definition",
+              "instruction": "0x22429bf",
+              "original": "0x2665470"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 940,
+              "kind": "call",
+              "target": "generate_token",
+              "instruction": "0x22429eb",
+              "original": "0x26659d0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 954,
+              "kind": "data",
+              "target": "affected_card_controller",
+              "instruction": "0x22429f8",
+              "original": "0x738c84"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 972,
+              "kind": "call",
+              "target": "in_play",
+              "instruction": "0x2242a0b",
+              "original": "0x26b32d0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1023,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x2242a3e",
+              "original": "0x266ed00"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1141,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x2242ab4",
+              "original": "0x269db00"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1184,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x2242adf",
+              "original": "0x266ed00"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1202,
+              "kind": "data",
+              "target": "spell_fizzled",
+              "instruction": "0x2242af0",
+              "original": "0x4ef194"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1232,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x2242b0f",
+              "original": "0x266ed00"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1243,
+              "kind": "data",
+              "target": "current_phase",
+              "instruction": "0x2242b19",
+              "original": "0x4ef184"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1280,
+              "kind": "call",
+              "target": "remove_state",
+              "instruction": "0x2242b3f",
+              "original": "0x2687a50"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 30,
+              "kind": "call",
+              "target": "lifelink",
+              "instruction": "0x2577edd",
+              "original": "0x2653e70"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 58,
+              "kind": "call",
+              "target": "card_drawn_trigger",
+              "instruction": "0x2577ef9",
+              "original": "0x268a200"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 98,
+              "kind": "call",
+              "target": "dat_ability",
+              "instruction": "0x2577f21",
+              "original": "0x26a0640"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 168,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x2577f67",
+              "original": "0x266b260"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 219,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "instruction": "0x2577f9a",
+              "original": "0x26ad9e0"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 234,
+              "kind": "call",
+              "target": "tap_card",
+              "instruction": "0x2577fa9",
+              "original": "0x26acf00"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 249,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x2577fb8",
+              "original": "0x266b260"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 261,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x2577fc3",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 270,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x2577fcc",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 293,
+              "kind": "call",
+              "target": "check_for_special_ability",
+              "instruction": "0x2577fe4",
+              "original": "0x2655ff0"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 302,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x2577fed",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 310,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x2577ff5",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 325,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x2578004",
+              "original": "0x266b260"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 432,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x257806f",
+              "original": "0x26b18a0"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 480,
+              "kind": "call",
+              "target": "pump_until_eot_merge_previous",
+              "instruction": "0x257809f",
+              "original": "0x268efc0"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 592,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x257810f",
+              "original": "0x26b18a0"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 612,
+              "kind": "call",
+              "target": "draw_a_card",
+              "instruction": "0x2578123",
+              "original": "0x266c050"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 728,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x2578197",
+              "original": "0x26b18a0"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 752,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x25781af",
+              "original": "0x266b260"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 859,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x257821a",
+              "original": "0x26b18a0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 97,
+              "kind": "call",
+              "target": "saga",
+              "instruction": "0x23a77b0",
+              "original": "0x2153e70"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 114,
+              "kind": "data",
+              "target": "affected_card",
+              "instruction": "0x23a77c0",
+              "original": "0x7a398c"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 122,
+              "kind": "data",
+              "target": "affected_card_controller",
+              "instruction": "0x23a77c8",
+              "original": "0x738c84"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 136,
+              "kind": "call",
+              "target": "in_play",
+              "instruction": "0x23a77d7",
+              "original": "0x266ba30"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 179,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x23a7802",
+              "original": "0x26cab30"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 200,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x23a7817",
+              "original": "0x266b260"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 307,
+              "kind": "call",
+              "target": "saga",
+              "instruction": "0x23a7882",
+              "original": "0x2153e70"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 328,
+              "kind": "call",
+              "target": "in_play",
+              "instruction": "0x23a7897",
+              "original": "0x266ba30"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 384,
+              "kind": "call",
+              "target": "paying_mana",
+              "instruction": "0x23a78cf",
+              "original": "0x2686ec0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 530,
+              "kind": "call",
+              "target": "dialog_impl",
+              "instruction": "0x23a7961",
+              "original": "0x2672d90"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 583,
+              "kind": "call",
+              "target": "add_state",
+              "instruction": "0x23a7996",
+              "original": "0x26aa260"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 683,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x23a79fa",
+              "original": "0x26b18a0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 689,
+              "kind": "data",
+              "target": "spell_fizzled",
+              "instruction": "0x23a79ff",
+              "original": "0x4ef194"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 702,
+              "kind": "data",
+              "target": "current_turn",
+              "instruction": "0x23a7a0c",
+              "original": "0x628670"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 734,
+              "kind": "data",
+              "target": "current_phase",
+              "instruction": "0x23a7a2c",
+              "original": "0x4ef184"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 751,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x23a7a3d",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 759,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x23a7a45",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 776,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x23a7a57",
+              "original": "0x266b260"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 816,
+              "kind": "call",
+              "target": "default_token_definition",
+              "instruction": "0x23a7a7f",
+              "original": "0x26dd150"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 860,
+              "kind": "call",
+              "target": "generate_token",
+              "instruction": "0x23a7aab",
+              "original": "0x26dd260"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 946,
+              "kind": "call",
+              "target": "new_default_test_definition",
+              "instruction": "0x23a7b01",
+              "original": "0x26b6ed0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 996,
+              "kind": "callback",
+              "target": "has_mana_cost_0_or_1",
+              "instruction": "0x23a7b31",
+              "original": "0x23921a0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1001,
+              "kind": "call",
+              "target": "new_global_tutor",
+              "instruction": "0x23a7b38",
+              "original": "0x26e1850"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1029,
+              "kind": "call",
+              "target": "saga",
+              "instruction": "0x23a7b54",
+              "original": "0x2153e70"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1042,
+              "kind": "data",
+              "target": "spell_fizzled",
+              "instruction": "0x23a7b60",
+              "original": "0x4ef194"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1072,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x23a7b7f",
+              "original": "0x26cab30"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1184,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x23a7bef",
+              "original": "0x26b18a0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1224,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x23a7c17",
+              "original": "0x26cab30"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1235,
+              "kind": "data",
+              "target": "current_phase",
+              "instruction": "0x23a7c21",
+              "original": "0x4ef184"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1272,
+              "kind": "call",
+              "target": "remove_state",
+              "instruction": "0x23a7c47",
+              "original": "0x26aa320"
+            }
+          ],
+          "pure_helpers": [
+            {
+              "side": 0,
+              "name": "inst_info",
+              "address": "0x26b3740",
+              "size": 176,
+              "sha256": "6f7cf938bc9290fed93afadd9748de3ad586088428a7844cefd4df320fa46637"
+            },
+            {
+              "side": 0,
+              "name": "set_inst_info",
+              "address": "0x26b36e0",
+              "size": 96,
+              "sha256": "1f1866f0d3dd397ec8d85f674723bb44430e3fb61c56ff8177e2eeed152ba55b"
+            },
+            {
+              "side": 1,
+              "name": "inst_info",
+              "address": "0x2670850",
+              "size": 112,
+              "sha256": "a97143e88232379e7bc6870f1acc63aede13775414f5d970af766a551ee5fedc"
+            },
+            {
+              "side": 1,
+              "name": "set_inst_info",
+              "address": "0x26707e0",
+              "size": 112,
+              "sha256": "741c0a2d982de0eed3eb85e4bffeec666cb998379cd08cebe1f8d807e0cfd249"
+            }
+          ],
+          "inputs": {
+            ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+            "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+            "ManalinkEh.dll": "0bb438319eb93526e79d1bf7dc7b3fb411a315605a3982e790d9fd5a4f54a5a8",
+            "ManalinkEh.dbg": "bc2043ba7bf48e2fdbb4a5d51f84128b0be0a6c7701e497b2f7a2b54a56c5e5a"
+          },
+          "scope": "Patch direct opaque leaf calls, seven known globals and the test callback operand. Execute actual native/current inst_info and set_inst_info bodies, verified free of external calls and absolute data accesses."
+        },
+        "plan_sha256": "8b1fb6c2a8962e4ac88de017e9e7418defd80f897e725d077fedc124e9cb7287",
+        "cases": 458752,
+        "mismatches": 0,
+        "log_sha256": "aaf12b25b6b790c5daeb7a5e735a4f9bf3076bb814a21c2c5acef00aa870a22a",
+        "compiler_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "plan": {
+          "entries": [
+            {
+              "side": 0,
+              "index": 0,
+              "name": "card_dream_trawler",
+              "address": "0x235c210",
+              "size": 643,
+              "sha256": "c4ac6a827b4cc45b15b9c21367819c009fe1a0b344def916bc7656c7c0cd5256"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "name": "card_urzas_saga",
+              "address": "0x2242640",
+              "size": 1289,
+              "sha256": "a36cae03df36d609594882e84e425729734531d5532da459f950b3bfeaaf2766"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "name": "card_dream_trawler",
+              "address": "0x2577f00",
+              "size": 576,
+              "sha256": "2a3a3c4ce6784c88bbfdb20cc774688b0cc0c81fdc1fbfbb5dd56d4d5bfb0e35"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "name": "card_urzas_saga",
+              "address": "0x23a7750",
+              "size": 1296,
+              "sha256": "ef2d8d6b6946dd62b1d4cc0e447249b9d2a8fc588b21f30f55a7f6a6541fc6d9"
+            }
+          ],
+          "patches": [
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 30,
+              "kind": "call",
+              "target": "lifelink",
+              "instruction": "0x235c22d",
+              "original": "0x26de600"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 58,
+              "kind": "call",
+              "target": "card_drawn_trigger",
+              "instruction": "0x235c249",
+              "original": "0x26977b0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 98,
+              "kind": "call",
+              "target": "dat_ability",
+              "instruction": "0x235c271",
+              "original": "0x268d9a0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 149,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c2a4",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 203,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "instruction": "0x235c2da",
+              "original": "0x267b300"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 221,
+              "kind": "call",
+              "target": "tap_card",
+              "instruction": "0x235c2ec",
+              "original": "0x2679c30"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 239,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c2fe",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 251,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x235c309",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 260,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x235c312",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 286,
+              "kind": "call",
+              "target": "check_for_special_ability",
+              "instruction": "0x235c32d",
+              "original": "0x26df890"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 296,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x235c336",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 305,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x235c33f",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 323,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c352",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 368,
+              "kind": "call",
+              "target": "pump_until_eot_merge_previous",
+              "instruction": "0x235c37f",
+              "original": "0x267ad30"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 506,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x235c409",
+              "original": "0x269db00"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 524,
+              "kind": "call",
+              "target": "draw_a_card",
+              "instruction": "0x235c41b",
+              "original": "0x26b3d00"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 552,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c437",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 592,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c45f",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 607,
+              "kind": "data",
+              "target": "stack_size",
+              "instruction": "0x235c46e",
+              "original": "0x5057a8"
+            },
+            {
+              "side": 0,
+              "index": 0,
+              "offset": 627,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x235c482",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 65,
+              "kind": "data",
+              "target": "affected_card",
+              "instruction": "0x224267f",
+              "original": "0x7a398c"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 113,
+              "kind": "call",
+              "target": "saga",
+              "instruction": "0x22426b0",
+              "original": "0x22cabe0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 154,
+              "kind": "call",
+              "target": "new_default_test_definition",
+              "instruction": "0x22426d9",
+              "original": "0x26bea60"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 210,
+              "kind": "callback",
+              "target": "has_mana_cost_0_or_1",
+              "instruction": "0x224270f",
+              "original": "0x222b7b0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 215,
+              "kind": "call",
+              "target": "new_global_tutor",
+              "instruction": "0x2242716",
+              "original": "0x2651990"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 232,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x2242727",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 320,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x224277f",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 416,
+              "kind": "call",
+              "target": "in_play",
+              "instruction": "0x22427df",
+              "original": "0x26b32d0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 477,
+              "kind": "call",
+              "target": "paying_mana",
+              "instruction": "0x224281c",
+              "original": "0x267ee80"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 609,
+              "kind": "call",
+              "target": "dialog_impl",
+              "instruction": "0x22428a0",
+              "original": "0x26e9c50"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 662,
+              "kind": "call",
+              "target": "add_state",
+              "instruction": "0x22428d5",
+              "original": "0x2687990"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 762,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x2242939",
+              "original": "0x269db00"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 768,
+              "kind": "data",
+              "target": "spell_fizzled",
+              "instruction": "0x224293e",
+              "original": "0x4ef194"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 781,
+              "kind": "data",
+              "target": "current_turn",
+              "instruction": "0x224294b",
+              "original": "0x628670"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 813,
+              "kind": "data",
+              "target": "current_phase",
+              "instruction": "0x224296b",
+              "original": "0x4ef184"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 830,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x224297c",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 838,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x2242984",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 856,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x2242997",
+              "original": "0x26b2ab0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 896,
+              "kind": "call",
+              "target": "default_token_definition",
+              "instruction": "0x22429bf",
+              "original": "0x2665470"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 940,
+              "kind": "call",
+              "target": "generate_token",
+              "instruction": "0x22429eb",
+              "original": "0x26659d0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 954,
+              "kind": "data",
+              "target": "affected_card_controller",
+              "instruction": "0x22429f8",
+              "original": "0x738c84"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 972,
+              "kind": "call",
+              "target": "in_play",
+              "instruction": "0x2242a0b",
+              "original": "0x26b32d0"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1023,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x2242a3e",
+              "original": "0x266ed00"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1141,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x2242ab4",
+              "original": "0x269db00"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1184,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x2242adf",
+              "original": "0x266ed00"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1202,
+              "kind": "data",
+              "target": "spell_fizzled",
+              "instruction": "0x2242af0",
+              "original": "0x4ef194"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1232,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x2242b0f",
+              "original": "0x266ed00"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1243,
+              "kind": "data",
+              "target": "current_phase",
+              "instruction": "0x2242b19",
+              "original": "0x4ef184"
+            },
+            {
+              "side": 0,
+              "index": 1,
+              "offset": 1280,
+              "kind": "call",
+              "target": "remove_state",
+              "instruction": "0x2242b3f",
+              "original": "0x2687a50"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 30,
+              "kind": "call",
+              "target": "lifelink",
+              "instruction": "0x2577f1d",
+              "original": "0x2653d80"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 58,
+              "kind": "call",
+              "target": "card_drawn_trigger",
+              "instruction": "0x2577f39",
+              "original": "0x268a110"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 98,
+              "kind": "call",
+              "target": "dat_ability",
+              "instruction": "0x2577f61",
+              "original": "0x26a0550"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 151,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x2577f96",
+              "original": "0x266b170"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 254,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x2577ffd",
+              "original": "0x26b17b0"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 320,
+              "kind": "call",
+              "target": "pump_until_eot_merge_previous",
+              "instruction": "0x257803f",
+              "original": "0x268eed0"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 344,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x2578057",
+              "original": "0x266b170"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 398,
+              "kind": "call",
+              "target": "pump_ability_until_eot_no_repeat",
+              "instruction": "0x257808d",
+              "original": "0x26ad8f0"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 416,
+              "kind": "call",
+              "target": "tap_card",
+              "instruction": "0x257809f",
+              "original": "0x26ace10"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 434,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x25780b1",
+              "original": "0x266b170"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 466,
+              "kind": "call",
+              "target": "check_for_special_ability",
+              "instruction": "0x25780d1",
+              "original": "0x2655f00"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 475,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x25780da",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 483,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x25780e2",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 501,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x25780f4",
+              "original": "0x266b170"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 522,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x2578108",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 531,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x2578111",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 0,
+              "offset": 548,
+              "kind": "call",
+              "target": "draw_a_card",
+              "instruction": "0x2578123",
+              "original": "0x266bf60"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 97,
+              "kind": "call",
+              "target": "saga",
+              "instruction": "0x23a77b0",
+              "original": "0x2153e70"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 114,
+              "kind": "data",
+              "target": "affected_card",
+              "instruction": "0x23a77c0",
+              "original": "0x7a398c"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 122,
+              "kind": "data",
+              "target": "affected_card_controller",
+              "instruction": "0x23a77c8",
+              "original": "0x738c84"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 136,
+              "kind": "call",
+              "target": "in_play",
+              "instruction": "0x23a77d7",
+              "original": "0x266b940"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 179,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x23a7802",
+              "original": "0x26caa40"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 200,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x23a7817",
+              "original": "0x266b170"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 307,
+              "kind": "call",
+              "target": "saga",
+              "instruction": "0x23a7882",
+              "original": "0x2153e70"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 328,
+              "kind": "call",
+              "target": "in_play",
+              "instruction": "0x23a7897",
+              "original": "0x266b940"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 389,
+              "kind": "call",
+              "target": "paying_mana",
+              "instruction": "0x23a78d4",
+              "original": "0x2686dd0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 530,
+              "kind": "call",
+              "target": "dialog_impl",
+              "instruction": "0x23a7961",
+              "original": "0x2672ca0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 583,
+              "kind": "call",
+              "target": "add_state",
+              "instruction": "0x23a7996",
+              "original": "0x26aa170"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 683,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x23a79fa",
+              "original": "0x26b17b0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 689,
+              "kind": "data",
+              "target": "spell_fizzled",
+              "instruction": "0x23a79ff",
+              "original": "0x4ef194"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 702,
+              "kind": "data",
+              "target": "current_turn",
+              "instruction": "0x23a7a0c",
+              "original": "0x628670"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 736,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x23a7a2e",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 744,
+              "kind": "data",
+              "target": "ai_modifier",
+              "instruction": "0x23a7a36",
+              "original": "0x7a31a8"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 768,
+              "kind": "call",
+              "target": "get_card_instance",
+              "instruction": "0x23a7a4f",
+              "original": "0x266b170"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 808,
+              "kind": "call",
+              "target": "default_token_definition",
+              "instruction": "0x23a7a77",
+              "original": "0x26dd060"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 852,
+              "kind": "call",
+              "target": "generate_token",
+              "instruction": "0x23a7aa3",
+              "original": "0x26dd170"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 938,
+              "kind": "call",
+              "target": "new_default_test_definition",
+              "instruction": "0x23a7af9",
+              "original": "0x26b6de0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 988,
+              "kind": "callback",
+              "target": "has_mana_cost_0_or_1",
+              "instruction": "0x23a7b29",
+              "original": "0x23921a0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 993,
+              "kind": "call",
+              "target": "new_global_tutor",
+              "instruction": "0x23a7b30",
+              "original": "0x26e1760"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1021,
+              "kind": "call",
+              "target": "saga",
+              "instruction": "0x23a7b4c",
+              "original": "0x2153e70"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1034,
+              "kind": "data",
+              "target": "spell_fizzled",
+              "instruction": "0x23a7b58",
+              "original": "0x4ef194"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1064,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x23a7b77",
+              "original": "0x26caa40"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1176,
+              "kind": "call",
+              "target": "generic_activated_ability",
+              "instruction": "0x23a7be7",
+              "original": "0x26b17b0"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1216,
+              "kind": "call",
+              "target": "mana_producer",
+              "instruction": "0x23a7c0f",
+              "original": "0x26caa40"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1227,
+              "kind": "data",
+              "target": "current_phase",
+              "instruction": "0x23a7c19",
+              "original": "0x4ef184"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1268,
+              "kind": "call",
+              "target": "remove_state",
+              "instruction": "0x23a7c43",
+              "original": "0x26aa230"
+            },
+            {
+              "side": 1,
+              "index": 1,
+              "offset": 1279,
+              "kind": "data",
+              "target": "current_phase",
+              "instruction": "0x23a7c4d",
+              "original": "0x4ef184"
+            }
+          ],
+          "pure_helpers": [
+            {
+              "side": 0,
+              "name": "inst_info",
+              "address": "0x26b3740",
+              "size": 176,
+              "sha256": "6f7cf938bc9290fed93afadd9748de3ad586088428a7844cefd4df320fa46637"
+            },
+            {
+              "side": 0,
+              "name": "set_inst_info",
+              "address": "0x26b36e0",
+              "size": 96,
+              "sha256": "1f1866f0d3dd397ec8d85f674723bb44430e3fb61c56ff8177e2eeed152ba55b"
+            },
+            {
+              "side": 1,
+              "name": "inst_info",
+              "address": "0x2670760",
+              "size": 112,
+              "sha256": "a97143e88232379e7bc6870f1acc63aede13775414f5d970af766a551ee5fedc"
+            },
+            {
+              "side": 1,
+              "name": "set_inst_info",
+              "address": "0x26706f0",
+              "size": 112,
+              "sha256": "741c0a2d982de0eed3eb85e4bffeec666cb998379cd08cebe1f8d807e0cfd249"
+            }
+          ],
+          "inputs": {
+            ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+            "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+            "ManalinkEh.dll": "8c4850eb6911e13489a195931bcb97bbcbcc073239c2b89d79cf40a69493f542",
+            "ManalinkEh.dbg": "0b29df86deb139f6e220c04f74080facc59b80b53c36e86b427d47b9bff8f0de"
+          },
+          "scope": "Patch direct opaque leaf calls, seven known globals and the test callback operand. Execute actual native/current inst_info and set_inst_info bodies, verified free of external calls and absolute data accesses."
+        },
+        "plan_sha256": "e4e4791ebe424072e86136922415d1000f4fe4cdfc9bb0fd6ba76c9092e1d19b",
+        "cases": 458752,
+        "mismatches": 0,
+        "log_sha256": "aaf12b25b6b790c5daeb7a5e735a4f9bf3076bb814a21c2c5acef00aa870a22a",
+        "compiler_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "combined_fixture_comparisons": 917504,
+    "fixture_scope": "Actual native/rebuilt caller code for two handlers and inst_info/set_inst_info code. Other leaf calls are opaque deterministic stubs. Compare ordered arguments, returns, four complete 300-byte card records plus extensions, ai_modifier and spell_fizzled over 8192 environments, 14 events and both players per handler. Not full gameplay or a whole-handler verdict for Verdant Command.",
+    "fixture_sources": {
+      ".recovery\\event_fixture_base_c652.c": "6ed5ad10b9ae71af24128c4dc5a3e5a66c371e89814a6bbf99560c7d8a5324d7",
+      ".recovery\\prepare_event_fixture_c652.py": "34dbba76e1b8719bf4fbcb409931f5bb55a78366e5e4e65691aa59f9636d5d45",
+      ".recovery\\build_event_fixture_c652.py": "990e2faf239874a20018b83e0b72d37ed89dfe9802147c48c1c8756e57bb779c"
+    },
+    "checker_sha256": "77f573540d7b1c11487eea9f13ebaf29b9edf3526683fe025376c65bc4dfd93a",
+    "staging": "preserved"
+  }
+}

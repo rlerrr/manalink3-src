@@ -1,0 +1,475 @@
+{
+  "format": 1,
+  "status": "Four existing callers restored from native shared-helper boundaries; combined build, 15,169 fixed slots, three exact source projections and all native/rebuilt callee counts pass.",
+  "files": [
+    {
+      "source": "cards/aether_revolt.c",
+      "before_bytes_sha256": "e8d363aa99fc9d39d3d957e6a76bba15cf55ba53ffd06bb915d87c8bfebb7673",
+      "after_bytes_sha256": "8318446d15b576f2cbbc5e6afbbb127249053054277a7cc3d34cd0a8077a8369",
+      "before_sha256": "91c95a36b0839d4ed4e5b9a5b63c21d6d67c3cdfdffca2bd8807f964bb9ff0f8",
+      "after_sha256": "96919e6ac8662a04e88efc0db7e26e1898fec453cdd604997861f4337a589cc2"
+    },
+    {
+      "source": "cards/alara_reborn.c",
+      "before_bytes_sha256": "f9697042a97dacfada30378154231e2fc05a5f4573e32cb0c1b8690e5de4b101",
+      "after_bytes_sha256": "ec0677ca6dbf271578891941d270ebd3466405ae2a72d2df058c9ebcde17255a",
+      "before_sha256": "78b1169b7f65677e83c5d31165a54e573e0f37908a644a291ff599da09e06e9d",
+      "after_sha256": "2e98017b1ad31bbafc731442eff9d244e21e23b3025536364d6579e9e58e4e04"
+    },
+    {
+      "source": "cards/modern_horizons.c",
+      "before_bytes_sha256": "739d3064122c5bf3b735216f63bf56cfadfe5aea954f8229c7274478b9f499b0",
+      "after_bytes_sha256": "4a42ffbf2b28b529c89d82638a16a63db5485f2aa3296105e73284a9508d6449",
+      "before_sha256": "6e0c22d82045e4ba00b6ec098e981ebc520a6912f9c82a753bc496818fd6af9f",
+      "after_sha256": "965aaa5e94a89e9a8a1478cdcd45ad78a76ee81db19beb126d142d63c25ac4bd"
+    }
+  ],
+  "functions": [
+    {
+      "name": "card_implement_of_examination",
+      "source": "cards/aether_revolt.c",
+      "before_definition_sha256": "d6e93a4c5b2c89e1132347e2ded1fadebfb3ec9e398942e3009d270c11e6078c",
+      "after_definition_sha256": "391b3f2a3e49011f87de3075e299f6d5d54782b6007af52391dc21885897ebd6",
+      "before_lines": 23,
+      "after_lines": 10,
+      "native_range": {
+        "address": "0x20c2e10",
+        "size": 186,
+        "sha256": "8321d612957a1050634ef4cfe347d8180366cf8eddca1c5757d43ddebc7b7ba2"
+      },
+      "native_callees": [
+        {
+          "address": "0x20c2e98",
+          "operation": "call",
+          "target": "0x269db00",
+          "names": [
+            "_generic_activated_ability"
+          ]
+        },
+        {
+          "address": "0x20c2eab",
+          "operation": "call",
+          "target": "0x26b3d00",
+          "names": [
+            "_draw_a_card"
+          ]
+        },
+        {
+          "address": "0x20c2ec5",
+          "operation": "jmp",
+          "target": "0x20ba990",
+          "names": [
+            "_aer_implement"
+          ]
+        }
+      ],
+      "checked_callee_counts": {
+        "native": {
+          "aer_implement": 1,
+          "generic_activated_ability": 1,
+          "draw_a_card": 1
+        },
+        "rebuilt": {
+          "aer_implement": 1,
+          "generic_activated_ability": 1,
+          "draw_a_card": 1
+        }
+      },
+      "rebuilt_range": {
+        "address": "0x2019770",
+        "size": 192,
+        "sha256": "eb5490c4425b404b1631d9fcb5cd66a708a42b7d2ddc94f4b0ca2d657855c0d9"
+      },
+      "rebuilt_external_transfers": [
+        {
+          "address": "0x20197f8",
+          "operation": "call",
+          "target": "0x26b1670",
+          "names": [
+            "_generic_activated_ability"
+          ]
+        },
+        {
+          "address": "0x201980b",
+          "operation": "call",
+          "target": "0x266be10",
+          "names": [
+            "_draw_a_card"
+          ]
+        },
+        {
+          "address": "0x2019825",
+          "operation": "jmp",
+          "target": "0x2013d40",
+          "names": [
+            "_aer_implement"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "card_marisis_twinclaws",
+      "source": "cards/alara_reborn.c",
+      "before_definition_sha256": "fd6467d12c904e373e6350f67de17ef9ebf11255a3a81b16eb7c4c58198c1e72",
+      "after_definition_sha256": "33a4abb6d9b515e142ac7cf40a83581cc59ee7a6058007a26871ee39b50d7ac0",
+      "before_lines": 27,
+      "after_lines": 4,
+      "native_range": {
+        "address": "0x22fecc0",
+        "size": 25,
+        "sha256": "fbbe5294cf49debd3ece64e38f6f01e8a0a4fa8ec145ed37518265242efab5aa"
+      },
+      "native_callees": [
+        {
+          "address": "0x22fecd4",
+          "operation": "jmp",
+          "target": "0x22fa4b0",
+          "names": [
+            "_arb_new_hybrid"
+          ]
+        }
+      ],
+      "checked_callee_counts": {
+        "native": {
+          "arb_new_hybrid": 1
+        },
+        "rebuilt": {
+          "arb_new_hybrid": 1
+        }
+      },
+      "rebuilt_range": {
+        "address": "0x202dee0",
+        "size": 32,
+        "sha256": "44fa8e86ceebe2750a9586ee4a529092cad548d83d347a9a42b4a62aa0b311f0"
+      },
+      "rebuilt_external_transfers": [
+        {
+          "address": "0x202def4",
+          "operation": "jmp",
+          "target": "0x2026c70",
+          "names": [
+            "_arb_new_hybrid"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "card_sewn_eye_drake",
+      "source": "cards/alara_reborn.c",
+      "before_definition_sha256": "0f1e2c85b552d1c2ebd55d506680481a431837692daf634b3190664107edec29",
+      "after_definition_sha256": "e96ef4684b2a5783d9a21ac4a12668eadae42a08f83fef04119dd79694079258",
+      "before_lines": 28,
+      "after_lines": 5,
+      "native_range": {
+        "address": "0x23001d0",
+        "size": 62,
+        "sha256": "597a69a5819bba222f1c9e16bb336bb14c485dd15d7bcdce2a148a4ec9b27c4d"
+      },
+      "native_callees": [
+        {
+          "address": "0x23001f3",
+          "operation": "call",
+          "target": "0x26de7e0",
+          "names": [
+            "_haste"
+          ]
+        },
+        {
+          "address": "0x2300209",
+          "operation": "jmp",
+          "target": "0x22fa4b0",
+          "names": [
+            "_arb_new_hybrid"
+          ]
+        }
+      ],
+      "checked_callee_counts": {
+        "native": {
+          "arb_new_hybrid": 1,
+          "haste": 1
+        },
+        "rebuilt": {
+          "arb_new_hybrid": 1,
+          "haste": 1
+        }
+      },
+      "rebuilt_range": {
+        "address": "0x202df00",
+        "size": 64,
+        "sha256": "96e21718572c305054c9b8b9f57ccb4f234f53f0b93a25b3d5a4b75563d6346e"
+      },
+      "rebuilt_external_transfers": [
+        {
+          "address": "0x202df23",
+          "operation": "call",
+          "target": "0x2654840",
+          "names": [
+            "_haste"
+          ]
+        },
+        {
+          "address": "0x202df39",
+          "operation": "jmp",
+          "target": "0x2026c70",
+          "names": [
+            "_arb_new_hybrid"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "card_weather_the_storm",
+      "source": "cards/modern_horizons.c",
+      "before_definition_sha256": "7c4dd86e2d37c97179f5db08074826c8ed0c8a97d4aa67e65472498ffe863d9b",
+      "after_definition_sha256": "e43abc507e135801f8c118016815f58d23e2de8282eb80a121d5cf7c24dec16d",
+      "before_lines": 32,
+      "after_lines": 25,
+      "native_range": {
+        "address": "0x233dbb0",
+        "size": 235,
+        "sha256": "13f72dcfe6e859c2094058618958136dcf6329610c6d2779ac409f84b178dc84"
+      },
+      "native_callees": [
+        {
+          "address": "0x233dc0f",
+          "operation": "call",
+          "target": "0x26a1bd0",
+          "names": [
+            "_basic_spell"
+          ]
+        },
+        {
+          "address": "0x233dc2c",
+          "operation": "call",
+          "target": "0x2679dd0",
+          "names": [
+            "_check_special_flags"
+          ]
+        },
+        {
+          "address": "0x233dc4b",
+          "operation": "call",
+          "target": "0x268f900",
+          "names": [
+            "_gain_life"
+          ]
+        },
+        {
+          "address": "0x233dc51",
+          "operation": "call",
+          "target": "0x26c81e0",
+          "names": [
+            "_get_storm_count"
+          ]
+        },
+        {
+          "address": "0x233dc6b",
+          "operation": "call",
+          "target": "0x268f900",
+          "names": [
+            "_gain_life"
+          ]
+        },
+        {
+          "address": "0x233dc7f",
+          "operation": "call",
+          "target": "0x26b5a00",
+          "names": [
+            "_kill_card"
+          ]
+        },
+        {
+          "address": "0x233dc96",
+          "operation": "jmp",
+          "target": "0x26a1bd0",
+          "names": [
+            "_basic_spell"
+          ]
+        }
+      ],
+      "checked_callee_counts": {
+        "native": {
+          "basic_spell": 2,
+          "check_special_flags": 1,
+          "get_storm_count": 1,
+          "gain_life": 2,
+          "kill_card": 1
+        },
+        "rebuilt": {
+          "basic_spell": 2,
+          "check_special_flags": 1,
+          "get_storm_count": 1,
+          "gain_life": 2,
+          "kill_card": 1
+        }
+      },
+      "rebuilt_range": {
+        "address": "0x23898b0",
+        "size": 224,
+        "sha256": "3818bf53c35d9623aac876f2aa156e63a3930ebcdbebf4949255e6caf3172615"
+      },
+      "rebuilt_external_transfers": [
+        {
+          "address": "0x23898ff",
+          "operation": "call",
+          "target": "0x26abdd0",
+          "names": [
+            "_basic_spell"
+          ]
+        },
+        {
+          "address": "0x238991c",
+          "operation": "call",
+          "target": "0x268d6e0",
+          "names": [
+            "_check_special_flags"
+          ]
+        },
+        {
+          "address": "0x238993b",
+          "operation": "call",
+          "target": "0x26978c0",
+          "names": [
+            "_gain_life"
+          ]
+        },
+        {
+          "address": "0x2389941",
+          "operation": "call",
+          "target": "0x26d4ba0",
+          "names": [
+            "_get_storm_count"
+          ]
+        },
+        {
+          "address": "0x238995b",
+          "operation": "call",
+          "target": "0x26978c0",
+          "names": [
+            "_gain_life"
+          ]
+        },
+        {
+          "address": "0x238996f",
+          "operation": "call",
+          "target": "0x266dab0",
+          "names": [
+            "_kill_card"
+          ]
+        },
+        {
+          "address": "0x2389986",
+          "operation": "jmp",
+          "target": "0x26abdd0",
+          "names": [
+            "_basic_spell"
+          ]
+        }
+      ]
+    }
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "inputs": {
+    ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+    "ManalinkEh.dll": "282f80b6fe2b73b12b56fc497074e2561cc7d38117b22a3c0834df8530f7319f",
+    "ManalinkEh.dbg": "93ed79fb65759df3636b1a88f4f95a20ad18eb2072d6502d272ad96e41f9958c"
+  },
+  "discovery": {
+    "report_sha256": "40097e9a039fff9f0655a982c6e292d247a6ae6fdb4b60bf92d287ed6d07c072",
+    "receipt": {
+      "setup_sha256": "d0e87daef82208e3bac29ae1cc814147559401bcac1699c9a6647fdde602088b",
+      "report_sha256": "40097e9a039fff9f0655a982c6e292d247a6ae6fdb4b60bf92d287ed6d07c072",
+      "inputs": {
+        "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "C:\\dev\\manalink3-src\\ManalinkEh.dll": "282f80b6fe2b73b12b56fc497074e2561cc7d38117b22a3c0834df8530f7319f",
+        "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "93ed79fb65759df3636b1a88f4f95a20ad18eb2072d6502d272ad96e41f9958c",
+        "C:\\dev\\manalink3-src\\.recovery\\2022-Magic.exe": "0170f02b1c381a20a97ca0c12e99c8d338453ce4edbfc99148e726d565bee0de"
+      },
+      "metadata_sha256": "461a4e4689d0cdabeac3bc3aa45fd8f7993d82fe4589b4275f917819cfa87beb",
+      "metadata_snapshot": ".recovery\\reccmp\\tiny-refresh-c659.metadata.csv",
+      "global_metadata_snapshot": ".recovery\\reccmp\\tiny-refresh-c659.globals.csv",
+      "global_metadata_sha256": "4bd078c759882fd6f758d1ec43ab13606b0e8e288c32b13ec11f52609c5142c9",
+      "global_bindings_snapshot": ".recovery\\reccmp\\tiny-refresh-c659.globals.json",
+      "global_bindings_sha256": "3e3d052ac5ff319ae3da038eba1eaef09727cd35c89ebb19fd9b077f460d897e",
+      "external_metadata_snapshot": ".recovery\\reccmp\\tiny-refresh-c659.externals.csv",
+      "external_metadata_sha256": "8dd2bc9adff98ec4456bdc2a752a289dea509b82753350b8d70c1f59d40c4bf7",
+      "external_bindings_snapshot": ".recovery\\reccmp\\tiny-refresh-c659.externals.json",
+      "external_bindings_sha256": "5a140a29ea2a3184906996ee43821a68a2d2ee53f4d08742c568d2e5cd3d9d1a",
+      "external_audit_snapshot": ".recovery\\reccmp\\tiny-refresh-c659.external-audit.json",
+      "external_audit_sha256": "0bd35804d4e3d0b53a3825cf5ccc4a47f62d48974951f8aabefdf00d5819927b",
+      "verified_external_bindings": 64,
+      "external_matching_enabled": true,
+      "verified_global_bindings": {
+        "verified": 293,
+        "bindings_sha256": "ecd32d6fb7ff1855c3f7702ba7098b20db92285818c792e3593ccfa6fdc6ce50"
+      },
+      "project_config_sha256": "a978a638b5f154a514be6229cd0b012f96fb8431f1bfc4c4f00c3cf13bc0d371",
+      "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+      "comparator_source_sha256": {
+        "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+        "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+        "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+        "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+        "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+        "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+        "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b",
+        "C:\\dev\\reccmp\\reccmp\\compare\\asm\\replacement.py": "28aec46cd59d06ca10cf6a9946e3b7fd1d3b3af3b2b400536afb5d4089b497c9",
+        "C:\\dev\\reccmp\\reccmp\\compare\\core.py": "bd85389476236576619e4bf404691d5aab618f4ddb12280e0ecae1fc865c1dbd",
+        "C:\\dev\\reccmp\\reccmp\\compare\\db.py": "364562d3eab1bb9ec03f9390804cb13d8131a09c06c25a6a2b66abc5d66f60a9",
+        "C:\\dev\\reccmp\\reccmp\\types.py": "d7096e7e44739d18054f1115f6ea23c65e1bb6dfbc994a86aef80668287aca14",
+        "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_globals.py": "1e870d89b4afbc15950d26c59a94162aecc70bec0700f60c032373a76910f3bc",
+        "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_externals.py": "d748a9223c09382c6f1302b0d019b6238062ddd0b619ded5992df67ef521fb83",
+        "C:\\dev\\manalink3-src\\tools\\reccmp_project.py": "c29d6cb6b6767e2fc3ea6a8d8915216301c1cb2b6e2c4288660c6dbc325e21b0"
+      },
+      "command": [
+        "reccmp-reccmp",
+        "--target",
+        "MANALINK2022",
+        "--no-color",
+        "--json",
+        ".recovery/reccmp/tiny-refresh-c659.json",
+        "--silent"
+      ],
+      "exit_code": 0
+    },
+    "callee_scan_sha256": "ef6e899522f27c78b95c80bedd315327d79be0ffdd844a6c1d509dd5e0ea810e",
+    "scope": "Full-report scan without score/instruction-count cutoffs found 53 changed named-callee groups and 18 call-argument groups. They are hints, not confirmed source bugs. The stricter immediate positive-return scan found no candidates among 4,262 source owners."
+  },
+  "scope": "Four existing card definitions across three C files. Restore aer_implement, arb_new_hybrid and basic_spell callers from native call/tail-call instructions. No shared helper definition changed. Preserve haste first, activation draw before GAA, native hybrid colors, current-card guard, cancellation/not-cast checks, dynamic storm rereads and resolve gain/kill order. No claim that prior expanded code caused a gameplay bug.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "dc2316c3d2dbd50e91fba8223d11811d7b73979aa6e7652ac001da8a096ea948",
+    "debug_sha256": "fd56e23009bfda5f2377191f6b2ad65843d7f16b86b1357000af13c3f622f123",
+    "build_log_sha256": "3dce81cf8765c6a480c20ca276e172e73c821c3e3cf15489ae053ca0caaedc53",
+    "full_file_projections": 3,
+    "raw_file_projections": 3,
+    "functions": 4,
+    "native_and_rebuilt_shared_transfer_counts": {
+      "card_implement_of_examination": {
+        "aer_implement": 1,
+        "generic_activated_ability": 1,
+        "draw_a_card": 1
+      },
+      "card_marisis_twinclaws": {
+        "arb_new_hybrid": 1
+      },
+      "card_sewn_eye_drake": {
+        "arb_new_hybrid": 1,
+        "haste": 1
+      },
+      "card_weather_the_storm": {
+        "basic_spell": 2,
+        "check_special_flags": 1,
+        "get_storm_count": 1,
+        "gain_life": 2,
+        "kill_card": 1
+      }
+    },
+    "checker_sha256": "93b514a49efb1db3af310562dff744ca6d08546b978cffefe363dd284c2f6845",
+    "staging": "preserved",
+    "scope": "Exact source projections and actual decoded external call/tail-call counts. These checks confirm restored native shared boundaries, not whole-handler execution, leaf behavior or full-game equivalence. No second full comparison; the C659 report remains the pre-edit discovery snapshot."
+  }
+}

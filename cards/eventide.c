@@ -54,7 +54,7 @@ static int hatchling(int player, int card, event_t event, int c1, int c2)
   unsigned int second_spell_color;
   test_definition_t test;
   enters_the_battlefield_with_counters(player, card, event, COUNTER_M1_M1, 4);
-  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_SPELL_CAST) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     result = is_humiliated(player, card, AL_TRIG);
@@ -1850,7 +1850,7 @@ int card_figure_of_destiny(int player, int card, event_t event)
   else if (avatar_match == 0)
     avatar_priority = 0x14;
   ability_choice_or_result = dialog_impl(
-      player, card, EVENT_ACTIVATE, "\001\002", "\001\033", "2/2 Kithkin Spirit", spirit_available,
+      player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_MODE, "2/2 Kithkin Spirit", spirit_available,
       spirit_priority, "4/4 Kithkin Spirit Warrior", warrior_available, warrior_priority,
       "8/8 Kithkin Spirit Warrior Avatar", avatar_available, avatar_priority, 0, 0, 0, 0);
   if (ability_choice_or_result == 0)
@@ -2835,12 +2835,12 @@ int card_necroskitter(int player, int card, event_t event)
         GFPC_TRACK_DEAD_CREATURES | GFPC_EXTRA_SKIP_TOKENS | GFPC_STORE_OWNER, 0);
   }
 
-  if (get_card_instance(player, card)->kill_code <= 0)
+  if (get_card_instance(player, card)->kill_code == 0)
   {
-    card_instance_t *instance = get_card_instance(player, card);
     int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
     if (amount)
     {
+      card_instance_t *instance = get_card_instance(player, card);
       int i;
       for (i = 0; i < amount && i < 11; i++)
       {
@@ -2923,7 +2923,7 @@ Search target player's library for up to X cards, where X is the number of |H1Sw
 				new_default_test_definition(&this_test, TYPE_ANY, msg);
 				this_test.no_shuffle = 1;
 				int crd = new_global_tutor(player, instance->targets[0].player, TUTOR_FROM_DECK, TUTOR_RFG, 0, AI_MAX_VALUE, &this_test);
-				if( crd != -1 ){
+				if( crd >= 0 ){
 					removed[r_count] = get_internal_card_id_from_csv_id(crd);
 					r_count++;
 				}
@@ -3098,24 +3098,15 @@ int card_oonas_grace(int player, int card, event_t event){
 
 int card_overbeing_of_myth(int player, int card, event_t event)
 {
-  int result;
   if (event - EVENT_POWER < 2)
   {
-    if (((card == affected_card) && (affected_card_controller == player)) && (player != -1))
-    {
+    if (affect_me(player, card) && player != -1)
       set_characteristic_pt(hand_count[player]);
-    }
   }
-  else if ((event == EVENT_DRAW_PHASE) && (current_turn == player))
-  {
-    result = is_humiliated(player, card, AL_TRIG);
-    if (result == 0)
-    {
-      event_result = event_result + 1;
-    }
-  }
-  result = hybrid(player, card, event);
-  return result;
+  else if (event == EVENT_DRAW_PHASE && current_turn == player &&
+           !is_humiliated(player, card, AL_TRIG))
+    ++event_result;
+  return hybrid(player, card, event);
 }
 
 int card_patrol_signaler(int player, int card, event_t event){
@@ -4055,7 +4046,7 @@ int card_springjack_pasture(int player, int card, event_t event)
 		  if (num_goats)
 			declare_mana_available_hex(player, COLOR_TEST_ANY_COLORED, num_goats);
 		  else if (can_mana)
-			declare_mana_available(player, COLOR_TEST_COLORLESS, 1);
+			declare_mana_available(player, COLOR_COLORLESS, 1);
 		  return 0;
 		}
 
@@ -4838,24 +4829,9 @@ int card_lingering_tormentor(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x236d3e0; original cards/eventide.c:3281. */
 int card_rendclaw_trow(int player, int card, event_t event)
 {
-  int result;
   wither(player, card, event);
   persist(player, card, event);
-  if (event != EVENT_MODIFY_COST)
-  {
-    if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
-        (player == affected_card_controller))
-    {
-      result = hybrid_casting(player, card, 0);
-      if (result == 0)
-      {
-        spell_fizzled = 1;
-      }
-    }
-    return (unsigned int)(event == EVENT_CAN_CAST);
-  }
-  modify_cost_for_hybrid_spells(player, card, EVENT_MODIFY_COST, 0);
-  return 0;
+  return hybrid(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x23700f0; original cards/eventide.c:4086. */
@@ -4869,7 +4845,7 @@ int card_springjack_shepherd(int player, int card, event_t event)
     return 0;
   }
   result = chroma(player, -1, COLOR_WHITE, 0);
-  generate_tokens_by_id(player, card, 0x4939, result);
+  generate_tokens_by_id(player, card, CARD_ID_GOAT, result);
   return 0;
 }
 
@@ -4939,33 +4915,25 @@ static int fod_2(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2362f40; original cards/eventide.c:1717. */
 static int fod_3(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-
-  if ((event - EVENT_POWER < 2 || event == EVENT_CHANGE_TYPE) || (event == EVENT_ABILITIES))
+  if (event - EVENT_POWER < 2 || event == EVENT_CHANGE_TYPE || event == EVENT_ABILITIES)
   {
-
-    instance = get_card_instance(player, card);
-    if ((instance->damage_target_card == affected_card) &&
-        (instance->damage_target_player == affected_card_controller))
+    card_instance_t *inst = get_card_instance(player, card);
+    int p = inst->damage_target_player;
+    int c = inst->damage_target_card;
+    if (affect_me(p, c))
     {
-
-      instance =
-          get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
+      card_instance_t *att = get_card_instance(p, c);
       if (event - EVENT_POWER < 2)
-      {
         set_base_pt(8);
-      }
       else if (event == EVENT_ABILITIES)
-      {
-        event_result = event_result | 0x120;
-      }
+        event_result |= 0x120;
       else
       {
-        update_alter_remove_creature_subtypes(instance);
-        update_alter_add_subtype(SUBTYPE_KITHKIN, instance);
-        update_alter_add_subtype(SUBTYPE_SPIRIT, instance);
-        update_alter_add_subtype(SUBTYPE_WARRIOR, instance);
-        update_alter_add_subtype(SUBTYPE_AVATAR, instance);
+        update_alter_remove_creature_subtypes(att);
+        update_alter_add_subtype(SUBTYPE_KITHKIN, att);
+        update_alter_add_subtype(SUBTYPE_SPIRIT, att);
+        update_alter_add_subtype(SUBTYPE_WARRIOR, att);
+        update_alter_add_subtype(SUBTYPE_AVATAR, att);
       }
     }
   }

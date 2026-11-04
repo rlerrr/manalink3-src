@@ -650,21 +650,24 @@ int card_elder_pine_of_jukai(int player, int card, event_t event)
 
   if (event == EVENT_SPA)
   {
-    int *deck = deck_ptr[player];
-    show_deck(current_turn, deck, 3, "Here's the revealed cards", 0, EXE_STR(ENGINE_DONE_LABEL));
-    show_deck(current_turn ^ 1, deck, 3, "Here's the revealed cards", 0, EXE_STR(ENGINE_DONE_LABEL));
+    show_deck(current_turn, deck_ptr[player], 3, "Here's the revealed cards", 0, EXE_STR(ENGINE_DONE_LABEL));
+    show_deck(current_turn ^ 1, deck_ptr[player], 3, "Here's the revealed cards", 0, EXE_STR(ENGINE_DONE_LABEL));
     int amount = MIN(3, count_deck(player));
-    for (int i = amount - 1; i >= 0; --i)
-    {
-      if (is_what(-1, deck[i], TYPE_LAND))
-      {
-        add_card_to_hand(player, deck[i]);
-        remove_card_from_deck(player, i);
-        --amount;
-      }
-    }
     if (amount > 0)
-      put_top_x_on_bottom(player, player, amount);
+    {
+      int *deck = deck_ptr[player];
+      for (int i = amount - 1; i >= 0; --i)
+      {
+        if (is_what(-1, deck[i], TYPE_LAND))
+        {
+          add_card_to_hand(player, deck[i]);
+          remove_card_from_deck(player, i);
+          --amount;
+        }
+      }
+      if (amount > 0)
+        put_top_x_on_bottom(player, player, amount);
+    }
   }
 
   return soulshift(player, card, event, 2, 1);
@@ -1425,14 +1428,12 @@ int card_jiwari_the_earth_aflame(int player, int card, event_t event){
 
 int card_kagemaro_first_to_suffer(int player, int card, event_t event)
 {
-  int result;
   check_legend_rule(player, card, event);
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    pump_subtype_until_eot(player, card, current_turn, -1, -hand_count[player], -hand_count[player],
-                           0, 0);
-    pump_subtype_until_eot(player, card, current_turn ^ 1, -1, -hand_count[player],
-                           -hand_count[player], 0, 0);
+    APNAP(p, {
+      pump_subtype_until_eot(player, card, p, -1, -hand_count[player], -hand_count[player], 0, 0);
+    });
   }
   else if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
             (affected_card_controller == player)) &&
@@ -1440,8 +1441,7 @@ int card_kagemaro_first_to_suffer(int player, int card, event_t event)
   {
     set_characteristic_pt(hand_count[player]);
   }
-  result = generic_activated_ability(player, card, event, 8, 0, 1, 0, 0, 0, 0, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 8, 0, 1, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
 static void store_iid_on_kaho(int player, int card, int iid){
@@ -3629,7 +3629,7 @@ static int card_choice_of_damnation_impl(int player, int card, event_t event)
       if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
       {
         default_target_definition(player, card, &td, 2);
-        td.zone = 0x1000;
+        td.zone = TARGET_ZONE_PLAYERS;
         instance = get_card_instance(player, card);
         if ((event == EVENT_RESOLVE_SPELL) &&
             (target_or_permanent_count = valid_target(&td), target_or_permanent_count != 0))
@@ -3683,7 +3683,7 @@ static int card_choice_of_damnation_impl(int player, int card, event_t event)
     }
   }
   default_target_definition(player, card, &td, 2);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   get_card_instance(player, card);
   return generic_spell(player, card, event, 0x40, &td, NULL, 1, NULL);
 }
@@ -3727,7 +3727,7 @@ int card_freed_from_the_real(int player, int card, event_t event)
       {
         untap_priority = 10;
       }
-      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Untap enchanted creature", 1,
+      result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Untap enchanted creature", 1,
                            untap_priority, "Tap enchanted creature", 1, 10, 0, 0, 0, 0);
       if (result == 0)
       {

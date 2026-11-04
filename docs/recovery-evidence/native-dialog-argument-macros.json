@@ -1,0 +1,2764 @@
+{
+  "format": 1,
+  "status": "101 DIALOG variadic groups and five local token selections named in 51 existing definitions across 32 C files; 13 macro contracts, source projections, 168 unchanged runtime objects, unchanged DLL runtime sections, build and 15,169 fixed slots pass.",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "native_enum_cu": "functions/dialog.c",
+  "native_enum_die": "0x6f2c27d",
+  "native_enumerators": {
+    "8": "DLGIMPL_WHO_CHOOSES_CH",
+    "17": "DLGIMPL_SMALLCARD_ID_CH",
+    "9": "DLGIMPL_HEADER_CH",
+    "6": "DLGIMPL_FULLCARD_CH",
+    "7": "DLGIMPL_SMALLCARD_CH",
+    "16": "DLGIMPL_MANA_CH",
+    "20": "DLGIMPL_TARGET_CH",
+    "22": "DLGIMPL_NO_DISPLAY_FOR_AI_CH",
+    "23": "DLGIMPL_NO_OP_CH",
+    "10": "DLGIMPL_FULLCARD_ID_CH",
+    "5": "DLGIMPL_CHOOSE_TWO_CH",
+    "14": "DLGIMPL_AUTOCHOOSE_IF_1_CH",
+    "19": "DLGIMPL_STORE_IN_CH",
+    "11": "DLGIMPL_FULLCARD_CSVID_CH"
+  },
+  "references": [
+    {
+      "source": "cards/aether_revolt.c",
+      "function": "pias_revolution_effect",
+      "offset": 180738,
+      "end": 180758,
+      "before": "\"\\001\\010\", opponent",
+      "after": "DLG_WHO_CHOOSES(opponent)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "opponent"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "function": "pias_revolution_effect",
+      "offset": 180794,
+      "end": 180825,
+      "before": "\"\\001\\021\", graveyard[position]",
+      "after": "DLG_SMALLCARD_ID(graveyard[position])",
+      "token": "\"\\001\\021\"",
+      "value": 17,
+      "macro": "DLG_SMALLCARD_ID",
+      "parameters": [
+        "graveyard[position]"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_ID_CH"
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "function": "card_pias_revolution",
+      "offset": 185683,
+      "end": 185703,
+      "before": "\"\\001\\010\", opponent",
+      "after": "DLG_WHO_CHOOSES(opponent)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "opponent"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "function": "card_pias_revolution",
+      "offset": 185739,
+      "end": 185770,
+      "before": "\"\\001\\021\", graveyard[position]",
+      "after": "DLG_SMALLCARD_ID(graveyard[position])",
+      "token": "\"\\001\\021\"",
+      "value": 17,
+      "macro": "DLG_SMALLCARD_ID",
+      "parameters": [
+        "graveyard[position]"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_ID_CH"
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "function": "card_dispossess",
+      "offset": 289106,
+      "end": 289121,
+      "before": "\"\\001\\021\", iid",
+      "after": "DLG_SMALLCARD_ID(iid)",
+      "token": "\"\\001\\021\"",
+      "value": 17,
+      "macro": "DLG_SMALLCARD_ID",
+      "parameters": [
+        "iid"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_ID_CH"
+    },
+    {
+      "source": "cards/battlebond.c",
+      "function": "card_pirs_whim",
+      "offset": 47238,
+      "end": 47263,
+      "before": "\"\\001\\011\", buffer_caster",
+      "after": "DLG_HEADER(buffer_caster)",
+      "token": "\"\\001\\011\"",
+      "value": 9,
+      "macro": "DLG_HEADER",
+      "parameters": [
+        "buffer_caster"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_HEADER_CH"
+    },
+    {
+      "source": "cards/battlebond.c",
+      "function": "card_pirs_whim",
+      "offset": 47543,
+      "end": 47558,
+      "before": "\"\\001\\011\", buf",
+      "after": "DLG_HEADER(buf)",
+      "token": "\"\\001\\011\"",
+      "value": 9,
+      "macro": "DLG_HEADER",
+      "parameters": [
+        "buf"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_HEADER_CH"
+    },
+    {
+      "source": "cards/battlebond.c",
+      "function": "card_last_one_standing",
+      "offset": 54032,
+      "end": 54103,
+      "before": "\"\\001\\006\", chosen_player,\r\n                  own_creatures_or_selected",
+      "after": "DLG_FULLCARD(chosen_player,\r\n                  own_creatures_or_selected)",
+      "token": "\"\\001\\006\"",
+      "value": 6,
+      "macro": "DLG_FULLCARD",
+      "parameters": [
+        "chosen_player",
+        "own_creatures_or_selected"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_FULLCARD_CH"
+    },
+    {
+      "source": "cards/battlebond.c",
+      "function": "card_last_one_standing",
+      "offset": 54105,
+      "end": 54123,
+      "before": "\"\\001\\011\", buffer",
+      "after": "DLG_HEADER(buffer)",
+      "token": "\"\\001\\011\"",
+      "value": 9,
+      "macro": "DLG_HEADER",
+      "parameters": [
+        "buffer"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_HEADER_CH"
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "function": "card_arbiter_of_the_ideal",
+      "offset": 27693,
+      "end": 27722,
+      "before": "\"\\001\\021\", *deck_ptr[player]",
+      "after": "DLG_SMALLCARD_ID(*deck_ptr[player])",
+      "token": "\"\\001\\021\"",
+      "value": 17,
+      "macro": "DLG_SMALLCARD_ID",
+      "parameters": [
+        "*deck_ptr[player]"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_ID_CH"
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "function": "card_arbiter_of_the_ideal",
+      "offset": 27724,
+      "end": 27774,
+      "before": "\"\\001\\011\",\r\n                        reveal_prompt",
+      "after": "DLG_HEADER(\r\n                        reveal_prompt)",
+      "token": "\"\\001\\011\"",
+      "value": 9,
+      "macro": "DLG_HEADER",
+      "parameters": [
+        "reveal_prompt"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_HEADER_CH"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "function": "card_kwain_itinerant_meddler",
+      "offset": 57468,
+      "end": 57489,
+      "before": "\"\\001\\010\", player_00",
+      "after": "DLG_WHO_CHOOSES(player_00)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "player_00"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "function": "card_livio_oathsworn_sentinel",
+      "offset": 275798,
+      "end": 275820,
+      "before": "\"\\001\\010\", controller",
+      "after": "DLG_WHO_CHOOSES(controller)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "controller"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "function": "card_livio_oathsworn_sentinel",
+      "offset": 275822,
+      "end": 275871,
+      "before": "\"\\001\\007\", controller, instance->targets[0].card",
+      "after": "DLG_SMALLCARD(controller, instance->targets[0].card)",
+      "token": "\"\\001\\007\"",
+      "value": 7,
+      "macro": "DLG_SMALLCARD",
+      "parameters": [
+        "controller",
+        "instance->targets[0].card"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_CH"
+    },
+    {
+      "source": "cards/darksteel.c",
+      "function": "card_coretapper",
+      "offset": 23557,
+      "end": 23611,
+      "before": "\"\\001\\020\", 0, 0, 0,\r\n                         0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 0,\r\n                         0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/darksteel.c",
+      "function": "card_coretapper",
+      "offset": 23622,
+      "end": 23656,
+      "before": "\"\\001\\024\", &td, \"TARGET_ARTIFACT\"",
+      "after": "DLG_TARGET(&td, \"TARGET_ARTIFACT\")",
+      "token": "\"\\001\\024\"",
+      "value": 20,
+      "macro": "DLG_TARGET",
+      "parameters": [
+        "&td",
+        "\"TARGET_ARTIFACT\""
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_TARGET_CH"
+    },
+    {
+      "source": "cards/darksteel.c",
+      "function": "card_coretapper",
+      "offset": 23730,
+      "end": 23758,
+      "before": "\"\\001\\020\", 0, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/darksteel.c",
+      "function": "card_coretapper",
+      "offset": 23786,
+      "end": 23820,
+      "before": "\"\\001\\024\", &td, \"TARGET_ARTIFACT\"",
+      "after": "DLG_TARGET(&td, \"TARGET_ARTIFACT\")",
+      "token": "\"\\001\\024\"",
+      "value": 20,
+      "macro": "DLG_TARGET",
+      "parameters": [
+        "&td",
+        "\"TARGET_ARTIFACT\""
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_TARGET_CH"
+    },
+    {
+      "source": "cards/dominaria.c",
+      "function": "dominaria_memorial_impl",
+      "offset": 205539,
+      "end": 205549,
+      "before": "\"\\001\\026\"",
+      "after": "DLG_NO_DISPLAY_FOR_AI",
+      "token": "\"\\001\\026\"",
+      "value": 22,
+      "macro": "DLG_NO_DISPLAY_FOR_AI",
+      "kind": "selected_token",
+      "variable": "payment_mode",
+      "native_enumerator": "DLGIMPL_NO_DISPLAY_FOR_AI_CH"
+    },
+    {
+      "source": "cards/dominaria.c",
+      "function": "dominaria_memorial_impl",
+      "offset": 205596,
+      "end": 205606,
+      "before": "\"\\001\\027\"",
+      "after": "DLG_NO_OP",
+      "token": "\"\\001\\027\"",
+      "value": 23,
+      "macro": "DLG_NO_OP",
+      "kind": "selected_token",
+      "variable": "payment_mode",
+      "native_enumerator": "DLGIMPL_NO_OP_CH"
+    },
+    {
+      "source": "cards/eldritch_moon.c",
+      "function": "card_spell_queller",
+      "offset": 197310,
+      "end": 197349,
+      "before": "\"\\001\\010\", instance->targets[1].player",
+      "after": "DLG_WHO_CHOOSES(instance->targets[1].player)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "instance->targets[1].player"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/eldritch_moon.c",
+      "function": "card_spell_queller",
+      "offset": 197422,
+      "end": 197459,
+      "before": "\"\\001\\021\", instance->targets[1].card",
+      "after": "DLG_SMALLCARD_ID(instance->targets[1].card)",
+      "token": "\"\\001\\021\"",
+      "value": 17,
+      "macro": "DLG_SMALLCARD_ID",
+      "parameters": [
+        "instance->targets[1].card"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_ID_CH"
+    },
+    {
+      "source": "cards/eldritch_moon.c",
+      "function": "card_minds_dilation",
+      "offset": 221633,
+      "end": 221666,
+      "before": "\"\\001\\012\", exiled_iid_or_trigger",
+      "after": "DLG_FULLCARD_ID(exiled_iid_or_trigger)",
+      "token": "\"\\001\\012\"",
+      "value": 10,
+      "macro": "DLG_FULLCARD_ID",
+      "parameters": [
+        "exiled_iid_or_trigger"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_FULLCARD_ID_CH"
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "function": "card_gemstone_array",
+      "offset": 71054,
+      "end": 71082,
+      "before": "\"\\001\\020\", 2, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(2, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "2",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "function": "card_gemstone_array",
+      "offset": 71492,
+      "end": 71520,
+      "before": "\"\\001\\020\", 2, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(2, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "2",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/homelands.c",
+      "function": "card_coral_reef",
+      "offset": 37169,
+      "end": 37197,
+      "before": "\"\\001\\020\", 0, 0, 1, 0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 1, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "1",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "function": "card_torment_of_hailfire",
+      "offset": 85260,
+      "end": 85280,
+      "before": "\"\\001\\010\", opponent",
+      "after": "DLG_WHO_CHOOSES(opponent)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "opponent"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "function": "card_reason_believe",
+      "offset": 131617,
+      "end": 131637,
+      "before": "\"\\001\\012\", *library",
+      "after": "DLG_FULLCARD_ID(*library)",
+      "token": "\"\\001\\012\"",
+      "value": 10,
+      "macro": "DLG_FULLCARD_ID",
+      "parameters": [
+        "*library"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_FULLCARD_ID_CH"
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "function": "card_hostile_desert",
+      "offset": 135328,
+      "end": 135356,
+      "before": "\"\\001\\020\", 2, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(2, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "2",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "function": "card_iceberg",
+      "offset": 135401,
+      "end": 135429,
+      "before": "\"\\001\\020\", 3, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(3, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "3",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "function": "card_breath_of_dreams",
+      "offset": 377278,
+      "end": 377347,
+      "before": "\"\\001\\006\",\r\n                           active_player_or_result, card",
+      "after": "DLG_FULLCARD(\r\n                           active_player_or_result, card)",
+      "token": "\"\\001\\006\"",
+      "value": 6,
+      "macro": "DLG_FULLCARD",
+      "parameters": [
+        "active_player_or_result",
+        "card"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_FULLCARD_CH"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "function": "card_breath_of_dreams",
+      "offset": 377349,
+      "end": 377390,
+      "before": "\"\\001\\007\", active_player_or_result, card",
+      "after": "DLG_SMALLCARD(active_player_or_result, card)",
+      "token": "\"\\001\\007\"",
+      "value": 7,
+      "macro": "DLG_SMALLCARD",
+      "parameters": [
+        "active_player_or_result",
+        "card"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_CH"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "function": "card_breath_of_dreams",
+      "offset": 377420,
+      "end": 377455,
+      "before": "\"\\001\\010\", active_player_or_result",
+      "after": "DLG_WHO_CHOOSES(active_player_or_result)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "active_player_or_result"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/ikoria.c",
+      "function": "vivien_library_ability",
+      "offset": 24542,
+      "end": 24590,
+      "before": "\"\\001\\021\",\r\n                  top_iid_or_result",
+      "after": "DLG_SMALLCARD_ID(\r\n                  top_iid_or_result)",
+      "token": "\"\\001\\021\"",
+      "value": 17,
+      "macro": "DLG_SMALLCARD_ID",
+      "parameters": [
+        "top_iid_or_result"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_ID_CH"
+    },
+    {
+      "source": "cards/ixalan.c",
+      "function": "explore",
+      "offset": 101848,
+      "end": 101865,
+      "before": "\"\\001\\012\", *deck",
+      "after": "DLG_FULLCARD_ID(*deck)",
+      "token": "\"\\001\\012\"",
+      "value": 10,
+      "macro": "DLG_FULLCARD_ID",
+      "parameters": [
+        "*deck"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_FULLCARD_ID_CH"
+    },
+    {
+      "source": "cards/kaladesh.c",
+      "function": "card_aetherborn_marauder",
+      "offset": 64181,
+      "end": 64202,
+      "before": "\"\\001\\007\", player, c",
+      "after": "DLG_SMALLCARD(player, c)",
+      "token": "\"\\001\\007\"",
+      "value": 7,
+      "macro": "DLG_SMALLCARD",
+      "parameters": [
+        "player",
+        "c"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_CH"
+    },
+    {
+      "source": "cards/kaladesh.c",
+      "function": "card_aetherborn_marauder",
+      "offset": 64981,
+      "end": 65026,
+      "before": "\"\\001\\007\", player,\r\n                       c",
+      "after": "DLG_SMALLCARD(player,\r\n                       c)",
+      "token": "\"\\001\\007\"",
+      "value": 7,
+      "macro": "DLG_SMALLCARD",
+      "parameters": [
+        "player",
+        "c"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_CH"
+    },
+    {
+      "source": "cards/kaladesh.c",
+      "function": "card_durable_handicraft",
+      "offset": 148261,
+      "end": 148335,
+      "before": "\"\\001\\007\",\r\n                      trigger_cause_controller, trigger_cause",
+      "after": "DLG_SMALLCARD(\r\n                      trigger_cause_controller, trigger_cause)",
+      "token": "\"\\001\\007\"",
+      "value": 7,
+      "macro": "DLG_SMALLCARD",
+      "parameters": [
+        "trigger_cause_controller",
+        "trigger_cause"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_CH"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "function": "ward_granted",
+      "offset": 85763,
+      "end": 85797,
+      "before": "\"\\001\\010\", spell_player_or_result",
+      "after": "DLG_WHO_CHOOSES(spell_player_or_result)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "spell_player_or_result"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "function": "card_verdant_command",
+      "offset": 318685,
+      "end": 318708,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "function": "card_verdant_command",
+      "offset": 321433,
+      "end": 321456,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "function": "ward_action",
+      "offset": 332233,
+      "end": 332248,
+      "before": "\"\\001\\010\", tcp",
+      "after": "DLG_WHO_CHOOSES(tcp)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "tcp"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/onslaught.c",
+      "function": "check_for_turned_face_up_card_interactions",
+      "offset": 9870,
+      "end": 9892,
+      "before": "\"\\001\\012\", raptor_iid",
+      "after": "DLG_FULLCARD_ID(raptor_iid)",
+      "token": "\"\\001\\012\"",
+      "value": 10,
+      "macro": "DLG_FULLCARD_ID",
+      "parameters": [
+        "raptor_iid"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_FULLCARD_ID_CH"
+    },
+    {
+      "source": "cards/rise_of_the_eldrazi.c",
+      "function": "card_brimstone_mage",
+      "offset": 104753,
+      "end": 104763,
+      "before": "\"\\001\\027\"",
+      "after": "DLG_NO_OP",
+      "token": "\"\\001\\027\"",
+      "value": 23,
+      "macro": "DLG_NO_OP",
+      "kind": "selected_token",
+      "variable": "dialog_mode",
+      "native_enumerator": "DLGIMPL_NO_OP_CH"
+    },
+    {
+      "source": "cards/rise_of_the_eldrazi.c",
+      "function": "card_brimstone_mage",
+      "offset": 104800,
+      "end": 104810,
+      "before": "\"\\001\\016\"",
+      "after": "DLG_AUTOCHOOSE_IF_1",
+      "token": "\"\\001\\016\"",
+      "value": 14,
+      "macro": "DLG_AUTOCHOOSE_IF_1",
+      "kind": "selected_token",
+      "variable": "dialog_mode",
+      "native_enumerator": "DLGIMPL_AUTOCHOOSE_IF_1_CH"
+    },
+    {
+      "source": "cards/rise_of_the_eldrazi.c",
+      "function": "card_brimstone_mage",
+      "offset": 104932,
+      "end": 104942,
+      "before": "\"\\001\\027\"",
+      "after": "DLG_NO_OP",
+      "token": "\"\\001\\027\"",
+      "value": 23,
+      "macro": "DLG_NO_OP",
+      "kind": "selected_token",
+      "variable": "dialog_mode",
+      "native_enumerator": "DLGIMPL_NO_OP_CH"
+    },
+    {
+      "source": "cards/rise_of_the_eldrazi.c",
+      "function": "card_brimstone_mage",
+      "offset": 105122,
+      "end": 105150,
+      "before": "\"\\001\\020\", 3, 0, 0, 0, 1, 0",
+      "after": "DLG_MANA6(3, 0, 0, 0, 1, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "3",
+        "0",
+        "0",
+        "0",
+        "1",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/rise_of_the_eldrazi.c",
+      "function": "card_brimstone_mage",
+      "offset": 105243,
+      "end": 105293,
+      "before": "\"\\001\\024\", &td,\r\n                    \"TARGET_ANY\"",
+      "after": "DLG_TARGET(&td,\r\n                    \"TARGET_ANY\")",
+      "token": "\"\\001\\024\"",
+      "value": 20,
+      "macro": "DLG_TARGET",
+      "parameters": [
+        "&td",
+        "\"TARGET_ANY\""
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_TARGET_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 134435,
+      "end": 134463,
+      "before": "\"\\001\\020\", 0, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 134488,
+      "end": 134540,
+      "before": "\"\\001\\020\", 0, 0, 0,\r\n                       0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 0,\r\n                       0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 134542,
+      "end": 134574,
+      "before": "\"\\001\\024\", &td, \"TARGET_PLAYER\"",
+      "after": "DLG_TARGET(&td, \"TARGET_PLAYER\")",
+      "token": "\"\\001\\024\"",
+      "value": 20,
+      "macro": "DLG_TARGET",
+      "parameters": [
+        "&td",
+        "\"TARGET_PLAYER\""
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_TARGET_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 134829,
+      "end": 134878,
+      "before": "\"\\001\\020\", 0, 0, 0, 0,\r\n                    0, 0",
+      "after": "DLG_MANA6(0, 0, 0, 0,\r\n                    0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 134903,
+      "end": 134931,
+      "before": "\"\\001\\020\", 0, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 134933,
+      "end": 134986,
+      "before": "\"\\001\\024\", &td,\r\n                    \"TARGET_PLAYER\"",
+      "after": "DLG_TARGET(&td,\r\n                    \"TARGET_PLAYER\")",
+      "token": "\"\\001\\024\"",
+      "value": 20,
+      "macro": "DLG_TARGET",
+      "parameters": [
+        "&td",
+        "\"TARGET_PLAYER\""
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_TARGET_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 135956,
+      "end": 136001,
+      "before": "\"\\001\\020\", 0, 0,\r\n                0, 0, 0, 0",
+      "after": "DLG_MANA6(0, 0,\r\n                0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 136026,
+      "end": 136054,
+      "before": "\"\\001\\020\", 0, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 136056,
+      "end": 136105,
+      "before": "\"\\001\\024\", &td,\r\n                \"TARGET_PLAYER\"",
+      "after": "DLG_TARGET(&td,\r\n                \"TARGET_PLAYER\")",
+      "token": "\"\\001\\024\"",
+      "value": 20,
+      "macro": "DLG_TARGET",
+      "parameters": [
+        "&td",
+        "\"TARGET_PLAYER\""
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_TARGET_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 136735,
+      "end": 136782,
+      "before": "\"\\001\\020\", 0, 0, 0,\r\n                  0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 0,\r\n                  0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 136825,
+      "end": 136853,
+      "before": "\"\\001\\020\", 0, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 136874,
+      "end": 136906,
+      "before": "\"\\001\\024\", &td, \"TARGET_PLAYER\"",
+      "after": "DLG_TARGET(&td, \"TARGET_PLAYER\")",
+      "token": "\"\\001\\024\"",
+      "value": 20,
+      "macro": "DLG_TARGET",
+      "parameters": [
+        "&td",
+        "\"TARGET_PLAYER\""
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_TARGET_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 137525,
+      "end": 137553,
+      "before": "\"\\001\\020\", 0, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 137607,
+      "end": 137635,
+      "before": "\"\\001\\020\", 0, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_grindclock",
+      "offset": 137637,
+      "end": 137669,
+      "before": "\"\\001\\024\", &td, \"TARGET_PLAYER\"",
+      "after": "DLG_TARGET(&td, \"TARGET_PLAYER\")",
+      "token": "\"\\001\\024\"",
+      "value": 20,
+      "macro": "DLG_TARGET",
+      "parameters": [
+        "&td",
+        "\"TARGET_PLAYER\""
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_TARGET_CH"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "function": "card_lorehold_command",
+      "offset": 218697,
+      "end": 218720,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "function": "card_lorehold_command",
+      "offset": 220670,
+      "end": 220693,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "function": "card_prismari_command",
+      "offset": 224085,
+      "end": 224108,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "function": "card_prismari_command",
+      "offset": 226542,
+      "end": 226565,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "function": "card_silverquill_command",
+      "offset": 230525,
+      "end": 230548,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "function": "card_silverquill_command",
+      "offset": 233297,
+      "end": 233320,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "function": "card_witherbloom_command",
+      "offset": 238239,
+      "end": 238262,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "function": "card_witherbloom_command",
+      "offset": 241077,
+      "end": 241100,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "function": "card_quandrix_command",
+      "offset": 343392,
+      "end": 343415,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "function": "card_quandrix_command",
+      "offset": 346333,
+      "end": 346356,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/tempest.c",
+      "function": "card_essence_bottle",
+      "offset": 64911,
+      "end": 64939,
+      "before": "\"\\001\\020\", 3, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(3, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "3",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/tempest.c",
+      "function": "card_essence_bottle",
+      "offset": 64965,
+      "end": 65021,
+      "before": "\"\\001\\020\", 0, 0,\r\n                           0, 0, 0, 0",
+      "after": "DLG_MANA6(0, 0,\r\n                           0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/tempest.c",
+      "function": "card_essence_bottle",
+      "offset": 65226,
+      "end": 65277,
+      "before": "\"\\001\\020\", 3, 0, 0,\r\n                      0, 0, 0",
+      "after": "DLG_MANA6(3, 0, 0,\r\n                      0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "3",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/tempest.c",
+      "function": "card_essence_bottle",
+      "offset": 65303,
+      "end": 65331,
+      "before": "\"\\001\\020\", 0, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(0, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/the_dark.c",
+      "function": "card_worms_of_the_earth",
+      "offset": 139558,
+      "end": 139603,
+      "before": "\"\\001\\010\",\r\n                    current_turn",
+      "after": "DLG_WHO_CHOOSES(\r\n                    current_turn)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "current_turn"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "function": "card_nylea_keen_eyed",
+      "offset": 80007,
+      "end": 80024,
+      "before": "\"\\001\\021\", *deck",
+      "after": "DLG_SMALLCARD_ID(*deck)",
+      "token": "\"\\001\\021\"",
+      "value": 17,
+      "macro": "DLG_SMALLCARD_ID",
+      "parameters": [
+        "*deck"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_ID_CH"
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "function": "card_clockspinning",
+      "offset": 42742,
+      "end": 42833,
+      "before": "\"\\001\\006\", instance->targets[0].player,\r\n                        instance->targets[0].card",
+      "after": "DLG_FULLCARD(instance->targets[0].player,\r\n                        instance->targets[0].card)",
+      "token": "\"\\001\\006\"",
+      "value": 6,
+      "macro": "DLG_FULLCARD",
+      "parameters": [
+        "instance->targets[0].player",
+        "instance->targets[0].card"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_FULLCARD_CH"
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "function": "card_clockspinning",
+      "offset": 42835,
+      "end": 42853,
+      "before": "\"\\001\\011\", prompt",
+      "after": "DLG_HEADER(prompt)",
+      "token": "\"\\001\\011\"",
+      "value": 9,
+      "macro": "DLG_HEADER",
+      "parameters": [
+        "prompt"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_HEADER_CH"
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "function": "card_clockspinning",
+      "offset": 42855,
+      "end": 42873,
+      "before": "\"\\001\\010\", player",
+      "after": "DLG_WHO_CHOOSES(player)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "player"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "function": "card_the_fallen_apart",
+      "offset": 91481,
+      "end": 91509,
+      "before": "\"\\001\\011\", limb_description",
+      "after": "DLG_HEADER(limb_description)",
+      "token": "\"\\001\\011\"",
+      "value": 9,
+      "macro": "DLG_HEADER",
+      "parameters": [
+        "limb_description"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_HEADER_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_everythingamajig_c",
+      "offset": 64000,
+      "end": 64038,
+      "before": "\"\\001\\023\", &instance->targets[5].card",
+      "after": "DLG_STORE_IN(&instance->targets[5].card)",
+      "token": "\"\\001\\023\"",
+      "value": 19,
+      "macro": "DLG_STORE_IN",
+      "parameters": [
+        "&instance->targets[5].card"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_STORE_IN_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_everythingamajig_c",
+      "offset": 64075,
+      "end": 64103,
+      "before": "\"\\001\\020\", 1, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(1, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "1",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_everythingamajig_c",
+      "offset": 64164,
+      "end": 64192,
+      "before": "\"\\001\\020\", 3, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(3, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "3",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_everythingamajig_c",
+      "offset": 64203,
+      "end": 64235,
+      "before": "\"\\001\\024\", &td, \"TARGET_PLAYER\"",
+      "after": "DLG_TARGET(&td, \"TARGET_PLAYER\")",
+      "token": "\"\\001\\024\"",
+      "value": 20,
+      "macro": "DLG_TARGET",
+      "parameters": [
+        "&td",
+        "\"TARGET_PLAYER\""
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_TARGET_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_everythingamajig_c",
+      "offset": 64285,
+      "end": 64322,
+      "before": "\"\\001\\020\", 0xffffffff, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(0xffffffff, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "0xffffffff",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_everythingamajig_b",
+      "offset": 79164,
+      "end": 79192,
+      "before": "\"\\001\\020\", 2, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(2, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "2",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_everythingamajig_b",
+      "offset": 79222,
+      "end": 79250,
+      "before": "\"\\001\\020\", 8, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(8, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "8",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_everythingamajig_b",
+      "offset": 79338,
+      "end": 79375,
+      "before": "\"\\001\\020\",\r\n        4, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(\r\n        4, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "4",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_very_cryptic_command_b",
+      "offset": 102233,
+      "end": 102256,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_very_cryptic_command_e",
+      "offset": 109502,
+      "end": 109525,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_very_cryptic_command_e",
+      "offset": 110691,
+      "end": 110714,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_very_cryptic_command_e",
+      "offset": 113497,
+      "end": 113520,
+      "before": "\"\\001\\005\", choices + 1",
+      "after": "DLG_CHOOSE_TWO(choices + 1)",
+      "token": "\"\\001\\005\"",
+      "value": 5,
+      "macro": "DLG_CHOOSE_TWO",
+      "parameters": [
+        "choices + 1"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_CHOOSE_TWO_CH"
+    },
+    {
+      "source": "cards/urza_destiny.c",
+      "function": "card_festering_wound",
+      "offset": 97492,
+      "end": 97516,
+      "before": "\"\\001\\006\", player, card",
+      "after": "DLG_FULLCARD(player, card)",
+      "token": "\"\\001\\006\"",
+      "value": 6,
+      "macro": "DLG_FULLCARD",
+      "parameters": [
+        "player",
+        "card"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_FULLCARD_CH"
+    },
+    {
+      "source": "cards/urza_destiny.c",
+      "function": "card_festering_wound",
+      "offset": 97518,
+      "end": 97570,
+      "before": "\"\\001\\007\",\r\n                           player, card",
+      "after": "DLG_SMALLCARD(\r\n                           player, card)",
+      "token": "\"\\001\\007\"",
+      "value": 7,
+      "macro": "DLG_SMALLCARD",
+      "parameters": [
+        "player",
+        "card"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_CH"
+    },
+    {
+      "source": "cards/urza_destiny.c",
+      "function": "card_festering_wound",
+      "offset": 97572,
+      "end": 97590,
+      "before": "\"\\001\\010\", player",
+      "after": "DLG_WHO_CHOOSES(player)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "player"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "function": "card_nicol_bolas_dragon_god",
+      "offset": 252731,
+      "end": 252776,
+      "before": "\"\\001\\010\",\r\n                        opponent",
+      "after": "DLG_WHO_CHOOSES(\r\n                        opponent)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "opponent"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "function": "card_god_eternal_kefnet",
+      "offset": 257690,
+      "end": 257705,
+      "before": "\"\\001\\021\", iid",
+      "after": "DLG_SMALLCARD_ID(iid)",
+      "token": "\"\\001\\021\"",
+      "value": 17,
+      "macro": "DLG_SMALLCARD_ID",
+      "parameters": [
+        "iid"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_SMALLCARD_ID_CH"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "function": "card_crawling_barrens",
+      "offset": 69619,
+      "end": 69647,
+      "before": "\"\\001\\020\", 4, 0, 0, 0, 0, 0",
+      "after": "DLG_MANA6(4, 0, 0, 0, 0, 0)",
+      "token": "\"\\001\\020\"",
+      "value": 16,
+      "macro": "DLG_MANA6",
+      "parameters": [
+        "4",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_MANA_CH"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "function": "card_shatterskull_smashing",
+      "offset": 109440,
+      "end": 109454,
+      "before": "\"\\001\\011\", \"\"",
+      "after": "DLG_HEADER(\"\")",
+      "token": "\"\\001\\011\"",
+      "value": 9,
+      "macro": "DLG_HEADER",
+      "parameters": [
+        "\"\""
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_HEADER_CH"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "function": "card_shatterskull_smashing",
+      "offset": 109510,
+      "end": 109535,
+      "before": "\"\\001\\010\", dialog_player",
+      "after": "DLG_WHO_CHOOSES(dialog_player)",
+      "token": "\"\\001\\010\"",
+      "value": 8,
+      "macro": "DLG_WHO_CHOOSES",
+      "parameters": [
+        "dialog_player"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_WHO_CHOOSES_CH"
+    },
+    {
+      "source": "functions/deck.c",
+      "function": "pre_counterspell",
+      "offset": 122546,
+      "end": 122600,
+      "before": "\"\\001\\012\",\r\n                    spell_iid_or_creature",
+      "after": "DLG_FULLCARD_ID(\r\n                    spell_iid_or_creature)",
+      "token": "\"\\001\\012\"",
+      "value": 10,
+      "macro": "DLG_FULLCARD_ID",
+      "parameters": [
+        "spell_iid_or_creature"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_FULLCARD_ID_CH"
+    },
+    {
+      "source": "functions/packs.c",
+      "function": "announce_expansion_choice",
+      "offset": 21659,
+      "end": 21744,
+      "before": "\"\\001\\011\",\r\n                  expansion_names[expansion + EXPANSION_REVISED_EDITION]",
+      "after": "DLG_HEADER(\r\n                  expansion_names[expansion + EXPANSION_REVISED_EDITION])",
+      "token": "\"\\001\\011\"",
+      "value": 9,
+      "macro": "DLG_HEADER",
+      "parameters": [
+        "expansion_names[expansion + EXPANSION_REVISED_EDITION]"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_HEADER_CH"
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "function": "effect_may_play_card_from_exile",
+      "offset": 35166,
+      "end": 35244,
+      "before": "\"\\001\\013\",\r\n                       (unsigned int)instance->display_pic_csv_id",
+      "after": "DLG_FULLCARD_CSVID(\r\n                       (unsigned int)instance->display_pic_csv_id)",
+      "token": "\"\\001\\013\"",
+      "value": 11,
+      "macro": "DLG_FULLCARD_CSVID",
+      "parameters": [
+        "(unsigned int)instance->display_pic_csv_id"
+      ],
+      "kind": "argument_group",
+      "native_enumerator": "DLGIMPL_FULLCARD_CSVID_CH"
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/aether_revolt.c",
+      "before_sha256": "1fb833af30ae884c9a632e836c711be4f186bc26032d52468730690023dacd0f",
+      "after_sha256": "9de803ba392275847946ef7051bc175c8155b25ec629ce1c19405354c178a4e5",
+      "before_bytes_sha256": "0aa5b65d7d5606b16ed3bc3906f5f513ca4a3210f290fffc2c43816caa4e58b9",
+      "after_bytes_sha256": "1290ca238efa0b96d51c30dc85f7770bff3b9bc14ccc704c859a2acf62ea36c8",
+      "line_count": 8060
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "before_sha256": "c7d315dfb832e21414d2fcc45b369a95414b05a6255d572b7de20a53b50c4ecf",
+      "after_sha256": "47cbeded480415516197b4182a62e2b3be5634c894332c8506765220b6d8447a",
+      "before_bytes_sha256": "4738cfe75c2ac89ace57909fb72826f9585a4891441cd1e489f3a2db23f3d7f4",
+      "after_bytes_sha256": "b3cde177b871c16ca00e27f444cccbfdcff9236dfdf03a7d4b076c61af060018",
+      "line_count": 9016
+    },
+    {
+      "source": "cards/battlebond.c",
+      "before_sha256": "1782a7300253b5e16dc62bfccaa75922b8404916dca79a20614b32136dced32e",
+      "after_sha256": "1684be7b7d51bb71608c9dc53fc5402af2b6e3feaa3713807a7417cbcb942154",
+      "before_bytes_sha256": "73629adc7f45acfa5364b94fe6b42383ca765a50ced4cfbd72c9fb06cb7d2cbd",
+      "after_bytes_sha256": "2db8f02e5e21d95ccc256a764758f9e165bf15eb94fc4430161f4e1457317fe1",
+      "line_count": 1757
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "before_sha256": "b44db6d1d58fd4ee280d6f898099e988f027ed1c331531ffec0285b1093f46eb",
+      "after_sha256": "9491df16ddf84a21047e32bbadc668293f845d8d431c4747158a752bb5063b3f",
+      "before_bytes_sha256": "1fd761bfc4d2f79de6e7a1dfe19d3180b7bde6a6900e7af3d98e9ca766447f79",
+      "after_bytes_sha256": "cd2c6cc15d28e4a757f7cc7a5e44fbdf6d2e42cd51bb34f6d787be95b7a84c45",
+      "line_count": 4871
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "before_sha256": "b96a782e15365a8331616f33d7823b9c9d2abd18237b2dcbdfa23a83ae6cca13",
+      "after_sha256": "2be6c95b68e4cd7df41c15a3d8c4bcab0facfaf1256b6e940f71ed6a9220cd05",
+      "before_bytes_sha256": "13a750eeaf6ddfb9f7b3485af54e1276ea92548f182111c054881da4f5458c4a",
+      "after_bytes_sha256": "cc04b14b635a409e7c2f5781928b26d5408017aade49094e9e602fed5007103d",
+      "line_count": 8647
+    },
+    {
+      "source": "cards/darksteel.c",
+      "before_sha256": "20802aa1e2798f277296fadc8470708fd4523db363060d961d53fe9290f2e288",
+      "after_sha256": "235614b622faa3b0b1b228df1503425e8af11766e6af314e4048baf931bc510e",
+      "before_bytes_sha256": "a0bc6a2c87f45d0ce329c733a075647da793b40faafb74d28af05fe0be5cd988",
+      "after_bytes_sha256": "73ee5af1c57477a70603c80ff7ab6af371e41238cbe3cf39b7233b5627ea42ff",
+      "line_count": 3871
+    },
+    {
+      "source": "cards/dominaria.c",
+      "before_sha256": "b444118343ac5952de61dc046fccd8826f0a5baae197d9b2173281dc08d9c3e9",
+      "after_sha256": "e7345f8bbd042e0ff2f842d87c7b34e07a3e321965d3799c38e5c325d8c5437d",
+      "before_bytes_sha256": "eae43e5e0cc31d1e613ce620e1578b804f5c63306fcb0949c445c88c81cf21f3",
+      "after_bytes_sha256": "1adee78321cdbede3254f57bffc8243a57d49df25d4330168b6260dd34cc1323",
+      "line_count": 6863
+    },
+    {
+      "source": "cards/eldritch_moon.c",
+      "before_sha256": "62a42cb2cb3891c99a983a03b4c6412cac5ede7b51b3ed7582519a7ce6028f34",
+      "after_sha256": "b2ecb579b1b8bcc573c0b010258b5ad052fbc32bc7205243e98f845d8abd4b1c",
+      "before_bytes_sha256": "ea2ff7e289e527d1eedb6bac0bcedd1be5d7550ad611184e935c979caedcc93f",
+      "after_bytes_sha256": "f6763d1b5d3f78381784e677c4bf05b6fd24ed6d14b0d5ef41e2f0189f98a43d",
+      "line_count": 6798
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "before_sha256": "60a6ade27065fbb17b2b21027bb94d6946008e04ee12be2fab20f7e69d6e1941",
+      "after_sha256": "e1acc0095551bd6ad633524a5d82a317c8afaab35959b1bfaf660ee602dee21a",
+      "before_bytes_sha256": "02ea6148c716b9fe292f3d47e2df537ff90c14e59562f64077314fd71bd34c22",
+      "after_bytes_sha256": "ce7dbacad557e4619e7ea3c7f8ca0656dda0b3446bd6496e8983db6a512be99c",
+      "line_count": 4449
+    },
+    {
+      "source": "cards/homelands.c",
+      "before_sha256": "99236592381f88ff28dd8ec84227930ca7ff8c0b59086648f54eedbaaf34ad15",
+      "after_sha256": "e3d2748c0323055d32ce390b3c5323c3379fd50ef05f3bab8c5dbbafeb6ab223",
+      "before_bytes_sha256": "a730e27c13a0b611f25fe17caf2c1e65ad7282a4da45feb08aa4426a07b3a09a",
+      "after_bytes_sha256": "851f18abe837ab24d5646c53ebfab4d37248322bd29c0650339aefea687d5c93",
+      "line_count": 3803
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "before_sha256": "e02f137e7ad20d2fb5c1c6f6f159143153f213aaa0f6f6146cb03cb90fde205d",
+      "after_sha256": "c7c20f03549a9c63b03d72206a0a03fab8f2f4fd7a715066f79724e20105eda9",
+      "before_bytes_sha256": "77439a38147f2d1ad414790449edb0cedd21b6991dfcd70207914de1cae50b69",
+      "after_bytes_sha256": "e072a627833d2dc1eefda0427b40d91777f7b647a943f8729b1ec9c9f31d15f6",
+      "line_count": 5978
+    },
+    {
+      "source": "cards/ice_age.c",
+      "before_sha256": "b0c9d3a843a64facf5e420f53d214b5d3cea611824732b4eee59fc4f614718df",
+      "after_sha256": "19434a51224cd257b00d891e621dd0925b2a7d2370dda8c04b8ce5b68eb4447a",
+      "before_bytes_sha256": "c7fb312a30c723298d15fd54d10daa6d7773d40522f0edc58c34727eba3e15a1",
+      "after_bytes_sha256": "3b3b6efa0e2b28bdac8b9313cd470f834151208d7a65d5f9c73c067374d0ba45",
+      "line_count": 12425
+    },
+    {
+      "source": "cards/ikoria.c",
+      "before_sha256": "28a49b68e53261e0fdec3e284eccb9daf7f9421bfeeaf8dcca1a609af59788cf",
+      "after_sha256": "cf51d8da8d16d03f947d0688394a2b081f767cce72e60241ca71e6edddffdf2d",
+      "before_bytes_sha256": "c16d4a6d3281152ee6ade82eec312faadb8e89b933a172b0d8bced05a243537d",
+      "after_bytes_sha256": "62ffd2c5e4c38d8715ebfb4a1512dbd769f6da5d4a9821ddae24a7d3a6698ba9",
+      "line_count": 2254
+    },
+    {
+      "source": "cards/ixalan.c",
+      "before_sha256": "2931edb4e9e547810ee32e9c35c7e9d71d4621af2fa1a689a9bae078477e2a01",
+      "after_sha256": "bb38e0479237ee77bdf632fb3a78e9b19fff59bba7a65d2006b7eca514b378c6",
+      "before_bytes_sha256": "ec492b226ec3685334741d33e5045434c6894ee8cd9051d079495da735fea168",
+      "after_bytes_sha256": "9a8fbe3338843e6f241f0409cde08839957a5a978fadb3aa6af65b1a1a59e53d",
+      "line_count": 4524
+    },
+    {
+      "source": "cards/kaladesh.c",
+      "before_sha256": "73236337356598e78b7a2c9188d5ea8498c295dfa229ddcc7e4f4fcff29f553a",
+      "after_sha256": "2be8d9b32eba21d39a7b5c832e36f59e8cedeaf0aae02a31a63b50bb96909f98",
+      "before_bytes_sha256": "f3bf58ab69aed45ed3bd6b3e66817a01a048e1b98d275c066b9a8f2866f9aaab",
+      "after_bytes_sha256": "f397dafb7510543dd45493374d5e7c64ae04a8256ddabb0c9fdbe9ada9b84145",
+      "line_count": 7859
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "before_sha256": "1d0fe9427266f90b7dc34c3bd1ea14956002c2b949027521091bd8ec07ca0f77",
+      "after_sha256": "13428078a6eddca855d8b7d1de25a19f2936a581f8481fc92e5b5754958047f5",
+      "before_bytes_sha256": "04b7ff4b1308e393f5f712e81ef9335643bd7a233d8a4fda8589c7e59cae1dc4",
+      "after_bytes_sha256": "5d517caa0d7bad845fd67d301981b184684687348b3b9798a8743611ef7d24c9",
+      "line_count": 10235
+    },
+    {
+      "source": "cards/onslaught.c",
+      "before_sha256": "3ffabc903035ff5e6d3d1beefab9d57ed4c42afebb89c450ac04ddd4e6264259",
+      "after_sha256": "a6d278df87b33ae7f41f2d64ac8977c04f3e5f2bd3b43672305070e767fc9161",
+      "before_bytes_sha256": "f4ebd3a8df1d2849e12d1f096905fe660cb11a7f4d50f1fa02583e869c35384d",
+      "after_bytes_sha256": "b15854c55162759ca89b89509c4fa87c049fc6e6b0befcff5d97377aba2a92e6",
+      "line_count": 5774
+    },
+    {
+      "source": "cards/rise_of_the_eldrazi.c",
+      "before_sha256": "35d262c4a7f2df5a4d4abf1c8183dd46bc4dec0e84ec9aeb980aba74b7fe6eea",
+      "after_sha256": "ed07697ff257048ee8458d5763abc1a710c7f77202d9b88fa30530e9b3aadb00",
+      "before_bytes_sha256": "d82347f45e4a80873bffe8dd36349391cb0720afec008df8b06d1d0e31ae737e",
+      "after_bytes_sha256": "deda333e60a4c499ea46c4bffa222c9d87e49e5688efce6ee83a5f49393f1ec8",
+      "line_count": 5492
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "before_sha256": "b13bbe7e1f2bd4c74407263f96fc04531c11e6792d6d7e5acdd95e3ad4651921",
+      "after_sha256": "9b376fe7f85bc5fd7d335aa5cc3cfd0e20f7256a51c393b5c7ef58744576d76c",
+      "before_bytes_sha256": "c23dde4c0308999206106e3ca99c44840bc2193f4fba63221c019550cf5af1c0",
+      "after_bytes_sha256": "9a1b4051ed805cb2489919f39dbae46dc6558802b4b47e082c9ac70cf9465818",
+      "line_count": 6889
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "before_sha256": "1021785594d697b4ecdb3a6b5f4cf3d2bfec0c05aafa91ed9fb62ee3709ad7b2",
+      "after_sha256": "48046461ca50b584df13bd23b9d52d55786caf1fc7e15cacc711e924f332ee41",
+      "before_bytes_sha256": "d52ff5ff11547326cf68a56814ec455a4e5905778ce48a53a953b5c5104a5fb9",
+      "after_bytes_sha256": "d3f98917fbec5aee4e33f74fe0768888cc353c3c7fc99d7689740adcd8dca718",
+      "line_count": 10636
+    },
+    {
+      "source": "cards/tempest.c",
+      "before_sha256": "fb183868ccf3e2d1bbc3b9f20da07c3fb8babf4319fadf33ee48cace960730af",
+      "after_sha256": "f65eb2e686dded9c5b30169c0dab3b61976e49156a89bf5da2efdbdddbaba57e",
+      "before_bytes_sha256": "8cdd046629605c0a35232465d3390654be40d2c2d2369fe002672b01277ea1f6",
+      "after_bytes_sha256": "3b0143b91bdd40db5aaa74bd2982d2caa25b5ecf85fc5554b0adf601fc47d407",
+      "line_count": 8105
+    },
+    {
+      "source": "cards/the_dark.c",
+      "before_sha256": "c0989b1d9153ef4c317952aa736e28f6925215338001057e8c6ec0b1d62f8bd6",
+      "after_sha256": "90e4a5450a725233d03a120d11ac9a96f4e07c6b9e904f004301fcebddc0cdda",
+      "before_bytes_sha256": "31a5c45e428221f75ec58c8bc8bae2b1004b03dc745bae768a1dca87aaffc63a",
+      "after_bytes_sha256": "0365e5ee334f0119d9da544f3e21c80793ab49d7d4ab4c8395f9816099353d37",
+      "line_count": 4339
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "before_sha256": "019af35b584d7d566f6ecd61799b5fcdac9aab2a7df1848dbc8aa63917d07a95",
+      "after_sha256": "f814f2a101c0576473027dcf98c57aeb593d180206b933377e5b976d99d1f87e",
+      "before_bytes_sha256": "97a2c3e0fdf3ce87a65be120b9c027e7aff9cb84c4a9152ebc50300e4ea464d8",
+      "after_bytes_sha256": "3b8804580117e3bd2a7c9892bbc45d6d34e0fdb31d465217f83019a22773b308",
+      "line_count": 4522
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "before_sha256": "bf2f3875c2cadd231474ea060da6e1cc32b6da39bfda6ae3b6a9a97681634f2a",
+      "after_sha256": "ca332249f4c8eb3b2307f8b319659a10d9221757ab8398be633d7211f3c5800e",
+      "before_bytes_sha256": "aa7fd1d088f7cea8495341e6ad2e7594c3657d8c545dcc367be182a0239fbff6",
+      "after_bytes_sha256": "fb41f84379181585351e788204a3cf7bb9cc4fa92ebd77a01141e4d81349cfe3",
+      "line_count": 8216
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "before_sha256": "2fa94271039c3c9641b5c630e225e07439b6eb9a92f7cc1cddd2bd666fe79ffa",
+      "after_sha256": "2ab0cc7833a91695f740acd6c315139920a7ebb18565b5d5fafad06aa60346dc",
+      "before_bytes_sha256": "efba6cbfb9bf0644f7fcf02d5f59c20e311a1251656af083e1f63d4ba700e2a1",
+      "after_bytes_sha256": "d0f67db0eb6317b2883cb35cb27cfa648fa1c06a4edf5729fdbddcbeda525576",
+      "line_count": 3112
+    },
+    {
+      "source": "cards/unstable.c",
+      "before_sha256": "f6c56477a7fcf79574ec3f88624b941bc1737d9b9bd2144b1f3f38926ad99be4",
+      "after_sha256": "07b8d8a596cf446614f733b43dd21d643dfde3aaee7c1494613f89a753276acf",
+      "before_bytes_sha256": "4f8ea6b2c248060049fa2b6dc480dbdd7227cc208b09f27d30feec0d5b949ae0",
+      "after_bytes_sha256": "9fcfaee99b95346d61c797612141005fd06fc6de6228707e187c88c0bac580b1",
+      "line_count": 3481
+    },
+    {
+      "source": "cards/urza_destiny.c",
+      "before_sha256": "52e10cb20fd77b76ea71cf150a9d82682585b21cf08bc2dd974717081ecbe00b",
+      "after_sha256": "9adcdf31352af4ee9e3b5bc48b6832f2bf704333531249c5980428f1fac65de6",
+      "before_bytes_sha256": "ce87461acbf4d911a12ec28bd10574b24ebb2d961ee639c0ded314516304301a",
+      "after_bytes_sha256": "4483910d8ebd2bc712ff512b30cb09b066c442ad62eabd1ac7bd704fbf08d14a",
+      "line_count": 3400
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "before_sha256": "296576dfdc39f72ad07f52c1c0759fbef9e888b91b4b542486d5c0181dc41fc7",
+      "after_sha256": "3d7a22f17010a689615ed3c3a9aa91089e2d13f9f5daa8479e8e1846dffeff9e",
+      "before_bytes_sha256": "4f9066d733ec442a48f45aacd20e958fb38b32fff15d64ee309334fb5ef9fa7b",
+      "after_bytes_sha256": "9de330fb90db92d347f054d0ed8c9394c595bc9747ad0382af924d8261f04535",
+      "line_count": 7985
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "before_sha256": "0336f9db28e767c8bad14bba3c7a6a4d391e959248860616edf29f35f956271d",
+      "after_sha256": "a1992dac8509a1be6dfc50f441c6eac4fc3083c6db82f525e833a5ff19d32db7",
+      "before_bytes_sha256": "d97a7fa31cce6ad59bf9c14934d980e1f52c7f0f1a758f8ba3f51f10a750747d",
+      "after_bytes_sha256": "dbe56efa27eb148a2af60dbae1af006bb71ffd5e86e6d33a5e092c7a2a3dbc43",
+      "line_count": 4295
+    },
+    {
+      "source": "functions/deck.c",
+      "before_sha256": "087824048285dd8bea5f77bd7c456c3ba7e8797722454721dba76cb62a6d28f1",
+      "after_sha256": "ccfb23089028260261eeb2c55aee3212b6e934497c3cb331092e59a139bd5064",
+      "before_bytes_sha256": "08f8e36ff87bba2330fe150aec8147ba9bc5609bbea8b06f8a33b75f8576e038",
+      "after_bytes_sha256": "6ca1b68cbffd357b12c381673b833e98ccaa58b6096ea53a2c969b634df816b8",
+      "line_count": 3607
+    },
+    {
+      "source": "functions/packs.c",
+      "before_sha256": "43bc5ca521b05296df5fc859a72301e0894072699075cc574760d77b9d347b7e",
+      "after_sha256": "809cdc7275950da8c0c128a378ef0488a1d80e4365069bc172432370cebf43d3",
+      "before_bytes_sha256": "7b3bb0f73993839ca1d6066a9b9ff190c43031ad225bf30741c6d53c79cf6f07",
+      "after_bytes_sha256": "0aacf536a87be06716a5c2b8cec8b3adbc505586e241e913b35ace25d6e7fe48",
+      "line_count": 2877
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "before_sha256": "43a80ef70ab480efd82c240dd9105d3a949be043a60330233123fe4f8d41b40d",
+      "after_sha256": "fbfd7ba40c90e8bd01e137160782390a5820599deb3f29dd2a8ba8d0facc8bdf",
+      "before_bytes_sha256": "47ed981a891e9f2464be1c4faf6c786eb9dcf6cb10ea08cfc0fbe4b62a54309d",
+      "after_bytes_sha256": "2fbf804ec7f838716da65a266f2994ff4527835c0178a652b1c100ca1d4bf773",
+      "line_count": 1183
+    }
+  ],
+  "functions": [
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "card_pias_revolution",
+      "references": 2,
+      "before_sha256": "38c9a2e82cd302724a17a3c0e032258290f022b3a017b2b363f4014e51d2374b",
+      "after_sha256": "ef97a9a030017089ad651c51e3441c38ae2fa1fd230b626a04075bc70c75014d"
+    },
+    {
+      "source": "cards/aether_revolt.c",
+      "name": "pias_revolution_effect",
+      "references": 2,
+      "before_sha256": "489575fc07094cbcbc381f5b0872d8f9e98c6fc61321901dadfcda4ea6d564be",
+      "after_sha256": "4789fe9a6f5775007677b62707dce997797f53cb6c8cb2b03e6196c7262d1769"
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_dispossess",
+      "references": 1,
+      "before_sha256": "2ff82ace1d00085f5254d9b3f78c4237997eef40559fe856a24ac10ac47d83dd",
+      "after_sha256": "054b12782d3c26de855e42da7dd75a0c857d7f198a7a3d9babf22d85514d47f6"
+    },
+    {
+      "source": "cards/battlebond.c",
+      "name": "card_last_one_standing",
+      "references": 2,
+      "before_sha256": "b5e84d7454c58a601f1a935dfc4ac0eac277ea8974ece2ce84284d9725e64d85",
+      "after_sha256": "117f59c6f044b1e8546443e086bd72eaad003b31d751f65474e630b03572ee5e"
+    },
+    {
+      "source": "cards/battlebond.c",
+      "name": "card_pirs_whim",
+      "references": 2,
+      "before_sha256": "4a80e6bce461c74a5fae4af57b03c0bedbba5fe67594eb8f57229ad684892181",
+      "after_sha256": "d9a2a89c51b456484ddfb77d5cb2c64767d250d6afa88b27e9310f310ab6576c"
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "name": "card_arbiter_of_the_ideal",
+      "references": 2,
+      "before_sha256": "bbc2b9d70b6a5923e8d1ef82949a2f2922de203dc7a3476923170e180423a6c3",
+      "after_sha256": "043a1234d0e93dfb370d0654856cb50c8ce92389eaa3025db9d5c2c099761117"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_kwain_itinerant_meddler",
+      "references": 1,
+      "before_sha256": "92d93d3dd85b07fc95bd4b1f6a3d535c727bd3e384664f4b60277abced0c45af",
+      "after_sha256": "5b94b41262c132b69fbb9e7e43bd886ba8d46b33904301052a036e46e054fa91"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "name": "card_livio_oathsworn_sentinel",
+      "references": 2,
+      "before_sha256": "6c88875ba94ffebcd60efe6c846138b2604fc48d86a33e204fd25933f9499f6b",
+      "after_sha256": "9dae6fcab3af5364685c0e9824c52d8b125676b6b760090ebaccd39e609bcac4"
+    },
+    {
+      "source": "cards/darksteel.c",
+      "name": "card_coretapper",
+      "references": 4,
+      "before_sha256": "17fd8553af1f68d540d233e7f7eb24c22be8093156fc3de8b3755489d1f1c10f",
+      "after_sha256": "8c2def002e45e5d3dee92aeda74760b6e799f71d1226d5963b2e2d9283a7aace"
+    },
+    {
+      "source": "cards/dominaria.c",
+      "name": "dominaria_memorial_impl",
+      "references": 2,
+      "before_sha256": "f802ed3c757cffa6ef8be358e1207a3db110fe1e1afc30f936c467519b3f9262",
+      "after_sha256": "0a30b09005ec777695d478faf43a13e4b2f4606c2156013a7c5e91d41027fb52"
+    },
+    {
+      "source": "cards/eldritch_moon.c",
+      "name": "card_minds_dilation",
+      "references": 1,
+      "before_sha256": "1e057effaba83964e5477161b14181afa23769c3dc4b090795dd57a351353b42",
+      "after_sha256": "b2ca8efb5a5bead9d6df754cd0e94de9ba16f39cddd3d35f0fa8a02609b007fc"
+    },
+    {
+      "source": "cards/eldritch_moon.c",
+      "name": "card_spell_queller",
+      "references": 2,
+      "before_sha256": "682767184978bfbd00de92bcc76d2242f37d60b3d3e11a31e193aad2cc28b1a7",
+      "after_sha256": "d5b077c4f9cda886b539b009c30fc7ec498b97ddd2bc91376aab2e52a74a09e9"
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "name": "card_gemstone_array",
+      "references": 2,
+      "before_sha256": "9fc834b37e7acc37fccf1106893ea796ec60958f053ff28ef7c53508b7b52bc3",
+      "after_sha256": "b355f2f6b9fadf3a9b0b6f582c70f3dda76a38ef1eda7adff11d74de39cdb1b4"
+    },
+    {
+      "source": "cards/homelands.c",
+      "name": "card_coral_reef",
+      "references": 1,
+      "before_sha256": "8cce226790cd91f671a67df5e72a0c56222fe8328a8d769e67524cbaa2c14a54",
+      "after_sha256": "721d9e51d4171ae45ccc5487fdaeb045605c0c90eb8a8cc72a1b132c7da86763"
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "card_hostile_desert",
+      "references": 1,
+      "before_sha256": "213b637808faa33bf9bf9a6da8bd0913b939af2d5e917a4b6d87006dbcf833a4",
+      "after_sha256": "58955f29a382700bd3c4d5322518c3758f46b7772296391897a63debf1ac6ff0"
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "card_reason_believe",
+      "references": 1,
+      "before_sha256": "6b13846acecdc30f3a6dd02b83ea73e27cb68f750f014e311d5c640827381d39",
+      "after_sha256": "17d518dffeddb5f8d554ceb99eeb66becf5fdb3652f22b36d88558ce6f3caeb7"
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "card_torment_of_hailfire",
+      "references": 1,
+      "before_sha256": "bb6f7df5fc5bebe9f56abd231ceac82163cbb8c6089226bc567259a7ebac5cdd",
+      "after_sha256": "1b1506b51038f0e986bb9dfe59919eac74689bfd93c22a570514d4a06117b81c"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "name": "card_breath_of_dreams",
+      "references": 3,
+      "before_sha256": "28f361bda115b6e8b10471a1131451ef7a6ca263343b74df420e043806a965b4",
+      "after_sha256": "13613fcf4ae1d9b9c2dde5eab71b622267c519cd8bbbd24e4cd1cdaaee412916"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "name": "card_iceberg",
+      "references": 1,
+      "before_sha256": "0acef9184e0e49a0327fb30eaf6425886cfa0e187952dc24a65025ca5fb99ad7",
+      "after_sha256": "13bf297036e556f00120a777592789c902ada55958bc24ab39eb59d14e1d3ff5"
+    },
+    {
+      "source": "cards/ikoria.c",
+      "name": "vivien_library_ability",
+      "references": 1,
+      "before_sha256": "b4e94e731b5a9939bfe871234e21f59cab3cb3d0f1e41c31b688add95d882c9c",
+      "after_sha256": "1044a1f565cd84b80163b430921c6b6d8792789060341f8fb5a1859b47092d15"
+    },
+    {
+      "source": "cards/ixalan.c",
+      "name": "explore",
+      "references": 1,
+      "before_sha256": "e72d2310f6b9e91b9bed5ed77a349b297d804d85fb2599dc69efceb32df6dae9",
+      "after_sha256": "1195ff74d8ac34a21c2fb2fe1ebc60dbe2bf7517af4a6bff6f088fdb4c8bcd09"
+    },
+    {
+      "source": "cards/kaladesh.c",
+      "name": "card_aetherborn_marauder",
+      "references": 2,
+      "before_sha256": "f8dc93981f6c3411387fa9ac77092843b5fdae3d8c91ae8887f5f0e8120d7fb1",
+      "after_sha256": "621278d6e8bf1e12e7b2fbcbe680866b0178685db7ea8f73e28423ed625d21e6"
+    },
+    {
+      "source": "cards/kaladesh.c",
+      "name": "card_durable_handicraft",
+      "references": 1,
+      "before_sha256": "afb6175d58e513271351374104b12ae1d63bfee9761bd97853378801191ec1da",
+      "after_sha256": "6ad1fb1d056a2cb6654a9db6559bd86f84c1dffc6f74f48d5ea9ed225a831934"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_verdant_command",
+      "references": 2,
+      "before_sha256": "305cb1aff9e0e90e96f472fc80338c2c4a2ad157ce4930675ba2f7191e496dbc",
+      "after_sha256": "a8c4bcb0f53edf16c9bd0171b22a1476b564d2a9c03854524c550d9493216738"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "ward_action",
+      "references": 1,
+      "before_sha256": "3431ed9f7da31be38a0efc563d0a055a1311cbe2c0328c4f6bf1aa3a52ba3eae",
+      "after_sha256": "79024a5c93522272edd81689409b21d1249f34230ba234b7c9c60ab3e54c2c10"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "name": "ward_granted",
+      "references": 1,
+      "before_sha256": "8b65b41dbeb59a496b77dfed25c8d985e239c8f5429010cdd3da493470e2f115",
+      "after_sha256": "009ee692eeb385dd38f94a8c3b1a7a54d095894396f46966bef5def437fae3e8"
+    },
+    {
+      "source": "cards/onslaught.c",
+      "name": "check_for_turned_face_up_card_interactions",
+      "references": 1,
+      "before_sha256": "c104129205f8b7f0fdac2ecfdbc23c05415e82dc438a93c93053861e81a8f06c",
+      "after_sha256": "ccbbe34733889a72c0e7772c0e21896c2261f26868adce502ee86c34bf61c29d"
+    },
+    {
+      "source": "cards/rise_of_the_eldrazi.c",
+      "name": "card_brimstone_mage",
+      "references": 5,
+      "before_sha256": "1f56cb23150ea94eafee1b2338a483617a3ba67741a788ff0cedffa11e9d3deb",
+      "after_sha256": "e8820314fd8e5caf9971585e04847761e0967c5202d179dba55104a96a55becc"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "name": "card_grindclock",
+      "references": 15,
+      "before_sha256": "babf86305e17de30ee06cd88e98db78e1103c1efa8081c4073cde8c556f3b382",
+      "after_sha256": "5dc03e56e8cb5862a596043a4caa051824fee74fbde520b79b45ca93f2b2944f"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_lorehold_command",
+      "references": 2,
+      "before_sha256": "a6f014e2cb5f977110e31da61f7865745419c7b8bafc505345aded261cf8e625",
+      "after_sha256": "0e58ca7e506fa1e61c6ab37d4cc5a1d7c871fce547b639263d04f70a8108a208"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_prismari_command",
+      "references": 2,
+      "before_sha256": "b0496bd37d6ed65178cea5b54caa798676d011615d32f6e56e8a97494696887e",
+      "after_sha256": "d2185800bb9c9267ab73d07c5361759c2df8bba8a37ae0766deb121ea5a1c4e1"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_quandrix_command",
+      "references": 2,
+      "before_sha256": "eee2ceacdc61b69d7e9bb877cfc7cd1553304afc0f4dd8336aff2e1754a23605",
+      "after_sha256": "1b9581d1b23bd556ed621b2115892e7d03cf31be3555a10bec2db2297b087fdb"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_silverquill_command",
+      "references": 2,
+      "before_sha256": "9e1d1b56a41a300b2f6668e6ea0ce104fe09e00ee1d410e76c26837a556affe2",
+      "after_sha256": "880010d6ea4b3c47c0f84d0d7e9aed8028c96542ac89edb6c7a8667d9e46959a"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "name": "card_witherbloom_command",
+      "references": 2,
+      "before_sha256": "122eeb59e911038780c35bdf68cd033b8b065a2b1215e7a98c0a0a02b8c6418c",
+      "after_sha256": "6d017a6607f9474b6557adcbbc8cd7f894bddd8fde0d65a0686ac069fd96e9f3"
+    },
+    {
+      "source": "cards/tempest.c",
+      "name": "card_essence_bottle",
+      "references": 4,
+      "before_sha256": "5801108de34b01ecf8b618d5bbfe9745c1febbe88e0ce101067a8ad4796d5db0",
+      "after_sha256": "bc9d327335aebb6d3881bd8b9a158cfe6c7e9efbc03fb766ee3cb268b85238c6"
+    },
+    {
+      "source": "cards/the_dark.c",
+      "name": "card_worms_of_the_earth",
+      "references": 1,
+      "before_sha256": "9dc234b1d3a950307be1378a8ccfeeb8ea5803154dfc585fd38735a2d21a5ee3",
+      "after_sha256": "64dddee709ed4d62ef5bd5f811043d49fd81eb71935c4b40ee87d4c3dd53f551"
+    },
+    {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_nylea_keen_eyed",
+      "references": 1,
+      "before_sha256": "29cbfe3ac1a7b63d05930434379cbe4955b3be1f053b2c41459963907b0e3ace",
+      "after_sha256": "77be143934aa71531f9b83edd80e4646372fd758d9f846eafb68a712e4b27203"
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "name": "card_clockspinning",
+      "references": 3,
+      "before_sha256": "c99db03deaa07105f74d15462fea04f7480a45312f77ef36c19ddb6d9013a089",
+      "after_sha256": "cf8108ac2f2c957443f04e001face14b1498bd7a606eea4fe7b01cc8ea057c73"
+    },
+    {
+      "source": "cards/unglued_unhinged.c",
+      "name": "card_the_fallen_apart",
+      "references": 1,
+      "before_sha256": "5ae03f51164b6aab60704a21f0861eb9a596bd0ed99ac261ee6fcf368abf3009",
+      "after_sha256": "5e21b0374bc4b758b781d8f99df01d253d4ddaabefa1fc2c4d98dbc0207b34b1"
+    },
+    {
+      "source": "cards/unstable.c",
+      "name": "card_everythingamajig_b",
+      "references": 3,
+      "before_sha256": "4d42af33bc955d5b89c199e502ed15ade05d047cad0ced5e64cf2459ceb08266",
+      "after_sha256": "ef584f4584e0e9b4db23e3edde17e37a8e7705a89d449d6cacda3dc09f358995"
+    },
+    {
+      "source": "cards/unstable.c",
+      "name": "card_everythingamajig_c",
+      "references": 5,
+      "before_sha256": "ac11face9ab89f7b5978d3100ae98fd382f5d80d14b1f0731b3e16520e510012",
+      "after_sha256": "7533f1c4a48cb4cc4688b8199c42efd55fdaf1afd9b41e01129c509bfac7f739"
+    },
+    {
+      "source": "cards/unstable.c",
+      "name": "card_very_cryptic_command_b",
+      "references": 1,
+      "before_sha256": "024862c76b311b15415747e05def1256e497213ecec3d38e561100ebda094899",
+      "after_sha256": "0e85bc42f7371291e6b675f0853f7b771ca7bb2240dc1def5f55839653f31016"
+    },
+    {
+      "source": "cards/unstable.c",
+      "name": "card_very_cryptic_command_e",
+      "references": 3,
+      "before_sha256": "5c001dca365700119202a533d9fd85c72ccd70fd0108f67aaff101c8c6ebee7b",
+      "after_sha256": "359df58fc3cee87bd9e38ab9aebf72ec8c5eddbd7cf68d8982e6af385f5335e5"
+    },
+    {
+      "source": "cards/urza_destiny.c",
+      "name": "card_festering_wound",
+      "references": 3,
+      "before_sha256": "8064455c06b2648d69346dd554615e521185cc625a2a1c9513b33c65b3126bc2",
+      "after_sha256": "1f80903e7e702e1e67ee0cdf7ce2e6017251079371ea1d6b10c8174a77c2084f"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_god_eternal_kefnet",
+      "references": 1,
+      "before_sha256": "f5248a50db70840d556db993b3452edcbe908a0addfc773c5cc5f417de7fbef9",
+      "after_sha256": "705202395e2a69ce84cb49dc2f59318dfabb8ef59c8092fc2d2eff3ce4a09e1f"
+    },
+    {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_nicol_bolas_dragon_god",
+      "references": 1,
+      "before_sha256": "c219c40c09c7526fb79ea461ebf2ffd6ba5f378265fa26e8a29a3fca67ec81a9",
+      "after_sha256": "9c9af101296f5b47b1d356e0ab996a1935bbf10766ed20d6089f7e57e7d631d1"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_crawling_barrens",
+      "references": 1,
+      "before_sha256": "06add1cb3aacde662e9fff43b8d0209536763dd93b0a64806814fbaab2ecba6c",
+      "after_sha256": "87b3c6f677d066c2c334bc7995dd33f155faf80b5d959ad7d4a0d68dbb644ed5"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_shatterskull_smashing",
+      "references": 2,
+      "before_sha256": "b38a9cfda74f25eb0b0b3d67a0f368a67efa1032d0d8f161cae02b2100afc65f",
+      "after_sha256": "630996c79428368ba67d82ae6770d64b45d869f9be6426edca626b68f61e2826"
+    },
+    {
+      "source": "functions/deck.c",
+      "name": "pre_counterspell",
+      "references": 1,
+      "before_sha256": "82bda5152ae3620a8dc0cdaa7399000a8c32e2e8c57987f265d91763f0423d84",
+      "after_sha256": "65cf7ffc3d68c50c95b70791fd70d98137600f864bd14942a2717e64c088fda9"
+    },
+    {
+      "source": "functions/packs.c",
+      "name": "announce_expansion_choice",
+      "references": 1,
+      "before_sha256": "f648a062d080af9100404e1ac5367fc77d35a1c96fbdb7ae7de5640725fc1d3b",
+      "after_sha256": "0164d24913ab5ce03cef2bb40f446f9bc0ed51bd3f62bbce4d5955da5abb580c"
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "name": "effect_may_play_card_from_exile",
+      "references": 1,
+      "before_sha256": "2a178306be797b55a357fb3d355c2520401d8dc966d9af16ed331facb0a8c9fe",
+      "after_sha256": "07ec6f07bbacc9dbbe65e743663b6ea7d7b93990395bf04cf41cce5694c22b12"
+    }
+  ],
+  "macros": {
+    "DLG_WHO_CHOOSES": 14,
+    "DLG_SMALLCARD_ID": 8,
+    "DLG_HEADER": 8,
+    "DLG_FULLCARD": 4,
+    "DLG_SMALLCARD": 6,
+    "DLG_MANA6": 29,
+    "DLG_TARGET": 9,
+    "DLG_NO_DISPLAY_FOR_AI": 1,
+    "DLG_NO_OP": 3,
+    "DLG_FULLCARD_ID": 5,
+    "DLG_CHOOSE_TWO": 16,
+    "DLG_AUTOCHOOSE_IF_1": 1,
+    "DLG_STORE_IN": 1,
+    "DLG_FULLCARD_CSVID": 1
+  },
+  "kinds": {
+    "argument_group": 101,
+    "selected_token": 5
+  },
+  "contracts": {
+    "plan_path": ".recovery\\reccmp\\dialog-argument-plan-c651.json",
+    "plan_sha256": "0e594b7c69981634817a136baf8b8dd80c415681590e59d4e64166462fd3700d",
+    "preparer_sha256": "4ec9347758801ae50bf7328ae85b75b61aebcf7a38d412df59201a6c74dd9777",
+    "recovery_script_sha256": "f204c3283e867c5e403e841a34435528233c3808246ee059c53230c213101078",
+    "header_sha256": "57c88017a79a93018eea19a7f5bb07966e4637c60b9bef8e13dde1a0960676ba"
+  },
+  "before_dll_sha256": "4d6c9d2eae46503c793ef356520a34801eeb575b99c73d68eeb2342f912e4f82",
+  "before_debug_sha256": "99180fccad4b53ed7df09ec63f1b53b15cc529f7bff1bdd236bf9cc77fceb356",
+  "before_object_snapshot": {
+    "path": ".recovery\\reccmp\\dialog-token-objects-after-c650.json",
+    "sha256": "b99a8d443be2c4ae1ab012ee021499d4418297076f4e250af1a16a82655930e9"
+  },
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "scope": "Source reconstruction in 51 existing definitions: 101 raw flag-plus-payload sequences become their existing named macros, and five local flag selections become object-like macros. Existing argument expressions, order, line endings and source line counts are preserved. No new handlers, parameter types, GUI procedures or intended gameplay changes.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "0bb438319eb93526e79d1bf7dc7b3fb411a315605a3982e790d9fd5a4f54a5a8",
+    "debug_sha256": "bc2043ba7bf48e2fdbb4a5d51f84128b0be0a6c7701e497b2f7a2b54a56c5e5a",
+    "build_log_sha256": "ad72664a826d3a5274e00dddedc2690fe822d6cdb922b32bf5bd46de0bbdc1fc",
+    "references": 106,
+    "argument_groups": 101,
+    "local_token_selections": 5,
+    "source_functions": 51,
+    "source_files": 32,
+    "argument_macro_contracts": {
+      "source": ".recovery\\reccmp\\dialog-argument-contract-c651.c",
+      "source_sha256": "b83c5a8d13b8019fe6c6dba22c7d2775c92d647fd906b6ad6a6b6d48289911c7",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiler": "C:/bin/gcc-9.3.0-no-debug/bin/gcc.exe",
+      "compiler_sha256": "1ad850df19f9b55fc149775eed109cebfdeb128cadef88e970b516ace059aa6e",
+      "exit_code": 0,
+      "macros": 13,
+      "contract_assertions": 109,
+      "scope": "Argument arity, flag size/type/three bytes/native enum, and each representative scalar argument value/type/order. Real pointer and other argument expressions are checked by the source projection and runtime-object comparison."
+    },
+    "full_file_projections": 32,
+    "independent_byte_range_projections": 32,
+    "preserved_line_counts_and_endings": 32,
+    "identical_runtime_objects": 168,
+    "identical_dll_runtime_sections": [
+      {
+        "name": ".text",
+        "rva": 4096,
+        "virtual_size": 7407968,
+        "raw_size": 7408128,
+        "flags": 1616904288,
+        "sha256": "8b6ee108e8b95fb3097e71878eafb582aaa1c0377914c1f9dfe997b39c7a4de4"
+      },
+      {
+        "name": "/4",
+        "rva": 7413760,
+        "virtual_size": 216,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "5dc7401202f71f3579fbe112f8f49f23c0212884ac9cf2297ed6c1069ab26351"
+      },
+      {
+        "name": "/19",
+        "rva": 7417856,
+        "virtual_size": 64,
+        "raw_size": 512,
+        "flags": 1615855648,
+        "sha256": "ecf8866c7fe8078bb274c5a2132b4d10f034cbe1891f5f9d5f1fd8b0ffe11941"
+      },
+      {
+        "name": "/33",
+        "rva": 7421952,
+        "virtual_size": 64,
+        "raw_size": 512,
+        "flags": 1615855648,
+        "sha256": "e21ad86d9a8294aebb7a131e5f3ddfc9addd8162b35a4842fbc04f1cc6826420"
+      },
+      {
+        "name": "/85",
+        "rva": 7426048,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "0fd1339a0a0f45ca3b957c61ebe51e8e547426e9756a28f9c165a9204fafad34"
+      },
+      {
+        "name": "/129",
+        "rva": 7430144,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "368dfd779f92f63440dc53655f931c63e3555489d70e9ed258550463df518450"
+      },
+      {
+        "name": "/169",
+        "rva": 7434240,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "8fd0d4614b494184b1342d900f8838aaad01e4a401434b6f7a871ccf178bae19"
+      },
+      {
+        "name": "/208",
+        "rva": 7438336,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "2e6fad85156ea7d43c9ead6275e6997f2dca3a249bac0acdf63c9baa37b37a47"
+      },
+      {
+        "name": "/249",
+        "rva": 7442432,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "f258dcd062b1737744cb79c44f8d91af0ece49314670c3a96dbf94d8a628d9b3"
+      },
+      {
+        "name": "/293",
+        "rva": 7446528,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "736773c3598bc83d61351cb6cf72e96901babd308ed87359ab20175331f92885"
+      },
+      {
+        "name": "/338",
+        "rva": 7450624,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "e106b94e3fe5780325783f10bc40204d08974dd2476dd04523354c0a4acc9148"
+      },
+      {
+        "name": "/387",
+        "rva": 7454720,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "0044e4fc29840e54f5747c6a7352a53034417d714b517aed09c84ef3309d6850"
+      },
+      {
+        "name": "/432",
+        "rva": 7458816,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "56dffc5611a4f45de9348bda754b4a3f4fb5c60bb402760171f501e1e6532e99"
+      },
+      {
+        "name": "/477",
+        "rva": 7462912,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "4e3627f698eb27902d1434e0b22d74c18c37c962b552840bb7d5df79dc78bf74"
+      },
+      {
+        "name": "/523",
+        "rva": 7467008,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "e59c594667e62f2b1ec880a9c8029f0a12c1b5aeb3a8bef78ab7282dbd1a1fb9"
+      },
+      {
+        "name": "/567",
+        "rva": 7471104,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "9c38b7acf5c1a65033b0b3598766bbb703395adf6b97317d8f02da4e8f74da28"
+      },
+      {
+        "name": "/614",
+        "rva": 7475200,
+        "virtual_size": 156,
+        "raw_size": 512,
+        "flags": 1613758496,
+        "sha256": "5fefa5dca26f1e7459c302e1654ca59954030c3613f0ff28df16f0273357b808"
+      },
+      {
+        "name": "/662",
+        "rva": 7479296,
+        "virtual_size": 112,
+        "raw_size": 512,
+        "flags": 1615855648,
+        "sha256": "51e89a9cc022850c15375606dfec8e1c45eae5302fb07932a3604067b797a051"
+      },
+      {
+        "name": ".data",
+        "rva": 7483392,
+        "virtual_size": 7540,
+        "raw_size": 7680,
+        "flags": 3227516992,
+        "sha256": "68418c47e5686c536fedb10039b39828695bd80eef51f97c8957d92e4a147bd0"
+      },
+      {
+        "name": ".rdata",
+        "rva": 7491584,
+        "virtual_size": 349740,
+        "raw_size": 350208,
+        "flags": 1080033344,
+        "sha256": "10dc3fb3f630c5ab8e7e947cdc5d1c4acc591792bf08d76d9c0ae454bc2f025c"
+      },
+      {
+        "name": ".bss",
+        "rva": 7843840,
+        "virtual_size": 260092,
+        "raw_size": 0,
+        "flags": 3227517056,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": ".idata",
+        "rva": 8110080,
+        "virtual_size": 5596,
+        "raw_size": 5632,
+        "flags": 3224371264,
+        "sha256": "8cdbcc794bb4d486b1d5558e7e7af1a35a1c7cdbd8b3bc32ef0cfaaa9ec60edc"
+      },
+      {
+        "name": ".CRT",
+        "rva": 8118272,
+        "virtual_size": 48,
+        "raw_size": 512,
+        "flags": 3224371264,
+        "sha256": "5b03cd0b3aeb5f1832c86f3e3355b09cd3bee8d391ab7f624bc963407793a9be"
+      },
+      {
+        "name": ".tls",
+        "rva": 8122368,
+        "virtual_size": 8,
+        "raw_size": 512,
+        "flags": 3224371264,
+        "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+      },
+      {
+        "name": ".reloc",
+        "rva": 8126464,
+        "virtual_size": 197432,
+        "raw_size": 197632,
+        "flags": 1110442048,
+        "sha256": "bac25f28f6502c1ab8ce626f78b15d31daebd192f92128bf638f3a4e6675fc47"
+      }
+    ],
+    "before_object_snapshot_sha256": "b99a8d443be2c4ae1ab012ee021499d4418297076f4e250af1a16a82655930e9",
+    "after_object_snapshot_sha256": "b99a8d443be2c4ae1ab012ee021499d4418297076f4e250af1a16a82655930e9",
+    "object_reader_sha256": "fc302f92bfcc7c3374de769925f11e0dc0c121f12a7866ac506ab0f90a3edd30",
+    "checker_sha256": "6ccb6a1dca264697dc4a655e7bda2b0d58973a5ee1ae5ab85859e628cd1c0d20",
+    "remaining_recognized_raw_token_literals": [],
+    "token_census_scope": "Unprefixed C string literals spelling a two-byte DIALOG token using octal/hex escapes in cards/*.c and functions/*.c, excluding comments. This does not census every possible literal spelling or C++/header code.",
+    "staging": "preserved",
+    "comparison": "No full reccmp rerun. Runtime code/data remain identical to the preceding successful build; old annotation receipts retain their historical source/debug hashes."
+  }
+}

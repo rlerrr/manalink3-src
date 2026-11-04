@@ -416,10 +416,8 @@ Cascade (When you cast this spell, exile cards from the top of your library unti
 
 int card_blitz_hellion(int player, int card, event_t event)
 {
-  int result;
   haste(player, card, event);
-  result = eot_trigger(player, card, event);
-  if (result == 0)
+  if (!eot_trigger(player, card, event))
   {
     return 0;
   }
@@ -1132,8 +1130,7 @@ int card_glory_of_warfare(int player, int card, event_t event)
     boost_creature_type(player, card, event, ~SUBTYPE_INVALID, result, toughness, 0,
                         BCT_INCLUDE_SELF | BCT_CONTROLLER_ONLY);
   }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 /*
@@ -2208,7 +2205,7 @@ Equip |2
 int card_sigil_captain(int player, int card, event_t event)
 {
   test_definition_t this_test;
-  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+  if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
     default_test_definition(&this_test, 2);
@@ -2297,7 +2294,7 @@ Sacrifice it at the beginning of the next end step.
     }
 
 	if(event == EVENT_RESOLVE_SPELL ){
-		if( valid_target(&td) ){
+		if( validate_target(player, card, &td, 0) ){
 			effect_act_of_treason(player, card, instance->targets[0].player, instance->targets[0].card);
 			haste_and_remove_at_beginning_of_next_end_step(player, card, instance->targets[0].player, instance->targets[0].card, 3);
 		}
@@ -2829,7 +2826,7 @@ int card_unscythe_killer_of_kings(int player, int card, event_t event){
 						break;
 					}
 			}
-			generate_tokens_by_id(player, card, CARD_ID_ZOMBIE, amount * (card_counts[player][5] + 1));
+			generate_tokens_by_id(player, card, CARD_ID_ZOMBIE, amount * (card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1));
 			instance->targets[11].player = 0;
 		}
 	}
@@ -3033,60 +3030,14 @@ int card_marrow_chomper(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x22fecc0; original cards/alara_reborn.c:1794. */
 int card_marisis_twinclaws(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-
-  instance = get_card_instance(player, card);
-  modify_cost_for_arb_hybrid_spells(player, card, event, 3);
-  if ((((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
-       (player == affected_card_controller)) &&
-      (instance->info_slot == 1))
-  {
-    result = played_for_free(player, card);
-    if (result == 0)
-    {
-      result = is_token(player, card);
-      if (result == 0)
-      {
-        result = arb_hybrid_casting(player, card, EVENT_CAST_SPELL, 3);
-        if (result == 0)
-        {
-          spell_fizzled = 1;
-        }
-      }
-    }
-  }
-  return 0;
+  return arb_new_hybrid(player, card, event, COLOR_GREEN);
 }
 
 /* ManalinkEh 2022: 0x23001d0; original cards/alara_reborn.c:2456. */
 int card_sewn_eye_drake(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-
   haste(player, card, event);
-  instance = get_card_instance(player, card);
-  modify_cost_for_arb_hybrid_spells(player, card, event, 1);
-  if ((((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
-       (player == affected_card_controller)) &&
-      (instance->info_slot == 1))
-  {
-    result = played_for_free(player, card);
-    if (result == 0)
-    {
-      result = is_token(player, card);
-      if (result == 0)
-      {
-        result = arb_hybrid_casting(player, card, EVENT_CAST_SPELL, 1);
-        if (result == 0)
-        {
-          spell_fizzled = 1;
-        }
-      }
-    }
-  }
-  return 0;
+  return arb_new_hybrid(player, card, event, COLOR_BLACK);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -3237,193 +3188,106 @@ void multicascade(int player, int card, event_t event, int amount);
 /* ManalinkEh 2022: 0x22fa680; original cards/alara_reborn.c:4. */
 void do_multicascade(int player, int card, int override, int amount)
 {
-  int count;
-  unsigned short cascade_csv_id;
-  int *library_or_graveyard;
-  card_instance_t *instance;
-  int cascade_iid_or_library_count;
-  int play_check_or_selected_index;
-  int *next_shift_entry;
-  int selected_card_or_index;
-  int *shift_entry;
-  int exiled_count_or_scan_index;
-  int *exiled_end;
-  int i;
-  int land_permission_or_remaining_offset;
-  int cascade_cmc_limit;
-  int lands_exiled_or_remaining_offset;
   int exiled[500];
+  int my_cmc = get_cmc(player, card);
+  if (override >= 0)
+    my_cmc = override;
+  int *deck = deck_ptr[player];
+  for (int i = 0; i < amount; ++i)
+  {
+    int averna_check = 0;
+    for (int c = 0; c < active_cards_count[player]; ++c)
+      if (in_play(player, c) != NULL && get_id(player, c) == CARD_ID_AVERNA_THE_CHAOS_BLOOM &&
+          is_humiliated(player, c, AL_STATIC) == 0)
+        ++averna_check;
 
-  cascade_cmc_limit = get_cmc(player, card);
-  if (-1 < override)
-  {
-    cascade_cmc_limit = override;
-  }
-  library_or_graveyard = deck_ptr[player];
-  i = 0;
-  if (0 < amount)
-  {
+    int lands_exiled = 0;
+    int exiled_index = 0;
+    int iid;
+    bool stopped = false;
     do
     {
-
-      exiled_count_or_scan_index = 0;
-      land_permission_or_remaining_offset = 0;
-      if (0 < active_cards_count[player])
+      iid = deck[exiled_index];
+      if (iid == -1)
       {
-        do
-        {
-          instance = in_play(player, exiled_count_or_scan_index);
-          if ((instance != NULL) &&
-              (cascade_iid_or_library_count = get_id(player, exiled_count_or_scan_index),
-               cascade_iid_or_library_count == 0x563f))
-          {
-            cascade_iid_or_library_count =
-                is_humiliated(player, exiled_count_or_scan_index, AL_STATIC);
-            land_permission_or_remaining_offset = land_permission_or_remaining_offset +
-                                                  (unsigned int)(cascade_iid_or_library_count == 0);
-          }
-          exiled_count_or_scan_index = exiled_count_or_scan_index + 1;
-        } while (exiled_count_or_scan_index < active_cards_count[player]);
+        stopped = true;
+        break;
       }
-      lands_exiled_or_remaining_offset = 0;
-      exiled_count_or_scan_index = 0;
-      bool stopped_before_limit = false;
-      do
+      iid = deck[0];
+      exiled[exiled_index] = iid;
+      rfg_top_card_of_deck(player);
+      int is_land = is_what(-1, iid, TYPE_LAND);
+      ++exiled_index;
+      lands_exiled = (lands_exiled + 1) - (unsigned int)(is_land == 0);
+      if (is_what(-1, iid, TYPE_LAND) == 0 && get_cmc_by_internal_id(iid) < my_cmc)
       {
-        cascade_iid_or_library_count = library_or_graveyard[exiled_count_or_scan_index];
-        if (cascade_iid_or_library_count == -1)
-        {
-          stopped_before_limit = true;
-          break;
-        }
-        cascade_iid_or_library_count = *library_or_graveyard;
-        exiled[exiled_count_or_scan_index] = cascade_iid_or_library_count;
-        rfg_top_card_of_deck(player);
-        play_check_or_selected_index = is_what(-1, cascade_iid_or_library_count, 1);
-        ++exiled_count_or_scan_index;
-        lands_exiled_or_remaining_offset = (lands_exiled_or_remaining_offset + 1) -
-                                           (unsigned int)(play_check_or_selected_index == 0);
-        play_check_or_selected_index = is_what(-1, cascade_iid_or_library_count, 1);
-        if (play_check_or_selected_index == 0 &&
-            (play_check_or_selected_index = get_cmc_by_internal_id(cascade_iid_or_library_count),
-             play_check_or_selected_index < cascade_cmc_limit))
-        {
-          stopped_before_limit = true;
-          break;
-        }
-      } while (exiled_count_or_scan_index != 500);
-      if (exiled_count_or_scan_index != 0)
-      {
-        bool can_play = stopped_before_limit;
-        if (!stopped_before_limit && land_permission_or_remaining_offset != 0)
-          cascade_iid_or_library_count = -1;
-        if (land_permission_or_remaining_offset != 0 && lands_exiled_or_remaining_offset != 0)
-        {
-          exiled_end = exiled + exiled_count_or_scan_index;
-          land_permission_or_remaining_offset =
-              land_permission_or_remaining_offset - exiled_count_or_scan_index;
-          lands_exiled_or_remaining_offset =
-              lands_exiled_or_remaining_offset - exiled_count_or_scan_index;
-          while (true)
-          {
-            test_definition_t test;
-
-            new_default_test_definition(&test, 1, "Select a Land card to put into play tapped.");
-            play_check_or_selected_index = select_card_from_zone(
-                player, player, exiled, exiled_count_or_scan_index, 0, 1, -1, &test);
-            if (play_check_or_selected_index < 0)
-              break;
-
-            selected_card_or_index = add_card_to_hand(player, exiled[play_check_or_selected_index]);
-            add_state(player, selected_card_or_index, 0x10);
-            put_into_play(player, selected_card_or_index);
-            shift_entry = exiled + play_check_or_selected_index;
-            if (play_check_or_selected_index < exiled_count_or_scan_index)
-            {
-              do
-              {
-                next_shift_entry = shift_entry + 1;
-                *shift_entry = shift_entry[1];
-                shift_entry = next_shift_entry;
-              } while (next_shift_entry != exiled_end);
-            }
-            exiled_count_or_scan_index = exiled_count_or_scan_index + -1;
-            exiled_end = exiled_end + -1;
-            if ((land_permission_or_remaining_offset + exiled_count_or_scan_index == 0) ||
-                (lands_exiled_or_remaining_offset + exiled_count_or_scan_index == 0))
-              break;
-          }
-        }
-        if (can_play && cascade_iid_or_library_count >= 0 &&
-            (play_check_or_selected_index =
-                 can_legally_play_iid(player, cascade_iid_or_library_count),
-             play_check_or_selected_index != 0))
-        {
-          char buffer[1000];
-          cascade_csv_id = cards_data[cascade_iid_or_library_count].id;
-          scnprintf(buffer, 1000, " Play %s\n Do not play", cards_ptr[cascade_csv_id]->name);
-          if (do_dialog(player, player, card, -1, -1, buffer, 0) == 0)
-          {
-            exiled_count_or_scan_index = exiled_count_or_scan_index + -1;
-            play_card_in_exile_for_free(player, player, (unsigned int)cascade_csv_id);
-            exiled[exiled_count_or_scan_index] = -1;
-          }
-        }
-        cascade_iid_or_library_count = count_deck(player);
-        cascade_iid_or_library_count += exiled_count_or_scan_index;
-        exiled_end = exiled + exiled_count_or_scan_index;
-        while (exiled_count_or_scan_index > 0)
-        {
-          play_check_or_selected_index =
-              (cascade_iid_or_library_count * 4 - 0x7e0) - (int)exiled_end;
-          if (exiled_count_or_scan_index < 2)
-            *(int *)((int)exiled + (int)deck_ptr[player] + play_check_or_selected_index + 0x7e0) =
-                exiled[0];
-          else
-          {
-            selected_card_or_index = internal_rand(exiled_count_or_scan_index);
-            *(int *)((int)exiled + (int)deck_ptr[player] + play_check_or_selected_index + 0x7e0) =
-                exiled[selected_card_or_index];
-            if (selected_card_or_index < exiled_count_or_scan_index)
-            {
-              shift_entry = exiled + selected_card_or_index;
-              do
-              {
-                next_shift_entry = shift_entry + 1;
-                *shift_entry = shift_entry[1];
-                shift_entry = next_shift_entry;
-              } while (exiled_end != next_shift_entry);
-            }
-          }
-          --exiled_count_or_scan_index;
-          --exiled_end;
-        }
+        stopped = true;
+        break;
       }
-      i = i + 1;
-    } while (amount != i);
-  }
-  library_or_graveyard = graveyard_ptr_mutable[player];
-  count = count_graveyard(player);
-  exiled_count_or_scan_index = count + -1;
-  if (-1 < count + -1)
-  {
-    do
+    } while (exiled_index != 500);
+    if (exiled_index == 0)
+      continue;
+
+    if (!stopped && averna_check != 0)
+      iid = -1;
+    if (averna_check != 0 && lands_exiled != 0)
     {
-      while (cards_data[library_or_graveyard[exiled_count_or_scan_index]].id != 0x563e)
+      while (true)
       {
-        exiled_count_or_scan_index = exiled_count_or_scan_index + -1;
-        if (exiled_count_or_scan_index == -1)
-        {
-          return;
-        }
+        test_definition_t test;
+        new_default_test_definition(&test, TYPE_LAND, "Select a Land card to put into play tapped.");
+        int selected = select_card_from_zone(player, player, exiled, exiled_index,
+                                             0, 1, -1, &test);
+        if (selected < 0)
+          break;
+        int added = add_card_to_hand(player, exiled[selected]);
+        add_state(player, added, STATE_TAPPED);
+        put_into_play(player, added);
+        for (int z = selected; z < exiled_index; ++z)
+          exiled[z] = exiled[z + 1];
+        --exiled_index;
+        --averna_check;
+        --lands_exiled;
+        if (averna_check == 0 || lands_exiled == 0)
+          break;
       }
-      add_card_to_hand(player, library_or_graveyard[exiled_count_or_scan_index]);
-      cascade_iid_or_library_count = exiled_count_or_scan_index + -1;
-      remove_card_from_grave(player, exiled_count_or_scan_index);
-      exiled_count_or_scan_index = cascade_iid_or_library_count;
-    } while (cascade_iid_or_library_count != -1);
+    }
+    if (stopped && iid >= 0 && can_legally_play_iid(player, iid) != 0)
+    {
+      char buffer[1000];
+      unsigned short csvid = cards_data[iid].id;
+      scnprintf(buffer, 1000, " Play %s\n Do not play", cards_ptr[csvid]->name);
+      if (do_dialog(player, player, card, -1, -1, buffer, 0) == 0)
+      {
+        --exiled_index;
+        play_card_in_exile_for_free(player, player, (unsigned int)csvid);
+        exiled[exiled_index] = -1;
+      }
+    }
+    int total = count_deck(player) + exiled_index;
+    while (exiled_index > 0)
+    {
+      int destination = total - exiled_index;
+      if (exiled_index < 2)
+        deck_ptr[player][destination] = exiled[0];
+      else
+      {
+        int rnd = internal_rand(exiled_index);
+        deck_ptr[player][destination] = exiled[rnd];
+        for (int z = rnd; z < exiled_index; ++z)
+          exiled[z] = exiled[z + 1];
+      }
+      --exiled_index;
+    }
   }
-  return;
+  int *grave = graveyard_ptr_mutable[player];
+  int count = count_graveyard(player);
+  for (int k = count - 1; k >= 0; --k)
+    if (cards_data[grave[k]].id == CARD_ID_AURORA_PHOENIX)
+    {
+      add_card_to_hand(player, grave[k]);
+      remove_card_from_grave(player, k);
+    }
 }
 
 /* ManalinkEh 2022: 0x22fab70; original cards/alara_reborn.c:111. */

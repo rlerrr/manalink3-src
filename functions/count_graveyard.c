@@ -142,38 +142,17 @@ int any_in_graveyard_by_type(int player, int type)
 
 int count_graveyard_by_subtype(int player, subtype_t subtype)
 {
-  int subtype_match;
-  int matches;
-  int grave_byte_offset;
-  int grave_owner;
-
-  matches = 0;
-  grave_owner = 0;
-  do
-  {
-    if ((player == grave_owner) || (player == 2))
-    {
-      grave_byte_offset = 0;
-      do
+  int count = 0;
+  for (int p = 0; p < 2; ++p)
+    if (player == p || player == 2)
+      for (int i = 0; i < 500; ++i)
       {
-        if (*(int *)((int)graveyard_ptr_mutable[grave_owner] + grave_byte_offset) == -1)
+        int iid = graveyard_ptr_mutable[p][i];
+        if (iid == -1)
           break;
-        subtype_match = has_subtype_by_id(
-            player,
-            (unsigned int)
-                cards_data[*(int *)((int)graveyard_ptr_mutable[grave_owner] + grave_byte_offset)]
-                    .id,
-            subtype);
-        matches = (matches + 1) - (unsigned int)(subtype_match == 0);
-        grave_byte_offset = grave_byte_offset + 4;
-      } while (grave_byte_offset != 2000);
-    }
-    grave_owner = grave_owner + 1;
-    if (grave_owner == 2)
-    {
-      return matches;
-    }
-  } while (true);
+        count += has_subtype_by_id(player, (unsigned int)cards_data[iid].id, subtype) != 0;
+      }
+  return count;
 }
 
 int any_in_graveyard_by_subtype(int player, subtype_t subtype)
@@ -217,31 +196,21 @@ int count_deck_by_type(int player, int type){
 
 int new_special_count_grave(int player, test_definition_t *this_test)
 {
-  int test_type;
-  int iid_or_match;
-  int *grave_cursor;
-  int i;
-  int matches;
-
-  test_type = new_get_test_score(this_test);
-  matches = 0;
-  i = 0;
-  do
-  {
-    if ((player == i) || (player == 2))
+  int test_score = new_get_test_score(this_test);
+  int matches = 0;
+  for (int p = 0; p < 2; ++p)
+    if (player == p || player == ANYBODY)
     {
-      grave_cursor = graveyard_ptr_mutable[i];
-      iid_or_match = *grave_cursor;
-      while (iid_or_match != -1)
+      int *grave = graveyard_ptr_mutable[p];
+      int iid = *grave;
+      while (iid != -1)
       {
-        grave_cursor = grave_cursor + 1;
-        iid_or_match = new_make_test(player, iid_or_match, test_type, this_test);
-        matches = (matches + 1) - (unsigned int)(iid_or_match == 0);
-        iid_or_match = *grave_cursor;
+        ++grave;
+        if (new_make_test(player, iid, test_score, this_test))
+          ++matches;
+        iid = *grave;
       }
     }
-    i = i + 1;
-  } while (i != 2);
   return matches;
 }
 

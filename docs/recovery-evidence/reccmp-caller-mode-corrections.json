@@ -1,0 +1,1328 @@
+{
+  "format": 1,
+  "status": "Eight native caller corrections built; all 24 focused call sites, 15,169 fixed slots, current source pins and staging checks passed.",
+  "before_comparison": {
+    "setup_sha256": "564ffec950f499dedc988022b75c7b1b84b3125b4880e50ec636dea23ac9fd7e",
+    "report_sha256": "46c325c0b819c8fc1dd27dc33a93880083c250bf07789a7a0fd4b411afc91738",
+    "inputs": {
+      "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dll": "ac236799d5e898fd8afdf3cbd798f920da722e157610fa01fed6bf7a63cb9af3",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "ffac859be789ada8c2137ef0cea49ad548355f8462d561a783043119cfa551c8"
+    },
+    "metadata_sha256": "c75be87b83402824826886e52ee913f38876f5b5af20e06ad3bcfbd4e778ff06",
+    "metadata_snapshot": ".recovery\\reccmp\\global-bindings-c626.metadata.csv",
+    "global_metadata_snapshot": ".recovery\\reccmp\\global-bindings-c626.globals.csv",
+    "global_metadata_sha256": "4bd078c759882fd6f758d1ec43ab13606b0e8e288c32b13ec11f52609c5142c9",
+    "global_bindings_snapshot": ".recovery\\reccmp\\global-bindings-c626.globals.json",
+    "global_bindings_sha256": "ef42d2ac0d117f42659e1569f46302752feb07636091f9026f8a58aa85cdac06",
+    "verified_global_bindings": {
+      "verified": 293,
+      "bindings_sha256": "552c653669d7d3a20c064c3e6d97e03a7068e36f786d92fc411a2fbf12abac86"
+    },
+    "project_config_sha256": "a978a638b5f154a514be6229cd0b012f96fb8431f1bfc4c4f00c3cf13bc0d371",
+    "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "comparator_source_sha256": {
+      "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+      "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+      "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+      "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_globals.py": "1e870d89b4afbc15950d26c59a94162aecc70bec0700f60c032373a76910f3bc",
+      "C:\\dev\\manalink3-src\\tools\\reccmp_project.py": "c63e3d0b734e532a9bf37141562308a06fd9d3327e85f02d01f67267c73876b6"
+    },
+    "command": [
+      "reccmp-reccmp",
+      "--target",
+      "MANALINK2022",
+      "--no-color",
+      "--json",
+      ".recovery/reccmp/global-bindings-c626.json",
+      "--silent"
+    ],
+    "exit_code": 0
+  },
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "functions": [
+    {
+      "source": "cards/hour_of_devastation.c",
+      "name": "card_abandoned_sarcophagus",
+      "native_address": "0x20d5330",
+      "native_size": 1125,
+      "native_body_sha256": "cd0efd1b4124f7b83338a2e581a7001fe98dc5bbb60b4183289348a736df47d4",
+      "before_reccmp_score": 0.5417439703153989,
+      "source_before_definition_sha256": "d403dbf95fc2095b972405fd40dc4a74c1188600970c35d9dfc2d6ac4fa55a89",
+      "source_after_definition_sha256": "c2d8b96fbe2dde068ac6e224bc08fd0b1492c5414f9809252e02093e7dd381e4",
+      "contracts": [
+        {
+          "callee": "can_sorcery_be_played",
+          "calls": 2,
+          "slot": 4,
+          "values": [
+            115,
+            109
+          ],
+          "kind": "casting_event"
+        },
+        {
+          "callee": "has_mana_to_cast_iid",
+          "calls": 2,
+          "slot": 4,
+          "values": [
+            115,
+            109
+          ],
+          "kind": "casting_event"
+        }
+      ],
+      "native_checks": [
+        {
+          "contract": {
+            "callee": "can_sorcery_be_played",
+            "calls": 2,
+            "slot": 4,
+            "values": [
+              115,
+              109
+            ],
+            "kind": "casting_event"
+          },
+          "sites": [
+            {
+              "call": "0x20d54fe",
+              "argument": {
+                "address": "0x20d54f3",
+                "instruction": "mov dword ptr [esp + 4], 0x73",
+                "value": 115
+              }
+            },
+            {
+              "call": "0x20d5745",
+              "argument": {
+                "address": "0x20d5737",
+                "instruction": "mov dword ptr [esp + 4], 0x6d",
+                "value": 109
+              }
+            }
+          ]
+        },
+        {
+          "contract": {
+            "callee": "has_mana_to_cast_iid",
+            "calls": 2,
+            "slot": 4,
+            "values": [
+              115,
+              109
+            ],
+            "kind": "casting_event"
+          },
+          "sites": [
+            {
+              "call": "0x20d54dd",
+              "argument": {
+                "address": "0x20d54ce",
+                "instruction": "mov dword ptr [esp + 4], 0x73",
+                "value": 115
+              }
+            },
+            {
+              "call": "0x20d560d",
+              "argument": {
+                "address": "0x20d55fb",
+                "instruction": "mov dword ptr [esp + 4], 0x6d",
+                "value": 109
+              }
+            }
+          ]
+        }
+      ],
+      "reason": "Use native EVENT_ACTIVATE (0x6d) while collecting activation choices; retain EVENT_CAN_ACTIVATE (0x73) in the query path and every filter/payment action."
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_as_foretold",
+      "native_address": "0x22d9770",
+      "native_size": 1246,
+      "native_body_sha256": "c9b993fe40a4b493b8650f371b2d705414d7e80388118bb3e46402973d26b808",
+      "before_reccmp_score": 0.4463087248322148,
+      "source_before_definition_sha256": "05e75ac89ddca2243de077555975810fdda3ba2b384fe97da9a457bfb35ce973",
+      "source_after_definition_sha256": "efb3c578d8e83cdfc5b4c4347707f5cb684d6f85a9ea66c2a90f9f9f16defdbb",
+      "contracts": [
+        {
+          "callee": "can_sorcery_be_played",
+          "calls": 4,
+          "slot": 4,
+          "values": [
+            115,
+            115,
+            109,
+            109
+          ],
+          "kind": "casting_event"
+        },
+        {
+          "callee": "flash",
+          "calls": 2,
+          "slot": 8,
+          "values": [
+            115,
+            109
+          ],
+          "kind": "casting_event"
+        }
+      ],
+      "native_checks": [
+        {
+          "contract": {
+            "callee": "can_sorcery_be_played",
+            "calls": 4,
+            "slot": 4,
+            "values": [
+              115,
+              115,
+              109,
+              109
+            ],
+            "kind": "casting_event"
+          },
+          "sites": [
+            {
+              "call": "0x22d98c6",
+              "argument": {
+                "address": "0x22d98bb",
+                "instruction": "mov dword ptr [esp + 4], 0x6d",
+                "value": 109
+              }
+            },
+            {
+              "call": "0x22d98f2",
+              "argument": {
+                "address": "0x22d98e7",
+                "instruction": "mov dword ptr [esp + 4], 0x6d",
+                "value": 109
+              }
+            },
+            {
+              "call": "0x22d9a16",
+              "argument": {
+                "address": "0x22d9a0b",
+                "instruction": "mov dword ptr [esp + 4], 0x73",
+                "value": 115
+              }
+            },
+            {
+              "call": "0x22d9a4a",
+              "argument": {
+                "address": "0x22d9a3f",
+                "instruction": "mov dword ptr [esp + 4], 0x73",
+                "value": 115
+              }
+            }
+          ]
+        },
+        {
+          "contract": {
+            "callee": "flash",
+            "calls": 2,
+            "slot": 8,
+            "values": [
+              115,
+              109
+            ],
+            "kind": "casting_event"
+          },
+          "sites": [
+            {
+              "call": "0x22d9a66",
+              "argument": {
+                "address": "0x22d9a57",
+                "instruction": "mov dword ptr [esp + 8], 0x73",
+                "value": 115
+              }
+            },
+            {
+              "call": "0x22d9c3c",
+              "argument": {
+                "address": "0x22d9c2d",
+                "instruction": "mov dword ptr [esp + 8], 0x6d",
+                "value": 109
+              }
+            }
+          ]
+        }
+      ],
+      "reason": "Use native EVENT_ACTIVATE (0x6d) while collecting activation choices; retain EVENT_CAN_ACTIVATE (0x73) in the query path and every filter/payment action."
+    },
+    {
+      "source": "cards/ikoria.c",
+      "name": "card_lurrus_of_the_dream_den",
+      "native_address": "0x228b340",
+      "native_size": 1450,
+      "native_body_sha256": "84b6067a1c23049eecf03d5252dc00fceff4f2665f8696d3a2b4dde5f69a952e",
+      "before_reccmp_score": 0.43567251461988304,
+      "source_before_definition_sha256": "bd7cf53d31a5f2222d9f2afddf1200b64eec72bf85fcf620d1a861a2f65193c5",
+      "source_after_definition_sha256": "c2402b08acfdb453c084c656f1c364e86335f674038d5eb2590a59d7c0688b03",
+      "contracts": [
+        {
+          "callee": "can_sorcery_be_played",
+          "calls": 2,
+          "slot": 4,
+          "values": [
+            115,
+            109
+          ],
+          "kind": "casting_event"
+        },
+        {
+          "callee": "has_mana_to_cast_iid",
+          "calls": 2,
+          "slot": 4,
+          "values": [
+            115,
+            109
+          ],
+          "kind": "casting_event"
+        }
+      ],
+      "native_checks": [
+        {
+          "contract": {
+            "callee": "can_sorcery_be_played",
+            "calls": 2,
+            "slot": 4,
+            "values": [
+              115,
+              109
+            ],
+            "kind": "casting_event"
+          },
+          "sites": [
+            {
+              "call": "0x228b710",
+              "argument": {
+                "address": "0x228b705",
+                "instruction": "mov dword ptr [esp + 4], 0x6d",
+                "value": 109
+              }
+            },
+            {
+              "call": "0x228b860",
+              "argument": {
+                "address": "0x228b855",
+                "instruction": "mov dword ptr [esp + 4], 0x73",
+                "value": 115
+              }
+            }
+          ]
+        },
+        {
+          "contract": {
+            "callee": "has_mana_to_cast_iid",
+            "calls": 2,
+            "slot": 4,
+            "values": [
+              115,
+              109
+            ],
+            "kind": "casting_event"
+          },
+          "sites": [
+            {
+              "call": "0x228b6d9",
+              "argument": {
+                "address": "0x228b6ca",
+                "instruction": "mov dword ptr [esp + 4], 0x6d",
+                "value": 109
+              }
+            },
+            {
+              "call": "0x228b829",
+              "argument": {
+                "address": "0x228b81a",
+                "instruction": "mov dword ptr [esp + 4], 0x73",
+                "value": 115
+              }
+            }
+          ]
+        }
+      ],
+      "reason": "Use native EVENT_ACTIVATE (0x6d) while collecting activation choices; retain EVENT_CAN_ACTIVATE (0x73) in the query path and every filter/payment action."
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_fires_of_invention",
+      "native_address": "0x25cf1b0",
+      "native_size": 1291,
+      "native_body_sha256": "96f4bb5e64ef4bdd8e539aaa6845dd6bed156d4e57d9d9b97c8cda2a4b32803f",
+      "before_reccmp_score": 0.32038834951456313,
+      "source_before_definition_sha256": "372e136899bd8c5157ed582683d980190522af32ba29a79ec5cf4ebe6eb92abc",
+      "source_after_definition_sha256": "ef8153fb84f225a59bc01f0363d2a296eb61066d52394ba4b9977cb3d6c7ea62",
+      "contracts": [
+        {
+          "callee": "can_sorcery_be_played",
+          "calls": 4,
+          "slot": 4,
+          "values": [
+            115,
+            115,
+            109,
+            109
+          ],
+          "kind": "casting_event"
+        },
+        {
+          "callee": "flash",
+          "calls": 2,
+          "slot": 8,
+          "values": [
+            115,
+            109
+          ],
+          "kind": "casting_event"
+        }
+      ],
+      "native_checks": [
+        {
+          "contract": {
+            "callee": "can_sorcery_be_played",
+            "calls": 4,
+            "slot": 4,
+            "values": [
+              115,
+              115,
+              109,
+              109
+            ],
+            "kind": "casting_event"
+          },
+          "sites": [
+            {
+              "call": "0x25cf34d",
+              "argument": {
+                "address": "0x25cf342",
+                "instruction": "mov dword ptr [esp + 4], 0x73",
+                "value": 115
+              }
+            },
+            {
+              "call": "0x25cf379",
+              "argument": {
+                "address": "0x25cf36e",
+                "instruction": "mov dword ptr [esp + 4], 0x73",
+                "value": 115
+              }
+            },
+            {
+              "call": "0x25cf4a9",
+              "argument": {
+                "address": "0x25cf49e",
+                "instruction": "mov dword ptr [esp + 4], 0x6d",
+                "value": 109
+              }
+            },
+            {
+              "call": "0x25cf4d5",
+              "argument": {
+                "address": "0x25cf4ca",
+                "instruction": "mov dword ptr [esp + 4], 0x6d",
+                "value": 109
+              }
+            }
+          ]
+        },
+        {
+          "contract": {
+            "callee": "flash",
+            "calls": 2,
+            "slot": 8,
+            "values": [
+              115,
+              109
+            ],
+            "kind": "casting_event"
+          },
+          "sites": [
+            {
+              "call": "0x25cf391",
+              "argument": {
+                "address": "0x25cf382",
+                "instruction": "mov dword ptr [esp + 8], 0x73",
+                "value": 115
+              }
+            },
+            {
+              "call": "0x25cf6a9",
+              "argument": {
+                "address": "0x25cf69a",
+                "instruction": "mov dword ptr [esp + 8], 0x6d",
+                "value": 109
+              }
+            }
+          ]
+        }
+      ],
+      "reason": "Use native EVENT_ACTIVATE (0x6d) while collecting activation choices; retain EVENT_CAN_ACTIVATE (0x73) in the query path and every filter/payment action."
+    },
+    {
+      "source": "cards/kaladesh.c",
+      "name": "card_lost_legacy",
+      "native_address": "0x23a2960",
+      "native_size": 666,
+      "native_body_sha256": "ada424b285b1f42b7fb17eca55d61535a7b97883e3d7867ea0b28eb81ae7c800",
+      "before_reccmp_score": 0.6296296296296297,
+      "source_before_definition_sha256": "0db71bb7eaafcd4dec798c9e7e243d73ee2e08e97f75093d9dffb7a36f2c258a",
+      "source_after_definition_sha256": "b9fdc6327c962d18d649cc1bd5ab48cd2cf93029c8330e860232e01f7f83545e",
+      "contracts": [
+        {
+          "callee": "lobotomy_effect",
+          "calls": 1,
+          "slot": 16,
+          "values": [
+            4
+          ],
+          "kind": "hand_only_reporting"
+        }
+      ],
+      "native_checks": [
+        {
+          "contract": {
+            "callee": "lobotomy_effect",
+            "calls": 1,
+            "slot": 16,
+            "values": [
+              4
+            ],
+            "kind": "hand_only_reporting"
+          },
+          "sites": [
+            {
+              "call": "0x23a2b48",
+              "argument": {
+                "address": "0x23a2b2e",
+                "instruction": "mov dword ptr [esp + 0x10], 4",
+                "value": 4
+              }
+            }
+          ]
+        }
+      ],
+      "reason": "Restore native flag 4: the returned count reports cards exiled from hand, and does not require finding all copies. Keep the name chooser and draw consumer unchanged."
+    },
+    {
+      "source": "functions/tutors.c",
+      "name": "new_global_tutor",
+      "native_address": "0x2651990",
+      "native_size": 2875,
+      "native_body_sha256": "d5fe4f5a33ec6aad5c34ab58a6f56a5a28b7ac1883a80fe35c4e8137123f3095",
+      "before_reccmp_score": 0.20349967595593,
+      "source_before_definition_sha256": "72eaca0e7b2a65f4028408810505734db8e8cf9ed7d2ba103aadc7ee4eda8875",
+      "source_after_definition_sha256": "54b9fdcf91ab284496f9d2ce1089ee2dff7fc2f6fd0066d0fd8b8d32f51d338e",
+      "contracts": [
+        {
+          "callee": "create_may_play_card_from_exile_effect",
+          "calls": 1,
+          "slot": 16,
+          "values": [
+            2
+          ],
+          "kind": "exile_payment_mode"
+        }
+      ],
+      "native_checks": [
+        {
+          "contract": {
+            "callee": "create_may_play_card_from_exile_effect",
+            "calls": 1,
+            "slot": 16,
+            "values": [
+              2
+            ],
+            "kind": "exile_payment_mode"
+          },
+          "sites": [
+            {
+              "call": "0x26520f9",
+              "argument": {
+                "address": "0x26520ea",
+                "instruction": "mov dword ptr [esp + 0x10], 2",
+                "value": 2
+              }
+            }
+          ]
+        }
+      ],
+      "reason": "Restore native mode 2 in TUTOR_OPPOSITION_AGENT: payment by mana value instead of free casting. Preserve the native exile-zone/player operands and surrounding card lifecycle."
+    },
+    {
+      "source": "cards/unlimited.c",
+      "name": "card_chaos_orb",
+      "native_address": "0x24c00a0",
+      "native_size": 967,
+      "native_body_sha256": "837cdc356aee179b18633376ede0a6b65391ffdf999eb9dd905b9136566dafff",
+      "before_reccmp_score": 0.5382932166301969,
+      "source_before_definition_sha256": "55fc8d20f6915af7a8cea014886967db2ccadb9529c1117e63ed05a6693013fe",
+      "source_after_definition_sha256": "4ee43cd139b5f226e4f71eb7a8310c19729cb3d03f27187b7f983ce0d1012210",
+      "contracts": [
+        {
+          "callee": "select_target",
+          "calls": 1,
+          "slot": 16,
+          "values": [
+            0
+          ],
+          "prompt_slot": 12,
+          "prompt": "Aim Chaos Orb at which card?",
+          "kind": "literal_target_prompt",
+          "forbidden_callee": "new_pick_target"
+        }
+      ],
+      "native_checks": [
+        {
+          "contract": {
+            "callee": "select_target",
+            "calls": 1,
+            "slot": 16,
+            "values": [
+              0
+            ],
+            "prompt_slot": 12,
+            "prompt": "Aim Chaos Orb at which card?",
+            "kind": "literal_target_prompt",
+            "forbidden_callee": "new_pick_target"
+          },
+          "sites": [
+            {
+              "call": "0x24c040a",
+              "argument": {
+                "address": "0x24c03ec",
+                "instruction": "mov dword ptr [esp + 0x10], 0",
+                "value": 0
+              },
+              "prompt_argument": {
+                "address": "0x24c03fb",
+                "instruction": "mov dword ptr [esp + 0xc], 0x274f34e",
+                "value": 41218894
+              }
+            }
+          ]
+        }
+      ],
+      "reason": "Restore the native five-argument literal-prompt selection with a null target-output pointer. The four-argument replacement loaded the literal as a text-resource key."
+    },
+    {
+      "source": "cards/commander.c",
+      "name": "card_zedruu_the_greathearted",
+      "native_address": "0x23e5d00",
+      "native_size": 863,
+      "native_body_sha256": "99dea164aaf3c66349cda116b23a04b416097bd7929638cfad44f73d772a02b0",
+      "before_reccmp_score": 0.8439897698209718,
+      "source_before_definition_sha256": "2cfc1b9359e60c48efd1a70679f973a7996396e8fc554ff72e7dcb120cf2a909",
+      "source_after_definition_sha256": "2050a0a1208320429ac1e0ff7b4c5f3e6a6201147c503851e6c03efcd3d39d68",
+      "contracts": [
+        {
+          "callee": "count_permanents_you_control_but_you_dont_own",
+          "calls": 1,
+          "slot": 4,
+          "values": [
+            71
+          ],
+          "kind": "native_count_helper"
+        }
+      ],
+      "native_checks": [
+        {
+          "contract": {
+            "callee": "count_permanents_you_control_but_you_dont_own",
+            "calls": 1,
+            "slot": 4,
+            "values": [
+              71
+            ],
+            "kind": "native_count_helper"
+          },
+          "sites": [
+            {
+              "call": "0x23e5f1a",
+              "argument": {
+                "address": "0x23e5f0d",
+                "instruction": "mov dword ptr [esp + 4], 0x47",
+                "value": 71
+              }
+            }
+          ]
+        }
+      ],
+      "reason": "Restore the native helper call and opponent/permanent operands, replacing the older handwritten loop. The same returned count feeds life gain and card draw; native helper quirks remain unchanged."
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/hour_of_devastation.c",
+      "before_source_sha256": "ae8e043a35b7c9e569babc8978894070314fbee6d3445c02ae678f77d9548483",
+      "after_source_sha256": "481102ee8aba380f7bb5161cc52e06d0ded6073e54de74e1dbd611ddc13c1541",
+      "before_bytes_sha256": "2395902c7048dde43209eea584807e312b813a4eca12849f52ac47701188a3e0"
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "before_source_sha256": "97211e0a4106712dc504283c07e1bfbcac3b904a73dd641d3d4543943354512f",
+      "after_source_sha256": "2b7dbb1a30e29a62acbe594e6a7f9de65144431c1dceab3602c98a882f478774",
+      "before_bytes_sha256": "443d80bc82d3f337105b9d7326b55f4c45cbab58f834a7d9aa4e9fa60b49c554"
+    },
+    {
+      "source": "cards/ikoria.c",
+      "before_source_sha256": "7966adf1c67d4ae626202314be534b0f9ab9e3e887fe6c4c9c103e4d118109bc",
+      "after_source_sha256": "4c6c497f380b13e235f5ecfe66a476ed9cdca6ea9ef711eabad59b81f94870cc",
+      "before_bytes_sha256": "1040c783b9bc0e9296be4f8270ab4a6d3f58c0f6b03ca59a6e07f1de456b609a"
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "before_source_sha256": "908d4055371529bd241cce3dfdcd7bf03e96377ec097464ac2f6c1c2ac24a51b",
+      "after_source_sha256": "c0e0dd4bc203ff07e6044d2044fe694cf95635a76fd43aeffc1e2a7e7e469824",
+      "before_bytes_sha256": "375300e7ff1c49fb7bf173eeb28288fdb6a0b6f8dad7912baed5bf105f449e7c"
+    },
+    {
+      "source": "cards/kaladesh.c",
+      "before_source_sha256": "d4fd46dcce733e64284dd9d5b7ec81cd2f25477c89a5abeab3fcba10312c401c",
+      "after_source_sha256": "31394af6522452c1260eb7748c2441e4c0eb85ec1fa19b6116d0a28986c5ca9f",
+      "before_bytes_sha256": "0aadb12f41e46c286f683675225d391633eb014ea08b6a55c3b42a6722bd6cf3"
+    },
+    {
+      "source": "functions/tutors.c",
+      "before_source_sha256": "a598d23b9105bcabc8c00173607bb44d6bf83e6f4234250dce83e2c70def0cc2",
+      "after_source_sha256": "3f79048ef9b43a40cca9903bbf0bd60d91e2ae4eaa3b702603b7835c5e9d1828",
+      "before_bytes_sha256": "143d931d1988b483c53ecfec907780d2e301b5ba48aa798da6d0d82c9627b0a7"
+    },
+    {
+      "source": "cards/unlimited.c",
+      "before_source_sha256": "31b7e8e0e06d8e3f15f4118728f2f1fcf83c2078077af9435c4aab8bf1a125ff",
+      "after_source_sha256": "22a8d88c363adda1ee239751de5ec197fa66383566a859ff9222793f93c7bcdb",
+      "before_bytes_sha256": "bbe53400af78cea6550b32a324ee989e3c69473849b73c7756bafa25d75efe13"
+    },
+    {
+      "source": "cards/commander.c",
+      "before_source_sha256": "b3690ef77a7431176c28c37e99c1ae1b664e583ecbd50ed544b21dc05e71bce9",
+      "after_source_sha256": "cc7acd69e1978f4141685241344e36ed7963c771eba422af6854ae7600b69aec",
+      "before_bytes_sha256": "450bd1850469957de6f54a7bfe781dedc984dc3ec9e3481fd2376759a1ddd266"
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "discovery": {
+    "screened_nonexact_functions": 6076,
+    "constant_candidates": 11,
+    "caller_scan_sha256": "a821e1f7105cb07ac04b93cf26efb9e29887b6ea45de82064d320bd62f59fd34",
+    "review": "Five outlast caller candidates are ABI false positives: the rebuilt private helper passes player/card/event in registers and drops constant-zero color arguments, whereas the native helper uses all stack arguments. No outlast cost edit is made. Hand checks and protection/trigger helper differences were checked for inlining and retained."
+  },
+  "scope": "Eight source owners, fourteen corrected native caller sites. All twenty query/activation event sites are included in validation. Reccmp scores remain discovery hints; no full semantic-equivalence or completion claim.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "functions": [
+      {
+        "source": "cards/hour_of_devastation.c",
+        "name": "card_abandoned_sarcophagus",
+        "address": "0x221df80",
+        "size": 1177,
+        "body_sha256": "af922cf72f37749be29c8983e7250fef161cf2dcb498aaea0bd5ce85386656a6",
+        "sites": [
+          {
+            "callee": "can_sorcery_be_played",
+            "kind": "casting_event",
+            "native": [
+              {
+                "call": "0x20d54fe",
+                "argument": {
+                  "address": "0x20d54f3",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x20d5745",
+                "argument": {
+                  "address": "0x20d5737",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x221e31c",
+                "argument": {
+                  "address": "0x221e311",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x221e3ca",
+                "argument": {
+                  "address": "0x221e3bc",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              }
+            ]
+          },
+          {
+            "callee": "has_mana_to_cast_iid",
+            "kind": "casting_event",
+            "native": [
+              {
+                "call": "0x20d54dd",
+                "argument": {
+                  "address": "0x20d54ce",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x20d560d",
+                "argument": {
+                  "address": "0x20d55fb",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x221e115",
+                "argument": {
+                  "address": "0x221e106",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x221e265",
+                "argument": {
+                  "address": "0x221e253",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/amonkhet.c",
+        "name": "card_as_foretold",
+        "address": "0x20551d0",
+        "size": 1272,
+        "body_sha256": "eeb483011d2fdc190216b03a5d05ac2ee355704eab494b934459cf1ffdf88a78",
+        "sites": [
+          {
+            "callee": "can_sorcery_be_played",
+            "kind": "casting_event",
+            "native": [
+              {
+                "call": "0x22d98c6",
+                "argument": {
+                  "address": "0x22d98bb",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              },
+              {
+                "call": "0x22d98f2",
+                "argument": {
+                  "address": "0x22d98e7",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              },
+              {
+                "call": "0x22d9a16",
+                "argument": {
+                  "address": "0x22d9a0b",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x22d9a4a",
+                "argument": {
+                  "address": "0x22d9a3f",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x205531e",
+                "argument": {
+                  "address": "0x2055313",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x2055352",
+                "argument": {
+                  "address": "0x2055347",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x2055666",
+                "argument": {
+                  "address": "0x205565b",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              },
+              {
+                "call": "0x205569a",
+                "argument": {
+                  "address": "0x205568f",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              }
+            ]
+          },
+          {
+            "callee": "flash",
+            "kind": "casting_event",
+            "native": [
+              {
+                "call": "0x22d9a66",
+                "argument": {
+                  "address": "0x22d9a57",
+                  "instruction": "mov dword ptr [esp + 8], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x22d9c3c",
+                "argument": {
+                  "address": "0x22d9c2d",
+                  "instruction": "mov dword ptr [esp + 8], 0x6d",
+                  "value": 109
+                }
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x205536e",
+                "argument": {
+                  "address": "0x205535f",
+                  "instruction": "mov dword ptr [esp + 8], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x20556b6",
+                "argument": {
+                  "address": "0x20556a7",
+                  "instruction": "mov dword ptr [esp + 8], 0x6d",
+                  "value": 109
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/ikoria.c",
+        "name": "card_lurrus_of_the_dream_den",
+        "address": "0x2246620",
+        "size": 1454,
+        "body_sha256": "affe9615f6050f1f4a33b7c2a5d9b7f647ba538869ed0ff02253917453a48d3d",
+        "sites": [
+          {
+            "callee": "can_sorcery_be_played",
+            "kind": "casting_event",
+            "native": [
+              {
+                "call": "0x228b710",
+                "argument": {
+                  "address": "0x228b705",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              },
+              {
+                "call": "0x228b860",
+                "argument": {
+                  "address": "0x228b855",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x22468a8",
+                "argument": {
+                  "address": "0x224689d",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              },
+              {
+                "call": "0x2246b78",
+                "argument": {
+                  "address": "0x2246b6d",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              }
+            ]
+          },
+          {
+            "callee": "has_mana_to_cast_iid",
+            "kind": "casting_event",
+            "native": [
+              {
+                "call": "0x228b6d9",
+                "argument": {
+                  "address": "0x228b6ca",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              },
+              {
+                "call": "0x228b829",
+                "argument": {
+                  "address": "0x228b81a",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x2246871",
+                "argument": {
+                  "address": "0x2246862",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              },
+              {
+                "call": "0x2246b41",
+                "argument": {
+                  "address": "0x2246b32",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/throne_of_eldraine.c",
+        "name": "card_fires_of_invention",
+        "address": "0x25881b0",
+        "size": 1292,
+        "body_sha256": "cf187c09dcbbcdaeac5db8690878827d17871fea9fc3b0976c0c9a8cd329eb27",
+        "sites": [
+          {
+            "callee": "can_sorcery_be_played",
+            "kind": "casting_event",
+            "native": [
+              {
+                "call": "0x25cf34d",
+                "argument": {
+                  "address": "0x25cf342",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x25cf379",
+                "argument": {
+                  "address": "0x25cf36e",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x25cf4a9",
+                "argument": {
+                  "address": "0x25cf49e",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              },
+              {
+                "call": "0x25cf4d5",
+                "argument": {
+                  "address": "0x25cf4ca",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x2588471",
+                "argument": {
+                  "address": "0x2588466",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x258849d",
+                "argument": {
+                  "address": "0x2588492",
+                  "instruction": "mov dword ptr [esp + 4], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x258865a",
+                "argument": {
+                  "address": "0x258864f",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              },
+              {
+                "call": "0x258868e",
+                "argument": {
+                  "address": "0x2588683",
+                  "instruction": "mov dword ptr [esp + 4], 0x6d",
+                  "value": 109
+                }
+              }
+            ]
+          },
+          {
+            "callee": "flash",
+            "kind": "casting_event",
+            "native": [
+              {
+                "call": "0x25cf391",
+                "argument": {
+                  "address": "0x25cf382",
+                  "instruction": "mov dword ptr [esp + 8], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x25cf6a9",
+                "argument": {
+                  "address": "0x25cf69a",
+                  "instruction": "mov dword ptr [esp + 8], 0x6d",
+                  "value": 109
+                }
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x25884b5",
+                "argument": {
+                  "address": "0x25884a6",
+                  "instruction": "mov dword ptr [esp + 8], 0x73",
+                  "value": 115
+                }
+              },
+              {
+                "call": "0x25886aa",
+                "argument": {
+                  "address": "0x258869b",
+                  "instruction": "mov dword ptr [esp + 8], 0x6d",
+                  "value": 109
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/kaladesh.c",
+        "name": "card_lost_legacy",
+        "address": "0x229bdd0",
+        "size": 683,
+        "body_sha256": "ba8ff74903f3ca003e4e2cd83c3aaa13ab77d71762b55fc2260007ae0166e8a2",
+        "sites": [
+          {
+            "callee": "lobotomy_effect",
+            "kind": "hand_only_reporting",
+            "native": [
+              {
+                "call": "0x23a2b48",
+                "argument": {
+                  "address": "0x23a2b2e",
+                  "instruction": "mov dword ptr [esp + 0x10], 4",
+                  "value": 4
+                }
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x229bfd0",
+                "argument": {
+                  "address": "0x229bfb6",
+                  "instruction": "mov dword ptr [esp + 0x10], 4",
+                  "value": 4
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "functions/tutors.c",
+        "name": "new_global_tutor",
+        "address": "0x26e2160",
+        "size": 3084,
+        "body_sha256": "1650dc5614748767c9a9b2943ec69323adb47986703a422660a5ebe7fa7745d6",
+        "sites": [
+          {
+            "callee": "create_may_play_card_from_exile_effect",
+            "kind": "exile_payment_mode",
+            "native": [
+              {
+                "call": "0x26520f9",
+                "argument": {
+                  "address": "0x26520ea",
+                  "instruction": "mov dword ptr [esp + 0x10], 2",
+                  "value": 2
+                }
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x26e27ba",
+                "argument": {
+                  "address": "0x26e279e",
+                  "instruction": "mov dword ptr [esp + 0x10], 2",
+                  "value": 2
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/unlimited.c",
+        "name": "card_chaos_orb",
+        "address": "0x25b5160",
+        "size": 1030,
+        "body_sha256": "f96dcbb2effbcd404b967f8d650f6cb8a0a09ae2e6877cfa33234c3aeb1c965d",
+        "sites": [
+          {
+            "callee": "select_target",
+            "kind": "literal_target_prompt",
+            "native": [
+              {
+                "call": "0x24c040a",
+                "argument": {
+                  "address": "0x24c03ec",
+                  "instruction": "mov dword ptr [esp + 0x10], 0",
+                  "value": 0
+                },
+                "prompt": "Aim Chaos Orb at which card?"
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x25b540a",
+                "argument": {
+                  "address": "0x25b53ec",
+                  "instruction": "mov dword ptr [esp + 0x10], 0",
+                  "value": 0
+                },
+                "prompt": "Aim Chaos Orb at which card?"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "source": "cards/commander.c",
+        "name": "card_zedruu_the_greathearted",
+        "address": "0x20d38a0",
+        "size": 863,
+        "body_sha256": "069ac0558ee5e7a2c31d1d3f4014f2df908b2ccb2220c01d02541847c8874edf",
+        "sites": [
+          {
+            "callee": "count_permanents_you_control_but_you_dont_own",
+            "kind": "native_count_helper",
+            "native": [
+              {
+                "call": "0x23e5f1a",
+                "argument": {
+                  "address": "0x23e5f0d",
+                  "instruction": "mov dword ptr [esp + 4], 0x47",
+                  "value": 71
+                }
+              }
+            ],
+            "rebuilt": [
+              {
+                "call": "0x20d3aba",
+                "argument": {
+                  "address": "0x20d3aad",
+                  "instruction": "mov dword ptr [esp + 4], 0x47",
+                  "value": 71
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "checked_call_sites": 24,
+    "corrected_call_sites": 14,
+    "dll_sha256": "1e1f044ec31f76d7c73aae7ddcc72efa2da748242a515c5741d8cfbb07f7a124",
+    "dbg_sha256": "abc66053ccd08d937f81823d0dfd5b0451019654027ca869b0459a8b0f8616f6",
+    "full_file_projections": 8,
+    "staging": "preserved",
+    "scope": "Fresh DWARF bounds, actual callee identities and native event/flag/prompt operands. Eight complete source-file projections restrict edits to recorded fragments. Twenty casting-event sites include ten changed activation sites and ten unchanged query sites. Full similarity and transitive gameplay equivalence are not claimed."
+  },
+  "build_log_sha256": "84b8cc6b75ed9b7114792a4cd8fa307876e8b91c41a7f2d90904e7dd0c861050",
+  "current_source_check": {
+    "canonical_functions": 738,
+    "accepted_function_names": 735,
+    "auxiliary_functions": [
+      {
+        "recovery_name": "exile_at_end_of_combat_2022",
+        "canonical_name": "innistrad_exile_at_end_of_combat_legacy",
+        "kind": "retained_public_native_helper",
+        "native_ranges": 1
+      },
+      {
+        "recovery_name": "reset_storm_count_2022",
+        "canonical_name": "reset_storm_count",
+        "kind": "native_inline_fragment",
+        "native_ranges": 14
+      },
+      {
+        "recovery_name": "keep_storm_count_2022",
+        "canonical_name": "keep_storm_count",
+        "kind": "native_inline_fragment",
+        "native_ranges": 21
+      }
+    ],
+    "changed_files": 171,
+    "verification": "current source hashes and canonical name/ledger references",
+    "historical_provenance_replayed": false,
+    "historical_artifacts_retired": true,
+    "scope": "Current configuration inputs only. Historical source-edit replay, archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json."
+  },
+  "review": [
+    "Previous goal turn added checked project data bindings and produced an input-pinned full comparison; that was progress. This batch uses that snapshot to correct native caller behavior in seven cards and one helper.",
+    "The widened scan compares basic-block-local constant arguments for every uniquely paired callee, instead of restricting itself to a small handpicked API list. It screens 6,076 eligible nonexact functions and finds eleven constant-argument candidates.",
+    "Five outlast findings are rejected after inspecting both callee prologues: native reads all nine formals from stack arguments; rebuilt uses EAX/EDX/ECX for player/card/event and omits constant-zero color arguments. Same numeric stack offsets therefore describe different formals. The source mana costs are retained.",
+    "Abandoned Sarcophagus, As Foretold, Lurrus and Fires of Invention have distinct query and activation paths. Only ten helper calls in the activation-list branches change to EVENT_ACTIVATE; ten query calls retain EVENT_CAN_ACTIVATE. Fresh compiled calls verify both value multisets against the native stream.",
+    "Lost Legacy passes flag 4 to lobotomy_effect, reporting only cards exiled from hand and allowing partial selection. Its source previously required every copy and reported the wrong draw count. The existing name filter and draw consumer are preserved.",
+    "The Opposition Agent tutor destination passes MPCFE_FOR_CMC (2) to its exile permission instead of free casting (1). All native player/zone operands and surrounding lifecycle operations remain as before.",
+    "Chaos Orb natively calls select_target with its literal prompt and a null output pointer. The replacement new_pick_target mode 0 attempted to load that literal as a text-resource key. The direct native call is restored without changing probability, destruction or cancellation logic.",
+    "Zedruu natively calls count_permanents_you_control_but_you_dont_own(1-player, TYPE_PERMANENT) and sends the returned count to both gain_life and draw_cards. The old handwritten loop is replaced by this helper; existing native helper quirks are retained.",
+    "Other direct-call differences from hand checks, target protection and prowess dispatch reflect inlining or private-call ABI changes and do not justify source edits. The Phyrexian Revoker shared-path count difference also remains a review signal rather than a change made from occurrence counts.",
+    "One combined build and eight full-file source projections pass. The C626 report now describes the pre-batch binaries; no post-batch full-function score is claimed. No historical full-audit replay or broad gameplay test is run."
+  ]
+}

@@ -420,10 +420,10 @@ int crypt_sliver_shared_ability(int player, int card, event_t event)
   default_target_definition(player, card, &td2, 2);
   td2.preferred_controller = player;
   td2.required_subtype = 0xb1;
-  td2.required_state = 0x4000;
+  td2.required_state = TARGET_STATE_DESTROYED;
   if (player == 1)
   {
-    td2.special = 0x800000;
+    td2.special = TARGET_SPECIAL_REGENERATION;
   }
   if (((event == EVENT_RESOLVE_ACTIVATION) &&
        (result = would_validate_arbitrary_target(&td2, instance->targets[2].player,
@@ -441,9 +441,9 @@ int crypt_sliver_shared_ability(int player, int card, event_t event)
 int card_crypt_sliver(int player, int card, event_t event)
 {
   int result;
-  int card_00;
+  int legacy_card;
   card_instance_t *instance;
-  int player_00;
+  int opponent;
   if (event == EVENT_RESOLVE_SPELL)
   {
     result = create_legacy_activate(player, card, crypt_sliver_shared_ability);
@@ -452,14 +452,14 @@ int card_crypt_sliver(int player, int card, event_t event)
     instance->targets[1].card = card;
     instance->number_of_targets = '\x01';
     instance = get_card_instance(player, card);
-    player_00 = 1 - player;
-    result = add_card_to_hand(player_00, instance->internal_card_id);
-    card_00 = create_legacy_activate(player_00, result, crypt_sliver_shared_ability);
-    instance = get_card_instance(player_00, card_00);
+    opponent = 1 - player;
+    result = add_card_to_hand(opponent, instance->internal_card_id);
+    legacy_card = create_legacy_activate(opponent, result, crypt_sliver_shared_ability);
+    instance = get_card_instance(opponent, legacy_card);
     instance->targets[1].player = player;
     instance->targets[1].card = card;
     instance->number_of_targets = '\x01';
-    obliterate_card(player_00, result);
+    obliterate_card(opponent, result);
     is_humiliated(player, card, AL_NM_NL_ACT);
   }
   else
@@ -482,8 +482,7 @@ int card_crypt_sliver(int player, int card, event_t event)
       }
     }
   }
-  result = slivercycling(player, card, event);
-  return result;
+  return slivercycling(player, card, event);
 }
 
 int card_dark_supplicant(int player, int card, event_t event){

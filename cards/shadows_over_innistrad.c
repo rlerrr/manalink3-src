@@ -93,7 +93,7 @@ static void make_zombie(int s_player, int s_card, int t_player, int qty, int sle
 void make_devil(int s_player, int s_card, int t_player, int qty, int sleight)
 {
   token_generation_t token;
-  default_token_definition(s_player, s_card, 0x491c, &token);
+  default_token_definition(s_player, s_card, CARD_ID_DEVIL, &token);
   token.t_player = t_player;
   token.qty = (unsigned char)qty;
   token.tou = 1;
@@ -767,7 +767,7 @@ int card_westvale_cult_leader(int player, int card, event_t event)
     result = eot_trigger(player, card, event);
     if (result != 0)
     {
-      default_token_definition(player, card, 0x494d, &token);
+      default_token_definition(player, card, CARD_ID_HUMAN_CLERIC, &token);
       token.tou = 1;
       token.pow = 1;
       token.color_forced = '\"';
@@ -1024,22 +1024,10 @@ int card_odric_lunarch_marshal(int player, int card, event_t event){
 
 static int is_aura_or_equipment(int iid, int unused, int player, int card)
 {
-  int subtype_or_type_match;
-  int matches;
-  subtype_or_type_match =
-      has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_EQUIPMENT);
-  matches = 1;
-  if (subtype_or_type_match == 0)
-  {
-    subtype_or_type_match = is_what(-1, iid, 4);
-    matches = 0;
-    if (subtype_or_type_match != 0)
-    {
-      matches = has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_AURA);
-      return (unsigned int)(matches != 0);
-    }
-  }
-  return matches;
+  if (has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_EQUIPMENT))
+    return 1;
+  return is_what(-1, iid, TYPE_ENCHANTMENT) &&
+         has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_AURA);
 }
 
 int card_open_the_armory(int player, int card, event_t event){
@@ -3765,7 +3753,7 @@ int card_relentless_dead(int player, int card, event_t event)
     }
   }
   both_available_or_choice =
-      dialog_impl(player, card, event, "\001\014", "\001\003", "Return this to hand",
+      dialog_impl(player, card, event, DLG_NO_STORAGE, DLG_NO_CANCEL, "Return this to hand",
                   return_mana_reserved, 5, "Reanimate zombie", reanimate_available, 10, "Do both",
                   both_available_or_choice, 0xf, "Do nothing", 1, 1, 0, 0, 0, 0);
   if ((both_available_or_choice & 0xfffffffd) == 0)
@@ -3936,7 +3924,7 @@ int card_stromkirk_mentor(int player, int card, event_t event)
   td.preferred_controller = player;
   td.allow_cancel = 0;
   td.required_subtype = 0xcd;
-  td.special = 0x4000;
+  td.special = TARGET_SPECIAL_NOT_ME;
   instance = get_card_instance(player, card);
   result = can_target(&td);
   if (result != 0)
@@ -4499,8 +4487,9 @@ int card_harness_the_storm(int player, int card, event_t event){
 
 	if (in_play(player, card) && !is_humiliated(player, card, AL_TRIG) && trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && reason_for_trigger_controller == player && trigger_cause_controller == player && !not_played_from_hand(player, trigger_cause)){
 	    test_definition_t test;
+	    int name = get_card_name(trigger_cause_controller, trigger_cause);
 	    default_test_definition(&test, TYPE_SPELL);
-	    test.id = get_card_name(trigger_cause_controller, trigger_cause);
+	    test.id = name;
 	    if (new_special_count_grave(player, &test)){
 	        sp_ability_trigger(player, event, RESOLVE_TRIGGER_AI(player), TYPE_ANY, NULL, player, card);
 	    }
@@ -5241,6 +5230,7 @@ static void make_insect(int s_player, int s_card, int t_player, int qty, int sle
 	token.qty = qty;
 	token.pow = token.tou = 1;
 	token.color_forced = (sleight ? get_sleighted_color_test(s_player, s_card, COLOR_TEST_GREEN) : COLOR_TEST_GREEN);
+	token.no_sleight = 0;
 	generate_token(&token);
 }
 
@@ -5857,7 +5847,7 @@ int card_sage_of_ancient_lore(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
-    if (((((int)((player ^ 0xffffffffU) & (card ^ 0xffffffffU)) < 0) &&
+    if ((((player >= 0 && card >= 0) &&
           (event - EVENT_POWER < 2)) &&
          (card == affected_card)) &&
         (player == affected_card_controller))
@@ -6809,7 +6799,7 @@ int card_sorin_grim_nemesis(int player, int card, event_t event)
       life_cost_or_source_player = life[player];
       instance->number_of_targets = '\0';
       instance->info_slot = 0;
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Reveal & damage",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_PLANESWALKER, "Reveal & damage",
                            1, 5, 1, "Damage creature or pwalker", can_target(&td),
                            (unsigned int)(life_cost_or_source_player < 6) * 9 + 1, 0,
                            "Make Vampire Knights", 1, 0xf, 0xfffffff7, 0, 0, 0, 0);
@@ -6898,7 +6888,7 @@ int card_sorin_grim_nemesis(int player, int card, event_t event)
       {
         life_cost_or_source_player = life[player];
       }
-      default_token_definition(player, card, 0x49a1, &token);
+      default_token_definition(player, card, CARD_ID_VAMPIRE_KNIGHT, &token);
       token.qty = (unsigned char)life_cost_or_source_player;
       token.tou = 1;
       token.pow = 1;
@@ -7028,7 +7018,7 @@ int card_brain_in_a_jar(int player, int card, event_t event)
     }
     else
       chosen_counters_or_cmc = 0;
-    choice = dialog_impl(player, card, event, "\001\002", "Add counter & play spell", 1,
+    choice = dialog_impl(player, card, event, DLG_RANDOM, "Add counter & play spell", 1,
                          cast_priority, "Remove counters & scry", scry_available,
                          scry_priority_or_source_card, 0, 0, 0, 0);
     if (choice == 0)
@@ -7873,7 +7863,7 @@ static int lilianas_indignation_legacy(int player, int card, event_t event)
   int amount;
   enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_MILLED;
   current_trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     current_trigger = xtrigger_impl_value_dont_use_directly;
   }
@@ -7978,7 +7968,7 @@ static int fleeting_memories_effect(int player, int card, event_t event)
       {
         instance->targets[0xb].player = 0;
       }
-      *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+      SET_BYTE2(instance->targets[0xb].player) = 1;
     }
   }
   clue_triggers =
@@ -7992,7 +7982,7 @@ static int fleeting_memories_effect(int player, int card, event_t event)
     {
 
       default_target_definition(player, card, &td, 0);
-      td.zone = 0x1000;
+      td.zone = TARGET_ZONE_PLAYERS;
       td.allow_cancel = 0;
       instance = get_card_instance(player, card);
       instance->number_of_targets = '\0';
@@ -8077,7 +8067,7 @@ static int graf_mole_effect(int player, int card, event_t event)
       {
         instance->targets[0xb].player = 0;
       }
-      *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+      SET_BYTE2(instance->targets[0xb].player) = 1;
     }
   }
   clue_triggers =
@@ -8156,7 +8146,7 @@ static int ulvenwald_mysteries_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       dying_card_or_id = affected_card;
       gfp_count_or_result = affected_card_controller;

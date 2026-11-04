@@ -378,7 +378,7 @@ int compute_and_check_casting_cost(int player, int unused, int card)
                               cost_xbugrwaU[COLOR_RED], cost_xbugrwaU[COLOR_WHITE]);
   else
   {
-    if ((card_flags[player] & 2) && COST_BLACK > 0)
+    if ((card_flags[player] & CFLAGS_KRRIK) && COST_BLACK > 0)
     {
       int8_t old_black = COST_BLACK;
       COST_BLACK -= how_much_life_can_i_pay(player) / 2;
@@ -561,7 +561,7 @@ int real_put_into_play(int player, int card)
 
   types_of_cards_on_bf[player] |= typ;
   redraw_libraries();
-  inst->state |= STATE_SUMMON_SICK|STATE_SICKNESS_UNUSED|STATE_INVISIBLE|STATE_IN_PLAY;
+  inst->state |= STATE_SUMMON_SICK|STATE_SUMMON_SICK_BACKUP|STATE_INVISIBLE|STATE_IN_PLAY;
   dispatch_event(player, card, EVENT_CAST_SPELL);
   inst->state |= STATE_JUST_CAST;
   if (player == 1)
@@ -999,7 +999,7 @@ int effect_may_play_card_from_exile(int player, int card, event_t event)
       generic_cost = get_updated_casting_cost(player, -1, iid, event, cmc);
       play_check_or_choice = is_what(-1, iid, 0x40);
       play_check_or_choice = has_mana(
-          player, (-(unsigned int)(play_check_or_choice == 0) ^ 0xffffffff) & 6, generic_cost);
+          player, (unsigned int)(play_check_or_choice == 0 ? COLOR_COLORLESS : COLOR_ARTIFACT), generic_cost);
       if (play_check_or_choice == 0 ||
           (play_check_or_choice = has_no_mana_cost(-1, iid), play_check_or_choice != 0))
         can_pay = false;
@@ -1015,8 +1015,8 @@ int effect_may_play_card_from_exile(int player, int card, event_t event)
   }
   if ((look_available != 0) &&
       (play_check_or_choice =
-           dialog_impl(player, card, EVENT_ACTIVATE, "\001\014", "\001\003", "\001\013",
-                       (unsigned int)instance->display_pic_csv_id, "Play card", play_available, 1,
+           dialog_impl(player, card, EVENT_ACTIVATE, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_FULLCARD_CSVID(
+                       (unsigned int)instance->display_pic_csv_id), "Play card", play_available, 1,
                        "Look at card", 1, 0xffffffff, 0, 0, 0, 0),
        play_check_or_choice == 2))
   {
@@ -1035,7 +1035,7 @@ int effect_may_play_card_from_exile(int player, int card, event_t event)
     {
       play_check_or_choice = is_what(-1, iid, 0x40);
       charge_mana(player,
-                  (-(unsigned int)(play_check_or_choice == 0) ^ ~COLOR_COLORLESS) & COLOR_ARTIFACT,
+                  (unsigned int)(play_check_or_choice == 0 ? COLOR_COLORLESS : COLOR_ARTIFACT),
                   generic_cost);
     }
     play_check_or_choice = spell_fizzled;
@@ -1133,22 +1133,22 @@ int has_no_mana_cost(int player, int card)
   int csvid = player == -1 ? cards_data[card].id : get_id(player, card);
   switch (csvid)
   {
-  case 0x1dd5:
-  case 0x211d:
-  case 0x2181:
-  case 0x2194:
-  case 0x2197:
-  case 0x21c6:
-  case 0x221a:
-  case 0x4e75:
-  case 0x4ebe:
-  case 0x59b6:
-  case 0x5a01:
-  case 0x5a0a:
-  case 0x5a1b:
-  case 0x5a4b:
-  case 0x5a54:
-  case 0x5a72:
+  case CARD_ID_EVERMIND:
+  case CARD_ID_ANCESTRAL_VISION:
+  case CARD_ID_HYPERGENESIS:
+  case CARD_ID_LIVING_END:
+  case CARD_ID_LOTUS_BLOOM:
+  case CARD_ID_RESTORE_BALANCE:
+  case CARD_ID_WHEEL_OF_FATE:
+  case CARD_ID_CRASHING_FOOTFALLS:
+  case CARD_ID_MOX_TANTALITE:
+  case CARD_ID_ASMORANOMARDICADAISTINACULDACAR:
+  case CARD_ID_GAEAS_WILL:
+  case CARD_ID_GLIMPSE_OF_TOMORROW:
+  case CARD_ID_INEVITABLE_BETRAYAL:
+  case CARD_ID_PROFANE_TUTOR:
+  case CARD_ID_RESURGENT_BELIEF:
+  case CARD_ID_SOL_TALISMAN:
     return 1;
   default:
     return 0;

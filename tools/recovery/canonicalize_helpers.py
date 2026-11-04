@@ -566,12 +566,16 @@ def verify_current(root=ROOT):
         assert sha(json.dumps(accepted[e['recovery_name']],sort_keys=True).encode())==e['accepted_recovery_record_sha256'],e['recovery_name']
     for e in proof.get('source_annotations',[]):
         assert sha(json.dumps(accepted[e['recovery_name']],sort_keys=True).encode())==e['accepted_recovery_record_sha256'],e['recovery_name']
+    archives=proof.get('source_edit_archives',[])
+    for archive in archives:
+        assert sha((root/archive['path']).read_bytes())==archive['sha256'],archive['path']
     return dict(canonical_functions=len(names(root)),accepted_function_names=len(proof['functions']),
                 auxiliary_functions=verify_auxiliary_functions(proof,root),changed_files=len(proof['files']),
                 verification='current source hashes and canonical name/ledger references',
                 historical_provenance_replayed=False,
                 historical_artifacts_retired=(root/'docs/recovery-evidence/historical-artifact-retirement.json').exists(),
-                scope='Current configuration inputs only. Historical source-edit replay, archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json.')
+                archived_source_edits=sum(archive['entries'] for archive in archives),
+                scope='Current source/name inputs and compressed edit-archive hashes only. Archived edits are not decompressed or replayed; archived builds, supporting proof inputs and native semantic audits are not rerun. Historical replay availability is recorded in docs/recovery-evidence/historical-artifact-retirement.json.')
 
 
 def verify(root=ROOT):

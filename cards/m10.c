@@ -61,7 +61,7 @@ Gain control of target creature until end of turn. Untap that creature. It gains
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-static int effect_must_attack(int player, int card, event_t event)
+int effect_must_attack(int player, int card, event_t event)
 {
 
   if (get_card_instance(player, card)->damage_target_card > -1)
@@ -1129,7 +1129,7 @@ int card_sanguine_bond(int player, int card, event_t event)
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      if (check_battlefield_for_id(player, 0x304d) == 0)
+      if (check_battlefield_for_id(player, CARD_ID_EXQUISITE_BLOOD) == 0)
       {
         lose_life(1 - player, gained_life);
       }

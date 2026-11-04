@@ -964,7 +964,9 @@ if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS)
       event == EVENT_CHANGE_TYPE && affect_me(instance->damage_target_player, instance->damage_target_card) &&
       !(land_can_be_played & LCBP_DURING_EVENT_CHANGE_TYPE_SECOND_PASS))
   {
-    card_instance_t* attached = get_card_instance(instance->damage_target_player, instance->damage_target_card);
+    int attached_player = instance->damage_target_player;
+    int attached_card = instance->damage_target_card;
+    card_instance_t* attached = get_card_instance(attached_player, attached_card);
     int iid = attached->internal_card_id;
     int change_to;
     if (instance->targets[7].player == iid || instance->dummy3 == iid)
@@ -980,7 +982,7 @@ if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS)
       cards_data[change_to].static_ability = 0;
       instance->dummy3 = change_to;
       instance->targets[7].player = iid;
-      attached->regen_status |= 0x1f000000;
+      get_card_instance(attached_player, attached_card)->regen_status |= 0x1f000000;
     }
     event_result = change_to;
     attached_is_forced_subtype(player, card, event, SUBTYPE_INSECT);
@@ -1238,7 +1240,7 @@ int card_marath_will_of_the_wild(int player, int card, event_t event)
   default_target_definition(player, card, &td1, 2);
   td1.preferred_controller = player;
   default_target_definition(player, card, &td2, 0x102);
-  td2.zone = 0x1200;
+  td2.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   if (event == EVENT_CAN_ACTIVATE)
   {
     return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0, 0,
@@ -1312,7 +1314,7 @@ int card_marath_will_of_the_wild(int player, int card, event_t event)
       }
       damage_target_available = can_target(damage_target_definition);
       choice =
-          dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Pass +1/+1 counters",
+          dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, "Pass +1/+1 counters",
                       can_target(creature_or_selected_definition), counter_priority,
                       "Damage creature or player", damage_target_available, damage_priority,
                       "Generate an Elemental", 1, counter_limit_or_token_priority, 0, 0, 0, 0);
@@ -1333,7 +1335,7 @@ int card_marath_will_of_the_wild(int player, int card, event_t event)
       else if (choice == CHOICE_ELEMENTAL)
         remove_counters(player, card, player, card, COUNTER_P1_P1, counters_to_remove_or_available);
       *(char *)&ability_instance->info_slot = (char)choice;
-      *(char *)((int)&ability_instance->info_slot + 1) = (char)counters_to_remove_or_available;
+      SET_BYTE1(ability_instance->info_slot) = (char)counters_to_remove_or_available;
     }
   }
   creature_or_selected_definition = &td1;
@@ -1359,7 +1361,7 @@ int card_marath_will_of_the_wild(int player, int card, event_t event)
     }
     else if ((stored_mode_and_amount & 0xff) == 3)
     {
-      default_token_definition(player, card, 0x4926, &token);
+      default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
       token.color_forced = '\b';
       token.pow = num;
       token.tou = num;
@@ -1720,7 +1722,7 @@ int card_eye_of_doom(int player, int card, event_t event)
 
     turn_order_or_second_player = 0;
     default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = 1;
+    td.illegal_type = TYPE_LAND;
     td.illegal_abilities = 0;
     td.allow_cancel = 0;
     instance = get_card_instance(player, card);

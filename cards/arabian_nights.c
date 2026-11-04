@@ -874,27 +874,15 @@ Land
 
 int card_erg_raiders(int player, int card, event_t event)
 {
-  int attacking;
-  int turn_player_or_trigger;
-  card_instance_t *instance;
-  if ((event == EVENT_RESOLVE_SPELL) ||
-      ((turn_player_or_trigger = current_turn,
-        event == EVENT_DECLARE_ATTACKERS &&
-            (attacking = is_attacking(player, card), turn_player_or_trigger = current_turn,
-             attacking != 0))))
+  if (event == EVENT_RESOLVE_SPELL ||
+      (event == EVENT_DECLARE_ATTACKERS && is_attacking(player, card)))
+    get_card_instance(player, card)->info_slot = 0x42;
+
+  if (current_turn == player && eot_trigger(player, card, event))
   {
-    instance = get_card_instance(player, card);
-    turn_player_or_trigger = current_turn;
-    instance->info_slot = 0x42;
-  }
-  if ((turn_player_or_trigger == player) &&
-      (turn_player_or_trigger = eot_trigger(player, card, event), turn_player_or_trigger != 0))
-  {
-    instance = get_card_instance(player, card);
+    card_instance_t *instance = get_card_instance(player, card);
     if (instance->info_slot != 0x42)
-    {
       damage_player(player, 2, player, card);
-    }
     instance = get_card_instance(player, card);
     instance->info_slot = 0;
   }
@@ -2506,8 +2494,8 @@ static int oubliette_legacy(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  int player_00;
-  if (trigger_condition != 0xd4)
+  int target_player;
+  if (trigger_condition != TRIGGER_LEAVE_PLAY)
   {
     return 0;
   }
@@ -2518,13 +2506,13 @@ static int oubliette_legacy(int player, int card, event_t event)
          (result = instance->targets[1].player, result == trigger_cause_controller)) &&
         (result == reason_for_trigger_controller))
     {
-      player_00 = (int)instance->damage_target_player;
+      target_player = (int)instance->damage_target_player;
       result = instance->damage_target_card;
-      remove_special_flags3(player_00, result, SF3_CANNOT_PHASE_IN);
-      phase_in(player_00, result);
+      remove_special_flags3(target_player, result, SF3_CANNOT_PHASE_IN);
+      phase_in(target_player, result);
       if (instance->targets[2].card == 0x1bf)
       {
-        tap_card(player_00, result);
+        tap_card(target_player, result);
       }
       kill_card(player, card, KILL_EXILE);
     }

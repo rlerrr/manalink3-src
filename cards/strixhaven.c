@@ -7,9 +7,9 @@ static char *is_monocolored(int who_chooses, int player, int card, int targeting
 /* ManalinkEh 2022: 0x23c6490; original cards/strixhaven.c:113. */
 static int academic_probation_legacy(int player, int card, event_t event)
 {
-  int card_00;
+  int target_card;
   card_instance_t *instance;
-  int player_00;
+  int target_player;
 
   if (event == EVENT_ABILITIES)
   {
@@ -19,11 +19,11 @@ static int academic_probation_legacy(int player, int card, event_t event)
         (instance->damage_target_player == affected_card_controller))
     {
       instance = get_card_instance(player, card);
-      player_00 = (int)instance->damage_target_player;
-      card_00 = instance->damage_target_card;
-      disable_all_activated_abilities(player_00, card_00, 1);
-      cannot_attack(player_00, card_00, EVENT_ABILITIES);
-      cannot_block(player_00, card_00, EVENT_ABILITIES);
+      target_player = (int)instance->damage_target_player;
+      target_card = instance->damage_target_card;
+      disable_all_activated_abilities(target_player, target_card, 1);
+      cannot_attack(target_player, target_card, EVENT_ABILITIES);
+      cannot_block(target_player, target_card, EVENT_ABILITIES);
     }
   }
   else if ((event == EVENT_CAN_SKIP_TURN) && (current_turn == player))
@@ -87,7 +87,7 @@ static int codie_effect(int player, int card, event_t event)
 {
   int result;
   test_definition_t test;
-  if ((((trigger_condition == 0xd3) && (card == affected_card)) &&
+  if ((((trigger_condition == TRIGGER_SPELL_CAST) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (result = check_special_flags(trigger_cause_controller, trigger_cause, 0x40000), result == 0))
   {
@@ -137,7 +137,7 @@ int card_crushing_disappointment(int player, int card, event_t event)
     draw_cards(player, 2);
     kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  result = basic_spell(player, card, event);
   return result;
 }
 
@@ -315,7 +315,7 @@ int card_environmental_sciences(int player, int card, event_t event)
     gain_life(player, 2);
     kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  result = basic_spell(player, card, event);
   return result;
 }
 
@@ -378,7 +378,6 @@ int card_expressive_iteration(int player, int card, event_t event)
 int card_fracture2(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   target_definition_t td;
 
   if (!IS_GS_EVENT(player, card, event))
@@ -389,8 +388,7 @@ int card_fracture2(int player, int card, event_t event)
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
     }
@@ -432,7 +430,6 @@ int card_hall_monitor(int player, int card, event_t event)
 int card_introduction_to_annihilation(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   target_definition_t td;
 
   if (!IS_GS_EVENT(player, card, event))
@@ -440,12 +437,11 @@ int card_introduction_to_annihilation(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0x47);
-  td.illegal_type = 1;
+  td.illegal_type = TYPE_LAND;
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
       draw_cards(instance->targets[0].player, 1);
@@ -476,7 +472,7 @@ int card_mortality_spear(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0x47);
-  td.illegal_type = 1;
+  td.illegal_type = TYPE_LAND;
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
@@ -514,7 +510,6 @@ int card_practical_research(int player, int card, event_t event)
 int card_reduce_to_memory(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   token_generation_t token;
   target_definition_t td;
 
@@ -523,15 +518,14 @@ int card_reduce_to_memory(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0x47);
-  td.illegal_type = 1;
+  td.illegal_type = TYPE_LAND;
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-      default_token_definition(player, card, 0x498d, &token);
+      default_token_definition(player, card, CARD_ID_SPIRIT, &token);
       token.t_player = instance->targets[0].player;
       token.pow = 3;
       token.tou = 2;
@@ -564,7 +558,7 @@ int card_resculpt(int player, int card, event_t event)
     {
       result = instance->targets[0].player;
       kill_card(result, instance->targets[0].card, KILL_EXILE);
-      default_token_definition(player, card, 0x4926, &token);
+      default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
       token.tou = 4;
       token.pow = 4;
       token.color_forced = '\x14';
@@ -583,27 +577,18 @@ int card_rootha_mercurial_artist(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
   check_legend_rule(player, card, event);
-  if (event == EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  counterspell_target_definition(player, card, &td, 0x38);
+  td.allowed_controller = player;
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    counterspell_target_definition(player, card, &td, 0x38);
-    td.allowed_controller = player;
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    instance = get_card_instance(player, card);
+    result = counterspell_validate(player, card, &td, 0);
+    if (result != 0)
     {
-      return 0;
-    }
-    counterspell_target_definition(player, card, &td, 0x38);
-    td.allowed_controller = player;
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      instance = get_card_instance(player, card);
-      result = counterspell_validate(player, card, &td, 0);
-      if (result != 0)
-      {
-        copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
-      }
+      copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
     }
   }
   result = generic_activated_ability(player, card, event, 0x20400, 2, 0, 0, 0, 0, 0, 0, &td, NULL);
@@ -631,7 +616,7 @@ int card_secret_rendezvous(int player, int card, event_t event)
     else if (event == EVENT_RESOLVE_SPELL)
     {
       default_target_definition(player, card, &td, 0);
-      td.zone = 0x1000;
+      td.zone = TARGET_ZONE_PLAYERS;
       result = valid_target(&td);
       if (result != 0)
       {
@@ -712,7 +697,7 @@ static int player_is_valid_target(int player, int card, int t_player)
   instance->targets[0].player = t_player;
   instance->targets[0].card = -1;
   instance->number_of_targets = '\x01';
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   td.preferred_controller = t_player;
   valid = would_valid_target(&td);
   instance->targets[0].player = saved_player;
@@ -739,49 +724,24 @@ int card_solve_the_equation(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23dd6a0; original cards/strixhaven.c:7412. */
 int card_teach_by_example(int player, int card, event_t event)
 {
-  int result;
-  if (event != EVENT_CAN_CAST)
-  {
-    if (event != EVENT_RESOLVE_SPELL)
-    {
-      if (event == EVENT_MODIFY_COST)
-      {
-        modify_cost_for_hybrid_spells(player, card, EVENT_MODIFY_COST, 0);
-        return 0;
-      }
-      if ((((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
-           (player == affected_card_controller)) &&
-          (result = hybrid_casting(player, card, 0), result == 0))
-      {
-        spell_fizzled = 1;
-      }
-      return (unsigned int)(event == EVENT_CAN_CAST);
-    }
-    create_legacy_effect(player, card, doublecast_legacy);
-    kill_card(player, card, KILL_DESTROY);
-  }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
-  return result;
+  if (event == EVENT_CAN_CAST)
+    return basic_spell(player, card, event);
+  if (event == EVENT_RESOLVE_SPELL)
+    return card_doublecast(player, card, event);
+  return hybrid(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x23c85d0; original cards/strixhaven.c:8002. */
 static char *is_monocolored(int who_chooses, int player, int card, int targeting_player,
                             int targeting_card)
 {
-  int result;
-  result = count_colors(player, card);
-  if (result != 1)
-  {
-    return "must be monocolored.";
-  }
-  return NULL;
+  return count_colors(player, card) == 1 ? NULL : "must be monocolored.";
 }
 
 /* ManalinkEh 2022: 0x23df040; original cards/strixhaven.c:8007. */
 int card_vanishing_verse(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   target_definition_t td;
 
   if (!IS_GS_EVENT(player, card, event))
@@ -789,13 +749,12 @@ int card_vanishing_verse(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0x47);
-  td.special = 0x8000;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   td.extra = (int32_t)is_monocolored;
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
     }
@@ -859,7 +818,7 @@ static void make_pest(int player, int card, int amount)
 {
   token_generation_t token;
 
-  default_token_definition(player, card, 0x4970, &token);
+  default_token_definition(player, card, CARD_ID_PEST, &token);
   token.qty = (unsigned char)amount;
   token.color_forced = '\n';
   token.tou = 1;
@@ -874,7 +833,7 @@ static void make_inkling(int player, int card, int amount, int action)
 {
   token_generation_t token;
 
-  default_token_definition(player, card, 0x58a7, &token);
+  default_token_definition(player, card, CARD_ID_INKLING, &token);
   token.qty = (unsigned char)amount;
   token.pow = 2;
   token.tou = 1;
@@ -941,28 +900,13 @@ int card_containment_breach(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23d1330; original cards/strixhaven.c:3244. */
 int card_inkling_summoning(int player, int card, event_t event)
 {
-  int result;
 
   if (event == EVENT_RESOLVE_SPELL)
   {
     make_inkling(player, card, 1, 0);
     kill_card(player, card, KILL_DESTROY);
   }
-  if (event != EVENT_MODIFY_COST)
-  {
-    if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
-        (player == affected_card_controller))
-    {
-      result = hybrid_casting(player, card, 0);
-      if (result == 0)
-      {
-        spell_fizzled = 1;
-      }
-    }
-    return (unsigned int)(event == EVENT_CAN_CAST);
-  }
-  modify_cost_for_hybrid_spells(player, card, EVENT_MODIFY_COST, 0);
-  return 0;
+  return hybrid(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x23d5d30; original cards/strixhaven.c:4746. */
@@ -975,7 +919,7 @@ int card_pest_summoning(int player, int card, event_t event)
     make_pest(player, card, 2);
     kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  result = basic_spell(player, card, event);
   return result;
 }
 
@@ -1016,7 +960,7 @@ int card_crackle_with_power(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     td.allow_cancel = 3;
     get_card_instance(player, card);
     result = generic_spell(player, card, EVENT_CAN_CAST, 4, NULL, NULL, 0, NULL);
@@ -1028,7 +972,7 @@ int card_crackle_with_power(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         default_target_definition(player, card, &td, 0x102);
-        td.zone = 0x1200;
+        td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
         td.allow_cancel = 3;
         get_card_instance(player, card);
         if ((card == affected_card) && (player == affected_card_controller))
@@ -1043,7 +987,7 @@ int card_crackle_with_power(int player, int card, event_t event)
              (event == EVENT_CHANGE_TARGET))
     {
       default_target_definition(player, card, &td, 0x102);
-      td.zone = 0x1200;
+      td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
       td.allow_cancel = 3;
       instance = get_card_instance(player, card);
       if (event == EVENT_RESOLVE_SPELL)
@@ -1138,7 +1082,7 @@ int card_exponential_growth(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23d5410; original cards/strixhaven.c:4590. */
 int card_necrotic_fumes(int player, int card, event_t event)
 {
-  int card_00;
+  int target_card;
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -1173,13 +1117,13 @@ int card_necrotic_fumes(int player, int card, event_t event)
             (new_pick_target(&td2, "Select a creature you control", 0, 0x81), spell_fizzled != 1))))
       {
         result = instance->targets[0].player;
-        card_00 = instance->targets[0].card;
+        target_card = instance->targets[0].card;
         instance->number_of_targets = '\0';
         generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE_OR_PLANESWALKER", 1,
                       NULL);
         if (spell_fizzled != 1)
         {
-          kill_card(result, card_00, KILL_EXILE);
+          kill_card(result, target_card, KILL_EXILE);
         }
       }
     }
@@ -1247,7 +1191,7 @@ int card_academic_probation(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = 1;
+    td.illegal_type = TYPE_LAND;
     get_card_instance(player, card);
     return basic_spell(player, card, EVENT_CAN_CAST);
   }
@@ -1256,7 +1200,7 @@ int card_academic_probation(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
       default_target_definition(player, card, &td, 0x47);
-      td.illegal_type = 1;
+      td.illegal_type = TYPE_LAND;
       instance = get_card_instance(player, card);
       if ((card == affected_card) && (player == affected_card_controller))
       {
@@ -1267,7 +1211,7 @@ int card_academic_probation(int player, int card, event_t event)
 
           result = can_target(&td);
           result =
-              dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\033", "Name a card", 1,
+              dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_MODE, "Name a card", 1,
                           10, "Target a permanent", result, 0x14, 0, 0, 0, 0);
           if (result == 0)
           {
@@ -1285,7 +1229,7 @@ int card_academic_probation(int player, int card, event_t event)
   else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
   {
     default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = 1;
+    td.illegal_type = TYPE_LAND;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
     {
@@ -1322,7 +1266,7 @@ int card_academic_probation(int player, int card, event_t event)
   else if (event == EVENT_CHANGE_TARGET)
   {
     default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = 1;
+    td.illegal_type = TYPE_LAND;
     get_card_instance(player, card);
   }
   return 0;
@@ -1360,7 +1304,7 @@ int card_access_tunnel(int player, int card, event_t event)
         instance->mode = '\x02';
         if ((human) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
         {
-          result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
+          result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Get mana", 1, 1,
                                "Give 'Unblockable' to a creature with power 3 or less", 1, 10, 0, 0,
                                0, 0);
           if (result == 0)
@@ -1377,7 +1321,7 @@ int card_access_tunnel(int player, int card, event_t event)
         }
         if (current_turn == player)
         {
-          result = ((current_phase < 0x17) - 1 & 0xffffffa0) + 0x30;
+          result = (unsigned int)((current_phase < 0x17) ? 48 : -48);
         }
         else
         {
@@ -1456,7 +1400,7 @@ int card_accomplished_alchemist(int player, int card, event_t event)
     if (player == 1)
       return mana_producing_creature_all_one_color(player, card, event, 0xc, COLOR_TEST_ANY_COLORED,
                                                    gained);
-    int choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Get mana", 1, 1,
+    int choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, "Get mana", 1, 1,
                              "Add X mana", 1, 1, 0, 0, 0, 0);
     if (!choice)
     {
@@ -1530,7 +1474,7 @@ int card_bayou_groff(int player, int card, event_t event)
     if (result != 0)
     {
       result = count_subtype(player, 2, -1);
-      result = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014",
+      result = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE,
                            "Sacrifice a creature", 1, 0x14, "Pay 3", 1, result * 10, 0, 0, 0, 0);
       if (result == 0)
       {
@@ -1743,7 +1687,7 @@ int card_callous_bloodmage(int player, int card, event_t event)
   }
 
   default_target_definition(player, card, &td1, 0);
-  td1.zone = 0x1000;
+  td1.zone = TARGET_ZONE_PLAYERS;
   td1.allow_cancel = 0;
   instance = get_card_instance(player, card);
   can_exile = can_target(&td1);
@@ -1761,7 +1705,7 @@ int card_callous_bloodmage(int player, int card, event_t event)
   {
     exile_priority = count_graveyard(what_player);
   }
-  choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\003",
+  choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
                        "Create a Pest token", 1, (other_creatures - own_creatures) * 10,
                        "Draw a card and you lose 1 life", 1, draw_priority,
                        "Exile target player's graveyard", can_exile, exile_priority, 0, 0, 0, 0);
@@ -1832,7 +1776,7 @@ int card_decisive_denial(int player, int card, event_t event)
     td1.allowed_controller = 1 - player;
     td1.preferred_controller = td1.allowed_controller;
     counterspell_target_definition(player, card, &td2, 0xff);
-    td2.illegal_type = 2;
+    td2.illegal_type = TYPE_CREATURE;
     get_card_instance(player, card);
     result = counterspell(player, card, EVENT_CAN_CAST, &td2, 0);
     if (result == 0)
@@ -1861,7 +1805,7 @@ int card_decisive_denial(int player, int card, event_t event)
       td1.allowed_controller = 1 - player;
       td1.preferred_controller = td1.allowed_controller;
       counterspell_target_definition(player, card, &td2, 0xff);
-      td2.illegal_type = 2;
+      td2.illegal_type = TYPE_CREATURE;
       instance = get_card_instance(player, card);
       if ((card == affected_card) && (player == affected_card_controller))
       {
@@ -1879,7 +1823,7 @@ int card_decisive_denial(int player, int card, event_t event)
           }
           result = counterspell(player, card, EVENT_CAN_CAST, &td2, 0);
           result = dialog_impl(
-              player, card, EVENT_CAST_SPELL, "\001\002", "\001\016", "\001\033",
+              player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, DLG_MODE,
               "Target creature you control fights target creature you don't control", can_fight, 5,
               "Counter target noncreature spell unless its controller pays |3", result, 10, 0, 0, 0,
               0);
@@ -1915,7 +1859,7 @@ int card_decisive_denial(int player, int card, event_t event)
     td1.allowed_controller = 1 - player;
     td1.preferred_controller = td1.allowed_controller;
     counterspell_target_definition(player, card, &td2, 0xff);
-    td2.illegal_type = 2;
+    td2.illegal_type = TYPE_CREATURE;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
     {
@@ -1982,7 +1926,7 @@ int card_awaken_the_blood_avatar(int player, int card, event_t event)
       new_default_test_definition(&test2, 2, "Select a creature to sacrifice");
       available_or_discounted = max_can_sacrifice_as_cost(player, card, &test2);
       generic_cost = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL, -1);
-      choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\016", "\001\014",
+      choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, DLG_NO_STORAGE,
                            "Sacrifice creatures", available_or_discounted, 5, "Cast Normally",
                            has_mana_multi(player, generic_cost, 1, 0, 0, 1, 0), 10, 0, 0, 0, 0);
       if (choice == 0)
@@ -2041,7 +1985,7 @@ int card_awaken_the_blood_avatar(int player, int card, event_t event)
   {
     token_generation_t token;
     player_sacrifices_a_permanent(player, card, 1 - player, 2, SAC_CAUSED);
-    default_token_definition(player, card, 0x4904, &token);
+    default_token_definition(player, card, CARD_ID_AVATAR, &token);
     token.pow = 3;
     token.tou = 6;
     token.color_forced = '\x12';
@@ -2103,7 +2047,7 @@ int card_fervent_mastery(int player, int card, event_t event)
           alternate_available = 0;
         }
         choice =
-            dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014", "\001\016",
+            dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE, DLG_AUTOCHOOSE_IF_1,
                         "Pay alternate mana cost", alternate_available, 10, "Pay full mana cost",
                         has_mana_to_cast_id(player, EVENT_CAST_SPELL, 0x5887), 0xf, 0, 0, 0, 0);
         if (choice == 0)
@@ -2322,7 +2266,7 @@ int card_ingenious_mastery(int player, int card, event_t event)
     int choice = 1;
     if (has_mana_to_cast_id(player, EVENT_CAST_SPELL, 0x58a6))
       choice =
-          dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014",
+          dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE,
                       "Pay alternate mana cost", 1, 0x14, "Pay full mana cost", 1, 10, 0, 0, 0, 0);
     int fizzle_snapshot;
     if (!choice)
@@ -2359,7 +2303,7 @@ int card_ingenious_mastery(int player, int card, event_t event)
     {
       draw_cards(player, 3);
       token_generation_t token;
-      default_token_definition(player, card, 0x4998, &token);
+      default_token_definition(player, card, CARD_ID_TREASURE, &token);
       token.qty = 2;
       token.t_player = 1 - player;
       generate_token(&token);
@@ -2432,7 +2376,7 @@ static int kasmina_effect(int player, int card, event_t event)
     {
       effect = get_card_instance(player, card);
       if (effect->damage_target_player >= 0 &&
-          get_id(effect->damage_target_player, effect->damage_target_card) != 0x58ae)
+          get_id(effect->damage_target_player, effect->damage_target_card) != CARD_ID_KASMINA_ENIGMA_SAGE)
         kill_card(player, card, KILL_EXILE);
     }
     effect = get_card_instance(player, card);
@@ -2460,7 +2404,7 @@ static int kasmina_effect(int player, int card, event_t event)
             int eligible = is_planeswalker(player, candidate);
             if (attached_card != candidate && eligible)
             {
-              int iid = get_internal_card_id_from_csv_id(0x58ae);
+              int iid = get_internal_card_id_from_csv_id(CARD_ID_KASMINA_ENIGMA_SAGE);
               if (call_card_fn(cards_data[iid].code_pointer, planeswalker, player, candidate,
                                EVENT_CAN_ACTIVATE))
                 return 1;
@@ -2494,14 +2438,14 @@ static int kasmina_effect(int player, int card, event_t event)
         return 0;
       }
       card_instance_t *planeswalker = get_card_instance(target_player, target_card);
-      int iid = get_internal_card_id_from_csv_id(0x58ae);
+      int iid = get_internal_card_id_from_csv_id(CARD_ID_KASMINA_ENIGMA_SAGE);
       call_card_fn(cards_data[iid].code_pointer, planeswalker, target_player, target_card,
                    EVENT_ACTIVATE);
     }
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    int iid = get_internal_card_id_from_csv_id(0x58ae);
+    int iid = get_internal_card_id_from_csv_id(CARD_ID_KASMINA_ENIGMA_SAGE);
     CardFunction address = cards_data[iid].code_pointer;
     int target_player = effect->targets[1].player;
     int target_card = effect->targets[1].card;
@@ -2527,7 +2471,7 @@ int card_kelpie_guide(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 0x47);
     td.preferred_controller = player;
-    td.special = 0x4000;
+    td.special = TARGET_SPECIAL_NOT_ME;
     default_target_definition(player, card, &td2, 0x47);
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
@@ -2563,9 +2507,9 @@ int card_kelpie_guide(int player, int card, event_t event)
                                                        0, 0, 0, 0, &td2, NULL);
         can_tap = (unsigned int)(lands_or_available != 0);
       }
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\033", "\001\016",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_MODE, DLG_AUTOCHOOSE_IF_1,
                            "Untap another target permanent", value,
-                           ((current_turn == player) - 1 & 0xffffffec) + 0x1e,
+                           ((current_turn == player) ? 30U : 10U),
                            "Tap target permanent", can_tap, 0x14, 0, 0, 0, 0);
       if (choice == 0)
       {
@@ -2612,7 +2556,7 @@ int card_kelpie_guide(int player, int card, event_t event)
     }
     default_target_definition(player, card, &td, 0x47);
     td.preferred_controller = player;
-    td.special = 0x4000;
+    td.special = TARGET_SPECIAL_NOT_ME;
     default_target_definition(player, card, &td2, 0x47);
     instance = get_card_instance(player, card);
   }
@@ -2639,7 +2583,7 @@ int card_kelpie_guide(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23c86a0; original cards/strixhaven.c:3632. */
 static int card_exiled_with_study_counter(int player, int card, event_t event)
 {
-  int player_00;
+  int target_player;
   card_instance_t *instance;
   int study_count;
   int iid_or_count;
@@ -2671,7 +2615,7 @@ static int card_exiled_with_study_counter(int player, int card, event_t event)
       iid_or_count = instance->targets[0].card;
       instance = get_card_instance(player, card);
       matches = 0;
-      player_00 = instance->targets[0].player;
+      target_player = instance->targets[0].player;
       if (0 < active_cards_count[player])
       {
         card_00 = 0;
@@ -2697,7 +2641,7 @@ static int card_exiled_with_study_counter(int player, int card, event_t event)
           card_00 = card_00 + 1;
         } while (card_00 < active_cards_count[player]);
       }
-      iid_or_count = count_iid_in_rfg(player_00, iid_or_count);
+      iid_or_count = count_iid_in_rfg(target_player, iid_or_count);
       if (iid_or_count < matches)
       {
         kill_card(player, card, KILL_EXILE);
@@ -2710,56 +2654,27 @@ static int card_exiled_with_study_counter(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23c6a40; original cards/strixhaven.c:3672. */
 static int count_different_mana_values_among_card_exiled_with_study_counter(int player)
 {
-  card_instance_t *instance;
-  int cmc;
-  int count_or_index;
-  int card;
-  int *cost_cursor;
-  int manacosts[20];
-
-  cost_cursor = manacosts;
-
-  for (count_or_index = 0x14; count_or_index != 0; count_or_index = count_or_index + -1)
+  int manacosts[20] = {0};
+  int mc = 0;
+  for (int c = 0; c < active_cards_count[player]; ++c)
   {
-    *cost_cursor = 0;
-    cost_cursor = cost_cursor + 1;
-  }
-  if (active_cards_count[player] < 1)
-  {
-    count_or_index = 0;
-  }
-  else
-  {
-    card = 0;
-    count_or_index = 0;
-    do
+    card_instance_t *inst = in_play(player, c);
+    if (inst && is_what(player, c, 0x80))
     {
-      instance = in_play(player, card);
-      if (instance != NULL)
+      inst = get_card_instance(player, c);
+      if (inst->info_slot_fn == card_exiled_with_study_counter &&
+          count_counters(player, c, COUNTER_STUDY))
       {
-        if (is_what(player, card, 0x80) != 0)
+        int cmc = get_cmc_by_internal_id(inst->targets[0].card);
+        if (!manacosts[cmc])
         {
-
-          instance = get_card_instance(player, card);
-          if (instance->info_slot_fn == card_exiled_with_study_counter)
-          {
-            if (count_counters(player, card, COUNTER_STUDY) != 0)
-            {
-
-              cmc = get_cmc_by_internal_id(instance->targets[0].card);
-              if (manacosts[cmc] == 0)
-              {
-                manacosts[cmc] = 1;
-                count_or_index = count_or_index + 1;
-              }
-            }
-          }
+          manacosts[cmc] = 1;
+          ++mc;
         }
       }
-      card = card + 1;
-    } while (card < active_cards_count[player]);
+    }
   }
-  return count_or_index;
+  return mc;
 }
 
 /* ManalinkEh 2022: 0x23d3d20; original cards/strixhaven.c:4118. */
@@ -2821,7 +2736,7 @@ int card_lorehold_excavation(int player, int card, event_t event)
   }
 
   instance = get_card_instance(player, card);
-  default_token_definition(instance->parent_controller, instance->parent_card, 0x498d, &token);
+  default_token_definition(instance->parent_controller, instance->parent_card, CARD_ID_SPIRIT, &token);
   token.pow = 3;
   token.tou = 2;
   token.color_forced = '0';
@@ -2850,7 +2765,7 @@ int card_mercurial_transformation(int player, int card, event_t event)
         return 0;
       }
       default_target_definition(player, card, &td, 0x47);
-      td.illegal_type = 1;
+      td.illegal_type = TYPE_LAND;
       instance = get_card_instance(player, card);
       if ((card == affected_card) && (player == affected_card_controller))
       {
@@ -2859,7 +2774,7 @@ int card_mercurial_transformation(int player, int card, event_t event)
         {
           return 0;
         }
-        dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\033", "Frog", 1, 1, "Octopus",
+        dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_MODE, "Frog", 1, 1, "Octopus",
                     1, 1, 0, 0, 0, 0);
         if (spell_fizzled == 1)
         {
@@ -2909,7 +2824,7 @@ int card_mercurial_transformation(int player, int card, event_t event)
     if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
     {
       default_target_definition(player, card, &td, 0x47);
-      td.illegal_type = 1;
+      td.illegal_type = TYPE_LAND;
       instance = get_card_instance(player, card);
       if (event == EVENT_RESOLVE_SPELL)
       {
@@ -2972,7 +2887,7 @@ int card_mercurial_transformation(int player, int card, event_t event)
     }
   }
   default_target_definition(player, card, &td, 0x47);
-  td.illegal_type = 1;
+  td.illegal_type = TYPE_LAND;
   get_card_instance(player, card);
   return generic_spell(player, card, event, 1, &td, NULL, 1, NULL);
 }
@@ -3072,7 +2987,7 @@ int card_rip_apart(int player, int card, event_t event)
         {
 
           can_destroy_or_valid = can_target(td);
-          choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\016", "\001\033",
+          choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, DLG_MODE,
                                "Damage target creature or planeswalker", can_target(&td1), 5,
                                "Destroy target artifact or enchantment", can_destroy_or_valid, 5, 0,
                                0, 0, 0);
@@ -3174,7 +3089,7 @@ int card_will_scholar_of_frost(int player, int card, event_t event)
     td.allow_cancel = 3;
     default_target_definition(player, card, &td2, 0x47);
     result_or_mode =
-        dialog_impl(player, card, event, "\001\002", "\001\017", "Target creature is 0/2",
+        dialog_impl(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Target creature is 0/2",
                     can_target(&td), 10, 1, "Draw 2 cards", 1, 0x14, 0xfffffffd,
                     "Exile 5 permanents", 1, 0x32, 0xfffffff9, 0, 0, 0, 0);
     if (event == EVENT_CAN_ACTIVATE)
@@ -3256,7 +3171,7 @@ int card_will_scholar_of_frost(int player, int card, event_t event)
             {
               if (valid[i] != 0)
               {
-                default_token_definition(player, card, 0x4926, &token);
+                default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
                 token.tou = 4;
                 token.pow = 4;
                 token.color_forced = '\x14';
@@ -3306,21 +3221,19 @@ int card_deadly_vanity(int player, int card, event_t event)
     td.preferred_controller = player;
     td.illegal_abilities = 0;
     td.allow_cancel = 0;
-    card_instance_t *instance = get_card_instance(player, card);
-    int available = can_target(&td);
-    if (available)
+    card_instance_t *inst = get_card_instance(player, card);
+    int chosen = can_target(&td);
+    if (chosen)
     {
       new_pick_target(&td, "Select a creature or planeswalker.", 0, 0x80);
-      instance->number_of_targets = 0;
+      inst->number_of_targets = 0;
     }
-    for (unsigned int pass = 0; pass < 2; ++pass)
-    {
-      unsigned int p = pass ^ current_turn;
-      for (int permanent = 0; permanent < active_cards_count[p]; ++permanent)
-        if (is_what(p, permanent, 0x102) && (!available || instance->targets[0].player != p ||
-                                             instance->targets[0].card != permanent))
-          kill_card(p, permanent, KILL_DESTROY);
-    }
+    APNAP(p, {
+      for (int c = 0; c < active_cards_count[p]; ++c)
+        if (is_what(p, c, 0x102) &&
+            (!chosen || inst->targets[0].player != p || inst->targets[0].card != c))
+          kill_card(p, c, KILL_DESTROY);
+    });
     kill_card(player, card, KILL_DESTROY);
   }
   return basic_spell(player, card, event);
@@ -3334,7 +3247,7 @@ static int embrose_dean_of_shadow_effect(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     if (instance->damage_target_player >= 0 &&
-        get_id(instance->damage_target_player, instance->damage_target_card) != 0x590f)
+        get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_EMBROSE_DEAN_OF_SHADOW)
       kill_card(player, card, KILL_EXILE);
   }
   instance = get_card_instance(player, card);
@@ -3449,7 +3362,7 @@ int card_umbral_juke(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     get_card_instance(player, card);
     return basic_spell(player, card, EVENT_CAN_CAST);
   }
@@ -3458,7 +3371,7 @@ int card_umbral_juke(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
       default_target_definition(player, card, &td, 0);
-      td.zone = 0x1000;
+      td.zone = TARGET_ZONE_PLAYERS;
       instance = get_card_instance(player, card);
       if ((card == affected_card) && (player == affected_card_controller))
       {
@@ -3469,7 +3382,7 @@ int card_umbral_juke(int player, int card, event_t event)
 
           instance->mode = '\0';
           result = can_target(&td);
-          result = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\016", "\001\033",
+          result = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, DLG_MODE,
                                "Target player sac a creature or a planeswalker", result, 10,
                                "Create a 2/1 Inkling", 1, 5, 0, 0, 0, 0);
           if (result == 0)
@@ -3488,7 +3401,7 @@ int card_umbral_juke(int player, int card, event_t event)
   else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
   {
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
     {
@@ -3514,7 +3427,7 @@ int card_umbral_juke(int player, int card, event_t event)
   else if (event == EVENT_CHANGE_TARGET)
   {
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     get_card_instance(player, card);
   }
   return 0;
@@ -3523,37 +3436,31 @@ int card_umbral_juke(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23df1b0; original cards/strixhaven.c:8032. */
 int card_velomachus_lorehold(int player, int card, event_t event)
 {
-  int result;
-  int amount;
-  test_definition_t test;
-
   check_legend_rule(player, card, event);
   special_abilities(player, card, event, 0xc, player, card);
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
   if (event == EVENT_DAT_ABILITY)
   {
-
-    result = get_power(player, card);
-
-    amount = count_deck(player);
-    if (amount != 0)
+    int pow = get_power(player, card);
+    int max = count_deck(player);
+    if (max != 0)
     {
-      if (7 < amount)
-      {
-        amount = 7;
-      }
+      if (max > 7)
+        max = 7;
+      test_definition_t test;
       default_test_definition(&test, 0x38);
-      test.cmc = result + 1;
+      test.cmc = pow + 1;
       test.cmc_flag = 3;
-      scnprintf(test.message, 100, "Choose an instant or sorcery card with MV %d or less", result);
-      test.create_minideck = (unsigned short)amount;
-      result = new_select_a_card(player, player, 1, 0, 1, -1, &test);
-      if (-1 < result)
+      scnprintf(test.message, sizeof(test.message),
+                "Choose an instant or sorcery card with MV %d or less", pow);
+      test.create_minideck = (unsigned short)max;
+      int result = new_select_a_card(player, player, 1, 0, 1, -1, &test);
+      if (result >= 0)
       {
-        amount = amount + -1;
+        --max;
         play_card_in_deck_for_free(player, player, result);
       }
-      put_top_x_on_bottom_in_random_order(player, amount);
+      put_top_x_on_bottom_in_random_order(player, max);
     }
   }
   return 0;
@@ -3584,7 +3491,7 @@ int card_zimone_quandrix_prodigy(int player, int card, event_t event)
     instance->mode = 0;
     int can_draw = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 4, 0, 0, 0, 0, 0,
                                              0, NULL, NULL);
-    int choice = dialog_impl(player, card, event, "\001\002", "\001\016", "\001\033",
+    int choice = dialog_impl(player, card, event, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, DLG_MODE,
                              "Put a land into play from hand",
                              generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 1, 0, 0,
                                                        0, 0, 0, 0, NULL, NULL),
@@ -3664,8 +3571,8 @@ static void learn(int player, int card)
       while (true)
       {
 
-        if ((cards_data[iid_or_choice].id == 0x58fc) &&
-            (iid_or_choice = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014",
+        if ((cards_data[iid_or_choice].id == CARD_ID_RETRIEVER_PHOENIX) &&
+            (iid_or_choice = dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_RANDOM, DLG_NO_STORAGE,
                                          "Retrieve Retriever Phoenix", 1, 0x14, "Learn as normal",
                                          1, 5, 0, 0, 0, 0),
              iid_or_choice == 1))
@@ -3692,7 +3599,7 @@ static void learn(int player, int card)
     }
   }
   choice =
-      dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014", "Get a Lesson", 1, 10,
+      dialog_impl(player, card, EVENT_RESOLVE_SPELL, DLG_RANDOM, DLG_NO_STORAGE, "Get a Lesson", 1, 10,
                   "Discard & Draw", hand_count[player], 10, "Do nothing", 1, 1, 0, 0, 0, 0);
   if (choice == 1)
   {
@@ -3716,8 +3623,6 @@ static void learn(int player, int card)
 /* ManalinkEh 2022: 0x23c9580; original cards/strixhaven.c:317. */
 int card_arcane_subtraction(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
   target_definition_t td;
 
   if (!IS_GS_EVENT(player, card, event))
@@ -3725,11 +3630,10 @@ int card_arcane_subtraction(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 2);
-  instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -4,
                      0);
@@ -3764,7 +3668,7 @@ static int dramatic_finale_effect(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     if (instance->damage_target_player >= 0 &&
-        get_id(instance->damage_target_player, instance->damage_target_card) != 0x586e)
+        get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_DRAMATIC_FINALE)
       kill_card(player, card, KILL_EXILE);
   }
   instance = get_card_instance(player, card);
@@ -3820,7 +3724,6 @@ int card_dream_strix(int player, int card, event_t event)
 int card_enthusiastic_study(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   target_definition_t td;
 
   if (event != EVENT_CAN_CAST)
@@ -3844,8 +3747,7 @@ int card_enthusiastic_study(int player, int card, event_t event)
         instance = get_card_instance(player, card);
         if (event == EVENT_RESOLVE_SPELL)
         {
-          result = valid_target(&td);
-          if (result != 0)
+          if (valid_target(&td))
           {
             pump_ability_until_eot(player, card, instance->targets[0].player,
                                    instance->targets[0].card, 3, 1, 0x80, 0);
@@ -3939,7 +3841,6 @@ int card_hunt_for_specimens(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23d0cf0; original cards/strixhaven.c:3102. */
 int card_igneous_inspiration(int player, int card, event_t event)
 {
-  int result;
   target_definition_t td;
 
   if (!IS_GS_EVENT(player, card, event))
@@ -3947,11 +3848,10 @@ int card_igneous_inspiration(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0x102);
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       damage_target0(player, card, 3);
       learn(player, card);
@@ -3998,7 +3898,7 @@ int card_overgrown_arch(int player, int card, event_t event)
       {
         learn_priority = (6 - hand_count[player]) * 8;
       }
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\033", "\001\016",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_MODE, DLG_AUTOCHOOSE_IF_1,
                            "Gain 1 life", mode_or_available, 0x1e, "Learn", can_learn,
                            learn_priority, 0, 0, 0, 0);
       if (choice == 0)
@@ -4068,29 +3968,13 @@ int card_overgrown_arch(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23d7120; original cards/strixhaven.c:5085. */
 int card_poets_quill(int player, int card, event_t event)
 {
-  int result;
-  int ec;
-
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event != EVENT_ETB)
-  {
-    attached_gets_pt(player, card, event, 1, 1);
-    attached_gets_kw(player, card, event, KEYWORD_0, SP_KEYWORD_LIFELINK);
-    if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
-         (event == EVENT_RESOLVE_ACTIVATION)) ||
-        (event == EVENT_CLEANUP))
-    {
-      result = basic_equipment(player, card, event, 0x10101);
-    }
-    else
-    {
-      result = 0;
-    }
-    return result;
-  }
-  learn(player, card);
-  attached_gets_pt(player, card, EVENT_ETB, 1, 1);
-  attached_gets_kw(player, card, EVENT_ETB, KEYWORD_0, SP_KEYWORD_LIFELINK);
+  if (event == EVENT_ETB)
+    learn(player, card);
+  attached_gets_pt(player, card, event, 1, 1);
+  attached_gets_kw(player, card, event, KEYWORD_0, SP_KEYWORD_LIFELINK);
+  if (IS_GAA_EVENT(event))
+    return basic_equipment(player, card, event, 0x10101);
   return 0;
 }
 
@@ -4178,7 +4062,7 @@ int card_baleful_mastery(int player, int card, event_t event)
 
       choice = 1;
       if (has_mana_to_cast_id(player, EVENT_CAST_SPELL, 0x583b) != 0)
-        choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014",
+        choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE,
                              "Pay alternate mana cost", 1, 0x14, "Pay full mana cost", 1, 10, 0, 0,
                              0, 0);
       if (choice == 0)
@@ -4271,8 +4155,6 @@ int card_emergent_sequence(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23ce960; original cards/strixhaven.c:2175. */
 int card_expanded_anatomy(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
   target_definition_t td;
 
   if (!IS_GS_EVENT(player, card, event))
@@ -4280,11 +4162,10 @@ int card_expanded_anatomy(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 2);
-  instance = get_card_instance(player, card);
+  card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       add_counters(player, card, instance->targets[0].player,
                                instance->targets[0].card, COUNTER_P1_P1, 2);
@@ -4319,44 +4200,24 @@ static int fdoc_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23d02b0; original cards/strixhaven.c:2764. */
 int card_guiding_voice(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-  target_definition_t td;
-
-  if (event != EVENT_CAN_CAST)
+  if (IS_GS_EVENT(player, card, event))
   {
-    if (event == EVENT_CAST_SPELL)
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
+    card_instance_t *instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
     {
-      if ((card != affected_card) || (player != affected_card_controller))
-        return vanilla_instant_pump(player, card, event, 2, player, 1, 1, 0, 0);
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      if (valid_target(&td))
       {
-        default_target_definition(player, card, &td, 2);
-        instance = get_card_instance(player, card);
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          result = valid_target(&td);
-          if (result != 0)
-          {
-            add_counters(player, card, instance->targets[0].player,
-                                     instance->targets[0].card, COUNTER_P1_P1, 1);
-            learn(player, card);
-          }
-          kill_card(player, card, KILL_DESTROY);
-          return 0;
-        }
-        return vanilla_instant_pump(player, card, event, 2, player, 1, 1, 0, 0);
+        add_counters(player, card, instance->targets[0].player,
+                     instance->targets[0].card, COUNTER_P1_P1, 1);
+        learn(player, card);
       }
-      if (event != EVENT_CHANGE_TARGET)
-        return vanilla_instant_pump(player, card, event, 2, player, 1, 1, 0, 0);
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
     }
   }
-  default_target_definition(player, card, &td, 2);
-  get_card_instance(player, card);
-  return vanilla_instant_pump(player, card, event, 2, player, 1, 1, 0, 0);
+  return vanilla_instant_pump(player, card, event, ANYBODY, player, 1, 1, 0, 0);
 }
 
 /* ManalinkEh 2022: 0x23d56f0; original cards/strixhaven.c:4653. */
@@ -4366,23 +4227,14 @@ int card_oriq_loremage(int player, int card, event_t event)
   int result;
   test_definition_t this_test;
 
-  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_ACTIVATE)
   {
-    instance = get_card_instance(player, card);
-    if (event == EVENT_ACTIVATE)
-    {
-      ai_modifier = ai_modifier + 0x30;
-      return generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
-    }
+    ai_modifier = ai_modifier + 0x30;
   }
-  else
-  {
-    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    instance = get_card_instance(player, card);
-  }
+
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
 
@@ -4406,7 +4258,7 @@ static int shadewing_laureate_effect(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     if (instance->damage_target_player >= 0 &&
-        get_id(instance->damage_target_player, instance->damage_target_card) != 0x590c)
+        get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_SHADEWING_LAUREATE)
       kill_card(player, card, KILL_EXILE);
   }
   instance = get_card_instance(player, card);
@@ -4725,7 +4577,7 @@ int card_sparring_regimen(int player, int card, event_t event)
     {
 
       default_target_definition(player, card, &td1, 2);
-      td1.required_state = 2;
+      td1.required_state = TARGET_STATE_ATTACKING;
       td1.allow_cancel = 0;
       instance = get_card_instance(player, card);
       result = can_target(&td1);
@@ -4838,13 +4690,12 @@ int card_culmination_of_studies(int player, int card, event_t event)
         get_sleighted_color_test(player, card, 0x10);
       } while (true);
     }
-    generate_tokens_by_id(player, card, 0x4998, 0);
+    generate_tokens_by_id(player, card, CARD_ID_TREASURE, 0);
     draw_cards(player, 0);
     damage_player(1 - player, 0, player, card);
     kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 4, NULL, NULL, 0, NULL);
-  return result;
+  return generic_spell(player, card, event, 4, NULL, NULL, 0, NULL);
 }
 
 /* ManalinkEh 2022: 0x23cd680; original cards/strixhaven.c:1684. */
@@ -4873,7 +4724,7 @@ int card_dragons_approach(int player, int card, event_t event)
   {
     damage_player(1 - player, 3, player, card);
     default_test_definition(&test, 0xff);
-    test.id = 0x586c;
+    test.id = CARD_ID_DRAGONS_APPROACH;
     count_or_index = new_special_count_grave(player, &test);
 
     if ((3 < count_or_index) &&
@@ -5101,7 +4952,7 @@ int card_lorehold_campus(int player, int card, event_t event)
               instance->mode = '\x01';
               if (mana_or_available < 3)
               {
-                priority = ((current_turn != player) - 1 & 0xffffffa0) + 0x30;
+                priority = (unsigned int)((current_turn != player) ? 48 : -48);
               }
               ai_modifier = ai_modifier + priority;
               return 0;
@@ -5171,7 +5022,7 @@ int card_plargg_dean_of_chaos(int player, int card, event_t event)
                                                 0, 0, 0, NULL, NULL);
       available_or_iid = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 4, 0, 0, 0,
                                                    1, 0, 0, NULL, NULL);
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\033",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, DLG_MODE,
                            "Discard & Draw", mode_or_index, 0x14, "Reveal cards", available_or_iid,
                            count_deck(player), 0, 0, 0, 0);
       if (choice == 0)
@@ -5262,25 +5113,12 @@ int card_plargg_dean_of_chaos(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23d6d00; original cards/strixhaven.c:4991. */
 int card_augusta_dean_of_order(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int target_card;
-  int marked_count_or_card;
-  int *marked_cursor;
-  bool more_marked;
-  target_definition_t td;
-  test_definition_t test;
-  int marked[151];
-
   mdfc_back(player, card, event);
   check_legend_rule(player, card, event);
-  instance = in_play(player, card);
-  if ((instance == NULL) &&
-      (marked_count_or_card = is_humiliated(player, card, AL_STATIC), marked_count_or_card != 0))
-  {
+  if (!in_play(player, card) && is_humiliated(player, card, AL_STATIC))
     return 0;
-  }
   if (card != affected_card && player == affected_card_controller &&
-      is_what(player, affected_card, 2))
+      is_what(player, affected_card, TYPE_CREATURE))
   {
     if (event == EVENT_POWER)
     {
@@ -5294,41 +5132,31 @@ int card_augusta_dean_of_order(int player, int card, event_t event)
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
   if (event == EVENT_DAT_ABILITY)
   {
-
-    default_test_definition(&test, 2);
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
     new_manipulate_all(player, card, player, &test, ACT_UNTAP);
-    default_target_definition(player, card, &td, 2);
+    target_definition_t td;
+    default_target_definition(player, card, &td, TYPE_CREATURE);
     td.illegal_abilities = 0;
     td.preferred_controller = player;
     td.allowed_controller = player;
     td.allow_cancel = 3;
-    instance = get_card_instance(player, card);
-    marked_count_or_card = 0;
-    while ((target_card = can_target(&td),
-            target_card != 0 &&
-                (target_card = new_pick_target(&td, "Select a creature to tap.", 0, 0x80),
-                 target_card != 0)))
+    card_instance_t *instance = get_card_instance(player, card);
+    int marked[151];
+    int mc = 0;
+    while (can_target(&td) && new_pick_target(&td, "Select a creature to tap.", 0, 0x80))
     {
-      target_card = instance->targets[0].card;
-      marked[marked_count_or_card] = target_card;
+      int target_card = instance->targets[0].card;
+      marked[mc] = target_card;
       state_untargettable(player, target_card, 1);
-      marked_count_or_card = marked_count_or_card + 1;
+      ++mc;
     }
-    if (0 < marked_count_or_card)
+    for (int i = mc - 1; i >= 0; --i)
     {
-      marked_cursor = marked + marked_count_or_card + -1;
-      do
-      {
-        marked_count_or_card = *marked_cursor;
-        state_untargettable(player, marked_count_or_card, 0);
-        if (spell_fizzled != 1)
-        {
-          tap_card(player, marked_count_or_card);
-        }
-        more_marked = marked_cursor != marked;
-        marked_cursor = marked_cursor + -1;
-      } while (more_marked);
-      return 0;
+      int target_card = marked[i];
+      state_untargettable(player, target_card, 0);
+      if (spell_fizzled != 1)
+        tap_card(player, target_card);
     }
   }
   return 0;
@@ -5364,7 +5192,7 @@ int card_rowan_scholar_of_sparks(int player, int card, event_t event)
   {
 
     instance = get_card_instance(player, card);
-    result = dialog_impl(player, card, event, "\001\002", "\001\017", "Damage opponent", 1, 10, 1,
+    result = dialog_impl(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Damage opponent", 1, 10, 1,
                          "Emblem", 1, 0x32, 0xfffffffc, 0, 0, 0, 0);
     if (event == EVENT_CAN_ACTIVATE)
     {
@@ -5381,12 +5209,12 @@ int card_rowan_scholar_of_sparks(int player, int card, event_t event)
     {
 
       damage_player(1 - player,
-                    (-(unsigned int)(cards_drawn_this_turn[player] < 3) & 0xfffffffe) + 3, player,
+                    ((cards_drawn_this_turn[player] < 3) ? 1U : 3U), player,
                     card);
     }
     else
     {
-      generate_token_by_id(player, card, 0x5903);
+      generate_token_by_id(player, card, CARD_ID_ROWAN_SCHOLAR_OF_SPARKS_EMBLEM);
     }
   }
   result = planeswalker(player, card, event, 2);
@@ -5498,7 +5326,7 @@ static int valentin_effect(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     if (instance->damage_target_player >= 0 &&
-        get_id(instance->damage_target_player, instance->damage_target_card) != 0x3d07)
+        get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_KALITAS_TRAITOR_OF_GHET)
       kill_card(player, card, KILL_EXILE);
   }
   instance = get_card_instance(player, card);
@@ -5714,7 +5542,7 @@ int card_verdant_mastery(int player, int card, event_t event)
         {
 
           choice =
-              dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\033", "\001\016",
+              dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_MODE, DLG_AUTOCHOOSE_IF_1,
                           "Pay alternate mana cost", 1, 0x14, "Pay full mana cost",
                           has_mana_to_cast_id(player, EVENT_CAST_SPELL, 0x5947), 10, 0, 0, 0, 0);
           if (choice == 0)
@@ -5928,7 +5756,7 @@ int card_jadzi_oracle_of_arcavios(int player, int card, event_t event)
     }
     scnprintf(buffer, 100, "Cast %s", cards_ptr[cards_data[value].id]->name);
     value = has_mana(player, 0, 1);
-    choice = dialog_impl(player, card, EVENT_SPA, "\001\002", "\001\003", "\001\014", "\001\016",
+    choice = dialog_impl(player, card, EVENT_SPA, DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE, DLG_AUTOCHOOSE_IF_1,
                          buffer, value, 10, "Decline", 1, 1, 0, 0, 0, 0);
     if (choice == 2)
     {
@@ -6079,7 +5907,7 @@ int card_professor_onyx(int player, int card, event_t event)
       event != EVENT_CLEANUP)
     return planeswalker(player, card, event, 5);
   int priority = (unsigned int)(life[player] > 6) * 5 + 5;
-  int mode = dialog_impl(player, card, event, "\001\002", "\001\017", "\001\033",
+  int mode = dialog_impl(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, DLG_MODE,
                          "Lose 1 life and reval 3 cards", 1, priority, 1,
                          "Opp. sac the biggest creature", 1, 0x14, 0xfffffffd,
                          "Opp. discards or loses life", 1, 0x32, 0xfffffff8, 0, 0, 0, 0);
@@ -6229,7 +6057,7 @@ int card_storm_kiln_artist(int player, int card, event_t event)
     }
     return 0;
   }
-  generate_token_by_id(player, card, 0x4998);
+  generate_token_by_id(player, card, CARD_ID_TREASURE);
   return 0;
 }
 
@@ -6239,6 +6067,7 @@ int card_symmetry_sage(int player, int card, event_t event)
   card_instance_t *instance;
   int target_player;
   int power;
+  int opponent_power;
   target_definition_t td;
 
   magecraft_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
@@ -6260,13 +6089,13 @@ int card_symmetry_sage(int player, int card, event_t event)
 
           power = get_power(target_player, instance->targets[0].card);
           target_player = instance->targets[0].player;
-          ai_modifier = ai_modifier + ((power < 2) - 1 & 0xffffffa0) + 0x30;
+          ai_modifier = ai_modifier + (unsigned int)((power < 2) ? 0 : -96) + 0x30;
         }
         if (1 - player == target_player)
         {
 
-          target_player = get_power(target_player, instance->targets[0].card);
-          ai_modifier = ai_modifier + ((2 < target_player) - 1 & 0xffffffa0) + 0x30;
+          opponent_power = get_power(target_player, instance->targets[0].card);
+          ai_modifier = ai_modifier + (unsigned int)((2 < opponent_power) ? 0 : -96) + 0x30;
         }
         instance->number_of_targets = '\0';
       }
@@ -6288,7 +6117,7 @@ int card_nassari_dean_of_expression(int player, int card, event_t event)
     exile_top_x_card_you_may_play_them(player, card, 1, &test, 1 - player,
                                        MPCFE_UNTIL_EOT | MPCFE_FOR_CMC);
   }
-  if (trigger_condition == 0xd3 && card == affected_card && player == affected_card_controller &&
+  if (trigger_condition == TRIGGER_SPELL_CAST && card == affected_card && player == affected_card_controller &&
       check_special_flags(trigger_cause_controller, trigger_cause, -0x80000000))
     sp_ability_trigger(player, event, 2,
                        TYPE_ARTIFACT | TYPE_SPELL | TYPE_ENCHANTMENT | TYPE_CREATURE, NULL, player,
@@ -6354,7 +6183,7 @@ int card_witherbloom_pledgemage(int player, int card, event_t event)
 static void make_one_spirit_strixhaven(int player, int card, int amount)
 {
   token_generation_t token;
-  default_token_definition(player, card, 0x498d, &token);
+  default_token_definition(player, card, CARD_ID_SPIRIT, &token);
   token.pow = 3;
   token.tou = 2;
   token.color_forced = '0';
@@ -6368,47 +6197,29 @@ static void make_one_spirit_strixhaven(int player, int card, int amount)
 /* ManalinkEh 2022: 0x23d0e40; original cards/strixhaven.c:3127. */
 int card_illuminate_history(int player, int card, event_t event)
 {
-  int result;
-  int card_00;
-  test_definition_t test;
-
-  if (event == EVENT_CAST_SPELL)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-      ai_modifier = ai_modifier + 0x18;
-    }
-  }
+  if (event == EVENT_CAST_SPELL && affect_me(player, card))
+    ai_modifier += 0x18;
   else if (event == EVENT_RESOLVE_SPELL)
   {
-
+    test_definition_t test;
     new_default_test_definition(&test, 0xff, "Select a card to discard.");
+    int disc = 0;
     if (hand_count[player] != 0)
-    {
-      result = 0;
-      while (true)
+      do
       {
-
-        card_00 = new_select_a_card(player, player, 4, 0, 3, -1, &test);
-        if (card_00 < 0)
+        int selected = new_select_a_card(player, player, 4, 0, 3, -1, &test);
+        if (selected < 0)
           break;
-        result = result + 1;
-        discard_card(player, card_00);
-        if (((result == 3) && ((ai_is_speculating == 1 ||
-                                ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))))) ||
-            (hand_count[player] == 0))
+        ++disc;
+        discard_card(player, selected);
+        if (disc == 3 && (ai_is_speculating == 1 || (player == AI && !(trace_mode & 2))))
           break;
-      }
-    }
-    result = count_graveyard(player);
-    if (6 < result)
-    {
+      } while (hand_count[player] != 0);
+    if (count_graveyard(player) > 6)
       make_one_spirit_strixhaven(player, card, 1);
-    }
     kill_card(player, card, KILL_DESTROY);
   }
-  result = basic_spell(player, card, event);
-  return result;
+  return basic_spell(player, card, event);
 }
 
 /* ManalinkEh 2022: 0x23d8ea0; original cards/strixhaven.c:5702. */
@@ -6464,7 +6275,7 @@ int card_spirit_summoning(int player, int card, event_t event)
 static void make_one_fractal(int player, int card, int amount, int number_of_p1_p1_counters)
 {
   token_generation_t token;
-  default_token_definition(player, card, 0x588e, &token);
+  default_token_definition(player, card, CARD_ID_FRACTAL, &token);
   token.color_forced = '\f';
   token.qty = amount;
   token.action = TOKEN_ACTION_ADD_COUNTERS;
@@ -6582,7 +6393,7 @@ int card_manifestation_sage(int player, int card, event_t event)
 static void make_one_elemental_strixhaven(int player, int card, int amount)
 {
   token_generation_t token;
-  default_token_definition(player, card, 0x4926, &token);
+  default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
   token.tou = 4;
   token.pow = 4;
   token.color_forced = '\x14';
@@ -6597,7 +6408,7 @@ int ee_legacy(int player, int card, event_t event);
 /* ManalinkEh 2022: 0x23c8a30; original cards/strixhaven.c:1982. */
 int ee_legacy(int player, int card, event_t event)
 {
-  if (trigger_condition == 0xd4 && card == affected_card && player == affected_card_controller &&
+  if (trigger_condition == TRIGGER_LEAVE_PLAY && card == affected_card && player == affected_card_controller &&
       reason_for_trigger_controller == player)
   {
     card_instance_t *instance = get_card_instance(player, card);
@@ -6732,7 +6543,7 @@ int card_multiple_choice(int player, int card, event_t event)
       {
         target_definition_t td;
         default_target_definition(player, card, &td, 0);
-        td.zone = 0x1000;
+        td.zone = TARGET_ZONE_PLAYERS;
         td.illegal_abilities = 0;
         if (new_pick_target(&td, "Select a player", 0, 0x80))
         {
@@ -6804,9 +6615,9 @@ int card_lorehold_command(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_target_definition(player, card, &td2, 0);
-    td2.zone = 0x1000;
+    td2.zone = TARGET_ZONE_PLAYERS;
     td2.preferred_controller = player;
     new_default_test_definition(&test, 0x47, "Select a permanent to sacrifice.");
     get_card_instance(player, card);
@@ -6818,16 +6629,16 @@ int card_lorehold_command(int player, int card, event_t event)
   if (event == EVENT_CAST_SPELL && (card != affected_card || player != affected_card_controller))
     return basic_spell(player, card, event);
   default_target_definition(player, card, &td, 0x102);
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   default_target_definition(player, card, &td2, 0);
-  td2.zone = 0x1000;
+  td2.zone = TARGET_ZONE_PLAYERS;
   td2.preferred_controller = player;
   new_default_test_definition(&test, 0x47, "Select a permanent to sacrifice.");
   instance = get_card_instance(player, card);
 
   if (event == EVENT_RESOLVE_SPELL)
   {
-    choices[0] = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
+    choices[0] = dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM,
                              "Create a 3/2 Spirit", 0, 1, "Pump your creatures", 0, 1,
                              "Damage & gain life", 0, 1, "Sac & draw", 0, 1, 0, 0, 0, 0);
     for (int choice_index = 0; choice_index < 2; ++choice_index)
@@ -6880,7 +6691,7 @@ int card_lorehold_command(int player, int card, event_t event)
     result = can_target(player_target);
     damage_available = (unsigned int)(result != 0);
   }
-  choice = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
+  choice = dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM,
                        "Create a 3/2 Spirit", 1, spirit_priority, "Pump your creatures", 1,
                        pump_priority, "Damage & gain life", damage_available, damage_priority,
                        "Sac & draw", 1, draw_priority, 0, 0, 0, 0);
@@ -6938,9 +6749,9 @@ int card_prismari_command(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_target_definition(player, card, &td2, 0);
-    td2.zone = 0x1000;
+    td2.zone = TARGET_ZONE_PLAYERS;
     td2.preferred_controller = player;
     default_target_definition(player, card, &td3, 0x40);
     get_card_instance(player, card);
@@ -6968,16 +6779,16 @@ int card_prismari_command(int player, int card, event_t event)
   if (event == EVENT_CAST_SPELL && (card != affected_card || player != affected_card_controller))
     return 0;
   default_target_definition(player, card, &td, 0x102);
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   default_target_definition(player, card, &td2, 0);
-  td2.zone = 0x1000;
+  td2.zone = TARGET_ZONE_PLAYERS;
   td2.preferred_controller = player;
   default_target_definition(player, card, &td3, 0x40);
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    choice = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
-                         "\001\033", "2 damage to any target", 0, 1, "Draw 2 & discard 2", 0, 1,
+    choice = dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM,
+                         DLG_MODE, "2 damage to any target", 0, 1, "Draw 2 & discard 2", 0, 1,
                          "Create a Treasure", 0, 1, "Destroy target artifact", 0, 1, 0, 0, 0, 0);
     choices[0] = choice;
     target_number = 0;
@@ -7008,7 +6819,7 @@ int card_prismari_command(int player, int card, event_t event)
         result = validate_target(player, card, &td2, target_number);
         if (result != 0)
         {
-          default_token_definition(player, card, 0x4998, &token);
+          default_token_definition(player, card, CARD_ID_TREASURE, &token);
           token.t_player = instance->targets[target_number].player;
           generate_token(&token);
         }
@@ -7041,8 +6852,8 @@ int card_prismari_command(int player, int card, event_t event)
   result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
   player_available = generic_spell(player, card, EVENT_CAN_CAST, 1, &td2, NULL, 1, NULL);
   artifact_available = generic_spell(player, card, EVENT_CAN_CAST, 1, &td3, NULL, 1, NULL);
-  choice = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
-                       "\001\033", "2 damage to any target", result, damage_priority,
+  choice = dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM,
+                       DLG_MODE, "2 damage to any target", result, damage_priority,
                        "Draw 2 & discard 2", player_available, draw_priority, "Create a Treasure",
                        player_available, treasure_priority, "Destroy target artifact",
                        artifact_available, artifact_priority, 0, 0, 0, 0);
@@ -7128,7 +6939,7 @@ int card_silverquill_command(int player, int card, event_t event)
     test.cmc = 3;
     test.cmc_flag = 3;
     default_target_definition(player, card, &td3, 0);
-    td3.zone = 0x1000;
+    td3.zone = TARGET_ZONE_PLAYERS;
     get_card_instance(player, card);
 
     int can_pump = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
@@ -7149,14 +6960,14 @@ int card_silverquill_command(int player, int card, event_t event)
   test.cmc = 3;
   test.cmc_flag = 3;
   default_target_definition(player, card, &td3, 0);
-  td3.zone = 0x1000;
+  td3.zone = TARGET_ZONE_PLAYERS;
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
     player_target = &td3;
     creature_target = &td;
-    choice = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
-                         "\001\033", "Pump a creature", 0, 1, "Reanimate", 0, 1,
+    choice = dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM,
+                         DLG_MODE, "Pump a creature", 0, 1, "Reanimate", 0, 1,
                          "Draw & lose 1 life", 0, 1, "Opponent sacrifices", 0, 1, 0, 0, 0, 0);
     choices[0] = choice;
     int target_index = 0;
@@ -7212,11 +7023,11 @@ int card_silverquill_command(int player, int card, event_t event)
   grave_priority = 1;
   if (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0))
   {
-    draw_priority = ((5 < life[player]) - 1 & 0xffffffdd) + 0x28;
+    draw_priority = ((5 < life[player]) ? 40U : 5U);
     sacrifice_priority = count_subtype(opponent, 2, -1);
     pump_priority = 10;
     grave_priority = 0x14;
-    sacrifice_priority = (-(unsigned int)(sacrifice_priority == 0) & 0xffffffe3) + 0x1e;
+    sacrifice_priority = ((sacrifice_priority == 0) ? 1U : 30U);
   }
   player_target = &td3;
   creature_target = &td;
@@ -7225,7 +7036,7 @@ int card_silverquill_command(int player, int card, event_t event)
   player_available = generic_spell(player, card, EVENT_CAN_CAST, 1, player_target, NULL, 1, NULL);
   sacrifice_available = would_validate_arbitrary_target(player_target, opponent, -1);
   choice =
-      dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002", "\001\033",
+      dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM, DLG_MODE,
                   "Pump a creature", pump_available, pump_priority, "Reanimate", grave_available,
                   grave_priority, "Draw & lose 1 life", player_available, draw_priority,
                   "Opponent sacrifices", sacrifice_available, sacrifice_priority, 0, 0, 0, 0);
@@ -7324,11 +7135,11 @@ int card_witherbloom_command(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     default_target_definition(player, card, &td2, 0x47);
-    td2.illegal_type = 3;
+    td2.illegal_type = TYPE_LAND | TYPE_CREATURE;
     td2.extra = 2;
-    td2.special = 0x800;
+    td2.special = TARGET_SPECIAL_CMC_LESSER_OR_EQUAL;
     default_target_definition(player, card, &td3, 2);
     td3.preferred_controller = 1 - player;
     get_card_instance(player, card);
@@ -7350,11 +7161,11 @@ int card_witherbloom_command(int player, int card, event_t event)
   if (event == EVENT_CAST_SPELL && (card != affected_card || player != affected_card_controller))
     return 0;
   default_target_definition(player, card, &td, 0);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   default_target_definition(player, card, &td2, 0x47);
-  td2.illegal_type = 3;
+  td2.illegal_type = TYPE_LAND | TYPE_CREATURE;
   td2.extra = 2;
-  td2.special = 0x800;
+  td2.special = TARGET_SPECIAL_CMC_LESSER_OR_EQUAL;
   default_target_definition(player, card, &td3, 2);
   opponent = 1 - player;
   td3.preferred_controller = opponent;
@@ -7364,7 +7175,7 @@ int card_witherbloom_command(int player, int card, event_t event)
     player_target = &td;
     creature_target = &td3;
     permanent_target = &td2;
-    choice = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
+    choice = dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM,
                          "Mill 3 & recycle land", 0, 1, "Destroy a permanent", 0, 1,
                          "Shrink creature", 0, 1, "Drain 2 life", 0, 1, 0, 0, 0, 0);
     choices[0] = choice;
@@ -7439,7 +7250,7 @@ int card_witherbloom_command(int player, int card, event_t event)
   pump_available = generic_spell(player, card, EVENT_CAN_CAST, 1, creature_target, NULL, 1, NULL);
   drain_available = opponent_is_valid_target(player, card);
   choice =
-      dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
+      dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM,
                   "Mill 3 & recycle land", mill_available, mill_priority, "Destroy a permanent",
                   result, destroy_priority, "Shrink creature", pump_available, pump_priority,
                   "Drain 2 life", drain_available, drain_priority, 0, 0, 0, 0);
@@ -7557,7 +7368,7 @@ int card_kianne_dean_of_substance(int player, int card, event_t event)
       instance->number_of_targets = '\0';
       can_exile = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 0, 0, 0, 0, 0, 0,
                                             0, NULL, NULL);
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\033", "\001\016",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_MODE, DLG_AUTOCHOOSE_IF_1,
                            "Tap and exile top card", can_exile, 0x14, "Create a Fractal",
                            generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 4, 0, 0,
                                                      1, 0, 0, 0, NULL, NULL),
@@ -7772,7 +7583,7 @@ int card_confront_the_past(int player, int card, event_t event)
             value = new_special_count_grave(player, &test);
           }
           offset_or_shroud = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
-          if (dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\016", "\001\033",
+          if (dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, DLG_MODE,
                           "Reanimate a Planewalke with MV X or less", value, 5,
                           "Remove 2*X loyalty from an oppoent's planeswalker", offset_or_shroud, 10,
                           0, 0, 0, 0) == 0)
@@ -7896,7 +7707,7 @@ int card_kasmina_enigma_sage(int player, int card, event_t event)
     {
       instance = get_card_instance(player, card);
       default_target_definition(player, card, &td, 2);
-      choice_or_count = dialog_impl(player, card, event, "\001\002", "\001\017", "\001\033",
+      choice_or_count = dialog_impl(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, DLG_MODE,
                                     "Scry 2", 1, 10, 2, "Create a Fractal", 1, 0x14, 0,
                                     "Exile a spell from your deck and you can cast it", 1, 0x32,
                                     0xfffffff8, 0, 0, 0, 0);
@@ -7939,7 +7750,7 @@ int card_kasmina_enigma_sage(int player, int card, event_t event)
 
       instance = get_card_instance(player, card);
       default_target_definition(player, card, &td, 2);
-      choice_or_count = dialog_impl(player, card, event, "\001\002", "\001\017", "\001\033",
+      choice_or_count = dialog_impl(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, DLG_MODE,
                                     "Scry 2", 1, 10, 2, "Create a Fractal", 1, 0x14, 0,
                                     "Exile a spell from your deck and you can cast it", 1, 0x32,
                                     0xfffffff8, 0, 0, 0, 0);
@@ -7969,7 +7780,7 @@ int card_kasmina_enigma_sage(int player, int card, event_t event)
           {
 
             scnprintf(buffer2, 100, "Play %s", cards_ptr[cards_data[loyalty_or_iid].id]->name);
-            choice_or_count = dialog_impl(player, card, event, "\001\002", "\001\003", "\001\014",
+            choice_or_count = dialog_impl(player, card, event, DLG_RANDOM, DLG_NO_CANCEL, DLG_NO_STORAGE,
                                           buffer2, 1, 0x14, "Decline", 1, 10, 0, 0, 0, 0);
             if (choice_or_count == 1)
             {
@@ -8116,38 +7927,20 @@ int card_ecological_appreciation(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23dc500; original cards/strixhaven.c:6979. */
 int card_silverquill_pledgemage(int player, int card, event_t event)
 {
-  int result;
-  unsigned int argument7;
-  int ability;
-  int sp_ability;
-
-  magecraft_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
+  magecraft_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_SPELL, NULL, player, card);
   if (event == EVENT_SPA)
   {
-
-    argument7 = 1;
-    if (6 < life[player])
-    {
-      result = check_for_ability(player, card, 0x20);
-      argument7 = (unsigned int)(result != 0);
-    }
-    result = do_dialog(player, player, card, -1, -1, " This gains flying\n This gains lifelink",
-                       argument7);
-    if (result == 0)
-    {
-      sp_ability = 0;
-      ability = 0x20;
-    }
-    else
-    {
-      ability = 0;
-      sp_ability = (unsigned int)(result == 1) * 2;
-    }
+    int priority = 1;
+    if (life[player] > 6)
+      priority = check_for_ability(player, card, KEYWORD_FLYING) != 0;
+    int choice = do_dialog(player, player, card, -1, -1,
+                           " This gains flying\n This gains lifelink", priority);
+    int ability = choice == 0 ? KEYWORD_FLYING : 0;
+    int sp_ability = choice == 1 ? SP_KEYWORD_LIFELINK : 0;
     pump_ability_until_eot_no_repeat_alt(player, card, player, card, ability, sp_ability,
-                                         result + 1);
+                                        choice + 1);
   }
-  result = hybrid(player, card, event);
-  return result;
+  return hybrid(player, card, event);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -8322,60 +8115,48 @@ static int hofri_effect(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23c7cd0; original cards/strixhaven.c:6173. */
 int rushed_rebirth_legacy(int player, int card, event_t event)
 {
-  char attached_player;
-  int value;
-  card_instance_t *dying;
-  int32_t trigger_count;
-  card_instance_t *instance;
-  int controller_or_cmc;
-  char buffer[100];
-  test_definition_t test;
-
   if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
-
-    instance = get_card_instance(player, card);
-    value = instance->damage_target_card;
-
-    if ((((value == affected_card) && (controller_or_cmc = (int)instance->damage_target_player,
-                                       controller_or_cmc == affected_card_controller)) &&
-         (check_for_death_trigger_removal(controller_or_cmc, value) == 0)) &&
-        (dying = get_card_instance(controller_or_cmc, value),
-         (unsigned char)(dying->kill_code - 1) < 3))
+    card_instance_t *inst = get_card_instance(player, card);
+    int c = inst->damage_target_card;
+    int p = inst->damage_target_player;
+    if (c == affected_card && p == affected_card_controller &&
+        !check_for_death_trigger_removal(p, c))
     {
-      attached_player = instance->damage_target_player;
-      value = instance->damage_target_card;
-      instance->targets[0xb].player = 0x42;
-      instance->targets[0].card = value;
-      instance->targets[0].player = (int)attached_player;
-      value = get_cmc((int)attached_player, value);
-      instance->targets[1].player = value;
-      value = is_what((int)instance->damage_target_player, instance->damage_target_card, 2);
-      trigger_count = 1;
-      if (value != 0)
+      card_instance_t *affected = get_card_instance(p, c);
+      if ((unsigned char)(affected->kill_code - 1) < 3)
       {
-        trigger_count = card_counts[player][5] + 1;
+        p = inst->damage_target_player;
+        c = inst->damage_target_card;
+        inst->targets[11].player = 0x42;
+        inst->targets[0].card = c;
+        inst->targets[0].player = p;
+        int mv = get_cmc(p, c);
+        inst->targets[1].player = mv;
+        int num = 1;
+        if (is_what(inst->damage_target_player, inst->damage_target_card, TYPE_CREATURE))
+          num = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
+        inst->targets[11].player = num;
+        inst->damage_target_player = -1;
+        inst->damage_target_card = -1;
       }
-      instance->targets[0xb].player = trigger_count;
-      instance->damage_target_player = -1;
-      instance->damage_target_card = -1;
     }
   }
-  value = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (value != 0)
+  int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result)
   {
-    instance = get_card_instance(player, card);
-    controller_or_cmc = instance->targets[1].player;
-    scnprintf(buffer, 100, "Select a creature card with mana value %d or less.",
-              controller_or_cmc + -1);
-    new_default_test_definition(&test, 2, buffer);
+    card_instance_t *inst = get_card_instance(player, card);
+    int mv = inst->targets[1].player;
+    char buffer[100];
+    scnprintf(buffer, sizeof(buffer), "Select a creature card with mana value %d or less.", mv - 1);
+    test_definition_t test;
+    new_default_test_definition(&test, TYPE_CREATURE, buffer);
     test.cmc_flag = 3;
-    test.cmc = controller_or_cmc;
+    test.cmc = mv;
     do
     {
       new_global_tutor(player, player, 1, 5, 0, 1, &test);
-      value = value + -1;
-    } while (value != 0);
+    } while (--result != 0);
     kill_card(player, card, KILL_EXILE);
   }
   if (event == EVENT_CLEANUP)
@@ -8482,7 +8263,7 @@ int card_honor_troll(int player, int card, event_t event)
   };
   vigilance(player, card, event);
   xtrigger_t trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
     trigger = xtrigger_impl_value_dont_use_directly;
   if (trigger == XTRIGGER_REPLACE_GAIN_LIFE)
   {
@@ -8524,39 +8305,39 @@ int card_radiant_scrollwielder(int player, int card, event_t event)
     MPCFE_EXILE_ON_RESOLUTION = 128
   };
 
-  unsigned short csvid;
-  int *graveyard;
+  int csvid;
+  int *grave;
   int iid_or_selection;
-  int argument1;
-  int grave_index;
+  int fc;
+  int i;
   int found[151];
 
   upkeep_trigger_ability(player, card, event, player);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
 
-    graveyard = graveyard_ptr_mutable[player];
-    iid_or_selection = *graveyard;
+    grave = graveyard_ptr_mutable[player];
+    iid_or_selection = *grave;
     if (iid_or_selection != -1)
     {
-      argument1 = 0;
-      grave_index = 0;
+      fc = 0;
+      i = 0;
       do
       {
         if (is_what(-1, iid_or_selection, 0x38) != 0)
         {
-          found[argument1] = grave_index;
-          argument1 = argument1 + 1;
+          found[fc] = i;
+          fc = fc + 1;
         }
-        grave_index = grave_index + 1;
-        iid_or_selection = graveyard[grave_index];
+        i = i + 1;
+        iid_or_selection = grave[i];
       } while (iid_or_selection != -1);
-      if (argument1 != 0)
+      if (fc != 0)
       {
-        iid_or_selection = internal_rand(argument1);
-        csvid = cards_data[graveyard[found[iid_or_selection]]].id;
-        rfg_card_from_grave(player, found[iid_or_selection]);
-        create_may_play_card_from_exile_effect(player, card, player, (unsigned int)csvid,
+        int stp = internal_rand(fc);
+        csvid = cards_data[grave[found[stp]]].id;
+        rfg_card_from_grave(player, found[stp]);
+        create_may_play_card_from_exile_effect(player, card, player, csvid,
                                                MPCFE_EXILE_ON_RESOLUTION | MPCFE_UNTIL_EOT);
         return 0;
       }
@@ -8656,50 +8437,31 @@ int card_spell_satchel(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23dd0c0; original cards/strixhaven.c:7277. */
 int card_strixhaven_stadium(int player, int card, event_t event)
 {
-
-  unsigned int packed_damage_counts;
-  int points;
-  unsigned int num;
-  int damaged_player;
-  int times_damaged[2];
-
-  packed_damage_counts = damage_dealt_to_me_arbitrary(
+  unsigned int result = damage_dealt_to_me_arbitrary(
       2, -1, event, DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_BE_COMBAT_DAMAGE, player, card);
-  if (packed_damage_counts != 0)
+  if (result)
   {
-
-    damaged_player = 0;
-    num = packed_damage_counts & 0xff;
-    times_damaged[1] = packed_damage_counts >> 8 & 0xff;
-    times_damaged[0] = num;
-    while (true)
+    int times_damaged[2] = { result & 0xff, (result >> 8) & 0xff };
+    for (int p = 0; p != 2; ++p)
     {
-      if (num != 0)
+      unsigned int num = times_damaged[p];
+      if (num)
       {
-        if (1 - player == damaged_player)
+        if (1 - player == p)
         {
           add_counters(player, card, player, card, COUNTER_POINT, num);
-          points = count_counters(player, card, COUNTER_POINT);
-          if (9 < points)
-          {
+          if (count_counters(player, card, COUNTER_POINT) > 9)
             lose_the_game(1 - player);
-          }
         }
-        if (player == damaged_player)
-        {
+        if (player == p)
           remove_counters(player, card, player, card, COUNTER_POINT, num);
-        }
       }
-      damaged_player = damaged_player + 1;
-      if (damaged_player == 2)
-        break;
-      num = times_damaged[damaged_player];
     }
   }
   if (event == EVENT_ACTIVATE)
   {
     add_counters(player, card, player, card, COUNTER_POINT, 1);
-    ai_modifier = ai_modifier + 0x100;
+    ai_modifier += 0x100;
   }
   return mana_producer(player, card, event);
 }
@@ -8825,46 +8587,21 @@ int card_tenured_inkcaster(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23d4150; original cards/strixhaven.c:4258. */
 int card_master_symmetrist(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  card_instance_t *attacker;
-  int power;
-  int toughness;
-  int attacker_index;
-
   store_attackers(player, card, event, DAT_TRACK, player, -1, NULL);
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
   if (event == EVENT_DAT_ABILITY)
   {
-
-    instance = get_card_instance(player, card);
-    attacker_index = instance->info_slot + -1;
-    if (-1 < attacker_index)
-    {
-      do
+    card_instance_t *instance = get_card_instance(player, card);
+    const uint8_t *attackers = (const uint8_t *)&instance->targets + 2 * sizeof(target_t);
+    for (int index = instance->info_slot - 1; index >= 0; --index)
+      if (in_play(current_turn, attackers[index]))
       {
-        attacker = in_play(
-            current_turn,
-            (unsigned int)*(unsigned char *)((int)&instance->targets[2].player + attacker_index));
-        if (attacker != NULL)
-        {
-          power = get_power(
-              current_turn,
-              (unsigned int)*(unsigned char *)((int)&instance->targets[2].player + attacker_index));
-          toughness = get_toughness(
-              current_turn,
-              (unsigned int)*(unsigned char *)((int)&instance->targets[2].player + attacker_index));
-          if (power == toughness)
-          {
-            pump_ability_until_eot_no_repeat(
-                player, card, current_turn,
-                (unsigned int)*(unsigned char *)((int)&instance->targets[2].player +
-                                                 attacker_index),
-                0x80, 0);
-          }
-        }
-        attacker_index = attacker_index + -1;
-      } while (attacker_index != -1);
-    }
+        int power = get_power(current_turn, attackers[index]);
+        int toughness = get_toughness(current_turn, attackers[index]);
+        if (power == toughness)
+          pump_ability_until_eot_no_repeat(player, card, current_turn, attackers[index],
+                                            KEYWORD_TRAMPLE, 0);
+      }
   }
   return 0;
 }
@@ -8872,54 +8609,27 @@ int card_master_symmetrist(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23d4840; original cards/strixhaven.c:4367. */
 int card_mila_crafty_companion(int player, int card, event_t event)
 {
-  int attacker_index;
-  const target_t *spell_target;
-  card_instance_t *tracking_record;
-  card_instance_t *instance;
-  int planeswalker;
-  test_definition_t test;
-
   check_legend_rule(player, card, event);
   mdfc_front(player, card, event);
   store_attackers(player, card, event, DAT_TRACK, 1 - player, -1, NULL);
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
   if (event == EVENT_DAT_ABILITY)
   {
-
-    tracking_record = get_card_instance(player, card);
-    attacker_index = tracking_record->info_slot + -1;
-    if (-1 < attacker_index)
-    {
-      do
+    card_instance_t *record = get_card_instance(player, card);
+    const uint8_t *attackers = (const uint8_t *)&record->targets + 2 * sizeof(target_t);
+    for (int index = record->info_slot - 1; index >= 0; --index)
+      if (in_play(current_turn, attackers[index]) && planeswalker_its_attacking(current_turn, attackers[index]) >= 0)
       {
-        instance =
-            in_play(current_turn,
-                    (unsigned int)*(unsigned char *)((int)&tracking_record->targets[2].player +
-                                                     attacker_index));
-        if ((instance != NULL) &&
-            (planeswalker = planeswalker_its_attacking(
-                 current_turn,
-                 (unsigned int)*(unsigned char *)((int)&tracking_record->targets[2].player +
-                                                  attacker_index)),
-             -1 < planeswalker))
-        {
-          default_test_definition(&test, 0x100);
-          new_manipulate_all(player, card, player, &test, 0x1420001);
-          break;
-        }
-        attacker_index = attacker_index + -1;
-      } while (attacker_index != -1);
-    }
+        test_definition_t test;
+        default_test_definition(&test, TARGET_TYPE_PLANESWALKER);
+        new_manipulate_all(player, card, player, &test, 0x1420001);
+        break;
+      }
   }
-  attacker_index = duh_mode(player);
-  spell_target = any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, -1, TYPE_ANY,
-                                    1 - player, (attacker_index != 0) + RESOLVE_TRIGGER_OPTIONAL);
-  if (((spell_target != NULL) &&
-       (tracking_record = in_play(player, card), tracking_record != NULL)) &&
-      (attacker_index = is_humiliated(player, card, AL_TRIG), attacker_index == 0))
-  {
+  const target_t *spell_target = any_becomes_target(player, card, event, player, -1,
+      TYPE_PERMANENT, -1, TYPE_ANY, 1 - player, (duh_mode(player) != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (spell_target && in_play(player, card) && !is_humiliated(player, card, AL_TRIG))
     draw_cards(player, 1);
-  }
   return 0;
 }
 
@@ -8969,7 +8679,7 @@ int card_devastating_mastery(int player, int card, event_t event)
         return basic_spell(player, card, event);
       choice = 1;
       if (has_mana_to_cast_id(player, EVENT_CAST_SPELL, 0x5866) != 0)
-        choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014",
+        choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE,
                              "Pay alternate mana cost", 1, 0x14, "Pay full mana cost", 1, 10, 0, 0,
                              0, 0);
       if (choice == 0)
@@ -9016,7 +8726,7 @@ int card_devastating_mastery(int player, int card, event_t event)
       target_definition_t td;
       default_target_definition(player, card, &td, 0x47);
       td.who_chooses = (int32_t)(1 - player);
-      td.illegal_type = 1;
+      td.illegal_type = TYPE_LAND;
       td.illegal_abilities = 0;
       td.allow_cancel = 3;
       remaining_bounces = 2;
@@ -9188,7 +8898,7 @@ int card_team_pennant(int player, int card, event_t event)
     td.allowed_controller = player;
     td.preferred_controller = player;
     default_target_definition(player, card, &td1, 2);
-    td1.special = 0x8000;
+    td1.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td1.extra = (int32_t)target_is_token_too;
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
@@ -9221,7 +8931,7 @@ int card_team_pennant(int player, int card, event_t event)
         result = can_sorcery_be_played(player, EVENT_ACTIVATE);
         token_equip_available = (unsigned int)(result != 0);
       }
-      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\033",
+      result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1, DLG_MODE,
                            "Normal equip", normal_equip_available, 1, "Token equip",
                            token_equip_available, 5, 0, 0, 0, 0);
       if (result != 0)
@@ -9258,7 +8968,7 @@ int card_team_pennant(int player, int card, event_t event)
     td.allowed_controller = player;
     td.preferred_controller = player;
     default_target_definition(player, card, &td1, 2);
-    td1.special = 0x8000;
+    td1.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td1.extra = (int32_t)target_is_token_too;
     instance = get_card_instance(player, card);
   }
@@ -9304,7 +9014,7 @@ int card_dina_soul_steeper(int player, int card, event_t event)
   life_triggers = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if ((life_triggers != 0) && (instance = in_play(player, card), instance != NULL))
   {
-    if (check_battlefield_for_id(player, 0x304d) == 0)
+    if (check_battlefield_for_id(player, CARD_ID_EXQUISITE_BLOOD) == 0)
     {
       lose_life(1 - player, 1);
     }
@@ -9522,7 +9232,7 @@ int card_silverquill_silencer(int player, int card, event_t event)
       create_card_name_legacy(player, card, data);
     }
   }
-  if (trigger_condition == 0xd3 && card == affected_card && player == affected_card_controller)
+  if (trigger_condition == TRIGGER_SPELL_CAST && card == affected_card && player == affected_card_controller)
   {
     default_test_definition(&test, 0xff);
     card_instance_t *instance = get_card_instance(player, card);
@@ -9642,10 +9352,10 @@ int card_divide_by_zero(int player, int card, event_t event)
   {
     counterspell_target_definition(player, card, &td, 0xff);
     td.extra = 1;
-    td.special = 0x1000000;
+    td.special = TARGET_SPECIAL_CMC_GREATER_OR_EQUAL;
     default_target_definition(player, card, &td2, 0x47);
     td2.extra = 1;
-    td2.special = 0x1000000;
+    td2.special = TARGET_SPECIAL_CMC_GREATER_OR_EQUAL;
     result = counterspell(player, card, EVENT_CAN_CAST, &td, 0);
     if (result != 0)
     {
@@ -9669,10 +9379,10 @@ int card_divide_by_zero(int player, int card, event_t event)
     }
     counterspell_target_definition(player, card, &td, 0xff);
     td.extra = 1;
-    td.special = 0x1000000;
+    td.special = TARGET_SPECIAL_CMC_GREATER_OR_EQUAL;
     default_target_definition(player, card, &td2, 0x47);
     td2.extra = 1;
-    td2.special = 0x1000000;
+    td2.special = TARGET_SPECIAL_CMC_GREATER_OR_EQUAL;
     if (card != affected_card)
     {
       return 0;
@@ -9697,16 +9407,16 @@ int card_divide_by_zero(int player, int card, event_t event)
     }
     counterspell_target_definition(player, card, &td, 0xff);
     td.extra = 1;
-    td.special = 0x1000000;
+    td.special = TARGET_SPECIAL_CMC_GREATER_OR_EQUAL;
     default_target_definition(player, card, &td2, 0x47);
     return 0;
   }
   counterspell_target_definition(player, card, &td, 0xff);
   td.extra = 1;
-  td.special = 0x1000000;
+  td.special = TARGET_SPECIAL_CMC_GREATER_OR_EQUAL;
   default_target_definition(player, card, &td2, 0x47);
   td2.extra = 1;
-  td2.special = 0x1000000;
+  td2.special = TARGET_SPECIAL_CMC_GREATER_OR_EQUAL;
   if (event != EVENT_RESOLVE_SPELL)
   {
     return 0;
@@ -9931,10 +9641,10 @@ int card_pestilent_cauldron(int player, int card, event_t event)
       generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 4, 0, 0, 0, 0, 0, 0, NULL,
                                 NULL);
       life_gained = get_trap_condition(player, 1);
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\004", "\001\016",
-                           "\001\033", "Create a Pest", value, 0x14, "Mill", mode_or_available,
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_OMIT_ILLEGAL, DLG_AUTOCHOOSE_IF_1,
+                           DLG_MODE, "Create a Pest", value, 0x14, "Mill", mode_or_available,
                            life_gained << 3, "Exile and draw", mode_or_available,
-                           (-(unsigned int)((available_modes & 2) == 0) & 0xffffffe7) + 0x1e, 0, 0,
+                           (((available_modes & 2) == 0) ? 5U : 30U), 0, 0,
                            0, 0);
       if (choice == 0)
       {
@@ -10023,55 +9733,31 @@ int card_pestilent_cauldron(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x23dfc10; original cards/strixhaven.c:8243. */
 int card_explore_the_vastlands(int player, int card, event_t event)
 {
-  enum
-  {
-    TUTOR_0 = 0
-  };
-
-  int result;
-  unsigned int t_player;
-  const char *msg;
-  unsigned int pass;
-  test_definition_t test;
-
+  enum { TUTOR_0 = 0 };
   mdfc_back(player, card, event);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    new_default_test_definition(&test, 0x39, "Select an instant, sorcery or land card.");
+    test_definition_t test;
+    new_default_test_definition(&test, TYPE_INSTANT | TYPE_INTERRUPT | TYPE_SORCERY | TYPE_LAND,
+                                "Select an instant, sorcery or land card.");
     test.ai_selection_mode = 1;
-
-    pass = 0;
-    do
-    {
-      t_player = pass ^ current_turn;
-
-      result = reveal_top_cards_of_library_and_choose_who_chooses(
-          player, card, t_player, t_player, 5, 0, TUTOR_TPLAYER_HAND, 1, TUTOR_0, 0, &test);
-      if (result == -1)
-      {
-        put_top_x_on_bottom_in_random_order(t_player, 5);
-      }
+    APNAP(p, {
+      int selected = reveal_top_cards_of_library_and_choose_who_chooses(
+          player, card, p, p, 5, 0, TUTOR_TPLAYER_HAND, 1, TUTOR_0, 0, &test);
+      if (selected == -1)
+        put_top_x_on_bottom_in_random_order(p, 5);
       else
       {
-        result = is_what(t_player, result, 1);
-        if (result == 0)
-        {
-          msg = "Select a land card.";
-          result = 1;
-        }
+        if (!is_what(p, selected, TYPE_LAND))
+          new_default_test_definition(&test, TYPE_LAND, "Select a land card.");
         else
-        {
-          msg = "Select an instant or sorcery card.";
-          result = 0x38;
-        }
-        new_default_test_definition(&test, result, msg);
-        reveal_top_cards_of_library_and_choose_who_chooses(player, card, t_player, t_player, 4, 0,
-                                                           TUTOR_TPLAYER_HAND, 1,
-                                                           TUTOR_BOTTOM_OF_DECK_RANDOM, 0, &test);
+          new_default_test_definition(&test, TYPE_INSTANT | TYPE_INTERRUPT | TYPE_SORCERY,
+                                      "Select an instant or sorcery card.");
+        reveal_top_cards_of_library_and_choose_who_chooses(
+            player, card, p, p, 4, 0, TUTOR_TPLAYER_HAND, 1, TUTOR_BOTTOM_OF_DECK_RANDOM, 0, &test);
       }
-      gain_life(t_player, 3);
-      pass = pass + 1;
-    } while (pass != 2);
+      gain_life(p, 3);
+    });
     kill_card(player, card, KILL_DESTROY);
   }
   return basic_spell(player, card, event);
@@ -10087,29 +9773,14 @@ int lukka_legacy(int player, int card, event_t event);
 /* ManalinkEh 2022: 0x23c7b30; original cards/strixhaven.c:4404. */
 int lukka_legacy(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-
-  instance = get_card_instance(player, card);
-  result = (int)instance->damage_target_player;
-  if (-1 < instance->damage_target_player)
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->damage_target_player >= 0)
+    haste(instance->damage_target_player, instance->damage_target_card, event);
+  if (instance->damage_target_player == current_turn && upkeep_trigger(player, card, event))
   {
-    haste(result, instance->damage_target_card, event);
-    result = (int)instance->damage_target_player;
-  }
-  if (result == current_turn)
-  {
-    result = upkeep_trigger(player, card, event);
-    if (result != 0)
-    {
-      result = check_state((int)instance->damage_target_player, instance->damage_target_card,
-                           STATE_OUBLIETTED);
-      if (result == 0)
-      {
-        kill_card((int)instance->damage_target_player, instance->damage_target_card, KILL_EXILE);
-      }
-      kill_card(player, card, KILL_EXILE);
-    }
+    if (!check_state(instance->damage_target_player, instance->damage_target_card, STATE_OUBLIETTED))
+      kill_card(instance->damage_target_player, instance->damage_target_card, KILL_EXILE);
+    kill_card(player, card, KILL_EXILE);
   }
   return 0;
 }
@@ -10146,7 +9817,7 @@ int card_lukka_wayward_bonder(int player, int card, event_t event)
   int can_reanimate = 0;
   if (graveyard_has_shroud(player) == 0)
     can_reanimate = new_special_count_grave(player, &this_test) != 0;
-  choice_or_card = dialog_impl(player, card, event, "\001\002", "\001\017", "Discard & draw", 1, 10,
+  choice_or_card = dialog_impl(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Discard & draw", 1, 10,
                                1, "Reanimate target creature", can_reanimate, 0x14, 0xfffffffe,
                                "Emblem", 1, 5, 0xfffffff9, 0, 0, 0, 0);
   if (event == EVENT_CAN_ACTIVATE)
@@ -10193,7 +9864,7 @@ int card_lukka_wayward_bonder(int player, int card, event_t event)
     }
     else if (choice_or_card == CHOICE_EMBLEM)
     {
-      generate_token_by_id(player, card, 0x58bd);
+      generate_token_by_id(player, card, CARD_ID_LUKKA_WAYWARD_BONDER_EMBLEM);
     }
   }
   return planeswalker(player, card, event, 5);
@@ -10238,7 +9909,7 @@ int card_tanazir_quandrix(int player, int card, event_t event)
 
   if (((event == EVENT_DAT_ABILITY) &&
        (count_or_choice =
-            dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014", "\001\003",
+            dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
                         "Set P/T of your creatures", 1, 10, "Decline", 1, 5, 0, 0, 0, 0),
         count_or_choice == 1)) &&
       (count_or_choice = active_cards_count[player] + -1, -1 < count_or_choice))
@@ -10356,7 +10027,7 @@ int card_shadrix_silverquill(int player, int card, event_t event)
   if (beginning_of_combat(player, card, event, player) != 0)
   {
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     token_recipient_or_valid = would_validate_arbitrary_target(&td, player, -1);
     if ((token_recipient_or_valid != 0) ||
         (token_recipient_or_valid = would_validate_arbitrary_target(&td, 1 - player, -1),
@@ -10375,7 +10046,7 @@ int card_shadrix_silverquill(int player, int card, event_t event)
         t_player = selection_pass ^ current_turn;
         if (player == t_player)
         {
-          draw_priority = ((6 < life[player]) - 1 & 0xffffffe7) + 0x1e;
+          draw_priority = ((6 < life[player]) ? 30U : 5U);
           recipient_text = "You";
           counter_priority = count_subtype(player, 2, -1);
           token_priority = 10;
@@ -10407,7 +10078,7 @@ int card_shadrix_silverquill(int player, int card, event_t event)
         {
           draw_recipient_or_valid = player_is_valid_target(player, card, t_player);
         }
-        choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014", "\001\004",
+        choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL,
                              buffer1, draw_recipient_or_valid, token_priority, buffer2,
                              counter_recipient_or_valid, draw_priority, buffer3, can_add_counters,
                              counter_priority, 0, 0, 0, 0);
@@ -10423,7 +10094,7 @@ int card_shadrix_silverquill(int player, int card, event_t event)
         if (mode == 1)
         {
           token_generation_t token;
-          default_token_definition(player, card, 0x58a7, &token);
+          default_token_definition(player, card, CARD_ID_INKLING, &token);
           token.pow = 2;
           token.tou = 1;
           token.key_plus = KEYWORD_FLYING;
@@ -10490,7 +10161,7 @@ int card_quandrix_command(int player, int card, event_t event)
     default_target_definition(player, card, &td3, 2);
     td3.preferred_controller = player;
     default_target_definition(player, card, &td4, 0);
-    td4.zone = 0x1000;
+    td4.zone = TARGET_ZONE_PLAYERS;
     td4.preferred_controller = player;
     new_default_test_definition(&test, 0xff, "Select target card.");
     get_card_instance(player, card);
@@ -10517,15 +10188,15 @@ int card_quandrix_command(int player, int card, event_t event)
   default_target_definition(player, card, &td3, 2);
   td3.preferred_controller = player;
   default_target_definition(player, card, &td4, 0);
-  td4.zone = 0x1000;
+  td4.zone = TARGET_ZONE_PLAYERS;
   td4.preferred_controller = player;
   new_default_test_definition(&test, 0xff, "Select target card.");
   instance = get_card_instance(player, card);
 
   if (event == EVENT_RESOLVE_SPELL)
   {
-    choice = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
-                         "\001\033", "Bounce target creature or planeswalker", 0, 1,
+    choice = dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM,
+                         DLG_MODE, "Bounce target creature or planeswalker", 0, 1,
                          "Counter target artifact or enchantment spell", 0, 1,
                          "Target creature gets 2 +1/+1 counters", 0, 1, "Recycle 3 target cards", 0,
                          1, 0, 0, 0, 0);
@@ -10597,7 +10268,7 @@ int card_quandrix_command(int player, int card, event_t event)
       generic_spell(player, card, EVENT_CAN_CAST, 1, creature_target, NULL, 1, NULL);
   recycle_available = generic_spell(player, card, EVENT_CAN_CAST, 0x1000, NULL, NULL, 3, &test);
   choice =
-      dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002", "\001\033",
+      dialog_impl(player, card, event, DLG_CHOOSE_TWO(choices + 1), DLG_SORT_RESULTS, DLG_RANDOM, DLG_MODE,
                   "Bounce target creature or planeswalker", bounce_available, bounce_priority,
                   "Counter target artifact or enchantment spell", counterspell_available, 1,
                   "Target creature gets 2 +1/+1 counters", counters_available, counters_priority,

@@ -2412,17 +2412,12 @@ int card_blizzard_elemental(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  if (event != EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      instance = get_card_instance(player, card);
-      untap_card(instance->parent_controller, instance->parent_card);
-    }
+    instance = get_card_instance(player, card);
+    untap_card(instance->parent_controller, instance->parent_card);
   }
   result = generic_activated_ability(player, card, event, 0, 3, 0, 1, 0, 0, 0, 0, NULL, NULL);
   return result;
@@ -2432,16 +2427,11 @@ int card_blizzard_elemental(int player, int card, event_t event)
 int card_braidwood_sextant(int player, int card, event_t event)
 {
   int result;
-  if (event != EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      tutor_basic_land(player, 0, 0);
-    }
+    tutor_basic_land(player, 0, 0);
   }
   result = generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
@@ -2457,7 +2447,7 @@ int card_disease_carriers(int player, int card, event_t event)
   if (result != 0)
   {
     default_target_definition(player, card, &td, 2);
-    td.special = 0x4000;
+    td.special = TARGET_SPECIAL_NOT_ME;
     td.allow_cancel = 0;
     instance = get_card_instance(player, card);
     result = can_target(&td);
@@ -2475,7 +2465,6 @@ int card_disease_carriers(int player, int card, event_t event)
 int card_encroach(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   ec_definition_t this_definition;
   target_definition_t td;
   test_definition_t this_test;
@@ -2485,12 +2474,11 @@ int card_encroach(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       new_default_test_definition(&this_test, 1, "Choose a nonbasic land card.");
       this_test.subtype = 0x2000;
@@ -2512,7 +2500,7 @@ int card_goblin_festival(int player, int card, event_t event)
   if (event == EVENT_ACTIVATE)
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     get_card_instance(player, card);
   }
   else
@@ -2523,7 +2511,7 @@ int card_goblin_festival(int player, int card, event_t event)
       return result;
     }
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
@@ -2577,7 +2565,7 @@ int card_magnify(int player, int card, event_t event)
     pump_creatures_until_eot(player, card, 2, 0, 1, 1, 0, 0, NULL);
     kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  result = basic_spell(player, card, event);
   return result;
 }
 
@@ -2590,16 +2578,11 @@ int card_plague_dogs(int player, int card, event_t event)
   {
     pump_subtype_until_eot(player, card, 2, -1, -1, -1, 0, 0);
   }
-  if (event != EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      draw_cards(player, 1);
-    }
+    draw_cards(player, 1);
   }
   result = generic_activated_ability(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
@@ -2608,7 +2591,6 @@ int card_plague_dogs(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2109e10; original cards/urza_destiny.c:3026. */
 int card_rescue(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t td;
   if (event != EVENT_CAN_CAST)
@@ -2633,8 +2615,7 @@ int card_rescue(int player, int card, event_t event)
         td.allowed_controller = player;
         if (event == EVENT_RESOLVE_SPELL)
         {
-          result = valid_target(&td);
-          if (result != 0)
+          if (valid_target(&td))
           {
             instance = get_card_instance(player, card);
             bounce_permanent(instance->targets[0].player, instance->targets[0].card);
@@ -2670,7 +2651,7 @@ int card_landslide(int player, int card, event_t event)
   test_definition_t test;
 
   default_target_definition(player, card, &td, 0x100);
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   if (event == EVENT_RESOLVE_SPELL)
   {
     result = valid_target(&td);
@@ -2732,7 +2713,7 @@ int card_compost(int player, int card, event_t event)
 
   enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_MILLED;
   current_trigger = trigger_condition;
-  if (trigger_condition == 0xe5)
+  if (trigger_condition == TRIGGER_XTRIGGER)
   {
     current_trigger = xtrigger_impl_value_dont_use_directly;
   }
@@ -2852,8 +2833,7 @@ int card_capashen_standard(int player, int card, event_t event)
       draw_cards(player, 1);
     }
   }
-  result = generic_activated_ability(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
 /* ManalinkEh 2022: 0x21082e0; original cards/urza_destiny.c:2501. */
@@ -2936,7 +2916,7 @@ int card_dying_wail(int player, int card, event_t event)
         {
 
           default_target_definition(player, card, &td, 0);
-          td.zone = 0x1000;
+          td.zone = TARGET_ZONE_PLAYERS;
           td.allow_cancel = 0;
           instance = get_card_instance(player, card);
           result = can_target(&td);
@@ -2968,8 +2948,8 @@ int card_festering_wound(int player, int card, event_t event)
     if (current_turn == player)
     {
 
-      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\006", player, card, "\001\007",
-                           player, card, "\001\010", player, "\001\002", "\001\014",
+      result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_FULLCARD(player, card), DLG_SMALLCARD(
+                           player, card), DLG_WHO_CHOOSES(player), DLG_RANDOM, DLG_NO_STORAGE,
                            "Put infection counter", 1, 10, 0, 0, 0, 0);
       if (result == 0)
       {
@@ -3015,8 +2995,7 @@ int card_illuminated_wings(int player, int card, event_t event)
       draw_cards(player, 1);
     }
   }
-  result = generic_activated_ability(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
-  return result;
+  return generic_activated_ability(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
 
 /* ManalinkEh 2022: 0x21090e0; original cards/urza_destiny.c:2784. */
@@ -3052,11 +3031,11 @@ int card_incendiary(int player, int card, event_t event)
   if (result != 0)
   {
 
-    damage_triggers_remaining = card_counts[player][5] + 1;
+    damage_triggers_remaining = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
     do
     {
       default_target_definition(player, card, &td, 0x102);
-      td.zone = 0x1200;
+      td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
       result = can_target(&td);
       if (result != 0 && (result = pick_target(&td, "TARGET_ANY"), result != 0))
       {
@@ -3186,7 +3165,7 @@ int card_archery_training(int player, int card, event_t event)
       if (event == EVENT_ACTIVATE)
       {
         default_target_definition(player, card, &td, 2);
-        td.required_state = 0x20;
+        td.required_state = TARGET_STATE_IN_COMBAT;
       }
       else
       {
@@ -3197,7 +3176,7 @@ int card_archery_training(int player, int card, event_t event)
           return aura(player, card, event, &td, NULL);
         }
         default_target_definition(player, card, &td, 2);
-        td.required_state = 0x20;
+        td.required_state = TARGET_STATE_IN_COMBAT;
         if (event == EVENT_RESOLVE_ACTIVATION)
         {
           result = valid_target(&td);
@@ -3237,7 +3216,7 @@ int card_scrying_glass(int player, int card, event_t event)
   if (event == EVENT_ACTIVATE)
   {
     default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    td.zone = TARGET_ZONE_PLAYERS;
     get_card_instance(player, card);
     return generic_activated_ability(player, card, event,
                                      (GAA_UNTAPPED | GAA_CAN_ONLY_TARGET_OPPONENT), 3, 0, 0, 0, 0,
@@ -3248,7 +3227,7 @@ int card_scrying_glass(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 0);
-  td.zone = 0x1000;
+  td.zone = TARGET_ZONE_PLAYERS;
   instance = get_card_instance(player, card);
   if ((event != EVENT_RESOLVE_ACTIVATION) || (target_valid = valid_target(&td), target_valid == 0))
     return generic_activated_ability(player, card, event,
@@ -3356,7 +3335,7 @@ int card_mantis_engine(int player, int card, event_t event)
       {
         first_strike_priority = 1;
       }
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Gains flying", 1,
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Gains flying", 1,
                            source_player_or_priority, "Gains first strike", 1,
                            first_strike_priority, 0, 0, 0, 0);
       if (choice == 0)

@@ -900,51 +900,40 @@ int card_blood_bairn(int player, int card, event_t event){
 }
 
 int card_bogbrew_witch(int player, int card, event_t event){
-/* Bogbrew Witch	|3|B
- * Creature - Human Wizard 1/3
- * |2, |T: Search your library for a card named Festering Newt or Bubbling Cauldron, put it onto the battlefield tapped,
- *			then shuffle your library. */
-
-	if( event == EVENT_ACTIVATE ){
-		int mod = check_battlefield_for_id(player, CARD_ID_FESTERING_NEWT) ? 0 : 24;
-		mod += check_battlefield_for_id(player, CARD_ID_BUBBLING_CAULDRON) ? 0 : 24;
-		ai_modifier += mod;
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		test_definition_t this_test;
-		if( player == HUMAN ){
-			new_default_test_definition(&this_test, TYPE_ANY, "Select a Festering Newt Newt or Bubbling Cauldron card.");
-			this_test.id = CARD_ID_FESTERING_NEWT;
-			this_test.id2 = CARD_ID_BUBBLING_CAULDRON;
-			this_test.id_flag = F4_DOUBLE_ID_TUTOR;
-		}
-		else{
-			default_test_definition(&this_test, TYPE_ANY);
-			int mode = 	1*check_battlefield_for_id(player, CARD_ID_FESTERING_NEWT) +
-						2*check_battlefield_for_id(player, CARD_ID_BUBBLING_CAULDRON);
-			test_definition_t cauldron;
-			default_test_definition(&cauldron, TYPE_ANY);
-			cauldron.id = CARD_ID_BUBBLING_CAULDRON;
-			int found = 0;
-			if (mode != 2 && mode != 3){
-				int score = new_get_test_score(&cauldron);
-				int i;
-				for (i = 0; i < 500 && deck_ptr[player][i] != -1; ++i){
-					if (new_make_test(-1, deck_ptr[player][i], score, &cauldron)){ found = 1; break; }
-				}
-			}
-			if( mode == 2 || mode == 3 || !found ){
-				this_test.id = CARD_ID_FESTERING_NEWT;
-			}
-			else{
-				this_test.id = CARD_ID_BUBBLING_CAULDRON;
-			}
-		}
-		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY_TAPPED, 0, AI_FIRST_FOUND, &this_test);
-	}
-
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(2), 0, NULL, NULL);
+  if (event == EVENT_ACTIVATE)
+  {
+    int mod = check_battlefield_for_id(player, CARD_ID_FESTERING_NEWT) ? 0 : 24;
+    mod += check_battlefield_for_id(player, CARD_ID_BUBBLING_CAULDRON) ? 0 : 24;
+    ai_modifier += mod;
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    test_definition_t this_test;
+    if (player == HUMAN)
+    {
+      new_default_test_definition(&this_test, TYPE_ANY,
+                                  "Select a Festering Newt Newt or Bubbling Cauldron card.");
+      this_test.id = CARD_ID_FESTERING_NEWT;
+      this_test.id2 = CARD_ID_BUBBLING_CAULDRON;
+      this_test.id_flag = F4_DOUBLE_ID_TUTOR;
+    }
+    else
+    {
+      default_test_definition(&this_test, TYPE_ANY);
+      int has_newt = check_battlefield_for_id(player, CARD_ID_FESTERING_NEWT);
+      int has_cauldron = check_battlefield_for_id(player, CARD_ID_BUBBLING_CAULDRON);
+      unsigned int mode = (unsigned int)has_newt + 2U * has_cauldron;
+      test_definition_t this_test2;
+      default_test_definition(&this_test2, TYPE_ANY);
+      this_test2.id = CARD_ID_BUBBLING_CAULDRON;
+      if (mode - 2U < 2U || !check_deck_for_test(player, &this_test2))
+        this_test.id = CARD_ID_FESTERING_NEWT;
+      else
+        this_test.id = CARD_ID_BUBBLING_CAULDRON;
+    }
+    new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY_TAPPED, 0, AI_FIRST_FOUND, &this_test);
+  }
+  return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(2), 0, NULL, NULL);
 }
 
 int card_corpse_hauler(int player, int card, event_t event){
@@ -2442,10 +2431,10 @@ static int savage_summonings_effect(int player, int card, event_t event)
         (trigger_player_or_creature_check = is_what(player, affected_card, 2),
          trigger_player_or_creature_check != 0))
       state_untargettable(affected_card_controller, affected_card, 1);
-    if (trigger_condition != 0xdb || card != affected_card)
+    if (trigger_condition != TRIGGER_COMES_INTO_PLAY || card != affected_card)
       return 0;
   }
-  if (trigger_condition == 0xdb && card == affected_card && affected_card_controller == player)
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY && card == affected_card && affected_card_controller == player)
   {
     trigger_player_or_creature_check = affected_card_controller;
     if (((reason_for_trigger_controller == affected_card_controller) &&

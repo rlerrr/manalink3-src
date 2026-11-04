@@ -523,7 +523,7 @@ Entwine—Sacrifice three lands. (Choose both if you pay the entwine cost.)
 	if(event == EVENT_RESOLVE_SPELL ){
 		int base_target = 0;
 		if( instance->info_slot == CHOICE_KILL || instance->info_slot == CHOICE_ENTWINE ){
-			if( valid_target(&td) ){
+			if( validate_target(player, card, &td, 0) ){
 				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
 			}
 			base_target++;
@@ -887,7 +887,7 @@ Imprint - When ~ enters the battlefield, you may exile a nonartifact, nonland ca
 		}
 	}
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_DUH);
+	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
 
 	if( event == EVENT_ETB_ABILITY ){
 		test_definition_t this_test;
@@ -1787,7 +1787,7 @@ int card_duplicant(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 2);
     td.special = (unsigned int)(player == 1) << 0xe;
-    td.illegal_type = 0x1000;
+    td.illegal_type = TARGET_TYPE_TOKEN;
     if (can_target(&td) != 0)
     {
       duplicant = get_card_instance(player, card);
@@ -2210,7 +2210,7 @@ int card_goblin_charbelcher(int player, int card, event_t event)
   if (event == EVENT_ACTIVATE)
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   }
   else
   {
@@ -2219,7 +2219,7 @@ int card_goblin_charbelcher(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     if (((event == EVENT_RESOLVE_ACTIVATION) &&
          (revealed_iid_or_result = valid_target(&td), revealed_iid_or_result != 0)) &&
         (revealed_iid_or_result = *deck_ptr[player], revealed_iid_or_result != -1))
@@ -2568,8 +2568,6 @@ int card_isochron_scepter(int player, int card, event_t event)
 
   if (event == EVENT_ETB_ABILITY)
   {
-    card_instance_t *instance = get_card_instance(player, card);
-
     test_definition_t this_test;
     new_default_test_definition(&this_test, TYPE_INSTANT | TYPE_INTERRUPT,
                                 "Choose an instant card with CMC 2 or less.");
@@ -2588,13 +2586,14 @@ int card_isochron_scepter(int player, int card, event_t event)
     }
     if (result > -1)
     {
+      card_instance_t *instance = get_card_instance(player, card);
       int pos = instance->info_slot;
       if (pos < 10)
       {
         int iid = get_original_internal_card_id(player, result);
-        instance->targets[pos].card = iid;
+        get_card_instance(player, card)->targets[pos].card = iid;
         rfg_card_in_hand(player, result);
-        instance->info_slot++;
+        get_card_instance(player, card)->info_slot++;
         create_card_name_legacy(player, card, cards_data[iid].id);
       }
     }
@@ -2605,8 +2604,6 @@ int card_isochron_scepter(int player, int card, event_t event)
     return 0;
   }
 
-  card_instance_t *instance = get_card_instance(player, card);
-
   if (event == EVENT_CAN_ACTIVATE)
   {
     if (generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_NONSICK, MANACOST_X(2), 0,
@@ -2614,9 +2611,9 @@ int card_isochron_scepter(int player, int card, event_t event)
     {
       int act = 0;
       int i;
-      for (i = 0; i < instance->info_slot; i++)
+      for (i = 0; i < get_card_instance(player, card)->info_slot; i++)
       {
-        int iid = instance->targets[i].card;
+        int iid = get_card_instance(player, card)->targets[i].card;
         if (iid >= 0 && check_rfg(player, cards_data[iid].id))
         {
           int result = can_legally_play_iid(player, iid);
@@ -2634,6 +2631,7 @@ int card_isochron_scepter(int player, int card, event_t event)
 
   if (event == EVENT_ACTIVATE)
   {
+    card_instance_t *instance = get_card_instance(player, card);
     int found = 0;
     int i;
     for (i = 0; i < instance->info_slot; i++)
@@ -2652,6 +2650,7 @@ int card_isochron_scepter(int player, int card, event_t event)
 
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
+    card_instance_t *instance = get_card_instance(player, card);
     int removed[10];
     int rc = 0;
     int i;
@@ -2893,7 +2892,7 @@ int card_lightning_coils(int player, int card, event_t event)
   {
     token_generation_t token;
     result = count_counters(player, card, COUNTER_CHARGE);
-    default_token_definition(player, card, 0x4926, &token);
+    default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
     token.qty = (char)result;
     token.pow = 3;
     token.tou = 1;
@@ -3705,7 +3704,7 @@ int card_oblivion_stone(int player, int card, event_t event)
     default_target_definition(player, card, &td, 0x47);
     if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
     {
-      td.illegal_type = 1;
+      td.illegal_type = TYPE_LAND;
     }
     if (event == EVENT_CAN_ACTIVATE)
     {
@@ -3805,7 +3804,7 @@ int card_oblivion_stone(int player, int card, event_t event)
           } while (c != -1);
         }
       }
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Add a Fate counter",
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Add a Fate counter",
                            fate_available_or_cost, 10, "Destroy nonland permanents",
                            destroy_available, destroy_priority, 0, 0, 0, 0);
       if (choice != 0)
@@ -3813,7 +3812,7 @@ int card_oblivion_stone(int player, int card, event_t event)
         if (choice == CHOICE_FATE_COUNTER)
         {
           prompt = "TARGET_PERMANENT";
-          ai_modifier = ai_modifier + ((current_turn != player) - 1 & 0xffffffd0) + 0x18;
+          ai_modifier = ai_modifier + (unsigned int)((current_turn != player) ? 0 : -48) + 0x18;
           td_00 = &td;
           fate_available_or_cost = 4;
           activation_flags_or_choice = 5;
@@ -4231,7 +4230,7 @@ int card_quicksilver_fountain(int player, int card, event_t event)
     td.who_chooses = current_turn;
     td.allow_cancel = 0;
     td.required_subtype = get_hacked_subtype(player, card, 0x5002);
-    td.special = 0x1000;
+    td.special = TARGET_SPECIAL_ILLEGAL_SUBTYPE;
     instance = get_card_instance(player, card);
     if (can_target(&td) != 0)
     {
@@ -4256,14 +4255,14 @@ int card_quicksilver_fountain(int player, int card, event_t event)
         flood_effect->dummy3 = replacement_iid_or_subtype;
       }
     }
-    not_end_step = trigger_condition != 0xcd;
+    not_end_step = trigger_condition != TRIGGER_EOT;
     instance->number_of_targets = '\0';
     if (not_end_step)
     {
       return 0;
     }
   }
-  if (trigger_condition == 0xcd &&
+  if (trigger_condition == TRIGGER_EOT &&
       ((card == affected_card) && (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
@@ -4586,14 +4585,14 @@ Equip {4}
 					damage->damage_target_card != -1 && damage->info_slot > 0 &&
 					is_what(damage->damage_target_player, damage->damage_target_card, TYPE_CREATURE) )
 				{
-					if( instance->info_slot < 1 ){
-						instance->info_slot = 1;
-					}
 					int pos = instance->info_slot;
+					if( pos < 1 ){
+						pos = 1;
+					}
 					if( pos < 8 ){
 						instance->targets[pos].player = damage->damage_target_player;
 						instance->targets[pos].card = damage->damage_target_card;
-						instance->info_slot++;
+						instance->info_slot = pos + 1;
 					}
 				}
 			}
@@ -4601,24 +4600,21 @@ Equip {4}
 
 		if( event == EVENT_GRAVEYARD_FROM_PLAY ){
 			if( in_play(affected_card_controller, affected_card) &&
-				!check_for_death_trigger_removal(affected_card_controller, affected_card) &&
 				is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
-				! is_token(affected_card_controller, affected_card) && instance->info_slot > 1 )
+				!is_token(affected_card_controller, affected_card) && instance->info_slot > 1 &&
+				is_this_dying(affected_card_controller, affected_card) &&
+				!check_for_death_trigger_removal(affected_card_controller, affected_card) )
 			{
-				if( is_this_dying(affected_card_controller, affected_card) ){
-					int i;
-					for(i=1; i<instance->info_slot; i++){
-						if( instance->targets[i].player == affected_card_controller &&
-							instance->targets[i].card == affected_card
-						  ){
-							if( instance->targets[11].player < 0 ){
-								instance->targets[11].player = 0;
-							}
-							instance->targets[11].player++;
-							instance->targets[i].player |= (1<<20);
-							instance->targets[i].card = get_original_internal_card_id(affected_card_controller, affected_card);
-							break;
+				for(int i=1; i<instance->info_slot; i++){
+					if( instance->targets[i].player == affected_card_controller &&
+						instance->targets[i].card == affected_card ){
+						if( instance->targets[11].player < 0 ){
+							instance->targets[11].player = 0;
 						}
+						instance->targets[11].player++;
+						instance->targets[i].player |= (1<<20);
+						instance->targets[i].card = get_original_internal_card_id(affected_card_controller, affected_card);
+						break;
 					}
 				}
 			}
@@ -5648,7 +5644,7 @@ Whenever a player casts a spell that shares a color or converted mana cost with 
 			}
 		}
 		if (dmg){
-			new_specific_spell_played(player, card, event, TYPE_ANY, RESOLVE_TRIGGER_MANDATORY, NULL);
+			sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
 		}
 	}
 
@@ -6295,29 +6291,17 @@ int card_tel_jilad_stylus(int player, int card, event_t event)
   int result;
   target_definition_t td;
 
-  if (event == EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  default_target_definition(player, card, &td, 0x47);
+  td.allowed_controller = player | 4;
+  td.illegal_abilities = 0;
+  td.preferred_controller = td.allowed_controller;
+  instance = get_card_instance(player, card);
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
-    default_target_definition(player, card, &td, 0x47);
-    td.allowed_controller = player | 4;
-    td.illegal_abilities = 0;
-    td.preferred_controller = td.allowed_controller;
-    get_card_instance(player, card);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 0x47);
-    td.allowed_controller = player | 4;
-    td.illegal_abilities = 0;
-    td.preferred_controller = td.allowed_controller;
-    instance = get_card_instance(player, card);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-    {
-      put_on_bottom_of_deck(instance->targets[0].player, instance->targets[0].card);
-    }
+    put_on_bottom_of_deck(instance->targets[0].player, instance->targets[0].card);
   }
   result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
                                      "TARGET_PERMANENT_YOU_OWN");

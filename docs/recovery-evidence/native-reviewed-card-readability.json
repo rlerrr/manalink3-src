@@ -1,0 +1,2559 @@
+{
+  "format": 1,
+  "status": "Twenty reviewed card/selector bodies clarified from 517 to 335 lines; combined build, 15,169 fixed slots, thirteen exact file projections and nine strict complete CFG correspondences pass.",
+  "files": [
+    {
+      "source": "cards/mercadian_masques.c",
+      "before_bytes_sha256": "902b28ace564fd837f7967a505a5e4bb3518412a2d9f280d890a4cb62b926915",
+      "after_bytes_sha256": "c29c2936bb58f22814fa04e1bc5683f4662aa6236ff0cb7f10ed288393d59dec",
+      "before_sha256": "4b2c91e3c794b231db2bde32c9d1eb2d36bbd4c23b4ecff1ec49ffe64265ddd3",
+      "after_sha256": "8aaae7b71b2e9256438c6830e63a32040e57e289d5812f46365a689ac891021a"
+    },
+    {
+      "source": "cards/rivals_of_ixalan.c",
+      "before_bytes_sha256": "9a53c448d2cdb28bc2d80a80148fd9a5c433f4787d6c1d3f40eed52fc388c116",
+      "after_bytes_sha256": "322d9a7fff95dc0615854c16408524f1e5559b7bad2ef08f08fe5b2976111f85",
+      "before_sha256": "2a4efab2bafa5b25ecae85eada08dd9cb860dc5d06fa7b7cff113837d8dd7d42",
+      "after_sha256": "0d55db2cf8a74594ee318b7778342b7ead88ccbf4782d792291bc37e726b33d7"
+    },
+    {
+      "source": "cards/throne_of_eldraine.c",
+      "before_bytes_sha256": "6a528e9f036cdb5e61d45c9b0de17104f52147a6971d6cdb5640605b6676206a",
+      "after_bytes_sha256": "1f49c5a36a9455f9ceddb03dcfed76f68c962f4770b26f0d7384d4b7f2dbd539",
+      "before_sha256": "919fb7f04bcbf23528638f5cb2a499fb4121911ad12d9ec4d79f3c16fb2f66e8",
+      "after_sha256": "ae1bc625a0f2cc546c601bc0790e9b8c26f982a9c2cba983d62684bfc842febe"
+    },
+    {
+      "source": "cards/journey_into_nyx.c",
+      "before_bytes_sha256": "fe1ba132bb9430d86ccbda7658de8aaa416551e657ac3c947349355139ac99a0",
+      "after_bytes_sha256": "eba4f65c90ec3e123efb585d0dd74f2b3c11ce72beb869bc9f0946979c16e74b",
+      "before_sha256": "974476686d6b99e96a5e6c9e88a3c5193873dd49ac8c2786607da3b4daa425f4",
+      "after_sha256": "aed6b6306e9419b165fb652765d3056b994ac01315e411d3779bf432cc53f7c1"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "before_bytes_sha256": "bdef7c5ae46ada45ff137f665bea8e86afbaf30c2c2c6b33362bbdb6e309b46f",
+      "after_bytes_sha256": "ad8a01adc0498098e2bd2b4b8a8af0b9af3aa51b9c55c3a6c0feeb09f2cefe21",
+      "before_sha256": "7d1823253a66f0a55e493af27b8c474ac02c8574d2d445057ba8fd2e616212fb",
+      "after_sha256": "ea92ad378c9e72a8b4524f010295888b8b70c555778835f9664636318d9faad8"
+    },
+    {
+      "source": "cards/strixhaven.c",
+      "before_bytes_sha256": "560a4810b902b12b1d29a6706265c60c280ec00af45e6888df2e7cf2a0ba8293",
+      "after_bytes_sha256": "d5fe8f30f61367a1a58e1dbe901cd11f455f8b55f0e53b4e03ac9d6389094721",
+      "before_sha256": "8802c9631049767a779234b7f61e0d9fcfde328eca69ca19bea6e755f82af3a6",
+      "after_sha256": "47eeacf0be366103e984ffc061dbe2f8a7b8b811ca3b49f5200dc5c90d38d2c9"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "before_bytes_sha256": "a1fefade2e7d68ea69d2ddda06847a85f909cbd762e7e84e49411aac4d9200a9",
+      "after_bytes_sha256": "90745229b874a3b5433902cb57671008d642d9989fc3de8bdffa2f1bb2e552bc",
+      "before_sha256": "ee0e0f0b07f3a0f4ace2ffbf30c3d3bc9a917cf235c1468c6c2d20aa6f5fa115",
+      "after_sha256": "75558249f2fd06d362145b79a5f292ae922f840c5bf828e153b49428771133e1"
+    },
+    {
+      "source": "cards/invasion.c",
+      "before_bytes_sha256": "e94035402a029bf2e87306325bc8a6f820717066181712ad9265d40930f7ea92",
+      "after_bytes_sha256": "9b4342d1c299e138c91739da922c244c1546f07b4eb864c1d38b7ab578f0a624",
+      "before_sha256": "b6ded04e940c730f2bdd9c48f27040504a99f22d272a43577de57925f95123d4",
+      "after_sha256": "345d14108c4e434afc21785d5c238ddc63a273d1502c3eb123c661342346d7cd"
+    },
+    {
+      "source": "cards/tempest.c",
+      "before_bytes_sha256": "aa04b50cb7743bd7120afafc775d7b77b91480e7a016b3ccafd8a93a1d89e0b1",
+      "after_bytes_sha256": "d8cbca6117267bd68569fedbfae416b74ede8164cd94401481ba5c4be7055d3a",
+      "before_sha256": "9c8e28183e133ead777491916ce7fc8a38c68115de0aaa12a0e43bd81f99f956",
+      "after_sha256": "21b78e6781955240eeeb4d69ad0f3cea06f922101e7f5d52858d7f0b3f5d9fcc"
+    },
+    {
+      "source": "cards/dominaria.c",
+      "before_bytes_sha256": "7e3375fb019fa4a036374a4f3862a47b428e7e54e247731adc65d2698b1938ee",
+      "after_bytes_sha256": "4e3e5c19ecdb0716613f2df4bd23e876f02401169d1dd3068731aba5b4b6b26f",
+      "before_sha256": "85f3fb2842b49c6a4b1b412aa4a675a910609766ce35ab54bb0d84eeda9bf799",
+      "after_sha256": "d07da32192865d1e84146fd1f09dbdf0820bcf345fab1f6e2c46e41017dc412a"
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "before_bytes_sha256": "e0344c01f90db04af3179723b6b2ce779a81661ad440ec1acfefb4f4d2bed7b4",
+      "after_bytes_sha256": "d224006feee5f413ebe57f6f6d387528ea9cf1afe5b497fee82eaf41b0d5b897",
+      "before_sha256": "baf4dfb497a5d2f6b407ed72fe18cac18844e4cffcb365e57a518d338742f65c",
+      "after_sha256": "61576f5a73950b1477799d4b51ce15c719fd7b6c428af8d562aeca4c8131db1d"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "before_bytes_sha256": "2c707e85491f5c1646bff25a3650a628034f6c57173036960e27d3ccf0f564cf",
+      "after_bytes_sha256": "03e66f38b983df24c4fd30ca4c0e35a7d6bae4377c8669ce8d4f7edcd926426e",
+      "before_sha256": "e43a65af588677f2a9e9e04c3f9225bab6cf7c5200b7049afe9f99817dc93cef",
+      "after_sha256": "d236d68e8f2990be3ebcbff1d48d7c981aac52a3c56cb4a436c97f8e46eddc78"
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "before_bytes_sha256": "82823af755dcdd871be424785d00774a08b5c4ec532f5c6abe3b684e94c3f40e",
+      "after_bytes_sha256": "2e955eeb73a10b100bf630552c96074b682c77c242bdef10e007f02e40bd7978",
+      "before_sha256": "cbec5e6e5653bca26bc68b1930e0abcba47d7705606141a3a62de89d4b3782d8",
+      "after_sha256": "e0b4fc90c32b9dd13d0f4e0786aec4aa3f152bb99ab6d0c0eec058a36c3193f5"
+    }
+  ],
+  "names": [
+    "card_fountain_watch",
+    "card_temple_altisaur",
+    "remove_eot_unless_cb",
+    "dotm_selection",
+    "is_creature_planeswalker_aura",
+    "card_coffin_puppets",
+    "card_silverquill_pledgemage",
+    "card_lathiel_the_bounteous_dawn",
+    "card_insubordination",
+    "card_rooting_kavu",
+    "card_timestream_navigator",
+    "card_circle_of_protection_shadow",
+    "card_mox_amber",
+    "card_glorious_enforcer",
+    "card_robber_of_the_rich",
+    "is_monocolored",
+    "card_tajuru_paragon",
+    "card_energy_chamber",
+    "card_floodhound",
+    "is_historic_by_internal_id"
+  ],
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "baseline": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "1574551d85b3748b10535a4b70557faa46f22528dba3caffb9e058dff8bef2e7",
+      "ManalinkEh.dbg": "32e18d16826215d723b3b3f9ea07ee0939d4d1dc756b9a3ed00b811cc893a36f"
+    },
+    "results": [
+      {
+        "name": "card_fountain_watch",
+        "matched": false,
+        "reason": "('Operation changed', 'cmp', 'test')",
+        "ranges": [
+          {
+            "address": "0x2180970",
+            "size": 162,
+            "sha256": "f526e22dc723f83ce67756261da28f61adcb979f9fe79565a261575c365b9cec",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2345d40",
+            "size": 176,
+            "sha256": "2488226db47f4cf1db879943f616a62d1b4542dafcfc968a78c84fbac53729d4",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_temple_altisaur",
+        "matched": false,
+        "reason": "('Operation changed', 'test', 'cmp')",
+        "ranges": [
+          {
+            "address": "0x21900a0",
+            "size": 147,
+            "sha256": "2063a64fe55cf78f66ae2958fe25f8e096e84f63ddac5e1dbcc15593cc423a11",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x24a4800",
+            "size": 160,
+            "sha256": "33cd55e1ee7166b85085d14e997740bd07f5f8c1b75e57d8316f40794a184e7d",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "remove_eot_unless_cb",
+        "matched": false,
+        "reason": "('Operation changed', 'movsx', 'mov')",
+        "ranges": [
+          {
+            "address": "0x218f5b0",
+            "size": 231,
+            "sha256": "3388adefdac8ae6d787bfbfc2119d9bcdc367c91bcbdb711f80d6e10921f9bf0",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x24a3a60",
+            "size": 240,
+            "sha256": "6e2015d591e310a801af32e595250e71e29fbc2ab652a3118b452b739332a246",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "dotm_selection",
+        "matched": false,
+        "reason": "('Operation changed', 'add', 'and')",
+        "ranges": [
+          {
+            "address": "0x25c8f40",
+            "size": 138,
+            "sha256": "ce8ee4951ed9ed9dea517472568a94c5eb6c09d53c8cd028754a84d5749c8166",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x257a1d0",
+            "size": 144,
+            "sha256": "2a06efe24e8457c9f9282cba97ebc275d217afbe633c335658686e4a5bceed3c",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "is_creature_planeswalker_aura",
+        "matched": false,
+        "reason": "('Operation changed', 'add', 'and')",
+        "ranges": [
+          {
+            "address": "0x24d0dc0",
+            "size": 138,
+            "sha256": "a9325d7c0bf6b6dfe98b78167962dba822d38073d8f426fcbf612b8e1612be61",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x227c290",
+            "size": 144,
+            "sha256": "5e85fd3dce2d0abbfb2c4761d014d625725a36c39b49d66a71d09466620066d9",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_coffin_puppets",
+        "matched": false,
+        "reason": "('Unbound operand', '0x38', '0x3c')",
+        "ranges": [
+          {
+            "address": "0x2600fe0",
+            "size": 403,
+            "sha256": "38981fdffb1b83873ef6bcb557a0ca9f09476fd14360e6df41d6d3633c2f934d",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x24540e0",
+            "size": 400,
+            "sha256": "d04019b0e138977cfa6e2ffbd2b5a509c76a8d844649712914a499adb5267eab",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_silverquill_pledgemage",
+        "matched": false,
+        "reason": "('Operation changed', 'xor', 'cmp')",
+        "ranges": [
+          {
+            "address": "0x23dc500",
+            "size": 267,
+            "sha256": "454e2cbcecd54216b52908d07628911fa6fbff69c26c1b4df18916d38bd239ff",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2525ea0",
+            "size": 272,
+            "sha256": "7bb91f6d8a61b6aab4e2f33042eb3ce0ad758ca3defc2f7b4686dca150f73768",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_lathiel_the_bounteous_dawn",
+        "matched": false,
+        "reason": "('Operation changed', 'xor', 'mov')",
+        "ranges": [
+          {
+            "address": "0x25ab8e0",
+            "size": 398,
+            "sha256": "641b01fd2924e661050d6a6a4db00d06d7d8fef1e1bb6e2be22fbba9e378bc4f",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2103d30",
+            "size": 400,
+            "sha256": "969602ca3f6e78a0c9132351e4108a724a2d05c0c6c4841cc44568dd14b6c79d",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_insubordination",
+        "matched": false,
+        "reason": "('Operation changed', 'mov', 'test')",
+        "ranges": [
+          {
+            "address": "0x2181100",
+            "size": 215,
+            "sha256": "b2409046d53a2f7d1c001e04429fac1f2a42f34911c022a8f24aa56638002def",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x234ab60",
+            "size": 224,
+            "sha256": "911e4993b067d6d7da5855e77788468641ecd44dd51401d6fdd8853f19ce7ab7",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_rooting_kavu",
+        "matched": false,
+        "reason": "('Operation changed', 'mov', 'dec')",
+        "ranges": [
+          {
+            "address": "0x249b1d0",
+            "size": 197,
+            "sha256": "74706fa1cf50993f8f14e92535a1cca0a1dd1b8d76df91b53d3ff2fd7adb3aa9",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x226feb0",
+            "size": 208,
+            "sha256": "a1ce4c9e1fb15d5619b15aa262f78b4692c55c10d0379de8282e987dd593b9cc",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_timestream_navigator",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x21908e0",
+            "size": 449,
+            "sha256": "898e29e525dc548b2965d21a1ad771dc48f8b85a5a7b1aa68d0e08df7de0d290",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x24a4ff0",
+            "size": 464,
+            "sha256": "db7d119acfdbd54cf04cc74b28e1bfe1313fcfa5e5b250d7f204c72bca89542c",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_circle_of_protection_shadow",
+        "matched": false,
+        "reason": "Operand type or width changed",
+        "ranges": [
+          {
+            "address": "0x215a2c0",
+            "size": 391,
+            "sha256": "c821d59e051bfd932566b7ce22932b72053f5a12a1afa48f310cfbfcd7363168",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x254aa70",
+            "size": 400,
+            "sha256": "9be75863e6b6f7e15b8357c42406e21b2900e85c3e40c11fd573f235e2dc050c",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_mox_amber",
+        "matched": false,
+        "reason": "('Operation changed', 'mov', 'xor')",
+        "ranges": [
+          {
+            "address": "0x22d0b60",
+            "size": 99,
+            "sha256": "cc06fc71744daafed9669b40378e34dcae0ae4ebcfc96d991ceb1e61ae670ee8",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2151530",
+            "size": 112,
+            "sha256": "a19c3e75089ee286a33655e25000c6562519c1f77b3aa05cc40fe9f29db2682a",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_glorious_enforcer",
+        "matched": false,
+        "reason": "('Operation changed', 'sub', 'mov')",
+        "ranges": [
+          {
+            "address": "0x2237020",
+            "size": 142,
+            "sha256": "49c12033bff6db038ae24de3e2a7723f590066da640390434255336c39e49e4b",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x23a3720",
+            "size": 144,
+            "sha256": "c901b8d6a22a993391cda4368459d9a403a816a56eb519c9d0293dd1bdf6e7fd",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_robber_of_the_rich",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x25d3970",
+            "size": 212,
+            "sha256": "c82128837f4215078a76c52c97d39931d7013db722ae609310d5eeda473150cd",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2585350",
+            "size": 224,
+            "sha256": "c1571f15c5fd4003bd3957a19abe91fdf2ef01f34e7e0bb1541ddd5d5e2539ff",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "is_monocolored",
+        "matched": false,
+        "reason": "('Operation changed', 'mov', 'dec')",
+        "ranges": [
+          {
+            "address": "0x23c85d0",
+            "size": 44,
+            "sha256": "9ee58c663d83886bbd27aff364ed87a4b912ff8d0cb5ff585b1f3c3c9bac9c65",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2510660",
+            "size": 48,
+            "sha256": "89a5e8f06d9240ec2ed03c4cb91c5f44711097be4a81b1a65c6ba58b6a865f24",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_tajuru_paragon",
+        "matched": false,
+        "reason": "Register allocation changed",
+        "ranges": [
+          {
+            "address": "0x230f070",
+            "size": 343,
+            "sha256": "b562b69decd06398fb569390240eca074aea6222d836919bdae8999cb349f26a",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x2647ab0",
+            "size": 352,
+            "sha256": "81634dfe4680a8afa5c89619cfcdffdf7d4b433cf1c38e25d006fe81581aae6d",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_energy_chamber",
+        "matched": false,
+        "reason": "('Operation changed', 'cmp', 'test')",
+        "ranges": [
+          {
+            "address": "0x202cd10",
+            "size": 229,
+            "sha256": "77f21db91464a359132d79e2d5b2c398f4843d42ff677af6b768f4d216b15168",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x21c76e0",
+            "size": 240,
+            "sha256": "374d2808e0df306c1a9426f4a2ad06fc96c557f350fa5c509e0196975bea7a96",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "card_floodhound",
+        "matched": false,
+        "reason": "('Operation changed', 'neg', 'sub')",
+        "ranges": [
+          {
+            "address": "0x2234b40",
+            "size": 180,
+            "sha256": "59932cde29641edaf0151d5f19586a0014a830acda344d2df62c44938c319135",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x23970c0",
+            "size": 192,
+            "sha256": "da08dd427cdd4069001de8fbaa278dadba99c9c034959ccf53eda9a1b7181c63",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      },
+      {
+        "name": "is_historic_by_internal_id",
+        "matched": false,
+        "reason": "('Operation changed', 'add', 'mov')",
+        "ranges": [
+          {
+            "address": "0x22ca500",
+            "size": 112,
+            "sha256": "aafd1e9e523395c1563b3766ca423014de6e92c54ae461b4b305028ae4a6b6cd",
+            "bounds": "native metadata"
+          },
+          {
+            "address": "0x214e4c0",
+            "size": 112,
+            "sha256": "3daac86c8627f968f90e55ca75d690dc4e6cd66bce6675db252c091d05fa88d3",
+            "bounds": "entry through next COFF function start, including trailing padding"
+          }
+        ]
+      }
+    ],
+    "checker_sha256": "74e794fe88ea28e2d9fa341c2736a90dc7297e3eb641bded2457446474cbdaa9",
+    "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+    "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+  },
+  "source_lines_before": 517,
+  "source_lines_after": 335,
+  "scope": "Readability recovery of existing 2022 bodies, not card-rules fixes. Preserve two Lathiel end-step calls, two Navigator resolution getters, Insubordination end-step query before its event shortcut, repeated/live target reads after callbacks, and the Robber turn/card-data reload after exile. Keep the CoP Shadow arithmetic event-range guard verbatim. The Mox mask becomes its equivalent nonnegative-color selection; Energy Chamber makes the same charge/P1P1 choice explicit. Native enum names replace only checked literal values. No gameplay or whole-DLL equivalence claim.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "fbcbdd8155c8886a845ef594fc37d05c041d4047fdec58aded3dd7c2ca133384",
+    "debug_sha256": "74021ee7b71a098231676378587a5be03fc16e383c00032b0b1e7a79b6f4d720",
+    "build_log_sha256": "9e178715deaedfae990397edaf104530614fc49c391dd5464a01cde8d4a03854",
+    "source_definitions": 20,
+    "canonical_and_raw_file_projections": 13,
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "fbcbdd8155c8886a845ef594fc37d05c041d4047fdec58aded3dd7c2ca133384",
+        "ManalinkEh.dbg": "74021ee7b71a098231676378587a5be03fc16e383c00032b0b1e7a79b6f4d720"
+      },
+      "results": [
+        {
+          "name": "card_fountain_watch",
+          "matched": true,
+          "proof": {
+            "cfg_states": 48,
+            "reached_instruction_counts": [
+              48,
+              48
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2681ca0",
+                "rebuilt": "0x2694a40",
+                "identity": "_is_what"
+              },
+              {
+                "native": "0x26b32d0",
+                "rebuilt": "0x266b4b0",
+                "identity": "_in_play"
+              },
+              {
+                "native": "0x26dd430",
+                "rebuilt": "0x2653430",
+                "identity": "_is_humiliated"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x2180970",
+              "size": 162,
+              "sha256": "f526e22dc723f83ce67756261da28f61adcb979f9fe79565a261575c365b9cec",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2345d40",
+              "size": 176,
+              "sha256": "3bf486a053be522687977122f119d68879998f275f2cecc1d9da6cd9b2b09939",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_temple_altisaur",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x21900a0",
+              "size": 147,
+              "sha256": "2063a64fe55cf78f66ae2958fe25f8e096e84f63ddac5e1dbcc15593cc423a11",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24a4800",
+              "size": 160,
+              "sha256": "d71f417ac1a06a2ceb293e6fd2d47618a7a63cd00f4f3014bf88dce21a1a3961",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "remove_eot_unless_cb",
+          "matched": false,
+          "reason": "('Operation changed', 'or', 'mov')",
+          "ranges": [
+            {
+              "address": "0x218f5b0",
+              "size": 231,
+              "sha256": "3388adefdac8ae6d787bfbfc2119d9bcdc367c91bcbdb711f80d6e10921f9bf0",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24a3a60",
+              "size": 240,
+              "sha256": "808c02b02fe383824973c51bca4fd8f8554902d2616a72a4e21b9641e9ca53b7",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "dotm_selection",
+          "matched": true,
+          "proof": {
+            "cfg_states": 39,
+            "reached_instruction_counts": [
+              39,
+              39
+            ],
+            "terminals": 2,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x26736e0",
+                "rebuilt": "0x26bc000",
+                "identity": "_has_subtype_by_id"
+              },
+              {
+                "native": "0x2681ca0",
+                "rebuilt": "0x2694a40",
+                "identity": "_is_what"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x25c8f40",
+              "size": 138,
+              "sha256": "ce8ee4951ed9ed9dea517472568a94c5eb6c09d53c8cd028754a84d5749c8166",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x257a120",
+              "size": 144,
+              "sha256": "96d5d9315e21f3057355101f8cd835b221eafc122a7cb6625d30a7c893d6cdf9",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "is_creature_planeswalker_aura",
+          "matched": true,
+          "proof": {
+            "cfg_states": 39,
+            "reached_instruction_counts": [
+              39,
+              39
+            ],
+            "terminals": 2,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x26736e0",
+                "rebuilt": "0x26bc000",
+                "identity": "_has_subtype_by_id"
+              },
+              {
+                "native": "0x2681ca0",
+                "rebuilt": "0x2694a40",
+                "identity": "_is_what"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x24d0dc0",
+              "size": 138,
+              "sha256": "a9325d7c0bf6b6dfe98b78167962dba822d38073d8f426fcbf612b8e1612be61",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x227c290",
+              "size": 144,
+              "sha256": "9c901ca1390a3e81324327fef0974cc78d6d2227d10968ba943f1d0870dc603a",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_coffin_puppets",
+          "matched": false,
+          "reason": "('Unbound operand', '0x38', '0x3c')",
+          "ranges": [
+            {
+              "address": "0x2600fe0",
+              "size": 403,
+              "sha256": "38981fdffb1b83873ef6bcb557a0ca9f09476fd14360e6df41d6d3633c2f934d",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24540e0",
+              "size": 400,
+              "sha256": "c59f85e5caaf2af9d1a56f8dc03fa850820c6903bf3f13cd06389a18c61a4607",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_silverquill_pledgemage",
+          "matched": true,
+          "proof": {
+            "cfg_states": 67,
+            "reached_instruction_counts": [
+              67,
+              67
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x471eb0",
+                "rebuilt": "0x471eb0",
+                "identity": "fixed:0x471eb0"
+              },
+              {
+                "native": "0x254b7d0",
+                "rebuilt": "0x24d5c90",
+                "identity": "_hybrid"
+              },
+              {
+                "native": "0x267b1b0",
+                "rebuilt": "0x26ad3b0",
+                "identity": "_pump_ability_until_eot_no_repeat_alt"
+              },
+              {
+                "native": "0x26a8160",
+                "rebuilt": "0x269a740",
+                "identity": "_magecraft_trigger"
+              },
+              {
+                "native": "0x26df730",
+                "rebuilt": "0x2654600",
+                "identity": "_check_for_ability"
+              },
+              {
+                "native": "0x2747f68",
+                "rebuilt": "0x2753ffc",
+                "identity": "readonly-C-string:460795decf03b4878d5359699fbd1fb3d3b9d857f2d4aeb3156291f9f9a8da26"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x23dc500",
+              "size": 267,
+              "sha256": "454e2cbcecd54216b52908d07628911fa6fbff69c26c1b4df18916d38bd239ff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2525e30",
+              "size": 272,
+              "sha256": "9b7fda6a7e65e7dc964e8a214f82cc226c3fd0ca0d2ff101652628584eccf972",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_lathiel_the_bounteous_dawn",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x25ab8e0",
+              "size": 398,
+              "sha256": "641b01fd2924e661050d6a6a4db00d06d7d8fef1e1bb6e2be22fbba9e378bc4f",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2103d30",
+              "size": 400,
+              "sha256": "350b500f90181c8536ef90378d8e336c4eb90ef984d3c2f771d4799b4e6ffd49",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_insubordination",
+          "matched": false,
+          "reason": "('Operation changed', 'mov', 'test')",
+          "ranges": [
+            {
+              "address": "0x2181100",
+              "size": 215,
+              "sha256": "b2409046d53a2f7d1c001e04429fac1f2a42f34911c022a8f24aa56638002def",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x234ab60",
+              "size": 224,
+              "sha256": "abbee14570f38adae4c8af2ca5dd14349bf690ac80def963462b3573d67ec6a3",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_rooting_kavu",
+          "matched": true,
+          "proof": {
+            "cfg_states": 62,
+            "reached_instruction_counts": [
+              62,
+              62
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x26795b0",
+                "rebuilt": "0x2685ba0",
+                "identity": "_duh_mode"
+              },
+              {
+                "native": "0x2689110",
+                "rebuilt": "0x2699e20",
+                "identity": "_this_dies_trigger"
+              },
+              {
+                "native": "0x269a940",
+                "rebuilt": "0x26a4cf0",
+                "identity": "_shuffle"
+              },
+              {
+                "native": "0x26b47b0",
+                "rebuilt": "0x266c550",
+                "identity": "_from_graveyard_to_deck"
+              },
+              {
+                "native": "0x26ba010",
+                "rebuilt": "0x266fc10",
+                "identity": "_exile_from_owners_graveyard"
+              },
+              {
+                "native": "0x26dd430",
+                "rebuilt": "0x2653430",
+                "identity": "_is_humiliated"
+              },
+              {
+                "native": "0x26e5da0",
+                "rebuilt": "0x2660290",
+                "identity": "_count_graveyard"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x249b1d0",
+              "size": 197,
+              "sha256": "74706fa1cf50993f8f14e92535a1cca0a1dd1b8d76df91b53d3ff2fd7adb3aa9",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x226feb0",
+              "size": 208,
+              "sha256": "5a1467992f0ef2e635542451b09ec70071169a821451fea2b4ccaa2c4ee74204",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_timestream_navigator",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x21908e0",
+              "size": 449,
+              "sha256": "898e29e525dc548b2965d21a1ad771dc48f8b85a5a7b1aa68d0e08df7de0d290",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24a4ff0",
+              "size": 352,
+              "sha256": "3570db1ca13b0b9e78c0e2de35c5d976bfcf51c2d1d44fcaaa4d8e7d26646731",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_circle_of_protection_shadow",
+          "matched": false,
+          "reason": "Conditional instruction changed",
+          "ranges": [
+            {
+              "address": "0x215a2c0",
+              "size": 391,
+              "sha256": "c821d59e051bfd932566b7ce22932b72053f5a12a1afa48f310cfbfcd7363168",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x254aa00",
+              "size": 336,
+              "sha256": "15e3d96a6a2dd794e31c6c1bb6f930e51aeb6301fe18dd6f2bd4007388b916a2",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_mox_amber",
+          "matched": true,
+          "proof": {
+            "cfg_states": 35,
+            "reached_instruction_counts": [
+              35,
+              35
+            ],
+            "terminals": 2,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x266ed00",
+                "rebuilt": "0x26ca6f0",
+                "identity": "_mana_producer"
+              },
+              {
+                "native": "0x266fd90",
+                "rebuilt": "0x26c88e0",
+                "identity": "_get_color_of_mana_produced_by_id"
+              },
+              {
+                "native": "0x2698060",
+                "rebuilt": "0x26989f0",
+                "identity": "_play_land_sound_effect_force_color"
+              },
+              {
+                "native": "0x26b35a0",
+                "rebuilt": "0x266b740",
+                "identity": "_get_id"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x22d0b60",
+              "size": 99,
+              "sha256": "cc06fc71744daafed9669b40378e34dcae0ae4ebcfc96d991ceb1e61ae670ee8",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2151530",
+              "size": 112,
+              "sha256": "abef41300a234664db3e4f2454f2ab3fb8bc80bc826e7d29e5d32e6030f6a874",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_glorious_enforcer",
+          "matched": false,
+          "reason": "('Operation changed', 'sub', 'mov')",
+          "ranges": [
+            {
+              "address": "0x2237020",
+              "size": 142,
+              "sha256": "49c12033bff6db038ae24de3e2a7723f590066da640390434255336c39e49e4b",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x23a3720",
+              "size": 144,
+              "sha256": "f63049fc8bf12f7b02b25378ea6d93b3befb8f2e71aee26327d00b143edec58c",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_robber_of_the_rich",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x25d3970",
+              "size": 212,
+              "sha256": "c82128837f4215078a76c52c97d39931d7013db722ae609310d5eeda473150cd",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25852a0",
+              "size": 224,
+              "sha256": "c1571f15c5fd4003bd3957a19abe91fdf2ef01f34e7e0bb1541ddd5d5e2539ff",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "is_monocolored",
+          "matched": true,
+          "proof": {
+            "cfg_states": 17,
+            "reached_instruction_counts": [
+              17,
+              17
+            ],
+            "terminals": 2,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x268c8b0",
+                "rebuilt": "0x2692990",
+                "identity": "_count_colors"
+              },
+              {
+                "native": "0x2746e7f",
+                "rebuilt": "0x2752dec",
+                "identity": "readonly-C-string:661cfa4e6b69feeda0d66ce167f4678b14d2e1548e4888154f019f8d8b9ab44c"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x23c85d0",
+              "size": 44,
+              "sha256": "9ee58c663d83886bbd27aff364ed87a4b912ff8d0cb5ff585b1f3c3c9bac9c65",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25105f0",
+              "size": 48,
+              "sha256": "1a30ca8134923002fc498346f6ae472518e45479f1b429ba2c29b7f8b3ea05b7",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_tajuru_paragon",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x230f070",
+              "size": 343,
+              "sha256": "b562b69decd06398fb569390240eca074aea6222d836919bdae8999cb349f26a",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2647a00",
+              "size": 352,
+              "sha256": "9b4df7c4b33f6688c496c268fefca5b8fac6c75170e3264369c825069422150d",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_energy_chamber",
+          "matched": true,
+          "proof": {
+            "cfg_states": 67,
+            "reached_instruction_counts": [
+              67,
+              67
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2660240",
+                "rebuilt": "0x26da9c0",
+                "identity": "_default_target_definition"
+              },
+              {
+                "native": "0x26604c0",
+                "rebuilt": "0x26daf70",
+                "identity": "_can_target"
+              },
+              {
+                "native": "0x2660d50",
+                "rebuilt": "0x26dbb70",
+                "identity": "_pick_target"
+              },
+              {
+                "native": "0x2681ca0",
+                "rebuilt": "0x2694a40",
+                "identity": "_is_what"
+              },
+              {
+                "native": "0x2695450",
+                "rebuilt": "0x2689bb0",
+                "identity": "_upkeep_trigger_ability"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266ace0",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26d4840",
+                "rebuilt": "0x2666720",
+                "identity": "_add_counters"
+              },
+              {
+                "native": "0x27240a7",
+                "rebuilt": "0x2735839",
+                "identity": "readonly-C-string:71123230ef9f2f01c64241ec26e375219085fdb505942129b7a8ae95fa8062e2"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x202cd10",
+              "size": 229,
+              "sha256": "77f21db91464a359132d79e2d5b2c398f4843d42ff677af6b768f4d216b15168",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x21c76e0",
+              "size": 240,
+              "sha256": "47238a93a6155dd9813cde772bab134acce1b0eac16a7fc4267387ea2bb01f5a",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_floodhound",
+          "matched": false,
+          "reason": "('Operation changed', 'neg', 'sub')",
+          "ranges": [
+            {
+              "address": "0x2234b40",
+              "size": 180,
+              "sha256": "59932cde29641edaf0151d5f19586a0014a830acda344d2df62c44938c319135",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x23970c0",
+              "size": 192,
+              "sha256": "27f7b5a68d9f1911de86ae7beeabe485f84775bae0f3a1be0bb727925fe7541d",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "is_historic_by_internal_id",
+          "matched": true,
+          "proof": {
+            "cfg_states": 33,
+            "reached_instruction_counts": [
+              33,
+              33
+            ],
+            "terminals": 2,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2663540",
+                "rebuilt": "0x26b4dd0",
+                "identity": "_is_legendary"
+              },
+              {
+                "native": "0x26736e0",
+                "rebuilt": "0x26bc000",
+                "identity": "_has_subtype_by_id"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x22ca500",
+              "size": 112,
+              "sha256": "aafd1e9e523395c1563b3766ca423014de6e92c54ae461b4b305028ae4a6b6cd",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x214e4c0",
+              "size": 112,
+              "sha256": "f8f20e13a878ec563c9e2f176040a6ce7f5bdde10670e7d419f2dd4840c1d61c",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "74e794fe88ea28e2d9fa341c2736a90dc7297e3eb641bded2457446474cbdaa9",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "compiled_call_packets": [
+      {
+        "name": "card_lathiel_the_bounteous_dawn",
+        "address": "0x2103d30",
+        "size": 400,
+        "sha256": "350b500f90181c8536ef90378d8e336c4eb90ef984d3c2f771d4799b4e6ffd49",
+        "call_sites": [
+          {
+            "callee": "eot_trigger",
+            "address": "0x2103d70",
+            "context": [
+              {
+                "address": "0x2103d5d",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x2103d60",
+                "instruction": "call 0x26538f0"
+              },
+              {
+                "address": "0x2103d65",
+                "instruction": "mov dword ptr [esp + 8], edi"
+              },
+              {
+                "address": "0x2103d69",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2103d6d",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x2103d70",
+                "instruction": "call 0x2694fb0"
+              },
+              {
+                "address": "0x2103d75",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2103d77",
+                "instruction": "jne 0x2103d88"
+              },
+              {
+                "address": "0x2103d79",
+                "instruction": "add esp, 0xd4"
+              },
+              {
+                "address": "0x2103d7f",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x2103d81",
+                "instruction": "pop ebx"
+              },
+              {
+                "address": "0x2103d82",
+                "instruction": "pop esi"
+              }
+            ]
+          },
+          {
+            "callee": "eot_trigger",
+            "address": "0x2103df3",
+            "context": [
+              {
+                "address": "0x2103de4",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2103de6",
+                "instruction": "je 0x2103d79"
+              },
+              {
+                "address": "0x2103de8",
+                "instruction": "mov dword ptr [esp + 8], edi"
+              },
+              {
+                "address": "0x2103dec",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2103df0",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x2103df3",
+                "instruction": "call 0x2694fb0"
+              },
+              {
+                "address": "0x2103df8",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2103dfa",
+                "instruction": "je 0x2103d79"
+              },
+              {
+                "address": "0x2103e00",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2103e04",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x2103e07",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x2103e0c",
+                "instruction": "mov edi, eax"
+              }
+            ]
+          },
+          {
+            "callee": "get_card_instance",
+            "address": "0x2103e07",
+            "context": [
+              {
+                "address": "0x2103df3",
+                "instruction": "call 0x2694fb0"
+              },
+              {
+                "address": "0x2103df8",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2103dfa",
+                "instruction": "je 0x2103d79"
+              },
+              {
+                "address": "0x2103e00",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2103e04",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x2103e07",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x2103e0c",
+                "instruction": "mov edi, eax"
+              },
+              {
+                "address": "0x2103e0e",
+                "instruction": "mov eax, dword ptr [ebp - 0xc8]"
+              },
+              {
+                "address": "0x2103e14",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2103e16",
+                "instruction": "jle 0x2103eb5"
+              },
+              {
+                "address": "0x2103e1c",
+                "instruction": "xor ecx, ecx"
+              },
+              {
+                "address": "0x2103e1e",
+                "instruction": "mov dword ptr [ebp + 8], ebx"
+              }
+            ]
+          },
+          {
+            "callee": "add_counters",
+            "address": "0x2103e5b",
+            "context": [
+              {
+                "address": "0x2103e4a",
+                "instruction": "mov dword ptr [esp + 8], eax"
+              },
+              {
+                "address": "0x2103e4e",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x2103e51",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x2103e55",
+                "instruction": "mov eax, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x2103e58",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x2103e5b",
+                "instruction": "call 0x2666720"
+              },
+              {
+                "address": "0x2103e60",
+                "instruction": "cmp esi, ebx"
+              },
+              {
+                "address": "0x2103e62",
+                "instruction": "je 0x2103eb5"
+              },
+              {
+                "address": "0x2103e64",
+                "instruction": "inc ebx"
+              },
+              {
+                "address": "0x2103e65",
+                "instruction": "lea eax, [ebp - 0x70]"
+              },
+              {
+                "address": "0x2103e68",
+                "instruction": "mov dword ptr [esp + 0x10], esi"
+              },
+              {
+                "address": "0x2103e6c",
+                "instruction": "mov dword ptr [esp + 0xc], ebx"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "card_timestream_navigator",
+        "address": "0x24a4ff0",
+        "size": 352,
+        "sha256": "3570db1ca13b0b9e78c0e2de35c5d976bfcf51c2d1d44fcaaa4d8e7d26646731",
+        "call_sites": [
+          {
+            "callee": "has_the_citys_blessing",
+            "address": "0x24a503a",
+            "context": [
+              {
+                "address": "0x24a502e",
+                "instruction": "pop edi"
+              },
+              {
+                "address": "0x24a502f",
+                "instruction": "pop ebp"
+              },
+              {
+                "address": "0x24a5030",
+                "instruction": "ret "
+              },
+              {
+                "address": "0x24a5031",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x24a5038",
+                "instruction": "mov eax, esi"
+              },
+              {
+                "address": "0x24a503a",
+                "instruction": "call 0x24a31f0"
+              },
+              {
+                "address": "0x24a503f",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x24a5041",
+                "instruction": "je 0x24a5027"
+              },
+              {
+                "address": "0x24a5043",
+                "instruction": "cmp ebx, 0x72"
+              },
+              {
+                "address": "0x24a5046",
+                "instruction": "je 0x24a5110"
+              },
+              {
+                "address": "0x24a504c",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x24a504f",
+                "instruction": "mov dword ptr [esp + 8], ebx"
+              }
+            ]
+          },
+          {
+            "callee": "generic_activated_ability",
+            "address": "0x24a50aa",
+            "context": [
+              {
+                "address": "0x24a5086",
+                "instruction": "mov dword ptr [esp + 0x18], 2"
+              },
+              {
+                "address": "0x24a508e",
+                "instruction": "mov dword ptr [esp + 0x14], 0"
+              },
+              {
+                "address": "0x24a5096",
+                "instruction": "mov dword ptr [esp + 0x10], 2"
+              },
+              {
+                "address": "0x24a509e",
+                "instruction": "mov dword ptr [esp + 0xc], 1"
+              },
+              {
+                "address": "0x24a50a6",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x24a50aa",
+                "instruction": "call 0x26b13c0"
+              },
+              {
+                "address": "0x24a50af",
+                "instruction": "add esp, 0x38"
+              },
+              {
+                "address": "0x24a50b2",
+                "instruction": "pop ebx"
+              },
+              {
+                "address": "0x24a50b3",
+                "instruction": "pop esi"
+              },
+              {
+                "address": "0x24a50b4",
+                "instruction": "pop edi"
+              },
+              {
+                "address": "0x24a50b5",
+                "instruction": "pop ebp"
+              },
+              {
+                "address": "0x24a50b6",
+                "instruction": "ret "
+              }
+            ]
+          },
+          {
+            "callee": "has_the_citys_blessing",
+            "address": "0x24a50ba",
+            "context": [
+              {
+                "address": "0x24a50b4",
+                "instruction": "pop edi"
+              },
+              {
+                "address": "0x24a50b5",
+                "instruction": "pop ebp"
+              },
+              {
+                "address": "0x24a50b6",
+                "instruction": "ret "
+              },
+              {
+                "address": "0x24a50b7",
+                "instruction": "nop "
+              },
+              {
+                "address": "0x24a50b8",
+                "instruction": "mov eax, esi"
+              },
+              {
+                "address": "0x24a50ba",
+                "instruction": "call 0x24a31f0"
+              },
+              {
+                "address": "0x24a50bf",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x24a50c1",
+                "instruction": "je 0x24a5027"
+              },
+              {
+                "address": "0x24a50c7",
+                "instruction": "cmp ebx, 0x6d"
+              },
+              {
+                "address": "0x24a50ca",
+                "instruction": "jne 0x24a5043"
+              },
+              {
+                "address": "0x24a50d0",
+                "instruction": "mov edx, dword ptr [esi*4 + 0x4d7030]"
+              },
+              {
+                "address": "0x24a50d7",
+                "instruction": "mov dword ptr [esp], esi"
+              }
+            ]
+          },
+          {
+            "callee": "get_card_instance",
+            "address": "0x24a511a",
+            "context": [
+              {
+                "address": "0x24a5108",
+                "instruction": "jmp 0x24a504c"
+              },
+              {
+                "address": "0x24a510d",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x24a5110",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x24a5113",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24a5116",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x24a511a",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x24a511f",
+                "instruction": "mov edi, dword ptr [eax + 0x110]"
+              },
+              {
+                "address": "0x24a5125",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x24a5128",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x24a512c",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24a512f",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x24a5134",
+                "instruction": "mov dword ptr [esp + 4], edi"
+              }
+            ]
+          },
+          {
+            "callee": "get_card_instance",
+            "address": "0x24a512f",
+            "context": [
+              {
+                "address": "0x24a511a",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x24a511f",
+                "instruction": "mov edi, dword ptr [eax + 0x110]"
+              },
+              {
+                "address": "0x24a5125",
+                "instruction": "mov eax, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x24a5128",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x24a512c",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24a512f",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x24a5134",
+                "instruction": "mov dword ptr [esp + 4], edi"
+              },
+              {
+                "address": "0x24a5138",
+                "instruction": "mov eax, dword ptr [eax + 0x10c]"
+              },
+              {
+                "address": "0x24a513e",
+                "instruction": "mov dword ptr [esp], eax"
+              },
+              {
+                "address": "0x24a5141",
+                "instruction": "call 0x2688590"
+              },
+              {
+                "address": "0x24a5146",
+                "instruction": "jmp 0x24a504c"
+              },
+              {
+                "address": "0x24a514b",
+                "instruction": "lea esi, [esi]"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "remove_eot_unless_cb",
+        "address": "0x24a3a60",
+        "size": 240,
+        "sha256": "808c02b02fe383824973c51bca4fd8f8554902d2616a72a4e21b9641e9ca53b7",
+        "call_sites": [
+          {
+            "callee": "get_card_instance",
+            "address": "0x24a3a76",
+            "context": [
+              {
+                "address": "0x24a3a66",
+                "instruction": "sub esp, 0x10"
+              },
+              {
+                "address": "0x24a3a69",
+                "instruction": "mov esi, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x24a3a6c",
+                "instruction": "mov ebx, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x24a3a6f",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x24a3a73",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24a3a76",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x24a3a7b",
+                "instruction": "cmp byte ptr [eax + 0x50], 0"
+              },
+              {
+                "address": "0x24a3a7f",
+                "instruction": "js 0x24a3a99"
+              },
+              {
+                "address": "0x24a3a81",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x24a3a85",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24a3a88",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x24a3a8d",
+                "instruction": "cmp dword ptr [0x7a2d78], 0xcd"
+              }
+            ]
+          },
+          {
+            "callee": "get_card_instance",
+            "address": "0x24a3a88",
+            "context": [
+              {
+                "address": "0x24a3a76",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x24a3a7b",
+                "instruction": "cmp byte ptr [eax + 0x50], 0"
+              },
+              {
+                "address": "0x24a3a7f",
+                "instruction": "js 0x24a3a99"
+              },
+              {
+                "address": "0x24a3a81",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x24a3a85",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24a3a88",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x24a3a8d",
+                "instruction": "cmp dword ptr [0x7a2d78], 0xcd"
+              },
+              {
+                "address": "0x24a3a97",
+                "instruction": "je 0x24a3aa8"
+              },
+              {
+                "address": "0x24a3a99",
+                "instruction": "add esp, 0x10"
+              },
+              {
+                "address": "0x24a3a9c",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x24a3a9e",
+                "instruction": "pop ebx"
+              },
+              {
+                "address": "0x24a3a9f",
+                "instruction": "pop esi"
+              }
+            ]
+          },
+          {
+            "callee": "check_state",
+            "address": "0x24a3af5",
+            "context": [
+              {
+                "address": "0x24a3ae0",
+                "instruction": "mov edi, dword ptr [eax + 4]"
+              },
+              {
+                "address": "0x24a3ae3",
+                "instruction": "mov dword ptr [esp + 8], 0x800000"
+              },
+              {
+                "address": "0x24a3aeb",
+                "instruction": "mov dword ptr [esp + 4], edi"
+              },
+              {
+                "address": "0x24a3aef",
+                "instruction": "mov dword ptr [esp], ecx"
+              },
+              {
+                "address": "0x24a3af2",
+                "instruction": "mov dword ptr [ebp - 0x10], ecx"
+              },
+              {
+                "address": "0x24a3af5",
+                "instruction": "call 0x26a9d20"
+              },
+              {
+                "address": "0x24a3afa",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x24a3afc",
+                "instruction": "jne 0x24a3b09"
+              },
+              {
+                "address": "0x24a3afe",
+                "instruction": "mov eax, esi"
+              },
+              {
+                "address": "0x24a3b00",
+                "instruction": "call 0x24a31f0"
+              },
+              {
+                "address": "0x24a3b05",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x24a3b07",
+                "instruction": "je 0x24a3b34"
+              }
+            ]
+          },
+          {
+            "callee": "has_the_citys_blessing",
+            "address": "0x24a3b00",
+            "context": [
+              {
+                "address": "0x24a3af2",
+                "instruction": "mov dword ptr [ebp - 0x10], ecx"
+              },
+              {
+                "address": "0x24a3af5",
+                "instruction": "call 0x26a9d20"
+              },
+              {
+                "address": "0x24a3afa",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x24a3afc",
+                "instruction": "jne 0x24a3b09"
+              },
+              {
+                "address": "0x24a3afe",
+                "instruction": "mov eax, esi"
+              },
+              {
+                "address": "0x24a3b00",
+                "instruction": "call 0x24a31f0"
+              },
+              {
+                "address": "0x24a3b05",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x24a3b07",
+                "instruction": "je 0x24a3b34"
+              },
+              {
+                "address": "0x24a3b09",
+                "instruction": "mov dword ptr [esp + 8], 4"
+              },
+              {
+                "address": "0x24a3b11",
+                "instruction": "mov dword ptr [esp + 4], ebx"
+              },
+              {
+                "address": "0x24a3b15",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x24a3b18",
+                "instruction": "call 0x266d770"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "card_insubordination",
+        "address": "0x234ab60",
+        "size": 224,
+        "sha256": "abbee14570f38adae4c8af2ca5dd14349bf690ac80def963462b3573d67ec6a3",
+        "call_sites": [
+          {
+            "callee": "in_play",
+            "address": "0x234ab76",
+            "context": [
+              {
+                "address": "0x234ab66",
+                "instruction": "sub esp, 0x14"
+              },
+              {
+                "address": "0x234ab69",
+                "instruction": "mov ebx, dword ptr [ebp + 8]"
+              },
+              {
+                "address": "0x234ab6c",
+                "instruction": "mov esi, dword ptr [ebp + 0xc]"
+              },
+              {
+                "address": "0x234ab6f",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x234ab73",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x234ab76",
+                "instruction": "call 0x266b4b0"
+              },
+              {
+                "address": "0x234ab7b",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x234ab7d",
+                "instruction": "je 0x234aba2"
+              },
+              {
+                "address": "0x234ab7f",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x234ab83",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x234ab86",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x234ab8b",
+                "instruction": "movsx edi, byte ptr [eax + 0x50]"
+              }
+            ]
+          },
+          {
+            "callee": "get_card_instance",
+            "address": "0x234ab86",
+            "context": [
+              {
+                "address": "0x234ab76",
+                "instruction": "call 0x266b4b0"
+              },
+              {
+                "address": "0x234ab7b",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x234ab7d",
+                "instruction": "je 0x234aba2"
+              },
+              {
+                "address": "0x234ab7f",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x234ab83",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x234ab86",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x234ab8b",
+                "instruction": "movsx edi, byte ptr [eax + 0x50]"
+              },
+              {
+                "address": "0x234ab8f",
+                "instruction": "test edi, edi"
+              },
+              {
+                "address": "0x234ab91",
+                "instruction": "js 0x234aba2"
+              },
+              {
+                "address": "0x234ab93",
+                "instruction": "mov eax, dword ptr [eax + 4]"
+              },
+              {
+                "address": "0x234ab96",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x234ab98",
+                "instruction": "js 0x234aba2"
+              }
+            ]
+          },
+          {
+            "callee": "get_card_instance",
+            "address": "0x234abd7",
+            "context": [
+              {
+                "address": "0x234abcd",
+                "instruction": "pop edi"
+              },
+              {
+                "address": "0x234abce",
+                "instruction": "pop ebp"
+              },
+              {
+                "address": "0x234abcf",
+                "instruction": "ret "
+              },
+              {
+                "address": "0x234abd0",
+                "instruction": "mov dword ptr [esp + 4], eax"
+              },
+              {
+                "address": "0x234abd4",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x234abd7",
+                "instruction": "call 0x266ace0"
+              },
+              {
+                "address": "0x234abdc",
+                "instruction": "test byte ptr [eax + 8], 0x44"
+              },
+              {
+                "address": "0x234abe0",
+                "instruction": "jne 0x234aba2"
+              },
+              {
+                "address": "0x234abe2",
+                "instruction": "mov eax, dword ptr [ebp + 0x10]"
+              },
+              {
+                "address": "0x234abe5",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x234abe9",
+                "instruction": "mov dword ptr [esp + 8], eax"
+              },
+              {
+                "address": "0x234abed",
+                "instruction": "mov dword ptr [esp], ebx"
+              }
+            ]
+          },
+          {
+            "callee": "eot_trigger",
+            "address": "0x234abf0",
+            "context": [
+              {
+                "address": "0x234abe0",
+                "instruction": "jne 0x234aba2"
+              },
+              {
+                "address": "0x234abe2",
+                "instruction": "mov eax, dword ptr [ebp + 0x10]"
+              },
+              {
+                "address": "0x234abe5",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x234abe9",
+                "instruction": "mov dword ptr [esp + 8], eax"
+              },
+              {
+                "address": "0x234abed",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x234abf0",
+                "instruction": "call 0x2694fb0"
+              },
+              {
+                "address": "0x234abf5",
+                "instruction": "cmp dword ptr [ebp + 0x10], 0xc7"
+              },
+              {
+                "address": "0x234abfc",
+                "instruction": "je 0x234ac02"
+              },
+              {
+                "address": "0x234abfe",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x234ac00",
+                "instruction": "je 0x234aba2"
+              },
+              {
+                "address": "0x234ac02",
+                "instruction": "mov dword ptr [esp + 8], 4"
+              },
+              {
+                "address": "0x234ac0a",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              }
+            ]
+          },
+          {
+            "callee": "is_humiliated",
+            "address": "0x234ac11",
+            "context": [
+              {
+                "address": "0x234abfe",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x234ac00",
+                "instruction": "je 0x234aba2"
+              },
+              {
+                "address": "0x234ac02",
+                "instruction": "mov dword ptr [esp + 8], 4"
+              },
+              {
+                "address": "0x234ac0a",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x234ac0e",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x234ac11",
+                "instruction": "call 0x2653430"
+              },
+              {
+                "address": "0x234ac16",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x234ac18",
+                "instruction": "jne 0x234aba2"
+              },
+              {
+                "address": "0x234ac1a",
+                "instruction": "mov dword ptr [esp + 0xc], esi"
+              },
+              {
+                "address": "0x234ac1e",
+                "instruction": "mov dword ptr [esp + 8], ebx"
+              },
+              {
+                "address": "0x234ac22",
+                "instruction": "mov dword ptr [esp + 4], 2"
+              },
+              {
+                "address": "0x234ac2a",
+                "instruction": "mov dword ptr [esp], edi"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "card_robber_of_the_rich",
+        "address": "0x25852a0",
+        "size": 224,
+        "sha256": "c1571f15c5fd4003bd3957a19abe91fdf2ef01f34e7e0bb1541ddd5d5e2539ff",
+        "call_sites": [
+          {
+            "callee": "rfg_top_card_of_deck",
+            "address": "0x258533e",
+            "context": [
+              {
+                "address": "0x2585327",
+                "instruction": "test byte ptr [eax*8 + 0x7e7038], 1"
+              },
+              {
+                "address": "0x258532f",
+                "instruction": "lea ecx, [eax*8 + 0x7e7010]"
+              },
+              {
+                "address": "0x2585336",
+                "instruction": "jne 0x25852ea"
+              },
+              {
+                "address": "0x2585338",
+                "instruction": "mov dword ptr [esp], edx"
+              },
+              {
+                "address": "0x258533b",
+                "instruction": "mov dword ptr [ebp - 0x10], ecx"
+              },
+              {
+                "address": "0x258533e",
+                "instruction": "call 0x266e3c0"
+              },
+              {
+                "address": "0x2585343",
+                "instruction": "mov ecx, dword ptr [ebp - 0x10]"
+              },
+              {
+                "address": "0x2585346",
+                "instruction": "mov dword ptr [esp + 0x10], 0x102"
+              },
+              {
+                "address": "0x258534e",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x2585350",
+                "instruction": "mov ax, word ptr [ecx + 0x24]"
+              },
+              {
+                "address": "0x2585354",
+                "instruction": "mov dword ptr [esp + 4], edi"
+              },
+              {
+                "address": "0x2585358",
+                "instruction": "mov dword ptr [esp + 0xc], eax"
+              }
+            ]
+          },
+          {
+            "callee": "create_may_play_card_from_exile_effect",
+            "address": "0x258536a",
+            "context": [
+              {
+                "address": "0x2585358",
+                "instruction": "mov dword ptr [esp + 0xc], eax"
+              },
+              {
+                "address": "0x258535c",
+                "instruction": "mov eax, dword ptr [0x628670]"
+              },
+              {
+                "address": "0x2585361",
+                "instruction": "sub ebx, eax"
+              },
+              {
+                "address": "0x2585363",
+                "instruction": "mov dword ptr [esp], esi"
+              },
+              {
+                "address": "0x2585366",
+                "instruction": "mov dword ptr [esp + 8], ebx"
+              },
+              {
+                "address": "0x258536a",
+                "instruction": "call 0x26c3960"
+              },
+              {
+                "address": "0x258536f",
+                "instruction": "jmp 0x25852ea"
+              },
+              {
+                "address": "0x2585374",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x258537b",
+                "instruction": "lea esi, [esi]"
+              },
+              {
+                "address": "0x258537f",
+                "instruction": "nop "
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "card_tajuru_paragon",
+        "address": "0x2647a00",
+        "size": 352,
+        "sha256": "9b4df7c4b33f6688c496c268fefca5b8fac6c75170e3264369c825069422150d",
+        "call_sites": [
+          {
+            "callee": "kicker",
+            "address": "0x2647a50",
+            "context": [
+              {
+                "address": "0x2647a35",
+                "instruction": "mov dword ptr [esp + 0x10], 0"
+              },
+              {
+                "address": "0x2647a3d",
+                "instruction": "mov dword ptr [esp + 0xc], 3"
+              },
+              {
+                "address": "0x2647a45",
+                "instruction": "mov dword ptr [esp + 8], edi"
+              },
+              {
+                "address": "0x2647a49",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2647a4d",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x2647a50",
+                "instruction": "call 0x225dd50"
+              },
+              {
+                "address": "0x2647a55",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2647a59",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x2647a5c",
+                "instruction": "call 0x225ddf0"
+              },
+              {
+                "address": "0x2647a61",
+                "instruction": "mov dword ptr [esp + 8], edi"
+              },
+              {
+                "address": "0x2647a65",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2647a67",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              }
+            ]
+          },
+          {
+            "callee": "kicked",
+            "address": "0x2647a5c",
+            "context": [
+              {
+                "address": "0x2647a49",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2647a4d",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x2647a50",
+                "instruction": "call 0x225dd50"
+              },
+              {
+                "address": "0x2647a55",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2647a59",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x2647a5c",
+                "instruction": "call 0x225ddf0"
+              },
+              {
+                "address": "0x2647a61",
+                "instruction": "mov dword ptr [esp + 8], edi"
+              },
+              {
+                "address": "0x2647a65",
+                "instruction": "test eax, eax"
+              },
+              {
+                "address": "0x2647a67",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2647a6b",
+                "instruction": "setne al"
+              },
+              {
+                "address": "0x2647a6e",
+                "instruction": "and eax, 0xff"
+              },
+              {
+                "address": "0x2647a73",
+                "instruction": "mov dword ptr [esp], ebx"
+              }
+            ]
+          },
+          {
+            "callee": "etb_ability",
+            "address": "0x2647a7c",
+            "context": [
+              {
+                "address": "0x2647a6b",
+                "instruction": "setne al"
+              },
+              {
+                "address": "0x2647a6e",
+                "instruction": "and eax, 0xff"
+              },
+              {
+                "address": "0x2647a73",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x2647a76",
+                "instruction": "add eax, eax"
+              },
+              {
+                "address": "0x2647a78",
+                "instruction": "mov dword ptr [esp + 0xc], eax"
+              },
+              {
+                "address": "0x2647a7c",
+                "instruction": "call 0x269bfe0"
+              },
+              {
+                "address": "0x2647a81",
+                "instruction": "cmp edi, 0x5100"
+              },
+              {
+                "address": "0x2647a87",
+                "instruction": "je 0x2647a98"
+              },
+              {
+                "address": "0x2647a89",
+                "instruction": "add esp, 0x168"
+              },
+              {
+                "address": "0x2647a8f",
+                "instruction": "xor eax, eax"
+              },
+              {
+                "address": "0x2647a91",
+                "instruction": "pop ebx"
+              },
+              {
+                "address": "0x2647a92",
+                "instruction": "pop esi"
+              }
+            ]
+          },
+          {
+            "callee": "default_test_definition",
+            "address": "0x2647aca",
+            "context": [
+              {
+                "address": "0x2647ab3",
+                "instruction": "mov dword ptr [esp + 4], esi"
+              },
+              {
+                "address": "0x2647ab7",
+                "instruction": "mov dword ptr [esp], ebx"
+              },
+              {
+                "address": "0x2647aba",
+                "instruction": "call 0x26b96b0"
+              },
+              {
+                "address": "0x2647abf",
+                "instruction": "mov dword ptr [esp], edi"
+              },
+              {
+                "address": "0x2647ac2",
+                "instruction": "mov dword ptr [esp + 4], 0xff"
+              },
+              {
+                "address": "0x2647aca",
+                "instruction": "call 0x26b6b40"
+              },
+              {
+                "address": "0x2647acf",
+                "instruction": "mov eax, dword ptr [ebp - 0x14c]"
+              },
+              {
+                "address": "0x2647ad5",
+                "instruction": "mov dword ptr [ebp - 0x7c], eax"
+              },
+              {
+                "address": "0x2647ad8",
+                "instruction": "mov eax, dword ptr [ebp - 0x148]"
+              },
+              {
+                "address": "0x2647ade",
+                "instruction": "mov dword ptr [ebp - 0x34], eax"
+              },
+              {
+                "address": "0x2647ae1",
+                "instruction": "mov eax, dword ptr [ebp - 0x144]"
+              },
+              {
+                "address": "0x2647ae7",
+                "instruction": "mov dword ptr [ebp - 0x30], eax"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "manual_source_reviews": {
+      "card_temple_altisaur": "Short-circuit guards keep the damage-card ID check before signed attachment checks and the subtype callback. The same cached damage pointer supplies live info_slot reads after that callback; affected globals are read again for prevent_damage.",
+      "remove_eot_unless_cb": "Retain the first getter/player-sign guard and a second getter before trigger/global checks. Positive turns_left decrements on every eligible event. On resolution, capture attachment coordinates before check_state, query blessing only if that state test is false, and retain the attached-only exile early return versus legacy exile.",
+      "card_coffin_puppets": "Land-sacrifice test initialization remains unconditional. The graveyard query and ability-cost query remain short-circuited in that order, with the same flags, six zero mana costs, trailing parameters, return-8 encoding and exact spell_fizzled!=1 result.",
+      "card_lathiel_the_bounteous_dawn": "Keep both conditional eot_trigger calls and default target initialization even for zero life gained. Negative nonzero life gained can still reach the getter and target-count clear without a loop iteration. The positive loop increments before formatting and stops without an overflowing increment after INT_MAX; chosen target fields are read after each picker callback.",
+      "card_insubordination": "Keep in_play, fresh aura getter, attachment getter and the end-step query before testing the AI event shortcut. Retain the cached attachment player, native state mask 0x44 and final aura controller helper for every path.",
+      "card_timestream_navigator": "The same four events perform one blessing query; other events return after ascend. Activation captures library before count_deck and IID lookup, writes the IID before obliteration, and then invokes GAA. Resolution captures parent_card from the first getter and parent_controller from the second getter before time_walk. The common GAA call retains 2UU and untapped flags.",
+      "card_circle_of_protection_shadow": "Combine the duplicated target-definition initialization while retaining the original arithmetic event-range predicate. Every accepted path still calls the instance getter once; only resolution validates the target and fetches the damage instance. The three ORed GAA flags equal 0x1000006, the prompt and 1-generic cost are unchanged.",
+      "card_glorious_enforcer": "The lifelink and combat helpers retain their order. Both life values remain reads after the combat helper, with the same signed comparison and double-strike keyword; removing a duplicated zero return changes no action.",
+      "card_robber_of_the_rich": "Capture the opponent for the hand comparison/deck read and exile call, but retain the new 1-current_turn evaluation and csvid load after rfg_top_card_of_deck. The saved IID is not replaced by a post-exile deck read. Land exclusion and effect flags are unchanged.",
+      "card_tajuru_paragon": "Kicker still precedes kicked and etb_ability on every event. On ETB, initialize/get all reported subtypes before creating the test and retain the original five subtype stores and F2_MULTISUBTYPE=3. The compiled TYPE_ANY argument is checked as 0xff, with identical reveal destinations and flags.",
+      "card_floodhound": "Retain the original arithmetic grouping of ai_modifier + hand_count * -10 + 70 and its placement before investigate. Only the hexadecimal spelling and unused result temporary are removed; the common GAA cost/flags are unchanged."
+    },
+    "staging": "preserved",
+    "scope": "Nine complete entry-reachable native/current CFG correspondences under the same strict checker that rejected all twenty prior bodies. Exact unique COFF/engine identities and full read-only C-string/DIALOG-token contents are assumptions; no predicate or return-tail relaxations are enabled. Eleven other bodies have manual control-flow/source reviews, with selected actual compiled callback sites recorded. Call-site counts confirm emitted sites only, not dynamic path equivalence. Twenty source replacements reconstruct exactly the thirteen raw/canonical files; no untouched source bytes are rewritten. No gameplay fixture or full comparison refresh was rerun."
+  }
+}

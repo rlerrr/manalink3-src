@@ -202,8 +202,7 @@ static int manifesting_aura(int player, int card, event_t event, int key, int s_
     result = global_enchantment(player, card, event);
     return result;
   }
-  result = generic_aura(player, card, event, player, 0, 0, key, s_key, 0, 0, 0);
-  return result;
+  return generic_aura(player, card, event, player, 0, 0, key, s_key, 0, 0, 0);
 }
 
 
@@ -343,7 +342,7 @@ int card_ugin_the_spirit_dragon(int player, int card, event_t event)
   if ((event == EVENT_ACTIVATE) || (event == EVENT_RESOLVE_ACTIVATION))
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_test_definition(&this_test, 0x47);
     this_test.color = 0x3e;
     instance = get_card_instance(player, card);
@@ -369,7 +368,7 @@ int card_ugin_the_spirit_dragon(int player, int card, event_t event)
         }
       }
       choice_or_loyalty =
-          dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017",
+          dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_PLANESWALKER,
                       "3 damage to creature or player", 1, 10, 2, "Exile permanents", 1,
                       exile_priority, 0, "Ultimatum", 1, 0x14, 0xfffffff6, 0, 0, 0, 0);
       instance->number_of_targets = '\0';
@@ -418,7 +417,7 @@ int card_ugin_the_spirit_dragon(int player, int card, event_t event)
     else
     {
       choice_or_loyalty = dialog_impl(
-          player, card, event, "\001\002", "\001\017", "3 damage to creature or player", 1, 10, 2,
+          player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "3 damage to creature or player", 1, 10, 2,
           "Exile permanents", 1, 0, 0, "Ultimatum", 1, 0x14, 0xfffffff6, 0, 0, 0, 0);
       if (choice_or_loyalty == CHOICE_SWIPE)
       {
@@ -622,7 +621,7 @@ int card_daghatar_the_adamant(int player, int card, event_t event)
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
     default_target_definition(player, card, &td, 2);
-    td.special = 0x40000;
+    td.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td.extra = 0;
     default_target_definition(player, card, &td2, 2);
     td2.preferred_controller = player;
@@ -674,7 +673,7 @@ int card_daghatar_the_adamant(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 2);
-    td.special = 0x40000;
+    td.special = TARGET_SPECIAL_REQUIRES_COUNTER;
     td.extra = 0;
     default_target_definition(player, card, &td2, 2);
     td2.preferred_controller = player;
@@ -751,13 +750,13 @@ int card_elite_scaleguard(int player, int card, event_t event){
 	}
 	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
 	if (event == EVENT_DAT_ABILITY){
-		int amt = get_card_instance(player, card)->info_slot;
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.preferred_controller = 1-player;
 		td.allowed_controller = 1-player;
 
 		card_instance_t* instance = get_card_instance(player, card);
+		int amt = instance->info_slot;
 
 		for (--amt; amt >= 0; --amt){
 			if( can_target(&td) ){
@@ -915,7 +914,13 @@ int card_monastery_mentor(int player, int card, event_t event)
     Whenever you cast a noncreature spell, put a 1/1 white Monk creature token with prowess onto the
     battlefield. 2/2
   */
-  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    test.type_flag = DOESNT_MATCH;
+    sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
+  }
   if (event == EVENT_SPA)
   {
     prowess(player, card, event);
@@ -1475,7 +1480,13 @@ int card_mistfire_adept(int player, int card, event_t event)
     3/3
   */
 
-  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    test.type_flag = DOESNT_MATCH;
+    sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
+  }
   if (event == EVENT_SPA)
   {
     prowess(player, card, event);
@@ -1835,7 +1846,13 @@ int card_shun_yun_the_silent_tempest(int player, int card, event_t event)
   */
   check_legend_rule(player, card, event);
 
-  prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card))
+  {
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    test.type_flag = DOESNT_MATCH;
+    sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_NONE, &test, player, card);
+  }
   if (event == EVENT_SPA)
   {
     prowess(player, card, event);
@@ -2204,11 +2221,15 @@ int card_brutal_hordechief(int player, int card, event_t event){
 	  3(R/W)(R/W): Creatures your opponents control block this turn if able, and you choose how those creatures block.
 	  3/3
 	*/
-	card_instance_t *instance = get_card_instance( player, card);
-
 	store_attackers(player, card, event, DAT_SEPARATE_TRIGGERS, player, -1, NULL);
 	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
 	if (event == EVENT_DAT_ABILITY){ lose_life(1-player, 1); gain_life(player, 1); }
+	if (!IS_GAA_EVENT(event)){
+		return 0;
+	}
+
+	card_instance_t *instance = get_card_instance(player, card);
+
 	if( event == EVENT_CAN_ACTIVATE ){
 		if( generic_activated_ability(player, card, event, 0, MANACOST0, 0, NULL, NULL) ){
 			int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_XR(3, 2));
@@ -4154,14 +4175,14 @@ int card_warden_of_the_first_tree(int player, int card, event_t event)
       } while (ability_number_or_spirit != 3);
       modified_cost_or_subtype = has_subtype(player, card, SUBTYPE_WARRIOR);
       choice_or_result = has_subtype(player, card, SUBTYPE_WARRIOR);
-      warrior_priority = (-(unsigned int)(choice_or_result == 0) & 0xffffffbf) + 0xf;
+      warrior_priority = (unsigned int)((choice_or_result == 0) ? -50 : 15);
       choice_or_result = warrior_priority;
       ability_number_or_spirit = has_subtype(player, card, SUBTYPE_SPIRIT);
       choice_or_result = dialog_impl(
-          player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "3/3 Human Warrior", abilities[0],
-          (-(unsigned int)(modified_cost_or_subtype == 0) & 0x3c) - 0x32, "Give Trample & Lifelink",
+          player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, "3/3 Human Warrior", abilities[0],
+          (unsigned int)((modified_cost_or_subtype == 0) ? 10 : -50), "Give Trample & Lifelink",
           abilities[1], warrior_priority, "Add 5 +1/+1 counters", abilities[2],
-          (-(unsigned int)(ability_number_or_spirit == 0) & 0xffffffba) + 0x14, 0, 0, 0, 0,
+          (unsigned int)((ability_number_or_spirit == 0) ? -50 : 20), 0, 0, 0, 0,
           choice_or_result);
       if (choice_or_result != 0)
       {
@@ -4278,7 +4299,7 @@ static int whisperwood_elemental_legacy(int player, int card, event_t event)
 
   if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
   {
-    int amount = card_counts[player][5] + 1;
+    int amount = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
     do
     {
       manifest(player, card);
@@ -4903,7 +4924,7 @@ static int wotft_1(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2622ce0; original cards/fate_reforged.c:4097. */
 static int wotft_2(int player, int card, event_t event)
 {
-  int card_00;
+  int target_card;
   card_instance_t *instance;
   int player_00;
 
@@ -4911,16 +4932,16 @@ static int wotft_2(int player, int card, event_t event)
   {
 
     instance = get_card_instance(player, card);
-    card_00 = instance->damage_target_card;
-    if ((card_00 == affected_card) &&
+    target_card = instance->damage_target_card;
+    if ((target_card == affected_card) &&
         (player_00 = (int)instance->damage_target_player, player_00 == affected_card_controller))
     {
 
-      instance = get_card_instance(player_00, card_00);
+      instance = get_card_instance(player_00, target_card);
       if (event == EVENT_ABILITIES)
       {
         event_result = event_result | 0x80;
-        lifelink(player_00, card_00, EVENT_ABILITIES);
+        lifelink(player_00, target_card, EVENT_ABILITIES);
       }
       else
       {

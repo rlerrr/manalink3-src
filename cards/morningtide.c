@@ -151,7 +151,7 @@ static void auto_attaching_equipment(int player, int card, event_t event, subtyp
 	}
 }
 
-static void tribal_spell_played(int player, int card, event_t event, int t_player, int trig_mode,
+void tribal_spell_played(int player, int card, event_t event, int t_player, int trig_mode,
                                 subtype_t subtype)
 {
   if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card))
@@ -218,34 +218,37 @@ Kithkin spells and Soldier spells you cast cost |1 less to cast. */
 	return banneret(player, card, event, SUBTYPE_SOLDIER, SUBTYPE_KITHKIN);
 }
 
-int card_battletide_alchemist(int player, int card, event_t event){
+int card_battletide_alchemist(int player, int card, event_t event)
+{
 /*
 Battletide Alchemist |3|W|W
 Creature — Kithkin Cleric 3/4
 If a source would deal damage to a player, you may prevent X of that damage, where X is the number of Clerics you control.
 */
 
-	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && event == EVENT_PREVENT_DAMAGE ){
-		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
-		if (damage->damage_target_card == -1){
-			if( damage->damage_target_card == -1 && !damage_is_to_planeswalker(damage) && damage->info_slot > 0 ){
-				int choice = 0;
-				int amount = count_subtype(player, TYPE_PERMANENT, SUBTYPE_CLERIC);
-				if( damage->damage_target_player != player ){
-					choice = 1;
-				}
-				if( ! duh_mode(player) ){
-					char buffer[100];
-					scnprintf(buffer, 500, " Prevent %d damages\n Pass", amount);
-					choice = do_dialog(player, player, card, -1, -1, buffer, 0);
-				}
-				if( choice == 0 ){
-					prevent_damage(affected_card_controller, affected_card, amount);
-				}
-			}
-		}
-	}
-	return 0;
+  if (!in_play(player, card) || is_humiliated(player, card, AL_STATIC) ||
+      event != EVENT_PREVENT_DAMAGE)
+    return 0;
+
+  card_instance_t *damage = get_card_instance(affected_card_controller, affected_card);
+  if (damage->damage_target_card != -1 || damage_is_to_planeswalker(damage) ||
+      damage->info_slot <= 0 || damage->damage_target_card != -1)
+    return 0;
+
+  int amount = count_subtype(player, TYPE_PERMANENT, SUBTYPE_CLERIC);
+  int damage_target_player = damage->damage_target_player;
+  int choice;
+  if (duh_mode(player))
+    choice = damage_target_player != player;
+  else
+  {
+    char buffer[100];
+    scnprintf(buffer, 500, " Prevent %d damages\n Pass", amount);
+    choice = do_dialog(player, player, card, -1, -1, buffer, 0);
+  }
+  if (choice == 0)
+    prevent_damage(affected_card_controller, affected_card, amount);
+  return 0;
 }
 
 int card_bitterblossom(int player, int card, event_t event){
@@ -2136,7 +2139,6 @@ Evoke |B (You may cast this spell for its evoke cost. If you do, it's sacrificed
 
 int card_oonas_blackguard(int player, int card, event_t event)
 {
-  char *second_player_count_byte;
   int result;
   unsigned int damage_counts;
   card_instance_t *damage_or_blackguard;
@@ -2170,14 +2172,11 @@ int card_oonas_blackguard(int player, int card, event_t event)
               }
               if (damage_or_blackguard->damage_target_player == '\0')
               {
-                *(char *)&source_or_trigger_instance->targets[8].player =
-                    (char)source_or_trigger_instance->targets[8].player + '\x01';
+                ++SET_BYTE0(source_or_trigger_instance->targets[8].player);
               }
               if (damage_or_blackguard->damage_target_player == '\x01')
               {
-                second_player_count_byte =
-                    (char *)((int)&source_or_trigger_instance->targets[8].player + 1);
-                *second_player_count_byte = *second_player_count_byte + '\x01';
+                ++SET_BYTE1(source_or_trigger_instance->targets[8].player);
               }
             }
           }
@@ -2186,13 +2185,13 @@ int card_oonas_blackguard(int player, int card, event_t event)
       damage_counts = resolve_damage_trigger(player, card, event, DDBM_0, player, card);
       if (damage_counts != 0)
       {
-        if ((char)damage_counts != '\0')
+        if (BYTE0(damage_counts) != 0)
         {
-          new_multidiscard(0, damage_counts & 0xff, 0, player);
+          new_multidiscard(0, BYTE0(damage_counts), 0, player);
         }
-        if ((char)(damage_counts >> 8) != '\0')
+        if (BYTE1(damage_counts) != 0)
         {
-          new_multidiscard(1, (int)damage_counts >> 8 & 0xff, 0, player);
+          new_multidiscard(1, BYTE1(damage_counts), 0, player);
         }
         damage_or_blackguard = get_card_instance(player, card);
         damage_or_blackguard->targets[8].player = 0;
@@ -3040,52 +3039,22 @@ int card_shard_volley(int player, int card, event_t event){
 
 int card_shared_animosity(int player, int card, event_t event)
 {
-  int attacker_card;
-  card_instance_t *instance;
-  int other_card_or_eligible;
-  int shared_subtype_or_eligible;
-  int shared_attackers;
   store_attackers(player, card, event, 0, player, -1, NULL);
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
-  if ((event == EVENT_DAT_ABILITY) &&
-      (attacker_card = active_cards_count[player] + -1, -1 < attacker_card))
-  {
-    do
-    {
-      instance = in_play(player, attacker_card);
-      if ((instance != NULL) &&
-          (((other_card_or_eligible = is_what(player, attacker_card, 2),
-             other_card_or_eligible != 0 &&
-                 (other_card_or_eligible = is_attacking(player, attacker_card),
-                  other_card_or_eligible != 0)) &&
-            (0 < active_cards_count[player]))))
+  if (event == EVENT_DAT_ABILITY)
+    for (int attacker = active_cards_count[player] - 1; attacker >= 0; --attacker)
+      if (in_play(player, attacker) && is_what(player, attacker, TYPE_CREATURE) &&
+          is_attacking(player, attacker))
       {
-        shared_attackers = 0;
-        other_card_or_eligible = 0;
-        do
-        {
-          if (((attacker_card != other_card_or_eligible) &&
-               (instance = in_play(player, other_card_or_eligible), instance != NULL)) &&
-              ((shared_subtype_or_eligible = is_what(player, other_card_or_eligible, 2),
-                shared_subtype_or_eligible != 0 &&
-                    (shared_subtype_or_eligible = is_attacking(player, other_card_or_eligible),
-                     shared_subtype_or_eligible != 0))))
-          {
-            shared_subtype_or_eligible =
-                shares_creature_subtype(player, attacker_card, player, other_card_or_eligible);
-            shared_attackers =
-                (shared_attackers + 1) - (unsigned int)(shared_subtype_or_eligible == 0);
-          }
-          other_card_or_eligible = other_card_or_eligible + 1;
-        } while (other_card_or_eligible < active_cards_count[player]);
-        if (0 < shared_attackers)
-        {
-          pump_until_eot(player, card, player, attacker_card, shared_attackers, 0);
-        }
+        int shared_attackers = 0;
+        for (int other = 0; other < active_cards_count[player]; ++other)
+          if (other != attacker && in_play(player, other) &&
+              is_what(player, other, TYPE_CREATURE) && is_attacking(player, other) &&
+              shares_creature_subtype(player, attacker, player, other))
+            ++shared_attackers;
+        if (shared_attackers > 0)
+          pump_until_eot(player, card, player, attacker, shared_attackers, 0);
       }
-      attacker_card = attacker_card + -1;
-    } while (attacker_card != -1);
-  }
   return global_enchantment(player, card, event);
 }
 
@@ -3679,7 +3648,7 @@ int card_walker_of_the_grove(int player, int card, event_t event)
   leaves_play(player, card, event, 1, 1);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
-    default_token_definition(player, card, 0x4926, &token);
+    default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
     token.color_forced = '\b';
     token.tou = 4;
     token.pow = 4;
@@ -3775,7 +3744,7 @@ int card_burrenton_bombardier(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x227dcf0; original cards/morningtide.c:3261. */
 static int thornbite_staff_effect(int player, int card, event_t event)
 {
-  int card_00;
+  int target_card;
   card_instance_t *instance;
   int result;
   card_instance_t *dying_permanent;
@@ -3818,7 +3787,7 @@ static int thornbite_staff_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }
@@ -3835,10 +3804,10 @@ static int thornbite_staff_effect(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
       result = instance->targets[0].player;
-      card_00 = instance->targets[0].card;
-      if ((-1 < result) && (-1 < card_00))
+      target_card = instance->targets[0].card;
+      if ((-1 < result) && (-1 < target_card))
       {
-        untap_card(result, card_00);
+        untap_card(result, target_card);
       }
       kill_card(player, card, KILL_EXILE);
     }

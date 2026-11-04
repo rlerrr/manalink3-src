@@ -152,7 +152,7 @@ int get_updated_equip_cost(int player, int card, int equip_cost)
           if (is_what(player, count, TYPE_ARTIFACT))
             ++art_count;
           if ((get_id(player, count) == CARD_ID_AURIOK_STEELSHAPER
-               || (get_id(player, count) == 0x4df4 && current_turn == player))
+               || (get_id(player, count) == CARD_ID_NAHIRI_STORM_OF_STONE && current_turn == player))
               && !is_humiliated(player, count, AL_STATIC))
             --new_cost;
           if (get_id(player, count) == CARD_ID_PURESTEEL_PALADIN && !is_humiliated(player, count, AL_STATIC))

@@ -1,0 +1,517 @@
+{
+  "format": 1,
+  "status": "Nine counter wrappers reconstructed (154 to 91 lines). One build, 15,169 fixed slots and 360,502 native/rebuilt/old/new record/global/result/call-trace fixtures pass; the shared storage core remains unchanged.",
+  "source": "functions/counters.c",
+  "functions": [
+    {
+      "name": "can_have_counters_placed_on_it",
+      "source": "functions/counters.c",
+      "before_definition_sha256": "074e04c4566ce0a15a7be6d72a79170ed560b0886aee5866124d5b70e34779b8",
+      "after_definition_sha256": "2afd24a220488762f769b974415fcddf43aba327b6a7e4c07892984a54beebae",
+      "before_lines": 15,
+      "after_lines": 13
+    },
+    {
+      "name": "get_updated_counters_number_as_cost",
+      "source": "functions/counters.c",
+      "before_definition_sha256": "a9a4045ee89dc28b99800b197cc967d9f64d475718be4df8cfa25d1a28cde5e0",
+      "after_definition_sha256": "e274893916a9868eeaa4158c9c5c9b8bd581a6068c188a08be24e81960da9adb",
+      "before_lines": 33,
+      "after_lines": 12
+    },
+    {
+      "name": "get_updated_counters_number",
+      "source": "functions/counters.c",
+      "before_definition_sha256": "63483f19674de0a2bcdd02419b785869151022a6220be838930b2c3feff442dd",
+      "after_definition_sha256": "5f1199bb4346f21c16774809092fd05104d5a3aa9ff97114a5687fc609c4cfc2",
+      "before_lines": 11,
+      "after_lines": 6
+    },
+    {
+      "name": "add_counters",
+      "source": "functions/counters.c",
+      "before_definition_sha256": "14e7c5b23501253834d1f3c4e6ab3ce38372cfec0648f458e280f80a0d11ffc8",
+      "after_definition_sha256": "f70aa420737d41dbf122c897538905e40a9e2547d06eee21ff6123a4ddf2a5ec",
+      "before_lines": 23,
+      "after_lines": 15
+    },
+    {
+      "name": "clear_all_counters",
+      "source": "functions/counters.c",
+      "before_definition_sha256": "40ff8b09f4171e3f0a1ce248834129c12e90a59721193676789bef23991f365d",
+      "after_definition_sha256": "35bd3296fed2611ecaa6eb9029f5e532f153f76a11efbe9619265dd53715c324",
+      "before_lines": 22,
+      "after_lines": 19
+    },
+    {
+      "name": "remove_counters",
+      "source": "functions/counters.c",
+      "before_definition_sha256": "b5064f54bb3313835b4e2dba772df5ec3739254dc6d917f91ecb8055e2129810",
+      "after_definition_sha256": "38facf99fec585f0dee2c067ba91d5a15f787a40003694c0d2210ff2e3010a39",
+      "before_lines": 10,
+      "after_lines": 5
+    },
+    {
+      "name": "remove_all_counters",
+      "source": "functions/counters.c",
+      "before_definition_sha256": "ae75975b8a1e32eddad27dba73431eb7ada6316779e25b57ae8e3a5db8eb7538",
+      "after_definition_sha256": "01756afbb0ebfc6a034ca14bd2c7035777aee90d75af7b7a39fe2041ea9efdb9",
+      "before_lines": 10,
+      "after_lines": 7
+    },
+    {
+      "name": "add_counters_predoubled",
+      "source": "functions/counters.c",
+      "before_definition_sha256": "b76afc1334b8ea7cabb4898b82df29aed461869b2a0cbce397d216730fb41463",
+      "after_definition_sha256": "b74a330e8ae8b3e80aa6adaaead3b315256882c7594b01f244044dd484a1d3a3",
+      "before_lines": 17,
+      "after_lines": 7
+    },
+    {
+      "name": "add_counters_as_cost",
+      "source": "functions/counters.c",
+      "before_definition_sha256": "2beb53ad2ac83c407a4547743e1b5d3ecde1308ddcbff91581ebad609f099d2b",
+      "after_definition_sha256": "df1d9a9dc25af36002d90c0058a6781e14642e8db9ba4d7d548f2b3c9a52a6bf",
+      "before_lines": 13,
+      "after_lines": 7
+    }
+  ],
+  "source_before_sha256": "3470fa6dcb0eac6aff393b8301823e4428e2b406cdbe945c55ff5fa2c73f059b",
+  "source_after_sha256": "137eb11e761046f81bcc1a17eae9fcf51d9e85088b5e87fea2e593fea8bf5186",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "before_rebuilt_sha256": "20bdfaf421f2ab26f04e794278c403ec673b49a9f3c1e3950236b1047b9f63de",
+  "before_debug_sha256": "26b5b8d7f112978824ea941da1f4d9c95568c77619c362d723966bd582d09f66",
+  "native_enumerators": {
+    "CARD_ID_TATTERKITE": 9691,
+    "CARD_ID_MELIRAS_KEEPERS": 11478,
+    "CARD_ID_MELIRA_SYLVOK_OUTCAST": 11635,
+    "CARD_ID_BLIGHTBEETLE": 20284,
+    "TYPE_CREATURE": 2,
+    "TYPE_EFFECT": 128,
+    "COUNTER_P1_P1": 0,
+    "COUNTER_M1_M1": 1,
+    "COUNTER_invalid": 255
+  },
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "storage_core_unchanged": {
+    "name": "add_or_remove_counters_impl",
+    "definition_sha256": "bc0627d1d3973d0c4c5aacbfc073f1bf91a6a045ef5525c3f0f3c38ace36e23a"
+  },
+  "baseline_execution": {
+    "fixtures": 360502,
+    "functions": 10,
+    "cases_by_index": [
+      139878,
+      8806,
+      8806,
+      8806,
+      8806,
+      8806,
+      8806,
+      8806,
+      150176,
+      8806
+    ],
+    "result_global_record_and_call_trace_mismatches": 0,
+    "checksum": "e71d3c58",
+    "patch_receipt_sha256": "94bbc167ae9d862d1b0e7048f4bdab6a95b92daa32004e6021ce73ad0873e541",
+    "harness_sha256": "57af8497420248df0d696f33572b77ae3cc5ac439d2f747d847e6eb11398506b",
+    "execution_log_sha256": "f07c1c2437b27754edf3358351df1451112fd093ff0e95bbd50b73d92a8d595c",
+    "fixture_driver_sha256": "aea91c386be946a540c0a26148a30e98e89fcaa5c30139eb0c7faabcf3a85858",
+    "fixture_generator_sha256": "c8a0298e7d9165db1f868e9777e72c367f181a3b8dd3bcad4202528d7bc53f64",
+    "entries": [
+      {
+        "image": 0,
+        "index": 0,
+        "name": "can_have_counters_placed_on_it",
+        "address": "0x26d44d0",
+        "size": 108,
+        "body_sha256": "13ac02676ba96fa3dc25066a291a250265f8e15131d3a809ddbe461f6e9533c0"
+      },
+      {
+        "image": 0,
+        "index": 1,
+        "name": "get_updated_counters_number_as_cost",
+        "address": "0x26d4540",
+        "size": 175,
+        "body_sha256": "d3893735c7bdbd5ed45f14aaa7dbcb89bb6904443a8ae13f2b4543aa7c8e7f60"
+      },
+      {
+        "image": 0,
+        "index": 2,
+        "name": "get_updated_counters_number",
+        "address": "0x26d4810",
+        "size": 35,
+        "body_sha256": "85d2abdb2806ade7729a9445cc13bb281789e4477439ce196572a198a386aac1"
+      },
+      {
+        "image": 0,
+        "index": 3,
+        "name": "add_counters",
+        "address": "0x26d4840",
+        "size": 136,
+        "body_sha256": "fd4ba335a296f4546802325ac33368ee4a4988119234459a73bae0de9ab16723"
+      },
+      {
+        "image": 0,
+        "index": 4,
+        "name": "clear_all_counters",
+        "address": "0x26ceef0",
+        "size": 90,
+        "body_sha256": "ab554fe05987bc500580f8ba023c22203f192a3075a10de0b68c28f7b6632c2e"
+      },
+      {
+        "image": 0,
+        "index": 5,
+        "name": "remove_counters",
+        "address": "0x26d4c10",
+        "size": 60,
+        "body_sha256": "039189ee7e1460e101dc2f77c725d6f69368a0692e2d2f46a1881906b828bccb"
+      },
+      {
+        "image": 0,
+        "index": 6,
+        "name": "remove_all_counters",
+        "address": "0x26d4c50",
+        "size": 66,
+        "body_sha256": "4bc19bd3ab96b6b7e2476264d08e580b8e0d01e39dd636142916cb2ebfcfec49"
+      },
+      {
+        "image": 0,
+        "index": 7,
+        "name": "add_counters_predoubled",
+        "address": "0x26d5970",
+        "size": 134,
+        "body_sha256": "a80a460916308bbd30ec05a380fde6ad17828c5953f732a7d6de966fac4fa74c"
+      },
+      {
+        "image": 0,
+        "index": 8,
+        "name": "add_or_remove_counters_impl",
+        "address": "0x26d0e90",
+        "size": 2106,
+        "body_sha256": "1d5d1b0578dbc9a1e70ed2d8bbc6beafec62dea56ef23b146f6d0bec4e7af633"
+      },
+      {
+        "image": 0,
+        "index": 9,
+        "name": "add_counters_as_cost",
+        "address": "0x26d5910",
+        "size": 84,
+        "body_sha256": "5226fc3089ca8e23be6aeb57c94114f86e3e055b1e627fe4f784db7872111e36"
+      },
+      {
+        "image": 1,
+        "index": 0,
+        "name": "can_have_counters_placed_on_it",
+        "address": "0x2666910",
+        "size": 96,
+        "body_sha256": "2a3166c0eb384211a65cca2322244eae29e4388a433caeeec507e9e21c9d20d0"
+      },
+      {
+        "image": 1,
+        "index": 1,
+        "name": "get_updated_counters_number_as_cost",
+        "address": "0x2661450",
+        "size": 136,
+        "body_sha256": "ce698bf44d626130ad8a70cfad7d1246ebccc741c2e25d4bf60e8e98a25ad7ba"
+      },
+      {
+        "image": 1,
+        "index": 2,
+        "name": "get_updated_counters_number",
+        "address": "0x2666cc0",
+        "size": 36,
+        "body_sha256": "6c89c1b2778eff9512ef87e3c8c6b0ee87a3567fef18d156c486e4201f468fa4"
+      },
+      {
+        "image": 1,
+        "index": 3,
+        "name": "add_counters",
+        "address": "0x2666cf0",
+        "size": 139,
+        "body_sha256": "17b90fbdc133f4dab708f36c487959ef7de1eb6525eae183a69627e1eaa46628"
+      },
+      {
+        "image": 1,
+        "index": 4,
+        "name": "clear_all_counters",
+        "address": "0x2661130",
+        "size": 90,
+        "body_sha256": "8f4be855415cb535a010a1c1768644832300ec31fc11772afe02c4f55868cee4"
+      },
+      {
+        "image": 1,
+        "index": 5,
+        "name": "remove_counters",
+        "address": "0x2667120",
+        "size": 53,
+        "body_sha256": "b963e60b239333f78906596ac72e7fc4d0cfec1189f68c0c83637b8754380479"
+      },
+      {
+        "image": 1,
+        "index": 6,
+        "name": "remove_all_counters",
+        "address": "0x2667160",
+        "size": 66,
+        "body_sha256": "1e1923394ea9ac459bbbc196c59239b56178572b8643c46479f4eaa3a1432a95"
+      },
+      {
+        "image": 1,
+        "index": 7,
+        "name": "add_counters_predoubled",
+        "address": "0x26679b0",
+        "size": 134,
+        "body_sha256": "0ef578e4049c2b335aee742e5ee7dd7be7eb924d95877f98ce413bc6dd0820d3"
+      },
+      {
+        "image": 1,
+        "index": 8,
+        "name": "add_or_remove_counters_impl",
+        "address": "0x2663420",
+        "size": 1824,
+        "body_sha256": "157bf27aab9ccc02debdb1eb66cf486efd136eb9df272fe8612323d7f8cc15be"
+      },
+      {
+        "image": 1,
+        "index": 9,
+        "name": "add_counters_as_cost",
+        "address": "0x2666c50",
+        "size": 105,
+        "body_sha256": "559665aa4515f70ec99560527eb2b36cadc2c57b8d9f7a6656cc3737bc4b15d0"
+      }
+    ],
+    "cost_guard_hoisted": true,
+    "cost_guard_callers": [
+      {
+        "caller": "get_updated_counters_number_impl",
+        "address": "0x2666970",
+        "size": 721,
+        "body_sha256": "18d39ecbc50186499080261af0640c2832c5c55733aac297aaefbea87daa10d5",
+        "worker_call": "0x26669a5",
+        "dominating_true_guards": [
+          {
+            "guard_call": "0x266698c",
+            "test": "0x2666991",
+            "branch": "0x2666993",
+            "true_target": "0x2666999"
+          }
+        ]
+      },
+      {
+        "caller": "add_counters_as_cost",
+        "address": "0x2666c50",
+        "size": 105,
+        "body_sha256": "559665aa4515f70ec99560527eb2b36cadc2c57b8d9f7a6656cc3737bc4b15d0",
+        "worker_call": "0x2666cad",
+        "dominating_true_guards": [
+          {
+            "guard_call": "0x2666c9a",
+            "test": "0x2666c9f",
+            "branch": "0x2666ca1",
+            "true_target": "0x2666ca3"
+          }
+        ]
+      }
+    ],
+    "calling_conventions": {
+      "as_cost": "regparm(3), four logical parameters",
+      "core": "regparm(3), six logical parameters",
+      "clear": "regparm(2), only target player/card retained",
+      "others": "cdecl public entries; worker calls have separate regparm adapters"
+    }
+  },
+  "preserved_native_details": [
+    "The replacement callback can change counters_added/type, but those globals are restored and its changed amount is not used for storage.",
+    "Placement restrictions still run for zero quantities when the cost helper is called directly.",
+    "Negative cost amounts bypass placement checks; predoubled placement checks still run before the zero-amount test.",
+    "Remove-all interprets only the low counter-type byte, including 255/511/-1/INT_MAX aliases.",
+    "Positive requests can retain native wraparound at extreme signed amounts; no saturation bug fix is introduced.",
+    "Activation parent redirection and callback/trap/sound/global-restore ordering remain intact."
+  ],
+  "scope": "Nine existing wrapper bodies become explicit; the shared counter-storage core remains unchanged. Native/rebuilt/old/new comparisons execute mapped DLL code with leaf-engine/data fixtures, compare complete 300-byte records and globals plus callback traces, and catch abort routes. The emitted cost worker is composed with the hoisted guard only when every compiled counters.c caller has a dominating nonzero guard edge. This is caller/storage behavior over the recorded domain, not engine-helper or whole-gameplay equivalence.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "85499e10ed5e9fbd683ec1fd5dac729e62969aefe9389ae1a20b9b3006e705ab",
+    "dbg_sha256": "f9213310f08e7a9886619662cad35b91c6862386bc34905c792fd225bd19b014",
+    "wrapper_functions": 9,
+    "executed_interfaces": 10,
+    "fixtures": 360502,
+    "cases_by_index": [
+      139878,
+      8806,
+      8806,
+      8806,
+      8806,
+      8806,
+      8806,
+      8806,
+      150176,
+      8806
+    ],
+    "record_bytes_per_instance": 300,
+    "instances_per_fixture": 4,
+    "result_global_record_and_call_trace_mismatches": 0,
+    "checksum": "e71d3c58",
+    "source_projection": "passed",
+    "storage_core_source": "unchanged",
+    "staging": "preserved",
+    "harness_sha256": "2ed6cbbe2932ad47f8bc003b2203f77a14ad0045a8ce94d09d5302c3c53f5fe0",
+    "harness_executable_sha256": "d93b3a9cd8193b014fbc21ea19aedbfd290796bba2988cc95b30a4487815f0c4",
+    "execution_log_sha256": "f07c1c2437b27754edf3358351df1451112fd093ff0e95bbd50b73d92a8d595c",
+    "patch_receipt_sha256": "9085e1509a9fc5127b2e40a284e3856e03330e1efef6f4da91c08c9db6e1b8fa",
+    "decoded_patch_fields": {
+      "call": 60,
+      "data": 56
+    },
+    "functions": [
+      {
+        "image": 1,
+        "index": 0,
+        "name": "can_have_counters_placed_on_it",
+        "address": "0x2666880",
+        "size": 108,
+        "body_sha256": "c1b42ff7f2336d912ec28c31ab3e8cc9e8c885cfb94a29f54564543e6a3afcc7"
+      },
+      {
+        "image": 1,
+        "index": 1,
+        "name": "get_updated_counters_number_as_cost",
+        "address": "0x26668f0",
+        "size": 123,
+        "body_sha256": "bd185797f923c1ece3511801338a34e0ffce8b498e1d5ccb8bb148c66a28cf54"
+      },
+      {
+        "image": 1,
+        "index": 2,
+        "name": "get_updated_counters_number",
+        "address": "0x2666c10",
+        "size": 36,
+        "body_sha256": "01a03d6884bbca666e35b2b3268e2a9b47153a8aa0a5548f9d18d6ed9ebd4b1b"
+      },
+      {
+        "image": 1,
+        "index": 3,
+        "name": "add_counters",
+        "address": "0x2666c40",
+        "size": 138,
+        "body_sha256": "2bae9d05c63a99df2c35a3aa9df2fa679e9ab2f9ac6db7a80be98d8e836dd37e"
+      },
+      {
+        "image": 1,
+        "index": 4,
+        "name": "clear_all_counters",
+        "address": "0x2661130",
+        "size": 90,
+        "body_sha256": "0494cf80d37918eb152418c426e6289184d3d9c66359886179df328c4eecb9e6"
+      },
+      {
+        "image": 1,
+        "index": 5,
+        "name": "remove_counters",
+        "address": "0x2667070",
+        "size": 60,
+        "body_sha256": "8ef5f7e82209050a08db3cb67bea969a26ecf2b0aea3f3cf8188ecb228b872e6"
+      },
+      {
+        "image": 1,
+        "index": 6,
+        "name": "remove_all_counters",
+        "address": "0x26670b0",
+        "size": 66,
+        "body_sha256": "749f04cce66acfd0d58334ea45373bce7b1132899e4bc4602af8b174c752d2ff"
+      },
+      {
+        "image": 1,
+        "index": 7,
+        "name": "add_counters_predoubled",
+        "address": "0x2667900",
+        "size": 136,
+        "body_sha256": "df0f10afd12fa0b8eb6f4b077292497be20e99e9b5f733721a9ca552a13f1c6c"
+      },
+      {
+        "image": 1,
+        "index": 8,
+        "name": "add_or_remove_counters_impl",
+        "address": "0x2663390",
+        "size": 1824,
+        "body_sha256": "2045832fd4b6bf17a791bdcf45eaa8457627b1264cbd6897e6ced3502ac3eaf8"
+      },
+      {
+        "image": 1,
+        "index": 9,
+        "name": "add_counters_as_cost",
+        "address": "0x2666970",
+        "size": 79,
+        "body_sha256": "016521a7081a39737462ed04251c3ea9fb7d96adf1f58b8199b037f45ffbc632"
+      }
+    ],
+    "cost_guard_hoisted": false,
+    "cost_guard_callers": [],
+    "cost_guard_reachable_paths": [],
+    "calling_conventions": {
+      "as_cost": "regparm(3), four logical parameters",
+      "core": "regparm(3), six logical parameters",
+      "clear": "regparm(2), only target player/card retained",
+      "others": "cdecl public entries; worker calls have separate regparm adapters"
+    },
+    "domain": {
+      "counter_amounts": [
+        -2147483648,
+        -513,
+        -256,
+        -255,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        254,
+        255,
+        256,
+        513,
+        2147483647
+      ],
+      "counter_types": [
+        -2147483648,
+        -257,
+        -256,
+        -1,
+        0,
+        1,
+        2,
+        12,
+        13,
+        123,
+        186,
+        254,
+        255,
+        256,
+        257,
+        511,
+        2147483647
+      ],
+      "placement_card_ids": [
+        0,
+        65535
+      ],
+      "placement_humiliation_states": [
+        0,
+        1
+      ],
+      "storage_primary_counter_types": [
+        0,
+        13
+      ],
+      "primary_slot_counts": [
+        0,
+        255
+      ],
+      "additional_random_storage_fixtures": 100000,
+      "callback_mutations": "Counter globals, enable masks, silent-sound mode and counter bytes may change inside fixture callbacks. Abort paths are caught with setjmp/longjmp."
+    },
+    "scope": "Nine existing wrapper bodies become explicit; the shared counter-storage core remains unchanged. Native/rebuilt/old/new comparisons execute mapped DLL code with leaf-engine/data fixtures, compare complete 300-byte records and globals plus callback traces, and catch abort routes. The emitted cost worker is composed with the hoisted guard only when every compiled counters.c caller has a dominating nonzero guard edge. This is caller/storage behavior over the recorded domain, not engine-helper or whole-gameplay equivalence."
+  }
+}

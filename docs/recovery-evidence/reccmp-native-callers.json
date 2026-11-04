@@ -1,0 +1,673 @@
+{
+  "format": 1,
+  "status": "Seven native caller restorations built; all eleven compiled call contracts verified.",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "before_inputs": {
+    "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+    "C:\\dev\\manalink3-src\\ManalinkEh.dll": "99726e599d2c2b774933548e83df300cd3a4671242cce03271693d1ed0f60d87",
+    "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "1e2946472bf7419018669cbd1cc6c730e6a457d71aceec6917867cc68a83b962"
+  },
+  "before_setup_sha256": "8df73f6a6dae5a118e959f0d8f1e89d40c2553f3c2a9683fa26307cf50bf4bc2",
+  "historical_comparison_inputs": {
+    "setup_sha256": "a30c17b44cd21b80da43fd526d8e68226692b109d06b91b1e545b3175c2631c6",
+    "report_sha256": "400bf85cb2091f774897ca45e0b710417491471b3ca6503026ecc40eb23a5905",
+    "inputs": {
+      "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dll": "8cbc62ccae8f1d1e0af97566961f043da5b113ba737ae4ce5fedeeafa9d05d41",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "b4e6eed1b5d4cd16ef62f6a3d9da39ca28b29c9772bad17097f4a385876be465"
+    },
+    "metadata_sha256": "2858270a97c13c27365bacd1c82badb4ab00d816f814bcf82707203b820bf5be",
+    "metadata_snapshot": ".recovery\\reccmp\\source-bindings-c622.metadata.csv",
+    "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "comparator_source_sha256": {
+      "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+      "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+      "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+      "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b"
+    },
+    "command": [
+      "reccmp-reccmp",
+      "--target",
+      "MANALINK2022",
+      "--no-color",
+      "--json",
+      ".recovery/reccmp/source-bindings-c622.json",
+      "--silent"
+    ],
+    "exit_code": 0
+  },
+  "historical_report_current": false,
+  "functions": [
+    {
+      "source": "functions/functions.c",
+      "name": "check_battlefield_for_targettable_id",
+      "native_address": "0x26819a0",
+      "native_size": 329,
+      "native_body_sha256": "da7dbed51187604bffeece3749df160b4d6a7cfb36b9874ccdd2e94d7b31dc61",
+      "before_rebuilt_address": "0x2688b70",
+      "before_rebuilt_size": 313,
+      "before_rebuilt_body_sha256": "b31a4e9ff8f76cd289993b1b6678c51031fe63beb9e70f101aacfccda0de36ce",
+      "before_rebuilt_bytes": "5589e557565383ec108b75148b5d1083feff740f83fb017e17837d08020f847d00000031ff83c41089f85b5e5f5dc3908b3c9d20f54e0085ff7ee831ffeb0b9047393c9d20f54e007ed9897c2404891c24e87a43feff85c074e6897c2404891c24e8fa45feff39f075d68b450c897c240c894424048b4508895c2408890424e8bcf9040085c075b88b4d1885c90f849c000000837d180175a7eb8a8d7426009031db8b049d20f54e0031ff85c07f13eb6f8db4260000000047393c9d20f54e007e5e897c2404891c24e80243feff85c074e6897c2404891c24e88245feff39f075d68b450c897c240c895c240889442404c7042402000000e843f9040085c075b78b551885d27427837d18010f8413ffffff47393c9d20f54e007fa68d7426004383fb020f8578ffffffe9f4feffffbf01000000e9ecfeffff",
+      "historical_report_score": 0.7414634146341463,
+      "source_before_definition_sha256": "7f063d4b77822d9ed9f8c5bf2de12c9faa8fe5f9db10b296e4a7cd591d4c7b6d",
+      "source_after_definition_sha256": "b285d470aba18cd272644a77162f040b900770898f19e28e059b21642b22bd86",
+      "contract": {
+        "callee": "is_protected_from",
+        "calls": 2,
+        "arguments": {
+          "16": 5
+        },
+        "forbidden_callee": "is_protected_from_me",
+        "kind": "protection_dispatch"
+      },
+      "reason": "Restore the native protection dispatcher, protected/source argument order and targeting mode 5 in both search paths. The retained deprecated helper only checks a small list of card-specific restrictions."
+    },
+    {
+      "source": "functions/functions.c",
+      "name": "pick_targets_for_multidamage",
+      "native_address": "0x2687e00",
+      "native_size": 1253,
+      "native_body_sha256": "a350240f0bfe25d17f74d67c59520cc8b117320bbf466fedca077b23181f4b76",
+      "before_rebuilt_address": "0x269fa40",
+      "before_rebuilt_size": 1218,
+      "before_rebuilt_body_sha256": "f9ed4983e1c5eb7b5ff1ff72b9b7206cfc0b994b6ca485101e43794ce792f813",
+      "before_rebuilt_bytes": "5589e557565383ec248b7d088b450c89442404893c248b7518e812cdfcff8945e88b451c89442404c7042400000000e89ce8010083ff010f84fb0000008b4d1031dbc745ec00000000c745f00000000085c90f8eb1000000897d088b7de8eb2d8d04df8b50788b407483faff0f85a6000000837c85ec01744ac74485ec01000000438db600000000395d107e3d893424e82bc2030085c074318d44df74c744240cac5c7100894424108b450c894424048b450889742408890424e831cb030085c0759d8b464485c074be85db7e3b8b45e88d70748d7cd8748b460483f8ff7422894424048b06890424e842ccfcff8b5008f7c200001000740981e2ffffefff89500883c60839f775cf83c42489d85b5e5f5dc38d7426009089542404890424e80cccfcff438b500881ca00001000895008e952ffffff669031db817e0c001200000f843f030000a120f54e0085c00f8ec700000031ff3b5d100f8dbc00000089751889fe8b7d10eb1c8db4260000000046393520f54e000f8e9b00000039fb0f8d9300000089742404c7042400000000e86bd3fcff85c074d7c74424080200000089742404c7042400000000e86f5affff85c074bb8b450c8974240cc74424080000000089442404c7042401000000e89c89030085c07598c744240cffffffffc74424083300000089742404c7042400000000e8f824feff3945140f8c6fffffff8b45e88d04d843c7407400000000897078e959ffffff908b7518395d100f8ee5feffff8b7e4485ff0f85dafeffffa120f54e0085c00f8ed500000031d2897de48975188b7d1089d6eb1a8d7426009046393520f54e000f8e9a00000039fb0f8da4feffff89742404c7042400000000e88bd2fcff85c074d7c74424080200000089742404c7042400000000e88f59ffff85c074bb8b450c8974240cc74424080000000089442404c7042401000000e8bc88030085c07598c744240cffffffffc74424083300000089742404c7042400000000e81824feff3945140f8d6fffffff8b45e88d04d843c7407400000000897078e959ffffff3b5d108b7de48b75180f8d03feffff8b4e4485c90f85f8fdffff8b1524f54e0085d20f8ec700000089751889fe8b7d10eb1c8db4260000000046393524f54e000f8e9d00000039fb0f8dc4fdffff89742404c7042401000000e8abd1fcff85c074d7c74424080200000089742404c7042401000000e8af58ffff85c074bb8b450c8974240cc74424080100000089442404c7042401000000e8dc87030085c07598c744240cffffffffc74424083300000089742404c7042401000000e83823feff3945140f8d6fffffff8b45e88d04d843c7407c0100000089b080000000e956ffffff3b5d108b75180f8d23fdffff8b764485f60f8518fdffffa124f54e0085c00f8e0bfdffff8b7d10eb1a8d7426009046393524f54e000f8ef4fcffff39fb0f8decfcffff89742404c7042401000000e8d3d0fcff85c074d7c74424080200000089742404c7042401000000e8d757ffff85c074bb8b450c8974240cc74424080100000089442404c7042401000000e80487030085c075988b45e88d04d843c7407c0100000089b080000000eb828b45e831dbc7407400000000c74078ffffffff8b450cc744240c000000008974240889442404c7042401000000e868c0030085c00f95c3e985fcffff",
+      "historical_report_score": 0.8397435897435898,
+      "source_before_definition_sha256": "cc523664af08221cdd29ca20841225eef440c5e3b2070bffa193ab15e8ec23e5",
+      "source_after_definition_sha256": "6d01ed86f00c011c4e491b8d9c730977a7f055ccef4c73b793a2761d27fac279",
+      "contract": {
+        "callee": "is_protected_from",
+        "calls": 4,
+        "arguments": {
+          "16": 5
+        },
+        "forbidden_callee": "is_protected_from_me",
+        "kind": "protection_dispatch"
+      },
+      "reason": "Restore all four native AI target-protection checks through is_protected_from(..., IPF_TARGET), preserving the native target-index and selection behavior elsewhere."
+    },
+    {
+      "source": "cards/mirrodin.c",
+      "name": "card_thought_prison",
+      "native_address": "0x25474e0",
+      "native_size": 895,
+      "native_body_sha256": "e041bd38196d2580fd6ff8b0600ece988353df08c0b54f76bb62d7f23c8652dc",
+      "before_rebuilt_address": "0x237a5f0",
+      "before_rebuilt_size": 887,
+      "before_rebuilt_body_sha256": "5222088cd1932b79ec454793f4717f2eca6acbbb28ba5d35426437bb5a506476",
+      "before_rebuilt_bytes": "5589e557565381ec680100008b75108b5d088b7d0c83fe6c0f84b2010000891c24e87acf30008974240885c0897c24040f95c025ff000000891c24408944240ce8fb25320081fe00510000742b813d782d7a00d3000000747b81fe001e00000f84ab01000081c46801000031c05b5e5f5dc38db6000000008d85c8feffffc744240c0200000089442408897c2404891c24e8ca103600897c2404891c24c785d4feffff00100000e8d4202f008985a8feffff8d85c8feffff890424e85016360085c00f8598010000813d782d7a00d300000075913b3d8c397a000f8579ffffff3b1d848c73000f856dffffff391d1c7e73000f8561ffffff897c2404891c24e87c202f008985a4feffff837838010f8e45ffffffba01000000895d08897d0c89d38975108d7426008b85a4feffff8b7cd878a1209a730089442404a17cc16200897c240cc7442408ffffffff890424e89c8d310089c6a1209a730089442404a17cc16200890424e8b4da3200893c248985a8feffffe8865c32003985a8feffff74168b85a4feffff433958380f8ecd01000085f6749266908b5d088b7d0c8b7510c744241400000000c744241002000000c744240cff00000089742408897c2404891c24e8b7ce3200e98bfeffff66903b3d8c397a000f844c010000891c24e8bccd300085c07458c744240c02000000c74424086c000000897c2404891c24e83c243200e944feffff8db42600000000a17cc16200897c240c895c2408c744240402000000890424e883c012fe81c4680100005b31c05e5f5dc38db600000000c744240c0100000089742408897c2404891c24e8e8233200e9f0fdffff8d76008d85c8feffffc744240487557402890424e89a20360085c00f844afeffff8d851cffffffc744240401000000890424e8ecd033008d95acfeffff8b85a8feffff89542408895c240466c7458801008b4874890c24e8f7e130008d851cffffff8d95acfeffff89442404891424c785b4feffff02000000e875c0320085c00f88e5fdffff8b8da8feffff8b513883fa090f8fd3fdffff85d27f05ba010000008b8da8feffff8944d1784289513889442408897c2404891c24e834913100e9a7fdffff8db42600000000391d848c73000f85a8feffff83fb010f859ffeffff8b15c4f14e0085d20f8f91feffffa1a8317a002de8030000a3a8317a00e97dfeffff89f08b5d088b7d0c8b751085c00f84e7fcffffe92afeffff",
+      "historical_report_score": 0.8910411622276029,
+      "source_before_definition_sha256": "0dbc4c3245485cc13dc0d12e5a478e9c3405cc190f55e06c82dec0484c6504dd",
+      "source_after_definition_sha256": "e03f2f666a871522e00942f69594713971a9830f3e105e926ac67a8ab403fead",
+      "contract": {
+        "callee": "sp_ability_trigger",
+        "calls": 1,
+        "arguments": {
+          "0": 2,
+          "8": 2,
+          "12": 255,
+          "16": 0
+        },
+        "forbidden_callee": "new_specific_spell_played",
+        "kind": "spell_trigger"
+      },
+      "reason": "Restore the native source-card spell-ability dispatcher. TYPE_ANY was passed as new_specific_spell_played's t_player argument, preventing the intended trigger and using a different resolution path."
+    },
+    {
+      "source": "cards/guildpact.c",
+      "name": "graven_dominator_legacy",
+      "native_address": "0x252aa10",
+      "native_size": 451,
+      "native_body_sha256": "4864f6793db84751f116f64cbbe452295589584955fa130eeb720ba936fca07f",
+      "before_rebuilt_address": "0x21f36a0",
+      "before_rebuilt_size": 467,
+      "before_rebuilt_body_sha256": "2906b4669fef1359a0235b8f0f73227c3e8bf45a250ee85cb7a927a5d890179c",
+      "before_rebuilt_bytes": "5589e557565381ecec0400008b4508898538fbffff8b450c898534fbffff8b451089852cfbffff3dba00000074218b8d2cfbffff8b9534fbffff8b8538fbffff81c4ec0400005b5e5f5de9f1f9ffff31c0b92e0100008dbd3cfbfffff3ab8b3d708662008b1cbd20f54e004b784d8d04ff8d0447c1e00329f88db4853cfbffff895c2404893c24e81498470085c0741fc744240802000000895c2404893c24e81c1f4a0085c07407c7049e010000004b83fbff75cb8b3d70866200bb0100000029fb89de8b1c9d20f54e004b784d8d04f68d0446c1e00329f08dbc853cfbffff895c2404893424e8b497470085c0741fc744240802000000895c2404893424e8bc1e4a0085c07407c7049f010000004b83fbff75cb8b3d70866200c78530fbffff000000008b9530fbffff31d78d04ff8d1c478d8538fbffffc1e30329fbc1e3028db41d94fdffff01c3eb0b8d74260083ee0439f374558b0685c074f38944240c8b8534fbffff894424048b8538fbffffc744242000000000c744241c00000000c744241800000000c744241401000000c744241001000000897c240889042483ee04e89817460039f375ab8b8530fbffff40898530fbffff8b8530fbffff83f8020f8466feffff8b3d70866200e952ffffff",
+      "historical_report_score": 0.925,
+      "source_before_definition_sha256": "884f82bef7b707591eac8a2365064f6ef1e4576ac5e9946661b0669880ad7375",
+      "source_after_definition_sha256": "cb3f7824421a9978a2b2f554ca9c03d7b7e025c8aef1d2c443ffe85b06414efd",
+      "contract": {
+        "callee": "real_set_pt",
+        "calls": 1,
+        "arguments": {
+          "16": 1,
+          "20": 1,
+          "24": 1
+        },
+        "forbidden_callee": "set_pt_and_abilities_until_eot",
+        "kind": "pt_caller_identity"
+      },
+      "reason": "Restore the native seven-argument real_set_pt call with mode 1. The old wrapper is equivalent for these known target and zero-ability operands; the native marked-value target is deliberately preserved."
+    },
+    {
+      "source": "cards/guildpact.c",
+      "name": "card_graven_dominator",
+      "native_address": "0x252e2a0",
+      "native_size": 706,
+      "native_body_sha256": "bb0263563d62ff9d8c9f3865a2710bf3e03c60752cde1c035b4279719c826e35",
+      "before_rebuilt_address": "0x21f6fa0",
+      "before_rebuilt_size": 722,
+      "before_rebuilt_body_sha256": "55cfbff9547773735056ad0bded137e11a4c4a46789f6a486da5bd80bb62af31",
+      "before_rebuilt_bytes": "5589e557565381ece00400008b5d108b550c89d98b4508e8b4c3ffff8b450c894424048b4508c744240c02000000895c2408890424e8963a4a0085c00f85d301000081fbba000000740d81c4e004000031c05b5e5f5dc331c0b92e0100008dbd3cfbfffff3ab8b3d708662008b1cbd20f54e004b785e8d04ff8d0447c1e00329f88db4853cfbffff895c2404893c24e80c5f470085c07430c744240802000000895c2404893c24e814e6490085c07418397d080f8550010000395d0c0f85470100008db6000000004b83fbff75ba8b3d70866200bb0100000029fb89de8b1c9d20f54e004b78658d04f68d0446c1e00329f08dbc853cfbffff8db42600000000895c2404893424e8945e470085c07430c744240802000000895c2404893424e89ce5490085c074183975080f85cc000000395d0c0f85c30000008db6000000004b83fbff75ba8b3d70866200c78538fbffff000000008b9538fbffff31d78d04ff8d1c478d8538fbffffc1e30329fbc1e3028db41d94fdffff01c3eb0a8d760083ee0439f3744f8b0685c074f38944240c8b450c894424048b4508c744242000000000c744241c00000000c744241800000000c744241401000000c744241001000000897c240889042483ee04e86ede450039f375b18b8538fbffff40898538fbffff8b8538fbffff83f8020f8458feffff8b3d70866200e959ffffffc7049f01000000e937ffffffc7049e01000000e9b3feffff8b450c894424048b4508890424e849a4470085c00f8413feffff8b450c8d953cfbffff894424048b450889542408890424c744240c02000000e85d454e008b450c894424048b4508890424c78580fbffff00000000e8615547008d953cfbffff89142489c7e8e14a4e008d953cfbffff85c00f84b5fdffffc7442404d97f7302891424e8c3564e0085c00f849dfdffff8b4778894424108b4774c7442408a0361f028944240c8b450c894424048b4508890424e843094900e970fdffff",
+      "historical_report_score": 0.8907103825136612,
+      "source_before_definition_sha256": "359329e9abb13181e7d141792fa90573ca3cae62da040f527e88258050010671",
+      "source_after_definition_sha256": "47603312c55b5d04b67872b10e08785367c3c39c10bc0672ffdf76327c7994e9",
+      "contract": {
+        "callee": "real_set_pt",
+        "calls": 1,
+        "arguments": {
+          "16": 1,
+          "20": 1,
+          "24": 1
+        },
+        "forbidden_callee": "set_pt_and_abilities_until_eot",
+        "kind": "pt_caller_identity"
+      },
+      "reason": "Restore the same native real_set_pt caller in the card handler, preserving its original source exclusion and marked-value indexing."
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "name": "card_dispossess",
+      "native_address": "0x22dbd60",
+      "native_size": 821,
+      "native_body_sha256": "2b4994be03fac06ccb853d55078ac76ad2ed7ea59785b706931727a34d8b8315",
+      "before_rebuilt_address": "0x20556d0",
+      "before_rebuilt_size": 859,
+      "before_rebuilt_body_sha256": "9b7e3e25dfd54c57714cc60094265659106a552e09aff880ec390cd4e7ed1c14",
+      "before_rebuilt_bytes": "5589e557565381ec940000008b5d1083fb6c0f84d800000083fb74745383fb71744e81fb00040000740e31c081fb005400000f85ac0000008b450c8d75a0894424048b4508890424c744240c0000000089742408e827606800b8010000008b5508c745ac0010000029d08945a4eb3b908b450c8b4d0889442404bf010000008b45088d75a029cfc744240c0000000089742408890424e8e55f6800c745ac00100000897da483fb7174668b450cc744241c00000000894424048b4508c744241801000000c7442414798b720289742410c744240c40000000895c2408890424e8bc5c650081c4940000005b5e5f5dc3908b0d8c397a0031c0394d0c75e78b15848c730039550875dce92bffffff8d7600893424e8c868680085c00f8486010000833d74857200017417837d08010f8595010000f60540067900020f858801000089f031d2895d1089fe89d389c7eb2c90c74424084000000089442404c70424ffffffffe828fe630085c00f858001000083c30481fbd0070000740f8b04b530704d008b041883f8ff75c689f88b5d1089f789c68b14bd18704d00895d1089759c89d38d82d007000089c6eb2b8d742600c74424084000000089442404c70424ffffffffe8c8fd630085c00f856001000083c30439de74078b0383f8ff75d283c9ff8b5d10837d08018b759c0f84630100008db426000000008d04c931d2894d98668b14c534707e0089142489559ce8bde063008b4d988944241c8b450c894424048b4508c744243400000000c744243000000000c744242c00000000c744242800000000c744242401000000c744242001000000894c2418c7442414528b7202c7442410558b7202c744240c588b7202c74424086d000000890424e860e961008b559c8b4508c744241000000000c744240cffffffff89542408897c2404890424e8ba0365008b450cc744240802000000894424048b4508890424e870986100e9e5fdffff8d7600c744240c40000000c7442408ffffffffc744240400000000c704245b8b7202e83473690089c2eb9389f889f789da89c68b04bd30704d008b5d108b0c1083f9ff0f8485feffff837d08010f85e0feffffb8640000008b15a8317a0001c28915a8317a00e9c8feffff89da8b759c837d08018b5d108b0a0f85b4feffff31c083f9ff0f95c048243883c064ebc9b89cffffffebc2",
+      "historical_report_score": 0.5179856115107914,
+      "source_before_definition_sha256": "2d6d199e27606af01eab8163d101718f31142d63ad18f032f839c20ceae0304b",
+      "source_after_definition_sha256": "821690218f09bc40d75d107df86d7ad5d72dbe555763b88364a0c51d10c34094",
+      "contract": {
+        "callee": "choose_a_card",
+        "calls": 1,
+        "arguments": {
+          "4": 4294967295,
+          "8": 64
+        },
+        "forbidden_callee": "choose_a_card_test_ct",
+        "kind": "chooser_caller_identity",
+        "prompt": "Choose an artifact card name."
+      },
+      "reason": "Restore the native three-argument chooser API. Its implementation supplies the same NULL constraints internally; this is caller-source fidelity, not a new GUI recovery."
+    },
+    {
+      "source": "cards/visions.c",
+      "name": "card_natural_order",
+      "native_address": "0x201c310",
+      "native_size": 473,
+      "native_body_sha256": "2a2337d874050af9907e8624be15f23f462548d9d324245fa88076a2b942294e",
+      "before_rebuilt_address": "0x2601fb0",
+      "before_rebuilt_size": 476,
+      "before_rebuilt_body_sha256": "871023dd8a4f9ca8c4d1b7b635e16b3846029a60090639403b46a7ca7c5912aa",
+      "before_rebuilt_bytes": "5589e557565381ec5c010000837d10748b75088b7d0c0f8413010000837d106c0f84e2000000837d10710f95c2817d10005400000f95c084c2740d817d10000400000f8590010000c744240c03000000c74424081ac47502897c2404893424e81c0909008d9db8feffff891c2489442408c744240464000000e8c2ba0b00895c24088d9d1cffffffc744240402000000891c24e8d8570b00c744240808000000897c2404893424e854090900837d107189458c0f85dd000000895c2418c744241402000000c744241000000000c744240c04000000c74424080100000089742404893424e807010e00c744240802000000897c2404893424e853d10600e9940000008db60000000031c03b3d8c397a000f85b70000003b35848c73000f85ab000000a1a8317a0083c060a3a8317a00c744240c03000000c74424081ac47502897c2404893424e8350809008d9db8feffff891c2489442408c744240464000000e8dbb90b00895c24088d9d1cffffffc744240402000000891c24e8f1560b00c744240808000000897c2404893424e86d08090089458c8b4510895c241cc744241800000000c744241400000000c744241000000000c744240c0004000089442408897c2404893424e8f3920a0081c45c0100005b5e5f5dc331c0ebf1",
+      "historical_report_score": 0.47058823529411764,
+      "source_before_definition_sha256": "9bac0f6f6c2e520368a50862e6b1e9830d535aa76fc3572b1ed99022ae49c319",
+      "source_after_definition_sha256": "bb5dace43c0b97534f7b4ca898b96a8ae0faff682f2fa0500b3138b8c7fa276a",
+      "contract": {
+        "callee": "generic_spell",
+        "calls": 1,
+        "arguments": {
+          "12": 32768,
+          "16": 0,
+          "20": 0,
+          "24": 0
+        },
+        "kind": "sacrifice_mode"
+      },
+      "reason": "Restore native generic_spell mode 0x8000, using the existing green-creature test as the sacrifice filter. The creature-cost mode 0x400 follows a different helper branch."
+    }
+  ],
+  "files": [
+    {
+      "source": "functions/functions.c",
+      "before_source_sha256": "bf5b86bd456facd60386ed5bda2564493074214ec11031703664e49c64abc06a",
+      "after_source_sha256": "59bf91b238d338909dcfabbae04f246dcfc52b4de90d14f3103ab5e5918e8b36",
+      "before_bytes_sha256": "6ab9e6e3a9f21cbbab0b1b58a0618de068aa0843cef506fa11b19e97b1b6e165"
+    },
+    {
+      "source": "cards/mirrodin.c",
+      "before_source_sha256": "2d998d79daf89c05e1cc8a57a8e768ecf01bf62f61861cea7596df3c11304170",
+      "after_source_sha256": "fbd4551810046b34c5ec164d11aabec46fdb2f396bc6ecdf7487595a7d748fa1",
+      "before_bytes_sha256": "7af39b7fbcbee7f5fa1b0c8ba2798818225f15728e862d4d5b2d2a67e5a4288e"
+    },
+    {
+      "source": "cards/guildpact.c",
+      "before_source_sha256": "429280108e2549b8786ca59c25312c7803826e229d1626707909e9841dc75b2f",
+      "after_source_sha256": "d6aa5d804f1c3a87125473162f0cb080a17c3657323258f16168a6356057ef1b",
+      "before_bytes_sha256": "e182332b3088669e9919fbd313c77f6e5931dc6c7be3a817419a215458f90298"
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "before_source_sha256": "0fd006bacdad2105529bab80b5e9fa8834e3ae463fab1cb9fc83df75fd1109e4",
+      "after_source_sha256": "97211e0a4106712dc504283c07e1bfbcac3b904a73dd641d3d4543943354512f",
+      "before_bytes_sha256": "2f34376c873eb1cde59fe8b3db3641c98f70a84b3aff6cc5f0715a13cbcd6f98"
+    },
+    {
+      "source": "cards/visions.c",
+      "before_source_sha256": "27a2aa4ea42a1b53f8ae951f0fef67027f22c573be22d506c2fb560bf27e8cb6",
+      "after_source_sha256": "ce232beac421a6abc707b198d8332af53f490baacaed2913087bbcf5223f1761",
+      "before_bytes_sha256": "60eea2d398f02e9088af94c3d8d1f42794da626801b0afeba3e68119bc275912"
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "review": [
+    "The preceding goal turn changed ten source functions and completed focused native checks; it was progress. This batch starts from their hash-checked successful build and preserves the existing index.",
+    "The C622 full report is a discovery snapshot. Fresh setup/debug bounds and actual current bytes are used for this batch; historical rebuilt RVAs are not reused after linking.",
+    "Full-report callee-family counts identify exactly two native callers still using the deprecated protection helper, plus Thought Prison using the wrong spell-trigger family. The two remaining old protection calls are in unbuilt recoded_cards.c; that file has no emitted current DWARF ranges and is not rewritten without native caller evidence.",
+    "Natural Order was found by comparing same-callee outgoing constant arguments in single-call functions. The native generic_spell mode is 0x8000 at 0x201c3dc; source test initialization and control flow were separately inspected before changing the flag.",
+    "The two Graven Dominator calls and Dispossess have equivalent current wrapper behavior for these operands. Restoring their explicitly identified native callees improves source/call-graph fidelity, not gameplay semantics.",
+    "Repeated Aura masks group the same event set differently (600/700 versus 700/4700 plus other tests); no macro is rewritten to force a preferred GCC block layout. Moved branches, masked type shifts, Kaya threshold encodings and split helper guards remain unchanged.",
+    "Raw historical decompiler exports were used only as reading aids; the native instruction stream, exact COFF callees, current source and fresh debug bounds are authoritative. No unverified Ghidra instance was treated as the release image.",
+    "One combined build and focused native caller checks follow. Full comparison and historical recovery replay are deferred.",
+    "Focused raw-operand verification caught the Thought Prison type-filter assumption before publication: native sp_ability_trigger uses TYPE_ANY (0xff), alongside controller ANYBODY (2), not TYPE_NONE. The final source preserves both distinct arguments."
+  ],
+  "scope": "Eleven native call sites in seven functions. Three caller restorations are explicitly behavior-preserving API simplifications. No whole-function or whole-game equivalence claim.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "c074bc8ffe14d98439387ea8e3efff34963b2175908e033028e76d761aaabed9",
+    "dbg_sha256": "8d823fc57e598465c3fae4ef0b6f213e445c447e1d7fd057250dd603569a6bdb",
+    "functions": [
+      {
+        "source": "functions/functions.c",
+        "name": "check_battlefield_for_targettable_id",
+        "address": "0x2688b50",
+        "size": 329,
+        "body_sha256": "ae243563390a60d3f38f6d8569c2db8b5299540359a026e7e92de02176aa7b9d",
+        "kind": "protection_dispatch",
+        "sites": [
+          {
+            "native_call": "0x2681a27",
+            "current_call": "0x2688bd7",
+            "callee": "is_protected_from",
+            "native_arguments": {
+              "16": {
+                "address": "0x2681a0d",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            },
+            "current_arguments": {
+              "16": {
+                "address": "0x2688bbd",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            }
+          },
+          {
+            "native_call": "0x2681aa8",
+            "current_call": "0x2688c58",
+            "callee": "is_protected_from",
+            "native_arguments": {
+              "16": {
+                "address": "0x2681a8d",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            },
+            "current_arguments": {
+              "16": {
+                "address": "0x2688c3d",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            }
+          }
+        ]
+      },
+      {
+        "source": "functions/functions.c",
+        "name": "pick_targets_for_multidamage",
+        "address": "0x269fa30",
+        "size": 1253,
+        "body_sha256": "396595ceccba9aa268581d7912c742174b40907d734b7968af4f0ef04f3c6d73",
+        "kind": "protection_dispatch",
+        "sites": [
+          {
+            "native_call": "0x2687fd7",
+            "current_call": "0x269fc07",
+            "callee": "is_protected_from",
+            "native_arguments": {
+              "16": {
+                "address": "0x2687fb8",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            },
+            "current_arguments": {
+              "16": {
+                "address": "0x269fbe8",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            }
+          },
+          {
+            "native_call": "0x26880bf",
+            "current_call": "0x269fcef",
+            "callee": "is_protected_from",
+            "native_arguments": {
+              "16": {
+                "address": "0x26880a0",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            },
+            "current_arguments": {
+              "16": {
+                "address": "0x269fcd0",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            }
+          },
+          {
+            "native_call": "0x26881a7",
+            "current_call": "0x269fdd7",
+            "callee": "is_protected_from",
+            "native_arguments": {
+              "16": {
+                "address": "0x2688188",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            },
+            "current_arguments": {
+              "16": {
+                "address": "0x269fdb8",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            }
+          },
+          {
+            "native_call": "0x2688287",
+            "current_call": "0x269feb7",
+            "callee": "is_protected_from",
+            "native_arguments": {
+              "16": {
+                "address": "0x2688268",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            },
+            "current_arguments": {
+              "16": {
+                "address": "0x269fe98",
+                "instruction": "mov dword ptr [esp + 0x10], 5",
+                "value": 5
+              }
+            }
+          }
+        ]
+      },
+      {
+        "source": "cards/mirrodin.c",
+        "name": "card_thought_prison",
+        "address": "0x237a5d0",
+        "size": 895,
+        "body_sha256": "d1047b97f5674a528fb40152d52d64bf71cf730f1b10529f965ab799384c4544",
+        "kind": "spell_trigger",
+        "sites": [
+          {
+            "native_call": "0x25476ac",
+            "current_call": "0x237a79c",
+            "callee": "sp_ability_trigger",
+            "native_arguments": {
+              "0": {
+                "address": "0x25476a5",
+                "instruction": "mov dword ptr [esp], 2",
+                "value": 2
+              },
+              "8": {
+                "address": "0x2547699",
+                "instruction": "mov dword ptr [esp + 8], 2",
+                "value": 2
+              },
+              "12": {
+                "address": "0x2547691",
+                "instruction": "mov dword ptr [esp + 0xc], 0xff",
+                "value": 255
+              },
+              "16": {
+                "address": "0x2547689",
+                "instruction": "mov dword ptr [esp + 0x10], 0",
+                "value": 0
+              }
+            },
+            "current_arguments": {
+              "0": {
+                "address": "0x237a795",
+                "instruction": "mov dword ptr [esp], 2",
+                "value": 2
+              },
+              "8": {
+                "address": "0x237a789",
+                "instruction": "mov dword ptr [esp + 8], 2",
+                "value": 2
+              },
+              "12": {
+                "address": "0x237a781",
+                "instruction": "mov dword ptr [esp + 0xc], 0xff",
+                "value": 255
+              },
+              "16": {
+                "address": "0x237a779",
+                "instruction": "mov dword ptr [esp + 0x10], 0",
+                "value": 0
+              }
+            }
+          }
+        ]
+      },
+      {
+        "source": "cards/guildpact.c",
+        "name": "graven_dominator_legacy",
+        "address": "0x21f36a0",
+        "size": 451,
+        "body_sha256": "c50d9937650a99474d28075e7990852d0e71e70815a7115b51f0badb680bf803",
+        "kind": "pt_caller_identity",
+        "sites": [
+          {
+            "native_call": "0x252aba3",
+            "current_call": "0x21f3833",
+            "callee": "real_set_pt",
+            "native_arguments": {
+              "16": {
+                "address": "0x252ab91",
+                "instruction": "mov dword ptr [esp + 0x10], 1",
+                "value": 1
+              },
+              "20": {
+                "address": "0x252ab89",
+                "instruction": "mov dword ptr [esp + 0x14], 1",
+                "value": 1
+              },
+              "24": {
+                "address": "0x252ab81",
+                "instruction": "mov dword ptr [esp + 0x18], 1",
+                "value": 1
+              }
+            },
+            "current_arguments": {
+              "16": {
+                "address": "0x21f3821",
+                "instruction": "mov dword ptr [esp + 0x10], 1",
+                "value": 1
+              },
+              "20": {
+                "address": "0x21f3819",
+                "instruction": "mov dword ptr [esp + 0x14], 1",
+                "value": 1
+              },
+              "24": {
+                "address": "0x21f3811",
+                "instruction": "mov dword ptr [esp + 0x18], 1",
+                "value": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "source": "cards/guildpact.c",
+        "name": "card_graven_dominator",
+        "address": "0x21f6f90",
+        "size": 706,
+        "body_sha256": "47930c5315ecde5a09306e2e72eff559882df9b12eb512e858c53618edcc7dda",
+        "kind": "pt_caller_identity",
+        "sites": [
+          {
+            "native_call": "0x252e45d",
+            "current_call": "0x21f714d",
+            "callee": "real_set_pt",
+            "native_arguments": {
+              "16": {
+                "address": "0x252e44b",
+                "instruction": "mov dword ptr [esp + 0x10], 1",
+                "value": 1
+              },
+              "20": {
+                "address": "0x252e443",
+                "instruction": "mov dword ptr [esp + 0x14], 1",
+                "value": 1
+              },
+              "24": {
+                "address": "0x252e43b",
+                "instruction": "mov dword ptr [esp + 0x18], 1",
+                "value": 1
+              }
+            },
+            "current_arguments": {
+              "16": {
+                "address": "0x21f713b",
+                "instruction": "mov dword ptr [esp + 0x10], 1",
+                "value": 1
+              },
+              "20": {
+                "address": "0x21f7133",
+                "instruction": "mov dword ptr [esp + 0x14], 1",
+                "value": 1
+              },
+              "24": {
+                "address": "0x21f712b",
+                "instruction": "mov dword ptr [esp + 0x18], 1",
+                "value": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "source": "cards/amonkhet.c",
+        "name": "card_dispossess",
+        "address": "0x20556d0",
+        "size": 851,
+        "body_sha256": "e80b446107c667f3b523f5c5118a89a262bf276195f44906edde29716c64e395",
+        "kind": "chooser_caller_identity",
+        "sites": [
+          {
+            "native_call": "0x22dbeaa",
+            "current_call": "0x20559af",
+            "callee": "choose_a_card",
+            "native_arguments": {
+              "4": {
+                "address": "0x22dbe9b",
+                "instruction": "mov dword ptr [esp + 4], 0xffffffff",
+                "value": 4294967295
+              },
+              "8": {
+                "address": "0x22dbe93",
+                "instruction": "mov dword ptr [esp + 8], 0x40",
+                "value": 64
+              }
+            },
+            "current_arguments": {
+              "4": {
+                "address": "0x20559a0",
+                "instruction": "mov dword ptr [esp + 4], 0xffffffff",
+                "value": 4294967295
+              },
+              "8": {
+                "address": "0x2055998",
+                "instruction": "mov dword ptr [esp + 8], 0x40",
+                "value": 64
+              }
+            },
+            "prompt": "Choose an artifact card name."
+          }
+        ]
+      },
+      {
+        "source": "cards/visions.c",
+        "name": "card_natural_order",
+        "address": "0x2601f90",
+        "size": 476,
+        "body_sha256": "df533304a8c51ce26955a3ce84955208a93360fc176b1f5821f7d58267462921",
+        "kind": "sacrifice_mode",
+        "sites": [
+          {
+            "native_call": "0x201c3ef",
+            "current_call": "0x2602158",
+            "callee": "generic_spell",
+            "native_arguments": {
+              "12": {
+                "address": "0x201c3dc",
+                "instruction": "mov dword ptr [esp + 0xc], 0x8000",
+                "value": 32768
+              },
+              "16": {
+                "address": "0x201c3d4",
+                "instruction": "mov dword ptr [esp + 0x10], 0",
+                "value": 0
+              },
+              "20": {
+                "address": "0x201c3cc",
+                "instruction": "mov dword ptr [esp + 0x14], 0",
+                "value": 0
+              },
+              "24": {
+                "address": "0x201c3c4",
+                "instruction": "mov dword ptr [esp + 0x18], 0",
+                "value": 0
+              }
+            },
+            "current_arguments": {
+              "12": {
+                "address": "0x2602145",
+                "instruction": "mov dword ptr [esp + 0xc], 0x8000",
+                "value": 32768
+              },
+              "16": {
+                "address": "0x260213d",
+                "instruction": "mov dword ptr [esp + 0x10], 0",
+                "value": 0
+              },
+              "20": {
+                "address": "0x2602135",
+                "instruction": "mov dword ptr [esp + 0x14], 0",
+                "value": 0
+              },
+              "24": {
+                "address": "0x260212d",
+                "instruction": "mov dword ptr [esp + 0x18], 0",
+                "value": 0
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "checked_call_sites": 11,
+    "staging": "preserved",
+    "scope": "Native callee and outgoing literal contracts for eleven calls in seven functions, with fresh compiled DWARF bounds and source/definition pins. Original marked-value indexing and other unrelated source behavior are retained. Full similarity scores and transitive gameplay equivalence are not claimed."
+  },
+  "build_log_sha256": "249a7c83cd6fe5435bee0f16948aee44d112f0393457c4c65a47610e8b7c527a"
+}

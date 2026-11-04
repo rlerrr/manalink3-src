@@ -509,8 +509,8 @@ Gravestorm (When you cast this spell, copy it for each permanent put into a grav
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_NONE);
 	td.zone = TARGET_ZONE_PLAYERS;
+	card_instance_t* instance = get_card_instance(player, card);
 	if (event == EVENT_RESOLVE_SPELL){
-		card_instance_t* instance = get_card_instance(player, card);
 		if (valid_target(&td) && deck_ptr[instance->targets[0].player][0] != -1){
 			test_definition_t test;
 			default_test_definition(&test, TYPE_ANY);
@@ -560,7 +560,7 @@ int bridge_from_below(int player, int card, event_t event)
   {
     instance->eot_toughness = 0;
     if (get_owner(affected_card_controller, affected_card) == player)
-      instance->eot_toughness0 += card_counts[player][5] + 1;
+      instance->eot_toughness0 += card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
     else
       ++instance->eot_toughness1;
   }
@@ -707,7 +707,7 @@ int card_coalition_relic(int player, int card, event_t event)
     paying_for_mana = paying_mana();
     if ((charge_count_or_result != 0) && (paying_for_mana == 0))
     {
-      choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get Mana", 1, 5,
+      choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Get Mana", 1, 5,
                            "Add Charge counter", charge_count_or_result, 10, 0, 0, 0, 0);
       if (choice == 0)
       {
@@ -723,7 +723,7 @@ int card_coalition_relic(int player, int card, event_t event)
         charge_count_or_result = -0x18;
         if (1 - player == current_turn)
         {
-          charge_count_or_result = ((0x1d < current_phase) - 1 & 0xffffff88) + 0x60;
+          charge_count_or_result = (unsigned int)((0x1d < current_phase) ? 96 : -24);
         }
         ai_modifier = ai_modifier + charge_count_or_result;
         return generic_activated_ability(player, card, EVENT_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0, NULL,
@@ -901,29 +901,19 @@ Destroy target non|Sgreen creature. It can't be regenerated. */
 	return 0;
 }
 
-int card_delay(int player,int card,event_t event)
-
+int card_delay(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-
-  instance = get_card_instance(player,card);
-  if (event != EVENT_CAN_CAST) {
-    if (event == EVENT_CAST_SPELL) {
-      if ((card == affected_card) && (player == affected_card_controller)) return counterspell(player,card,event,(target_definition_t *)0x0,0);
-    }
-    else if (event == EVENT_RESOLVE_SPELL) {
-      if (counterspell_validate(player,card,(target_definition_t *)0x0,0) != 0) {
-
-        if (pre_counterspell(player,card,instance->targets[0].player,instance->targets[0].card) != 0) {
-          suspend_a_card(player,card,instance->targets[0].player,instance->targets[0].card,3);
-        }
-      }
-      kill_card(player,card,KILL_DESTROY);
-      return 0;
-    }
-    return 0;
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_CAST || (event == EVENT_CAST_SPELL && affect_me(player, card)))
+    return counterspell(player, card, event, NULL, 0);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (counterspell_validate(player, card, NULL, 0) &&
+        pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card))
+      suspend_a_card(player, card, instance->targets[0].player, instance->targets[0].card, 3);
+    kill_card(player, card, KILL_DESTROY);
   }
-  return counterspell(player,card,event,(target_definition_t *)0x0,0);
+  return 0;
 }
 
 int card_dryad_arbor(int player, int card, event_t event){
@@ -2056,7 +2046,7 @@ int card_maelstrom_djinn(int player, int card, event_t event)
   {
     saved_iid = instance->internal_card_id;
     instance->targets[1].player = 0x42;
-    djinn_iid = get_internal_card_id_from_csv_id(0x2309);
+    djinn_iid = get_internal_card_id_from_csv_id(CARD_ID_MAELSTROM_DJINN);
     instance->internal_card_id = djinn_iid;
     add_counters(player, card, player, card, COUNTER_TIME, 2);
     instance->internal_card_id = saved_iid;
@@ -2610,49 +2600,34 @@ int card_rift_elemental(int player, int card, event_t event)
         count_counters_by_counter_and_card_type(player, COUNTER_TIME, TYPE_ANY);
     return counter_count_or_ability_result * 2;
   }
-  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  base_target_definition(player, card, &td, 199);
+  td.preferred_controller = player;
+  td.allowed_controller = player;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+  td.extra = (int32_t)target_has_a_time_counter;
+  instance = get_card_instance(player, card);
+  counter_count_or_ability_result =
+      generic_activated_ability(player, card, event, 4, 1, 0, 0, 0, 1, 0, 0, &td, "TARGET_CARD");
+  if (event == EVENT_ACTIVATE)
   {
-    base_target_definition(player, card, &td, 199);
-    td.preferred_controller = player;
-    td.allowed_controller = player;
-    td.special = 0x8000;
-    td.extra = (int32_t)target_has_a_time_counter;
-    instance = get_card_instance(player, card);
-    counter_count_or_ability_result =
-        generic_activated_ability(player, card, event, 4, 1, 0, 0, 0, 1, 0, 0, &td, "TARGET_CARD");
-    if (event == EVENT_ACTIVATE)
+    if (spell_fizzled == 1)
     {
-      if (spell_fizzled == 1)
-      {
-        return counter_count_or_ability_result;
-      }
-      instance->number_of_targets = '\0';
-      remove_counters(player, card, instance->targets[0].player, instance->targets[0].card,
-                      COUNTER_TIME, 1);
-      if (is_what(instance->targets[0].player, instance->targets[0].card, 0x80) != 0)
-      {
-        ai_modifier = ai_modifier + 0x40;
-        return counter_count_or_ability_result;
-      }
-      ai_modifier = ai_modifier + -0x40;
       return counter_count_or_ability_result;
     }
-  }
-  else
-  {
-    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    instance->number_of_targets = '\0';
+    remove_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                    COUNTER_TIME, 1);
+    if (is_what(instance->targets[0].player, instance->targets[0].card, 0x80) != 0)
     {
-      return 0;
+      ai_modifier = ai_modifier + 0x40;
+      return counter_count_or_ability_result;
     }
-    base_target_definition(player, card, &td, 199);
-    td.preferred_controller = player;
-    td.allowed_controller = player;
-    td.special = 0x8000;
-    td.extra = (int32_t)target_has_a_time_counter;
-    instance = get_card_instance(player, card);
-    counter_count_or_ability_result =
-        generic_activated_ability(player, card, event, 4, 1, 0, 0, 0, 1, 0, 0, &td, "TARGET_CARD");
+    ai_modifier = ai_modifier + -0x40;
+    return counter_count_or_ability_result;
   }
+
   if (event != EVENT_RESOLVE_ACTIVATION)
   {
     return counter_count_or_ability_result;
@@ -3232,7 +3207,7 @@ int card_sporoloth_ancient(int player, int card, event_t event)
     base_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
     td.allowed_controller = player;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)target_has_2_spore_counters_and_can_activate;
     if (event == EVENT_CAN_ACTIVATE)
     {
@@ -3264,7 +3239,7 @@ int card_sporoloth_ancient(int player, int card, event_t event)
       }
       else if (event == EVENT_RESOLVE_ACTIVATION)
       {
-        generate_token_by_id(player, card, 0x497d);
+        generate_token_by_id(player, card, CARD_ID_SAPROLING);
         return 0;
       }
     }
@@ -3707,7 +3682,7 @@ int card_virulent_sliver(int player, int card, event_t event)
       }
       instance->targets[damaged_player].player = instance->targets[damaged_player].player + 1;
     }
-    if ((((trigger_condition == 0xd7) && (card == affected_card)) &&
+    if ((((trigger_condition == TRIGGER_DEAL_DAMAGE) && (card == affected_card)) &&
          ((player == affected_card_controller && (reason_for_trigger_controller == player)))) &&
         ((damage_or_sliver = get_card_instance(player, card),
           0 < damage_or_sliver->targets[0].player || (0 < damage_or_sliver->targets[1].player))))
@@ -3858,7 +3833,7 @@ int card_second_wind(int player, int card, event_t event)
       {
         untap_priority = 10;
       }
-      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Untap enchanted creature", 1,
+      result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Untap enchanted creature", 1,
                            untap_priority, "Tap enchanted creature", 1, 10, 0, 0, 0, 0);
       if (result == 0)
       {
@@ -3938,7 +3913,7 @@ int card_dust_of_moments(int player, int card, event_t event)
             if ((instance != NULL) &&
                 ((((instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
                     (instance->info_slot_fn == generic_suspend_legacy)) ||
-                   (cards_data[instance->internal_card_id].id == 0x2178)) ||
+                   (cards_data[instance->internal_card_id].id == CARD_ID_GREATER_GARGADON_SUSPENDED)) ||
                   (time_counters_or_type_match = is_what(target_player, c, 0x47),
                    time_counters_or_type_match != 0))))
             {
@@ -3967,7 +3942,7 @@ int card_dust_of_moments(int player, int card, event_t event)
                   0 < time_counters_or_type_match)) &&
                 (((instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
                    (instance->info_slot_fn == generic_suspend_legacy)) ||
-                  ((cards_data[instance->internal_card_id].id == 0x2178 ||
+                  ((cards_data[instance->internal_card_id].id == CARD_ID_GREATER_GARGADON_SUSPENDED ||
                     (time_counters_or_type_match = is_what(target_player, c, 0x47),
                      time_counters_or_type_match != 0))))))
             {
@@ -4063,7 +4038,7 @@ static char *is_permanent_or_suspend_legacy(int who_chooses, int player, int car
     instance = get_card_instance(player, card);
     result = is_what(player, card, 0x80);
     if (((result == 0) || (instance->info_slot_fn != generic_suspend_legacy)) &&
-        (cards_data[instance->internal_card_id].id != 0x2178))
+        (cards_data[instance->internal_card_id].id != CARD_ID_GREATER_GARGADON_SUSPENDED))
     {
       return "must be a permanent or a Suspend legacy card.";
     }
@@ -4085,7 +4060,7 @@ int card_shivan_sand_mage(int player, int card, event_t event)
 
     default_target_definition(player, card, &td, 199);
     td.preferred_controller = 2;
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)is_permanent_or_suspend_legacy;
     instance = get_card_instance(player, card);
     result =
@@ -4131,14 +4106,14 @@ int card_shivan_sand_mage(int player, int card, event_t event)
           if (result == player)
           {
             result = is_what(player, card_00, 0x80);
-            ai_modifier = ai_modifier + (-(unsigned int)(result == 0) & 0xffffffa0) + 0x30;
+            ai_modifier = ai_modifier + (unsigned int)((result == 0) ? -96 : 0) + 0x30;
             result = instance->targets[0].player;
             if (result == player)
               return suspend(player, card, event, 4, 0, 0, 0, 0, 1, 0, NULL, NULL);
             card_00 = instance->targets[0].card;
           }
           result = is_what(result, card_00, 0x80);
-          ai_modifier = ai_modifier + ((-(unsigned int)(result == 0) & 0x60) - 0x30);
+          ai_modifier = ai_modifier + ((unsigned int)((result == 0) ? 48 : -48));
         }
       }
     }
@@ -4157,12 +4132,10 @@ int card_yixlid_jailer(int player, int card, event_t event);
 int card_yixlid_jailer(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_STATIC))
     {
       player_bits[player] = player_bits[player] | PB_GY_ABILITIES_DISABLED;
       player_bits[1 - player] = player_bits[1 - player] | PB_GY_ABILITIES_DISABLED;

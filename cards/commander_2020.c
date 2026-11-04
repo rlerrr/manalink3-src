@@ -27,7 +27,7 @@ int card_bonders_ornament(int player, int card, event_t event)
                                                                5, 0, 0, 0, 0, 0, 0, NULL, NULL),
                             result != 0))
       {
-        result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Produce mana", 1, 1,
+        result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Produce mana", 1, 1,
                              "Draw a card", 1, 10, 0, 0, 0, 0);
         if (result == 0)
         {
@@ -90,35 +90,22 @@ int card_bonders_ornament(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25e6dd0; original cards/commander_2020.c:280. */
 int card_jirina_kudro(int player, int card, event_t event)
 {
-  int count;
-  card_instance_t *instance;
-  int commander_marker_card;
-  token_generation_t token;
-
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   boost_creature_type(player, card, event, SUBTYPE_HUMAN, 2, 0, 0, BCT_CONTROLLER_ONLY);
-
-  if ((event == EVENT_ETB) && (0 < active_cards_count[player]))
-  {
-    commander_marker_card = 0;
-    do
-    {
-      instance = in_play(player, commander_marker_card);
-      if ((instance != NULL) && (get_id(player, commander_marker_card) == 0x3953))
+  if (event == EVENT_ETB)
+    for (int count = 0; count < active_cards_count[player]; ++count)
+      if (in_play(player, count) && get_id(player, count) == CARD_ID_ELDER_DRAGON_HIGHLANDER)
       {
-        count = count_counters(player, commander_marker_card, COUNTER_VORTEX);
-        if (count / 2 == 0)
+        int times_cast = count_counters(player, count, COUNTER_VORTEX) / 2;
+        if (times_cast != 0)
         {
-          return 0;
+          token_generation_t token;
+          default_token_definition(player, card, CARD_ID_HUMAN, &token);
+          token.qty = (unsigned char)times_cast;
+          generate_token(&token);
         }
-        default_token_definition(player, card, 0x494c, &token);
-        token.qty = (unsigned char)(count / 2);
-        generate_token(&token);
         return 0;
       }
-      commander_marker_card = commander_marker_card + 1;
-    } while (commander_marker_card < active_cards_count[player]);
-  }
   return 0;
 }
 
@@ -155,7 +142,7 @@ int card_nesting_grounds(int player, int card, event_t event)
       td_to = td_from;
       source_definition = &td_from;
       destination_definition = &td_to;
-      td_from.special = 0x40000;
+      td_from.special = TARGET_SPECIAL_REQUIRES_COUNTER;
       td_from.allowed_controller = player;
       if (event != EVENT_RESOLVE_ACTIVATION)
       {
@@ -186,7 +173,7 @@ int card_nesting_grounds(int player, int card, event_t event)
   default_target_definition(player, card, &td_from, 0x47);
   td_to = td_from;
   td_from.allowed_controller = player;
-  td_from.special = 0x40000;
+  td_from.special = TARGET_SPECIAL_REQUIRES_COUNTER;
 
   result = paying_mana();
   if ((result != 0) || (result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 2,
@@ -206,7 +193,7 @@ int card_nesting_grounds(int player, int card, event_t event)
   instance->info_slot = 2;
   if ((not_speculating) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
   {
-    result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
+    result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Get mana", 1, 1,
                          "Move a counter", 1, 1, 0, 0, 0, 0);
     if (result == 0)
     {

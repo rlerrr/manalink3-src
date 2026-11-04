@@ -1,0 +1,844 @@
+{
+  "format": 1,
+  "status": "Thirteen native-backed corrections built; all fourteen changed instruction sites verified.",
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "before_rebuilt_dll_sha256": "47c91e8a1bb4be68cdc7195166c878626dfa647ee7c229b5ebd1a565f834d08a",
+  "comparison_report_sha256": "fd392364586c139d19e055a361f8e2bfd42d0c4c3242c46d80230049e8a41b3c",
+  "comparison_inputs": {
+    "setup_sha256": "5bdf2477c7c612aab4b1d2711cf84172ff20efb24f2945b064953a57c904b62e",
+    "report_sha256": "fd392364586c139d19e055a361f8e2bfd42d0c4c3242c46d80230049e8a41b3c",
+    "inputs": {
+      "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dll": "47c91e8a1bb4be68cdc7195166c878626dfa647ee7c229b5ebd1a565f834d08a",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "c728ad523bcdaafba733524ac26b0ec42f8ae16a899aab773751534634e2faf5"
+    },
+    "metadata_sha256": "59206d75dc8824142d9f31554819272b1831a9b27870d27209cc55ed499b22df",
+    "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "comparator_source_sha256": {
+      "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+      "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+      "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+      "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b"
+    },
+    "command": [
+      "reccmp-reccmp",
+      "--target",
+      "MANALINK2022",
+      "--no-color",
+      "--json",
+      ".recovery/reccmp/small-diffs-c618.json",
+      "--silent"
+    ],
+    "exit_code": 0
+  },
+  "comparison_summary": {
+    "exact": 12280,
+    "different": 6184,
+    "effective": 261
+  },
+  "small_diff_candidates": 494,
+  "functions": [
+    {
+      "source": "cards/eventide.c",
+      "source_function": "card_springjack_pasture",
+      "native_owner": "card_springjack_pasture",
+      "native_address": "0x236f9a0",
+      "native_size": 1867,
+      "native_body_sha256": "f69926daf6809947b0b006333a2856a3638c47fb793601ce062d166ebf79903f",
+      "before_rebuilt_address": "0x2199390",
+      "before_rebuilt_size": 1867,
+      "before_rebuilt_bytes": "5589e557565381ecac0200008b5d1083fb730f94c283fb6d0f94c008c2889594fdffff752b8d438f83f801762331f683fb7f0f840803000083fb3c0f840f02000081c4ac02000089f05b5e5f5dc366908dbdecfdffffc7442408f14a7302c744240447000000893c24e802e451008b450c894424048b4508890424c78554feffff4a000000e8e4ed34fe85c00f842e010000c78590fdffff0000000031f68b450c897c2408894424048b4508890424e8dcc8530083fb7189c70f846101000083fb3c0f840002000083fb7f0f84a70300008b8d90fdffff85c90f8501030000c78590fdffff00000000e842ef4e0089fa85c00f841001000089958cfdffffe82def4e0083f8018b8d90fdffff19c08b958cfdffff83c80289742414894424188b450c894424048b4508c74424280d4b7302c744242404000000894c2420c744241c1d4b7302c7442410294b7302c744240c3b447302895c24088904248974242cc744244000000000c744243c00000000c744243800000000c74424340000000089542430e877ad4d0083fb7389c60f84adfeffff80bd94fdffff000f855701000083f8020f840603000031f681c4ac02000089f05b5e5f5dc38db426000000008b450c894424048b4508890424e8de0c510085c00f85b8feffff8b450c894424048b4508890424e8a4f04b00c78590fdffff0100000085c00f95c025ff00000089c6e997feffff908d470189c2c1ea1f01c2d1fae9dffeffff8db4260000000083f80119c031f683e0c283c03f894424088b450c894424048b4508890424e84d00500081c4ac0200005b89f05e5f5dc3a18c397a0039450c0f85e3fdffffa1848c73003945080f85d5fdffff8dbdecfdffffc7442408f14a7302c744240447000000893c24e8e6e151008b450c894424048b4508890424c78554feffff4a000000e8c8eb34fe85c00f8412ffffff8b450c897c2408894424048b4508890424e8ccc6530089c766908b450c894424048b4508890424e8e6304d0085ff0f84f60100008b703881ce0000004089703831f6e94cfdffff8d760083f8020f84ef01000083f8030f845e0200004e0f8599feffff8b450cc744240c01000000894424048b4508c744240800000000890424e8fdd7520031f6e972feffff8db600000000a18c397a0039450c0f85f3fcffffa1848c73003945080f85e5fcffff8dbdecfdffffc7442408f14a7302c744240447000000893c24e8f6e051008b450c894424048b4508890424c78554feffff4a000000e8d8ea34fe85c00f8422feffff8b450c897c2408894424048b4508890424e8dcc5530089c685c00f8483fcffff89f78b4508897c2408c74424043e000000890424e8d93a30fe31f6e963fcffff6690e84bec4e0085c00f85f2fcffff8b450c894424048b4508890424e831ee4b0085c00f84d8fcffffb80400000085f6740e89f885ff7f05b80100000083c004894424088b450c894424048b4508c744241c00000000c744241800000000c744241400000000c744241000000000c744240c00000000890424e8a4f14f0085c00f95c025ff000000898590fdffffe978fcffff8db4260000000085c00f8540ffffff85f60f84b9fbffff8b4508c744240801000000c744240401000000890424e8fd3b30fe31f6e997fbffff8db6000000008b450cc744240839490000894424048b450889042431f6e884555400e9dbfcffff8db426000000008b583831f681e3ffffffbf895838e956fbffff8d742600908b450cc744240810000000894424048b4508890424e8e61051008b450c894424048b4508c744241c00000000c744241800000000c744241400000000c744241000000000c744240c00000000c744240804000000890424e844614f0085c00f8465010000c705bc047900ffffffff31f6e947fcffff8d760085ff0f84200100008d9dc6feffffba2e01000089dff6c3020f85ac01000089d131c0c1e90283e202f3ab740566c70700008b450c8db598fdffff894424048b4508890424c744240c4700000089742408e8e31d54008b4508c744240410300000c70424020000008985a0fdffff89859cfdffffe850f14e0085c0740ac785acfdffff02000000893424895c240cc7442408ffffffffc7442404f14a7302c785c4fdffff4a000000c785dcfdffff03000000e8e2335400833d94f14e000189c60f847dfbffff85c00f8ef50000008b45088b148520f54e0085d20f8e970000008b4d088d04c089b594fdffff8d04418d3cc331db29cf89fe89cfeb0f8d7426009043391cbd20f54e007e66803c1e0074f0c744240803000000895c2404893c24e8c4574d00ebda66908b450cc744240c00000000894424048b4508c74424083e000000890424e8beca520031f6e9f3faffff8b450cc744240810000000894424048b4508890424e8dd0f5100e97cfeffff8bb594fdffff8b450889742404890424e8c3e74f008b5d088b7d0c8d742600908974240cc74424083e000000897c2404891c24c70594f14e0000000000e856ca5200833d94f14e000174d531f6e982faffff8b5d088b7d0cebc666c785c6feffff00008dbdc8feffffba2c010000e93bfeffff",
+      "before_rebuilt_body_sha256": "0689c552e6d67570a2820ce3f43a0f9b6449aff488b14302644b23733041e475",
+      "before_reccmp_score": 0.9977477477477478,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x236fe33",
+              "mov dword ptr [esp + 4], 0"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2199823",
+              "mov dword ptr [esp + 4], 1"
+            ]
+          ]
+        }
+      ],
+      "reason": "Color index zero for declare_mana_available; color-test mask one selected the wrong mana color.",
+      "source_before_definition_sha256": "e228ff05a51076f5c74b2e0d7f5213426b240986586a5a6e3c95ec5966484b16",
+      "source_after_definition_sha256": "dae265de0ebec95804aa34d67e57a6b8fd7e50c8205166d041e87a618f1fdf90"
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "source_function": "lim_dul_the_necromancer_effect",
+      "native_owner": "lim_dul_the_necromancer_effect",
+      "native_address": "0x20e97c0",
+      "native_size": 1141,
+      "native_body_sha256": "99c88285bd868d596551c1f7064755612a8b90629fba0e35d100b577acf28b0e",
+      "before_rebuilt_address": "0x2589f10",
+      "before_rebuilt_size": 1141,
+      "before_rebuilt_bytes": "5589e557565381ec74010000817d10004700008b5d088b750c0f84b102000089742404891c24e815280e00807850007947837d1077745e8b4510c744240c020000008944240889742404891c24e8ce63100085c00f85f9000000837d10220f84ac02000081c47401000031c05b5e5f5dc38db426000000008b45108974240489442408891c24e885dd0f0085c075d5837d107775a289742404891c24e89f270e0089c7a18c397a0089442404a1848c7300890424e8572f0e0085c07472a18c397a0089442404a1848c7300890424e86d270e008078680074560fbe475084c0780f8b0d8c397a00394f040f8455030000b801000000c744241c0100000029d8c744241810000000c744241400000000c7442410020000008944240cc74424087700000089742404891c24e801ee1100c744240c02000000c74424087700000089742404891c24e8d562100085c00f8411ffffffc74424080000010089742404891c24e8d90812008985acfeffff85c00f85e5feffff89742404891c24e8bf260e008d8db0feffff83c07c898da8feffff89ca8db6000000008b0883c204894afc8dbdd4feffff8b480483c008894a20894a44c740fcffffffffc740f8ffffffff39fa75d48d851cffffffc744240820867502890424c7442404ff000000e80ed71200a1d45e73008d04c031ff66c7459a010089750c668b3cc534707e0089f88bbdacfeffff894590eb5a8db6000000008d851cffffffc7442418ffffffff8944241c8d85d4feffffc744241402000000c744241000000000c744240c0900000089442408895c2404891c24e8f060150083f8ff744a8b15d45e730089f7899485d4feffff8d7701c744241800000000c744241400000000c744241000000000c744240c000000008974240889742404891c24e809e7100085c00f8571ffffff89bdacfeffff8b750c8b85acfeffff85c00f85ea000000c74424080400000089742404891c24e806500e00e98bfdffff903b358c397a00747089742404891c24e85c250e00807850000f8849fdffff8b45108974240489442408891c24e80fdb0f0085c00f842efdffffe956fdffff6690c74424080000010089742404891c24e81c07120085c00f8538fdffffc74424080400000089742404891c24e8904f0e00e91ffdffff8d76003b1d848c7300758889742404891c24e8e4240e000fbe505084d20f8870ffffff8b400489142489442404e8292f0e003d932100000f8456ffffffc74424080400000089742404891c24e83a4f0e00e93dffffff8d742600908b85acfeffffc744242400000000c744242000000000c744241c00000000c7442418000000008944241489442410895c240cc74424087e00000089742404891c24e80a78100085c00f84c8feffff8bbda8feffffeb13669083c7048d85d4feffff39c70f84adfeffffa1d45e730039472475e5c74424100800000031c98b47488d04c0668b0cc534707e0089c88944240c8b078974240489442408891c24e8dd690e00ebb33b05848c73000f859ffcffffc74704ffffffffc64750ffc74424080000010089742404891c24e810321200e97bfcffff",
+      "before_rebuilt_body_sha256": "63d26095f38778a16c199d24cd12592215719ebc04991559c7ae9e12a08dd8a4",
+      "before_reccmp_score": 0.9961832061068703,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x20e98bf",
+              "mov dword ptr [esp + 0x18], 0x90"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x258a00f",
+              "mov dword ptr [esp + 0x18], 0x10"
+            ]
+          ]
+        }
+      ],
+      "reason": "Restore native GFP mode 0x90, including the stored owner word.",
+      "source_before_definition_sha256": "85b34cc16552953ba2eaf4a1d76c656c822cda60d170687957b0340bed4e9059",
+      "source_after_definition_sha256": "2a366775d6147e53c7330cff6ecfc8212b88e77ba2e3706906352fc1633590e5"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "source_function": "card_enduring_renewal",
+      "native_owner": "card_enduring_renewal",
+      "native_address": "0x23f5d60",
+      "native_size": 885,
+      "native_body_sha256": "cb5ab5e5ec31680e995d4e5f25133240c09e5043f285d50ccc0f0a9532c37dc2",
+      "before_rebuilt_address": "0x2227f30",
+      "before_rebuilt_size": 885,
+      "before_rebuilt_bytes": "5589e557565383ec288b45108b5d0889c28945f08b750ca1782d7a0081fa004700000f84880100003dcf0000007439837df0770f841701000089742404891c24e8db47440080786800743d8b45f089750c895d0889451083c4285b5e5f5de9fd0146008d742600903b358c397a000f8474010000817df00047000074bc837df07775b6e9c80000008b45f0c744240c020000008944240889742404891c24e85d83460085c074a489742404891c24e86d4744008d787405c40000008945ec66908b0783f8ff74848d04c031c9c707ffffffffc7442410ffffffff668b0cc534707e00895c240889c8c7442404ffffffff8944240c891c24e8048d44008b470483f8ff0f8443ffffff8d04c031c9c74704ffffffffc7442410ffffffff668b0cc534707e00895c240889c8c7442404ffffffff8944240c891c2483c708e8bf8c44003b7dec0f8576ffffffe9fcfeffff90a18c397a0089442404a1848c7300890424e82a32460039d80f85cbfeffffc744241c00000000c744241850000000c744241400000000c744241002000000895c240cc74424087700000089742404891c24e86a0d4800e98efeffff8d742600908b0c9da4f14e0080cd023dcf000000890c9da4f14e000f849cfeffff3b358c397a000f8561feffff3b1d848c73000f8555feffffeb3166903b1d848c73000f8580feffff8b15c86d780085d2750c391d1c7e73000f84d8000000817df0004700000f8518feffff8b049d20f54e0031ff85c07f0eeb62669047393c9d20f54e007e56897c2404891c24e8b24d440085c074e6c744240880000000897c2404891c24e8bad4460085c074ce897c2404891c24e8ba454400817838f002220275b90fbe485039d9746139587475ac39707875a7e9b3fdffff669089742410895c240cc7442408f002220289742404891c24e8bcf94500891c248944240489c7e86e454400895874897078c6403601c744240800000100897c2404891c24e860534800e964fdffff8d7600397004759ae957fdffffc74424080200000089742404891c24e82acc420085c0750c837df07d7418837df07e741e817df0004700000f851cfdffffe9b4feffff830db405620002e915fdffff8b049d30704d008b0083f8ff0f8403fdffffc74424080200000089442404c70424ffffffffe8c2d3460085c00f84e3fcffffc744240401000000891c24e85ab54400c705c86d780001000000e9c4fcffff",
+      "before_rebuilt_body_sha256": "30d7090d8739424ccb433229b7beae3156dc58b0b33f93fba9876ad2beac4018",
+      "before_reccmp_score": 0.9953488372093023,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x23f5ed6",
+              "mov dword ptr [esp + 0x18], 0x60"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x22280a6",
+              "mov dword ptr [esp + 0x18], 0x50"
+            ]
+          ]
+        }
+      ],
+      "reason": "Restore native GFP mode 0x60 with GFPC_EXTRA_SKIP_TOKENS.",
+      "source_before_definition_sha256": "910a28c411f1290eed8c6ee2bb49a7ab0b65dc6a9c67d7d70a9542ff43e4c624",
+      "source_after_definition_sha256": "c4aecd4ba27812afd78d52d6c5d7eb445d153eb95527bac1d0944c1a9a6a8bb7"
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "source_function": "consuming_rage_legacy",
+      "native_owner": "consuming_rage_legacy",
+      "native_address": "0x2035280",
+      "native_size": 358,
+      "native_body_sha256": "a9f131e3e4af2531e3c2aee7c480f93d9e4d7b85b8bc567dd182cb4a68fd1d23",
+      "before_rebuilt_address": "0x20a51d0",
+      "before_rebuilt_size": 358,
+      "before_rebuilt_bytes": "5589e557565383ec548b75088b5d108b7d0cc744241800000000c7442414ffffffff89742410c744240c40000000895c2408897c2404893424e852aa5e00c744241001000000c744240c02000000895c2408897c2404893424e832bb5f0081fb001f0000741a83fb220f84d900000083c45431c05b5e5f5dc38db42600000000897c2404893424e8f4745c008945c08b407c89c38945bc4b78d58db6000000008b55c031c08a841a8400000089442404a170866200890424e8937c5c0085c0746d8d45c4c74424180000000089442408c744241400000000c744241000000000c744240c02000000897c2404893424e8cca05e008d45c48b55c089442410c745dc00420000c745e40100000031c08a841a84000000897c24048944240ca17086620089442408893424e8428e60004b83fbff0f8568ffffff83c45431c05b5e5f5dc38db600000000897c2404893424c744240804000000e8b49e5c0083c4545b31c05e5f5dc3",
+      "before_rebuilt_body_sha256": "343beaf6d242f0f88061dce95070e253c46a7397af994496a35efd105f49e427",
+      "before_reccmp_score": 0.9897959183673469,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x2035385",
+              "mov dword ptr [ebp - 0x1c], 2"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x20a52d5",
+              "mov dword ptr [ebp - 0x1c], 1"
+            ]
+          ]
+        }
+      ],
+      "reason": "Restore native removal word two.",
+      "source_before_definition_sha256": "46f18ae1cd4033f326aa0ce6a9824f8d973d960387234630c6e56b5e864dbb6c",
+      "source_after_definition_sha256": "422c5e785b5ba1dd7c91596299068831b35a1ec8de5a3ceb07b589c6024744b5"
+    },
+    {
+      "source": "cards/dissension.c",
+      "source_function": "card_freewind_equenaut",
+      "native_owner": "card_freewind_equenaut",
+      "native_address": "0x2220530",
+      "native_size": 291,
+      "native_body_sha256": "e22fb4d9914d6f390ea70ce652aefeb2cd447d4ae1bb55c92469e2c6c6e66e13",
+      "before_rebuilt_address": "0x2142890",
+      "before_rebuilt_size": 291,
+      "before_rebuilt_bytes": "5589e55756538d7da081ec880000008b5d088b750cc744240c02000000897c240889742404891c24e8738e590089742404891c24c745dc20000000e850a6520085c07418c74424080400000089742404891c24e86825510085c0743c837d1072740e31c081c4880000005b5e5f5dc390893c24e88897590085c074e6c74424080200000089742404891c24e8007b5200ebd08db60000000089742404891c24e8bc7f510085c074b4837d106d74118b451083e87283f8017606837d102275a38b4510c744243010167302897c242cc744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241000000000c744240c050000008944240889742404891c24e812f65600e941ffffff",
+      "before_rebuilt_body_sha256": "0e700c4018f16ec246de035572803638cff64153a5ac950f438550c63e69735d",
+      "before_reccmp_score": 0.9866666666666667,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x2220636",
+              "mov dword ptr [esp + 0xc], 7"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2142996",
+              "mov dword ptr [esp + 0xc], 5"
+            ]
+          ]
+        }
+      ],
+      "reason": "Restore native ability flags seven for the literal target prompt.",
+      "source_before_definition_sha256": "8d5cf7a1ab3c41b6062b45ba608a4464d3d1ba655595932990670b25159cc234",
+      "source_after_definition_sha256": "f978d50aafbe4b7a4ed9d85c0888dad71226cfa2ea60e1201b14ce022a4de593"
+    },
+    {
+      "source": "cards/betrayers_of_kamigawa.c",
+      "source_function": "make_colorless_spirit",
+      "native_owner": "card_baku_altar",
+      "native_address": "0x2569a60",
+      "native_size": 321,
+      "native_body_sha256": "28e95a4e1333dce914cfb34810bb7273c29e8d90ea9ed6fb7681a80d1821c529",
+      "before_rebuilt_address": "0x209cbf0",
+      "before_rebuilt_size": 321,
+      "before_rebuilt_bytes": "5589e557565383c4808b75088b5d108934248b7d0ce866a95e00895c240885c0897c24040f95c025ff000000893424408944240ce8d791010081fb001e0000747783fb720f849e000000895c2408897c2404893424c744243000000000c744242c00000000c744242800013f01c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241002000000c744240c01000000e82653610083ec805b5e5f5dc38db600000000c744241401000000c74424103f000000897c240c89742408897c2404893424e8c4b45c00e969ffffff8db42600000000897c2404893424e86cfa5c008d55a88954240cc74424088d4900008b8810010000894c24048b800c010000890424e8750d64008d55a8891424c745c401000000c745c001000000c645d000c645d301e8640e6400e909ffffff",
+      "before_rebuilt_body_sha256": "37d39a36548cdd1ac76bae44f1fce673116b0028f0b03965d77749d63accd76e",
+      "before_reccmp_score": 0.9863013698630136,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x2569b8f",
+              "mov byte ptr [ebp - 0x30], 1"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x209cd1f",
+              "mov byte ptr [ebp - 0x30], 0"
+            ]
+          ]
+        }
+      ],
+      "reason": "Restore the native forced colorless mask one in Baku Altar's inlined token helper; this helper has one caller.",
+      "source_before_definition_sha256": "a5cddb6af2f0ce7ebdfd97b9656b3eb45efc36c455b0a7f83a6b410b116f5138",
+      "source_after_definition_sha256": "1d40eca814241b448b839b6dbae7c3a1475720fed16eaca362fa57c518a8519d"
+    },
+    {
+      "source": "cards/theros.c",
+      "source_function": "generic_hydra_head",
+      "native_owner": "generic_hydra_head",
+      "native_address": "0x26305d0",
+      "native_size": 186,
+      "native_body_sha256": "3c0b29a7f9ebc6b3be946aa554f1c8b4ba14dffe97b72bc57238a21f254540e8",
+      "before_rebuilt_address": "0x255ec50",
+      "before_rebuilt_size": 186,
+      "before_rebuilt_bytes": "5589e5575689d75389ce83ec1489c389542404890424e8e5da1000807868037604c6406802c744241000000000c744240c0000000089742408897c2404891c24e85bc7130081fe005f0000740b83c41431c05b5e5f5dc3908b3c9d30704d008b0783f8ff74e731f6c74424084700000089442404c70424ffffffffe87069130085c07424c744240800000000895c2404891c24e8881c1100468b0783fe017fad83f8ff75c3eba690c744240401000000891c24e8e84a1100ebde",
+      "before_rebuilt_body_sha256": "da8ca700cd01a182ddd3a7a5cd96b876dd90280ff5d59bec60b3d19116c2bf93",
+      "before_reccmp_score": 0.9827586206896551,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x26305f1",
+              "mov byte ptr [eax + 0x68], 1"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x255ec71",
+              "mov byte ptr [eax + 0x68], 2"
+            ]
+          ]
+        }
+      ],
+      "reason": "Restore native kill-code byte one.",
+      "source_before_definition_sha256": "b7e6671411b7283ec3aabc9c75d5ae645042dc0ad5417c03dd07ef61e963e7eb",
+      "source_after_definition_sha256": "883d04d5e7d73268c42f7fe5e709e7ca80a9ed64576a55cbb00dc687822058d6"
+    },
+    {
+      "source": "cards/alliances.c",
+      "source_function": "card_spiny_starfish",
+      "native_owner": "card_spiny_starfish",
+      "native_address": "0x20a79f0",
+      "native_size": 206,
+      "native_body_sha256": "13358a91b7c953a6e4423549fe1a1207b1e3f7f19aba18ccc28412238b5d74d8",
+      "before_rebuilt_address": "0x2039fb0",
+      "before_rebuilt_size": 206,
+      "before_rebuilt_bytes": "5589e557565383ec348b5d108b7d0c83fb72746c8b4508895c2408897c2404c744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241801000000c744241400000000c744241000000000c744240c10000000890424e8997f670083c4345b5e5f5dc3908b4508897c2404890424e81127630089c68b8010010000894424048b860c010000890424e887b5610085c00f8463ffffff8b8610010000894424048b860c010000890424e8c7b56100e946ffffff",
+      "before_rebuilt_body_sha256": "994658ad8fae00b7de228d8e2b16ea6a64f161abd4db5931a72340b44aa02512",
+      "before_reccmp_score": 0.98,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x20a7a57",
+              "mov dword ptr [esp + 0xc], 0x800000"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x203a017",
+              "mov dword ptr [esp + 0xc], 0x10"
+            ]
+          ]
+        }
+      ],
+      "reason": "Use the native activated-ability regeneration flag 0x800000 instead of spell flag 0x10.",
+      "source_before_definition_sha256": "5eafadfe1b64342c4bbf4b335d5942950615d6bf405ed782f7ba6c259404f524",
+      "source_after_definition_sha256": "1ed6af6d904771ff02bf3c96f854c1f3a4902eec98ea5b24b64389bf6954267f"
+    },
+    {
+      "source": "cards/champions_of_kamigawa.c",
+      "source_function": "rfg_when_die_legacy",
+      "native_owner": "rfg_when_die_legacy",
+      "native_address": "0x260a5c0",
+      "native_size": 308,
+      "native_body_sha256": "804c6fb6ce13b8d86c9711fed2ef5fc9816a866955cb5436434e87006d0b8c84",
+      "before_rebuilt_address": "0x20b3b10",
+      "before_rebuilt_size": 308,
+      "before_rebuilt_bytes": "5589e557565383ec1c8b5d1083fb77742f813d782d7a00d40000000f848300000083fb220f84e600000081fb005f00000f84da00000083c41c31c05b5e5f5dc38b450c894424048b4508890424e8ee8b5b008b70043b358c397a00753b0fbe78503b3d848c7300752f89742404893c24e8cb8b5b008a48688d51ff80fa027718c6406804c74424080000001089742404893c24e868a85d00813d782d7a00d40000007592a18c397a0039450c0f856fffffffa1848c73003945080f8561ffffff8b450c894424048b4508890424e86e8b5b00c744241800000000c7442414000000008b5078895424108b4074895c24088944240c8b450c894424048b4508890424e85a8a5e00e916ffffff8d742600908b450cc744240804000000894424048b4508890424e8a6b55b0083c41c5b31c05e5f5dc3",
+      "before_rebuilt_body_sha256": "2237cdafc296e26c9c149770092ec41d24762879f51d097afe06ea915e347325",
+      "before_reccmp_score": 0.9767441860465116,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x260a638",
+              "lea edx, [ecx - 2]"
+            ],
+            [
+              "0x260a63b",
+              "cmp dl, 1"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x20b3b88",
+              "lea edx, [ecx - 1]"
+            ],
+            [
+              "0x20b3b8b",
+              "cmp dl, 2"
+            ]
+          ]
+        }
+      ],
+      "reason": "Restore the native inclusive kill-code range two through three, without broadening it to one.",
+      "source_before_definition_sha256": "a5f1cd54cd919e4b4815412218b12f8b465b37864f4642b9386fcd2d99011ee4",
+      "source_after_definition_sha256": "0339e75cce2a41c287aa75b71300cce5df604e8021ee570760bb7c34ab5f65b1"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "source_function": "card_inquisitor_exarch",
+      "native_owner": "card_inquisitor_exarch",
+      "native_address": "0x2278b00",
+      "native_size": 341,
+      "native_body_sha256": "d0150f0ac6e51c97fb730c3c61078dc6b9f01d95708f501907f14588b7ff16f0",
+      "before_rebuilt_address": "0x23cac40",
+      "before_rebuilt_size": 349,
+      "before_rebuilt_bytes": "5589e557565381ec980000008b5d108b75088b7d0cc744240c02000000895c2408897c2404893424e8a31f2d0081fb00510000741381c49800000031c05b5e5f5dc38db6000000008d45a0c744240c0000000089442408897c2404893424bb01000000e8880a310029f38d45a0c7442408ffffffff895c2404890424c745ac00100000895da4e875113100c74424340000000089c231c0833cb528f54e00060f9cc0c7442430050000008954242c8d44c001c74424284f8b740289442424c744242001000000c744241c648b7402c744241827897402c7442414ce887402c7442410d1887402c744240c53877402c744240800510000897c2404893424c744244000000000c744243c00000000c744243800000000e836952a0083f8010f842500000083f8020f8509ffffffc744240402000000891c24e894cd2c00e9f4feffff8db42600000000c744240402000000893424e8a8d42c00e9d8feffff",
+      "before_rebuilt_body_sha256": "6241fe6463415e99e650b30177f9c74526bfeb3f7bc707646a9ff9dd7f300264",
+      "before_reccmp_score": 0.92,
+      "native_diff": [
+        {
+          "original": [],
+          "rebuilt": [
+            [
+              "0x23cacbc",
+              "mov dword ptr [ebp - 0x54], 0x1000"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2278b7f",
+              "mov dword ptr [ebp - 0x54], 0x1000"
+            ]
+          ],
+          "rebuilt": []
+        },
+        {
+          "original": [
+            [
+              "0x2278bee",
+              "mov dword ptr [esp + 8], 0x6d"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23cad2e",
+              "mov dword ptr [esp + 8], 0x5100"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2278c1d",
+              "je 0x21"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23cad5d",
+              "je 0x25"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2278c22",
+              "jne -0xf3"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23cad66",
+              "jne -0xf7"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2278c38",
+              "jmp -0x108"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23cad7c",
+              "jmp -0x10c"
+            ]
+          ]
+        },
+        {
+          "original": [
+            [
+              "0x2278c50",
+              "jmp -0x120"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23cad98",
+              "jmp -0x128"
+            ]
+          ]
+        }
+      ],
+      "reason": "Pass native dialog event 0x6d while resolving the ETB ability; the ETB event itself is not a supported chooser event.",
+      "source_before_definition_sha256": "45e0787edefd15e0f7b6a32537f9222af689d99a3302b2ddd89952011996d18c",
+      "source_after_definition_sha256": "229bd9ba308f8d6ea7999165eae98a0c12caadb3db6a5e0ee513cdbac30d4f63"
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "source_function": "foster_effect",
+      "native_owner": "foster_effect",
+      "native_address": "0x216bd30",
+      "native_size": 975,
+      "native_body_sha256": "103a28148bf946f57a44c4639f6eae21308a372a52e6c518811548c86addded3",
+      "before_rebuilt_address": "0x2331de0",
+      "before_rebuilt_size": 975,
+      "before_rebuilt_bytes": "5589e557565381ec1c0100008b7d108b5d088b750c81ff004700000f847f00000089742404891c24e843a9330080785000794d83ff770f8414020000891c24e84c573500897c240885c0897424040f95c025ff000000891c24408944240ce8ede4350085c0757983ff220f848002000081c41c01000031c05b5e5f5dc38d7600897c240889742404891c24e8b05e350085c075dc83ff7775a3e9b201000066903b358c397a000f849c02000089742404891c24e8b8a83300807850000f887affffff897c240889742404891c24e86e5e350085c00f8462ffffffeb948d742600c74424080000010089742404891c24898518ffffffe8768a370085c00f8565ffffff8b9518ffffff81e2ff000000899518ffffff7516e90d0200008d74260090ff8d18ffffff0f84fc010000c744240801000000c744240407000000891c24e8ecb516fe85c00f84dc010000891c24e84cfd3200c744243c0000000083f813c7442438000000000f9fc025ff000000c744243400000000c744243000000000c744242c050000008d44c001c744242801000000c74424242a31740289442420c744241c01000000c744241832317402c744241442317402c744241045317402c744240c48317402c74424086d00000089742404891c24e8d5223400480f8546010000c744241401000000c744241007000000895c240cc74424087e00000089742404891c24e8c6f9350085c00f840effffff8d851cffffffc744240402000000890424e8485938008d851cffffffc744240c2100000089442408895c2404891c24e8eaaf3700e9d5feffff8d7426009089742404891c24e814a73300898518ffffffa18c397a0089442404a1848c7300890424e8c8ae330085c00f84bcfdffffa18c397a0089442404a1848c7300890424e8daa63300807868000f849cfdffff8b8d18ffffff0fbe415084c0780f8b158c397a003951040f84e2000000c744241400000000c744241002000000895c240cc74424087700000089742404891c24e8cb6d3700e952fdffff8db600000000c74424080000010089742404891c24e86c88370085c00f8564fdffffc74424080400000089742404891c24e8e0d03300e94bfdffff8d7600c74424080400000089742404891c24e8c4d03300e926fdffff8db426000000003b1d848c73000f8558fdffff89742404891c24e810a633000fbe505084d20f8840fdffff8b400489142489442404e855b033003d771100000f8426fdffffc74424080400000089742404891c24e866d03300e90dfdffff3b05848c73000f8512ffffffc74104ffffffffc64150ffc74424080000010089742404891c24e8e6b33700e9eefeffff",
+      "before_rebuilt_body_sha256": "6222623fdcd4dc373253fc6690b9209816710f3116643eca0f6d43bd104f62c1",
+      "before_reccmp_score": 0.9953488372093023,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x216bed7",
+              "mov dword ptr [esp + 0x18], \"Reveal cards\" (STRING)"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x2331f87",
+              "mov dword ptr [esp + 0x18], \"Activate Foster\" (STRING)"
+            ]
+          ]
+        }
+      ],
+      "reason": "Restore the native chooser label.",
+      "source_before_definition_sha256": "de1e148a76f8df312c9f8fe8045e775eeec1311e808d03ac6a4708d846b7c65f",
+      "source_after_definition_sha256": "94512765e31ca7debf91bdfe69e8cd7641c112f9c56048641980c3a34a9f072c"
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "source_function": "card_foster",
+      "native_owner": "card_foster",
+      "native_address": "0x2173510",
+      "native_size": 742,
+      "native_body_sha256": "8c384b80e45a2071250f83b4179deec9e728544b7eedfca04c34c337855ae9cc",
+      "before_rebuilt_address": "0x2339610",
+      "before_rebuilt_size": 742,
+      "before_rebuilt_bytes": "5589e557565381ec18010000817d10004700008b5d088b750c746d837d1077743789742404891c24e813313300807868000f84e10000008b451089742404891c2489442408e836eb340081c4180100005b5e5f5dc38d7600c744241400000000c744241002000000895c240cc74424087700000089742404891c24e800f83600eb9f8db6000000003b358c397a0075913b1d848c730075898b049d20f54e0085c00f8ee101000031ffeb138d7426009047393c9d20f54e000f8eca010000897c2404891c24e84638330085c074e2c744240880000000897c2404891c24e84ebf350085c074ca897c2404891c24e84e303300817838e01d330275b50fbe505039da0f84d101000039587475a4397078759fe90bffffff6690891c24e840de34008974240485c0891c240f95c025ff000000408944240c8b451089442408e8de6b350089c785c00f84ebfeffff81e7ff0000007513e9defeffff8db426000000004f0f84d0feffffc744240801000000c744240407000000891c24e8813d16fe85c00f84b0feffff891c24e8e1843200c744243c0000000083f813c7442438000000000f9fc025ff000000c744243400000000c744243000000000c744242c050000008d44c001c744242801000000c74424242a31740289442420c744241c01000000c744241832317402c744241442317402c744241045317402c744240c48317402c74424086d00000089742404891c24e86aaa3300480f851afeffffc744241401000000c744241007000000895c240cc74424087e00000089742404891c24e85b81350085c00f8413ffffff8d851cffffffc744240402000000890424e8dde037008d851cffffffc744240c2100000089442408895c2404891c24e87f373700e9dafeffff669089742410895c240cc7442408e01d330289742404891c24e8dce23400891c248944240489c7e88e2e3300895874897078c6403601c744240800000100897c2404891c24e8803c3700e94cfdffff8d76003970040f8526feffffe93bfdffff",
+      "before_rebuilt_body_sha256": "0fd14a0cbc39815f003865e005435757289a7b10975f1f932134abc5fa5cbdd0",
+      "before_reccmp_score": 0.9941860465116279,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x21736f2",
+              "mov dword ptr [esp + 0x18], \"Reveal cards\" (STRING)"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x23397f2",
+              "mov dword ptr [esp + 0x18], \"Activate Foster\" (STRING)"
+            ]
+          ]
+        }
+      ],
+      "reason": "Restore the native chooser label.",
+      "source_before_definition_sha256": "b098484e68ae07ffb58944e41eaf4107d2ee01123e329c7a328c65857e0a4b9e",
+      "source_after_definition_sha256": "a899e7fd1ec8e4d214b8961acc723cec5a910c83abc93c09e6db3b507c463a80"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "source_function": "card_genesis_wave",
+      "native_owner": "card_genesis_wave",
+      "native_address": "0x243a690",
+      "native_size": 860,
+      "native_body_sha256": "28dbec5c5a0a9c48046bf2c7f4a74938caacfc6e19f47666bb02611258c05ad7",
+      "before_rebuilt_address": "0x24bb460",
+      "before_rebuilt_size": 860,
+      "before_rebuilt_bytes": "5589e557565381ec6c010000837d106c8b75087453837d10710f84e1000000c744241c00000000c744241800000000c744241400000000c744241000000000c744240c040000008b4510894424088b450c89342489442404e893ff1e008d65f45b5e5f5dc38d7600a18c397a0039450c75ad3b35848c730075a5c744241c00000000c744241800000000c744241400000000c744241000000000c744240c04000000c74424086c0000008b450c89342489442404e837ff1e0031c0833d94f14e000174998b450c89342489442404e81d121b008b5038b8d0ffffff83fa057e068d0452c1e0028b15a8317a0001c231c08915a8317a00e962ffffff8d742600908b450c89342489442404e8e1111b0089342489c3e807671a008b7b3839c77e0289c785ff0f84f5feffffc744240801000000c744240402000000893424e87e221d008985acfeffffc7442414b0757300c744241000000000c744240cec0f7502897c240889c38b04b530704d0089342489442404e8d764220085db0f85790100008d04bd0000000089a5a8feffffe89dea230029c485ff8d5424207e4289bdb4feffff31db89f789d68db426000000008b04bd30704d008b0089049ec744240400000000893c2443e8e3e6fbfd399db4feffff75db89f289fe8bbdb4feffff8d9db8feffff8995b4feffff897c240cc74424080c107502c744240464000000891c24e8692420008d851cffffff890424895c2408c744240447000000e87fc11f008d47018b95b4feffff89459c89d066c745a4030089fa89c78db426000000008d851cffffff8954240c8944241cc7442418ffffffffc744241401000000c7442410000000008995b4feffff897c240889742404893424e8744b22008b95b4feffff89c383f8ff0f84890000008b04878995b0feffff89442404893424e8ce131b00c744240800000100894424048985b4feffff893424e894291d008b85b4feffff89442404893424e8d28320008b95b0feffff4a39d37d138db426000000004339d38b049f89449ffc75f485d20f854cffffff8ba5a8feffffc7442408020000008b450c89342489442404e86f3a1b00e909fdffff89f889d785ff74d67e2e89bdb4feffff8b9dacfeffff89c766908b049f8934248944240443e8e0e5fbfd3b9db4feffff75e88bbdb4feffff897c2404893424e836801b00eb98",
+      "before_rebuilt_body_sha256": "50fa4f561cf111d81f92361563aa91656db0ef797fb153ba8009aa9155f52831",
+      "before_reccmp_score": 0.9951456310679612,
+      "native_diff": [
+        {
+          "original": [
+            [
+              "0x243a87f",
+              "mov dword ptr [esp + 8], \"Select a permanent card with CMC <= %d.\" (STRING)"
+            ]
+          ],
+          "rebuilt": [
+            [
+              "0x24bb64f",
+              "mov dword ptr [esp + 8], \"Select a permanent card with CMC %d.\" (STRING)"
+            ]
+          ]
+        }
+      ],
+      "reason": "Restore the native prompt describing the existing CMC upper bound.",
+      "source_before_definition_sha256": "375ad98936ba1f342b919f4d8c559487a831116d2fe7f65c0f06e8ba929a5f17",
+      "source_after_definition_sha256": "d21f4828def7639f3518a106f2e5881a4e9e26685fbf7e1a367be7bbff3c0cfc"
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/eventide.c",
+      "before_source_sha256": "feb9af2a8695688f54e6d53e9e57535ac54d94909bd285bccb44d4b0b8c6e201",
+      "after_source_sha256": "e8c93b952e73ea14cf472ef7e03cccb50cfa16471f36d557db545aff3e452a70",
+      "before_bytes_sha256": "4ae629fb9fa6186e179b123ab5b17235fda420647f9acfd42c8026d3a549a0cb"
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "before_source_sha256": "becb7a8c4e3a036128414a9f543eb5afc8be16dcc727e34f1ed63d1819ec92bf",
+      "after_source_sha256": "c6f9ed6e1e55d792dbde2c7abd67e4211dfdedf1ea84eaa83246c2ee71603d16",
+      "before_bytes_sha256": "1d7a057d6ace09eaed6fd1ab7f94ad20bcbf53fb53b8428e67a8e9770827734c"
+    },
+    {
+      "source": "cards/ice_age.c",
+      "before_source_sha256": "168d7be7d560d62c71b4480582ac4e34989ce29da0c7305de65b98ac163be7a7",
+      "after_source_sha256": "d2f4a5d1c8d3782e0866aeb109de20f80ef42e3a7ece18a2443e45f7fe16b21e",
+      "before_bytes_sha256": "69595ab9a9102ccef1e50e7b5f6c231312722d53bdd22a17d8b58580e13e40a4"
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "before_source_sha256": "06b3ffd89962b94ff3a24e979b65c30d6a75f8f49ec83d14b83bff8a318a3941",
+      "after_source_sha256": "9a12d3112fe30020a91bb89cb6b2085a2ee3fcd809435a1f9dbcf8955316b893",
+      "before_bytes_sha256": "2f6aad8d2e64114a3389b81c178b0e0467227a54d19170268810040c4acded82"
+    },
+    {
+      "source": "cards/dissension.c",
+      "before_source_sha256": "fb30d56d880fd6d1d3a53787360fee5f2c6d065f6132896b5ce69a5eb7fcb5e0",
+      "after_source_sha256": "f295dea0fc3c95785620cebaba016ceb4c85ab2e9e69e8a29ef29d7520f57840",
+      "before_bytes_sha256": "8712bdf4c14527c90ea8df77090fca3584e040438ca985b6277eeb3dfd7d2bc3"
+    },
+    {
+      "source": "cards/betrayers_of_kamigawa.c",
+      "before_source_sha256": "a8c3e7d2a9a9f4d2696b0ea5b91a303478fb16555bf0c64c52c77b9f7c59ebff",
+      "after_source_sha256": "83a1bf30c05872a57f2f51be7a078a7ed051b02ab8aa7c95757a7393b7500a03",
+      "before_bytes_sha256": "9af6077cc51b8de50ca8ee918adeaabd63e3ba5f498f593831e5f7e2efbb7b7d"
+    },
+    {
+      "source": "cards/theros.c",
+      "before_source_sha256": "04490bd70a77ec105f77e5d0f291e040f02ec9c7065be9ab1cc34760d67a89fd",
+      "after_source_sha256": "b5ac3854116988a022257c3187585898320f70b760b8d1ec3639a1affce010ae",
+      "before_bytes_sha256": "d2237c75003cb006326c8225fdfd1f06a769f3a9b3819287859cc59bb37ec5f4"
+    },
+    {
+      "source": "cards/alliances.c",
+      "before_source_sha256": "dcdc05b3e2e5b4e489a82342837c38de24d51d44732a88bbdd8b4814a9bc5a82",
+      "after_source_sha256": "1c49730e9da915d0bbbffabd64777dabb87c050e5a48ffcfc6718f3eef8e7936",
+      "before_bytes_sha256": "64eb00449a31a8274b5c746ad5a46e147d73db5f18bb14fda2523ffe0618a81f"
+    },
+    {
+      "source": "cards/champions_of_kamigawa.c",
+      "before_source_sha256": "16b523e20344779ec3bf6dcc869002783642c32236896bda1cb3c91e6c78f194",
+      "after_source_sha256": "da34a4e928a54057ad31fc4a760c89a206a46139e621bdf7a9b2a1c147fdba01",
+      "before_bytes_sha256": "391ce621756ca235111128ab916b7ee22a91c4ca55d6dde1cbde23955d39cf1f"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "before_source_sha256": "a5ebae5128498aac9c72d3b19547a28a4249e9e7bf830cfa38df6c8376d0070d",
+      "after_source_sha256": "82486b67ecc1cc5dc0e996624928130cd1c75b364527f02b157dd7322978dd19",
+      "before_bytes_sha256": "41f28af9dfd9397fd1866353f78b48d2401dd3134dc77b9c0c59659e9081958f"
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "before_source_sha256": "aee888a93e42677e48b722c14b0fb894593864b047286abe7fc95d74b050922a",
+      "after_source_sha256": "2c918cf306b14719e003370edeebe98120793389a0873a09ff0a659723f9be44",
+      "before_bytes_sha256": "796acbf020cbaa568020b825a1becc8ece34c1baf586f850dc81aab6a4f38d95"
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "before_source_sha256": "de06024683506bfcf77a9398b5a4a858e22a8e01eeb7e292987f50688ba1b9e7",
+      "after_source_sha256": "c026ffb81509cd92c7c25e0fb922f35ace516772dd852880a8c789ffc050fdad",
+      "before_bytes_sha256": "5e31a1a32ea66db50916937597996e9ed767a12e007368f7b0da9a54e3608cea"
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "review": [
+    "Fresh full reccmp JSON includes instruction diffs for 18,725 configured ranges. 12,280 are exact, 261 effective matches, 6,184 differ. Rank by absolute changed instruction count and score; 494 have score >=90% and at most eight changed instructions per side.",
+    "Thirteen source functions are corrected from native instruction/value evidence, including one helper inlined into the Baku Altar owner. There is no blind replacement of assembly differences or global flag renumbering.",
+    "Native GAA_NONSICK is already zero; Freewind needs GAA_LITERAL_PROMPT. Native kill-code names/values are already correct; fix the specific Hydra/removal/range uses rather than swapping the enum.",
+    "Leave equivalent byte/word tests and signed shifts followed by byte masks alone. Hissing Iguanar loop counts start from BYTE0 and decrement toward zero; >0 and !=0 are equivalent there.",
+    "Do not change Oath of Nissa from the apparent zero/99 delta: native contains both return blocks, and the grouped diff aligned reordered blocks incorrectly. Branch displacement/padding changes, symbolic binding gaps and moved instructions remain separate queue items.",
+    "Routine C++ chooser coverage now binds current canonical source pins and current body hashes, preserving original review hashes and an explicit historical check. Bounds caches bind debug hashes, reader implementation and inclusion mode.",
+    "One incremental build and focused emitted-value/string checks follow. The JSON report is a pre-correction snapshot, not a claim that the rebuilt functions now score 100% or that all other differences are harmless."
+  ],
+  "scope": "Evidence-driven small source corrections and a reusable comparison workflow. Not a byte-matching requirement or a transitive gameplay-equivalence claim.",
+  "verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "6c541ea7129a56b140b608420f9e3374dc22c50065d25b59019729c1d15f4215",
+    "dbg_sha256": "2e5b3ebbf83873813a782435c82aaf9faf67bee08c75b6b249e2f2d5369139ad",
+    "functions": [
+      {
+        "source": "cards/eventide.c",
+        "source_function": "card_springjack_pasture",
+        "native_owner": "card_springjack_pasture",
+        "current_address": "0x2199390",
+        "current_size": 1867,
+        "current_body_sha256": "4fb1b912c2043aca031f25b179a8ca32a3b4a7a1eccba3ffe36b455bb546f5b9",
+        "corrected_sites": [
+          {
+            "native_address": "0x236fe33",
+            "current_address": "0x2199823",
+            "instruction": "mov dword ptr [esp + 4], 0"
+          }
+        ]
+      },
+      {
+        "source": "cards/time_spiral.c",
+        "source_function": "lim_dul_the_necromancer_effect",
+        "native_owner": "lim_dul_the_necromancer_effect",
+        "current_address": "0x2589f10",
+        "current_size": 1141,
+        "current_body_sha256": "d6e140645fbe47e93b211fc28b515647eb4b049a7727e28db9013ebdb66d923d",
+        "corrected_sites": [
+          {
+            "native_address": "0x20e98bf",
+            "current_address": "0x258a00f",
+            "instruction": "mov dword ptr [esp + 0x18], 0x90"
+          }
+        ]
+      },
+      {
+        "source": "cards/ice_age.c",
+        "source_function": "card_enduring_renewal",
+        "native_owner": "card_enduring_renewal",
+        "current_address": "0x2227f30",
+        "current_size": 885,
+        "current_body_sha256": "a5d42a8970d871ae6d8109024f98416bb8449066d700e83d7444b2c1f0bba620",
+        "corrected_sites": [
+          {
+            "native_address": "0x23f5ed6",
+            "current_address": "0x22280a6",
+            "instruction": "mov dword ptr [esp + 0x18], 0x60"
+          }
+        ]
+      },
+      {
+        "source": "cards/born_of_the_gods.c",
+        "source_function": "consuming_rage_legacy",
+        "native_owner": "consuming_rage_legacy",
+        "current_address": "0x20a51d0",
+        "current_size": 358,
+        "current_body_sha256": "9f2d78c120beae94f841cc72b1b7310b157b788dd58e845c5ffee02df49261d6",
+        "corrected_sites": [
+          {
+            "native_address": "0x2035385",
+            "current_address": "0x20a52d5",
+            "instruction": "mov dword ptr [ebp - 0x1c], 2"
+          }
+        ]
+      },
+      {
+        "source": "cards/dissension.c",
+        "source_function": "card_freewind_equenaut",
+        "native_owner": "card_freewind_equenaut",
+        "current_address": "0x2142890",
+        "current_size": 291,
+        "current_body_sha256": "b2a14d0931f72ee5abca36ee9ff9e5e74468ee2619ab3f761a40572b22ee55c7",
+        "corrected_sites": [
+          {
+            "native_address": "0x2220636",
+            "current_address": "0x2142996",
+            "instruction": "mov dword ptr [esp + 0xc], 7"
+          }
+        ]
+      },
+      {
+        "source": "cards/betrayers_of_kamigawa.c",
+        "source_function": "make_colorless_spirit",
+        "native_owner": "card_baku_altar",
+        "current_address": "0x209cbf0",
+        "current_size": 321,
+        "current_body_sha256": "a690515d81b5484697b802e164ec7866acd715b52335dd31804a1a6470eeee44",
+        "corrected_sites": [
+          {
+            "native_address": "0x2569b8f",
+            "current_address": "0x209cd1f",
+            "instruction": "mov byte ptr [ebp - 0x30], 1"
+          }
+        ]
+      },
+      {
+        "source": "cards/theros.c",
+        "source_function": "generic_hydra_head",
+        "native_owner": "generic_hydra_head",
+        "current_address": "0x255ec50",
+        "current_size": 186,
+        "current_body_sha256": "700e8c21aa3a646459187c3e9347c7b14cba3f08b4a0d6fd8a989d847bd9084e",
+        "corrected_sites": [
+          {
+            "native_address": "0x26305f1",
+            "current_address": "0x255ec71",
+            "instruction": "mov byte ptr [eax + 0x68], 1"
+          }
+        ]
+      },
+      {
+        "source": "cards/alliances.c",
+        "source_function": "card_spiny_starfish",
+        "native_owner": "card_spiny_starfish",
+        "current_address": "0x2039fb0",
+        "current_size": 206,
+        "current_body_sha256": "bd8b192abbcb0a21be4eebafee2dabe893fcbe786f91791b2415c815b12d2ef3",
+        "corrected_sites": [
+          {
+            "native_address": "0x20a7a57",
+            "current_address": "0x203a017",
+            "instruction": "mov dword ptr [esp + 0xc], 0x800000"
+          }
+        ]
+      },
+      {
+        "source": "cards/champions_of_kamigawa.c",
+        "source_function": "rfg_when_die_legacy",
+        "native_owner": "rfg_when_die_legacy",
+        "current_address": "0x20b3b10",
+        "current_size": 308,
+        "current_body_sha256": "4c4034a6bcd22ef0daa8b4ec532e2fc5f34ee1cb7352ef0d44f2771c6d17c180",
+        "corrected_sites": [
+          {
+            "native_address": "0x260a638",
+            "current_address": "0x20b3b88",
+            "instruction": "lea edx, [ecx - 2]"
+          },
+          {
+            "native_address": "0x260a63b",
+            "current_address": "0x20b3b8b",
+            "instruction": "cmp dl, 1"
+          }
+        ]
+      },
+      {
+        "source": "cards/new_phyrexia.c",
+        "source_function": "card_inquisitor_exarch",
+        "native_owner": "card_inquisitor_exarch",
+        "current_address": "0x23cac40",
+        "current_size": 349,
+        "current_body_sha256": "2f89a02a6b50bfb6fa07c362482e4e3e86d28926b2f7882e493b545cc4c6aec9",
+        "corrected_sites": [
+          {
+            "native_address": "0x2278bee",
+            "current_address": "0x23cad2e",
+            "instruction": "mov dword ptr [esp + 8], 0x6d"
+          }
+        ]
+      },
+      {
+        "source": "cards/mercadian_masques.c",
+        "source_function": "foster_effect",
+        "native_owner": "foster_effect",
+        "current_address": "0x2331de0",
+        "current_size": 975,
+        "current_body_sha256": "804b13cf4aa6b1edb4c3c70fbf8e21b969d313103836aff9e82db48d3835559d",
+        "corrected_sites": [
+          {
+            "native_address": "0x216bed7",
+            "current_address": "0x2331f87",
+            "instruction": "mov dword ptr [esp + 0x18], 0x2743132",
+            "string": "Reveal cards"
+          }
+        ]
+      },
+      {
+        "source": "cards/mercadian_masques.c",
+        "source_function": "card_foster",
+        "native_owner": "card_foster",
+        "current_address": "0x2339610",
+        "current_size": 742,
+        "current_body_sha256": "1d7c019ed7e82c523851a5f37f13aed06a74b51c7d48dfe86b6aad16e3fb143b",
+        "corrected_sites": [
+          {
+            "native_address": "0x21736f2",
+            "current_address": "0x23397f2",
+            "instruction": "mov dword ptr [esp + 0x18], 0x2743132",
+            "string": "Reveal cards"
+          }
+        ]
+      },
+      {
+        "source": "cards/scars_of_mirrodin.c",
+        "source_function": "card_genesis_wave",
+        "native_owner": "card_genesis_wave",
+        "current_address": "0x24bb460",
+        "current_size": 860,
+        "current_body_sha256": "50fa4f561cf111d81f92361563aa91656db0ef797fb153ba8009aa9155f52831",
+        "corrected_sites": [
+          {
+            "native_address": "0x243a87f",
+            "current_address": "0x24bb64f",
+            "instruction": "mov dword ptr [esp + 8], 0x275100c",
+            "string": "Select a permanent card with CMC <= %d."
+          }
+        ]
+      }
+    ],
+    "corrected_instruction_sites": 14,
+    "staging": "preserved",
+    "scope": "Changed instruction sites only, found by original before-build instruction ordinals within hash-pinned function bytes and fresh post-build DWARF bounds. Numeric instructions or readonly strings match the native release exactly. No claim that every remaining instruction or reccmp score is now identical; full comparison deferred."
+  },
+  "queue_tool": "tools/recovery/small_diff_queue.py"
+}

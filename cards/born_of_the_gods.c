@@ -791,59 +791,30 @@ int card_aerie_worshippers(int player, int card, event_t event)
 
 int card_arbiter_of_the_ideal(int player, int card, event_t event)
 {
-  int result;
-  const char *reveal_prompt;
-
-  if (event != EVENT_UNTAP_CARD)
-  {
+  if (event != EVENT_UNTAP_CARD || card != affected_card || player != affected_card_controller)
     return 0;
-  }
-  if (card != affected_card)
-  {
+  if (!inspired(player, card, event) || deck_ptr[player][0] == -1)
     return 0;
-  }
-  if (player != affected_card_controller)
+  if (!is_what(-1, deck_ptr[player][0], 0x43) ||
+      (is_what(-1, deck_ptr[player][0], TYPE_CREATURE) &&
+       grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_DECK)))
+    reveal_card_iid(player, card, deck_ptr[player][0]);
+  else
   {
-    return 0;
-  }
-  result = inspired(player, card, event);
-  if (result != 0)
-  {
-    if (*deck_ptr[player] != -1)
+    const char *reveal_prompt = player == 0 ? "You reveal:" : "Opponent reveals:";
+    if (dialog_impl(player, card, EVENT_ACTIVATE, DLG_SMALLCARD_ID(deck_ptr[player][0]),
+                    DLG_HEADER(reveal_prompt), DLG_NO_STORAGE,
+                    "Put into play", 1, 1, 0, 0, 0, 0))
     {
-      result = is_what(-1, *deck_ptr[player], 0x43);
-      if ((result == 0) ||
-          ((result = is_what(-1, *deck_ptr[player], 2),
-            result != 0 &&
-                (result = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_DECK), result != 0))))
-      {
-        reveal_card_iid(player, card, *deck_ptr[player]);
-      }
-      else
-      {
-        reveal_prompt = "You reveal:";
-        if (player != 0)
-        {
-          reveal_prompt = "Opponent reveals:";
-        }
-        result =
-            dialog_impl(player, card, EVENT_ACTIVATE, "\001\021", *deck_ptr[player], "\001\011",
-                        reveal_prompt, "\001\014", "Put into play", 1, 1, 0, 0, 0, 0);
-        if (result != 0)
-        {
-          result = add_card_to_hand(player, *deck_ptr[player]);
-          remove_card_from_deck(player, 0);
-          create_targetted_legacy_effect(player, card, effect_become_enchantment, player, result);
-          set_special_flags2(player, result, 0x80);
-          hack_silent_counters = hack_silent_counters + 1;
-          add_counters(player, card, player, result, COUNTER_MANIFESTATION, 1);
-          hack_silent_counters = hack_silent_counters + -1;
-          put_into_play(player, result);
-        }
-      }
-      return 0;
+      int card_added = add_card_to_hand(player, deck_ptr[player][0]);
+      remove_card_from_deck(player, 0);
+      create_targetted_legacy_effect(player, card, effect_become_enchantment, player, card_added);
+      set_special_flags2(player, card_added, 0x80);
+      ++hack_silent_counters;
+      add_counters(player, card, player, card_added, COUNTER_MANIFESTATION, 1);
+      --hack_silent_counters;
+      put_into_play(player, card_added);
     }
-    return 0;
   }
   return 0;
 }
@@ -2955,14 +2926,19 @@ static int effect_searing_blood(int player, int card, event_t event)
 {
   card_instance_t *instance = get_card_instance(player, card);
 
-  if (instance->damage_target_player >= 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+  if (instance->damage_target_player >= 0)
   {
-    int p = instance->damage_target_player;
-    int c = instance->damage_target_card;
-    if (affect_me(p, c) && !check_for_death_trigger_removal(p, c) && is_this_dying(p, c))
+    instance = get_card_instance(player, card);
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
     {
-      instance->damage_target_player = instance->damage_target_card = -1;
-      instance->targets[11].player = 66;
+      int c = instance->damage_target_card;
+      int p = instance->damage_target_player;
+      if (affect_me(p, c) && !check_for_death_trigger_removal(p, c) && is_this_dying(p, c))
+      {
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
+        instance->targets[11].player = 66;
+      }
     }
   }
   if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
@@ -4594,38 +4570,18 @@ int card_altar_of_mogis(int player, int card, event_t event){
 
 int unquenchable_fury_legacy(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-  int card_00;
-  test_definition_t test;
   if (event == EVENT_DECLARE_BLOCKERS)
   {
-    default_test_definition(&test, 2);
-    test.subtype = 0x77;
-    test.state = 4;
-    if (0 < active_cards_count[player])
-    {
-      card_00 = 0;
-      do
-      {
-        instance = in_play(player, card_00);
-        if (instance != NULL)
-        {
-          result = new_make_test_in_play(player, card_00, -1, &test);
-          if (result != 0)
-          {
-            menace(player, card_00, EVENT_DECLARE_BLOCKERS);
-          }
-        }
-        card_00 = card_00 + 1;
-      } while (card_00 < active_cards_count[player]);
-    }
+    test_definition_t test;
+    default_test_definition(&test, TYPE_CREATURE);
+    test.subtype = SUBTYPE_MINOTAUR;
+    test.state = STATE_ATTACKING;
+    for (int c = 0; c < active_cards_count[player]; ++c)
+      if (in_play(player, c) && new_make_test_in_play(player, c, -1, &test))
+        menace(player, c, event);
   }
   else if (event == EVENT_CLEANUP)
-  {
     kill_card(player, card, KILL_EXILE);
-    return 0;
-  }
   return 0;
 }
 
@@ -4743,7 +4699,7 @@ int consuming_rage_legacy(int player, int card, event_t event)
         pump_ability_t pump;
         default_pump_ability_definition(player, card, &pump, 2, 0, 0, 0);
         pump.paue_flags = PAUE_END_AT_EOT | PAUE_REMOVE_TARGET_AT_EOT;
-        pump.eot_removal_method = KILL_BURY;
+        pump.eot_removal_method = KILL_DESTROY;
         pump_ability(player, card, current_turn, attackers[amt], &pump);
       }
     }
@@ -4819,7 +4775,6 @@ static int crypsis_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x20378f0; original cards/born_of_the_gods.c:866. */
 int card_crypsis(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t td;
 
@@ -4845,8 +4800,7 @@ int card_crypsis(int player, int card, event_t event)
         td.allowed_controller = player;
         if (event == EVENT_RESOLVE_SPELL)
         {
-          result = valid_target(&td);
-          if (result != 0)
+          if (valid_target(&td))
           {
 
             instance = get_card_instance(player, card);

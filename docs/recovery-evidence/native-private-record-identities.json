@@ -1,0 +1,429 @@
+{
+  "format": 1,
+  "status": "Original record identities restored; combined build and focused checks passed.",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "native_records": [
+    {
+      "source": "cards/new_phyrexia.c",
+      "name": "edh_data_t",
+      "scopes": [
+        "card_karn_liberated"
+      ],
+      "die_offset": "0x228e817",
+      "type_die": "0x228e7a4",
+      "size": 16,
+      "fields": [
+        {
+          "name": "edh_card",
+          "offset": 0,
+          "member_die": "0x228e7ae",
+          "type_die": "0x21cd373",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "general1_id",
+          "offset": 4,
+          "member_die": "0x228e7bc",
+          "type_die": "0x21cd373",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "general2_id",
+          "offset": 8,
+          "member_die": "0x228e7d2",
+          "type_die": "0x21cd373",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "general1_ebk",
+          "offset": 12,
+          "member_die": "0x228e7e8",
+          "type_die": "0x21cd67c",
+          "type_name": "int8_t",
+          "type_tag": "DW_TAG_base_type",
+          "size": 1,
+          "encoding": 6
+        },
+        {
+          "name": "general2_ebk",
+          "offset": 13,
+          "member_die": "0x228e7ff",
+          "type_die": "0x21cd67c",
+          "type_name": "int8_t",
+          "type_tag": "DW_TAG_base_type",
+          "size": 1,
+          "encoding": 6
+        }
+      ]
+    },
+    {
+      "source": "functions/windows.c",
+      "name": "inst_and_ext_t",
+      "scopes": [],
+      "die_offset": "0x5ef17dc",
+      "type_die": "0x5ef17dc",
+      "size": 492,
+      "fields": [
+        {
+          "name": "inst",
+          "offset": 0,
+          "member_die": "0x5ef17eb",
+          "type_die": "0x5eec8a2",
+          "type_name": "card_instance_t",
+          "type_tag": "DW_TAG_structure_type",
+          "size": 300,
+          "encoding": null
+        },
+        {
+          "name": "ext",
+          "offset": 300,
+          "member_die": "0x5ef17f9",
+          "type_die": "0x5eef108",
+          "type_name": "card_ext_t",
+          "type_tag": "DW_TAG_structure_type",
+          "size": 192,
+          "encoding": null
+        }
+      ]
+    },
+    {
+      "source": "functions/engine.c",
+      "name": "PotentialAttacker",
+      "scopes": [],
+      "die_offset": "0x666d5ee",
+      "type_die": "0x666d595",
+      "size": 12,
+      "fields": [
+        {
+          "name": "card",
+          "offset": 0,
+          "member_die": "0x666d59f",
+          "type_die": "0x65bc81d",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "effectiveness",
+          "offset": 4,
+          "member_die": "0x666d5ad",
+          "type_die": "0x65bc81d",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "bands",
+          "offset": 8,
+          "member_die": "0x666d5c5",
+          "type_die": "0x65bcb26",
+          "type_name": "int8_t",
+          "type_tag": "DW_TAG_base_type",
+          "size": 1,
+          "encoding": 6
+        },
+        {
+          "name": "one_of_best_7",
+          "offset": 9,
+          "member_die": "0x666d5d5",
+          "type_die": "0x65bcb26",
+          "type_name": "int8_t",
+          "type_tag": "DW_TAG_base_type",
+          "size": 1,
+          "encoding": 6
+        }
+      ]
+    },
+    {
+      "source": "functions/engine.c",
+      "name": "ai_combat_data_t",
+      "scopes": [],
+      "die_offset": "0x666d687",
+      "type_die": "0x666d609",
+      "size": 16,
+      "fields": [
+        {
+          "name": "potential_power",
+          "offset": 0,
+          "member_die": "0x666d613",
+          "type_die": "0x65bc81d",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "potential_toughness",
+          "offset": 4,
+          "member_die": "0x666d62d",
+          "type_die": "0x65bc81d",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "abils",
+          "offset": 8,
+          "member_die": "0x666d64b",
+          "type_die": "0x6666893",
+          "type_name": "keyword_t",
+          "type_tag": "DW_TAG_enumeration_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "opinion_of_game_state_without_this",
+          "offset": 12,
+          "member_die": "0x666d659",
+          "type_die": "0x65bc81d",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        }
+      ]
+    },
+    {
+      "source": "functions/dialog.c",
+      "name": "dialog_args_t",
+      "scopes": [],
+      "die_offset": "0x6f2c6c1",
+      "type_die": "0x6f2c641",
+      "size": 24,
+      "fields": [
+        {
+          "name": "bigcard_player",
+          "offset": 0,
+          "member_die": "0x6f2c64b",
+          "type_die": "0x6e7901a",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "bigcard_card",
+          "offset": 4,
+          "member_die": "0x6f2c664",
+          "type_die": "0x6e7901a",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "smallcard_player",
+          "offset": 8,
+          "member_die": "0x6f2c67b",
+          "type_die": "0x6e7901a",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "smallcard_card",
+          "offset": 12,
+          "member_die": "0x6f2c689",
+          "type_die": "0x6e7901a",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        },
+        {
+          "name": "prompt",
+          "offset": 16,
+          "member_die": "0x6f2c697",
+          "type_die": "0x6f28fbc",
+          "type_name": null,
+          "type_tag": "DW_TAG_pointer_type",
+          "size": 4,
+          "encoding": null
+        },
+        {
+          "name": "human_chooses",
+          "offset": 20,
+          "member_die": "0x6f2c6a8",
+          "type_die": "0x6e7901a",
+          "type_name": "int",
+          "type_tag": "DW_TAG_base_type",
+          "size": 4,
+          "encoding": 5
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/new_phyrexia.c",
+      "before_source_sha256": "ebc495830b61c24fdb4fc90e622f19ce3616838ff6d620560825678a82088a04",
+      "after_source_sha256": "a5ebae5128498aac9c72d3b19547a28a4249e9e7bf830cfa38df6c8376d0070d",
+      "before_bytes_sha256": "afa2276b5b28cdf590e3e6c2db185e86b88d7ef7e77fd257677ac0f600974c08"
+    },
+    {
+      "source": "functions/engine.c",
+      "before_source_sha256": "8ce8c74945de7946fbc3ce3924512b4fc7c711d1ec687ceede450303217ef183",
+      "after_source_sha256": "04389f840cc62a8040a4498030e430b585ec9eea5287577964f4a2aba335d59b",
+      "before_bytes_sha256": "c5becc556b84cb63156e96d4402a354efe0e01d41a692daa41c57748cf6804eb"
+    },
+    {
+      "source": "manalink.h",
+      "before_source_sha256": "439e5dea2a450454b06ae8f009750bb31d69cd923d16f62d78bc7cab19038857",
+      "after_source_sha256": "38bf3f54dd4701eb81fca5c3fa40a2beb21a1e3287c954cfbdcb6d7310b1d52d",
+      "before_bytes_sha256": "57eb05dabb7bf9f5f8b5f54d76c9c39b44ab9f668a8c9b3bb1833d6bce8331b0"
+    },
+    {
+      "source": "functions/windows.c",
+      "before_source_sha256": "df570a048970706d90e4534914fc695a34782919213945d6403d59a42c4f64a3",
+      "after_source_sha256": "e1ba14adc556dcaccb1d9648bbc4bfd3d9eb51fa298a580f2349a7b5a260daad",
+      "before_bytes_sha256": "3a36f0610d44fb3fc9c8b5a611c5741b690394943f24895646533466b80c8db4"
+    },
+    {
+      "source": "functions/dialog.c",
+      "before_source_sha256": "922de15ce85e0322b04051eead3dfc0c6031de406de58c5344d3689e23f9ee85",
+      "after_source_sha256": "a75dbfa3b1add18233123b20c06dfc6c75a7cdb7cf4030d7620b70305f21a887",
+      "before_bytes_sha256": "a15e84261edd6ea1c07dddbedf619080836eac85e55af68fca3f5aa6803926db"
+    }
+  ],
+  "changes": [
+    {
+      "source": "cards/new_phyrexia.c",
+      "before_sha256": "b09c452110001e023a5ba1b4fa44a99107e300498a215f1cd2738343b1c3cfc4",
+      "after_sha256": "a659405d7c71fd4cc2d623d9c5e6451172322d4c7ea12f514e9310004f0d6978",
+      "kind": "native_karn_record_name"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "before_sha256": "67126432b60e673dc9332e01d9b4f9710cc0cf9669697836c410ff2d01cd7d0c",
+      "after_sha256": "6c86ac0a7feeaa5fa48eb34a32a02d626a8795d80a530d69aae80820264aaaec",
+      "kind": "native_karn_record_name"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "before_sha256": "420f855a3a8a3485bb09801343b7cef5b17a774ea8aafcc3806f326f883fb763",
+      "after_sha256": "95cc962eacb556332185363562c417c19aba64ae2d88e348836b7d1d61392bed",
+      "kind": "native_karn_record_name"
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "before_sha256": "2a2ec536fb6c83a3b62fe7e0c1c58f8c060b50c8d31200b13bf2ca7c11800799",
+      "after_sha256": "0fa0f46d8a09ce50f7271290116daa8ec403de0426998e33956bd57bcb991447",
+      "kind": "native_karn_record_name"
+    },
+    {
+      "source": "functions/engine.c",
+      "before_sha256": "e5ece6d1d76dac966e46b391e5b68160b7b584806ee2ca130f729bf5703a2ee1",
+      "after_sha256": "77115f20e2f723cb6907dc993640aef3fbc7ed4e8b05728c6627d1f735dbe9d3",
+      "kind": "native_combat_record_scope"
+    },
+    {
+      "source": "functions/engine.c",
+      "before_sha256": "42d2cd20a739a8a14bd05510fad9d42dae20af8171675ccee945570142f36c6b",
+      "after_sha256": "a6458190365b3b357d121aec1087a1de3ee04be456ac8e1845855f18a47c1a94",
+      "kind": "native_combat_record_scope"
+    },
+    {
+      "source": "functions/engine.c",
+      "before_sha256": "abb7852b9db9a288789802813232b4fed4cccfc35eb2478fef8806d2ace8a7dd",
+      "after_sha256": "075cc8346a952e5884a4050ead7789307e969a2b5d98b1da01725f3603fbdd5d",
+      "kind": "native_shared_combat_records"
+    },
+    {
+      "source": "manalink.h",
+      "before_sha256": "406430303c26bfbcee0cbcd5999984f2fce51c0da1b30e5e14755a8ed529861e",
+      "after_sha256": "ec032dc14484e8a37e2ce4c5556639884f014f75328218edfd0b00a06be9e421",
+      "kind": "native_display_record_forward_declaration"
+    },
+    {
+      "source": "functions/windows.c",
+      "before_sha256": "700093d13e7a0b3a0a498e96116b77430103b36c436615a4c2556e4a5054e0af",
+      "after_sha256": "497f6a500d44af5b2cc820b365b7d25da729cfd6d916e85e2eaf57112de223d3",
+      "kind": "native_display_record_owner"
+    },
+    {
+      "source": "functions/dialog.c",
+      "before_sha256": "3bcab82705e41df1efd1acf0f843b8592558e296b3948c85463b96a92efdf34d",
+      "after_sha256": "6ce93c482b09ec9135496edaf53fa8b402361dab9881a967eb0794aca2404d63",
+      "kind": "native_dialog_argument_declaration"
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "review": [
+    "Restore five original named private records. Karn local edh_data_t replaces the descriptive recovery name, with unchanged fields and all four token uses renamed together.",
+    "PotentialAttacker and ai_combat_data_t return to native engine.c file scope. Two identical local ai_combat_data_t definitions become one shared declaration; no executable statement tokens change.",
+    "The complete inst_and_ext_t definition returns to windows.c immediately before its first consumer. manalink.h keeps an opaque typedef for the existing pointer API; no other source unit uses a complete instance.",
+    "Restore the native 24-byte dialog_args_t declaration before the existing dialog hook. Native DWARF has no variable/formal referring to that typedef or its underlying record; leave it unused, without dummy objects, forced debug emission or dialog changes.",
+    "The project-record discovery found 48 native records: 41 already matched, these five names/scopes/owners were missing, and two SafeBool specializations were not emitted in the current C++ build. SafeBool templates and enum operators already exist in defs.h; do not force extra uses.",
+    "One combined build and focused original-record/source checks follow. No full project rescan, reccmp refresh or historical audit replay."
+  ],
+  "scope": "Record source names, scope and ownership; not additional function-body coverage or new dialog/runtime behavior.",
+  "verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "47c91e8a1bb4be68cdc7195166c878626dfa647ee7c229b5ebd1a565f834d08a",
+    "dbg_sha256": "c728ad523bcdaafba733524ac26b0ec42f8ae16a899aab773751534634e2faf5",
+    "compiled_records": [
+      {
+        "source": "cards/new_phyrexia.c",
+        "scopes": [
+          "card_karn_liberated"
+        ],
+        "name": "edh_data_t",
+        "die_offset": "0x31cee34",
+        "type_die": "0x31cedbc",
+        "size": 16,
+        "contract_sha256": "9a1d4aa038e08a493d6f3d93bc1bff0ba6895afcb2cbf14e5b755651e54b5dcd"
+      },
+      {
+        "source": "functions/engine.c",
+        "scopes": [],
+        "name": "PotentialAttacker",
+        "die_offset": "0x5601cf2",
+        "type_die": "0x5601c99",
+        "size": 12,
+        "contract_sha256": "4b5588464af9a3bf9ef605b801cf626b57df45d1a96c6f115fbbdbd236a45c42"
+      },
+      {
+        "source": "functions/engine.c",
+        "scopes": [],
+        "name": "ai_combat_data_t",
+        "die_offset": "0x5601d8b",
+        "type_die": "0x5601d0d",
+        "size": 16,
+        "contract_sha256": "5b9e1b59490a804c564e02c50aa0fe3bd0a84143967186ca6b14f85f25773ea4"
+      },
+      {
+        "source": "functions/windows.c",
+        "scopes": [],
+        "name": "inst_and_ext_t",
+        "die_offset": "0x6152f59",
+        "type_die": "0x6152f59",
+        "size": 492,
+        "contract_sha256": "4f0ea4b776d17e2256a22bc7dfaadd0a24c524bff5f463b2fb6d49575c070362"
+      }
+    ],
+    "source_only_unused_records": [
+      [
+        "functions/dialog.c",
+        [],
+        "dialog_args_t"
+      ]
+    ],
+    "executable_statement_changes": 0,
+    "staging": "preserved",
+    "scope": "Changed named records only: original source owner/scope, nested field contracts to depth eight, and unchanged source statements. Unused dialog declaration checked in source without forced debug emission. No new runtime or function-body-equivalence claim."
+  }
+}

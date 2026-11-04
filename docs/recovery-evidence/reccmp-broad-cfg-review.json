@@ -1,0 +1,1837 @@
+{
+  "format": 1,
+  "status": "Expanded the unchanged direct-CFG model to all 5,993 differing discovery ranges; 222 additional normalized correspondences.",
+  "statistics": {
+    "discovery_ranges": 5993,
+    "previous_cfg_correspondences": 121,
+    "cfg_correspondences": 343,
+    "additional_correspondences": 222,
+    "additional_card_named_ranges": 164,
+    "additional_other_ranges": 58,
+    "cfg_states": 29684,
+    "per_function_operand_bindings": 2449,
+    "annotated_ranges": 422,
+    "unannotated_ranges": 5571,
+    "unchanged_tiny_queue": {
+      "candidates": 590,
+      "annotated": 200,
+      "unannotated": 390
+    }
+  },
+  "review_archive": {
+    "path": "docs\\recovery-evidence\\reccmp-full-cfg-review.json.gz",
+    "sha256": "7b9a4b4284f4153ef18b50a0e1e2deed51569ce6aad2d240fbb587b4cc600951",
+    "compressed_bytes": 244351,
+    "uncompressed_bytes": 2353108,
+    "uncompressed_sha256": "d2c65dbd65d6c39636272625910a47c34795680c93dc4dd94fa20d2d4d100877",
+    "format": "gzip-compressed format-1 review JSON; exact bytes from the local proof"
+  },
+  "inputs": {
+    ".recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "ManalinkEh.dll": "0762e15c6c11bc905b2651cfccb62d84ed5f971da30d4690d48ae19009ed5598",
+    "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+    "ManalinkEh.dbg": "982a5886d62600c9e9a062ba99f3e4599311f67b1046eeedf065c2eaaf1af7ab",
+    ".recovery\\reccmp\\all-differences-c649.json": "a0c4a0510833a07ced0a6e1eaa102c8e86322835b2170678464204c9921deac7",
+    ".recovery\\reccmp\\external-refresh-c642.json": "67291126c1471b66d7623caf0acdd303b6a549c38b928d8f8275aea74e1c69f0",
+    ".recovery\\reccmp\\external-refresh-c642.inputs.json": "860b79b65e5a27d651a1a0461f62b0d48f09c65b1247fa4e3e85ecb8341843c7",
+    ".recovery\\reccmp\\external-refresh-c642.metadata.csv": "fbfd21cba133c7a2bb84bf2624afe02591c123763b8229da83977fed02c7cb73",
+    "docs\\recovery-evidence\\native-target-masks.json": "d06f4fdec0fb5e221536a485ec09b410733455747963e2beb8295352d1d00000",
+    "C:\\dev\\manalink3-src\\tools\\recovery\\review_branch_layout.py": "950d4a32ad0848373f347d2e63678a2a522e9dfde69c362bf755658c828c9bf9",
+    "C:\\dev\\manalink3-src\\tools\\recovery\\inspect_release.py": "68d82cb0052718b1b16c25b3773aeb9fca29749b6944bb855809b67441f45dc4",
+    "C:\\dev\\manalink3-src\\tools\\reccmp_project.py": "c29d6cb6b6767e2fc3ea6a8d8915216301c1cb2b6e2c4288660c6dbc325e21b0",
+    "C:\\Users\\rler\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\capstone\\__init__.py": "94571d1314355e261aff0ddfc94985fe8761232ddff6874181fd21efa9fab47f",
+    "C:\\Users\\rler\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\capstone\\lib\\capstone.dll": "76958e18380023a68fd1714fa2e01c594cc6db1955a07ad6937b66e66dc5d6c3",
+    "manalink.h": "93e3370fabd86bec6400e030e31bc99ab2b53e0be7e29b511b8b9e1e9224f904",
+    "cards\\champions_of_kamigawa.c": "8a087fad8690b70fa59ce225e3b3ea378340a5b5c8d739c01dadfe4d10e5febb",
+    "functions\\challenge_mode.c": "d2d07d7c24888c9fa4039136d1a8ebea39d2e850f6bb254134f28fb3fa7ad0a0",
+    "cards\\shards_of_alara.c": "c231a667f890a07c0666b12b37171ddc185ba628e779253c4fae45dbcdccb3d9",
+    "cards\\guildpact.c": "8038dacd033f5b0f7b154d5bcaa3c69714c7e7ceb19c27282399463b9cf491cb",
+    "cards\\urza_destiny.c": "133281edb3d87c76e9479e39ade84517ff3e085699308940f251ac965f5c121b",
+    "cards\\fallen_empires.c": "16dec9d736c327bb016f016ff7feca5f627887121bdb6fce93c05e31c339e33f",
+    "functions\\functions.c": "be12dbdc6e183302f6dd3ed229e281666598c06f1f6f8afe01972e85918db4d4",
+    "cards\\dark_ascension.c": "f45be252e5fd435a54db5abd0876410a3e34117fef7505ba940177146f1871b9",
+    "functions\\equipments.c": "915822567c09a0046d6317cc070d0f2db98dcdfa7556c18fe487b0b82aedb7d3",
+    "cards\\strixhaven.c": "dc92ddadb7479098c56c4e79dd0db80a8b1166ede5dfd87354262053f5d4d819",
+    "cards\\conflux.c": "ad7cb47525dec01cd6da7aaed136f6f3ded3df137e3e611b20129003541ab778",
+    "cards\\scars_of_mirrodin.c": "1e8fe853e7871b982af777f05ebb49fba1e12b689987352a3e5514601e7388ea",
+    "cards\\mercadian_masques.c": "694c929bcb51f0cba129a6ce088b3493c7904f757a676d68156d4c0980c47bd4",
+    "functions\\windows.c": "ecc6c9f00a3b2be33cc68d6629fcd0a8edc6d775858fa4e0f74d62efeb580f14",
+    "cards\\unglued_unhinged.c": "382155362f5d6c0c15ae7c7e0ab14c2d5f5c5d0a1a2a27284863409e5c34c09b",
+    "functions\\show_backtrace.c": "fd8c47744737bac054663b1669466b9d45fc9dd6e760e1400b7e2e9c426ddef2",
+    "cards\\fate_reforged.c": "1cc2ccd56c4f15767c55cad62296de126bc721d581195280b82e7e9537ce99d5",
+    "functions\\choose_a_card.cpp": "93237499b0e5e88769a0102d9676eb98a2588bd206654db30b795434c68d7d5b",
+    "cards\\unstable.c": "0d10145c5120a211413b5018d43de695e72ce89f709756ea726f0e3aab971619",
+    "cards\\born_of_the_gods.c": "cec2c35d5d57fbbdbac2365a35912afa0f1fd86ba929d8e1d005056581c853a6",
+    "cards\\commander.c": "0899beee4085605ffac63bc7c03c73d5a74f1fa5ff4153529e615b5b71f1e9e9",
+    "cards\\time_spiral.c": "4b88a9bb2b4792a122b62d1d6e7d4b3520d785f3d1ca1db4b2ee179280567911",
+    "cards\\theros_beyond_death.c": "a58b6456847f30cb8b2620e4adcd6a822554aa8a509716f37f09df443c22d204",
+    "cards\\eldritch_moon.c": "0b57d3ecf2d9d334e6354ae5018e800a3affcb89365a11b0733ac28534755ea8",
+    "cards\\urza_legacy.c": "0c0a250f050bd6a3174179b6392443dba2386ed81b09cfcd117ba72294d0e080",
+    "cards\\commander_legends.c": "65a1e02082808c2d54c82622374dee5bf9e2006a8afc6b2b7e8381406f0d22cc",
+    "cards\\darksteel.c": "9154756f979a3365e8b571aca2b7c33f9f1c941f130fb97eb8250a41903cc166",
+    "cards\\fifth_dawn.c": "a0f7106b99fc4ffda5a4c37bb2fa1c686f37a09377d85199fd8b9b9dcf7140e8",
+    "cards\\planechase.c": "0c3883e9334a296f5680c11dc4bf0f039f23ef46432ed1781ba506d287bea103",
+    "cards\\mirrodin_besieged.c": "7d9edd3ccec8b16dd553d0e15572eadd8efec93f7967f26715751c98a12ff792",
+    "cards\\oath_of_the_gatewatch.c": "ce04ab1f5e72b1845b49f920b11d0d8dd5595cfea4c3bc08a5d6edc44aa9ca43",
+    "functions\\has_creature_type.c": "000a8ff510cd1f799f4aa83a731e8ece45ad67d17005e34d53bfaf6163ad80de",
+    "cards\\avacyn_restored.c": "fefb7c2339143ef035868eb59b0c163b5490fd2cccfd157db744464d1fb3f2d1",
+    "cards\\innistrad.c": "e5f6edd200a585e0c9ebc06b1b630d28e9e1d0d6c210da06a20869a8f5d6d92e",
+    "functions\\deck.c": "f32f8def5d4b205326423d62433447ca7d5ff4e32cda28d39f467405a419e0ac",
+    "functions\\engine.c": "31b059d04c673d18c4ecb627d128bb6cc5e59e58ae8341e1fa5b9188fe77a582",
+    "cards\\tempest.c": "761fac4d4b8cda34ee1cb1934f5c6eec8c5a8ba42213d8679580ddbc19c6e6e8",
+    "cards\\khans_of_tarkir.c": "2984db8e3ac1d15d7d5b9d9c9658df4be8b7e099afe55db9e23a5bdf78867530",
+    "cards\\shadows_over_innistrad.c": "050e60074aa11a6801a6148f38ed9601c5cc9ea2966d4df66279ed5e45dfc9c9",
+    "cards\\ravnica_allegiance.c": "f4860123286237986102a3f31cf74540dc9a5ff52637ce0c90e53728e2327a91",
+    "cards\\rivals_of_ixalan.c": "b19aab27c4034653c4e81e99f4b94feb35d59807e4fc872abb745214463d9904",
+    "cards\\future_sight.c": "69fb6f4f21d781397d6f4e5956b9aff9755916eedef030077e1b92a4e852d224",
+    "functions\\auras.c": "b464303ebb0727e614cc4ba7df36934a4bb7741a2364b5025f68a28713016e5a",
+    "cards\\rise_of_the_eldrazi.c": "a42e2b70f554f69fd7eab988a13642e1b7bb9e36f23d9ac118c2e92678084e77",
+    "cards\\dominaria.c": "bc5c6e2b8fc913b5397d32a4d0c8ec39336c3f344d29ad26774a99c9a8598a55",
+    "cards\\unlimited.c": "dc57dee778afa457253f8c4d1eac47e4d234ca247cfc0ad0562bff7251c05ab6",
+    "cards\\conspiracy.c": "176078c02e4a4d520114c6603425bc49e8179c1d0a956ac964f93cf962d27206",
+    "cards\\eventide.c": "18e0d057a6a4a38aa03ee6b9495307fd3d4367b7c8b869ac78e63634be13cfe0",
+    "cards\\commander_2018.c": "582796a931aeb578eaf20029cb8653be0529b22acc69663f801d60c24f297cea",
+    "cards\\saviors_of_kamigawa.c": "14457729ff15b7c19ad5458ebaa1d9dfcb3c02ef261f20d279f41019a1cedd58",
+    "cards\\kaladesh.c": "75e4aba0fb07fba1592a0cdea0c0ca401eda502d5a4d6988008cef9b4288492d",
+    "cards\\legions.c": "cf74b8ce7d5102d739929c56cc7dbc00618ba3524f92830942b21ffad8cd9942",
+    "cards\\aether_revolt.c": "d3bc27758b890ca190db8bfd0149a7a6f17146c295836ff68f80ca1c634134c2",
+    "cards\\ixalan.c": "91a8035685aaadfa98b205dba32bd65fa955367c09e7b9629b9a71eb03e53d32",
+    "functions\\packs.c": "4a14146dbfd5aa35a7d48c2aea5eb948e5643066bc043d9ffaa74e51f903d1fc",
+    "cards\\prophecy.c": "d207c75d240fed8fa6b69893726c993d85e447b2b3c8c63947e3debea9a0a140",
+    "cards\\shadowmoor.c": "6c62618e56ea813836ed1850b4ff06f89d4a2a5416fadd6899c96c0653eb7b96",
+    "cards\\the_dark.c": "890dfa8df09f0b30638af8d9e4dc5c60185beb957cbe5041d1b99deb8d853537",
+    "cards\\journey_into_nyx.c": "7064b888391b014a7986215ac90e2bd72cfcd419c01f446271b6fbb558fec616",
+    "cards\\throne_of_eldraine.c": "980743a8528126be6077d20776f3388f5439645a5c4c2b87110fa49454dec847",
+    "cards\\stronghold.c": "adbe8d6e6f8ef915b64ebb2b7affdd4db1a7dd232f532d34163a6a93612cdb45",
+    "cards\\mirage.c": "bad93b33a008f2dc729dcc94c4e08862ba744f7e920057e340d5ee59cb1b5320",
+    "functions\\sacrifices.c": "9d05b80658b98304369f1a5dd04c641531bc5a190e9987c78678002ff3c9cb9f",
+    "cards\\return_to_ravnica.c": "f7fe96da77e73c5a5ceff037aafea5d2bb502396a24b22eed33f5660b4e2860a",
+    "cards\\betrayers_of_kamigawa.c": "f13b43663aeac86f2a6726b1edd1632f1b0c311c2bbe213cdd9e1d92abc7769d",
+    "cards\\modern_horizons.c": "309ac28d49488d1a39171fc160564d6ae2c645b4fd3c5edc3e5c3902a4bf4b5f",
+    "cards\\dragons_of_tarkir.c": "727ff0fa04bc67e952444c6e51cb3d767ec92f2188fa78629778bda8f8d41033",
+    "functions\\multiblock.c": "5bbf568a1977e99b16c0d3926c5578085fa1f43ed8da694911ae440601ae72d7",
+    "cards\\zendikar_rising.c": "b81a0215aca4d3a2f7aeb330a4fc370d090eb3c96ecaf410b033c15ada1df721",
+    "functions\\utility.cpp": "a8a8184f78480a751e163b4a6706af86d651db2c17d75d908b3496af9f169539",
+    "cards\\invasion.c": "312504e4e2e9a68c8564228a230542cb4fe040572d8f7c46ea1e1cfcc3bf59c5",
+    "cards\\modern_horizons_2.c": "6acb7cf978489ea0d6085058c180644c14915220745363d186ee77dd01ca936b",
+    "functions\\targets.c": "5e5e3c7aed80e6996b4417983aef75024c99f1c1c9d05034c462cbd4f505cfb7",
+    "functions\\rules_engine.c": "8507a1f921ceff4583e6bc0c4d056e48b173c066aed001637bd5dc8a176a843b",
+    "cards\\alliances.c": "64c4ce08b8e70cf1d9d4251b88454de7d75df299132496c67cc93b1f096522b3",
+    "cards\\weatherlight.c": "29663fe16a2411e884a7c3bf01aebd01ee80f2b5d59496c6298517c75438a8bf",
+    "cards\\zendikar.c": "174c0418632de95dc2de0c2dcd4081df2ab6dd880cb768a5023e0c649a864498",
+    "cards\\nemesis.c": "70b6595eb084de634fd8a30e6b3803601e3b5449bd081424214e4edd920af27d",
+    "cards\\visions.c": "2214a9223836edc51c62afc39d9e998c7780eaf20de0310a9b9ff2438c8135d1",
+    "cards\\portal_1_2_3k.c": "f3d25b014c113338ee0118345953a5b46d893c7626f558e8b0c99d952c4ae8ea",
+    "cards\\amonkhet.c": "bb755c1d1af9b7d956dae1f83b685a09607ede472dc966e17523a474d5737766",
+    "cards\\exodus.c": "6115604bbb3b48415214516946d3cbd6acb71deb69570c36d1e940042378de5b",
+    "functions\\abilities.c": "edac0c3a4b6516605f3e51b42cb544f6f140e7393896f591d5bba1a95784172d",
+    "cards\\war_of_the_spark.c": "73f34967b22b51e2589fe222f233871eb9224c8910c4eda01a1b439e3708268d",
+    "functions\\produce_mana.c": "9376838e7194535258e3e2ff1bd0fca04f9322f96d0b6cc2f3f0b253b2dcd85a",
+    "cards\\judgement.c": "5533a0c6da88dc7ff22dfa52f294bb1e033793389bfdde9231e26a70084da657",
+    "cards\\scourge.c": "9d18fd815e0328016378d7d256ab290fb9c4d1bbb4b4596e040b54999569264f",
+    "cards\\ice_age.c": "9077e70430fe0f69542d5edcbfc8a0042aa351a83209a905ee2d018f41802dda",
+    "cards\\battle_for_zendikar.c": "7a1103c6e42c69ce186d0b9cad4411d6be696c33e8168b16ba55e55fcc6b2c48",
+    "cards\\legends.c": "b51cb5bcf773bed81a31a5b90e290055a11d5a25f1b40d1a646ff7c08eef7523",
+    "cards\\lorwyn.c": "a6cb6b50bcd314b1ba7a92f7dcd7de5a2535c9d827f84109b3313bac53cacb21",
+    "cards\\planar_chaos.c": "1243ba2dddec418e6a705a1c4772e773d8ea2f1e1ad87061bfd5770696668373",
+    "functions\\manipulate_and_damage_all.c": "a34cd2add59ff869cfd100b8192e594ca4a0fcebde13b1b76b0fe9d487166d99",
+    "cards\\antiquities.c": "73f02450019e3329f233877466963c1a630058a8855d8e5f3ebca5aa79eed47c",
+    "cards\\urza_saga.c": "902b577732e5f9aa5466957285df7d90b0fb485e44df5b141ca2947da4c9fa96",
+    "cards\\m12.c": "dc5fc56d1cc0fa0e6bcd52ab45c1e1724afbe1924ca4d95617001688f8b14bab",
+    "cards\\torment.c": "8227ae61ca3f8367411954e230b4705e3313671329c100fc3b5ea0d9d61f9702",
+    "functions\\counters.c": "21f5c9da5b7ac9d79708ccd023498ccf2cc3efff464630469690a09a04c41b40",
+    "cards\\onslaught.c": "b3484970d1001e5899a8913fb0576bb3877af75a8cfe78a153bcd7e9c5de7aa6",
+    "cards\\origins.c": "7ae2f04dc2a1bca010166e5002c07f862c6582afbf02b1847a1ba9ef5f7e9963",
+    "cards\\promo.c": "72c4428bcc2403f70c70c44727bc1e99ff446620caf39efd4d4f3e64dac5f4ea",
+    "cards\\arabian_nights.c": "196c896db3a5da562aa0334e7db6f9a17e736e56a8aca58fdd4bc9874a0e42b2",
+    "cards\\ravnica.c": "9a759e8adb63dc68b00abcef5075ec783a73f0a11621f2b20fd30e4b8ed54152",
+    "cards\\new_phyrexia.c": "24d1606d43bfcb178d3d28a10b3b24fa008e062dd28f27f4b5356e3332a93da4",
+    "cards\\commander_2016.c": "4584430e0942aebe07b988ba579880202bbb333ba9c2d6945c3c4a5d45810b84",
+    "cards\\commander_2017.c": "60c3730db8f12454febb65db8498a6c767f94f4048e2e44a89559bce67704599",
+    "cards\\guilds_of_ravnica.c": "cc8ceb7c5f862c1803265a3bb4ec469b074a335fc3dfe8abba648f6c602d6258",
+    "cards\\dragons_maze.c": "17907faa4ff916a8881df22b9d02073dcf87a909a59aba80c2f9b5be8acc1b69",
+    "functions\\play_spell_for_free.c": "1c18b6a5d80c077b7ababd001a75da60f88d07774c4c3811b61f4e37a027d733",
+    "cards\\gargaroz.c": "ba53cafef4e3aa72287f34fb1855c7c19b454378dc61a1018e174b00fc34cbef",
+    "functions\\token_generation.c": "8b0b832db7b59ae36f89a1b6278ec694f662ad5f679246a9d56b0794bc283235",
+    "cards\\theros.c": "0b69e524c5c5c4090cb341c4911161e90816630b271fd8933b4d689ba15025ba",
+    "cards\\odissey.c": "c5c1cc930648d3208b6f124d0116058f85f7cd9bc478db522c318172b0641e49",
+    "cards\\hour_of_devastation.c": "b21b00f020f80ec57502cdf4968d29312214c214b8ad184cdfc668a4c1369749",
+    "cards\\coldsnap.c": "b58ead6d06952e9a9ddbba5be69b0be310ccfdef60be4cda8d81a0b67c76035d",
+    "cards\\m20.c": "ebc8ed67402a7ac348c15ceea753ec2882f2bd365c8ed18d3ba4dc14161b9038",
+    "functions\\ai.c": "e5c22e8b3e75755b0b45474cb4533f27aeb2d6145da7f0a324b4cc7b459ddedf",
+    "cards\\m15.c": "7a1edd1f980d05ab0880cb58729e5d495db9e9d894c8ffd4890191b00cfb81cf",
+    "cards\\battlebond.c": "22647150b4d238215a82e0fe9c7b6ff4d5e9c4d38ca21f9fe6ffd5ec6854f850",
+    "cards\\vanguard.c": "18a9c1546f93f832849fabe971d1bb42163a3a39066e26774b332d8026d5404f",
+    "cards\\homelands.c": "14ec6690b672917cec5c7756886ce8eb00091dff04f9d9903d94cc079139a895",
+    "cards\\m19.c": "f1b80581e6118f384800fa8b9c343b05eb78c40f02d13b52f46d2776da1a31e2",
+    "cards\\morningtide.c": "7f13495559ded1f5d1a209de214d64548d82916ccb888e7d5c53dd772c363716",
+    "cards\\archenemy.c": "5d33c522e9bcef71eca4ec9bf8369f342b6fde27b2033622b9fa410c38362d52",
+    "cards\\conspiracy-take-the-crown.c": "84ade1fffc4ff6c50409053a2802fac348f7df66e9ca7544c7f3f47dd0cd36b4",
+    "cards\\apocalypse.c": "bc4e77ba13058da3d116a2597835035278ae1b6feb07e390f409289b3baaa856",
+    "cards\\planeshift.c": "2c15f86e72ba72bd39efce568e127760a18fece69a56757f9ef1bdbec3622aa7",
+    "cards\\m13.c": "877295ecbcc7fa5f89310355a03757baa27424c14641ef9dfc3c36a70e753f24",
+    "cards\\alara_reborn.c": "f9697042a97dacfada30378154231e2fc05a5f4573e32cb0c1b8690e5de4b101",
+    "functions\\draft.c": "678a334bc729289bc5a46bcefc70023db23abb34bc6ccdc6cac59b3af860fa4d",
+    "cards\\worldwake.c": "250791a6f08ac02e8f64daf96e543ec11d77422a0048eb099c373830b6d260f6",
+    "cards\\dissension.c": "a08f65a1bf82e66b9353988c4a3bb9816061df8fe7a4bb3a6ec8e89e8abe4964",
+    "cards\\m10.c": "4028a800253d4b0e380d15e273b6be8b8ca223ccf5e5af412ca2e3019d46d2e4",
+    "cards\\commander_2015.c": "27223e0edd6b60e9524c4cc87e22bb55e6e616e72845bb8cf521195dac36ddb8",
+    "functions\\tutors.c": "ccbd6cb5b734f4773854d1bdb959351f2247413120d7856c72fbf0e6723fd53e",
+    "cards\\jumpstart.c": "677e65f3829e8f5c4b2f73c20cf7c7db698a4b5e4b0fe665aeff2c3a6c409a84",
+    "cards\\tokens.c": "ab35a87ff07f5c8971f253402c9da75aed25d5ff67517b70ca5d456ea66aedd3",
+    "cards\\gatecrash.c": "2379e69f80aa63536b5f4d05ac809610965fad8d3ffdca060053565a9bc49983",
+    "functions\\events.c": "1a63cf5d3a76bf559689d029d277283fc05beb04dad5245e05c0953614a5708c",
+    "cards\\commander_2019.c": "ae6f5d42077fef9853c275844aa02533471640b13798d556b6f7b7de934f1d0d",
+    "cards\\mirrodin.c": "f9cecfd096b43a0b240d351a49e58f28e477dc544542e3f0f627a15c28ce81e9",
+    "functions\\count_graveyard.c": "255cfe6159732c6de7f9209a1bb5da172f4be8f6799cb1264183b869d3148bf9",
+    "cards\\ikoria.c": "86fe719d6aa77ef9a787afac5a961f13f4e1c07a9dde6398132f5536c41816cc",
+    "cards\\m11.c": "b509f16835eb1abfcce5e4339fe14c2e3e02f2baba8901f0cf53eec4c1e1eedc",
+    "functions\\load_text.c": "5b64456061245e04b67f909667dbfc72e4be5ad9d422a44be168c7da76e6428c",
+    "cards\\commander_2014.c": "197bd61f8b246623d61eb02f9d8c91e4b10b6ba6a248b7b6527d34e79f901f77",
+    "functions\\gain_control_and_legend_rule.c": "91455c72dc120543ab89120fd7df5cb9f92fd58d88dfe6c52f1c5e1613939c19",
+    "cards\\m14.c": "b406409a2bdb990afd118076a164c848ff6d54758c29cab555bb0a62dac5d9d5",
+    "cards\\commander_2020.c": "27ac8ed0ea0f266e6989edda79bd6fa1b48f99abe383c89a3857556392fd34aa",
+    "functions\\global_checking.c": "61ea412d9acd95ed5e9c5c3bc171df20da76d06777ebe12c4e3c4be348dbfef0",
+    "cards\\commander_2013.c": "92dbc4a67a8163dfdf11aabb4512ccc4612e171dcad50d95ffb2cd9daba6c3ef",
+    "functions\\damage_effects.c": "7d9b17e8e385b39d8c2f4a418a59974c8e77cd3ceb61cd02001e667ed547b7fe",
+    "functions\\dice.c": "3999815b5af1450063f5cd9e639b63b55cdaa30e8b511f0143f2659cd028b489",
+    "functions\\deadbox.c": "0c23f8bcc930e68c2aba4c9ab70c42679626db932e143660464853a3575db07d",
+    "functions\\dialog.c": "7c0c9522fe09de23a3439f0640f008e42159318eaa1476413a587a9509ca1a7d",
+    "functions\\exiledby.c": "3631d6e0fa6dde7b1af2b3092b87d778a87cd7c0f4c16f820334f8571342461e",
+    "cards\\planeswalker.c": "79ef1e54882336b74b41d28b4e5ce6bf6a67230c905fcafe648c850d44a00dc0",
+    ".recovery\\reccmp\\triage-rebuilt-bounds.json": "be9e2a4391ead5d2023d8577a00a93c468d8f943662890b8569f310ba0a2099d"
+  },
+  "implementation_inputs": {
+    "tools/recovery/review_branch_layout.py": "950d4a32ad0848373f347d2e63678a2a522e9dfde69c362bf755658c828c9bf9",
+    "tools/recovery/small_diff_queue.py": "a0c4062fcd18c18ec0ab6841d61794f7eca925686eba88c983433c41955846da"
+  },
+  "model_controls_reused": {
+    "path": "docs/recovery-evidence/reccmp-branch-layout-review.json",
+    "sha256": "458dd11b1f7c45b9039954e240b04885656799dc8f899b66e0826173eb73f2a2",
+    "reason": "Same model and annotation implementations; all prior 121 result objects agree exactly."
+  },
+  "queue_verification": {
+    "path": ".recovery\\reccmp\\all-reviewed-differences-c649.json",
+    "sha256": "d017ad6a35b59651ce76cf99a1d5264f78702e196c6ede4626a897703e469f2e",
+    "candidates": 5993,
+    "groups": 5175,
+    "report_inputs_current": false,
+    "scope": {
+      "annotated_change_sites": 422,
+      "candidates_without_site_review": 5571
+    },
+    "scores_order_groups_changes_and_prior_annotations_unchanged": true,
+    "all_previous_cfg_results_unchanged": true
+  },
+  "selection": {
+    "min_score": 0,
+    "max_changed_per_side": 50000,
+    "largest_observed_changed_side": 4173,
+    "meaning": "All differing function rows with full diffs in this comparison, not a tiny-diff cutoff."
+  },
+  "analysis_commands": [
+    "python tools/recovery/small_diff_queue.py --report .recovery/reccmp/external-refresh-c642.json --min-score 0 --max-changed-per-side 50000 --event-review .recovery/reccmp/event-guard-review-c645.json --address-review .recovery/reccmp/address-review-c646.json --diagnostic-review .recovery/reccmp/diagnostic-review-c647.json --output .recovery/reccmp/all-differences-c649.json --preview 0 --group-preview 0",
+    "python tools/recovery/review_branch_layout.py --queue .recovery/reccmp/all-differences-c649.json --build-evidence docs/recovery-evidence/native-target-masks.json --output .recovery/reccmp/all-cfg-review-c649.json",
+    "python tools/recovery/small_diff_queue.py --report .recovery/reccmp/external-refresh-c642.json --min-score 0 --max-changed-per-side 50000 --event-review .recovery/reccmp/event-guard-review-c645.json --address-review .recovery/reccmp/address-review-c646.json --diagnostic-review .recovery/reccmp/diagnostic-review-c647.json --cfg-review .recovery/reccmp/all-cfg-review-c649.json --output .recovery/reccmp/all-reviewed-differences-c649.json --preview 0 --group-preview 0"
+  ],
+  "additional_ranges": [
+    {
+      "name": "ugins_token_processing",
+      "address": "0x21c7140",
+      "source": "cards/war_of_the_spark.c",
+      "native_size": 148,
+      "cfg_states": 44
+    },
+    {
+      "name": "card_ahn_crop_crasher",
+      "address": "0x22dd960",
+      "source": "cards/amonkhet.c",
+      "native_size": 323,
+      "cfg_states": 90
+    },
+    {
+      "name": "card_ulvenwald_bear",
+      "address": "0x2114510",
+      "source": "cards/dark_ascension.c",
+      "native_size": 227,
+      "cfg_states": 68
+    },
+    {
+      "name": "fx_stamp_of_approval",
+      "address": "0x25c4f50",
+      "source": "cards/unstable.c",
+      "native_size": 122,
+      "cfg_states": 36
+    },
+    {
+      "name": "card_aetherworks_marvel",
+      "address": "0x23ac700",
+      "source": "cards/kaladesh.c",
+      "native_size": 1222,
+      "cfg_states": 267
+    },
+    {
+      "name": "get_watermark_by_iid",
+      "address": "0x25c49f0",
+      "source": "cards/unstable.c",
+      "native_size": 101,
+      "cfg_states": 35
+    },
+    {
+      "name": "sacrifice_at_end_of_combat",
+      "address": "0x268ca10",
+      "source": "functions/functions.c",
+      "native_size": 152,
+      "cfg_states": 52
+    },
+    {
+      "name": "card_tromokratis",
+      "address": "0x2038e50",
+      "source": "cards/born_of_the_gods.c",
+      "native_size": 1074,
+      "cfg_states": 249
+    },
+    {
+      "name": "card_klothys_god_of_destiny",
+      "address": "0x235e310",
+      "source": "cards/theros_beyond_death.c",
+      "native_size": 436,
+      "cfg_states": 98
+    },
+    {
+      "name": "card_shimmering_wings",
+      "address": "0x215d7b0",
+      "source": "cards/tempest.c",
+      "native_size": 291,
+      "cfg_states": 75
+    },
+    {
+      "name": "card_sun_clasp",
+      "address": "0x2024740",
+      "source": "cards/visions.c",
+      "native_size": 294,
+      "cfg_states": 75
+    },
+    {
+      "name": "card_viscerid_armor",
+      "address": "0x20ae8f0",
+      "source": "cards/alliances.c",
+      "native_size": 299,
+      "cfg_states": 75
+    },
+    {
+      "name": "card_conviction",
+      "address": "0x212d5f0",
+      "source": "cards/stronghold.c",
+      "native_size": 299,
+      "cfg_states": 75
+    },
+    {
+      "name": "card_whip_silk",
+      "address": "0x24952e0",
+      "source": "cards/invasion.c",
+      "native_size": 299,
+      "cfg_states": 75
+    },
+    {
+      "name": "card_aether_barrier",
+      "address": "0x2090c20",
+      "source": "cards/nemesis.c",
+      "native_size": 201,
+      "cfg_states": 52
+    },
+    {
+      "name": "card_inferno_hellion",
+      "address": "0x2208fa0",
+      "source": "cards/m19.c",
+      "native_size": 116,
+      "cfg_states": 36
+    },
+    {
+      "name": "card_caltrops",
+      "address": "0x21013b0",
+      "source": "cards/urza_destiny.c",
+      "native_size": 336,
+      "cfg_states": 101
+    },
+    {
+      "name": "card_gate_colossus",
+      "address": "0x25bf230",
+      "source": "cards/ravnica_allegiance.c",
+      "native_size": 194,
+      "cfg_states": 53
+    },
+    {
+      "name": "card_food",
+      "address": "0x2583130",
+      "source": "cards/tokens.c",
+      "native_size": 188,
+      "cfg_states": 48
+    },
+    {
+      "name": "shares_creature_subtype",
+      "address": "0x2673970",
+      "source": "functions/has_creature_type.c",
+      "native_size": 536,
+      "cfg_states": 149
+    },
+    {
+      "name": "card_serene_remembrance",
+      "address": "0x251fbc0",
+      "source": "cards/gatecrash.c",
+      "native_size": 649,
+      "cfg_states": 151
+    },
+    {
+      "name": "card_sanctifier_en_vec",
+      "address": "0x223d690",
+      "source": "cards/modern_horizons_2.c",
+      "native_size": 420,
+      "cfg_states": 107
+    },
+    {
+      "name": "dat_ability",
+      "address": "0x268d9a0",
+      "source": "functions/functions.c",
+      "native_size": 285,
+      "cfg_states": 81
+    },
+    {
+      "name": "card_pendulum_of_patterns",
+      "address": "0x20c6a30",
+      "source": "cards/aether_revolt.c",
+      "native_size": 333,
+      "cfg_states": 65
+    },
+    {
+      "name": "card_demon_token",
+      "address": "0x2582190",
+      "source": "cards/tokens.c",
+      "native_size": 246,
+      "cfg_states": 61
+    },
+    {
+      "name": "add_counters",
+      "address": "0x26d4840",
+      "source": "functions/counters.c",
+      "native_size": 136,
+      "cfg_states": 51
+    },
+    {
+      "name": "is_a_tappable_mana_source",
+      "address": "0x26b0480",
+      "source": "functions/engine.c",
+      "native_size": 121,
+      "cfg_states": 42
+    },
+    {
+      "name": "scry",
+      "address": "0x26544a0",
+      "source": "functions/tutors.c",
+      "native_size": 121,
+      "cfg_states": 35
+    },
+    {
+      "name": "select_multiple_cards_from_graveyard_to_array",
+      "address": "0x2652b90",
+      "source": "functions/tutors.c",
+      "native_size": 72,
+      "cfg_states": 34
+    },
+    {
+      "name": "real_counter_a_spell",
+      "address": "0x26b64a0",
+      "source": "functions/deck.c",
+      "native_size": 87,
+      "cfg_states": 34
+    },
+    {
+      "name": "card_trade_routes",
+      "address": "0x217bcb0",
+      "source": "cards/mercadian_masques.c",
+      "native_size": 1127,
+      "cfg_states": 232
+    },
+    {
+      "name": "card_nim_deathmantle",
+      "address": "0x243e320",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_size": 831,
+      "cfg_states": 188
+    },
+    {
+      "name": "card_charming_prince",
+      "address": "0x25cca30",
+      "source": "cards/throne_of_eldraine.c",
+      "native_size": 437,
+      "cfg_states": 91
+    },
+    {
+      "name": "card_chaotic_goo",
+      "address": "0x215a1a0",
+      "source": "cards/tempest.c",
+      "native_size": 191,
+      "cfg_states": 63
+    },
+    {
+      "name": "card_perilous_forays",
+      "address": "0x24ed720",
+      "source": "cards/ravnica.c",
+      "native_size": 196,
+      "cfg_states": 49
+    },
+    {
+      "name": "can_counter_triggered_ability",
+      "address": "0x2693060",
+      "source": "functions/functions.c",
+      "native_size": 133,
+      "cfg_states": 40
+    },
+    {
+      "name": "card_dihadas_ploy",
+      "address": "0x2233220",
+      "source": "cards/modern_horizons_2.c",
+      "native_size": 164,
+      "cfg_states": 48
+    },
+    {
+      "name": "edh_special_case",
+      "address": "0x22c3380",
+      "source": "cards/vanguard.c",
+      "native_size": 132,
+      "cfg_states": 39
+    },
+    {
+      "name": "invasion_apprentices",
+      "address": "0x2486a20",
+      "source": "cards/invasion.c",
+      "native_size": 3147,
+      "cfg_states": 587
+    },
+    {
+      "name": "cloning",
+      "address": "0x267f030",
+      "source": "functions/functions.c",
+      "native_size": 657,
+      "cfg_states": 169
+    },
+    {
+      "name": "card_teferi_timebender",
+      "address": "0x22d3ec0",
+      "source": "cards/dominaria.c",
+      "native_size": 717,
+      "cfg_states": 140
+    },
+    {
+      "name": "card_shambling_shell",
+      "address": "0x24f0630",
+      "source": "cards/ravnica.c",
+      "native_size": 384,
+      "cfg_states": 96
+    },
+    {
+      "name": "encore_legacy",
+      "address": "0x25a1e20",
+      "source": "cards/commander_legends.c",
+      "native_size": 351,
+      "cfg_states": 89
+    },
+    {
+      "name": "generic_wish_effect",
+      "address": "0x20590c0",
+      "source": "cards/judgement.c",
+      "native_size": 295,
+      "cfg_states": 80
+    },
+    {
+      "name": "manifesting_aura",
+      "address": "0x26222e0",
+      "source": "cards/fate_reforged.c",
+      "native_size": 265,
+      "cfg_states": 72
+    },
+    {
+      "name": "card_nether_void",
+      "address": "0x21fab90",
+      "source": "cards/legends.c",
+      "native_size": 213,
+      "cfg_states": 54
+    },
+    {
+      "name": "card_rites_of_flourishing",
+      "address": "0x24a1a20",
+      "source": "cards/m12.c",
+      "native_size": 157,
+      "cfg_states": 50
+    },
+    {
+      "name": "aura_or_equipment",
+      "address": "0x25a1f80",
+      "source": "cards/commander_legends.c",
+      "native_size": 145,
+      "cfg_states": 45
+    },
+    {
+      "name": "card_cryptbreaker",
+      "address": "0x247a4f0",
+      "source": "cards/eldritch_moon.c",
+      "native_size": 603,
+      "cfg_states": 132
+    },
+    {
+      "name": "triome",
+      "address": "0x2288800",
+      "source": "cards/ikoria.c",
+      "native_size": 170,
+      "cfg_states": 48
+    },
+    {
+      "name": "autotap_mana_source",
+      "address": "0x26a98c0",
+      "source": "functions/engine.c",
+      "native_size": 615,
+      "cfg_states": 148
+    },
+    {
+      "name": "card_wildfire_eternal",
+      "address": "0x20d16b0",
+      "source": "cards/hour_of_devastation.c",
+      "native_size": 290,
+      "cfg_states": 78
+    },
+    {
+      "name": "card_quest_for_the_gravelord",
+      "address": "0x25de100",
+      "source": "cards/zendikar.c",
+      "native_size": 310,
+      "cfg_states": 76
+    },
+    {
+      "name": "card_remand",
+      "address": "0x24eeb60",
+      "source": "cards/ravnica.c",
+      "native_size": 260,
+      "cfg_states": 69
+    },
+    {
+      "name": "card_price_of_glory",
+      "address": "0x2510270",
+      "source": "cards/odissey.c",
+      "native_size": 175,
+      "cfg_states": 51
+    },
+    {
+      "name": "card_talas_researcher",
+      "address": "0x21c37b0",
+      "source": "cards/portal_1_2_3k.c",
+      "native_size": 196,
+      "cfg_states": 43
+    },
+    {
+      "name": "card_fade_away",
+      "address": "0x264dca0",
+      "source": "cards/exodus.c",
+      "native_size": 451,
+      "cfg_states": 103
+    },
+    {
+      "name": "card_knight_of_autumn",
+      "address": "0x261dee0",
+      "source": "cards/guilds_of_ravnica.c",
+      "native_size": 401,
+      "cfg_states": 83
+    },
+    {
+      "name": "exchange_life_totals",
+      "address": "0x268fc50",
+      "source": "functions/functions.c",
+      "native_size": 296,
+      "cfg_states": 79
+    },
+    {
+      "name": "card_krark_the_thumbless",
+      "address": "0x25ab540",
+      "source": "cards/commander_legends.c",
+      "native_size": 179,
+      "cfg_states": 59
+    },
+    {
+      "name": "add_counters_predoubled",
+      "address": "0x26d5970",
+      "source": "functions/counters.c",
+      "native_size": 134,
+      "cfg_states": 50
+    },
+    {
+      "name": "card_takenuma2",
+      "address": "0x241a130",
+      "source": "cards/planechase.c",
+      "native_size": 420,
+      "cfg_states": 96
+    },
+    {
+      "name": "card_the_immortal_sun",
+      "address": "0x21971d0",
+      "source": "cards/rivals_of_ixalan.c",
+      "native_size": 324,
+      "cfg_states": 78
+    },
+    {
+      "name": "card_mortis_dogs",
+      "address": "0x22797f0",
+      "source": "cards/new_phyrexia.c",
+      "native_size": 263,
+      "cfg_states": 65
+    },
+    {
+      "name": "card_sea_gate_stormcaller",
+      "address": "0x230db10",
+      "source": "cards/zendikar_rising.c",
+      "native_size": 206,
+      "cfg_states": 60
+    },
+    {
+      "name": "card_temp_of_the_damned",
+      "address": "0x2303870",
+      "source": "cards/unglued_unhinged.c",
+      "native_size": 190,
+      "cfg_states": 60
+    },
+    {
+      "name": "card_goblin_general",
+      "address": "0x21bc3a0",
+      "source": "cards/portal_1_2_3k.c",
+      "native_size": 180,
+      "cfg_states": 54
+    },
+    {
+      "name": "card_timeless_dragon",
+      "address": "0x2241730",
+      "source": "cards/modern_horizons_2.c",
+      "native_size": 158,
+      "cfg_states": 36
+    },
+    {
+      "name": "card_lingering_mirage",
+      "address": "0x2055a10",
+      "source": "cards/urza_saga.c",
+      "native_size": 150,
+      "cfg_states": 35
+    },
+    {
+      "name": "spirit_link_effect_part",
+      "address": "0x21ecf20",
+      "source": "cards/legends.c",
+      "native_size": 87,
+      "cfg_states": 36
+    },
+    {
+      "name": "card_wiitigo",
+      "address": "0x240c670",
+      "source": "cards/ice_age.c",
+      "native_size": 336,
+      "cfg_states": 109
+    },
+    {
+      "name": "card_three_dreams",
+      "address": "0x24f37f0",
+      "source": "cards/ravnica.c",
+      "native_size": 378,
+      "cfg_states": 86
+    },
+    {
+      "name": "card_linden_the_steadfast_queen",
+      "address": "0x25d1790",
+      "source": "cards/throne_of_eldraine.c",
+      "native_size": 293,
+      "cfg_states": 74
+    },
+    {
+      "name": "card_necroplasm",
+      "address": "0x24ecca0",
+      "source": "cards/ravnica.c",
+      "native_size": 268,
+      "cfg_states": 66
+    },
+    {
+      "name": "destroy_unless_pay_2",
+      "address": "0x25fb1a0",
+      "source": "cards/prophecy.c",
+      "native_size": 192,
+      "cfg_states": 54
+    },
+    {
+      "name": "card_liliana_of_the_veil",
+      "address": "0x2079770",
+      "source": "cards/innistrad.c",
+      "native_size": 1827,
+      "cfg_states": 409
+    },
+    {
+      "name": "card_heroes_bane",
+      "address": "0x24d9380",
+      "source": "cards/journey_into_nyx.c",
+      "native_size": 311,
+      "cfg_states": 76
+    },
+    {
+      "name": "card_security_detail",
+      "address": "0x2183a00",
+      "source": "cards/mercadian_masques.c",
+      "native_size": 275,
+      "cfg_states": 73
+    },
+    {
+      "name": "card_shrouded_serpent",
+      "address": "0x2606b30",
+      "source": "cards/prophecy.c",
+      "native_size": 288,
+      "cfg_states": 74
+    },
+    {
+      "name": "token_characteristic_setting_effects",
+      "address": "0x2665820",
+      "source": "functions/token_generation.c",
+      "native_size": 219,
+      "cfg_states": 62
+    },
+    {
+      "name": "card_oashra_cultivator",
+      "address": "0x22e0c40",
+      "source": "cards/amonkhet.c",
+      "native_size": 266,
+      "cfg_states": 55
+    },
+    {
+      "name": "gain_2_life_unless_they_pay_2",
+      "address": "0x25fb260",
+      "source": "cards/prophecy.c",
+      "native_size": 192,
+      "cfg_states": 52
+    },
+    {
+      "name": "lose_2_life_unless_pay_2",
+      "address": "0x25fb320",
+      "source": "cards/prophecy.c",
+      "native_size": 192,
+      "cfg_states": 52
+    },
+    {
+      "name": "card_the_flame_of_keld",
+      "address": "0x22d4980",
+      "source": "cards/dominaria.c",
+      "native_size": 189,
+      "cfg_states": 48
+    },
+    {
+      "name": "verify_legend_rule",
+      "address": "0x2663930",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "native_size": 89,
+      "cfg_states": 39
+    },
+    {
+      "name": "card_path_of_mettle",
+      "address": "0x2194cc0",
+      "source": "cards/rivals_of_ixalan.c",
+      "native_size": 436,
+      "cfg_states": 94
+    },
+    {
+      "name": "card_conquerors_galleon",
+      "address": "0x22182e0",
+      "source": "cards/ixalan.c",
+      "native_size": 269,
+      "cfg_states": 67
+    },
+    {
+      "name": "card_ecstatic_piper",
+      "address": "0x24dd4e0",
+      "source": "cards/journey_into_nyx.c",
+      "native_size": 201,
+      "cfg_states": 60
+    },
+    {
+      "name": "card_ghost_tactician",
+      "address": "0x23b9cc0",
+      "source": "cards/planar_chaos.c",
+      "native_size": 279,
+      "cfg_states": 59
+    },
+    {
+      "name": "card_desecrated_tomb",
+      "address": "0x2207a00",
+      "source": "cards/m19.c",
+      "native_size": 169,
+      "cfg_states": 52
+    },
+    {
+      "name": "card_hungry_hungry_heifer",
+      "address": "0x2304110",
+      "source": "cards/unglued_unhinged.c",
+      "native_size": 298,
+      "cfg_states": 84
+    },
+    {
+      "name": "card_phantasmal_terrain",
+      "address": "0x24cabe0",
+      "source": "cards/unlimited.c",
+      "native_size": 321,
+      "cfg_states": 78
+    },
+    {
+      "name": "card_disappear",
+      "address": "0x21086d0",
+      "source": "cards/urza_destiny.c",
+      "native_size": 284,
+      "cfg_states": 76
+    },
+    {
+      "name": "card_orchard_strider",
+      "address": "0x223aeb0",
+      "source": "cards/modern_horizons_2.c",
+      "native_size": 186,
+      "cfg_states": 55
+    },
+    {
+      "name": "card_magmasaur",
+      "address": "0x215c430",
+      "source": "cards/tempest.c",
+      "native_size": 347,
+      "cfg_states": 84
+    },
+    {
+      "name": "card_verdant_automaton",
+      "address": "0x20cbfd0",
+      "source": "cards/aether_revolt.c",
+      "native_size": 324,
+      "cfg_states": 67
+    },
+    {
+      "name": "effect_touch_of_vitae",
+      "address": "0x23ed670",
+      "source": "cards/ice_age.c",
+      "native_size": 220,
+      "cfg_states": 64
+    },
+    {
+      "name": "is_aura_equipment_or_vehicle",
+      "address": "0x20ba870",
+      "source": "cards/aether_revolt.c",
+      "native_size": 196,
+      "cfg_states": 60
+    },
+    {
+      "name": "card_fractured_sanity",
+      "address": "0x2235800",
+      "source": "cards/modern_horizons_2.c",
+      "native_size": 224,
+      "cfg_states": 59
+    },
+    {
+      "name": "card_rite_of_belzenlok",
+      "address": "0x22d24e0",
+      "source": "cards/dominaria.c",
+      "native_size": 202,
+      "cfg_states": 54
+    },
+    {
+      "name": "card_bannerhide_krushok",
+      "address": "0x222dfe0",
+      "source": "cards/modern_horizons_2.c",
+      "native_size": 182,
+      "cfg_states": 39
+    },
+    {
+      "name": "card_admonition_angel",
+      "address": "0x25841c0",
+      "source": "cards/worldwake.c",
+      "native_size": 338,
+      "cfg_states": 93
+    },
+    {
+      "name": "card_quintorius_field_historian",
+      "address": "0x23d8ea0",
+      "source": "cards/strixhaven.c",
+      "native_size": 216,
+      "cfg_states": 58
+    },
+    {
+      "name": "card_freyalises_charm",
+      "address": "0x23f8370",
+      "source": "cards/ice_age.c",
+      "native_size": 509,
+      "cfg_states": 107
+    },
+    {
+      "name": "card_tendo_ice_bridge",
+      "address": "0x256fc50",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_size": 357,
+      "cfg_states": 91
+    },
+    {
+      "name": "effect_driven",
+      "address": "0x20cd3f0",
+      "source": "cards/hour_of_devastation.c",
+      "native_size": 237,
+      "cfg_states": 72
+    },
+    {
+      "name": "card_thought_gorger",
+      "address": "0x24b4970",
+      "source": "cards/rise_of_the_eldrazi.c",
+      "native_size": 242,
+      "cfg_states": 68
+    },
+    {
+      "name": "get_sacrifice_prompt_text",
+      "address": "0x26e3a30",
+      "source": "functions/sacrifices.c",
+      "native_size": 185,
+      "cfg_states": 45
+    },
+    {
+      "name": "prince_of_thralls_effect",
+      "address": "0x2136fc0",
+      "source": "cards/shards_of_alara.c",
+      "native_size": 1283,
+      "cfg_states": 298
+    },
+    {
+      "name": "true_return_from_oblivion",
+      "address": "0x267a3d0",
+      "source": "functions/functions.c",
+      "native_size": 316,
+      "cfg_states": 91
+    },
+    {
+      "name": "card_pirs_whim",
+      "address": "0x2027f60",
+      "source": "cards/battlebond.c",
+      "native_size": 653,
+      "cfg_states": 121
+    },
+    {
+      "name": "card_herald_of_anguish",
+      "address": "0x20c1c90",
+      "source": "cards/aether_revolt.c",
+      "native_size": 470,
+      "cfg_states": 108
+    },
+    {
+      "name": "encore",
+      "address": "0x25a2850",
+      "source": "cards/commander_legends.c",
+      "native_size": 281,
+      "cfg_states": 76
+    },
+    {
+      "name": "embalm",
+      "address": "0x22d74b0",
+      "source": "cards/amonkhet.c",
+      "native_size": 282,
+      "cfg_states": 74
+    },
+    {
+      "name": "fdoc_legacy",
+      "address": "0x23c7530",
+      "source": "cards/strixhaven.c",
+      "native_size": 246,
+      "cfg_states": 66
+    },
+    {
+      "name": "card_alseid_of_lifes_bounty",
+      "address": "0x235a610",
+      "source": "cards/theros_beyond_death.c",
+      "native_size": 443,
+      "cfg_states": 107
+    },
+    {
+      "name": "card_grip_of_amnesia",
+      "address": "0x205c2f0",
+      "source": "cards/judgement.c",
+      "native_size": 380,
+      "cfg_states": 94
+    },
+    {
+      "name": "card_implement_of_combustion",
+      "address": "0x20c2cd0",
+      "source": "cards/aether_revolt.c",
+      "native_size": 319,
+      "cfg_states": 75
+    },
+    {
+      "name": "pale_moon_legacy",
+      "address": "0x20902e0",
+      "source": "cards/nemesis.c",
+      "native_size": 393,
+      "cfg_states": 101
+    },
+    {
+      "name": "card_bounty_of_the_luxa",
+      "address": "0x22e2650",
+      "source": "cards/amonkhet.c",
+      "native_size": 337,
+      "cfg_states": 76
+    },
+    {
+      "name": "card_thragtusk",
+      "address": "0x22b9820",
+      "source": "cards/m13.c",
+      "native_size": 231,
+      "cfg_states": 65
+    },
+    {
+      "name": "card_quicksilver_dragon",
+      "address": "0x2428100",
+      "source": "cards/gargaroz.c",
+      "native_size": 208,
+      "cfg_states": 43
+    },
+    {
+      "name": "card_dirtwater_wraith",
+      "address": "0x238c500",
+      "source": "cards/mirage.c",
+      "native_size": 232,
+      "cfg_states": 43
+    },
+    {
+      "name": "card_fungal_bloom",
+      "address": "0x2424c50",
+      "source": "cards/fallen_empires.c",
+      "native_size": 366,
+      "cfg_states": 85
+    },
+    {
+      "name": "card_aethershield_artificer",
+      "address": "0x2206800",
+      "source": "cards/m19.c",
+      "native_size": 295,
+      "cfg_states": 77
+    },
+    {
+      "name": "card_fallen_ideal",
+      "address": "0x20f0580",
+      "source": "cards/time_spiral.c",
+      "native_size": 695,
+      "cfg_states": 137
+    },
+    {
+      "name": "card_kitesail_freebooter",
+      "address": "0x2214900",
+      "source": "cards/ixalan.c",
+      "native_size": 462,
+      "cfg_states": 113
+    },
+    {
+      "name": "card_mesmeric_fiend",
+      "address": "0x2315ce0",
+      "source": "cards/torment.c",
+      "native_size": 462,
+      "cfg_states": 113
+    },
+    {
+      "name": "card_ionize",
+      "address": "0x261dc70",
+      "source": "cards/guilds_of_ravnica.c",
+      "native_size": 306,
+      "cfg_states": 79
+    },
+    {
+      "name": "card_hidden_stockpile",
+      "address": "0x20c1fc0",
+      "source": "cards/aether_revolt.c",
+      "native_size": 233,
+      "cfg_states": 62
+    },
+    {
+      "name": "card_regisaur_alpha",
+      "address": "0x2217bf0",
+      "source": "cards/ixalan.c",
+      "native_size": 214,
+      "cfg_states": 60
+    },
+    {
+      "name": "is_nice_creature_to_sacrifice",
+      "address": "0x26e3e40",
+      "source": "functions/sacrifices.c",
+      "native_size": 125,
+      "cfg_states": 47
+    },
+    {
+      "name": "card_ajani_mentor_of_heroes",
+      "address": "0x24da760",
+      "source": "cards/journey_into_nyx.c",
+      "native_size": 935,
+      "cfg_states": 200
+    },
+    {
+      "name": "card_witherscale_wurm",
+      "address": "0x255ecd0",
+      "source": "cards/shadowmoor.c",
+      "native_size": 420,
+      "cfg_states": 110
+    },
+    {
+      "name": "card_surrak_the_hunt_caller",
+      "address": "0x2326280",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_size": 299,
+      "cfg_states": 80
+    },
+    {
+      "name": "effect_prevent_combat_damage_to_or_from",
+      "address": "0x23102a0",
+      "source": "cards/torment.c",
+      "native_size": 170,
+      "cfg_states": 58
+    },
+    {
+      "name": "card_stangg",
+      "address": "0x22009f0",
+      "source": "cards/legends.c",
+      "native_size": 274,
+      "cfg_states": 70
+    },
+    {
+      "name": "card_sengir_autocrat",
+      "address": "0x2128ef0",
+      "source": "cards/homelands.c",
+      "native_size": 266,
+      "cfg_states": 67
+    },
+    {
+      "name": "card_chitterspitter",
+      "address": "0x2230860",
+      "source": "cards/modern_horizons_2.c",
+      "native_size": 556,
+      "cfg_states": 119
+    },
+    {
+      "name": "card_felidar_retreat",
+      "address": "0x2309150",
+      "source": "cards/zendikar_rising.c",
+      "native_size": 401,
+      "cfg_states": 91
+    },
+    {
+      "name": "card_prison_realm",
+      "address": "0x21d49e0",
+      "source": "cards/war_of_the_spark.c",
+      "native_size": 300,
+      "cfg_states": 87
+    },
+    {
+      "name": "card_beastmaster_ascension",
+      "address": "0x25d9bf0",
+      "source": "cards/zendikar.c",
+      "native_size": 251,
+      "cfg_states": 63
+    },
+    {
+      "name": "card_step_through",
+      "address": "0x223f7b0",
+      "source": "cards/modern_horizons_2.c",
+      "native_size": 238,
+      "cfg_states": 56
+    },
+    {
+      "name": "card_fylamarid",
+      "address": "0x215b280",
+      "source": "cards/tempest.c",
+      "native_size": 463,
+      "cfg_states": 103
+    },
+    {
+      "name": "card_ghostly_possession",
+      "address": "0x207fb90",
+      "source": "cards/innistrad.c",
+      "native_size": 409,
+      "cfg_states": 96
+    },
+    {
+      "name": "card_trollhide",
+      "address": "0x24a5060",
+      "source": "cards/m12.c",
+      "native_size": 351,
+      "cfg_states": 91
+    },
+    {
+      "name": "card_training_grounds",
+      "address": "0x24b2990",
+      "source": "cards/rise_of_the_eldrazi.c",
+      "native_size": 396,
+      "cfg_states": 83
+    },
+    {
+      "name": "card_llanowar_druid",
+      "address": "0x22f8300",
+      "source": "cards/weatherlight.c",
+      "native_size": 254,
+      "cfg_states": 62
+    },
+    {
+      "name": "card_mystical_dispute",
+      "address": "0x25d2580",
+      "source": "cards/throne_of_eldraine.c",
+      "native_size": 250,
+      "cfg_states": 57
+    },
+    {
+      "name": "card_go_to_jail",
+      "address": "0x25c5150",
+      "source": "cards/unstable.c",
+      "native_size": 421,
+      "cfg_states": 104
+    },
+    {
+      "name": "eternalize",
+      "address": "0x20cd780",
+      "source": "cards/hour_of_devastation.c",
+      "native_size": 292,
+      "cfg_states": 80
+    },
+    {
+      "name": "card_the_birth_of_meletis",
+      "address": "0x2361560",
+      "source": "cards/theros_beyond_death.c",
+      "native_size": 327,
+      "cfg_states": 68
+    },
+    {
+      "name": "card_stonebound_mentor",
+      "address": "0x23dcf60",
+      "source": "cards/strixhaven.c",
+      "native_size": 172,
+      "cfg_states": 45
+    },
+    {
+      "name": "card_muxus_goblin_grandee",
+      "address": "0x2374400",
+      "source": "cards/jumpstart.c",
+      "native_size": 615,
+      "cfg_states": 148
+    },
+    {
+      "name": "card_crypt_sliver",
+      "address": "0x24a7500",
+      "source": "cards/legions.c",
+      "native_size": 388,
+      "cfg_states": 98
+    },
+    {
+      "name": "remove_state",
+      "address": "0x2687a50",
+      "source": "functions/functions.c",
+      "native_size": 200,
+      "cfg_states": 74
+    },
+    {
+      "name": "card_stone_haven_pilgrim",
+      "address": "0x2375800",
+      "source": "cards/jumpstart.c",
+      "native_size": 252,
+      "cfg_states": 61
+    },
+    {
+      "name": "card_vital_splicer",
+      "address": "0x2273ad0",
+      "source": "cards/new_phyrexia.c",
+      "native_size": 598,
+      "cfg_states": 136
+    },
+    {
+      "name": "effect_cant_be_blocked_except_by_walls(1)",
+      "address": "0x209d520",
+      "source": "cards/alliances.c",
+      "native_size": 158,
+      "cfg_states": 45
+    },
+    {
+      "name": "card_omniscience",
+      "address": "0x22b7f20",
+      "source": "cards/m13.c",
+      "native_size": 931,
+      "cfg_states": 224
+    },
+    {
+      "name": "card_boseiju_who_shelters_all",
+      "address": "0x260cf30",
+      "source": "cards/champions_of_kamigawa.c",
+      "native_size": 308,
+      "cfg_states": 87
+    },
+    {
+      "name": "card_suppression_field",
+      "address": "0x24f2d60",
+      "source": "cards/ravnica.c",
+      "native_size": 403,
+      "cfg_states": 82
+    },
+    {
+      "name": "companion_effect",
+      "address": "0x26c5ff0",
+      "source": "functions/rules_engine.c",
+      "native_size": 218,
+      "cfg_states": 57
+    },
+    {
+      "name": "card_valakut_exploration",
+      "address": "0x230f7b0",
+      "source": "cards/zendikar_rising.c",
+      "native_size": 398,
+      "cfg_states": 111
+    },
+    {
+      "name": "effect_target_gains_trample_and_regenerate_for_g",
+      "address": "0x25e7820",
+      "source": "cards/onslaught.c",
+      "native_size": 410,
+      "cfg_states": 105
+    },
+    {
+      "name": "scavenge",
+      "address": "0x245c510",
+      "source": "cards/return_to_ravnica.c",
+      "native_size": 391,
+      "cfg_states": 105
+    },
+    {
+      "name": "card_sentinel_of_the_eternal_watch",
+      "address": "0x20dbb40",
+      "source": "cards/origins.c",
+      "native_size": 262,
+      "cfg_states": 75
+    },
+    {
+      "name": "end_the_turn",
+      "address": "0x26a7e80",
+      "source": "functions/functions.c",
+      "native_size": 507,
+      "cfg_states": 126
+    },
+    {
+      "name": "card_supply_demand",
+      "address": "0x221dd00",
+      "source": "cards/dissension.c",
+      "native_size": 479,
+      "cfg_states": 101
+    },
+    {
+      "name": "card_whirlpool_warrior",
+      "address": "0x2069a60",
+      "source": "cards/apocalypse.c",
+      "native_size": 335,
+      "cfg_states": 89
+    },
+    {
+      "name": "card_god_pharaohs_gift",
+      "address": "0x20d5cb0",
+      "source": "cards/hour_of_devastation.c",
+      "native_size": 425,
+      "cfg_states": 101
+    },
+    {
+      "name": "card_medomais_prophecy",
+      "address": "0x235e870",
+      "source": "cards/theros_beyond_death.c",
+      "native_size": 429,
+      "cfg_states": 88
+    },
+    {
+      "name": "card_capashen_standard",
+      "address": "0x21081f0",
+      "source": "cards/urza_destiny.c",
+      "native_size": 237,
+      "cfg_states": 60
+    },
+    {
+      "name": "card_illuminated_wings",
+      "address": "0x2108ff0",
+      "source": "cards/urza_destiny.c",
+      "native_size": 237,
+      "cfg_states": 60
+    },
+    {
+      "name": "card_the_locust_god",
+      "address": "0x20d1f50",
+      "source": "cards/hour_of_devastation.c",
+      "native_size": 321,
+      "cfg_states": 79
+    },
+    {
+      "name": "card_shielded_aether_thief",
+      "address": "0x20c9770",
+      "source": "cards/aether_revolt.c",
+      "native_size": 261,
+      "cfg_states": 67
+    },
+    {
+      "name": "card_mourning",
+      "address": "0x24993a0",
+      "source": "cards/invasion.c",
+      "native_size": 359,
+      "cfg_states": 87
+    },
+    {
+      "name": "card_crosiss_attendant",
+      "address": "0x2497290",
+      "source": "cards/invasion.c",
+      "native_size": 338,
+      "cfg_states": 78
+    },
+    {
+      "name": "card_darigaazs_attendant",
+      "address": "0x2497470",
+      "source": "cards/invasion.c",
+      "native_size": 338,
+      "cfg_states": 78
+    },
+    {
+      "name": "card_dromars_attendant",
+      "address": "0x24978c0",
+      "source": "cards/invasion.c",
+      "native_size": 338,
+      "cfg_states": 78
+    },
+    {
+      "name": "card_riths_attendant",
+      "address": "0x249aff0",
+      "source": "cards/invasion.c",
+      "native_size": 338,
+      "cfg_states": 78
+    },
+    {
+      "name": "card_trevas_attendant",
+      "address": "0x249dd50",
+      "source": "cards/invasion.c",
+      "native_size": 338,
+      "cfg_states": 78
+    },
+    {
+      "name": "card_gontis_machinations",
+      "address": "0x20c14d0",
+      "source": "cards/aether_revolt.c",
+      "native_size": 248,
+      "cfg_states": 62
+    },
+    {
+      "name": "card_the_ozolith",
+      "address": "0x228c300",
+      "source": "cards/ikoria.c",
+      "native_size": 481,
+      "cfg_states": 119
+    },
+    {
+      "name": "escape_with_counters_impl",
+      "address": "0x235a200",
+      "source": "cards/theros_beyond_death.c",
+      "native_size": 210,
+      "cfg_states": 60
+    },
+    {
+      "name": "card_the_mending_of_dominaria",
+      "address": "0x22d4a40",
+      "source": "cards/dominaria.c",
+      "native_size": 347,
+      "cfg_states": 72
+    },
+    {
+      "name": "card_hope_of_ghirapur",
+      "address": "0x20c22c0",
+      "source": "cards/aether_revolt.c",
+      "native_size": 541,
+      "cfg_states": 112
+    },
+    {
+      "name": "card_conjurers_ban",
+      "address": "0x252c6d0",
+      "source": "cards/guildpact.c",
+      "native_size": 268,
+      "cfg_states": 61
+    },
+    {
+      "name": "card_chronatog",
+      "address": "0x2015780",
+      "source": "cards/visions.c",
+      "native_size": 413,
+      "cfg_states": 82
+    },
+    {
+      "name": "card_quest_for_the_gemblades",
+      "address": "0x25db470",
+      "source": "cards/zendikar.c",
+      "native_size": 409,
+      "cfg_states": 108
+    },
+    {
+      "name": "vizkopa_guildmage_legacy",
+      "address": "0x2515d80",
+      "source": "cards/gatecrash.c",
+      "native_size": 233,
+      "cfg_states": 73
+    },
+    {
+      "name": "card_gruul_war_chant",
+      "address": "0x2296290",
+      "source": "cards/dragons_maze.c",
+      "native_size": 266,
+      "cfg_states": 80
+    },
+    {
+      "name": "card_shield_mare",
+      "address": "0x220b5d0",
+      "source": "cards/m19.c",
+      "native_size": 312,
+      "cfg_states": 78
+    },
+    {
+      "name": "jumpstart",
+      "address": "0x2619aa0",
+      "source": "cards/guilds_of_ravnica.c",
+      "native_size": 329,
+      "cfg_states": 71
+    },
+    {
+      "name": "card_rune_of_protection_artifacts",
+      "address": "0x2056200",
+      "source": "cards/urza_saga.c",
+      "native_size": 494,
+      "cfg_states": 116
+    },
+    {
+      "name": "card_rune_of_protection_lands",
+      "address": "0x2056990",
+      "source": "cards/urza_saga.c",
+      "native_size": 494,
+      "cfg_states": 116
+    },
+    {
+      "name": "card_delaying_shield",
+      "address": "0x2508700",
+      "source": "cards/odissey.c",
+      "native_size": 512,
+      "cfg_states": 117
+    },
+    {
+      "name": "card_hall_of_gemstone",
+      "address": "0x237f6d0",
+      "source": "cards/mirage.c",
+      "native_size": 456,
+      "cfg_states": 125
+    },
+    {
+      "name": "surveil",
+      "address": "0x26198e0",
+      "source": "cards/guilds_of_ravnica.c",
+      "native_size": 436,
+      "cfg_states": 112
+    },
+    {
+      "name": "fx_yanling_debuff",
+      "address": "0x23942a0",
+      "source": "cards/m20.c",
+      "native_size": 199,
+      "cfg_states": 53
+    },
+    {
+      "name": "card_dregscape_sliver",
+      "address": "0x2337210",
+      "source": "cards/modern_horizons.c",
+      "native_size": 482,
+      "cfg_states": 99
+    },
+    {
+      "name": "card_den_protector",
+      "address": "0x2324770",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_size": 423,
+      "cfg_states": 94
+    },
+    {
+      "name": "darkheart_sliver_shared_ability",
+      "address": "0x23b4b60",
+      "source": "cards/planar_chaos.c",
+      "native_size": 493,
+      "cfg_states": 114
+    },
+    {
+      "name": "card_terrarion",
+      "address": "0x24846b0",
+      "source": "cards/eldritch_moon.c",
+      "native_size": 588,
+      "cfg_states": 130
+    },
+    {
+      "name": "card_eldrazi_monument",
+      "address": "0x25d7cb0",
+      "source": "cards/zendikar.c",
+      "native_size": 312,
+      "cfg_states": 80
+    },
+    {
+      "name": "card_manaforge_cinder",
+      "address": "0x2554450",
+      "source": "cards/shadowmoor.c",
+      "native_size": 403,
+      "cfg_states": 102
+    },
+    {
+      "name": "card_soul_shepherd",
+      "address": "0x22f8fc0",
+      "source": "cards/weatherlight.c",
+      "native_size": 415,
+      "cfg_states": 87
+    },
+    {
+      "name": "card_desperate_research",
+      "address": "0x248c290",
+      "source": "cards/invasion.c",
+      "native_size": 460,
+      "cfg_states": 103
+    },
+    {
+      "name": "end_the_turn_legacy",
+      "address": "0x26a2e90",
+      "source": "functions/functions.c",
+      "native_size": 449,
+      "cfg_states": 105
+    },
+    {
+      "name": "card_elspeths_nightmare",
+      "address": "0x235c830",
+      "source": "cards/theros_beyond_death.c",
+      "native_size": 408,
+      "cfg_states": 95
+    },
+    {
+      "name": "card_nullstone_gargoyle",
+      "address": "0x24ed1f0",
+      "source": "cards/ravnica.c",
+      "native_size": 518,
+      "cfg_states": 130
+    },
+    {
+      "name": "card_catacomb_sifter",
+      "address": "0x24573e0",
+      "source": "cards/battle_for_zendikar.c",
+      "native_size": 479,
+      "cfg_states": 123
+    },
+    {
+      "name": "card_haze_of_rage",
+      "address": "0x2575cf0",
+      "source": "cards/future_sight.c",
+      "native_size": 321,
+      "cfg_states": 78
+    },
+    {
+      "name": "frenetic_sliver_shared_ability",
+      "address": "0x23b4e80",
+      "source": "cards/planar_chaos.c",
+      "native_size": 590,
+      "cfg_states": 144
+    },
+    {
+      "name": "card_wake_of_voltures",
+      "address": "0x20259c0",
+      "source": "cards/visions.c",
+      "native_size": 600,
+      "cfg_states": 120
+    },
+    {
+      "name": "retrace",
+      "address": "0x23636c0",
+      "source": "cards/eventide.c",
+      "native_size": 401,
+      "cfg_states": 86
+    },
+    {
+      "name": "card_ardenn_intrepid_archaeologist",
+      "address": "0x25a3dd0",
+      "source": "cards/commander_legends.c",
+      "native_size": 805,
+      "cfg_states": 195
+    },
+    {
+      "name": "peace_talks_effect",
+      "address": "0x2014640",
+      "source": "cards/visions.c",
+      "native_size": 369,
+      "cfg_states": 97
+    },
+    {
+      "name": "card_mob_mentality",
+      "address": "0x2022fb0",
+      "source": "cards/visions.c",
+      "native_size": 576,
+      "cfg_states": 143
+    },
+    {
+      "name": "card_heart_wolf",
+      "address": "0x2125fa0",
+      "source": "cards/homelands.c",
+      "native_size": 617,
+      "cfg_states": 135
+    },
+    {
+      "name": "card_ulvenwald_mysteries",
+      "address": "0x22af780",
+      "source": "cards/shadows_over_innistrad.c",
+      "native_size": 787,
+      "cfg_states": 185
+    },
+    {
+      "name": "card_falkenrath_torturer",
+      "address": "0x210f760",
+      "source": "cards/dark_ascension.c",
+      "native_size": 600,
+      "cfg_states": 132
+    }
+  ],
+  "branch_cases_left_open": [
+    {
+      "name": "card_staff_of_domination",
+      "reason": "Indirect switch jump successors require explicit table/bounds recovery."
+    },
+    {
+      "name": "card_councils_judgement",
+      "reason": "A relocated absolute read of a zero byte; the current model does not bind such loads by value."
+    },
+    {
+      "name": "card_waves_of_aggression",
+      "reason": "A relocated absolute read of a zero byte; the current model does not bind such loads by value."
+    },
+    {
+      "name": "card_creeping_renaissance",
+      "reason": "An empty-string pointer is not accepted as an arbitrary read-only object identity."
+    },
+    {
+      "name": "card_isareth_the_awakener",
+      "reason": "An empty-string pointer is not accepted as an arbitrary read-only object identity."
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "build": "The same successful target-mask DLL/debug pair is reused. No code edits, rebuild or full reccmp rerun.",
+  "scope": "Entry-reachable direct CFG correspondence under the listed exact-name/import/function-address identities. Ignore architectural no-ops and direct internal jump trampolines; preserve ordinary operations, registers, operand widths, prefixes and edge predicates, including paired inverse predicates. Shared/duplicated tails may correlate to the same instructions. This is structural evidence, not execution, callee/data-content equivalence, literal pointer-identity proof or a whole-game proof. Read-only C-string and declared DIALOG-token mappings compare complete contents through NUL, not storage identity, alias relationships or bytes beyond the terminator. Arbitrary PC/return-address inspection is outside this review. Calls are followed through normal returns only; exception/unwind/longjmp edges are not covered. Indirect jumps are refused. Unsupported operation, register, address and width differences remain unresolved. Raw scores and discovery differences are unchanged; current native/rebuilt ranges are pinned.",
+  "followup_observations": {
+    "dialog_mode": {
+      "native_enum": "DLGIMPL_MODE",
+      "value": 27,
+      "native_cu": "functions/dialog.c",
+      "native_die": "0x6f2c27d",
+      "rebuilt_die": "0x62d5319",
+      "current_state": "The enum and dialog_impl case already exist. The public DLG_MODE spelling is absent; 47 raw mode-token uses were observed in seven card files. Naming that token is a possible source cleanup, not a missing runtime implementation."
+    },
+    "dream_trawler": {
+      "source": "cards/theros_beyond_death.c",
+      "native_address": "0x235c210",
+      "native_size": 643,
+      "native_listing_sha256": "39a14dcaeb97537af1f852255b958b21f792dd3f1900dafbcf828d4b20e12734",
+      "rebuilt_listing_sha256": "b0c3c3a42139e7987ab2aee8a14a14e2fc467e5a4104984fe013e99925726c11",
+      "observation": "The native static-effects reset block is itself unreachable. The entry into the shared comparisons is constrained to EVENT_CAN_ACTIVATE (0x73) or EVENT_CLEANUP (0x22); the later test for EVENT_STATIC_EFFECTS (0x4700) cannot succeed. The current source contains the same impossible nested guard and its compiler removes that block. Do not enable that reset as a recovery fix. A source cleanup could flatten the event dispatch while preserving this native behavior."
+    },
+    "scope": "Read-only follow-up observations; not additional queue annotations or executed behavior checks."
+  }
+}

@@ -1089,7 +1089,7 @@ int card_molten_hydra(int player, int card, event_t event)
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
@@ -1112,7 +1112,7 @@ int card_molten_hydra(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     instance = get_card_instance(player, card);
   }
   if (event != EVENT_ACTIVATE)
@@ -1135,7 +1135,7 @@ int card_molten_hydra(int player, int card, event_t event)
     {
       return 0;
     }
-    damage_target0(player, card, (unsigned int)*(unsigned char *)((int)&instance->info_slot + 1));
+    damage_target0(player, card, (unsigned int)SET_BYTE1(instance->info_slot));
     return 0;
   }
   instance->info_slot = 0;
@@ -1150,7 +1150,7 @@ int card_molten_hydra(int player, int card, event_t event)
     if (counter_count != 0)
       damage_priority = 10;
   }
-  choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\016",
+  choice = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_AUTOCHOOSE_IF_1,
                        "Add +1/+1 counter", counter_ability_or_count, 5, "Damage target",
                        damage_ability_available, damage_priority, 0, 0, 0, 0);
   if (choice == 0)
@@ -1166,7 +1166,7 @@ int card_molten_hydra(int player, int card, event_t event)
                           spell_fizzled != 1))
     {
       counter_ability_or_count = count_counters(player, card, COUNTER_P1_P1);
-      *(char *)((int)&instance->info_slot + 1) = (char)counter_ability_or_count;
+      SET_BYTE1(instance->info_slot) = (char)counter_ability_or_count;
       remove_counters(player, card, player, card, COUNTER_P1_P1, counter_ability_or_count);
     }
     return 0;
@@ -2318,23 +2318,15 @@ static int debuff_for_T_sac(int player, int card, event_t event, int powmod, int
   int result;
   card_instance_t *instance;
   target_definition_t td;
-  if (event == EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  default_target_definition(player, card, &td, 2);
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
-    default_target_definition(player, card, &td, 2);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 2);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-    {
-      instance = get_card_instance(player, card);
-      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, powmod,
-                     tghmod);
-    }
+    instance = get_card_instance(player, card);
+    pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, powmod,
+                   tghmod);
   }
   result = generic_activated_ability(player, card, event, 0xd, 0, 0, 0, 0, 0, 0, 0, &td,
                                      "TARGET_CREATURE");
@@ -2344,79 +2336,19 @@ static int debuff_for_T_sac(int player, int card, event_t event, int powmod, int
 /* ManalinkEh 2022: 0x25b6b40; original cards/urza_legacy.c:1488. */
 int card_phyrexian_denouncer(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  target_definition_t creature_target;
-  if (event == EVENT_ACTIVATE)
-  {
-    default_target_definition(player, card, &creature_target, 2);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &creature_target, 2);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&creature_target) != 0))
-    {
-      instance = get_card_instance(player, card);
-      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -1, -1);
-    }
-  }
-  return generic_activated_ability(player, card, event, 0xd, 0, 0, 0, 0, 0, 0, 0, &creature_target,
-                                   "TARGET_CREATURE");
+  return debuff_for_T_sac(player, card, event, -1, -1);
 }
 
 /* ManalinkEh 2022: 0x25b6b60; original cards/urza_legacy.c:1497. */
 int card_phyrexian_debaser(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  target_definition_t creature_target;
-  if (event == EVENT_ACTIVATE)
-  {
-    default_target_definition(player, card, &creature_target, 2);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &creature_target, 2);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&creature_target) != 0))
-    {
-      instance = get_card_instance(player, card);
-      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -2, -2);
-    }
-  }
-  return generic_activated_ability(player, card, event, 0xd, 0, 0, 0, 0, 0, 0, 0, &creature_target,
-                                   "TARGET_CREATURE");
+  return debuff_for_T_sac(player, card, event, -2, -2);
 }
 
 /* ManalinkEh 2022: 0x25b6b80; original cards/urza_legacy.c:1507. */
 int card_phyrexian_defiler(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  target_definition_t creature_target;
-  if (event == EVENT_ACTIVATE)
-  {
-    default_target_definition(player, card, &creature_target, 2);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &creature_target, 2);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&creature_target) != 0))
-    {
-      instance = get_card_instance(player, card);
-      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -3, -3);
-    }
-  }
-  return generic_activated_ability(player, card, event, 0xd, 0, 0, 0, 0, 0, 0, 0, &creature_target,
-                                   "TARGET_CREATURE");
+  return debuff_for_T_sac(player, card, event, -3, -3);
 }
 
 /* ManalinkEh 2022: 0x25b9bb0; original cards/urza_legacy.c:2547. */
@@ -2448,7 +2380,7 @@ int card_ghitu_fire_eater(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
   default_target_definition(player, card, &td, 0x102);
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
     instance = get_card_instance(player, card);
@@ -2467,24 +2399,9 @@ int card_ghitu_fire_eater(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25ba050; original cards/urza_legacy.c:2668. */
 int card_iron_will(int player, int card, event_t event)
 {
-  int result;
-  if (event != EVENT_CAN_CAST)
-  {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card != affected_card) || (player != affected_card_controller))
-        goto us_cycling;
-    }
-    else if ((event != EVENT_RESOLVE_SPELL) &&
-             ((event != EVENT_CAN_CHANGE_TARGET && (event != EVENT_CHANGE_TARGET))))
-    {
-    us_cycling:
-      result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
-      return result;
-    }
-  }
-  result = vanilla_instant_pump(player, card, event, 2, player, 0, 4, 0, 0);
-  return result;
+  if (!IS_GS_EVENT(player, card, event))
+    return us_cycling(player, card, event);
+  return vanilla_instant_pump(player, card, event, TYPE_CREATURE, player, 0, 4, 0, 0);
 }
 
 /* ManalinkEh 2022: 0x25ba200; original cards/urza_legacy.c:2701. */
@@ -2495,7 +2412,7 @@ int card_last_ditch_effort(int player, int card, event_t event)
   target_definition_t td;
   test_definition_t test;
   default_target_definition(player, card, &td, 0x102);
-  td.zone = 0x1200;
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   if (event == EVENT_RESOLVE_SPELL)
   {
     instance = get_card_instance(player, card);
@@ -2542,22 +2459,14 @@ int card_tragic_poet(int player, int card, event_t event)
 {
   int result;
   test_definition_t this_test;
-  if (event == EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  new_default_test_definition(&this_test, 4, "Select an enchantment card.");
+  if ((event == EVENT_RESOLVE_ACTIVATION) &&
+      (result = validate_target_from_grave_source(player, card, player, 0), result != -1))
   {
-    new_default_test_definition(&this_test, 4, "Select an enchantment card.");
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    new_default_test_definition(&this_test, 4, "Select an enchantment card.");
-    if ((event == EVENT_RESOLVE_ACTIVATION) &&
-        (result = validate_target_from_grave_source(player, card, player, 0), result != -1))
-    {
-      from_grave_to_hand(player, result, 1);
-    }
+    from_grave_to_hand(player, result, 1);
   }
   result = generic_activated_ability_with_target_in_grave(
       player, card, event, GAA_SACRIFICE_ME | GAA_UNTAPPED, 0, 0, 0, 0, 0, 0, 0, NULL, NULL,
@@ -2570,17 +2479,12 @@ int card_vigilant_drake(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  if (event != EVENT_ACTIVATE)
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      instance = get_card_instance(player, card);
-      untap_card(instance->parent_controller, instance->parent_card);
-    }
+    instance = get_card_instance(player, card);
+    untap_card(instance->parent_controller, instance->parent_card);
   }
   result = generic_activated_ability(player, card, event, 0, 2, 0, 1, 0, 0, 0, 0, NULL, NULL);
   return result;
@@ -2641,7 +2545,7 @@ int card_goblin_medics(int player, int card, event_t event)
     if (result == 0)
     {
       default_target_definition(player, card, &td, 0x102);
-      td.zone = 0x1200;
+      td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
       result = can_target(&td);
       if (result != 0)
       {
@@ -2659,44 +2563,18 @@ int card_goblin_medics(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25b9f70; original cards/urza_legacy.c:2643. */
 int card_intervene(int player, int card, event_t event)
 {
-  int counterspell_available;
-  card_instance_t *spell;
-  card_instance_t *target_creature;
-  int target_card_or_type;
-  int i;
-
   if (event != EVENT_CAN_CAST)
-  {
     return card_counterspell(player, card, event);
-  }
 
-  counterspell_available = card_counterspell(player, card, EVENT_CAN_CAST);
-
-  if ((0 < counterspell_available) &&
-      (spell = get_card_instance(card_on_stack_controller, card_on_stack),
-       spell->number_of_targets != '\0'))
-  {
-    i = 0;
-    do
-    {
-      while (((spell->targets[i].player == player &&
-               (target_card_or_type = spell->targets[i].card, target_card_or_type != -1)) &&
-              (target_creature = in_play(player, target_card_or_type), target_creature != NULL)))
-      {
-        target_card_or_type = is_what(spell->targets[i].player, spell->targets[i].card, 2);
-        if (target_card_or_type != 0)
-        {
-          return counterspell_available;
-        }
-        i = i + 1;
-        if ((int)(unsigned int)spell->number_of_targets <= i)
-        {
-          return 0;
-        }
-      }
-      i = i + 1;
-    } while (i < (int)(unsigned int)spell->number_of_targets);
-  }
+  int available = card_counterspell(player, card, EVENT_CAN_CAST);
+  if (available <= 0)
+    return 0;
+  card_instance_t *spell = get_card_instance(card_on_stack_controller, card_on_stack);
+  for (int target = 0; target < spell->number_of_targets; ++target)
+    if (spell->targets[target].player == player && spell->targets[target].card != -1 &&
+        in_play(player, spell->targets[target].card) &&
+        is_what(spell->targets[target].player, spell->targets[target].card, TYPE_CREATURE))
+      return available;
   return 0;
 }
 
@@ -2719,7 +2597,7 @@ int card_parch(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_target_definition(player, card, &td1, 2);
     td1.required_color = get_sleighted_color_test(player, card, 4);
     get_card_instance(player, card);
@@ -2734,7 +2612,7 @@ int card_parch(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
       default_target_definition(player, card, &td, 0x102);
-      td.zone = 0x1200;
+      td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
       default_target_definition(player, card, &td1, 2);
       td1.required_color = get_sleighted_color_test(player, card, 4);
       instance = get_card_instance(player, card);
@@ -2745,7 +2623,7 @@ int card_parch(int player, int card, event_t event)
         {
 
           blue_target_available = can_target(&td1);
-          choice = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\016",
+          choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_RANDOM, DLG_AUTOCHOOSE_IF_1,
                                "Damage any target ", can_target(&td), 5, "Damage blue target",
                                blue_target_available, 5, 0, 0, 0, 0);
           if (choice == 0)
@@ -2769,7 +2647,7 @@ int card_parch(int player, int card, event_t event)
   else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_target_definition(player, card, &td1, 2);
     td1.required_color = get_sleighted_color_test(player, card, 4);
     instance = get_card_instance(player, card);
@@ -2795,7 +2673,7 @@ int card_parch(int player, int card, event_t event)
   else if (event == EVENT_CHANGE_TARGET)
   {
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_target_definition(player, card, &td1, 2);
     td1.required_color = get_sleighted_color_test(player, card, 4);
     get_card_instance(player, card);
@@ -2873,12 +2751,10 @@ static void destroy_auras_attached(int player, int card, int t_player, int t_car
 /* ManalinkEh 2022: 0x25baf80; original cards/urza_legacy.c:2985. */
 int card_treefolk_mystic(int player, int card, event_t event)
 {
-  int result;
 
   if (event == EVENT_DECLARE_BLOCKERS)
   {
-    result = is_humiliated(player, card, AL_TRIG);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_TRIG))
     {
       if (current_turn == player)
       {
@@ -2941,7 +2817,7 @@ int card_viashino_bey(int player, int card, event_t event)
         {
           special_keywords = get_special_abilities_by_instance(instance);
           instance->state =
-              instance->state | (-(unsigned int)((special_keywords & 8) == 0) & 0x10) + 4;
+              instance->state | (((special_keywords & 8) == 0) ? 16U : 0U) + 4;
           choose_who_attack(player_00, card_00);
           dispatch_event(player_00, card_00, 0x15);
         }
@@ -2958,14 +2834,12 @@ int card_viashino_bey(int player, int card, event_t event)
 int card_tethered_skirge(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
   const target_t *targeting_source;
 
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    result = is_humiliated(player, card, AL_TRIG);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_TRIG))
     {
       targeting_source = becomes_target_of_spell_or_effect(player, card, event, player, card, 2);
       if (targeting_source != NULL)
@@ -3032,47 +2906,29 @@ int card_sleepers_guile(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x25baa90; original cards/urza_legacy.c:2853. */
 int card_slow_motion(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
-  unsigned int argument7;
-
   immortal_enchantment(player, card, event);
-  instance = in_play(player, card);
-  if (instance != NULL)
+  if (in_play(player, card) && get_card_instance(player, card)->damage_target_player != -1)
   {
-    instance = get_card_instance(player, card);
-    if (instance->damage_target_player != -1)
+    card_instance_t *instance = get_card_instance(player, card);
+    upkeep_trigger_ability(player, card, event, instance->damage_target_player);
+    if (event == EVENT_UPKEEP_TRIGGER_ABILITY && instance->damage_target_player == current_turn)
     {
-
-      instance = get_card_instance(player, card);
-      upkeep_trigger_ability(player, card, event, (int)instance->damage_target_player);
-      if ((event == EVENT_UPKEEP_TRIGGER_ABILITY) &&
-          (instance->damage_target_player == current_turn))
+      if (has_mana_multi(instance->damage_target_player, 2, 0, 0, 0, 0, 0))
       {
-        result = has_mana_multi((int)instance->damage_target_player, 2, 0, 0, 0, 0, 0);
-        if (result != 0)
+        int ai_choice = 0;
+        if (is_tapped(instance->damage_target_player, instance->damage_target_card))
+          ai_choice = has_mana(player, 7, -1) < 5;
+        int choice = do_dialog(instance->damage_target_player, player, card, -1, -1,
+                               " Pay 2 or sac\n Pass", ai_choice);
+        if (choice == 0)
         {
-
-          result = is_tapped((int)instance->damage_target_player, instance->damage_target_card);
-          argument7 = 0;
-          if (result != 0)
-          {
-            result = has_mana(player, 7, -1);
-            argument7 = (unsigned int)(result < 5);
-          }
-          result = do_dialog((int)instance->damage_target_player, player, card, -1, -1,
-                             " Pay 2 or sac\n Pass", argument7);
-          if (result == 0)
-          {
-            charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER,
-                                        (int)instance->damage_target_player, COLOR_ANY, 2);
-            if (spell_fizzled != 1)
-              return aura(player, card, event, NULL, NULL);
-          }
+          charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER,
+                                    instance->damage_target_player, COLOR_ANY, 2);
+          if (spell_fizzled != 1)
+            return aura(player, card, event, NULL, NULL);
         }
-        kill_card((int)instance->damage_target_player, instance->damage_target_card,
-                  KILL_SACRIFICE);
       }
+      kill_card(instance->damage_target_player, instance->damage_target_card, KILL_SACRIFICE);
     }
   }
   return aura(player, card, event, NULL, NULL);

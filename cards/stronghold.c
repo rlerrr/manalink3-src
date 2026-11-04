@@ -68,7 +68,7 @@ int acidic_sliver_shared_ability(int player, int card, event_t event)
       event != EVENT_CLEANUP)
     return 0;
   default_target_definition(player, card, &td2, 0x102);
-  td2.zone = 0x1200;
+  td2.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
   td2.allow_cancel = 0;
   if ((event == EVENT_RESOLVE_ACTIVATION) &&
       (result = would_validate_arbitrary_target(&td2, instance->targets[2].player,
@@ -3232,7 +3232,7 @@ int card_crossbow_ambush(int player, int card, event_t event)
     pump_subtype_until_eot(player, card, player, -1, 0, 0, 0x400, 0);
     kill_card(player, card, KILL_DESTROY);
   }
-  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  result = basic_spell(player, card, event);
   return result;
 }
 
@@ -3240,14 +3240,14 @@ int card_crossbow_ambush(int player, int card, event_t event)
 int card_samite_blessing(int player, int card, event_t event)
 {
   char enchanted_player;
-  int card_00;
+  int target_card;
   card_instance_t *instance;
   int ability_result;
   target_definition_t td1;
 
   instance = get_card_instance(player, card);
   enchanted_player = instance->damage_target_player;
-  card_00 = instance->damage_target_card;
+  target_card = instance->damage_target_card;
   default_target_definition(player, card, &td1, 2);
   ability_result = aura_granting_activated_ability(
       player, card, event, (int)enchanted_player, 7, 0, 0, 0, 0, 0, 0, 0, &td1,
@@ -3256,7 +3256,7 @@ int card_samite_blessing(int player, int card, event_t event)
   {
     if (validate_target(player, card, &td1, 0) != 0)
     {
-      prevent_the_next_n_damage((int)enchanted_player, card_00, instance->targets[0].player,
+      prevent_the_next_n_damage((int)enchanted_player, target_card, instance->targets[0].player,
                                 instance->targets[0].card, 0, PREVENT_INFINITE, 0, 0);
     }
   }
@@ -3266,7 +3266,6 @@ int card_samite_blessing(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x21359f0; original cards/stronghold.c:3674. */
 int card_smite(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t td;
   if (!IS_GS_EVENT(player, card, event))
@@ -3274,11 +3273,10 @@ int card_smite(int player, int card, event_t event)
     return 0;
   }
   default_target_definition(player, card, &td, 2);
-  td.required_state = 8;
+  td.required_state = TARGET_STATE_ISBLOCKED;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    result = valid_target(&td);
-    if (result != 0)
+    if (valid_target(&td))
     {
       instance = get_card_instance(player, card);
       kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
@@ -3333,7 +3331,7 @@ int card_tidal_warrior(int player, int card, event_t event)
   if (player == 1 && (ai_is_speculating == 1 || ((unsigned char)trace_mode & 2) == 0))
   {
     td.required_subtype = get_hacked_subtype(1, card, 0x5002);
-    td.special = 0x1000;
+    td.special = TARGET_SPECIAL_ILLEGAL_SUBTYPE;
   }
   instance = get_card_instance(player, card);
   if ((event == EVENT_RESOLVE_ACTIVATION) && (target_valid = valid_target(&td), target_valid != 0))
@@ -3444,7 +3442,7 @@ int card_verdant_touch(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 1);
     td.preferred_controller = player;
-    td.illegal_type = 2;
+    td.illegal_type = TYPE_CREATURE;
     get_card_instance(player, card);
     result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
     return result;
@@ -3454,7 +3452,7 @@ int card_verdant_touch(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
       default_target_definition(player, card, &td, 1);
-      td.illegal_type = 2;
+      td.illegal_type = TYPE_CREATURE;
       td.preferred_controller = player;
       instance = get_card_instance(player, card);
       if ((card == affected_card) &&
@@ -3471,7 +3469,7 @@ int card_verdant_touch(int player, int card, event_t event)
   else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
   {
     default_target_definition(player, card, &td, 1);
-    td.illegal_type = 2;
+    td.illegal_type = TYPE_CREATURE;
     td.preferred_controller = player;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
@@ -3490,7 +3488,7 @@ int card_verdant_touch(int player, int card, event_t event)
   else if (event == EVENT_CHANGE_TARGET)
   {
     default_target_definition(player, card, &td, 1);
-    td.illegal_type = 2;
+    td.illegal_type = TYPE_CREATURE;
     td.preferred_controller = player;
     get_card_instance(player, card);
   }
@@ -3506,29 +3504,20 @@ int card_duct_crawler(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
 
-  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = 1 - player;
+  if (event == EVENT_ACTIVATE)
   {
-    default_target_definition(player, card, &td, 2);
-    td.preferred_controller = 1 - player;
-    if (event == EVENT_ACTIVATE)
+    result = -0x18;
+    if (current_turn == player)
     {
-      result = -0x18;
-      if (current_turn == player)
-      {
-        result = ((current_phase < 0x17) - 1 & 0xffffffd0) + 0x18;
-      }
-      ai_modifier = ai_modifier + result;
+      result = (unsigned int)((current_phase < 0x17) ? 24 : -24);
     }
+    ai_modifier = ai_modifier + result;
   }
-  else
-  {
-    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 2);
-    td.preferred_controller = 1 - player;
-  }
+
   if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
 
@@ -3704,7 +3693,7 @@ static int grave_pact_effect(int player, int card, event_t event)
         {
           instance->targets[0xb].player = 0;
         }
-        *(uint8_t *)((int)&instance->targets[0xb].player + 2) = 1;
+        SET_BYTE2(instance->targets[0xb].player) = 1;
       }
       count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
     }
@@ -3836,7 +3825,7 @@ int card_hornet_cannon(int player, int card, event_t event)
 
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    default_token_definition(player, card, 0x4948, &token);
+    default_token_definition(player, card, CARD_ID_HORNET, &token);
     token.s_key_plus = 4;
     token.special_code_on_generation = destroy_token_at_next_eot;
     generate_token(&token);
@@ -3855,7 +3844,7 @@ int card_hidden_retreat(int player, int card, event_t event)
   int32_t target_spell_card;
   card_instance_t *instance;
   int target_player_or_result;
-  int card_00;
+  int legacy_card;
   target_definition_t td_spell;
   test_definition_t this_test;
 
@@ -3914,8 +3903,8 @@ int card_hidden_retreat(int player, int card, event_t event)
         target_player_or_result != -1 && (instance->info_slot == 1))))
   {
     target_spell_card = instance->targets[0].card;
-    card_00 = create_legacy_effect(player, card, source_type_spell_damage_prevented);
-    instance = get_card_instance(player, card_00);
+    legacy_card = create_legacy_effect(player, card, source_type_spell_damage_prevented);
+    instance = get_card_instance(player, legacy_card);
     instance->targets[0].player = target_player_or_result;
     instance->targets[0].card = target_spell_card;
     return 0;

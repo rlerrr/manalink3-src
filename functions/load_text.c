@@ -281,60 +281,39 @@ const char **load_text_nocopy(const char *header, int *num_lines)
 /* The released fallback indexes this cache using num_loadtexts from the main cache. */
 const char **load_text_nocopy_from_file(const char *filename, const char *header, int *num_lines)
 {
-  LoadText *cached_stash;
-  int filename_match_or_entry_count;
-  int i;
-  LoadText *entry;
-
   if (ai_is_speculating == 1)
   {
-    if (num_lines != NULL)
-    {
+    if (num_lines)
       *num_lines = 0;
-    }
-    if (loadtexts == NULL)
-    {
+    if (!loadtexts)
       load_text_stash("Text.res", &loadtexts, &num_loadtexts);
-    }
-    return loadtexts[num_loadtexts + -1].lines;
+    return loadtexts[num_loadtexts - 1].lines;
   }
-  filename_match_or_entry_count = strncmp(last_loadtext_from_file, filename, 0x106);
-  cached_stash = loadtexts_from_file;
-  if (filename_match_or_entry_count != 0)
+  int filename_match = strncmp(last_loadtext_from_file, filename, 0x106);
+  LoadText *cached_stash = loadtexts_from_file;
+  if (filename_match != 0)
   {
     strncpy(last_loadtext_from_file, filename, 0x106);
     last_loadtext_from_file[0x105] = '\0';
-    if (cached_stash != NULL)
-    {
+    if (cached_stash)
       free(cached_stash);
-    }
     load_text_stash(filename, &loadtexts_from_file, &num_loadtexts_from_file);
   }
   cached_stash = loadtexts_from_file;
-  filename_match_or_entry_count = num_loadtexts_from_file;
-  if (0 < num_loadtexts_from_file)
+  int entry_count = num_loadtexts_from_file;
+  for (int i = 0; i < entry_count; ++i)
   {
-    i = 0;
-    entry = loadtexts_from_file;
-    do
+    LoadText *entry = cached_stash + i;
+    if (strcmp(entry->key, header) == 0)
     {
-      if (strcmp(entry->key, header) == 0)
-      {
-        if (num_lines != NULL)
-        {
-          *num_lines = entry->num;
-        }
-        return entry->lines;
-      }
-      i = i + 1;
-      entry = entry + 1;
-    } while (i != filename_match_or_entry_count);
+      if (num_lines)
+        *num_lines = entry->num;
+      return entry->lines;
+    }
   }
-  if (num_lines != NULL)
-  {
+  if (num_lines)
     *num_lines = 0;
-  }
-  return cached_stash[num_loadtexts + -1].lines;
+  return cached_stash[num_loadtexts - 1].lines;
 }
 
 /* ManalinkEh 2022: 0x26765b0; original functions/load_text.c:257. */

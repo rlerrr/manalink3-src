@@ -1,0 +1,836 @@
+{
+  "format": 1,
+  "status": "Three native nonnegative tutor-return guards restored in original source files; one combined build, 15,169 fixed slots, source projections and three actual rebuilt/native sign-branch checks pass.",
+  "report_receipt": {
+    "setup_sha256": "d0beac4e2912835be35a78863aa10e9fd99c917260f9bf0d766ff2167983dbeb",
+    "report_sha256": "36b2ac06a260ba9372ef17c636105cc84fede7e70951e50ca6aafb9f7e94232d",
+    "inputs": {
+      "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dll": "8c4850eb6911e13489a195931bcb97bbcbcc073239c2b89d79cf40a69493f542",
+      "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "0b29df86deb139f6e220c04f74080facc59b80b53c36e86b427d47b9bff8f0de",
+      "C:\\dev\\manalink3-src\\.recovery\\2022-Magic.exe": "0170f02b1c381a20a97ca0c12e99c8d338453ce4edbfc99148e726d565bee0de"
+    },
+    "metadata_sha256": "6da58cac382b202029b15d5fd3c2b9bef27e757a130e8b1b959f3c27f557995d",
+    "metadata_snapshot": ".recovery\\reccmp\\tiny-refresh-c653.metadata.csv",
+    "global_metadata_snapshot": ".recovery\\reccmp\\tiny-refresh-c653.globals.csv",
+    "global_metadata_sha256": "4bd078c759882fd6f758d1ec43ab13606b0e8e288c32b13ec11f52609c5142c9",
+    "global_bindings_snapshot": ".recovery\\reccmp\\tiny-refresh-c653.globals.json",
+    "global_bindings_sha256": "f09a80827c93dead6d83f9c0f37ea056f3716d9793c70f3899e5ebf034610c27",
+    "external_metadata_snapshot": ".recovery\\reccmp\\tiny-refresh-c653.externals.csv",
+    "external_metadata_sha256": "8dd2bc9adff98ec4456bdc2a752a289dea509b82753350b8d70c1f59d40c4bf7",
+    "external_bindings_snapshot": ".recovery\\reccmp\\tiny-refresh-c653.externals.json",
+    "external_bindings_sha256": "251a4dff21fbca1ad70fa9c55f13ecd9584e3d02294081c810d6f7f49410ffe0",
+    "external_audit_snapshot": ".recovery\\reccmp\\tiny-refresh-c653.external-audit.json",
+    "external_audit_sha256": "aced4fab2d98804ee4dac8856063cebcb686180a40a8397a6cd4920e7592098e",
+    "verified_external_bindings": 64,
+    "external_matching_enabled": true,
+    "verified_global_bindings": {
+      "verified": 293,
+      "bindings_sha256": "b80c62c4b2e482a02a178dd76b947db9b320a51b7176ee5e30dd8d150d53562b"
+    },
+    "project_config_sha256": "a978a638b5f154a514be6229cd0b012f96fb8431f1bfc4c4f00c3cf13bc0d371",
+    "recovery_ledger_sha256": "fdcbdbabdf9f89dc1312846c4745142341e132c5bdf4a49f5a78d7f939840181",
+    "comparator_source_sha256": {
+      "C:\\dev\\reccmp\\reccmp\\compare\\functions.py": "3244bc554a3b4625d7eeec0f8a878ba0a70fbd6b3352cee08120f8eae2f228bc",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\parse.py": "e45f27a7206c79b378962fd1318e4a86a39fac6864b522f5bf8d083a07964e91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\fixes.py": "d93614343080d3ae1aefc22b379b764fcdb3f878872cb0df48e53d87213cf2a4",
+      "C:\\dev\\reccmp\\reccmp\\compare\\report.py": "cd8f9c779de9bebc8fd2a1e2962fea36cd37cc2728a0743e88895aacc910be91",
+      "C:\\dev\\reccmp\\reccmp\\compare\\csv.py": "d10b6aedd4d44a90715c3be63c61f9dfacae91e5e54a01ab5b6dd563a9e91200",
+      "C:\\dev\\reccmp\\reccmp\\compare\\match_msvc.py": "f1145c5487ece9aceeb885f93bcdb0d8933767863e085fe915eac277fdd30d82",
+      "C:\\dev\\reccmp\\reccmp\\dwarf\\analysis.py": "40ce083e4c7970174bd780beb06ed32ce6375c9a333482a55762b3df1089512b",
+      "C:\\dev\\reccmp\\reccmp\\compare\\asm\\replacement.py": "28aec46cd59d06ca10cf6a9946e3b7fd1d3b3af3b2b400536afb5d4089b497c9",
+      "C:\\dev\\reccmp\\reccmp\\compare\\core.py": "bd85389476236576619e4bf404691d5aab618f4ddb12280e0ecae1fc865c1dbd",
+      "C:\\dev\\reccmp\\reccmp\\compare\\db.py": "364562d3eab1bb9ec03f9390804cb13d8131a09c06c25a6a2b66abc5d66f60a9",
+      "C:\\dev\\reccmp\\reccmp\\types.py": "d7096e7e44739d18054f1115f6ea23c65e1bb6dfbc994a86aef80668287aca14",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_globals.py": "1e870d89b4afbc15950d26c59a94162aecc70bec0700f60c032373a76910f3bc",
+      "C:\\dev\\manalink3-src\\tools\\recovery\\reccmp_externals.py": "d748a9223c09382c6f1302b0d019b6238062ddd0b619ded5992df67ef521fb83",
+      "C:\\dev\\manalink3-src\\tools\\reccmp_project.py": "c29d6cb6b6767e2fc3ea6a8d8915216301c1cb2b6e2c4288660c6dbc325e21b0"
+    },
+    "command": [
+      "reccmp-reccmp",
+      "--target",
+      "MANALINK2022",
+      "--no-color",
+      "--json",
+      ".recovery/reccmp/tiny-refresh-c653.json",
+      "--silent"
+    ],
+    "exit_code": 0
+  },
+  "report_sha256": "36b2ac06a260ba9372ef17c636105cc84fede7e70951e50ca6aafb9f7e94232d",
+  "report_receipt_sha256": "e005b1812dfdabacf0fba524668fa94fe2a80d4e6423949d0b61397beecc1d47",
+  "discovery_summary": {
+    "exact": 12561,
+    "effective": 274,
+    "different": 5993,
+    "tiny_candidates_at_90_percent": 369,
+    "tiny_candidates_all_scores": 585,
+    "annotated_candidates": 200,
+    "remaining_unannotated": 385
+  },
+  "discovery_queue": {
+    ".recovery\\reccmp\\tiny-reviewed-c653.json": "00661789bca2abe630594d20ed6dc7b2a88e2ba1b3dc68497221aaa35135e311",
+    ".recovery\\reccmp\\sentinel-all-c653.json": "71669ffbfe0098e1700eacc20c0916fbc2c21582018cae9c70ea09fcceb3adb2"
+  },
+  "files": [
+    {
+      "source": "cards/dragons_of_tarkir.c",
+      "before_bytes_sha256": "b4b2c30e84c97c89775991d3fd61a0f79d34f5900d6d76a7826d0590fde743de",
+      "after_bytes_sha256": "dc8a7fc728ca463e7eb6eadfe90cfee316149ff3376fe910cf31a20ad2af5c72",
+      "before_sha256": "ef9abe537d24e3ea3d96cbbe80f2eb7f983020a5cc0a7bccd75876144ae060a9",
+      "after_sha256": "8905aa4ba992bb30fed997502f2fb0f1dbbfca3cf5fbdbf5bec15cbcac306572"
+    },
+    {
+      "source": "cards/antiquities.c",
+      "before_bytes_sha256": "73f02450019e3329f233877466963c1a630058a8855d8e5f3ebca5aa79eed47c",
+      "after_bytes_sha256": "26ef4ce38371572707b4b591d71e324044b56eb3cc7977bd186428c2b6a78b74",
+      "before_sha256": "6cefe20a7b6feab6078fcf6bb097509bd3055909616dce436657aecb15ddb7de",
+      "after_sha256": "73a0c9e58f73c893f69f2f1c6aa173867fa826c829c8ad63ac09789005c83109"
+    },
+    {
+      "source": "cards/prophecy.c",
+      "before_bytes_sha256": "a496e67b8298129a1c7d88de7e234db96cfd662c5f16e9ea94604d7e6f635bd3",
+      "after_bytes_sha256": "1d1189df761d5eeef54bd7ec308fc991a788989b7703f1634e097abe3de667b6",
+      "before_sha256": "f488e41640473cf82f5de29370d6c4354f73cc33b7c3632c3b4bb8b5beb299ef",
+      "after_sha256": "b5076e9cc5806ca94ec2b6bd5a46866a38b3dab71558d38cfa8084e638eb3f67"
+    }
+  ],
+  "functions": [
+    {
+      "source": "cards/dragons_of_tarkir.c",
+      "name": "card_sarkhan_unbroken",
+      "source_before_sha256": "2a52b5d81748924928032f4ebd7754304d5660b445f35057877a5fac5457153a",
+      "source_after_sha256": "d277f4b1e4a527e9e49ed9c0ca6777c5d5f40d59bbae2bbbc21c76539daec89a",
+      "discovery": {
+        "address": "0x2329020",
+        "name": "card_sarkhan_unbroken",
+        "matching": 0.9732142857142857,
+        "recomp": "0x21771a0",
+        "type": 1,
+        "source": null,
+        "native_name": null,
+        "native_size": null,
+        "removed": 3,
+        "added": 3,
+        "changed_lines": 6,
+        "changes": [
+          {
+            "original": [
+              [
+                "0x23291ee",
+                "test eax, eax"
+              ],
+              [
+                "0x23291f0",
+                "jns -0x3a"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x217736e",
+                "inc eax"
+              ],
+              [
+                "0x217736f",
+                "jne -0x39"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x23291fa",
+                "jmp -0x1bd"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2177379",
+                "jmp -0x1bc"
+              ]
+            ]
+          }
+        ],
+        "review_pattern": "inspect_operands_and_control_flow"
+      },
+      "native_range": {
+        "address": "0x2329020",
+        "size": 549,
+        "sha256": "2696a0ff0d66d44035af747888ea7ebd26956ae9221f7ab958ea9ff48b1ea1e2"
+      },
+      "native_guard": [
+        {
+          "address": "0x23291e9",
+          "mnemonic": "call",
+          "operands": "0x2651990",
+          "bytes": "e8a2873200"
+        },
+        {
+          "address": "0x23291ee",
+          "mnemonic": "test",
+          "operands": "eax, eax",
+          "bytes": "85c0"
+        },
+        {
+          "address": "0x23291f0",
+          "mnemonic": "jns",
+          "operands": "0x23291b8",
+          "bytes": "79c6"
+        }
+      ],
+      "before_rebuilt_range": {
+        "address": "0x21771a0",
+        "size": 560,
+        "sha256": "97c46ad6605e58c73688bbd6022871445d78c610e7b21718793f27da02c48046"
+      },
+      "before_guard": [
+        {
+          "address": "0x2177369",
+          "mnemonic": "call",
+          "operands": "0x26e1760",
+          "bytes": "e8f2a35600"
+        },
+        {
+          "address": "0x217736e",
+          "mnemonic": "inc",
+          "operands": "eax",
+          "bytes": "40"
+        },
+        {
+          "address": "0x217736f",
+          "mnemonic": "jne",
+          "operands": "0x2177338",
+          "bytes": "75c7"
+        }
+      ],
+      "after_rebuilt_range": {
+        "address": "0x21771a0",
+        "size": 560,
+        "sha256": "d6eea5ba6ef7344db6a3e6fc5d1f1bfd5a3adde426fdb5747752f2163f305a2f"
+      },
+      "after_guard": [
+        {
+          "address": "0x2177369",
+          "mnemonic": "call",
+          "operands": "0x26e1760",
+          "bytes": "e8f2a35600"
+        },
+        {
+          "address": "0x217736e",
+          "mnemonic": "test",
+          "operands": "eax, eax",
+          "bytes": "85c0"
+        },
+        {
+          "address": "0x2177370",
+          "mnemonic": "jns",
+          "operands": "0x2177338",
+          "bytes": "79c6"
+        }
+      ]
+    },
+    {
+      "source": "cards/antiquities.c",
+      "name": "card_drafnas_restoration",
+      "source_before_sha256": "c1f82b77f88f6c37991fb6375b572eae9db7ec27b4aab09d1afa313d660b70e6",
+      "source_after_sha256": "72572a5c41708a9d387bc243b064e63958515f0a810d0d8d0402a45ffcf08581",
+      "discovery": {
+        "address": "0x2247790",
+        "name": "card_drafnas_restoration",
+        "matching": 0.937984496124031,
+        "recomp": "0x2058b80",
+        "type": 1,
+        "source": null,
+        "native_name": null,
+        "native_size": null,
+        "removed": 8,
+        "added": 8,
+        "changed_lines": 16,
+        "changes": [
+          {
+            "original": [
+              [
+                "0x22477b6",
+                "cmp ebx, 0x400"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2058ba6",
+                "cmp ebx, 0x5400"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x2247810",
+                "cmp ebx, 0x5400"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2058c00",
+                "cmp ebx, 0x400"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x224797b",
+                "test eax, eax"
+              ],
+              [
+                "0x224797d",
+                "js -0xd6"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2058d6b",
+                "inc eax"
+              ],
+              [
+                "0x2058d6c",
+                "je -0xd5"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x224798a",
+                "je -0xe3"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2058d79",
+                "je -0xe2"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x2247993",
+                "jne -0x4d"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2058d82",
+                "jne -0x4c"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x224799c",
+                "jne -0x56"
+              ],
+              [
+                "0x224799e",
+                "jmp -0xf6"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x2058d8b",
+                "jne -0x55"
+              ],
+              [
+                "0x2058d8d",
+                "jmp -0xf5"
+              ]
+            ]
+          }
+        ],
+        "review_pattern": "inspect_operands_and_control_flow"
+      },
+      "native_range": {
+        "address": "0x2247790",
+        "size": 531,
+        "sha256": "bfb032eb32074053d440fb7f00a9cd4995711fcfb7061421e086c129c1acd1fc"
+      },
+      "native_guard": [
+        {
+          "address": "0x2247976",
+          "mnemonic": "call",
+          "operands": "0x2651990",
+          "bytes": "e815a04000"
+        },
+        {
+          "address": "0x224797b",
+          "mnemonic": "test",
+          "operands": "eax, eax",
+          "bytes": "85c0"
+        },
+        {
+          "address": "0x224797d",
+          "mnemonic": "js",
+          "operands": "0x22478ad",
+          "bytes": "0f882affffff"
+        }
+      ],
+      "before_rebuilt_range": {
+        "address": "0x2058b80",
+        "size": 544,
+        "sha256": "7fb23e17e52da24897c0824ffb70f85b824f3e2a5cf566a3abcd68ecdbb3c8e2"
+      },
+      "before_guard": [
+        {
+          "address": "0x2058d66",
+          "mnemonic": "call",
+          "operands": "0x26e1760",
+          "bytes": "e8f5896800"
+        },
+        {
+          "address": "0x2058d6b",
+          "mnemonic": "inc",
+          "operands": "eax",
+          "bytes": "40"
+        },
+        {
+          "address": "0x2058d6c",
+          "mnemonic": "je",
+          "operands": "0x2058c9d",
+          "bytes": "0f842bffffff"
+        }
+      ],
+      "after_rebuilt_range": {
+        "address": "0x2058b80",
+        "size": 544,
+        "sha256": "1bd75afeb0caa6c06b49bf92d735d8f0e78b09dcc245b30625d809bef833c93d"
+      },
+      "after_guard": [
+        {
+          "address": "0x2058d66",
+          "mnemonic": "call",
+          "operands": "0x26e1760",
+          "bytes": "e8f5896800"
+        },
+        {
+          "address": "0x2058d6b",
+          "mnemonic": "test",
+          "operands": "eax, eax",
+          "bytes": "85c0"
+        },
+        {
+          "address": "0x2058d6d",
+          "mnemonic": "js",
+          "operands": "0x2058c9d",
+          "bytes": "0f882affffff"
+        }
+      ]
+    },
+    {
+      "source": "cards/prophecy.c",
+      "name": "card_denying_wind",
+      "source_before_sha256": "e403bfe38703486ff6967137728edd43cf3c07b1b0ea4d720888ac834a3c406c",
+      "source_after_sha256": "63733be2baec7682593503ea2348ab9ed6cf36dbe134dfa419833a3f910ab11d",
+      "discovery": {
+        "address": "0x25fc8f0",
+        "name": "card_denying_wind",
+        "matching": 0.8,
+        "recomp": "0x244f7d0",
+        "type": 1,
+        "source": null,
+        "native_name": null,
+        "native_size": null,
+        "removed": 26,
+        "added": 28,
+        "changed_lines": 54,
+        "changes": [
+          {
+            "original": [
+              [
+                "0x25fc906",
+                "je 0xb9"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x244f7e6",
+                "je 0xe4"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x25fc910",
+                "je 0xf2"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x244f7f0",
+                "je 0xc2"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x25fc91a",
+                "je 0xd"
+              ],
+              [
+                "0x25fc91c",
+                "cmp dword ptr [ebp + 0x10], 0x400"
+              ],
+              [
+                "0x25fc923",
+                "jne 0x8f"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x244f7fa",
+                "setne dl"
+              ],
+              [
+                "0x244f7fd",
+                "cmp dword ptr [ebp + 0x10], 0x5400"
+              ],
+              [
+                "0x244f804",
+                "setne al"
+              ],
+              [
+                "0x244f807",
+                "test dl, al"
+              ],
+              [
+                "0x244f809",
+                "jne 0x91"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x25fc96d",
+                "je 0xad"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x244f853",
+                "je 0xb7"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x25fc9b8",
+                "cmp dword ptr [ebp + 0x10], 0x5400"
+              ],
+              [
+                "0x25fc9bf",
+                "jne 0x16d"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x244f89f",
+                "nop "
+              ],
+              [
+                "0x244f8a0",
+                "cmp dword ptr [ebp + 0x10], 0x400"
+              ],
+              [
+                "0x244f8a7",
+                "je -0x9e"
+              ],
+              [
+                "0x244f8ad",
+                "xor eax, eax"
+              ],
+              [
+                "0x244f8af",
+                "jmp -0x21"
+              ],
+              [
+                "0x244f8b1",
+                "lea esi, [esi]"
+              ],
+              [
+                "0x244f8b8",
+                "xor eax, eax"
+              ],
+              [
+                "0x244f8ba",
+                "cmp esi, dword ptr [<OFFSET5>]"
+              ],
+              [
+                "0x244f8c0",
+                "jne -0x32"
+              ],
+              [
+                "0x244f8c2",
+                "cmp ebx, dword ptr [<OFFSET6>]"
+              ],
+              [
+                "0x244f8c8",
+                "jne -0x3a"
+              ],
+              [
+                "0x244f8ca",
+                "lea esi, [esi]"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x25fc9ff",
+                "jmp -0x91"
+              ],
+              [
+                "0x25fca04",
+                "lea esi, [esi]"
+              ],
+              [
+                "0x25fca08",
+                "xor eax, eax"
+              ],
+              [
+                "0x25fca0a",
+                "cmp esi, dword ptr [<OFFSET5>]"
+              ],
+              [
+                "0x25fca10",
+                "jne -0x68"
+              ],
+              [
+                "0x25fca12",
+                "cmp ebx, dword ptr [<OFFSET6>]"
+              ],
+              [
+                "0x25fca18",
+                "jne -0x70"
+              ],
+              [
+                "0x25fca1a",
+                "jmp -0x57"
+              ],
+              [
+                "0x25fca1c",
+                "lea esi, [esi]"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x244f90a",
+                "jmp -0xb6"
+              ],
+              [
+                "0x244f90f",
+                "nop "
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x25fca40",
+                "jmp -0xd2"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x244f930",
+                "jmp -0xdc"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x25fca82",
+                "jle 0x85"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x244f972",
+                "jle 0x84"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x25fcaa3",
+                "jle 0x5f"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x244f993",
+                "jle 0x5e"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x25fcb00",
+                "test eax, eax"
+              ],
+              [
+                "0x25fcb02",
+                "jns -0x64"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x244f9f0",
+                "inc eax"
+              ],
+              [
+                "0x244f9f1",
+                "jne -0x63"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x25fcb1e",
+                "jmp -0xf7"
+              ]
+            ],
+            "rebuilt": [
+              [
+                "0x244fa0d",
+                "jmp -0xf6"
+              ]
+            ]
+          },
+          {
+            "original": [
+              [
+                "0x25fcb27",
+                "nop "
+              ]
+            ],
+            "rebuilt": []
+          },
+          {
+            "original": [
+              [
+                "0x25fcb32",
+                "xor eax, eax"
+              ],
+              [
+                "0x25fcb34",
+                "jmp -0x18f"
+              ]
+            ],
+            "rebuilt": []
+          }
+        ],
+        "review_pattern": "inspect_operands_and_control_flow"
+      },
+      "native_range": {
+        "address": "0x25fc8f0",
+        "size": 585,
+        "sha256": "bd7846410434419cfac1b02f082866a71abcd95fd0cdd03eee82a2455d5b75e4"
+      },
+      "native_guard": [
+        {
+          "address": "0x25fcafb",
+          "mnemonic": "call",
+          "operands": "0x2651990",
+          "bytes": "e8904e0500"
+        },
+        {
+          "address": "0x25fcb00",
+          "mnemonic": "test",
+          "operands": "eax, eax",
+          "bytes": "85c0"
+        },
+        {
+          "address": "0x25fcb02",
+          "mnemonic": "jns",
+          "operands": "0x25fcaa0",
+          "bytes": "799c"
+        }
+      ],
+      "before_rebuilt_range": {
+        "address": "0x244f7d0",
+        "size": 608,
+        "sha256": "8f20f12a4a0806a25f46c4362be6da2bdb225f20b57ee6cbca7737fc6c2b877c"
+      },
+      "before_guard": [
+        {
+          "address": "0x244f9eb",
+          "mnemonic": "call",
+          "operands": "0x26e1760",
+          "bytes": "e8701d2900"
+        },
+        {
+          "address": "0x244f9f0",
+          "mnemonic": "inc",
+          "operands": "eax",
+          "bytes": "40"
+        },
+        {
+          "address": "0x244f9f1",
+          "mnemonic": "jne",
+          "operands": "0x244f990",
+          "bytes": "759d"
+        }
+      ],
+      "after_rebuilt_range": {
+        "address": "0x244f7d0",
+        "size": 608,
+        "sha256": "1e09c125bbbf258a37223a7de6ffa8a354a3ca7e05a4fb4eb77b260c8babaa7a"
+      },
+      "after_guard": [
+        {
+          "address": "0x244f9eb",
+          "mnemonic": "call",
+          "operands": "0x26e1760",
+          "bytes": "e8701d2900"
+        },
+        {
+          "address": "0x244f9f0",
+          "mnemonic": "test",
+          "operands": "eax, eax",
+          "bytes": "85c0"
+        },
+        {
+          "address": "0x244f9f2",
+          "mnemonic": "jns",
+          "operands": "0x244f990",
+          "bytes": "799c"
+        }
+      ]
+    }
+  ],
+  "staged_diff_sha256": "ec819f72536f43ba15dec6d46e1f6232797e3e5f7b69704b0ea154da37ad7110",
+  "scope": "Three existing card definitions; restore native signed return guards without assuming the tutor can only return -1 on failure. These are native fidelity corrections; practical gameplay impact of other negative returns is not established. Reccmp percentages are discovery metrics, not behavior verdicts. No source changes for byte-bounded loop-guard or register/layout-only differences.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "663cfc469afe8fa0661c6619bfead97ab6758b300e255869f10a1efa0d99d72c",
+    "debug_sha256": "7418dc34119ecee56fb3157fdb68323c2878b4cb3a3c2c10e20f03e9ee2d72de",
+    "build_log_sha256": "be3db5c5262632662d2ecdc463ff8f47193c5d668a879a8c2c964e4d1b3e891d",
+    "full_file_projections": 3,
+    "raw_file_projections": 3,
+    "preserved_line_counts_and_endings": 3,
+    "native_signed_return_guards": 3,
+    "checker_sha256": "1a81963411c4480a7fa48c3ad3f0b9ad926ce8a5c2a5f9f7c82020c6fe0406a6",
+    "scope": "Inspect actual rebuilt calls and subsequent test-eax/sign branches against native decoded instruction boundaries. This checks the three signed-return decisions, not whole-handler or gameplay equivalence. The full reccmp discovery report remains the pre-edit build snapshot; no second full comparison.",
+    "staging": "preserved"
+  }
+}

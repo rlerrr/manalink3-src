@@ -636,7 +636,7 @@ int card_aysen_crusader(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int qualifying_subtype;
-  int card_00;
+  int candidate;
   int characteristic_value;
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
@@ -648,21 +648,21 @@ int card_aysen_crusader(int player, int card, event_t event)
     }
     else
     {
-      card_00 = 0;
+      candidate = 0;
       characteristic_value = 0;
       do
       {
-        instance = in_play(player, card_00);
+        instance = in_play(player, candidate);
         if ((instance != NULL) &&
-            ((qualifying_subtype = has_subtype(player, card_00, SUBTYPE_SOLDIER),
+            ((qualifying_subtype = has_subtype(player, candidate, SUBTYPE_SOLDIER),
               qualifying_subtype != 0 ||
-                  (qualifying_subtype = has_subtype(player, card_00, SUBTYPE_WARRIOR),
+                  (qualifying_subtype = has_subtype(player, candidate, SUBTYPE_WARRIOR),
                    qualifying_subtype != 0))))
         {
           characteristic_value = characteristic_value + 1;
         }
-        card_00 = card_00 + 1;
-      } while (card_00 < active_cards_count[player]);
+        candidate = candidate + 1;
+      } while (candidate < active_cards_count[player]);
       characteristic_value = characteristic_value + 2;
     }
     set_characteristic_pt(characteristic_value);
@@ -732,17 +732,17 @@ int card_baron_sengir(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
-    td.required_state = 0x4000;
+    td.required_state = TARGET_STATE_DESTROYED;
     td.required_subtype = 0xcd;
     if (player == 1)
     {
-      td.special = 0x804000;
+      td.special = TARGET_SPECIAL_NOT_ME | TARGET_SPECIAL_REGENERATION;
       get_card_instance(1, card);
       vampire_target = &td;
       return generic_activated_ability(player, card, event, 0x800007, 0, 0, 0, 0, 0, 0, 0,
                                        vampire_target, "Select target Vampire to regenerate.");
     }
-    td.special = 0x4000;
+    td.special = TARGET_SPECIAL_NOT_ME;
   }
   else
   {
@@ -751,10 +751,10 @@ int card_baron_sengir(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 2);
-    td.special = ((player == 1) - 1 & 0xff800000) + 0x804000;
+    td.special = ((player == 1) ? 0x804000U : 16384U);
   }
   vampire_target = &td;
-  td.required_state = 0x4000;
+  td.required_state = TARGET_STATE_DESTROYED;
   td.required_subtype = 0xcd;
   td.preferred_controller = player;
   instance = get_card_instance(player, card);
@@ -1010,7 +1010,7 @@ int card_coral_reef(int player, int card, event_t event)
     td_blue.allowed_controller = player;
     td_blue.preferred_controller = player;
     td_blue.required_color = get_sleighted_color_test(player, card, 4);
-    td_blue.illegal_state = 1;
+    td_blue.illegal_state = TARGET_STATE_TAPPED;
     default_target_definition(player, card, &td_creature, 2);
     td_creature.preferred_controller = player;
     mode_counter_or_result = count_counters(player, card, COUNTER_POLYP);
@@ -1024,9 +1024,9 @@ int card_coral_reef(int player, int card, event_t event)
           (unsigned int)(targets_available != 0 && 0 < mode_counter_or_result);
     }
     mode_counter_or_result =
-        dialog_impl(player, card, event, "\001\002", "Add Polyp counter", sacrifice_or_target_card,
-                    (-(unsigned int)(mode_counter_or_result == 0) & 2) - 1, "Add +0/+1 counter",
-                    counter_transfer_available, 9, "\001\020", 0, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+        dialog_impl(player, card, event, DLG_RANDOM, "Add Polyp counter", sacrifice_or_target_card,
+                    (unsigned int)((mode_counter_or_result == 0) ? 1 : -1), "Add +0/+1 counter",
+                    counter_transfer_available, 9, DLG_MANA6(0, 0, 1, 0, 0, 0), 0, 0, 0, 0);
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
       reef = get_card_instance(player, card);
@@ -1688,10 +1688,10 @@ int card_grandmother_sengir(int player, int card, event_t event){
 		return 0;
 	}
 
-	card_instance_t *instance = get_card_instance(player, card);
-
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
+
+	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
@@ -2236,29 +2236,21 @@ int card_marjhan(int player, int card, event_t event){
 	return 0;
 }
 
-int card_memory_lapse(int player,int card,event_t event)
-
+int card_memory_lapse(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-
-  if (event != EVENT_CAN_CAST) {
-    if (event == EVENT_CAST_SPELL) {
-      if ((card == affected_card) && (player == affected_card_controller)) return counterspell(player,card,event,(target_definition_t *)0x0,0);
+  if (event == EVENT_CAN_CAST || (event == EVENT_CAST_SPELL && affect_me(player, card)))
+    return counterspell(player, card, event, NULL, 0);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (counterspell_validate(player, card, NULL, 0))
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      if (pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card))
+        put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
     }
-    else if (event == EVENT_RESOLVE_SPELL) {
-      if (counterspell_validate(player,card,(target_definition_t *)0x0,0) != 0) {
-
-        instance = get_card_instance(player,card);
-        if (pre_counterspell(player,card,instance->targets[0].player,instance->targets[0].card) != 0) {
-          put_on_top_of_deck(instance->targets[0].player,instance->targets[0].card);
-        }
-      }
-      kill_card(player,card,KILL_DESTROY);
-      return 0;
-    }
-    return 0;
+    kill_card(player, card, KILL_DESTROY);
   }
-  return counterspell(player,card,event,(target_definition_t *)0x0,0);
+  return 0;
 }
 
 int card_merchant_scroll(int player, int card, event_t event){
@@ -2635,7 +2627,9 @@ int card_roots(int player, int card, event_t event)
 	td.illegal_abilities |= KEYWORD_FLYING;
 	if (event == EVENT_ABILITIES && affect_me(player, card)){
 		card_instance_t* inst = get_card_instance(player, card);
-		if (get_abilities(inst->damage_target_player, inst->damage_target_card, EVENT_ABILITIES, -1) & KEYWORD_FLYING){ kill_card(player, card, KILL_STATE_BASED_ACTION); }
+		int enchanted_card = inst->damage_target_card;
+		inst = get_card_instance(player, card);
+		if (get_abilities(inst->damage_target_player, enchanted_card, EVENT_ABILITIES, -1) & KEYWORD_FLYING){ kill_card(player, card, KILL_STATE_BASED_ACTION); }
 	}
 
 	return targeted_aura(player, card, event, &td, "FLOOD");	// Select target creature without flying.
@@ -2742,7 +2736,7 @@ int card_sengir_autocrat(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    generate_tokens_by_id(player, card, 0x497f, 3);
+    generate_tokens_by_id(player, card, CARD_ID_SERF, 3);
     leaves_play(player, card, EVENT_ETB, 1, 1);
     return 0;
   }
@@ -3145,7 +3139,7 @@ int card_samite_alchemist(int player, int card, event_t event)
       {
         return 0;
       }
-      return (-(unsigned int)((land_can_be_played & 4U) == 0) & 0xffffff9e) + 99;
+      return (((land_can_be_played & 4U) == 0) ? 1U : 99U);
     }
     if (event == EVENT_ACTIVATE)
     {
@@ -3597,7 +3591,7 @@ int card_daughter_of_autumn(int player, int card, event_t event)
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
     default_target_definition(player, card, &td, 0);
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)damage_dealt_to_white_creature;
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
@@ -3658,7 +3652,7 @@ int card_daughter_of_autumn(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 0);
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)damage_dealt_to_white_creature;
     instance = get_card_instance(player, card);
   }
@@ -3695,7 +3689,7 @@ int card_hazduhr_the_abbot(int player, int card, event_t event)
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
     default_target_definition(player, card, &td, 0);
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)damage_dealt_to_white_creature;
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
@@ -3781,7 +3775,7 @@ int card_hazduhr_the_abbot(int player, int card, event_t event)
       return 0;
     }
     default_target_definition(player, card, &td, 0);
-    td.special = 0x8000;
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
     td.extra = (int32_t)damage_dealt_to_white_creature;
     instance = get_card_instance(player, card);
   }

@@ -1,0 +1,726 @@
+{
+  "format": 1,
+  "status": "Native Harnessed Lightning callback registration and three shared Phyrexian helper routes restored. Four new strict CFG correspondences, one retained, successful build and 15,169 fixed slots. All 1,609 scanned private source-owned entries accounted for by emitted/inline code, an exact COFF-only body or existing native equivalence.",
+  "files": [
+    {
+      "source": "cards/kaladesh.c",
+      "before_bytes_sha256": "2e41454a81984ab5bc4c49781e5a87dfefeb31f3bc5bdca2ed93d47565206ccd",
+      "after_bytes_sha256": "4434a1dce8a764e9150c207de7dfce220f438344a30f21750368239bbe145e0d",
+      "before_sha256": "3d5b90b1eb5fb0895cfb8872c5be398e81693b157e30f7293e812c9f75b348df",
+      "after_sha256": "67e9dcedabfa6a5f551b2242e03449f57bdcb7cd351f3445077a67c702e6e447"
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "before_bytes_sha256": "0f056d204093fb06354b4a9133fc77d61ea84c04c0f341323bf70b5851897088",
+      "after_bytes_sha256": "dbd39214a15fcc3941bba10390b6cdbfbc52003df4b9e686c333e36947763b6e",
+      "before_sha256": "b109f92a6ae4ebf21213d99af86f33461d89fe8d1ce30b3fd0919fa582513b5c",
+      "after_sha256": "532c5919b0f94a3a2d299f189f273deea55ae02c29bfe7cf7a78bb28fa93447b"
+    }
+  ],
+  "comparison_alias": {
+    "path": "config/reccmp/function-aliases.json",
+    "before_sha256": "fe82e7273b9e667f0087d7ec390f56a1f44421b5796ae061d9ab3992b23483ff",
+    "after_sha256": "6810ee76437abc4602513ce776463d484520c7397d333dcc43c001d15f5c4dd0",
+    "entry": {
+      "native_address": "0x212ace0",
+      "native_name": "bounce_at_end_of_combat",
+      "source": "cards/stronghold.c",
+      "rebuilt_name": "create_stronghold_end_combat_bounce"
+    }
+  },
+  "staged_diff_sha256": "8f4cd95df60b1a0a644e9606c62dee41331bc11e120531023ab7e160afd0338d",
+  "baseline": {
+    "inputs": {
+      ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "ManalinkEh.dll": "77043e4c03f6381220883da8cb4f50539517150417f7e2709a4c9e3dcbac70b2",
+      "ManalinkEh.dbg": "c28cea653b8ff04a71524d5e7220de39046530ebb32bdd8cabc45799b85e97db"
+    },
+    "results": [
+      {
+        "name": "ai_helper_function_for_harness_lightning",
+        "native_name": "ai_helper_function_for_harness_lightning",
+        "source": "cards/kaladesh.c",
+        "ranges": [
+          {
+            "address": "0x239b380",
+            "size": 81,
+            "sha256": "3c53a5a439b14883f9700a9fe5de8324c35459803332c2859b92801a5c68de5f"
+          },
+          null
+        ],
+        "matched": false,
+        "reason": "No standalone rebuilt entry"
+      },
+      {
+        "name": "debuff_for_T_sac",
+        "native_name": "debuff_for_T_sac",
+        "source": "cards/urza_legacy.c",
+        "ranges": [
+          {
+            "address": "0x25b2420",
+            "size": 311,
+            "sha256": "33e5eab3a7aaba3bae5d3ec18e66a2fde64eebe7bc79b019de3394049ac40ef3"
+          },
+          null
+        ],
+        "matched": false,
+        "reason": "No standalone rebuilt entry"
+      },
+      {
+        "name": "create_stronghold_end_combat_bounce",
+        "native_name": "bounce_at_end_of_combat",
+        "source": "cards/stronghold.c",
+        "ranges": [
+          {
+            "address": "0x212ace0",
+            "size": 48,
+            "sha256": "3b47440bdc6f74645539f334769ad020bae232f90b843797b62ac7f50851013b"
+          },
+          {
+            "address": "0x252c030",
+            "size": 48,
+            "sha256": "26229940a8cac2c5a0321d809a81af7e66b9ae55ed77d7cbd29c508032874703"
+          }
+        ],
+        "matched": true,
+        "proof": {
+          "cfg_states": 15,
+          "reached_instruction_counts": [
+            15,
+            15
+          ],
+          "terminals": 1,
+          "equality_load_guards": [],
+          "zero_return_epilogues": [],
+          "pointer_return_tails": [],
+          "address_correspondences": [
+            {
+              "native": "0x212c080",
+              "rebuilt": "0x252d430",
+              "identity": "_wot_effect"
+            },
+            {
+              "native": "0x267ab00",
+              "rebuilt": "0x26865b0",
+              "identity": "_create_targetted_legacy_effect"
+            }
+          ]
+        }
+      },
+      {
+        "name": "card_harness_lightning",
+        "native_name": "card_harness_lightning",
+        "source": "cards/kaladesh.c",
+        "ranges": [
+          {
+            "address": "0x23a5810",
+            "size": 500,
+            "sha256": "a6623f354aa0dbc67087366e0a8668e6af9c38348382261f517a3965ca9a8abf"
+          },
+          {
+            "address": "0x229e250",
+            "size": 512,
+            "sha256": "1ef5ef47937f10c8b9c26663766811fa270ddb1e08632807c86e658a0c006f6d"
+          }
+        ],
+        "matched": false,
+        "reason": "Conditional instruction changed"
+      },
+      {
+        "name": "card_phyrexian_denouncer",
+        "native_name": "card_phyrexian_denouncer",
+        "source": "cards/urza_legacy.c",
+        "ranges": [
+          {
+            "address": "0x25b6b40",
+            "size": 32,
+            "sha256": "ea83937844d95acf68de5730d65e992a18f95f285e72c0aa28d6e3e29b751c4a"
+          },
+          {
+            "address": "0x25d9d80",
+            "size": 336,
+            "sha256": "a1fd7e5861896f8746dbeeebd33cbb229117141ef2c07e7e30787f71689dc313"
+          }
+        ],
+        "matched": false,
+        "reason": "('Operation changed', 'mov', 'push')"
+      },
+      {
+        "name": "card_phyrexian_debaser",
+        "native_name": "card_phyrexian_debaser",
+        "source": "cards/urza_legacy.c",
+        "ranges": [
+          {
+            "address": "0x25b6b60",
+            "size": 32,
+            "sha256": "16386dd61ca6c7a8306dc513fb8c3e1f26e78833c3afab90c2d62a76545e417a"
+          },
+          {
+            "address": "0x25d9ed0",
+            "size": 336,
+            "sha256": "a1e0a3aaf0cf1d512cf4a88257d58531f449afc93d4814263ce48af4460cbb85"
+          }
+        ],
+        "matched": false,
+        "reason": "('Operation changed', 'mov', 'push')"
+      },
+      {
+        "name": "card_phyrexian_defiler",
+        "native_name": "card_phyrexian_defiler",
+        "source": "cards/urza_legacy.c",
+        "ranges": [
+          {
+            "address": "0x25b6b80",
+            "size": 32,
+            "sha256": "b749095e929b7eb8a01c582cb9166e96f98d19c9886ba02c031640e5c37327b1"
+          },
+          {
+            "address": "0x25da020",
+            "size": 336,
+            "sha256": "625cd5c9f70318b36cf4d2f20ba3e4977dc15eb56736875f758bbe52203d0380"
+          }
+        ],
+        "matched": false,
+        "reason": "('Operation changed', 'mov', 'push')"
+      },
+      {
+        "name": "wot_effect",
+        "native_name": "wot_effect",
+        "source": "cards/stronghold.c",
+        "ranges": [
+          {
+            "address": "0x212c080",
+            "size": 165,
+            "sha256": "b80f82291e502a6308da4baafcb107ce4fda066a94e3b840bea2a54c8098d912"
+          },
+          {
+            "address": "0x252d430",
+            "size": 176,
+            "sha256": "2fea17cf2acd3e4c6a3c167ce86aeebddfc1ffb913e9b23d5d55e43dad77381f"
+          }
+        ],
+        "matched": false,
+        "reason": "Register allocation changed"
+      },
+      {
+        "name": "card_wall_of_tears",
+        "native_name": "card_wall_of_tears",
+        "source": "cards/stronghold.c",
+        "ranges": [
+          {
+            "address": "0x2134d90",
+            "size": 223,
+            "sha256": "d399116fea37dadf2a6caf4f12e1388416df2e1b6ef16a840f603bba3f9fa853"
+          },
+          {
+            "address": "0x2535dc0",
+            "size": 240,
+            "sha256": "9731ffb3bd1528689445ea05d99c687fdadc83e486c3bef203e23a92d9b7b5b3"
+          }
+        ],
+        "matched": false,
+        "reason": "Address expression changed"
+      }
+    ],
+    "checker_sha256": "e78b68c60ae5e382065f368b8d8ce5856645fb83f194edb8b488c84c302ed6fd",
+    "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+    "scope": "Strict entry-reachable CFG comparison with unique COFF identities, explicit native/source bindings for these helpers, unchanged EXE addresses and complete read-only string/token contents. No OFFSET wildcards or predicate/return-tail relaxations. Callee identities and conventional ABI remain assumptions."
+  },
+  "scope": "Restore the native callback registration and query order for Harnessed Lightning and its helper, plus the original shared helper route for three Phyrexian card wrappers. Stronghold comparison alias binds an already faithful void/four-argument helper to its native address, without confusing it with Prophecy's int/three-argument legacy callback. No game-rules correction, forced inlining or public helper promotion.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "1924720ae1023f518acd48c69fb4577118ebc0184ec93d412ed7a3d1f9906f76",
+    "debug_sha256": "394da9225d2ec4eab357445ea923df1a4b608820634b56ec1ffb0baab325ebe0",
+    "build_log_sha256": "248cacf429c747831209013518d26413171d64a039404e497af0602fc984e2db",
+    "exact_file_projections": 2,
+    "source_definitions": 5,
+    "unchanged_shared_debuff_source_sha256": "45ada2cd5e409dd21422e1ca8c975e8f6a9ab6f3e0111b24c67dfda238f4c5e5",
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "1924720ae1023f518acd48c69fb4577118ebc0184ec93d412ed7a3d1f9906f76",
+        "ManalinkEh.dbg": "394da9225d2ec4eab357445ea923df1a4b608820634b56ec1ffb0baab325ebe0"
+      },
+      "results": [
+        {
+          "name": "ai_helper_function_for_harness_lightning",
+          "native_name": "ai_helper_function_for_harness_lightning",
+          "source": "cards/kaladesh.c",
+          "ranges": [
+            {
+              "address": "0x239b380",
+              "size": 81,
+              "sha256": "3c53a5a439b14883f9700a9fe5de8324c35459803332c2859b92801a5c68de5f"
+            },
+            {
+              "address": "0x2293e30",
+              "size": 96,
+              "sha256": "3004318734447428c97b7efce3eaa2cfe8bf61215766834bc948bf066291b732"
+            }
+          ],
+          "matched": true,
+          "proof": {
+            "cfg_states": 33,
+            "reached_instruction_counts": [
+              33,
+              33
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2696a70",
+                "rebuilt": "0x2689e20",
+                "identity": "_get_toughness"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266aef0",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x2744f10",
+                "rebuilt": "0x273c398",
+                "identity": "readonly-C-string:7802bb85987ba621a50dcc5c2c2232368fc7070795e10f5fe3f504e6b7d3e459"
+              }
+            ]
+          }
+        },
+        {
+          "name": "debuff_for_T_sac",
+          "native_name": "debuff_for_T_sac",
+          "source": "cards/urza_legacy.c",
+          "ranges": [
+            {
+              "address": "0x25b2420",
+              "size": 311,
+              "sha256": "33e5eab3a7aaba3bae5d3ec18e66a2fde64eebe7bc79b019de3394049ac40ef3"
+            },
+            {
+              "address": "0x25d25f0",
+              "size": 336,
+              "sha256": "02f8afa1dab32aaa6bc29aec44eb2b37b5483dc6c9324ab0be81707a503b112a"
+            }
+          ],
+          "matched": false,
+          "reason": "('Unbound operand', '0x30', '0x8')"
+        },
+        {
+          "name": "create_stronghold_end_combat_bounce",
+          "native_name": "bounce_at_end_of_combat",
+          "source": "cards/stronghold.c",
+          "ranges": [
+            {
+              "address": "0x212ace0",
+              "size": 48,
+              "sha256": "3b47440bdc6f74645539f334769ad020bae232f90b843797b62ac7f50851013b"
+            },
+            {
+              "address": "0x252c090",
+              "size": 48,
+              "sha256": "e3349aaa1bfb699126fe65bfb0aa16857503d59c60caac3a422af43bd9ab14dd"
+            }
+          ],
+          "matched": true,
+          "proof": {
+            "cfg_states": 15,
+            "reached_instruction_counts": [
+              15,
+              15
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x212c080",
+                "rebuilt": "0x252d490",
+                "identity": "_wot_effect"
+              },
+              {
+                "native": "0x267ab00",
+                "rebuilt": "0x26863d0",
+                "identity": "_create_targetted_legacy_effect"
+              }
+            ]
+          }
+        },
+        {
+          "name": "card_harness_lightning",
+          "native_name": "card_harness_lightning",
+          "source": "cards/kaladesh.c",
+          "ranges": [
+            {
+              "address": "0x23a5810",
+              "size": 500,
+              "sha256": "a6623f354aa0dbc67087366e0a8668e6af9c38348382261f517a3965ca9a8abf"
+            },
+            {
+              "address": "0x229e2b0",
+              "size": 512,
+              "sha256": "7577a3ae97667bfe323911a7132e3990a2ee08e4343a76a81df230e04b3a108d"
+            }
+          ],
+          "matched": false,
+          "reason": "Conditional instruction changed"
+        },
+        {
+          "name": "card_phyrexian_denouncer",
+          "native_name": "card_phyrexian_denouncer",
+          "source": "cards/urza_legacy.c",
+          "ranges": [
+            {
+              "address": "0x25b6b40",
+              "size": 32,
+              "sha256": "ea83937844d95acf68de5730d65e992a18f95f285e72c0aa28d6e3e29b751c4a"
+            },
+            {
+              "address": "0x25d9f30",
+              "size": 32,
+              "sha256": "058f72503a1bbef2a050a945040826dafcc718ee19746ea01614c0581d94c1a8"
+            }
+          ],
+          "matched": true,
+          "proof": {
+            "cfg_states": 9,
+            "reached_instruction_counts": [
+              9,
+              9
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x25b2420",
+                "rebuilt": "0x25d25f0",
+                "identity": "_debuff_for_T_sac"
+              }
+            ]
+          }
+        },
+        {
+          "name": "card_phyrexian_debaser",
+          "native_name": "card_phyrexian_debaser",
+          "source": "cards/urza_legacy.c",
+          "ranges": [
+            {
+              "address": "0x25b6b60",
+              "size": 32,
+              "sha256": "16386dd61ca6c7a8306dc513fb8c3e1f26e78833c3afab90c2d62a76545e417a"
+            },
+            {
+              "address": "0x25d9f50",
+              "size": 32,
+              "sha256": "86c1ef5c0d019a2b3a68fe537e2a4f1c3a4d80e574ea16c0667ca9d6e25ad6d7"
+            }
+          ],
+          "matched": true,
+          "proof": {
+            "cfg_states": 9,
+            "reached_instruction_counts": [
+              9,
+              9
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x25b2420",
+                "rebuilt": "0x25d25f0",
+                "identity": "_debuff_for_T_sac"
+              }
+            ]
+          }
+        },
+        {
+          "name": "card_phyrexian_defiler",
+          "native_name": "card_phyrexian_defiler",
+          "source": "cards/urza_legacy.c",
+          "ranges": [
+            {
+              "address": "0x25b6b80",
+              "size": 32,
+              "sha256": "b749095e929b7eb8a01c582cb9166e96f98d19c9886ba02c031640e5c37327b1"
+            },
+            {
+              "address": "0x25d9f70",
+              "size": 32,
+              "sha256": "f800e31f64646bd99502567b6c511ffc8ed5806328c7412d4b3d838368bd7754"
+            }
+          ],
+          "matched": true,
+          "proof": {
+            "cfg_states": 9,
+            "reached_instruction_counts": [
+              9,
+              9
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x25b2420",
+                "rebuilt": "0x25d25f0",
+                "identity": "_debuff_for_T_sac"
+              }
+            ]
+          }
+        },
+        {
+          "name": "wot_effect",
+          "native_name": "wot_effect",
+          "source": "cards/stronghold.c",
+          "ranges": [
+            {
+              "address": "0x212c080",
+              "size": 165,
+              "sha256": "b80f82291e502a6308da4baafcb107ce4fda066a94e3b840bea2a54c8098d912"
+            },
+            {
+              "address": "0x252d490",
+              "size": 176,
+              "sha256": "f80c5164334d45a276f741222a6883e31fbf5d2ac9c9f584b0ae68fc6cbe63d8"
+            }
+          ],
+          "matched": false,
+          "reason": "Register allocation changed"
+        },
+        {
+          "name": "card_wall_of_tears",
+          "native_name": "card_wall_of_tears",
+          "source": "cards/stronghold.c",
+          "ranges": [
+            {
+              "address": "0x2134d90",
+              "size": 223,
+              "sha256": "d399116fea37dadf2a6caf4f12e1388416df2e1b6ef16a840f603bba3f9fa853"
+            },
+            {
+              "address": "0x2535e20",
+              "size": 240,
+              "sha256": "e59185b0349bc50428f3ebda4ae882bf10248dd9215082cb4cf3f9948d4a5e45"
+            }
+          ],
+          "matched": false,
+          "reason": "Address expression changed"
+        }
+      ],
+      "checker_sha256": "e78b68c60ae5e382065f368b8d8ce5856645fb83f194edb8b488c84c302ed6fd",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with unique COFF identities, explicit native/source bindings for these helpers, unchanged EXE addresses and complete read-only string/token contents. No OFFSET wildcards or predicate/return-tail relaxations. Callee identities and conventional ABI remain assumptions."
+    },
+    "new_complete_cfg_matches": [
+      "ai_helper_function_for_harness_lightning",
+      "card_phyrexian_debaser",
+      "card_phyrexian_defiler",
+      "card_phyrexian_denouncer"
+    ],
+    "retained_complete_cfg_matches": [
+      "create_stronghold_end_combat_bounce"
+    ],
+    "harness_callback_registration": [
+      {
+        "side": 0,
+        "callback": "0x239b380",
+        "card_range": {
+          "address": "0x23a5810",
+          "size": 500,
+          "sha256": "a6623f354aa0dbc67087366e0a8668e6af9c38348382261f517a3965ca9a8abf"
+        },
+        "context": [
+          {
+            "address": "0x23a5984",
+            "instruction": "jmp 0x23a58fc"
+          },
+          {
+            "address": "0x23a5989",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x23a5990",
+            "instruction": "mov eax, dword ptr [eax + 0x10]"
+          },
+          {
+            "address": "0x23a5993",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x23a5996",
+            "instruction": "and eax, 0xffff"
+          },
+          {
+            "address": "0x23a599b",
+            "instruction": "mov dword ptr [ebp - 0x28], 0x8000"
+          },
+          {
+            "address": "0x23a59a2",
+            "instruction": "sub edx, eax"
+          },
+          {
+            "address": "0x23a59a4",
+            "instruction": "mov dword ptr [ebp - 0x38], 0x239b380"
+          },
+          {
+            "address": "0x23a59ab",
+            "instruction": "cmp edx, ecx"
+          },
+          {
+            "address": "0x23a59ad",
+            "instruction": "jle 0x23a595b"
+          },
+          {
+            "address": "0x23a59af",
+            "instruction": "mov dword ptr [esp + 4], 0"
+          },
+          {
+            "address": "0x23a59b7",
+            "instruction": "mov dword ptr [esp], 1"
+          },
+          {
+            "address": "0x23a59be",
+            "instruction": "call 0x26d4300"
+          },
+          {
+            "address": "0x23a59c3",
+            "instruction": "jmp 0x23a58fc"
+          }
+        ]
+      },
+      {
+        "side": 1,
+        "callback": "0x2293e30",
+        "card_range": {
+          "address": "0x229e2b0",
+          "size": 512,
+          "sha256": "7577a3ae97667bfe323911a7132e3990a2ee08e4343a76a81df230e04b3a108d"
+        },
+        "context": [
+          {
+            "address": "0x229e42c",
+            "instruction": "mov dword ptr [esp], esi"
+          },
+          {
+            "address": "0x229e42f",
+            "instruction": "call 0x2668bc0"
+          },
+          {
+            "address": "0x229e434",
+            "instruction": "jmp 0x229e3ac"
+          },
+          {
+            "address": "0x229e439",
+            "instruction": "lea esi, [esi]"
+          },
+          {
+            "address": "0x229e440",
+            "instruction": "xor edx, edx"
+          },
+          {
+            "address": "0x229e442",
+            "instruction": "mov dword ptr [ebp - 0x28], 0x8000"
+          },
+          {
+            "address": "0x229e449",
+            "instruction": "mov dx, word ptr [eax + 0x10]"
+          },
+          {
+            "address": "0x229e44d",
+            "instruction": "mov dword ptr [ebp - 0x38], 0x2293e30"
+          },
+          {
+            "address": "0x229e454",
+            "instruction": "mov eax, edx"
+          },
+          {
+            "address": "0x229e456",
+            "instruction": "mov edx, dword ptr [ebp - 0x64]"
+          },
+          {
+            "address": "0x229e459",
+            "instruction": "sub edx, eax"
+          },
+          {
+            "address": "0x229e45b",
+            "instruction": "cmp edx, ecx"
+          },
+          {
+            "address": "0x229e45d",
+            "instruction": "jle 0x229e40b"
+          },
+          {
+            "address": "0x229e45f",
+            "instruction": "mov dword ptr [esp + 4], 0"
+          }
+        ]
+      }
+    ],
+    "private_helper_representation": {
+      "examined": 1609,
+      "concrete_emitted_or_inline": 1607,
+      "coff_only_byte_identical": {
+        "native_address": "0x2650b30",
+        "rebuilt_address": "0x26de660",
+        "bytes": 17,
+        "sha256": "e46f047b8c4023a5c229e343c22ce29a122f8b335c6356d9c1853ec9c659db6f",
+        "storage": "private COFF entry; no matching named DWARF range",
+        "scope": "Complete 17-byte comparator identity, with no calls/relocations/branches outside its native extent. This is real emitted code, not a folded-thunk claim or a fabricated debug range."
+      },
+      "verified_shared_native_equivalent": {
+        "canonical_address": "0x25b2290",
+        "duplicate_address": "0x25e73f0",
+        "bytes": 76,
+        "canonical_source": "cards/urza_legacy.c",
+        "duplicate_source": "cards/onslaught.c",
+        "canonical_name": "target_is_attached_to_creature",
+        "canonical_sha256": "eb383fd800fef0032455ed898200f1db53366cde4ca86807d782570b9359036e",
+        "duplicate_sha256": "77168fe0f4595e96b36d28e75fbca32f657a67e90802e9ac6a218a8c941e045c",
+        "callees": [
+          "0x26b2ab0",
+          "0x2681ca0"
+        ],
+        "readonly_strings": [
+          "attached to a creature"
+        ],
+        "fingerprint_sha256": "a23dbe46df8162c5da78eb885822d6857c76ee2f0faca2596d33181b4f5966d5"
+      },
+      "source_ownership_categories": {
+        "direct_source_definition": 1543,
+        "arcane_macro_generated_private_body": 54,
+        "source_name_alias": 2,
+        "odyssey_filename_alias": 9,
+        "verified_shared_native_equivalent": 1
+      },
+      "scope": "Source ownership/representation accounting only for unsuffixed file-owned native private COFF functions with nonexternal DWARF. This binds direct definitions, known names/file aliases, macro-generated bodies or an existing verified native equivalence. It does not prove function semantics, cover arbitrary compiler workers/header inline instances or claim no remaining recovery work.",
+      "inventory": "unsuffixed private COFF entries with source-owned nonexternal DWARF, excluding arbitrary compiler workers and header-local definitions; source ownership/representation, not whole-body semantics"
+    },
+    "comparison_setup": {
+      "function_ranges": 18837,
+      "excluded": {
+        "ambiguous original name": 3,
+        "no rebuilt function with this name": 7,
+        "verified equivalent native helper shares a canonical implementation": 1,
+        "ambiguous rebuilt name": 1
+      },
+      "alias": {
+        "native_address": "0x212ace0",
+        "native_name": "bounce_at_end_of_combat",
+        "source": "cards/stronghold.c",
+        "rebuilt_name": "create_stronghold_end_combat_bounce"
+      }
+    },
+    "staging": "preserved",
+    "scope": "The AI helper and three native thin card wrappers gain strict complete CFG correspondence; Stronghold helper retains its prior match. Full helper/caller equivalence is not inferred transitively: debuff_for_T_sac, Harnessed Lightning, wot_effect and Wall of Tears retain instruction differences. The shared debuff body is unchanged. Callback registration preserves its native resolution-only placement and all native energy/player/message quirks. The private-helper scan is representation accounting, not proof that all helpers or gameplay are fully recovered. No gameplay tests were run. A current full reccmp refresh is tracked separately."
+  }
+}

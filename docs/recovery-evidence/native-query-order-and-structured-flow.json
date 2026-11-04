@@ -1,0 +1,1346 @@
+{
+  "format": 1,
+  "status": "Thirteen source definitions updated; final build and 15,169 fixed slots pass. Seven complete entry-reachable CFG comparisons match.",
+  "source_reviews": [
+    {
+      "name": "card_tibor_and_lumia",
+      "display_name": "card_tibor_and_lumia",
+      "source": "cards/guildpact.c",
+      "address": "0x2535a20",
+      "size": 669,
+      "bytes_hex": "5589e557565381ec040100008b75088b5d0c8b7d10895c2404897c2408893424e84bde1200813d782d7a00d3000000741f81ff001e00000f84b300000081c40401000031c05b5e5f5dc38db6000000003b1d8c397a0075d93b35848c730075d1c744240804000000895c2404893424e82ca91400c744240810000000895c2404893424898518ffffffe812a914008d951cffffffc7442404ff000000891424898514ffffffe8e69018008b9514ffffff8b8518ffffff895c241809d08d951cffffff8974241489542410c744240c00000000c744240802000000897c240489342489458ce817261700e943ffffff6690c744240804000000895c2404893424e89ca81400c744240810000000895c240489342489c7e886a81400898518ffffffa1209a730089442404a17cc16200890424e81a8f14008b9518ffffff09fa895c240421c2893424899514ffffffe83ecf170085bd14ffffff89c20f85800000008b8d14ffffff858d18ffffff7512c642360081c40401000031c05b5e5f5dc3908dbd1cffffffc744240402000000893c24899518ffffffe8f48f1800897c2414c744241000000000c744240c01000000c744240802000000895c2404893424c745a02000000066c745a60100e8ff1b13008b9518ffffffeb958db426000000008dbd1cffffffc744240c02000000897c2408895c2404893424898510ffffffe81ca61200893c2489b524ffffffc78560ffffff00000000e884a812008b9510ffffff85c00f8436ffffffc744240c00000000c744240800000000c744240499237502893c24e846b112008b9510ffffff85c00f8408ffffffc744241c00000000c744241820000000c744241400000000c7442410000000008b42788944240c8b4274895c240489442408893424e84e5214008b9510ffffffe9c3feffff",
+      "native_bytes_sha256": "47629e2075f72a9cab3c64787b28c1c338e852d878542d6060b15cb24a77fa37",
+      "native_decomp_path": ".recovery/decompiled-short-wrapper-cards23/2535a20.c",
+      "native_decomp_sha256": "52cc7817c3106e8f512aaf6bcbfd014ffc443f299e2cdaa5c1917829e64f13b3",
+      "reason": "Restore the native trigger-time blue query, red query, test initialization order. Keep both saved colors across initialization. The later resolution-time color queries, target callbacks and red damage continuation are unchanged. No newly demonstrated gameplay defect is asserted for this setup-order restoration.",
+      "before_sha256": "ea5c9694acd2edb3d81b76cdfc54bf61b881bb1fd2684652ea82a3d6b1c1f60f",
+      "after_sha256": "da33b058bc8713d31003b4e8c6f6504f5c9632c83ee37f47528c85f54647bdf3"
+    },
+    {
+      "name": "card_harness_the_storm",
+      "display_name": "card_harness_the_storm",
+      "source": "cards/shadows_over_innistrad.c",
+      "address": "0x22ab430",
+      "size": 530,
+      "bytes_hex": "5589e557565381ecec0200008b5d088b750c89742404891c248b7d10e87f7e400085c07418c74424080200000089742404891c24e8c71f430085c0742b81ff001e00000f84ff000000897c240889742404891c24e8970d3d0081c4ec0200005b5e5f5dc38d742600813d782d7a00d300000075c93b358c397a0075c13b1d848c730075b9391d1c7e730075b1391d7cc1620075a9a1209a7300891c2489442404e89bc73b0085c07594a1209a730089442404a17cc16200890424e841443f008d9500feffff891424c744240438000000898524fdffffe8a53641008d9500feffff8b8524fdffff89542404891c24898574feffffe8b7ad430085c00f843cffffff891c24e877e03c008974241885c0895c24140f95c025ff000000c74424100000000040c744240cff00000089442408897c2404891c24e8b4cb3f00e9fcfeffff8db42600000000a1209a730089442404a17cc16200890424e8a2433f008d8d00feffff89c28b048500bb7300899524fdffff8b4008890c248944240cc744240850b67302c7442404f4010000e8be3442008d8d00feffff8d8528fdffff894c2408890424c744240438000000e87e3441008d8528fdffff8b9524fdffff89442418c7442414ffffffffc744241005000000c744240c00000000c744240802000000895c2404891c2489959cfdffffe8dc5c3a0083f8ff0f844cfeffff89442408895c2404891c24e803d63b00e937feffff",
+      "native_bytes_sha256": "69c12eb82848c0eeed97dd6d0f4b188283c42719b8951b98a482739e7804c8ad",
+      "native_decomp_path": ".recovery/decompiled-short-wrapper-cards19/22ab430.c",
+      "native_decomp_sha256": "e88a12e21bb69227e6e79ad5c03b62977b98eeb1939f97737ea0f18d6815c428",
+      "reason": "Restore the native trigger-time get_card_name snapshot before default_test_definition and use the saved ID afterward. Preserve all in-play, humiliation, trigger/affected/controller/hand guards and the later separate resolution-time name lookup. No new arbitrary callee equivalence assumption or gameplay-bug claim.",
+      "before_sha256": "c11394ea9c8b54e0ea20bf062764af74bbd53c53fa5a4193db50aa5a0f9c0f93",
+      "after_sha256": "a278050a3408c5e5e79a67c9f484373dacaef947560fec2653e442cd7f777c8b"
+    },
+    {
+      "name": "card_skyclave_apparition",
+      "display_name": "card_skyclave_apparition",
+      "source": "cards/zendikar_rising.c",
+      "address": "0x230e400",
+      "size": 457,
+      "bytes_hex": "5589e557565383ec6c8b75088b5d108934248b7d0ce896b13600895c240885c0897c24040f95c025ff000000893424408944240ce8376f3900c744241001000000c744240c01000000895c2408897c2404893424e8273c390081fb00510000741781fb005f00000f84eb00000083c46c31c05b5e5f5dc3908d5da0c744240c47000000895c2408897c2404893424e8ad1d35008b157cc16200b801000000891c2429d0c745b401100000c745c804000000c745d8000800008945a4e80020350085c074a9c744240c80000000c744240800000000c744240434f97302891c24e8cc28350085c07485897c2404893424e8bc453a0089c38b4078894424048b4374890424e8f840380089459c8b4378894424048b4374890424e8e35b38008b559c81e2ffff0000894424088954240cc7442404e4550000891c24e8a2513a00c744240804000000897c2404893424e8de743a00e916ffffff90897c2404893424e84c453a008d4da089c3894c240c897c2404893424c744240851490000e8ef6e3500891c24c7442404e4550000e8af513a00891c24c7442404e45500008955bc8955b8e899513a008d4da0c745cc42000000c1e810890c248945b4e81174350083c46c31c05b5e5f5dc3",
+      "native_bytes_sha256": "68da29f423465e641ff5815e1fe33f39c411271b463f77cce7ccb6e419286a4c",
+      "native_decomp_path": ".recovery/decompiled-abi/230e400.c",
+      "native_decomp_sha256": "2dfc063112fce7acf1d6f0ced92418ad32d1753e95b4b69a059a6e279378cb45",
+      "reason": "Split the merged duh-mode/owner temporary and select the native high halfword through inst_info_t.data2. The header defines both id and data2 as uint16_t; the previous packing expression equals data2 for every field value. Preserve the two distinct inst_info calls after token initialization and the ETB owner-before-CMC snapshot sequence.",
+      "before_sha256": "6a50b2a777f11f19142d0b64cdeac3327bceced137cbe71c1913baf6737a6340",
+      "after_sha256": "5f258c21676ecbbecac19ae3fe25d57390d229bbca9a5ff31689f2106342e561"
+    },
+    {
+      "name": "graft_trigger",
+      "display_name": "graft_trigger",
+      "source": "cards/dissension.c",
+      "address": "0x2219fb0",
+      "size": 459,
+      "bytes_hex": "5589e557565389c381ec04010000813d782d7a00db000000741e81f9005100000f84e200000081c40401000031c05b5e5f5dc38d742600903b158c397a0075da3b05848c730075d239051c7e730075ca89542404c744240800000000890424898d14ffffff899518ffffffe810774b008b9518ffffff85c08b8d14ffffff7e9a83fb010f84c2000000bf010000008db51cffffffc744240402000000893424898d10ffffff899518ffffffe8504b4a008b9518ffffff8b8d10ffffff89542418894c2404895c241489742410c744240c00000000897c2408c7042402000000899514ffffff898d18ffffff66c745c60100e8bab948008b9514ffffff8b8d18ffffffe913ffffff90a1209a7300895c24108944240ca17cc1620089442408891c24c744241c01000000c7442418000000008954241489542404e812b94b0081c4040100005b31c05e5f5dc389542404c744240802000000c7042401000000898d14ffffff899518ffffffe8817b46008b9518ffffff85c08b8d14ffffff751a833d7cc1620001740731ffe9fffeffffbf02000000e9f5feffff89542404c7042401000000898d14ffffff899518ffffffe80bc947008b9518ffffff488b8d14ffffff7fbb31ffe9c3feffff",
+      "native_bytes_sha256": "2cb27c1688013ca80a25ce16c1a347523e14a408f1053870cc7b0cd880bc0c9b",
+      "native_decomp_path": ".recovery/decompiled-death-tribal-return/2219fb0.c",
+      "native_decomp_sha256": "6bd6727fb24794863b9432cc9972d70e75bc6317438aead3254e800ae2477a3d",
+      "reason": "Reconstruct the positive ETB/affected/controller/counter guard and give the trigger mode its own local. Keep AI is_what before conditional toughness query and read trigger_cause_controller only after those queries when applicable. Test setup remains after mode selection; the separate EVENT_ETB counter transfer uses live trigger coordinates afterward.",
+      "before_sha256": "c566739a8c1313be19dfc26abcb95409bc303bc32e9eb09a3412b0bb8acbca70",
+      "after_sha256": "94d3c56d89ac033caabfd7b6d7d4dc3e2a660a741d54ffabe7e388e1e0083aaa"
+    },
+    {
+      "name": "triskelion_like_creature",
+      "display_name": "triskelion_like_creature",
+      "source": "cards/antiquities.c",
+      "address": "0x224caf0",
+      "size": 324,
+      "bytes_hex": "5589e557565381ec880000008b45148b5d108b7d0c894424108b4508c744240c00000000895c2408897c2404890424e83c4b430083fb6d0f84ab0000008d438e83f801760b31c083fb220f85870000008b45088d75a0c744240c0201000089742408897c2404890424e8e2364100c745ac0012000083fb720f849a0000008b452c8974242c894424248b4528894424208b45248944241c8b4520894424188b451c894424148b4518894424108b4508c744242800000000c744240c44000000895c2408897c2404890424c7442430d57f7302e8390f450081c4880000005b5e5f5dc38db6000000008b45088d75a0c744240c0201000089742408897c2404890424e84a364100c745ac00120000e96cffffff8db600000000893424e8404b410085c00f8456ffffff8b4508c744240801000000897c2404890424e8a1564900e93affffff",
+      "native_bytes_sha256": "a4cf53875339a5f18c79c2625d46f2db0544b8d4bef5483ecdc7c6f41aebfbe2",
+      "native_decomp_path": ".recovery/decompiled-abi/224caf0.c",
+      "native_decomp_sha256": "57c44538a1664ceb3360659d80224904e5fe114861aee3a0c0d621bb35bea271",
+      "reason": "Consolidate the native duplicated target setup after the same four-event filter. EVENT_RESOLVE_ACTIVATION and EVENT_CAN_ACTIVATE are adjacent (0x72/0x73); explicit event membership preserves the original unsigned interval. Keep ETB counters before filtering, validation before damage and the final activation-helper call even after damage.",
+      "before_sha256": "3d288097ea4108540addff6f37840192f6bd0194311c4f4c4c7880fa378a8ce8",
+      "after_sha256": "bad0eda529f0856c6a3f5897bafd046e28b9568bfaf5c1dd127e482bbbf13e87"
+    },
+    {
+      "name": "is_aura_or_equipment",
+      "display_name": "is_aura_or_equipment(1)",
+      "source": "cards/shadows_over_innistrad.c",
+      "address": "0x229e1f0",
+      "size": 152,
+      "bytes_hex": "5531c989e557565383ec0c8b5d088b7510c7442408013000008934248d04db668b0cc534707e008d3cc510707e0089c889442404e8b7543d0089c2b80100000085d2740c83c40c5b5e5f5dc38d742600c744240804000000895c2404c70424ffffffffe8483a3e0085c074d831c0893424668b4724c74424080040000089442404e86a543d0085c00f95c083c40c25ff0000005b5e5f5dc3",
+      "native_bytes_sha256": "d0bc5d6f293bd3a1a8dd19bf5a0667d7e76cb5adab7dad2e76bd4c4752c3a7a5",
+      "native_decomp_path": ".recovery/decompiled-abi/229e1f0.c",
+      "native_decomp_sha256": "b2f56c22529fcfa5412ac087d79e0001c807a2dd61ca3496fc354c154b0d5654",
+      "reason": "Reconstruct the ordered short-circuit predicate and ordinary boolean return. Keep equipment lookup first, enchantment-type lookup only on failure, and a fresh cards_data[iid].id read after that lookup before checking aura subtype. The second subtype result is still normalized to 0/1.",
+      "before_sha256": "8eaa8777da2f3002ae50fb208c9a557eef69aebd0040dfebaedd450a88984233",
+      "after_sha256": "f41018df95cb258cb709ca4ccf01d30871f49b900acfca695b2ca3d81434e52d"
+    },
+    {
+      "name": "altar_extended",
+      "display_name": "altar_extended",
+      "source": "functions/sacrifices.c",
+      "address": "0x26e5900",
+      "size": 626,
+      "bytes_hex": "5589e557565383ec648b45148b5d088945f08b45188945ec8b451c8945e88b45208945e48b45248945e08b45288945dc8b452c8945d88b45308945d48b45348945d08b45388b7d0c8b75108945cc8b453c8945c8897c2404891c24e850d1fcff83fe73741383fe6d0f84da00000083c46431c05b5e5f5dc3897c2404891c24e8bc79ffff85c074e6897c2404891c24e86cc7f9ff31f685c075068b75f083e601897c2404891c24e8c4c7f9ff85c07509f645f002740383c602897c2404891c24e83928e0fd85c07509f645f004740383c604833d84f14e00040f8481010000391d708662000f845d0100003b75f00f857affffff8b45c8895d088945348b45cc8945308b45d089452c8b45d48945288b45d88945248b45dc8945208b45e089451c8b45e48945188b45e88945148b45ec894510c7450c0100000083c4645b5e5f5de94ae1ffff66908945c48b45c8894424308b45cc8944242c8b45d0894424288b45d4894424248b45d8894424208b45dc8944241c8b45e0894424188b45e4894424148b45e8894424108b45ec8944240cc744240800000000897c2404891c24e8abf1ffff89c683f8ff0f848800000089442404891c24e8840ffbff8b55c48955ec89427c89742404891c24e89f0ffbff8b55ec89828000000089742404891c24e88a8ff9ff8b55ec89828400000089742404891c24e805e6faff8b55ec898288000000c74424080300000089742404891c24e8e8fefcfff645f0040f844cfeffff897c2404891c24e80241f9ffe93bfeffff8d74260090c70594f14e0001000000e927feffff90f645f0100f8499feffff83c610e991feffff8db600000000f645f0080f8475feffff83c608e96dfeffff",
+      "native_bytes_sha256": "c549dc7e8af8c23f47d6be9cc053e7b5a5496a0e0f53b5ebcaedc896d48a454e",
+      "native_decomp_path": ".recovery/decompiled-abi/26e5900.c",
+      "native_decomp_sha256": "c0e65bffb5eb0e6d0f4157f6a266f887a58c81657306f8eef32356715c8c1777",
+      "reason": "Separate the chosen sacrifice-card index from boolean availability queries. Keep all three queries in native order even when their act_mode bits are clear. Preserve the getter before event dispatch, per-stat query/store interleaving, kill before conditional tap and native availability-bit arithmetic.",
+      "before_sha256": "01906b0c16dfaaa4f83780ca49cd45e22aa9c8157eb6804a97be65fa175e0564",
+      "after_sha256": "8d4bf37c33ffe6470d5002f15b634ee0ebfb7902f6f78d4007df51c13943abe4"
+    },
+    {
+      "name": "check_for_flanking_removal",
+      "display_name": "check_for_flanking_removal",
+      "source": "functions/abilities.c",
+      "address": "0x26df1b0",
+      "size": 161,
+      "bytes_hex": "5589e5565383ec0c8b5d088b450cc74424084400000089442404891c24e84ecdfaff85c07472be0100000029de8b04b520f54e0085c07e6031dbeb0e8d742600433b1cb520f54e007d4e895c2404893424e8ca40fdff85c074e6895c2404893424e88a43fdff3d6209000075d383feff741783fbff7412b94000000089da89f0e81bdeffff85c075b783c40cb8010000005b5e5dc38d760083c40c31c05b5e5dc3",
+      "native_bytes_sha256": "b69c486b4ea90b84f8c9dd68407685c266557dd1c8b2ec5e02538ce959591f3c",
+      "native_decomp_path": ".recovery/decompiled-ability-callers/26df1b0.c",
+      "native_decomp_sha256": "61051170c946e6b369fda4b0b8bd3225bbb69189acb77353f6f5bf733cf52ebe",
+      "reason": "Split state/opponent and candidate-ID/result temporaries into the state guard, saved opponent and candidate index. Keep in_play then ID then conditional humiliation, including the native -1 short-circuit, and reread the active count after each query iteration. No helper query is hoisted across a callback.",
+      "before_sha256": "13e6cd6a574b5bcb0ecb601e97c8e32526399c02be05d5e8566d4162a3b20926",
+      "after_sha256": "3e562aaea45a5176b759c54e2537be8d49eedd0c1f19825c0e0e8f1fbca163fd"
+    },
+    {
+      "name": "card_natural_reclamation",
+      "display_name": "card_natural_reclamation",
+      "source": "cards/commander_legends.c",
+      "address": "0x25acfa0",
+      "size": 187,
+      "bytes_hex": "5589e557565383ec748b45108b75088b5d0c83f86c75083b1d8c397a00741989442408895c2404893424e82153f1ff83c4745b5e5f5dc3903b35848c730075df8d7da0c744240c44000000897c2408895c2404893424e845320b00c744241c00000000c744241801000000c7442414276f7502897c2410c744240c01000000c74424086c000000895c2404893424e81d320f00833d94f14e0001750431c0eb8fc74424086c000000895c2404893424e89cdbd4ff31c0e974ffffff",
+      "native_bytes_sha256": "5e2ed981035690dac7ea76328b6e4ae7b1f4994f955709014e39994dd648ff91",
+      "native_decomp_path": ".recovery/decompiled-abi/25acfa0.c",
+      "native_decomp_sha256": "e53dc6642f289db1dbd23f353ffde19d4d3a5fdee4c688daa0142189394085e8",
+      "reason": "Reconstruct the native affected-CAST branch with its shared zero result, retaining the exact spell_fizzled==1 cancellation test. Cascade remains after generic_spell, only when that test permits it. Other events and unaffected CAST still return card_disenchant directly.",
+      "before_sha256": "487f998cb80d44c5e8a90116e211053dfb72f394951a8b1c2ebceddebe70b1f0",
+      "after_sha256": "e8135e555296bb2ad34fe1627be661458f912c0ea0b5730c824a97c87e1e5b09"
+    },
+    {
+      "name": "select_target_maybe_force",
+      "display_name": "select_target_maybe_force",
+      "source": "functions/targets.c",
+      "address": "0x265fb20",
+      "size": 395,
+      "bytes_hex": "5589e557565389c383ec588b45548b75508944244c8b454c894424448b4548894424408b45448944243c8b4540894424388b453c894424348b4538894424308b45348944242c8b4530894424288b452c894424248b4528894424208b45248b7d08897424488944241c8b4520894424188b451c894424148b4518894424108b45148944240c8b4510894424088b450c89442404893c2489d8894dec8955f0e80df8ffff85c0752bf7c60100000075238b4dec8b55f083f9017409833d7485720001750f89f883e002740831c0f6450c02740e83c4585b5e5f5dc38db6000000008b4554897424488944244c8b454c894424448b4548894424408b45448944243c8b4540894424388b453c894424348b4538894424308b45348944242c8b4530894424288b452c894424248b4528894424208b45248944241c8b4520894424188b451c894424148b4518894424108b45148944240c8b4510894424088b450c83f001893c248944240489d8e841f7ffff85c00f845bffffff8b15a8317a0083ea208915a8317a00e947ffffff",
+      "native_bytes_sha256": "bcb006433b9b8e0727069568d33c0cc28d9a538f07c6ac8c31400ca6f1fd41cd",
+      "native_decomp_path": ".recovery/decompiled-abi/265fb20.c",
+      "native_decomp_sha256": "32beb83048004af5e7c5b22eaa01d39a135d32c437e4b7d18171964f2d1dc253",
+      "reason": "Remove redundant result=0 comma assignments from the retry eligibility predicate: its enclosing branch already proves result==0 and no intervening call can change that local. Preserve live ai_is_speculating lookup, controller-mask checks, retry packet with only preferred_controller XOR1, and success-only AI penalty.",
+      "before_sha256": "c85654b712cc9271f1487e63dfb6236d979df39cd35092f6fca84528b03a63c0",
+      "after_sha256": "f736b7009321dddfff22031aa7b9e79484d15f3e6b3dc5ddae275862d2b5c0eb"
+    },
+    {
+      "name": "card_aysen_crusader",
+      "display_name": "card_aysen_crusader",
+      "source": "cards/homelands.c",
+      "address": "0x21226c0",
+      "size": 196,
+      "bytes_hex": "5589e5565383ec0c8b451083e83283f801760d83c40c31c05b5e5dc38d742600a18c397a0039450c75e98b45083905848c730075de83f8ff74d98b048520f54e0085c07e7831f631db8db426000000008b4508895c2404890424e8b10b590085c0741c8b4508c7442408b4000000895c2404890424e87611550085c07422468b450843391c8520f54e007fc483c602893424e839af5a00e977ffffff8d7426008b4508c7442408d2000000895c2404890424e83911550085c075c3ebc2be02000000ebcb",
+      "native_bytes_sha256": "9abfbe33f67b6d0e9d12dc52d271f0c4304523ab2ac0a5a660369843c308ca31",
+      "native_decomp_path": ".recovery/decompiled-ability-callers/21226c0.c",
+      "native_decomp_sha256": "1d2a3c29e124957d6c805500e7bdf55e816a0d08695c654fe90fbe2bc21e8575",
+      "reason": "Replace the remaining decompiler placeholder scan index with candidate. Keep every native Soldier/Warrior short-circuit query and the live active-card loop bound; the base2 characteristic remains added only after the scan. No control-flow or gameplay change.",
+      "before_sha256": "97c0790b9a4ba484310872b4c9de556af42abe4c8c8e6b0dc35da498932adbe4",
+      "after_sha256": "a0e402c37b2a96c02fa5075627e930f1f3af5a07fde154438005804f7c7d91e3"
+    },
+    {
+      "name": "card_necroskitter",
+      "display_name": "card_necroskitter",
+      "source": "cards/eventide.c",
+      "address": "0x236b8f0",
+      "size": 666,
+      "bytes_hex": "5589e557565381ec00010000817d10004700008b5d088b750c0f84c10000008b45108974240489442408891c24e86e2e3700837d1077742889742404891c24e87c713400807868000f84ba00000081c40001000031c05b5e5f5dc38d74260090a18c397a00c74424080100000089442404a1848c7300890424e8c25d360085c074b68d851cffffffc744240402000000890424e8283235008d851cffffff89442414b80100000029d8c744241c00000000c7442418d0000000c7442410ffffffff8944240cc74424087700000089742404891c24e817933200e95affffff66903b358c397a000f84cc000000c74424080047000089742404891c24e8a02d3700e933ffffff8d7600891c24e8b0db30008974240485c0891c240f95c025ff000000408944240c8b451089442408e81eda3100898514ffffff85c00f840effffff89742404891c24e87470340089c18b8514ffffff85c00f8ef2feffff31ff6690c74424100000000031d28b44f978898d18ffffff8d04c0668b14c534707e0089d08944240c8b44f9748974240489442408891c2447e8e6dc340039bd14ffffff0f8ea8feffff83ff0a8b8d18ffffff7eafe998feffff66903b1d848c73000f8528ffffff8b149d20f54e0085d27e6931ffeb0f8d7426009047393c9d20f54e007e56897c2404891c24e8f277340085c074e6c744240880000000897c2404891c24e8aa61310085c074ce897c2404891c24e8aa6f34008178382031360275b90fbe485039d9746939587475ac39707875a7e9b6feffff669089742410895c240cc74424082031360289742404891c24e8bcef3000891c2489442404898518ffffffe85a6f34008b9518ffffff895874897078c6403601c74424080000010089542404891c24e8c6c13100e95dfeffff903970047592e952feffff",
+      "native_bytes_sha256": "e3222bdb575bb7a346ba691e1c232820562c3e4416bad19225b99b37476ecfc2",
+      "native_decomp_path": ".recovery/decompiled-death-tribal-return-support/236b8f0.c",
+      "native_decomp_sha256": "d2cf901a9909d2bec2f693ec68cdc4fc358b3589ecf84ed658b749b94d9acd71",
+      "reason": "Restore the native fresh get_card_instance after nonzero GFP resolution, instead of caching it before duh_mode/resolve_gfp_ability. Keep the kill-code getter before those callbacks and the later getter even for a negative nonzero amount, with the positive bounded loop still deciding reanimation. Use the native kill_code==0 predicate; the current unsigned field also made <=0 equivalent.",
+      "before_sha256": "76e2d8bad09bcf3a481f4377086a1bab27c7dfd9486998f786c1c120c22f9ff2",
+      "after_sha256": "d60050649e255192ed7cce9cf2fb609d66342e2ea8578f4f3ef855f3074a28fb"
+    },
+    {
+      "name": "card_scythe_of_the_wretched",
+      "display_name": "card_scythe_of_the_wretched",
+      "source": "cards/mirrodin.c",
+      "address": "0x2544400",
+      "size": 993,
+      "bytes_hex": "5589e557565383ec308b5d088b750c89742404891c248b7d10e8e2951a0085c0743b89742404891c24e882e6160083ff6e89c2747b83ff770f84c20000008b88cc00000085c97e10813d782d7a00d50000000f840602000083ff227443897c240889742404891c24c744241c00000000c744241800000000c744241402000000c744241002000000c744240c04000000e86ba01a0083c4305b5e5f5dc38d7600c7423801000000ebb48db426000000008a40508955f08845e78b42048945e8a18c397a0089442404a1848c7300890424e8dbe516008b55f089c18945eca1f804790039416c0f842d0200008b82cc00000085c00f8f4fffffffe95fffffff66908945f0a18c397a0089442404a1848c7300890424e8b7ed16008b55f085c00f841c010000a18c397a00c74424080200000089442404a1848c7300890424e85ed713008b55f085c00f84f3000000a18c397a0089442404a1848c7300890424e8bdc813008b55f085c00f85d2000000837a38010f8ec8000000a18c397a0089442404a1848c7300890424e882da15008b55f085c00f84a7000000a18c397a0089442404a1848c7300890424e871da13008b55f085c00f85860000008b42388945f0487e7d8b0d8c397a00a1848c7300894dec895d08b901000000eb0f8d74260090413b4df00f84e60100003944ca7475f08b5dec395cca7875e783bacc000000008b5d08790ac782cc00000000000000ff82cc0000008d0cca81497400001000894df08b4dec894c24048904248955e8e82cf016008b4df08b55e88941788d76008b82cc00000085c00f8e0ffeffff813d782d7a00d50000000f85fffdffff391d1c7e73000f85eefdffff3b358c397a000f85e2fdffff3b1d848c73000f85d6fdffff83ff7d0f841e01000083ff7e0f85c4fdffff8d4a7c8d82b4000000897d108945f08955ec89cfeb0c83c7083b7df00f84050100008b0785c078eea90000100074e725ffffefff31c98907c7442410000000008b570489442408c7442404ffffffff891c248d14d2668b0cd534707e0089ca8954240ce87450170085c078aa8944240c895c240889742404891c24e88c951a00eb9466908b45e83941480f85c7fdffff8a45e73a410c0f85bbfdffff8b410483f8ff0f84affdffff837938000f8ea5fdffffc744240802000000894424040fbe4150890424e842d513008b55f085c00f8482fdffff8b42388945f085c07e6583f8070f8f6ffdffff8b45f08b4dec8d04c28945e80fbe415089c18b45e88948748b4dec8b49048948788b45f040894238e942fdffffa1b405620083c802a3b4056200e9a2fcffff8b55ec8b7d10c782cc00000000000000e98dfcffff8b5d08e968feffffc745f001000000eb9b",
+      "native_bytes_sha256": "39477eeae240718c4fd19f1b33edaadb8c1af1b28c63b563aaf16558f14d1bcd",
+      "native_decomp_path": ".recovery/decompiled-short-wrapper-cards27/2544400.c",
+      "native_decomp_sha256": "b18db1e93fc0a759894c76dbb2d43d6fd033b0054a3d4af4752c2e4cd69506e3",
+      "reason": "Restore native death-scan query order: in_play, creature test, token test, stored-count guard, is_this_dying, death-trigger-removal check, then a fresh stored-count loop condition. This retains live affected coordinates between callbacks and avoids invoking removal checking for candidates rejected earlier by the native code. Also clamp the damage-record index locally and store the final count only after both target writes, as native code does. No rules fixes, capacity changes or invented safety checks.",
+      "before_sha256": "29f9b83d6a5766b613e7d57dbb85864500c11716b4a285e35dafa99705227628",
+      "after_sha256": "fc4e268f1c1a858c9a57632430f5d2b3c23f824565d40a875d3c7d45418dabb1"
+    }
+  ],
+  "files": [
+    {
+      "source": "cards/guildpact.c",
+      "before_bytes_sha256": "b39f797e55898347dca5370288c62976b2be1075484eeca9491fdb6516835183",
+      "after_bytes_sha256": "5519721c4015097f0436fbfc500e4b664fbb28ba6db653185c33ef1aabde1847",
+      "before_sha256": "a3d85cbb3d69be90b11cfded9e0517c1a0549388c81a172446cf850da3cdc28e",
+      "after_sha256": "16a021c037fb98a85cb7cb992c43065ac5864d1e1e4ea57414d8dbfb7575a91a"
+    },
+    {
+      "source": "cards/shadows_over_innistrad.c",
+      "before_bytes_sha256": "7d0459e13272e679f47cabcb1bf04ddaf355f5102c61e97d0cb624498470c176",
+      "after_bytes_sha256": "4fc76850aa8bb1dcb9e6e18488f286ec9e1db0a51f278e0481deb86849e0acf5",
+      "before_sha256": "91c042c8265508dc73cea2368579a37da114e1028f96c8fd7b96747cfc4f84aa",
+      "after_sha256": "393dc02ce44c4e4ad80c05e60b3ebc1f88fc4678cd9541c0e3e525ecef8ecce7"
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "before_bytes_sha256": "03e66f38b983df24c4fd30ca4c0e35a7d6bae4377c8669ce8d4f7edcd926426e",
+      "after_bytes_sha256": "2f5c2cf57e9551216969af3f040e2ac1462aea280dd7305d0d622eff80c0f9e0",
+      "before_sha256": "d236d68e8f2990be3ebcbff1d48d7c981aac52a3c56cb4a436c97f8e46eddc78",
+      "after_sha256": "245307cdf993162d05b128917d5be4de05e1b5e30647cdad15fcfe5b8e88efe3"
+    },
+    {
+      "source": "cards/dissension.c",
+      "before_bytes_sha256": "99609ba405b11aee210eb6a259ffd82d6abba958592046c130f254a920ad1fc2",
+      "after_bytes_sha256": "b98f1989e9943aa8a51a51be6cab86019c7a3f62c0b48789a24c1146362d08ac",
+      "before_sha256": "2e6a6500bd13553379611769d49d6de2e74a077201ae971ceb274ec956f6961a",
+      "after_sha256": "31fa49847cfdfb28fae8a555699dd9e193551f9c0518d20cf04254e6012dd7d5"
+    },
+    {
+      "source": "cards/antiquities.c",
+      "before_bytes_sha256": "dc46c28fe2ad105936c0993c53a5f491c9b762aa73800c1a09ebeb67f270c631",
+      "after_bytes_sha256": "069866f3bc5828308d5a17e6e482832e2eb2e3e553d4ce2c71a62871b7211ba7",
+      "before_sha256": "3f7211fe215f9c4d287e78e55770c006841eaea4ee64aff7c7db7112e63b4f4b",
+      "after_sha256": "c33236ee97605ce9084fa2e2abfd24352cd934b3aa705b80d766426bd228f9e8"
+    },
+    {
+      "source": "functions/sacrifices.c",
+      "before_bytes_sha256": "90e758bd8dada2493063496f689f3d1f2ab330baf862faac167b62a370a2b047",
+      "after_bytes_sha256": "1bce30ce5a256bcb03434a65ee9f5d30314e50aa36e90c6ef4f51680115f76d4",
+      "before_sha256": "8614bb516f0e6b51ffbe3a01f008ae7e024c29cb43b9b92a171c78fb7bed8731",
+      "after_sha256": "47faa7fb36fc03aa5bea6ed29f39de3601d9358cb89676fd189949c078a98ba2"
+    },
+    {
+      "source": "functions/abilities.c",
+      "before_bytes_sha256": "31dd0e4ce08c3fde9d93b8e41d26f0940c5c2325f0acd5f2bd8f8218752ae170",
+      "after_bytes_sha256": "6873824d91d79a7a2bdd2bded83dbe3a3ed8ceae40d8afc352bd920913ab6b9d",
+      "before_sha256": "542a064082f6b68c8713aa058c072c8271cc2375febc4c67e7f722b2fb116911",
+      "after_sha256": "3b782c225691d0437f15c57c8223f42322226004bd9af1e61f44547a11e0deb8"
+    },
+    {
+      "source": "cards/commander_legends.c",
+      "before_bytes_sha256": "90745229b874a3b5433902cb57671008d642d9989fc3de8bdffa2f1bb2e552bc",
+      "after_bytes_sha256": "d6bc8bad2d68f66a2e00f3e06ccfa061cfb5e4188ba85d84329f0b6c75c8b1ea",
+      "before_sha256": "75558249f2fd06d362145b79a5f292ae922f840c5bf828e153b49428771133e1",
+      "after_sha256": "7a2ac412be328aff5b1503d157359eb64201d0a15c448251882f47f9b4d563ad"
+    },
+    {
+      "source": "functions/targets.c",
+      "before_bytes_sha256": "5e5e3c7aed80e6996b4417983aef75024c99f1c1c9d05034c462cbd4f505cfb7",
+      "after_bytes_sha256": "303bd436a1efffc0b4326d85d5aedf5c2ce7fa935c89ba57c68dff22b1b7812b",
+      "before_sha256": "20d516c103516bc9bde3ff0e854a25fc69bcb425ac1128c545605b06ca7bc6ac",
+      "after_sha256": "a5e7cfce287c5088bea473e4919ee15ae4ea68b6c92a73b3537841766ac07636"
+    },
+    {
+      "source": "cards/homelands.c",
+      "before_bytes_sha256": "c76f924318da20f79ae20fb451ba3ec56a2d8385029a6c45ca42cb00d4206853",
+      "after_bytes_sha256": "d1059eb34d7142083b1822c48ef4399b98b48df183918fcb7a3d3c612a707e61",
+      "before_sha256": "ae791bfdba93380757230e8ed59d81c936c7dff8b69f08a91951f614c28aa29b",
+      "after_sha256": "54e86a1c9c67ec500f47d3480bcc9b16deb3291dc6d166c85fb351dc60c96d9e"
+    },
+    {
+      "source": "cards/eventide.c",
+      "before_bytes_sha256": "2661806d6d1890554762c0de753d1098eacc9560e19370eced32d0ad8141c3d5",
+      "after_bytes_sha256": "a8d81b3f838d3294cda5d1a26098c3ab00577f564b62903bc431ec9658fe7135",
+      "before_sha256": "f0da0d5f17c0a3f1004157d97f138f057615bbc819f440f409579e0d539bafcd",
+      "after_sha256": "2441b65bafddae3d0d7922f316c4fa5083287dc1b5b897317a7c91badc21a0c5"
+    },
+    {
+      "source": "cards/mirrodin.c",
+      "before_bytes_sha256": "d41eb9a5edf0c0e25f0cfec26fda0dfa606e90600fe5a8c046b76ef79d53662b",
+      "after_bytes_sha256": "bcf577695bfadf8ed3ac070bcf77c5c2aff0bc2accb3fa6e598297c8bfea6d6d",
+      "before_sha256": "b72e77e7c0157379cdd2f599b6d0fbfc8a3520690472db450b5f4a2638be5783",
+      "after_sha256": "f4c5e53a61f957c4e8ea903fefdeada08dbab034fcda39ef2f900ef1d4a456a4"
+    }
+  ],
+  "native_dll_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "staged_diff_sha256": "365ee6cd7b44fbac2e4d753edaa9c1d8419e6b2fd17844a371e021b58d1ed3d8",
+  "prior_build": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "dll_sha256": "394fa962e3e24f3399077a435f0d421b8377dad7f2f9251dd3207208829ed748",
+    "debug_sha256": "9a510c6a3f88cb64d71e5d0dcf506abe63de627f63617a2578d05ddbbbc1a615",
+    "build_log_sha256": "c531c044ef5e80fd3c8399e34647f98269f25bdc48181759767155f5eb5508db",
+    "source_definitions": 7,
+    "exact_file_projections": 7,
+    "complete_cfg_matches": [
+      "card_perpetual_timepiece",
+      "card_kefnet_the_mindful"
+    ],
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "394fa962e3e24f3399077a435f0d421b8377dad7f2f9251dd3207208829ed748",
+        "ManalinkEh.dbg": "9a510c6a3f88cb64d71e5d0dcf506abe63de627f63617a2578d05ddbbbc1a615"
+      },
+      "results": [
+        {
+          "name": "card_perpetual_timepiece",
+          "matched": true,
+          "proof": {
+            "cfg_states": 204,
+            "reached_instruction_counts": [
+              204,
+              204
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x44e050",
+                "rebuilt": "0x44e050",
+                "identity": "fixed:0x44e050"
+              },
+              {
+                "native": "0x2652b10",
+                "rebuilt": "0x26e0e30",
+                "identity": "_select_multiple_cards_from_graveyard"
+              },
+              {
+                "native": "0x2687990",
+                "rebuilt": "0x26a9f30",
+                "identity": "_add_state"
+              },
+              {
+                "native": "0x268e850",
+                "rebuilt": "0x268efb0",
+                "identity": "_charge_mana_for_activated_ability"
+              },
+              {
+                "native": "0x269a940",
+                "rebuilt": "0x26a4ea0",
+                "identity": "_shuffle"
+              },
+              {
+                "native": "0x269db00",
+                "rebuilt": "0x26b1570",
+                "identity": "_generic_activated_ability"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266ae90",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b5a00",
+                "rebuilt": "0x266d920",
+                "identity": "_kill_card"
+              },
+              {
+                "native": "0x26b9430",
+                "rebuilt": "0x2671fd0",
+                "identity": "_mill"
+              },
+              {
+                "native": "0x26bea60",
+                "rebuilt": "0x26b6ba0",
+                "identity": "_new_default_test_definition"
+              },
+              {
+                "native": "0x26e5da0",
+                "rebuilt": "0x2660330",
+                "identity": "_count_graveyard"
+              },
+              {
+                "native": "0x26e9c50",
+                "rebuilt": "0x2672a70",
+                "identity": "_dialog_impl"
+              },
+              {
+                "native": "0x2745246",
+                "rebuilt": "0x273c6fa",
+                "identity": "readonly-DIALOG-token:a12871fee210fb8619291eaea194581cbd2531e4b23759d225f6806923f63222"
+              },
+              {
+                "native": "0x2745be7",
+                "rebuilt": "0x273d09b",
+                "identity": "readonly-C-string:1fd1b149a75169b0a3af847baf406292c323aeef0ef7ead62006b4a30fa2d348"
+              },
+              {
+                "native": "0x2745bff",
+                "rebuilt": "0x273d0b3",
+                "identity": "readonly-C-string:a4f79085255f8e76282a1f01ebfae2081a8a848ea2f7a3e816aee18abcb47759"
+              },
+              {
+                "native": "0x2745c06",
+                "rebuilt": "0x273d0ba",
+                "identity": "readonly-DIALOG-token:653b3bb3e18ef84d5b1e8ff9884aecf1950c7a1c98715411c22b987663b86dda"
+              },
+              {
+                "native": "0x2745c0c",
+                "rebuilt": "0x273d0c0",
+                "identity": "readonly-C-string:c81e0528d525d80825aa5b6b41fd5d1e15c136a391f8b710177eae0fd9227258"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x23af440",
+              "size": 1092,
+              "sha256": "01b0793afe243b7363d3c68857cd82dfb01397dcb21b51f610c706a77632559d",
+              "bytes_hex": "5589e557565381ec1c0100008b5d108b75088b7d0c83fb73743683fb6d743183fb72740583fb227517897c2404893424e83b36300089c283fb720f848002000031c081c41c0100005b5e5f5dc38d7600897c2404893424e81436300083fb7389c20f848102000083fb6d75cbc744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241000000000c744240c01000000c744240873000000897c2404893424898514ffffffe8eae52e00c744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241002000000c744240c00400000c744240873000000897c240489342489c3e884e52e00893424898518ffffffe8166833008b8d18ffffff01c0c744243800000000c744243400000000c744243000000000c744242c0000000089442428894c2424c7442420e75b7402c744241c0f000000895c2418c7442414ff5b7402c7442410065c7402c744240c46527402c74424086d000000897c2404893424e856a633008b9514ffffff85c00f840002000083f8010f841f02000083f8020f8566feffffc744241c00000000c744241800000000c744241400000000c744241000000000c744240c00000000c744240802000000897c2404893424899518ffffffe8f4f12d0085c00f841cfeffff8d9d1cffffffc74424080c5c7402c7442404ff000000891c24e8def3300085f68b9518ffffff0f85d2010000c7042400000000e8046733008b9518ffffff8d4a7489442414894c2418895c2410c744240c01000000c74424080000000089742404893424899518ffffffe83d342a008b9518ffffff8a4a3901c1884a39c744240804000000897c2404893424e80b633000e986fdffff8db6000000008b423883f8010f840c01000083f8020f856bfdffff893424e823b22e0031c0e95efdffff8d742600c744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241000000000c744240c01000000c744240873000000897c2404893424e874e32e0089c2b80100000085d20f85e7fcffffc744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241002000000c744240c00400000c744240873000000897c2404893424e801e32e00e97efcffff8d742600c70594f14e0001000000e96bfcffff90c744240402000000893424e8089c300031c0e953fcffff90c744240810000000897c2404893424e84c812d008b1da8317a0083c30fc705bc047900ffffffff891da8317a00e91efcffff893424899518ffffffe830653300890424e8d8e709fe8b9518ffffff40e91efeffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x22a7e20",
+              "size": 1104,
+              "sha256": "212a3357e5b0ef20cdf853b4ebcdf769516df20b5eb00484751b317007ee3094",
+              "bytes_hex": "5589e557565381ec1c0100008b5d108b75088b7d0c83fb73743683fb6d743183fb72740583fb227517897c2404893424e83b303c0089c283fb720f848002000031c081c41c0100005b5e5f5dc38d7600897c2404893424e814303c0083fb7389c20f848102000083fb6d75cbc744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241000000000c744240c01000000c744240873000000897c2404893424898514ffffffe87a964000c744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241002000000c744240c00400000c744240873000000897c240489342489c3e814964000893424898518ffffffe8c6833b008b8d18ffffff01c0c744243800000000c744243400000000c744243000000000c744242c0000000089442428894c2424c74424209bd07302c744241c0f000000895c2418c7442414b3d07302c7442410bad07302c744240cfac67302c74424086d000000897c2404893424e896aa3c008b9514ffffff85c00f840002000083f8010f841f02000083f8020f8566feffffc744241c00000000c744241800000000c744241400000000c744241000000000c744240c00000000c744240802000000897c2404893424899518ffffffe8746f3e0085c00f841cfeffff8d9d1cffffffc7442408c0d07302c7442404ff000000891c24e83eeb400085f68b9518ffffff0f85d2010000c7042400000000e8b4823b008b9518ffffff8d4a7489442414894c2418895c2410c744240c01000000c74424080000000089742404893424899518ffffffe87d8d43008b9518ffffff8a4a3901c1884a39c744240804000000897c2404893424e84b583c00e986fdffff8db6000000008b423883f8010f840c01000083f8020f856bfdffff893424e8a3cd3f0031c0e95efdffff8d742600c744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241000000000c744240c01000000c744240873000000897c2404893424e80494400089c2b80100000085d20f85e7fcffffc744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241800000000c744241400000000c744241002000000c744240c00400000c744240873000000897c2404893424e891934000e97efcffff8d742600c70594f14e0001000000e96bfcffff90c744240402000000893424e8c89d3c0031c0e953fcffff90c744240810000000897c2404893424e80c1d40008b1da8317a0083c30fc705bc047900ffffffff891da8317a00e91efcffff893424899518ffffffe8e0803b00890424e8f85d1afe8b9518ffffff40e91efeffff8db426000000008d74260090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_kefnet_the_mindful",
+          "matched": true,
+          "proof": {
+            "cfg_states": 119,
+            "reached_instruction_counts": [
+              118,
+              119
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2660240",
+                "rebuilt": "0x26dab70",
+                "identity": "_default_target_definition"
+              },
+              {
+                "native": "0x26604c0",
+                "rebuilt": "0x26db120",
+                "identity": "_can_target"
+              },
+              {
+                "native": "0x2660db0",
+                "rebuilt": "0x26dbd80",
+                "identity": "_new_pick_target"
+              },
+              {
+                "native": "0x2663890",
+                "rebuilt": "0x26b52d0",
+                "identity": "_check_legend_rule"
+              },
+              {
+                "native": "0x269db00",
+                "rebuilt": "0x26b1570",
+                "identity": "_generic_activated_ability"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266ae90",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b3d00",
+                "rebuilt": "0x266bc80",
+                "identity": "_draw_a_card"
+              },
+              {
+                "native": "0x26b5c30",
+                "rebuilt": "0x266db00",
+                "identity": "_bounce_permanent"
+              },
+              {
+                "native": "0x26dd430",
+                "rebuilt": "0x26534d0",
+                "identity": "_is_humiliated"
+              },
+              {
+                "native": "0x26de430",
+                "rebuilt": "0x2653850",
+                "identity": "_cannot_block"
+              },
+              {
+                "native": "0x26de580",
+                "rebuilt": "0x2655d60",
+                "identity": "_indestructible"
+              },
+              {
+                "native": "0x273d804",
+                "rebuilt": "0x2727444",
+                "identity": "readonly-C-string:9ee1a7f7db97bb72c8930f9364377671ce8872d133fbeaeed5903d00d4726a37"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x22da380",
+              "size": 559,
+              "sha256": "3697be3d076f83dddeb4735bed53792800d3e6d845728c9564e48304c7082d38",
+              "bytes_hex": "5589e557565381ec8c0000008b7d108b5d088b750c897c240889742404891c24e8eb943800897c240889742404891c24e8cb41400083ff790f844a01000083ff340f85a90000003b358c397a000f848d0100008d45a0c744240c010000008944240889742404891c24e8525e380089742404891c24895da8895da4e8b0863d00897c240889742404891c24c744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241801000000c744241400000000c744241003000000c744240c00000000e8a0363c0081c48c0000005b5e5f5dc38d742600908d45a0c744240c010000008944240889742404891c24e8b55d380089742404891c24895da8895da4e813863d0083ff7289459c0f8557ffffff891c24e84f983d008d45a0890424e80460380085c00f843cffffff8d45a0c744240c80000000c744240800000000c744240404d87302890424e8c968380085c00f8411ffffff8b459c8b4078891c2489442404e82fb73d00e9fafeffff66903b358c397a000f85bffeffff3b1d848c73000f85b3feffff833c9dc4f14e00060f8fa5feffffc74424080400000089742404891c24e8ee2e400085c00f8589feffffc705b405620001000000e97afeffff8db426000000003b1d848c73000f8567feffff833c9dc4f14e00060f8f59feffffc74424080400000089742404891c24e8a22e400085c00f853dfeffffc74424083400000089742404891c24e8863e4000e924feffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x204a1f0",
+              "size": 544,
+              "sha256": "2031cb6655136fe1d34aa452d7e6b9412a830bceebef21eac09a18df217796b9",
+              "bytes_hex": "5589e557565381ec8c0000008b7d108b5d088b750c897c240889742404891c24e8bbb06600897c240889742404891c24e83bbb600083ff790f84f200000083ff340f84a90000008d45a0c744240c010000008944240889742404891c24e81e09690089742404891c24895da8895da4e82c0c620083ff7289459c0f84f0000000897c240889742404891c24c744243000000000c744242c00000000c744242800000000c744242400000000c744242000000000c744241c00000000c744241801000000c744241400000000c744241003000000c744240c00000000e8a072660081c48c0000005b5e5f5dc38d742600903b358c397a000f84d40000008d45a0c744240c010000008944240889742404891c24e86908690089742404891c24895da8895da4e8770b6200e952ffffff66903b358c397a0075c43b1d848c730075bc833c9dc4f14e00067fb2c74424080400000089742404891c24e88291600085c0759ac705b405620001000000eb8e6690891c24e8181962008d45a0890424e8ad0d690085c00f84f5feffff8d45a0c744240c80000000c744240800000000c744240444747202890424e8e219690085c00f84cafeffff8b459c8b4078891c2489442404e848376200e9b3feffff8d76003b1d848c73000f8520ffffff833c9dc4f14e00060f8f12ffffffc74424080400000089742404891c24e8e290600085c00f85f6feffffc74424083400000089742404891c24e846946000e9ddfeffff90",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_stormfist_crusader",
+          "matched": false,
+          "reason": "('Unbound operand', '0x4', '0x0')",
+          "ranges": [
+            {
+              "address": "0x25d4820",
+              "size": 135,
+              "sha256": "31cef64fcdcbf274aa756172a7c712a3e902c58148fb5c5d1780309c84394bad",
+              "bytes_hex": "5589e557565383ec108b75088b5d108b7d0c895c2408897c2404893424e8aead10008974240c895c2408897c2404893424e8fa0b0c0081fb000a0000753f8b1d70866200891c24e894f40d00891c24c744240401000000e834a90b008b1d7086620083f301891c24e873f40d00c744240401000000891c24e813a90b0083c41031c05b5e5f5dc3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x257bcc0",
+              "size": 160,
+              "sha256": "6720103a5753321c3c8e91ccbc08f4549c0afbebaa8a61e00dce1410185029c8",
+              "bytes_hex": "5589e557565383ec108b75088b5d108b7d0c895c2408897c2404893424e83eb50d008974240c895c2408897c2404893424e86ae0100081fb000a0000740a83c41031c05b5e5f5dc38b1d70866200891c24e86aff0e00891c24c744240401000000e8babb11008b1d7086620083f301891c24e849ff0e00891c24c744240401000000e899bb110083c4105b31c05e5f5dc38db426000000008db4260000000090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_treetop_defense",
+          "matched": false,
+          "reason": "('Unbound operand', '0x0', '0x8')",
+          "ranges": [
+            {
+              "address": "0x21c19e0",
+              "size": 278,
+              "sha256": "756f6b9c9cbbfc113f3b7a76792013ecfb760cb4e126284190dd4a71a70fd1d0",
+              "bytes_hex": "5589e5565383ec20837d1074741a837d10710f849000000031c083c4205b5e5dc38db426000000008b450839057086620074e5833d84f14e001675dc8b450cc744240874000000894424048b4508890424e89a014e0085c074be8b35708662008b04b520f54e0085c07ead31db8d7600895c2404893424e8a4f84b0085c07418c744240840000000895c2404893424e85c834b0085c0747443391cb520f54e007fcee971ffffff908b4508c744241c00000000894424088b450c894424048b4508c744241800040000c744241400000000c744241000000000c744240cffffffff890424e867454c008b450c894424048b4508890424c744240802000000e81d3f4f0083c4205b31c05e5dc3b801000000e904ffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24460d0",
+              "size": 288,
+              "sha256": "7760be77ffbf0f75e3e69c648a867ad8e6e779c7aa1a07313177bcf27b4a69c3",
+              "bytes_hex": "5589e5565383ec20837d1074741a837d10710f849000000031c083c4205b5e5dc38db426000000008b450839057086620074e5833d84f14e001675dc8b450cc744240874000000894424048b4508890424e8aa5b260085c074be8b35708662008b04b520f54e0085c07ead31db8d7600895c2404893424e8543d260085c07418c744240840000000895c2404893424e8ac74240085c0747043391cb520f54e007fcee971ffffff908b4508c744241c00000000894424088b450c894424048b4508c744241800040000c744241400000000c744241000000000c744240cffffffff890424e8d79b26008b450c894424048b4508c744240802000000890424e84d772200e910ffffffb801000000e908ffffff8db426000000008db42600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_underworld_cerberus",
+          "matched": false,
+          "reason": "('Unbound operand', '0x0', '0x8')",
+          "ranges": [
+            {
+              "address": "0x263fad0",
+              "size": 222,
+              "sha256": "4cc13df66626488669dd855fad69717555f4d753a4d7bf0706060fa087151bf0",
+              "bytes_hex": "5589e557565381ecf00000008b5d088b750c8b7d1089742404897c2408891c24e84bfb0900c744240c02000000897c240889742404891c24e80396040085c0750f81c4f000000031c05b5e5f5dc3669089742404891c248db51cffffffe8dea40700893424c74424082ac27502c744240402000000e816ef07008b1d7086620089742404891c24e824a207008974240489849d14ffffffa170866200bb0100000029c3891c24e805a207008b0da8317a0089849d14ffffff8b8518ffffff8b9514ffffff29d0c1e00301c131c0890da8317a0081c4f00000005b5e5f5dc3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x256ca90",
+              "size": 224,
+              "sha256": "50481c7a5aabf1f002c40eafbf2cce46242dfdfa6213d5b251ceffccd7a12c4d",
+              "bytes_hex": "5589e557565381ecf00000008b5d088b750c8b7d1089742404897c2408891c24e84b8f0e00c744240c02000000897c240889742404891c24e803d5120085c00f848100000089742404891c248db51cffffffe8d9321000c744240896637502c744240402000000893424e8a1a014008b1d70866200891c2489742404e81f3010008974240489849d14ffffffa170866200bb0100000029c3891c24e8003010008b0da8317a0089849d14ffffff8b8518ffffff8b9514ffffff29d0c1e00301c1890da8317a0081c4f000000031c05b5e5f5dc38db426000000008db600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "target_has_league_watermark",
+          "matched": false,
+          "reason": "Instruction prefix changed",
+          "ranges": [
+            {
+              "address": "0x25c4aa0",
+              "size": 68,
+              "sha256": "cad91d232e7a2e8efe9f66ea4c2cc6fca06e79cb453bac4c9889140958bd2212",
+              "bytes_hex": "5589e583ec088b4510894424048b450c890424e8f8df0e00668b50468b406c85c0790531c06689d0e823ffffff89c2b87e7c750283fa027407c9c38d7426009031c0c9c3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x25c4540",
+              "size": 64,
+              "sha256": "a0de19d3ffdfded47db044ec2460ee41a1fe97fd5a05c50df75f1fee1e1d8006",
+              "bytes_hex": "5589e583ec088b4510894424048b450c890424e838690a008b506c85d2790631d2668b504689d0e854ffffff83f8027407b858907502c9c331c0c9c38d742600",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "set_base_pt",
+          "matched": false,
+          "reason": "('Operation changed', 'push', 'mov')",
+          "ranges": [
+            {
+              "address": "0x26cd650",
+              "size": 50,
+              "sha256": "cb336bff97551bfd01a79da6fdb376c2f1b32e54528edcfce8434bab73f64bea",
+              "bytes_hex": "558b0d641d720289e58b45085d89c2a3641d720229caa1601d72028b0db405620080e4bf01d1a3601d7202890db4056200c3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2681830",
+              "size": 64,
+              "sha256": "fb2622f551da6b61d73b2149c2d167e3c72ae912c7ca648216c9a270fce5addd",
+              "bytes_hex": "8b0de43b72025580e5bfa1e83b720289e5890de43b72028b0db405620029c18b550889c88915e83b720201d05da3b4056200c38db426000000008db600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "a0e5393543dca87ae98e93c75114a46caf216ea8fd9ab146c33aaa58312339c0",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "scope": "One incremental build for the complete source batch, followed by the existing strict CFG comparator for the seven edited definitions. Two matches use exact operands and unique COFF/global/string identities; matched callees remain identity/behavior assumptions. Five remaining instruction differences are retained. No full reccmp refresh or gameplay tests."
+  },
+  "scope": "Two native query-order restorations plus structured predicates/shared setup and ordinary locals. No compiler attributes, local unions or register forcing. The cached decompilations supply leads; named native calls and integer/type definitions determine the targeted source changes. Full-function/gameplay equivalence is not claimed.",
+  "compiled_verification": {
+    "build": "passed",
+    "fixed_entry_slots": 15169,
+    "source_definitions": 13,
+    "exact_file_projections": 12,
+    "dll_sha256": "2ad26e16a15fee1b9421e5e0f69c684ce48b89fc25a15c828168b0e7c0368561",
+    "debug_sha256": "f12b2b98c5a661cba818910f9a94fcd43e874b540af6b90dcd84df5a80b6859b",
+    "build_logs_sha256": {
+      "broad-source-build-c700.log": "063be846f132cd89da330002cb9910840ac3b2aae60aa1a86115ba926dff47cf",
+      "broad-source-final-build-c700.log": "71a3b613651377819037db7c035ca7d7e4f7613561e1009d1bc79bf6d62d03db"
+    },
+    "complete_cfg_matches": [
+      "card_tibor_and_lumia",
+      "card_harness_the_storm",
+      "triskelion_like_creature",
+      "check_for_flanking_removal",
+      "card_natural_reclamation",
+      "card_necroskitter",
+      "card_scythe_of_the_wretched"
+    ],
+    "strict_cfg_after": {
+      "inputs": {
+        ".recovery/2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+        "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+        "ManalinkEh.dll": "2ad26e16a15fee1b9421e5e0f69c684ce48b89fc25a15c828168b0e7c0368561",
+        "ManalinkEh.dbg": "f12b2b98c5a661cba818910f9a94fcd43e874b540af6b90dcd84df5a80b6859b"
+      },
+      "results": [
+        {
+          "name": "card_tibor_and_lumia",
+          "matched": true,
+          "proof": {
+            "cfg_states": 143,
+            "reached_instruction_counts": [
+              143,
+              143
+            ],
+            "terminals": 2,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2660240",
+                "rebuilt": "0x26dab90",
+                "identity": "_default_target_definition"
+              },
+              {
+                "native": "0x26604c0",
+                "rebuilt": "0x26db140",
+                "identity": "_can_target"
+              },
+              {
+                "native": "0x2660db0",
+                "rebuilt": "0x26dbda0",
+                "identity": "_new_pick_target"
+              },
+              {
+                "native": "0x2663890",
+                "rebuilt": "0x26b52f0",
+                "identity": "_check_legend_rule"
+              },
+              {
+                "native": "0x26677f0",
+                "rebuilt": "0x26bdf80",
+                "identity": "_new_damage_all"
+              },
+              {
+                "native": "0x267af00",
+                "rebuilt": "0x26ad780",
+                "identity": "_pump_ability_until_eot"
+              },
+              {
+                "native": "0x267ea70",
+                "rebuilt": "0x2692160",
+                "identity": "_get_color"
+              },
+              {
+                "native": "0x26803c0",
+                "rebuilt": "0x2691f60",
+                "identity": "_get_sleighted_color_test"
+              },
+              {
+                "native": "0x26a8120",
+                "rebuilt": "0x269a950",
+                "identity": "_sp_ability_trigger"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266aeb0",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26bebb0",
+                "rebuilt": "0x26b6d10",
+                "identity": "_default_test_definition"
+              },
+              {
+                "native": "0x2752399",
+                "rebuilt": "0x273712d",
+                "identity": "readonly-C-string:3ba43e8291ee474b85b74ceeff733d3ed99ef9bb060faaec4c6ad52bf06df0aa"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x2535a20",
+              "size": 669,
+              "sha256": "47629e2075f72a9cab3c64787b28c1c338e852d878542d6060b15cb24a77fa37",
+              "bytes_hex": "5589e557565381ec040100008b75088b5d0c8b7d10895c2404897c2408893424e84bde1200813d782d7a00d3000000741f81ff001e00000f84b300000081c40401000031c05b5e5f5dc38db6000000003b1d8c397a0075d93b35848c730075d1c744240804000000895c2404893424e82ca91400c744240810000000895c2404893424898518ffffffe812a914008d951cffffffc7442404ff000000891424898514ffffffe8e69018008b9514ffffff8b8518ffffff895c241809d08d951cffffff8974241489542410c744240c00000000c744240802000000897c240489342489458ce817261700e943ffffff6690c744240804000000895c2404893424e89ca81400c744240810000000895c240489342489c7e886a81400898518ffffffa1209a730089442404a17cc16200890424e81a8f14008b9518ffffff09fa895c240421c2893424899514ffffffe83ecf170085bd14ffffff89c20f85800000008b8d14ffffff858d18ffffff7512c642360081c40401000031c05b5e5f5dc3908dbd1cffffffc744240402000000893c24899518ffffffe8f48f1800897c2414c744241000000000c744240c01000000c744240802000000895c2404893424c745a02000000066c745a60100e8ff1b13008b9518ffffffeb958db426000000008dbd1cffffffc744240c02000000897c2408895c2404893424898510ffffffe81ca61200893c2489b524ffffffc78560ffffff00000000e884a812008b9510ffffff85c00f8436ffffffc744240c00000000c744240800000000c744240499237502893c24e846b112008b9510ffffff85c00f8408ffffffc744241c00000000c744241820000000c744241400000000c7442410000000008b42788944240c8b4274895c240489442408893424e84e5214008b9510ffffffe9c3feffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x21fdeb0",
+              "size": 672,
+              "sha256": "53f1636b6cacd35034f01dadc4b633d5ba9d8654eaa462f636cb009f7a796fa2",
+              "bytes_hex": "5589e557565381ec040100008b75088b5d0c8b7d10895c2404897c2408893424e81b744b00813d782d7a00d3000000741f81ff001e00000f84b300000081c40401000031c05b5e5f5dc38db6000000003b1d8c397a0075d93b35848c730075d1c744240804000000895c2404893424e83c404900c744240810000000895c2404893424898518ffffffe8224049008d951cffffffc7442404ff000000891424898514ffffffe8b68d4b008b9514ffffff8b8518ffffff895c241809d08d951cffffff8974241489542410c744240c00000000c744240802000000897c240489342489458ce8b7c94900e943ffffff6690c744240804000000895c2404893424e8ac3f4900c744240810000000895c240489342489c7e8963f4900898518ffffffa1209a730089442404a17cc16200890424e87a4149008b9518ffffff09fa895c240421c2893424899514ffffffe8aece460085bd14ffffff89c20f85800000008b8d14ffffff858d18ffffff7512c642360081c40401000031c05b5e5f5dc3908dbd1cffffffc744240402000000893c24899518ffffffe8c48c4b00897c2414c744241000000000c744240c01000000c744240802000000895c2404893424c745a02000000066c745a60100e8fffe4b008b9518ffffffeb958db426000000008dbd1cffffffc744240c02000000897c2408895c2404893424898510ffffffe8dcca4d00893c2489b524ffffffc78560ffffff00000000e874d04d008b9510ffffff85c00f8436ffffffc744240c00000000c744240800000000c74424042d717302893c24e8a6dc4d008b9510ffffff85c00f8408ffffffc744241c00000000c744241820000000c744241400000000c7442410000000008b42788944240c8b4274895c240489442408893424e83ef64a008b9510ffffffe9c3feffff8d7600",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_harness_the_storm",
+          "matched": true,
+          "proof": {
+            "cfg_states": 120,
+            "reached_instruction_counts": [
+              120,
+              120
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2651300",
+                "rebuilt": "0x26e03d0",
+                "identity": "_new_select_a_card"
+              },
+              {
+                "native": "0x2667c70",
+                "rebuilt": "0x26c1d10",
+                "identity": "_not_played_from_hand"
+              },
+              {
+                "native": "0x2668c40",
+                "rebuilt": "0x26c2900",
+                "identity": "_play_card_in_grave_for_free"
+              },
+              {
+                "native": "0x26795b0",
+                "rebuilt": "0x2685d70",
+                "identity": "_duh_mode"
+              },
+              {
+                "native": "0x267c220",
+                "rebuilt": "0x2686990",
+                "identity": "_global_enchantment"
+              },
+              {
+                "native": "0x269f930",
+                "rebuilt": "0x26933a0",
+                "identity": "_get_card_name"
+              },
+              {
+                "native": "0x26a8120",
+                "rebuilt": "0x269a950",
+                "identity": "_sp_ability_trigger"
+              },
+              {
+                "native": "0x26b32d0",
+                "rebuilt": "0x266b680",
+                "identity": "_in_play"
+              },
+              {
+                "native": "0x26bea60",
+                "rebuilt": "0x26b6bc0",
+                "identity": "_new_default_test_definition"
+              },
+              {
+                "native": "0x26bebb0",
+                "rebuilt": "0x26b6d10",
+                "identity": "_default_test_definition"
+              },
+              {
+                "native": "0x26cea80",
+                "rebuilt": "0x26bcf30",
+                "identity": "_scnprintf"
+              },
+              {
+                "native": "0x26dd430",
+                "rebuilt": "0x26534e0",
+                "identity": "_is_humiliated"
+              },
+              {
+                "native": "0x26e62e0",
+                "rebuilt": "0x2660860",
+                "identity": "_new_special_count_grave"
+              },
+              {
+                "native": "0x273b650",
+                "rebuilt": "0x2751d20",
+                "identity": "readonly-C-string:9f1ff1ccdf1fb4fa156e7a83d8e8bc17cf07ee34cd7e518bf04fa153961d8139"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x22ab430",
+              "size": 530,
+              "sha256": "69c12eb82848c0eeed97dd6d0f4b188283c42719b8951b98a482739e7804c8ad",
+              "bytes_hex": "5589e557565381ecec0200008b5d088b750c89742404891c248b7d10e87f7e400085c07418c74424080200000089742404891c24e8c71f430085c0742b81ff001e00000f84ff000000897c240889742404891c24e8970d3d0081c4ec0200005b5e5f5dc38d742600813d782d7a00d300000075c93b358c397a0075c13b1d848c730075b9391d1c7e730075b1391d7cc1620075a9a1209a7300891c2489442404e89bc73b0085c07594a1209a730089442404a17cc16200890424e841443f008d9500feffff891424c744240438000000898524fdffffe8a53641008d9500feffff8b8524fdffff89542404891c24898574feffffe8b7ad430085c00f843cffffff891c24e877e03c008974241885c0895c24140f95c025ff000000c74424100000000040c744240cff00000089442408897c2404891c24e8b4cb3f00e9fcfeffff8db42600000000a1209a730089442404a17cc16200890424e8a2433f008d8d00feffff89c28b048500bb7300899524fdffff8b4008890c248944240cc744240850b67302c7442404f4010000e8be3442008d8d00feffff8d8528fdffff894c2408890424c744240438000000e87e3441008d8528fdffff8b9524fdffff89442418c7442414ffffffffc744241005000000c744240c00000000c744240802000000895c2404891c2489959cfdffffe8dc5c3a0083f8ff0f844cfeffff89442408895c2404891c24e803d63b00e937feffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24f7120",
+              "size": 544,
+              "sha256": "1c37e67a3436d970fc38864523e2d1ab612a6e4d496103901aed880414737682",
+              "bytes_hex": "5589e557565381ecec0200008b5d088b750c89742404891c248b7d10e83f45170085c07418c74424080200000089742404891c24e887c3150085c0742b81ff001e00000f84ff000000897c240889742404891c24e817f8180081c4ec0200005b5e5f5dc38d742600813d782d7a00d300000075c93b358c397a0075c13b1d848c730075b9391d1c7e730075b1391d7cc1620075a9a1209a7300891c2489442404e84bab1c0085c07594a1209a730089442404a17cc16200890424e8c1c119008d9500feffff891424c744240438000000898524fdffffe815fb1b008d9500feffff8b8524fdffff89542404891c24898574feffffe84796160085c00f843cffffff891c24e847eb18008974241885c0895c24140f95c025ff000000c74424100000000040c744240cff00000089442408897c2404891c24e8f4361a00e9fcfeffff8db42600000000a1209a730089442404a17cc16200890424e822c119008d8d00feffff89c28b048500bb7300899524fdffff8b4008890c248944240cc7442408201d7502c7442404f4010000e87e5c1c008d8d00feffff8d8528fdffff894c2408890424c744240438000000e8eef81b008d8528fdffff8b9524fdffff89442418c7442414ffffffffc744241005000000c744240c00000000c744240802000000895c2404891c2489959cfdffffe8bc901e0083f8ff0f844cfeffff89442408895c2404891c24e8d3b51c00e937feffff8db426000000008db42600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_skyclave_apparition",
+          "matched": false,
+          "reason": "('Unbound operand', '0x4', '0x8')",
+          "ranges": [
+            {
+              "address": "0x230e400",
+              "size": 457,
+              "sha256": "68da29f423465e641ff5815e1fe33f39c411271b463f77cce7ccb6e419286a4c",
+              "bytes_hex": "5589e557565383ec6c8b75088b5d108934248b7d0ce896b13600895c240885c0897c24040f95c025ff000000893424408944240ce8376f3900c744241001000000c744240c01000000895c2408897c2404893424e8273c390081fb00510000741781fb005f00000f84eb00000083c46c31c05b5e5f5dc3908d5da0c744240c47000000895c2408897c2404893424e8ad1d35008b157cc16200b801000000891c2429d0c745b401100000c745c804000000c745d8000800008945a4e80020350085c074a9c744240c80000000c744240800000000c744240434f97302891c24e8cc28350085c07485897c2404893424e8bc453a0089c38b4078894424048b4374890424e8f840380089459c8b4378894424048b4374890424e8e35b38008b559c81e2ffff0000894424088954240cc7442404e4550000891c24e8a2513a00c744240804000000897c2404893424e8de743a00e916ffffff90897c2404893424e84c453a008d4da089c3894c240c897c2404893424c744240851490000e8ef6e3500891c24c7442404e4550000e8af513a00891c24c7442404e45500008955bc8955b8e899513a008d4da0c745cc42000000c1e810890c248945b4e81174350083c46c31c05b5e5f5dc3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x264e3f0",
+              "size": 464,
+              "sha256": "108c88820d7f4bede475c85146ab0c128b8e10724421131c213bd6ac774b1eff",
+              "bytes_hex": "5589e557565383ec6c8b75088b5d108934248b7d0ce866790300895c240885c0897c24040f95c025ff000000893424408944240ce887dd0400c744241001000000c744240c01000000895c2408897c2404893424e847c5040081fb00510000741781fb005f00000f84eb00000083c46c31c05b5e5f5dc3908d5da0c744240c47000000895c2408897c2404893424e80dc708008b157cc16200b801000000891c2429d0c745b4011000008945a4c745c804000000c745d800080000e890cc080085c074a9c744240c80000000c744240800000000c74424049ce57502891c24e8ccd8080085c07485897c2404893424e8ccc9010089c38b4078894424048b4374890424e8e8b5030089459c8b4378894424048b4374890424e8a39205008b559c81e2ffff0000894424088954240cc7442404e4550000891c24e8a21f0200c744240804000000897c2404893424e8ce1d0200e916ffffff90897c2404893424e85cc901008d4da089c3894c240cc744240851490000897c2404893424e86fe90800c7442404e4550000891c24e8bf1f0200c7442404e4550000891c248955b88955bce8a91f02008d4da0c745cc42000000c1e810890c248945b4e841ea0800e9a9feffff8db426000000008d74260090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "graft_trigger",
+          "matched": false,
+          "reason": "('Operation changed', 'cmp', 'mov')",
+          "ranges": [
+            {
+              "address": "0x2219fb0",
+              "size": 459,
+              "sha256": "2cb27c1688013ca80a25ce16c1a347523e14a408f1053870cc7b0cd880bc0c9b",
+              "bytes_hex": "5589e557565389c381ec04010000813d782d7a00db000000741e81f9005100000f84e200000081c40401000031c05b5e5f5dc38d742600903b158c397a0075da3b05848c730075d239051c7e730075ca89542404c744240800000000890424898d14ffffff899518ffffffe810774b008b9518ffffff85c08b8d14ffffff7e9a83fb010f84c2000000bf010000008db51cffffffc744240402000000893424898d10ffffff899518ffffffe8504b4a008b9518ffffff8b8d10ffffff89542418894c2404895c241489742410c744240c00000000897c2408c7042402000000899514ffffff898d18ffffff66c745c60100e8bab948008b9514ffffff8b8d18ffffffe913ffffff90a1209a7300895c24108944240ca17cc1620089442408891c24c744241c01000000c7442418000000008954241489542404e812b94b0081c4040100005b31c05e5f5dc389542404c744240802000000c7042401000000898d14ffffff899518ffffffe8817b46008b9518ffffff85c08b8d14ffffff751a833d7cc1620001740731ffe9fffeffffbf02000000e9f5feffff89542404c7042401000000898d14ffffff899518ffffffe80bc947008b9518ffffff488b8d14ffffff7fbb31ffe9c3feffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x213c520",
+              "size": 448,
+              "sha256": "b39c235da24dac397284e1d1a468db2c7dc2bb7e3cc3fa96dc3ec7a82ad85e72",
+              "bytes_hex": "5589e557565389c381ec04010000813d782d7a00db000000741e81f9005100000f84e200000081c40401000031c05b5e5f5dc38d742600903b158c397a0075da3b05848c730075d239051c7e730075ca89542404c744240800000000890424898d14ffffff899518ffffffe8807152008b9518ffffff85c08b8d14ffffff7e9abf0100000083fb010f84bd0000008db51cffffffc744240402000000893424898d10ffffff899518ffffffe840a757008b9518ffffff8b8d10ffffff89542418894c2404895c241489742410c744240c00000000897c2408c7042402000000899514ffffff898d18ffffff66c745c60100e8ca0056008b9514ffffff8b8d18ffffffe913ffffff90a1209a7300895c24108944240ca17cc1620089442408891c24c744241c01000000c7442418000000008954241489542404e8e2af520081c4040100005b31c05e5f5dc389542404c744240802000000c7042401000000e88d8555008b9518ffffff85c08b8d14ffffff751a833d7cc1620001740731ffe90bffffffbf02000000e901ffffff89542404c7042401000000898d14ffffff899518ffffffe817d754008b9518ffffff488b8d14ffffff7fbb31ffe9cffeffff90",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "triskelion_like_creature",
+          "matched": true,
+          "proof": {
+            "cfg_states": 80,
+            "reached_instruction_counts": [
+              80,
+              80
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2660240",
+                "rebuilt": "0x26dab90",
+                "identity": "_default_target_definition"
+              },
+              {
+                "native": "0x2661750",
+                "rebuilt": "0x26db4f0",
+                "identity": "_valid_target"
+              },
+              {
+                "native": "0x2681660",
+                "rebuilt": "0x2687180",
+                "identity": "_enters_the_battlefield_with_counters"
+              },
+              {
+                "native": "0x269db00",
+                "rebuilt": "0x26b1590",
+                "identity": "_generic_activated_ability"
+              },
+              {
+                "native": "0x26e22d0",
+                "rebuilt": "0x2668b80",
+                "identity": "_damage_target0"
+              },
+              {
+                "native": "0x2737fd5",
+                "rebuilt": "0x2727e29",
+                "identity": "readonly-C-string:7c93a00c592365fdc450d381c3a13b28fde44334a555974dd4de8b4bd5632825"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x224caf0",
+              "size": 324,
+              "sha256": "a4cf53875339a5f18c79c2625d46f2db0544b8d4bef5483ecdc7c6f41aebfbe2",
+              "bytes_hex": "5589e557565381ec880000008b45148b5d108b7d0c894424108b4508c744240c00000000895c2408897c2404890424e83c4b430083fb6d0f84ab0000008d438e83f801760b31c083fb220f85870000008b45088d75a0c744240c0201000089742408897c2404890424e8e2364100c745ac0012000083fb720f849a0000008b452c8974242c894424248b4528894424208b45248944241c8b4520894424188b451c894424148b4518894424108b4508c744242800000000c744240c44000000895c2408897c2404890424c7442430d57f7302e8390f450081c4880000005b5e5f5dc38db6000000008b45088d75a0c744240c0201000089742408897c2404890424e84a364100c745ac00120000e96cffffff8db600000000893424e8404b410085c00f8456ffffff8b4508c744240801000000897c2404890424e8a1564900e93affffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x205e780",
+              "size": 336,
+              "sha256": "f0b1fe393042d80adddbe33128ad771d131c10d7133dc00a9a39171574840f67",
+              "bytes_hex": "5589e557565381ec880000008b45148b5d108b7d0c894424108b4508c744240c00000000895c2408897c2404890424e8cc89620083fb6d0f84ab0000008d438e83f801760b31c083fb220f85870000008b45088d75a0c744240c0201000089742408897c2404890424e8a2c36700c745ac0012000083fb720f849a0000008b452c8974242c894424248b4528894424208b45248944241c8b4520894424188b451c894424148b4518894424108b4508c744242800000000c744240c44000000895c2408897c2404890424c7442430297e7202e8392d650081c4880000005b5e5f5dc38db6000000008b45088d75a0c744240c0201000089742408897c2404890424e80ac36700c745ac00120000e96cffffff8db600000000893424e850cc670085c00f8456ffffff8b4508c744240801000000897c2404890424e8c1a26000e93affffff8db426000000008d74260090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "altar_extended",
+          "matched": false,
+          "reason": "Register allocation changed",
+          "ranges": [
+            {
+              "address": "0x26e5900",
+              "size": 626,
+              "sha256": "c549dc7e8af8c23f47d6be9cc053e7b5a5496a0e0f53b5ebcaedc896d48a454e",
+              "bytes_hex": "5589e557565383ec648b45148b5d088945f08b45188945ec8b451c8945e88b45208945e48b45248945e08b45288945dc8b452c8945d88b45308945d48b45348945d08b45388b7d0c8b75108945cc8b453c8945c8897c2404891c24e850d1fcff83fe73741383fe6d0f84da00000083c46431c05b5e5f5dc3897c2404891c24e8bc79ffff85c074e6897c2404891c24e86cc7f9ff31f685c075068b75f083e601897c2404891c24e8c4c7f9ff85c07509f645f002740383c602897c2404891c24e83928e0fd85c07509f645f004740383c604833d84f14e00040f8481010000391d708662000f845d0100003b75f00f857affffff8b45c8895d088945348b45cc8945308b45d089452c8b45d48945288b45d88945248b45dc8945208b45e089451c8b45e48945188b45e88945148b45ec894510c7450c0100000083c4645b5e5f5de94ae1ffff66908945c48b45c8894424308b45cc8944242c8b45d0894424288b45d4894424248b45d8894424208b45dc8944241c8b45e0894424188b45e4894424148b45e8894424108b45ec8944240cc744240800000000897c2404891c24e8abf1ffff89c683f8ff0f848800000089442404891c24e8840ffbff8b55c48955ec89427c89742404891c24e89f0ffbff8b55ec89828000000089742404891c24e88a8ff9ff8b55ec89828400000089742404891c24e805e6faff8b55ec898288000000c74424080300000089742404891c24e8e8fefcfff645f0040f844cfeffff897c2404891c24e80241f9ffe93bfeffff8d74260090c70594f14e0001000000e927feffff90f645f0100f8499feffff83c610e991feffff8db600000000f645f0080f8475feffff83c608e96dfeffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x26d7020",
+              "size": 640,
+              "sha256": "255c0b31007629dad89f686c3c17a80bf7234bfd60186a13f6e6288b491d6435",
+              "bytes_hex": "5589e557565383ec648b45148b5d088945f08b45188945ec8b451c8945e88b45208945e48b45248945e08b45288945dc8b452c8945d88b45308945d48b45348945d08b45388b7d0c8b75108945cc8b453c8945c8897c2404891c24e8303ef9ff83fe73741383fe6d0f84da00000083c46431c05b5e5f5dc3897c2404891c24e8bcfbf7ff85c074e6897c2404891c24e88c24fdff31f685c075068b75f083e601897c2404891c24e84427fdff85c07509f645f002740383c602897c2404891c24e81911e1fd85c07509f645f004740383c604833d84f14e00040f8481010000391d708662000f845d0100003b75f00f857affffff8b45c8895d088945348b45cc8945308b45d089452c8b45d48945288b45d88945248b45dc8945208b45e089451c8b45e48945188b45e88945148b45ec894510c7450c0100000083c4645b5e5f5de93ae0ffff66908945c48b45c8894424308b45cc8944242c8b45d0894424288b45d4894424248b45d8894424208b45dc8944241c8b45e0894424188b45e4894424148b45e8894424108b45ec8944240cc744240800000000897c2404891c24e82bf1ffff8b55c489c683f8ff7511c70594f14e0001000000e9b0feffff669089442404891c248955ece8c12bfbff8b55ec89427c89742404891c24e8df2bfbff8b55ec89828000000089742404891c24e84aaffbff8b55ec89828400000089742404891c24e88505fdff8b55ec898288000000c74424080300000089742404891c24e8f866f9fff645f0040f843cfeffff897c2404891c24e89259fdffe92bfeffff8d74260090f645f0100f8499feffff83c610e991feffff8db600000000f645f0080f8475feffff83c608e96dfeffff8db426000000008db42600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "check_for_flanking_removal",
+          "matched": true,
+          "proof": {
+            "cfg_states": 55,
+            "reached_instruction_counts": [
+              55,
+              55
+            ],
+            "terminals": 2,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x268bf20",
+                "rebuilt": "0x26a9ef0",
+                "identity": "_check_state"
+              },
+              {
+                "native": "0x26b32d0",
+                "rebuilt": "0x266b680",
+                "identity": "_in_play"
+              },
+              {
+                "native": "0x26b35a0",
+                "rebuilt": "0x266b910",
+                "identity": "_get_id"
+              },
+              {
+                "native": "0x26dd050",
+                "rebuilt": "0x26533f0",
+                "identity": "_is_humiliated.part.0"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x26df1b0",
+              "size": 161,
+              "sha256": "b69c486b4ea90b84f8c9dd68407685c266557dd1c8b2ec5e02538ce959591f3c",
+              "bytes_hex": "5589e5565383ec0c8b5d088b450cc74424084400000089442404891c24e84ecdfaff85c07472be0100000029de8b04b520f54e0085c07e6031dbeb0e8d742600433b1cb520f54e007d4e895c2404893424e8ca40fdff85c074e6895c2404893424e88a43fdff3d6209000075d383feff741783fbff7412b94000000089da89f0e81bdeffff85c075b783c40cb8010000005b5e5dc38d760083c40c31c05b5e5dc3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2654390",
+              "size": 176,
+              "sha256": "5a8be691529087f449898286e46403e1cd0e56e7f884a8476a1b9e59922d4230",
+              "bytes_hex": "5589e5565383ec0c8b5d088b450cc74424084400000089442404891c24e83e5b050085c07472be0100000029de8b04b520f54e0085c07e6031dbeb0e8d742600433b1cb520f54e007d4e895c2404893424e89a72010085c074e6895c2404893424e81a7501003d6209000075d383feff741783fbff7412b94000000089da89f0e8dbefffff85c075b783c40cb8010000005b5e5dc38d760083c40c31c05b5e5dc38db426000000008db4260000000090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_natural_reclamation",
+          "matched": true,
+          "proof": {
+            "cfg_states": 50,
+            "reached_instruction_counts": [
+              50,
+              50
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x22fabf0",
+                "rebuilt": "0x202f320",
+                "identity": "_cascade"
+              },
+              {
+                "native": "0x24c22f0",
+                "rebuilt": "0x25b5ed0",
+                "identity": "_card_disenchant"
+              },
+              {
+                "native": "0x2660240",
+                "rebuilt": "0x26dab90",
+                "identity": "_default_target_definition"
+              },
+              {
+                "native": "0x26a0250",
+                "rebuilt": "0x26aaa20",
+                "identity": "_generic_spell"
+              },
+              {
+                "native": "0x2756f27",
+                "rebuilt": "0x272dc1c",
+                "identity": "readonly-C-string:b86372886c4c2108f309a1100c0c25aa58f05672bbff307ff263eda7ed037191"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x25acfa0",
+              "size": 187,
+              "sha256": "5e2ed981035690dac7ea76328b6e4ae7b1f4994f955709014e39994dd648ff91",
+              "bytes_hex": "5589e557565383ec748b45108b75088b5d0c83f86c75083b1d8c397a00741989442408895c2404893424e82153f1ff83c4745b5e5f5dc3903b35848c730075df8d7da0c744240c44000000897c2408895c2404893424e845320b00c744241c00000000c744241801000000c7442414276f7502897c2410c744240c01000000c74424086c000000895c2404893424e81d320f00833d94f14e0001750431c0eb8fc74424086c000000895c2404893424e89cdbd4ff31c0e974ffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2108cd0",
+              "size": 192,
+              "sha256": "6406a260e2e562e4393129917be0321df336a42abc74ff2267d9b326e580248a",
+              "bytes_hex": "5589e557565383ec748b45108b75088b5d0c83f86c75083b1d8c397a00741989442408895c2404893424e8d1d14a0083c4745b5e5f5dc3903b35848c730075df8d7da0c744240c44000000897c2408895c2404893424e8651e5d00c744241c00000000c744241801000000c74424141cdc7202897c2410c744240c01000000c74424086c000000895c2404893424e8bd1c5a00833d94f14e0001750431c0eb8fc74424086c000000895c2404893424e89c65f2ff31c0e974ffffff8d74260090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "select_target_maybe_force",
+          "matched": false,
+          "reason": "('Operation changed', 'mov', 'test')",
+          "ranges": [
+            {
+              "address": "0x265fb20",
+              "size": 395,
+              "sha256": "bcb006433b9b8e0727069568d33c0cc28d9a538f07c6ac8c31400ca6f1fd41cd",
+              "bytes_hex": "5589e557565389c383ec588b45548b75508944244c8b454c894424448b4548894424408b45448944243c8b4540894424388b453c894424348b4538894424308b45348944242c8b4530894424288b452c894424248b4528894424208b45248b7d08897424488944241c8b4520894424188b451c894424148b4518894424108b45148944240c8b4510894424088b450c89442404893c2489d8894dec8955f0e80df8ffff85c0752bf7c60100000075238b4dec8b55f083f9017409833d7485720001750f89f883e002740831c0f6450c02740e83c4585b5e5f5dc38db6000000008b4554897424488944244c8b454c894424448b4548894424408b45448944243c8b4540894424388b453c894424348b4538894424308b45348944242c8b4530894424288b452c894424248b4528894424208b45248944241c8b4520894424188b451c894424148b4518894424108b45148944240c8b4510894424088b450c83f001893c248944240489d8e841f7ffff85c00f845bffffff8b15a8317a0083ea208915a8317a00e947ffffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x26da940",
+              "size": 400,
+              "sha256": "fdbe078741e7a33a0cd37251dd0b786f05491b5d6a82d3ff0ac5b8d96a14c931",
+              "bytes_hex": "5589e557565389c383ec588b45548b75508944244c8b454c894424448b4548894424408b45448944243c8b4540894424388b453c894424348b4538894424308b45348944242c8b4530894424288b452c894424248b4528894424208b45248b7d08897424488944241c8b4520894424188b451c894424148b4518894424108b45148944240c8b4510894424088b450c89442404893c2489d8894dec8955f0e8cdf7ffff85c0752af7c60100000075228b4dec8b55f083f9017409833d7485720001750ef7c7020000007406f6450c02740f83c4585b5e5f5dc38db426000000008b4554897424488944244c8b454c894424448b4548894424408b45448944243c8b4540894424388b453c894424348b4538894424308b45348944242c8b4530894424288b452c894424248b4528894424208b45248944241c8b4520894424188b451c894424148b4518894424108b45148944240c8b4510894424088b450c83f001893c248944240489d8e801f7ffff85c00f845affffff8b15a8317a0083ea208915a8317a00e946ffffff8d74260090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_aysen_crusader",
+          "matched": false,
+          "reason": "Address expression changed",
+          "ranges": [
+            {
+              "address": "0x21226c0",
+              "size": 196,
+              "sha256": "9abfbe33f67b6d0e9d12dc52d271f0c4304523ab2ac0a5a660369843c308ca31",
+              "bytes_hex": "5589e5565383ec0c8b451083e83283f801760d83c40c31c05b5e5dc38d742600a18c397a0039450c75e98b45083905848c730075de83f8ff74d98b048520f54e0085c07e7831f631db8db426000000008b4508895c2404890424e8b10b590085c0741c8b4508c7442408b4000000895c2404890424e87611550085c07422468b450843391c8520f54e007fc483c602893424e839af5a00e977ffffff8d7426008b4508c7442408d2000000895c2404890424e83911550085c075c3ebc2be02000000ebcb",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x220a8c0",
+              "size": 192,
+              "sha256": "dd3cfe03da9eddb4ac26f74d796120a4ca3136645fba3d3202feb9591bf437cb",
+              "bytes_hex": "5589e5565383ec0c8b451083e83283f801760d83c40c31c05b5e5dc38d7426008b450c39058c397a0075e88b45083905848c730075dd83f8ff74d88b048520f54e00be0200000085c07e4431f631db908b4508895c2404890424e8610d460085c0741c8b4508c7442408b4000000895c2404890424e8a6f24a0085c07422468b450843391c8520f54e007fc483c602893424e8396f4700e977ffffff8d7426008b4508c7442408d2000000895c2404890424e869f24a0085c075c3ebc28d7600",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_necroskitter",
+          "matched": true,
+          "proof": {
+            "cfg_states": 161,
+            "reached_instruction_counts": [
+              161,
+              161
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2363120",
+                "rebuilt": "0x218c7d0",
+                "identity": "_necroskitter_effect"
+              },
+              {
+                "native": "0x26795b0",
+                "rebuilt": "0x2685d70",
+                "identity": "_duh_mode"
+              },
+              {
+                "native": "0x267ab00",
+                "rebuilt": "0x2686390",
+                "identity": "_create_targetted_legacy_effect"
+              },
+              {
+                "native": "0x2681ca0",
+                "rebuilt": "0x2694c10",
+                "identity": "_is_what"
+              },
+              {
+                "native": "0x2687d40",
+                "rebuilt": "0x26acb30",
+                "identity": "_add_status"
+              },
+              {
+                "native": "0x2689440",
+                "rebuilt": "0x268f8e0",
+                "identity": "_resolve_gfp_ability"
+              },
+              {
+                "native": "0x2694ce0",
+                "rebuilt": "0x26a8410",
+                "identity": "_count_for_gfp_ability_and_store_values"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266aeb0",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b32d0",
+                "rebuilt": "0x266b680",
+                "identity": "_in_play"
+              },
+              {
+                "native": "0x26b9770",
+                "rebuilt": "0x266f530",
+                "identity": "_seek_grave_for_id_to_reanimate"
+              },
+              {
+                "native": "0x26bebb0",
+                "rebuilt": "0x26b6d10",
+                "identity": "_default_test_definition"
+              },
+              {
+                "native": "0x26d1730",
+                "rebuilt": "0x2663710",
+                "identity": "_count_counters"
+              },
+              {
+                "native": "0x26de790",
+                "rebuilt": "0x2653ae0",
+                "identity": "_wither"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x236b8f0",
+              "size": 666,
+              "sha256": "e3222bdb575bb7a346ba691e1c232820562c3e4416bad19225b99b37476ecfc2",
+              "bytes_hex": "5589e557565381ec00010000817d10004700008b5d088b750c0f84c10000008b45108974240489442408891c24e86e2e3700837d1077742889742404891c24e87c713400807868000f84ba00000081c40001000031c05b5e5f5dc38d74260090a18c397a00c74424080100000089442404a1848c7300890424e8c25d360085c074b68d851cffffffc744240402000000890424e8283235008d851cffffff89442414b80100000029d8c744241c00000000c7442418d0000000c7442410ffffffff8944240cc74424087700000089742404891c24e817933200e95affffff66903b358c397a000f84cc000000c74424080047000089742404891c24e8a02d3700e933ffffff8d7600891c24e8b0db30008974240485c0891c240f95c025ff000000408944240c8b451089442408e81eda3100898514ffffff85c00f840effffff89742404891c24e87470340089c18b8514ffffff85c00f8ef2feffff31ff6690c74424100000000031d28b44f978898d18ffffff8d04c0668b14c534707e0089d08944240c8b44f9748974240489442408891c2447e8e6dc340039bd14ffffff0f8ea8feffff83ff0a8b8d18ffffff7eafe998feffff66903b1d848c73000f8528ffffff8b149d20f54e0085d27e6931ffeb0f8d7426009047393c9d20f54e007e56897c2404891c24e8f277340085c074e6c744240880000000897c2404891c24e8aa61310085c074ce897c2404891c24e8aa6f34008178382031360275b90fbe485039d9746939587475ac39707875a7e9b6feffff669089742410895c240cc74424082031360289742404891c24e8bcef3000891c2489442404898518ffffffe85a6f34008b9518ffffff895874897078c6403601c74424080000010089542404891c24e8c6c13100e95dfeffff903970047592e952feffff",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2194e20",
+              "size": 672,
+              "sha256": "7eebf63d61f064da6716a9d53c79a242b49523f67aa245c2b4200ca7072fab90",
+              "bytes_hex": "5589e557565381ec00010000817d10004700008b5d088b750c0f84c10000008b45108974240489442408891c24e88eec4b00837d1077742889742404891c24e84c604d00807868000f84ba00000081c40001000031c05b5e5f5dc38d74260090a18c397a00c74424080100000089442404a1848c7300890424e872e84c0085c074b68d851cffffffc744240402000000890424e8581e52008d851cffffff89442414b80100000029d8c744241c00000000c7442418d0000000c7442410ffffffff8944240cc74424087700000089742404891c24e817355100e95affffff66903b358c397a000f84cc000000c74424080047000089742404891c24e8c0eb4b00e933ffffff8d7600891c24e8400e4f008974240485c0891c240f95c025ff000000408944240c8b451089442408e88ea94f00898514ffffff85c00f840effffff89742404891c24e8445f4d0089c18b8514ffffff85c00f8ef2feffff31ff6690c74424100000000031d28b44f978898d18ffffff8d04c0668b14c534707e0089d08944240c8b44f9748974240489442408891c2447e876a54d0039bd14ffffff0f8ea8feffff83ff0a8b8d18ffffff7eafe998feffff66903b1d848c73000f8528ffffff8b149d20f54e0085d27e6931ffeb0f8d7426009047393c9d20f54e007e56897c2404891c24e872664d0085c074e6c744240880000000897c2404891c24e8eafb4f0085c074ce897c2404891c24e87a5e4d00817838d0c7180275b90fbe485039d9746939587475ac39707875a7e9b6feffff669089742410895c240cc7442408d0c7180289742404891c24e81c134f00891c2489442404898518ffffffe82a5e4d008b9518ffffff895874897078c6403601c74424080000010089542404891c24e8867a5100e95dfeffff903970047592e952feffff8db600000000",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "card_scythe_of_the_wretched",
+          "matched": true,
+          "proof": {
+            "cfg_states": 248,
+            "reached_instruction_counts": [
+              248,
+              248
+            ],
+            "terminals": 1,
+            "equality_load_guards": [],
+            "zero_return_epilogues": [],
+            "pointer_return_tails": [],
+            "address_correspondences": [
+              {
+                "native": "0x2680e20",
+                "rebuilt": "0x26a6570",
+                "identity": "_is_token"
+              },
+              {
+                "native": "0x2681ca0",
+                "rebuilt": "0x2694c10",
+                "identity": "_is_what"
+              },
+              {
+                "native": "0x2682020",
+                "rebuilt": "0x26993a0",
+                "identity": "_check_for_death_trigger_removal"
+              },
+              {
+                "native": "0x26a2010",
+                "rebuilt": "0x268a3c0",
+                "identity": "_is_this_dying"
+              },
+              {
+                "native": "0x26b2ab0",
+                "rebuilt": "0x266aeb0",
+                "identity": "_get_card_instance"
+              },
+              {
+                "native": "0x26b32d0",
+                "rebuilt": "0x266b680",
+                "identity": "_in_play"
+              },
+              {
+                "native": "0x26b3660",
+                "rebuilt": "0x266b9d0",
+                "identity": "_get_original_internal_card_id"
+              },
+              {
+                "native": "0x26b9770",
+                "rebuilt": "0x266f530",
+                "identity": "_seek_grave_for_id_to_reanimate"
+              },
+              {
+                "native": "0x26eda00",
+                "rebuilt": "0x267eaa0",
+                "identity": "_is_equipping"
+              },
+              {
+                "native": "0x26edca0",
+                "rebuilt": "0x267ed40",
+                "identity": "_equip_target_creature"
+              },
+              {
+                "native": "0x26ee500",
+                "rebuilt": "0x267f5e0",
+                "identity": "_vanilla_equipment"
+              }
+            ]
+          },
+          "ranges": [
+            {
+              "address": "0x2544400",
+              "size": 993,
+              "sha256": "39477eeae240718c4fd19f1b33edaadb8c1af1b28c63b563aaf16558f14d1bcd",
+              "bytes_hex": "5589e557565383ec308b5d088b750c89742404891c248b7d10e8e2951a0085c0743b89742404891c24e882e6160083ff6e89c2747b83ff770f84c20000008b88cc00000085c97e10813d782d7a00d50000000f840602000083ff227443897c240889742404891c24c744241c00000000c744241800000000c744241402000000c744241002000000c744240c04000000e86ba01a0083c4305b5e5f5dc38d7600c7423801000000ebb48db426000000008a40508955f08845e78b42048945e8a18c397a0089442404a1848c7300890424e8dbe516008b55f089c18945eca1f804790039416c0f842d0200008b82cc00000085c00f8f4fffffffe95fffffff66908945f0a18c397a0089442404a1848c7300890424e8b7ed16008b55f085c00f841c010000a18c397a00c74424080200000089442404a1848c7300890424e85ed713008b55f085c00f84f3000000a18c397a0089442404a1848c7300890424e8bdc813008b55f085c00f85d2000000837a38010f8ec8000000a18c397a0089442404a1848c7300890424e882da15008b55f085c00f84a7000000a18c397a0089442404a1848c7300890424e871da13008b55f085c00f85860000008b42388945f0487e7d8b0d8c397a00a1848c7300894dec895d08b901000000eb0f8d74260090413b4df00f84e60100003944ca7475f08b5dec395cca7875e783bacc000000008b5d08790ac782cc00000000000000ff82cc0000008d0cca81497400001000894df08b4dec894c24048904248955e8e82cf016008b4df08b55e88941788d76008b82cc00000085c00f8e0ffeffff813d782d7a00d50000000f85fffdffff391d1c7e73000f85eefdffff3b358c397a000f85e2fdffff3b1d848c73000f85d6fdffff83ff7d0f841e01000083ff7e0f85c4fdffff8d4a7c8d82b4000000897d108945f08955ec89cfeb0c83c7083b7df00f84050100008b0785c078eea90000100074e725ffffefff31c98907c7442410000000008b570489442408c7442404ffffffff891c248d14d2668b0cd534707e0089ca8954240ce87450170085c078aa8944240c895c240889742404891c24e88c951a00eb9466908b45e83941480f85c7fdffff8a45e73a410c0f85bbfdffff8b410483f8ff0f84affdffff837938000f8ea5fdffffc744240802000000894424040fbe4150890424e842d513008b55f085c00f8482fdffff8b42388945f085c07e6583f8070f8f6ffdffff8b45f08b4dec8d04c28945e80fbe415089c18b45e88948748b4dec8b49048948788b45f040894238e942fdffffa1b405620083c802a3b4056200e9a2fcffff8b55ec8b7d10c782cc00000000000000e98dfcffff8b5d08e968feffffc745f001000000eb9b",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x2376c90",
+              "size": 1008,
+              "sha256": "91364faa6257700fa728157f3d4cb9dd6efa59d130600e120947a92b674948fe",
+              "bytes_hex": "5589e557565383ec308b5d088b750c89742404891c248b7d10e8f27d300085c0743b89742404891c24e8f2412f0083ff6e89c2747b83ff770f84c20000008b88cc00000085c97e10813d782d7a00d50000000f840602000083ff227443897c240889742404891c24c744241c00000000c744241800000000c744241402000000c744241002000000c744240c04000000e8bb88300083c4305b5e5f5dc38d7600c7423801000000ebb48db426000000008a40508955f08845e78b42048945e8a18c397a0089442404a1848c7300890424e84b412f008b55f089c18945eca1f804790039416c0f842d0200008b82cc00000085c00f8f4fffffffe95fffffff66908945f0a18c397a0089442404a1848c7300890424e8d7482f008b55f085c00f841c010000a18c397a00c74424080200000089442404a1848c7300890424e83ede31008b55f085c00f84f3000000a18c397a0089442404a1848c7300890424e87df732008b55f085c00f85d2000000837a38010f8ec8000000a18c397a0089442404a1848c7300890424e8a23531008b55f085c00f84a7000000a18c397a0089442404a1848c7300890424e8612532008b55f085c00f85860000008b42388945f0487e7d8b0d8c397a00a1848c7300894dec895d08b901000000eb0f8d74260090413b4df00f84e60100003944ca7475f08b5dec395cca7875e783bacc000000008b5d08790ac782cc00000000000000ff82cc0000008d0cca81497400001000894df08b4dec894c24048904248955e8e80c4b2f008b4df08b55e88941788d76008b82cc00000085c00f8e0ffeffff813d782d7a00d50000000f85fffdffff391d1c7e73000f85eefdffff3b358c397a000f85e2fdffff3b1d848c73000f85d6fdffff83ff7d0f841e01000083ff7e0f85c4fdffff8d4a7c8d82b4000000897d108945f08955ec89cfeb0c83c7083b7df00f84050100008b0785c078eea90000100074e725ffffefff31c98907c7442410000000008b570489442408c7442404ffffffff891c248d14d2668b0cd534707e0089ca8954240ce8a4852f0085c078aa8944240c895c240889742404891c24e89c7d3000eb9466908b45e83941480f85c7fdffff8a45e73a410c0f85bbfdffff8b410483f8ff0f84affdffff837938000f8ea5fdffffc744240802000000894424040fbe4150890424e822dc31008b55f085c00f8482fdffff8b42388945f085c07e6583f8070f8f6ffdffff8b45f08b4dec8d04c28945e80fbe415089c18b45e88948748b4dec8b49048948788b45f040894238e942fdffffa1b405620083c802a3b4056200e9a2fcffff8b55ec8b7d10c782cc00000000000000e98dfcffff8b5d08e968feffffc745f001000000eb9b8db426000000008db4260000000090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        },
+        {
+          "name": "is_aura_or_equipment(1)",
+          "matched": false,
+          "reason": "('Unbound operand', '0x7e7010', '0x7e7030')",
+          "ranges": [
+            {
+              "address": "0x229e1f0",
+              "size": 152,
+              "sha256": "d0bc5d6f293bd3a1a8dd19bf5a0667d7e76cb5adab7dad2e76bd4c4752c3a7a5",
+              "bytes_hex": "5531c989e557565383ec0c8b5d088b7510c7442408013000008934248d04db668b0cc534707e008d3cc510707e0089c889442404e8b7543d0089c2b80100000085d2740c83c40c5b5e5f5dc38d742600c744240804000000895c2404c70424ffffffffe8483a3e0085c074d831c0893424668b4724c74424080040000089442404e86a543d0085c00f95c083c40c25ff0000005b5e5f5dc3",
+              "bounds": "native metadata"
+            },
+            {
+              "address": "0x24ea3a0",
+              "size": 160,
+              "sha256": "059e51bae6b97ce3bb3be4c37e020acc050542e3d78e0d577827f3990339e300",
+              "bytes_hex": "5531c989e557565383ec0c8b5d088b7510c7442408013000008934248d04db668b0cc534707e008d3cc530707e0089c889442404e8f71d1d0089c2b80100000085d2740c83c40c5b5e5f5dc38d742600c744240804000000895c2404c70424ffffffffe808a81a0085c074d831c0893424668b4704c74424080040000089442404e8aa1d1d0085c00f95c083c40c25ff0000005b5e5f5dc38db4260000000090",
+              "bounds": "entry through next COFF function start, including trailing padding"
+            }
+          ]
+        }
+      ],
+      "checker_sha256": "82b0d6e553904ca0b4b867f88e95818dc3844b25ffd2c61170ac3596308edc4f",
+      "cfg_reviewer_sha256": "1f187de7010c21e2d79ff29d3ae895c68980027326ad3ffa913d103d08ef1561",
+      "scope": "Strict entry-reachable CFG comparison with exact unique COFF symbol identities and unchanged engine addresses and complete read-only C-string/DIALOG-token contents. Matched callees and globals remain identity/behavior assumptions; padding and direct jump trampolines are ignored. No whole-game or arbitrary callee equivalence claim."
+    },
+    "selected_current_source_bounds": [
+      {
+        "name": "is_aura_or_equipment",
+        "source": "cards/shadows_over_innistrad.c",
+        "address": 38708128,
+        "size": 152
+      }
+    ],
+    "scope": "Two incremental builds: the initial eleven definitions, then a final build after the wider scan identified two additional callback-boundary corrections. All thirteen edited definitions receive the existing strict CFG comparison; seven match with exact operands and unique symbol/engine/string identities. Matched callees remain identity/behavior assumptions. Six instruction-different bodies remain. No full reccmp refresh or gameplay tests."
+  }
+}

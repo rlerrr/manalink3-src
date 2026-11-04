@@ -1772,14 +1772,12 @@ Creatures without flying get -2/-0. */
 int card_guard_gomazoa(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  int result;
 
   if ((((event == EVENT_CHECK_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (current_phase < 0x18))
   {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_STATIC))
     {
       check_abilities_toughness = check_abilities_toughness + 0x3fff;
     }
@@ -1788,8 +1786,7 @@ int card_guard_gomazoa(int player, int card, event_t event)
   if (((instance != NULL) && (instance->damage_target_card == card)) &&
       (instance->damage_target_player == player))
   {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
+    if (!is_humiliated(player, card, AL_STATIC))
     {
       prevent_damage(affected_card_controller, affected_card, -1);
     }
@@ -2053,7 +2050,7 @@ int card_shared_discovery(int player, int card, event_t event)
     td.preferred_controller = player;
     td.allowed_controller = player;
     td.illegal_abilities = 0;
-    td.illegal_state = 1;
+    td.illegal_state = TARGET_STATE_TAPPED;
     get_card_instance(player, card);
     if (basic_spell(player, card, EVENT_CAN_CAST) != 0)
     {
@@ -2069,7 +2066,7 @@ int card_shared_discovery(int player, int card, event_t event)
       td.preferred_controller = player;
       td.allowed_controller = player;
       td.illegal_abilities = 0;
-      td.illegal_state = 1;
+      td.illegal_state = TARGET_STATE_TAPPED;
       instance = get_card_instance(player, card);
       p = current_turn;
       if ((card == affected_card) && (player == affected_card_controller))
@@ -2192,7 +2189,7 @@ int card_shared_discovery(int player, int card, event_t event)
     td.preferred_controller = player;
     td.allowed_controller = player;
     td.illegal_abilities = 0;
-    td.illegal_state = 1;
+    td.illegal_state = TARGET_STATE_TAPPED;
     get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
     {
@@ -2230,7 +2227,7 @@ int card_sphinx_of_magosi(int player, int card, event_t event)
     {
       if (0x1d < current_phase)
       {
-        ai_modifier = ai_modifier + ((1 - player == current_turn) - 1 & 0xffffffdc) + 0x18;
+        ai_modifier = ai_modifier + (unsigned int)((1 - player == current_turn) ? 0 : -36) + 0x18;
       }
     }
     else if (event == EVENT_RESOLVE_ACTIVATION)
@@ -2243,8 +2240,7 @@ int card_sphinx_of_magosi(int player, int card, event_t event)
     result = generic_activated_ability(player, card, event, 0, 2, 0, 1, 0, 0, 0, 0, NULL, NULL);
     return result;
   }
-  result = generic_shade(player, card, event, 0, 2, 0, 1, 0, 0, 0, 1, 1, 0, 0);
-  return result;
+  return generic_shade(player, card, event, 0, 2, 0, 1, 0, 0, 0, 1, 1, 0, 0);
 }
 
 int card_surrakar_spellblade(int player, int card, event_t event){
@@ -2299,8 +2295,7 @@ int card_training_grounds(int player, int card, event_t event)
       remove_cost_mod_for_activated_abilities(player, -1, 2, &this_test);
     }
   }
-  result = global_enchantment(player, card, event);
-  return result;
+  return global_enchantment(player, card, event);
 }
 
 int card_unified_will(int player, int card, event_t event){
@@ -3166,7 +3161,7 @@ int card_brimstone_mage(int player, int card, event_t event)
   {
     level_count_or_result = count_counters_no_parent(player, card, COUNTER_LEVEL);
     default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     if (ai_is_speculating == 1)
     {
       damage_prompt[0] = '\0';
@@ -3201,20 +3196,20 @@ int card_brimstone_mage(int player, int card, event_t event)
       level_up_available =
           (unsigned int)(unsigned char)(ability_choice_or_result != 0 & activation_or_manual);
       if (level_count_or_result != 0 && !level_up_default)
-        dialog_mode = "\001\027";
+        dialog_mode = DLG_NO_OP;
       else
-        dialog_mode = "\001\016";
+        dialog_mode = DLG_AUTOCHOOSE_IF_1;
     }
     else
     {
       level_up_available = (unsigned int)(ability_choice_or_result != 0);
-      dialog_mode = "\001\027";
+      dialog_mode = DLG_NO_OP;
     }
     ability_choice_or_result =
-        dialog_impl(player, card, event, "\001\002", dialog_mode, "Level up", level_up_available,
-                    level_up_priority, "\001\020", 3, 0, 0, 0, 1, 0, damage_option,
-                    (unsigned int)(0 < level_count_or_result), 1, "\001\025", "\001\024", &td,
-                    "TARGET_ANY", 0, 0, 0, 0);
+        dialog_impl(player, card, event, DLG_RANDOM, dialog_mode, "Level up", level_up_available,
+                    level_up_priority, DLG_MANA6(3, 0, 0, 0, 1, 0), damage_option,
+                    (unsigned int)(0 < level_count_or_result), 1, DLG_TAP, DLG_TARGET(&td,
+                    "TARGET_ANY"), 0, 0, 0, 0);
     if (event == EVENT_CAN_ACTIVATE)
     {
       return ability_choice_or_result;
@@ -3281,7 +3276,7 @@ int card_brimstone_mage(int player, int card, event_t event)
                 (level_count_or_result = has_mana_for_activated_ability(1, card, 0, 0, 0, 0, 0, 0),
                  level_count_or_result != 0))))))
     {
-      ai_modifier = ai_modifier + ((2 < ability_choice_or_result) - 1 & 0xffffffd0) + 0x48;
+      ai_modifier = ai_modifier + (unsigned int)((2 < ability_choice_or_result) ? 0 : -48) + 0x48;
     }
   }
   else if (((event == EVENT_ATTACK_RATING) &&
@@ -4724,7 +4719,7 @@ int card_sarkhan_the_mad(int player, int card, event_t event)
     td3.power_requirement = 0x1005;
     td3.toughness_requirement = 0x1005;
     default_target_definition(1, card, &td4, 0x100);
-    td4.zone = 0x1200;
+    td4.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_test_definition(&this_test, 2);
     this_test.subtype = 0x30;
     instance = get_card_instance(1, card);
@@ -4737,7 +4732,7 @@ int card_sarkhan_the_mad(int player, int card, event_t event)
   {
     default_target_definition(player, card, &td3, 2);
     default_target_definition(player, card, &td4, 0x100);
-    td4.zone = 0x1200;
+    td4.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
     default_test_definition(&this_test, 2);
     this_test.subtype = 0x30;
     instance = get_card_instance(player, card);
@@ -4779,7 +4774,7 @@ int card_sarkhan_the_mad(int player, int card, event_t event)
     own_sacrifice_priority = opponent_sacrifice_priority;
   }
   choice_or_result =
-      dialog_impl(player, card, event, "\001\002", "\001\017", "Reveal & damage Sarkhan", 1, 10, 0,
+      dialog_impl(player, card, event, DLG_RANDOM, DLG_PLANESWALKER, "Reveal & damage Sarkhan", 1, 10, 0,
                   "Impose sacrifice", sacrifice_available, own_sacrifice_priority, 0xfffffffe,
                   "Dragon Power", 1, choice_or_result * 2, 0xfffffffc, 0, 0, 0, 0);
   if (event == EVENT_CAN_ACTIVATE)
@@ -4837,7 +4832,7 @@ int card_sarkhan_the_mad(int player, int card, event_t event)
          choice_or_result != 0))
     {
       kill_card(instance->targets[0].player, instance->targets[0].card, KILL_SACRIFICE);
-      default_token_definition(player, card, 0x491f, &token);
+      default_token_definition(player, card, CARD_ID_DRAGON, &token);
       token.t_player = instance->targets[0].player;
       token.color_forced = '\x10';
       token.pow = 5;
@@ -5154,7 +5149,6 @@ int card_affa_guard_hound(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x24b9a10; original cards/rise_of_the_eldrazi.c:4874. */
 int card_wildheart_invoker(int player, int card, event_t event)
 {
-  int result;
   card_instance_t *instance;
   target_definition_t td;
   if (event == EVENT_ACTIVATE)
@@ -5170,16 +5164,15 @@ int card_wildheart_invoker(int player, int card, event_t event)
     }
     default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&td) != 0))
     {
       instance = get_card_instance(player, card);
       pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
                              5, 5, 0x80, 0);
     }
   }
-  result = generic_activated_ability(player, card, event, 4, 8, 0, 0, 0, 0, 0, 0, &td,
+  return generic_activated_ability(player, card, event, 4, 8, 0, 0, 0, 0, 0, 0, &td,
                                      "TARGET_CREATURE");
-  return result;
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
