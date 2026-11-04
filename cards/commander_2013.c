@@ -3,6 +3,7 @@
 static int opal_palace_legacy(int player, int card, event_t event);
 
 // Functions
+
 static void store_mana_paid_to_play_this(int player, int card, event_t event){
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -19,6 +20,7 @@ static void store_mana_paid_to_play_this(int player, int card, event_t event){
 // Cards
 
 // black
+
 int card_baleful_force(int player, int card, event_t event){
 /* CARD_ID_BALEFUL_FORCE	13606
 Baleful Force	|5|B|B|B
@@ -255,15 +257,14 @@ int card_toxic_deluge(int player, int card, event_t event){
 }
 
 // blue
+
 int card_curse_of_inertia(int player, int card, event_t event)
 {
-/*
-Curse of Inertia |2|U
-Enchantment — Aura Curse
-Enchant player
-Whenever a player attacks enchanted player with one or more creatures, that attacking player may tap or untap target permanent of
-his or her choice.
-*/
+  /* Curse of Inertia |2|U
+   * Enchantment — Aura Curse
+   * Enchant player
+   * Whenever a player attacks enchanted player with one or more creatures, that attacking player may tap or untap target permanent of
+   * his or her choice. */
 
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_TRIG) ){
 		card_instance_t* instance = get_card_instance(player, card);
@@ -289,11 +290,10 @@ his or her choice.
 }
 
 int card_diviner_spirit(int player, int card, event_t event ){
-/*
-Diviner Spirit |4|U
-Creature — Spirit 2/4
-Whenever Diviner Spirit deals combat damage to a player, you and that player each draw that many cards.
-*/
+  /* Diviner Spirit |4|U
+   * Creature — Spirit 2/4
+   * Whenever Diviner Spirit deals combat damage to a player, you and that player each draw that many cards. */
+
 	if (damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE |
 							DDBM_REPORT_DAMAGE_DEALT) )
 	{
@@ -309,12 +309,11 @@ Whenever Diviner Spirit deals combat damage to a player, you and that player eac
 }
 
 int card_djinn_of_infinite_deceits(int player, int card, event_t event){
-/*
-Djinn of Infinite Deceits |4|U|U
-Creature — Djinn 2/7
-Flying
-{T}: Exchange control of two target nonlegendary creatures. You can't activate this ability during combat.
-*/
+  /* Djinn of Infinite Deceits |4|U|U
+   * Creature — Djinn 2/7
+   * Flying
+   * {T}: Exchange control of two target nonlegendary creatures. You can't activate this ability during combat. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -381,12 +380,10 @@ Flying
 // illusionist's gambit --> skipped
 
 int card_order_of_succession(int player, int card, event_t event){
-/*
-Order of Succession |3|U
-Sorcery
-Choose left or right. Starting with you and proceeding in the chosen direction, each player chooses a creature controlled by
-	the next player in that direction. Each player gains control of the creature he or she chose.
-*/
+  /* Order of Succession |3|U
+   * Sorcery
+   * Choose left or right. Starting with you and proceeding in the chosen direction, each player chooses a creature controlled by
+   * 	the next player in that direction. Each player gains control of the creature he or she chose. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int targetted[2] = {-1};
@@ -420,6 +417,12 @@ Choose left or right. Starting with you and proceeding in the chosen direction, 
 
 int card_true_name_nemesis(int player, int card, event_t event)
 {
+  /* CARD_ID_TRUE_NAME_NEMESIS	13651
+   * True-Name Nemesis	|1|U|U
+   * Creature - Merfolk Rogue 3/1
+   * As ~ enters the battlefield, choose a player.
+   * ~ has protection from the chosen player. (This creature can't be blocked, targeted, dealt damage, or enchanted by anything controlled by that player.) */
+
   card_instance_t *instance;
   int result;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -445,13 +448,11 @@ int card_true_name_nemesis(int player, int card, event_t event)
 }
 
 int card_tempt_with_reflections(int player, int card, event_t event){
-/*
-Tempt with Reflections |3|U
-Sorcery
-Tempting offer — Choose target creature you control. Put a token onto the battlefield that's a copy of that creature.
-Each opponent may put a token onto the battlefield that's a copy of that creature.
-For each opponent who does, put a token onto the battlefield that's a copy of that creature.
-*/
+  /* Tempt with Reflections |3|U
+   * Sorcery
+   * Tempting offer — Choose target creature you control. Put a token onto the battlefield that's a copy of that creature.
+   * Each opponent may put a token onto the battlefield that's a copy of that creature.
+   * For each opponent who does, put a token onto the battlefield that's a copy of that creature. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		target_definition_t td;
@@ -514,6 +515,7 @@ At the beginning of each upkeep, you may tap or untap target permanent. */
 }
 
 // green
+
 int card_bane_of_progress(int player, int card, event_t event){
 /* CARD_ID_BANE_OF_PROGRESS	13607
 Bane of Progress	|4|G|G
@@ -569,13 +571,11 @@ Whenever a creature attacks enchanted player, put a +1/+1 counter on it. */
 }
 
 int card_naya_soulbeast(int player, int card, event_t event){
-/*
-Naya Soulbeast |6|G|G
-Creature — Beast 0/0
-Trample
-When you cast Naya Soulbeast, each player reveals the top card of his or her library.
-Naya Soulbeast enters the battlefield with X +1/+1 counters on it, where X is the total converted mana cost of all cards revealed this way.
-*/
+  /* Naya Soulbeast |6|G|G
+   * Creature — Beast 0/0
+   * Trample
+   * When you cast Naya Soulbeast, each player reveals the top card of his or her library.
+   * Naya Soulbeast enters the battlefield with X +1/+1 counters on it, where X is the total converted mana cost of all cards revealed this way. */
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) && ! check_special_flags(player, card, SF_NOT_CAST) &&
 		! is_token(player, card) )
@@ -598,11 +598,9 @@ Naya Soulbeast enters the battlefield with X +1/+1 counters on it, where X is th
 // primal vigor --> doubling season
 
 int card_restore2(int player, int card, event_t event){
-/*
-Restore |1|G
-Sorcery
-Put target land card from a graveyard onto the battlefield under your control.
-*/
+  /* Restore |1|G
+   * Sorcery
+   * Put target land card from a graveyard onto the battlefield under your control. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -683,6 +681,7 @@ int card_tempt_with_discovery(int player, int card, event_t event){
 }
 
 // red
+
 int card_curse_of_chaos(int player, int card, event_t event ){
 /* CARD_ID_CURSE_OF_CHAOS	13608
 Curse of Chaos	|2|R
@@ -851,15 +850,13 @@ At the beginning of your end step, target opponent chosen at random gains contro
 	return global_enchantment(player, card, event);
 }
 
-
 // white
+
 int card_act_of_authority(int player, int card, event_t event ){
-/*
-Act of Authority |1|W|W
-Enchantment
-When Act of Authority enters the battlefield, you may exile target artifact or enchantment.
-At the beginning of your upkeep, you may exile target artifact or enchantment. If you do, its controller gains control of Act of Authority.
-*/
+  /* Act of Authority |1|W|W
+   * Enchantment
+   * When Act of Authority enters the battlefield, you may exile target artifact or enchantment.
+   * At the beginning of your upkeep, you may exile target artifact or enchantment. If you do, its controller gains control of Act of Authority. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
@@ -1082,6 +1079,7 @@ int card_unexpectedly_absent(int player, int card, event_t event){
 }
 
 // gold
+
 int card_derevi_empyrial_tactician(int player, int card, event_t event ){
 /* CARD_ID_DEREVI_EMPYRIAL_TACTICIAN	13614
 Derevi, Empyrial Tactician	|G|W|U
@@ -1142,14 +1140,12 @@ Whenever a creature attacks one of your opponents or a planeswalker an opponent 
 }
 
 int card_jeleva_nephalias_scourge(int player, int card, event_t event ){
-	/*
-	  Jeleva, Nephalia's Scourge English |1|U|B|R
-	  Legendary Creature - Vampire Wizard 1/3
-	  Flying
-	  When Jeleva, Nephalia's Scourge enters the battlefield, each player exiles the top X cards of his or her library,
-	  where X is the amount of mana spent to cast Jeleva.
-	  Whenever Jeleva attacks, you may cast an instant or sorcery card exiled with it without paying its mana cost.
-	*/
+  /* Jeleva, Nephalia's Scourge English |1|U|B|R
+   * 	  Legendary Creature - Vampire Wizard 1/3
+   * 	  Flying
+   * 	  When Jeleva, Nephalia's Scourge enters the battlefield, each player exiles the top X cards of his or her library,
+   * 	  where X is the amount of mana spent to cast Jeleva.
+   * 	  Whenever Jeleva attacks, you may cast an instant or sorcery card exiled with it without paying its mana cost. */
 
 	store_mana_paid_to_play_this(player, card, event);
 
@@ -1199,6 +1195,14 @@ int card_jeleva_nephalias_scourge(int player, int card, event_t event ){
 
 int card_marath_will_of_the_wild(int player, int card, event_t event)
 {
+  /* Marath, Will of the Wild	|R|G|W	0x200b362
+   * Legendary Creature - Elemental Beast 0/0
+   * ~ enters the battlefield with a number of +1/+1 counters on it equal to the amount of mana spent to cast it.
+   * |X, Remove X +1/+1 counters from ~: Choose one -
+   * * Put X +1/+1 counters on target creature. X can't be 0.
+   * * ~ deals X damage to any target. X can't be 0.
+   * * Create an X/X |Sgreen Elemental creature token. X can't be 0. */
+
   enum
   {
     CHOICE_PASS_COUNTERS = 1,
@@ -1497,13 +1501,12 @@ Vigilance, trample
 
 int card_sydri_galvanic_genius(int player, int card, event_t event)
 {
-/*
-Sydri, Galvanic Genius |W|U|B
-Legendary Creature — Human Artificer 2/2
-{U}: Target noncreature artifact becomes an artifact creature with power and toughness each equal to its converted mana cost
-	until end of turn.
-{W}{B}: Target artifact creature gains deathtouch and lifelink until end of turn.
-*/
+  /* Sydri, Galvanic Genius |W|U|B
+   * Legendary Creature — Human Artificer 2/2
+   * {U}: Target noncreature artifact becomes an artifact creature with power and toughness each equal to its converted mana cost
+   * 	until end of turn.
+   * {W}{B}: Target artifact creature gains deathtouch and lifelink until end of turn. */
+
 	check_legend_rule(player, card, event);
 
 	if( ! IS_GAA_EVENT(event) ){
@@ -1591,13 +1594,12 @@ Legendary Creature — Human Artificer 2/2
 }
 
 int card_shattergang_brothers(int player, int card, event_t event ){
-/*
-Shattergang Brothers |1|B|R|G
-Legendary Creature — Goblin Artificer 3/3
-{2}{B}, Sacrifice a creature: Each other player sacrifices a creature.
-{2}{R}, Sacrifice an artifact: Each other player sacrifices an artifact.
-{2}{G}, Sacrifice an enchantment: Each other player sacrifices an enchantment.
-*/
+  /* Shattergang Brothers |1|B|R|G
+   * Legendary Creature — Goblin Artificer 3/3
+   * {2}{B}, Sacrifice a creature: Each other player sacrifices a creature.
+   * {2}{R}, Sacrifice an artifact: Each other player sacrifices an artifact.
+   * {2}{G}, Sacrifice an enchantment: Each other player sacrifices an enchantment. */
+
 	check_legend_rule(player, card, event);
 
 	if( ! IS_GAA_EVENT(event) ){
@@ -1706,6 +1708,11 @@ Legendary Creature — Goblin Artificer 3/3
 
 int card_eye_of_doom(int player, int card, event_t event)
 {
+  /* Eye of Doom	|4
+   * Artifact
+   * When ~ enters the battlefield, each player chooses a nonland permanent and puts a doom counter on it.
+   * |2, |T, Sacrifice ~: Destroy each permanent with a doom counter on it. */
+
   int p;
   int c;
   int target_or_marked_player;
@@ -1807,12 +1814,11 @@ int card_eye_of_doom(int player, int card, event_t event)
 }
 
 int card_surveyors_scope(int player, int card, event_t event){
-/*
-Surveyor's Scope |2
-Artifact
-{T}, Exile Surveyor's Scope: Search your library for up to X basic land cards, where X is the number of players who control
-	at least two more lands than you. Put those cards onto the battlefield, then shuffle your library.
-*/
+  /* Surveyor's Scope |2
+   * Artifact
+   * {T}, Exile Surveyor's Scope: Search your library for up to X basic land cards, where X is the number of players who control
+   * 	at least two more lands than you. Put those cards onto the battlefield, then shuffle your library. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1830,7 +1836,59 @@ Artifact
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_RFG_ME, MANACOST0, 0, NULL, NULL);
 }
 
+/* ManalinkEh 2022: 0x23c0880; original cards/commander_2013.c:1745. */
+static int opal_palace_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int commander_color;
+  unsigned int spent_color_test;
+  bool used_palace_mana;
+
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (((((card != affected_card) || (affected_card_controller != player)) &&
+          (result = is_token(affected_card_controller, affected_card), result == 0)) &&
+         ((result = check_special_flags2(affected_card_controller, affected_card, -0x80000000),
+           result == 0 &&
+               (result = get_cmc(affected_card_controller, affected_card), 0 < result)))) &&
+        ((affected_card_controller == player &&
+          (result = check_special_flags2(player, affected_card, 0x1000000), result != 0))))
+    {
+      instance = get_card_instance(player, card);
+      if (instance->targets[1].card == 0)
+      {
+        result = get_updated_casting_cost(affected_card_controller, affected_card, -1,
+                                          EVENT_CAST_SPELL, -1);
+        used_palace_mana = 0 < result;
+      }
+      else
+      {
+        commander_color = get_color(affected_card_controller, affected_card);
+        instance = get_card_instance(player, card);
+        spent_color_test = color_to_color_test(instance->targets[1].card);
+        used_palace_mana = (commander_color & spent_color_test) != 0;
+      }
+      if (used_palace_mana)
+      {
+        result = get_commander_storm_count(player);
+        enters_the_battlefield_with_counters(affected_card_controller, affected_card,
+                                             EVENT_CAST_SPELL, COUNTER_P1_P1, result);
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  else if (((event == EVENT_STATIC_EFFECTS) && (stack_size == 0)) &&
+           (instance = get_card_instance(player, card),
+            mana_pool[player][instance->targets[1].card] < 1))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
 // lands
+
 int card_opal_palace(int player, int card, event_t event){
 /* Opal Palace	""
  * Land
@@ -1907,57 +1965,4 @@ int card_opal_palace(int player, int card, event_t event){
 	}
 
 	return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x23c0880; original cards/commander_2013.c:1745. */
-static int opal_palace_legacy(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  unsigned int commander_color;
-  unsigned int spent_color_test;
-  bool used_palace_mana;
-
-  if (event == EVENT_CAST_SPELL)
-  {
-    if (((((card != affected_card) || (affected_card_controller != player)) &&
-          (result = is_token(affected_card_controller, affected_card), result == 0)) &&
-         ((result = check_special_flags2(affected_card_controller, affected_card, -0x80000000),
-           result == 0 &&
-               (result = get_cmc(affected_card_controller, affected_card), 0 < result)))) &&
-        ((affected_card_controller == player &&
-          (result = check_special_flags2(player, affected_card, 0x1000000), result != 0))))
-    {
-      instance = get_card_instance(player, card);
-      if (instance->targets[1].card == 0)
-      {
-        result = get_updated_casting_cost(affected_card_controller, affected_card, -1,
-                                          EVENT_CAST_SPELL, -1);
-        used_palace_mana = 0 < result;
-      }
-      else
-      {
-        commander_color = get_color(affected_card_controller, affected_card);
-        instance = get_card_instance(player, card);
-        spent_color_test = color_to_color_test(instance->targets[1].card);
-        used_palace_mana = (commander_color & spent_color_test) != 0;
-      }
-      if (used_palace_mana)
-      {
-        result = get_commander_storm_count(player);
-        enters_the_battlefield_with_counters(affected_card_controller, affected_card,
-                                             EVENT_CAST_SPELL, COUNTER_P1_P1, result);
-        kill_card(player, card, KILL_EXILE);
-      }
-    }
-  }
-  else if (((event == EVENT_STATIC_EFFECTS) && (stack_size == 0)) &&
-           (instance = get_card_instance(player, card),
-            mana_pool[player][instance->targets[1].card] < 1))
-  {
-    kill_card(player, card, KILL_EXILE);
-  }
-  return 0;
 }

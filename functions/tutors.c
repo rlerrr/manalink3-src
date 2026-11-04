@@ -45,22 +45,25 @@ int reveal_top_cards_of_library_and_choose_type(int src_player, int src_card, in
 
 int show_deck_exe(int player, const int* deck, int num_cards, const char* prompt, int suppress_done_label, /* const char* */int done_label);
 
-
-
-
-
 const char* hack_override_show_deck_done_button_label = NULL;
 
+/* ManalinkEh 2022: 0x2650b50; original functions/tutors.c:313. */
+static int effect_leonin_arbiter(int player, int card, event_t event)
+{
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
 
+// [player] reveals the top [num_cards] of his library.
 
+/* [reveal_rest or Look at] the top [num_cards] of your library.  Choose a [test] card from among them, [reveal_chosen], and move it to [destination_chosen].
+ * Move the rest to [destination_rest]. */
 
-
-
-
-
-
-
-
+// Identical to reveal_top_cards_of_library_and_choose(), but specify a type bitfield instead of a full test_definition_t.  Constructs an appropriate prompt.
 
 int tutor_from_grave_to_hand_except_for_dying_card(int player, int card, int must_select, int ai_selection_mode, test_definition_t* test)
 {
@@ -98,16 +101,6 @@ int tutor_from_grave_to_hand_except_for_dying_card(int player, int card, int mus
 
   return rval;
 }
-
-// [player] reveals the top [num_cards] of his library.
-
-
-/* [reveal_rest or Look at] the top [num_cards] of your library.  Choose a [test] card from among them, [reveal_chosen], and move it to [destination_chosen].
- * Move the rest to [destination_rest]. */
-
-
-// Identical to reveal_top_cards_of_library_and_choose(), but specify a type bitfield instead of a full test_definition_t.  Constructs an appropriate prompt.
-
 
 int select_one_and_mill_the_rest(int player, int t_player, int number, int type){
 
@@ -216,6 +209,7 @@ void tutor_basic_land(int player, int put_in_play, int tap_it){
 	tutor_basic_lands(player, mode, 1);
 }
 
+// Tutor two basic lands, one onto bf tapped, one into hand, then shuffle
 void tutor_basic_lands(int player, tutor_t destination, int num){
 	test_definition_t test;
 	new_default_test_definition(&test, TYPE_LAND, "Choose a basic land card.");
@@ -227,7 +221,7 @@ void tutor_basic_lands(int player, tutor_t destination, int num){
 	shuffle(player);
 }
 
-// Tutor two basic lands, one onto bf tapped, one into hand, then shuffle
+// Simple n^2 insertion sort on array[].player, descending.  Poorly suited if number is greater than about 30.
 void cultivate(int player)
 {
   test_definition_t test;
@@ -247,7 +241,13 @@ void cultivate(int player)
   shuffle(player);
 }
 
-// Simple n^2 insertion sort on array[].player, descending.  Poorly suited if number is greater than about 30.
+// test only needs to be defined during EVENT_CAST_SPELL.
+/* ManalinkEh 2022: 0x2650b10; original functions/tutors.c:1154. */
+static int qsort_compare_int_descending(const void *lhs, const void *rhs)
+{
+  return *(const int *)rhs - *(const int *)lhs;
+}
+
 void descending_insertion_sort_on_player(int number, target_t* array){
 	target_t value;
 	int i, j;
@@ -260,9 +260,37 @@ void descending_insertion_sort_on_player(int number, target_t* array){
 	}
 }
 
+// Separates the first number cards in source_deck[] into two piles.  AI attempts to divide evenly by base_value.
+// Preconditions: piles is an array of int[2][number].  Elements of source_deck[] are internal_card_ids (such as from deck_ptr[], get_grave(), or rfg_ptr[]).
+// Postcondition: For each i in [0..number), one of piles[0][i] and piles[1][i] will be set to source_deck[i], and the other iid_draw_a_card.
+/* Legacy 208-byte test compatibility for the to-array selector.
+ * Native 2022 entry and private part are recovered below. */
 
+/* ManalinkEh 2022: 0x2652ab0; original functions/tutors.c:1158. */
+void descending_qsort(int number, int *array)
+{
+  qsort(array, number, 4, qsort_compare_int_descending);
+  return;
+}
 
-// test only needs to be defined during EVENT_CAST_SPELL.
+// Chooses between two piles of cards each with number cards.
+// Preconditions: piles is an array of int[2][number].  Elements of piles[][] are internal_card_ids.  ai_selection_mode is AI_MAX_VALUE or AI_MIN_VALUE.  choice_txt is 11 chars or less.
+// Returns chosen pile, 0 or 1.
+/* ManalinkEh 2022: 0x2650b30; original functions/tutors.c:1162. */
+static int qsort_compare_target_player_descending(const void *lhs, const void *rhs)
+{
+  return *(const int *)rhs - *(const int *)lhs;
+}
+
+// 1-who_chooses separates the top number cards of player's deck into two piles.  who_chooses picks a pile to put in player's hand.
+// The rest are put in put_rest_where, which must currently be TUTOR_GRAVE or TUTOR_BOTTOM_OF_DECK.
+/* ManalinkEh 2022: 0x2652ae0; original functions/tutors.c:1166. */
+void descending_qsort_on_player(int number, target_t *array)
+{
+  qsort(array, number, 8, qsort_compare_target_player_descending);
+  return;
+}
+
 int spell_return_up_to_n_target_cards_from_your_graveyard_to_your_hand(int player, int card, event_t event, int max_cards, test_definition_t* test, int dont_kill_self)
 {
   if (event == EVENT_CAN_CAST)
@@ -371,9 +399,6 @@ int spell_return_one_or_two_cards_from_gy_to_hand(int player, int card, event_t 
   return 0;
 }
 
-// Separates the first number cards in source_deck[] into two piles.  AI attempts to divide evenly by base_value.
-// Preconditions: piles is an array of int[2][number].  Elements of source_deck[] are internal_card_ids (such as from deck_ptr[], get_grave(), or rfg_ptr[]).
-// Postcondition: For each i in [0..number), one of piles[0][i] and piles[1][i] will be set to source_deck[i], and the other iid_draw_a_card.
 void separate_into_two_piles(int who_separates, const int *source_deck, int number, void *piles_)
 {
   int (*piles)[number] = piles_;
@@ -428,9 +453,6 @@ void separate_into_two_piles(int who_separates, const int *source_deck, int numb
     }
 }
 
-// Chooses between two piles of cards each with number cards.
-// Preconditions: piles is an array of int[2][number].  Elements of piles[][] are internal_card_ids.  ai_selection_mode is AI_MAX_VALUE or AI_MIN_VALUE.  choice_txt is 11 chars or less.
-// Returns chosen pile, 0 or 1.
 int choose_between_two_piles(int chooser, int number, void *piles_, int ai_selection_mode,
                              const char *choice_txt)
 {
@@ -476,8 +498,6 @@ int choose_between_two_piles(int chooser, int number, void *piles_, int ai_selec
   }
 }
 
-// 1-who_chooses separates the top number cards of player's deck into two piles.  who_chooses picks a pile to put in player's hand.
-// The rest are put in put_rest_where, which must currently be TUTOR_GRAVE or TUTOR_BOTTOM_OF_DECK.
 void effect_fof(int player, int who_chooses, int number, int put_rest_where)
 {
   int num_cards_in_deck = count_deck(player);
@@ -845,6 +865,8 @@ int show_bottom_of_deck(int player, int* deck, int num_cards, const char* prompt
 	return show_deck(player, &deck[count_in_deck - num_cards], num_cards, prompt, 0, EXE_STR(ENGINE_DONE_LABEL));
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 void rearrange_bottom_x(int t_player, int who_chooses, int number){
 	// t_player = target player
 	// who_chooses = player who rearranges
@@ -927,6 +949,12 @@ void put_top_x_on_bottom(int player, int t_player, int remaining ){
 			}
 	}
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int select_multiple_cards_from_graveyard_to_array(int player, int targ_player, int must_select_all,
+                                                  int ai_selection_mode,
+                                                  test_definition_t *this_test, int max_targets,
+                                                  target_t *ret_location);
 
 void put_top_x_on_bottom_in_random_order(int player, int amount)
 {
@@ -1016,78 +1044,31 @@ void tutor_multiple_card_from_hand(int who_chooses, int t_player, int who_gets_t
 	}
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2650b50; original functions/tutors.c:313. */
-static int effect_leonin_arbiter(int player, int card, event_t event)
-{
-  if (event != EVENT_CLEANUP)
-  {
-    return 0;
-  }
-  kill_card(player, card, KILL_EXILE);
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x2650b10; original functions/tutors.c:1154. */
-static int qsort_compare_int_descending(const void *lhs, const void *rhs)
-{
-  return *(const int *)rhs - *(const int *)lhs;
-}
-
-/* ManalinkEh 2022: 0x2650b30; original functions/tutors.c:1162. */
-static int qsort_compare_target_player_descending(const void *lhs, const void *rhs)
-{
-  return *(const int *)rhs - *(const int *)lhs;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int select_multiple_cards_from_graveyard_to_array(int player, int targ_player, int must_select_all,
-                                                  int ai_selection_mode,
-                                                  test_definition_t *this_test, int max_targets,
-                                                  target_t *ret_location);
-
-/* Legacy 208-byte test compatibility for the to-array selector.
- * Native 2022 entry and private part are recovered below. */
-
-
-/* ManalinkEh 2022: 0x2652ab0; original functions/tutors.c:1158. */
-void descending_qsort(int number, int *array)
-{
-  qsort(array, number, 4, qsort_compare_int_descending);
-  return;
-}
-
-/* ManalinkEh 2022: 0x2652ae0; original functions/tutors.c:1166. */
-void descending_qsort_on_player(int number, target_t *array)
-{
-  qsort(array, number, 8, qsort_compare_target_player_descending);
-  return;
-}
-
-
 #ifndef SHANDALAR
 /* Recovered October 2022 typed consumers and compiler parts. */
 
-/* ManalinkEh 2022: 0x2650b80; original functions/tutors.c:152. */
-static void side_effects_to_tutor_deck_from_permanents(int player, int targ_player)
+/* ManalinkEh 2022: 0x2650c40; original functions/tutors.c:10. */
+int show_deck(int player, const int *deck, int num_cards, const char *prompt,
+              int suppress_done_label, const char *done_label)
 {
-  int amount;
-  int card;
-  int opponent;
-
-  opponent = 1 - player;
-  amount = count_cards_by_id(opponent, CARD_ID_OB_NIXILIS_UNSHACKLED);
-  if (amount == 0)
-  {
-    return;
-  }
-  lose_life(player, amount * 10);
-  card = locate_id(opponent, 0x3741);
-  impose_sacrifice(opponent, card, player, amount, 2, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-  return;
+  int result;
+  call_sub_437E20_unless_ai_is_speculating();
+  hack_show_deck_force_expansion = 0;
+  result = show_deck_exe(player, deck, num_cards, prompt, suppress_done_label, (int32_t)(intptr_t)done_label);
+  return result;
 }
 
+/* ManalinkEh 2022: 0x2650ca0; original functions/tutors.c:18. */
+int show_deck_force_expansion(int player, const int *deck, int num_cards, const char *prompt,
+                              int suppress_done_label, const char *done_label, EXPANSION_t expansion)
+{
+  call_sub_437E20_unless_ai_is_speculating();
+  hack_show_deck_force_expansion = expansion;
+  int result = show_deck_exe(player, deck, num_cards, prompt, suppress_done_label,
+                             (int32_t)(intptr_t)done_label);
+  hack_show_deck_force_expansion = 0;
+  return result;
+}
 
 /* ManalinkEh 2022: 0x2650cf0; original functions/tutors.c:28. */
 int get_average_value_from_zone(int targ_player, const int *s_location, int zone_count,
@@ -1105,7 +1086,6 @@ int get_average_value_from_zone(int targ_player, const int *s_location, int zone
     }
   return found ? total / found : 0;
 }
-
 
 /* ManalinkEh 2022: 0x2650de0; original functions/tutors.c:62. */
 int select_card_from_zone(int player, int targ_player, const int *s_location, int zone_count,
@@ -1173,6 +1153,24 @@ int select_card_from_zone(int player, int targ_player, const int *s_location, in
   return candidate_count ? candidates[internal_rand(candidate_count)] : -1;
 }
 
+/* ManalinkEh 2022: 0x2650b80; original functions/tutors.c:152. */
+static void side_effects_to_tutor_deck_from_permanents(int player, int targ_player)
+{
+  int amount;
+  int card;
+  int opponent;
+
+  opponent = 1 - player;
+  amount = count_cards_by_id(opponent, CARD_ID_OB_NIXILIS_UNSHACKLED);
+  if (amount == 0)
+  {
+    return;
+  }
+  lose_life(player, amount * 10);
+  card = locate_id(opponent, 0x3741);
+  impose_sacrifice(opponent, card, player, amount, 2, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+  return;
+}
 
 /* ManalinkEh 2022: 0x2651140; original functions/tutors.c:323. */
 int get_tutoring_denial(int player)
@@ -1248,7 +1246,6 @@ int get_tutoring_denial(int player)
   } while (true);
 }
 
-
 /* ManalinkEh 2022: 0x2651300; original functions/tutors.c:178. */
 int new_select_a_card(int player, int targ_player, int search_location, int must_select,
                       int ai_selection_mode, int test_type, test_definition_t *this_test)
@@ -1322,7 +1319,6 @@ int new_select_a_card(int player, int targ_player, int search_location, int must
   return selected;
 }
 
-
 /* ManalinkEh 2022: 0x26515c0; original functions/tutors.c:272. */
 int select_a_card(int player, int targ_player, int search_location, int must_select,
                        int ai_selection_mode, int test_type, int type, int flag1, int subtype,
@@ -1346,267 +1342,23 @@ int select_a_card(int player, int targ_player, int search_location, int must_sel
   return result;
 }
 
-
-/* ManalinkEh 2022: 0x2651660; original functions/tutors.c:1180. */
-static int select_multiple_cards_from_graveyard_to_array_part(
-    int player, int targ_player, int must_select_all, int ai_selection_mode,
-    test_definition_t *this_test, int max_targets, target_t *ret_location)
+static int select_a_card_from_deck_automatic(int player, int targ_player, int test_type,
+                                              test_definition_t *this_test)
 {
-  test_definition_t default_test;
-  if (!this_test)
-  {
-    this_test = &default_test;
-    new_default_test_definition(this_test, 0, "");
-    if (ai_is_speculating != 1)
-    {
-      if (max_targets == 1)
-        strncpy(default_test.message, "Select a card.", 15);
-      else if (!must_select_all)
-        sprintf(this_test->message, "Select up to %d cards.", max_targets);
-      else
-        sprintf(this_test->message, "Select %d cards.", max_targets);
-    }
-    default_test.id = 904;
-    default_test.id_flag = DOESNT_MATCH;
-  }
-  else if (!this_test->id)
-  {
-    this_test->id = 904;
-    this_test->id_flag = DOESNT_MATCH;
-  }
-  else if (this_test->id != 904 || this_test->id_flag != DOESNT_MATCH)
-    backtrace_and_abort(
-        "functions/tutors.c:1188\nthis_test->id == 904 && this_test->id_flag == DOESNT_MATCH");
-
-  for (int i = 0; i < max_targets; ++i)
-    ret_location[i].player = ret_location[i].card = -1;
-  if (graveyard_has_shroud(targ_player))
-  {
-    if (must_select_all)
-      spell_fizzled = 1;
-    return 0;
-  }
-  int grave_count = count_graveyard(targ_player);
-  if (!grave_count || (max_targets > grave_count && must_select_all))
-  {
-    if (must_select_all)
-      spell_fizzled = 1;
-    return 0;
-  }
-  if (max_targets > grave_count)
-    max_targets = grave_count;
-  if (max_targets < 1)
-  {
-    qsort(ret_location, max_targets, sizeof(*ret_location), qsort_compare_target_player_descending);
-    return max_targets;
-  }
-  int selected = 0;
-  while (selected < max_targets)
-  {
-    int position = new_select_a_card(player, targ_player, TUTOR_FROM_GRAVE, must_select_all > 0,
-                                     ai_selection_mode, -1, this_test);
-    if (position == -1)
-      break;
-    ret_location[selected].player = position;
-    ret_location[selected].card = turn_card_in_grave_face_down(targ_player, position);
-    ++selected;
-  }
-  for (int i = 0; i < selected; ++i)
-    turn_card_in_grave_face_up(targ_player, ret_location[i].player, ret_location[i].card);
-  qsort(ret_location, selected, sizeof(*ret_location), qsort_compare_target_player_descending);
-  if (selected < max_targets && must_select_all)
-    spell_fizzled = 1;
-  return selected;
-}
-
-
-/* ManalinkEh 2022: 0x2652b10; original functions/tutors.c:1170. */
-int select_multiple_cards_from_graveyard(int player, int targ_player, int must_select_all,
-                                              int ai_selection_mode,
-                                              test_definition_t *this_test, int max_targets,
-                                              target_t *ret_location)
-{
-  int result;
-  if (max_targets == 0)
-  {
-    return 0;
-  }
-  if (max_targets - 1U < 0x13)
-  {
-    result = select_multiple_cards_from_graveyard_to_array_part(
-        player, targ_player, must_select_all, ai_selection_mode, this_test, max_targets,
-        ret_location);
-    return result;
-  }
-  backtrace_and_abort("functions/tutors.c:1175\nmax_targets > 0 && max_targets <= 19");
-  __builtin_unreachable();
-}
-
-
-/* ManalinkEh 2022: 0x2652b90; original functions/tutors.c:1180. */
-int select_multiple_cards_from_graveyard_to_array(int player, int targ_player,
-                                                       int must_select_all, int ai_selection_mode,
-                                                       test_definition_t *this_test,
-                                                       int max_targets, target_t *ret_location)
-{
-  int result;
-
-  if (max_targets != 0)
-  {
-    result = select_multiple_cards_from_graveyard_to_array_part(
-        player, targ_player, must_select_all, ai_selection_mode, this_test, max_targets,
-        ret_location);
-    return result;
-  }
-  return 0;
+  if (get_tutoring_denial(player))
+    return -1;
+  int pos = 0;
+  if (check_battlefield_for_id(1 - targ_player, CARD_ID_AVEN_MINDCENSOR) && count_deck(targ_player) > 3)
+    pos = count_deck(targ_player) - 4;
+  for (; pos < count_deck(player); ++pos)
+    if (new_make_test(targ_player, deck_ptr[targ_player][pos], test_type, this_test))
+      return pos;
+  return -1;
 }
 
 #endif
 
-
 #ifndef SHANDALAR
-/* ManalinkEh 2022: 0x2650c40; original functions/tutors.c:10. */
-int show_deck(int player, const int *deck, int num_cards, const char *prompt,
-              int suppress_done_label, const char *done_label)
-{
-  int result;
-  call_sub_437E20_unless_ai_is_speculating();
-  hack_show_deck_force_expansion = 0;
-  result = show_deck_exe(player, deck, num_cards, prompt, suppress_done_label, (int32_t)(intptr_t)done_label);
-  return result;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 specialized activation costs. */
-
-/* ManalinkEh 2022: 0x2652be0; original functions/tutors.c:1266. */
-int select_multiple_cards_from_either_graveyard(int player, int card, select_grave_t mode,
-                                                int ai_mode_own_graveyard,
-                                                int ai_mode_opponent_graveyard,
-                                                test_definition_t *this_test, int max_targets,
-                                                target_t *ret_location)
-{
-  if (max_targets == 0)
-    return 0;
-  if ((unsigned int)max_targets - 1 > 18)
-    backtrace_and_abort("functions/tutors.c:1270\nmax_targets > 0 && max_targets <= 19");
-
-  int cannot_cancel = mode & SFG_CANNOT_CANCEL;
-  test_definition_t default_test;
-  if (!this_test)
-  {
-    this_test = &default_test;
-    new_default_test_definition(this_test, 0, "");
-    if (ai_is_speculating != 1)
-    {
-      if (max_targets == 1)
-        strncpy(default_test.message, "Select a card.", 15);
-      else if (!cannot_cancel)
-        sprintf(this_test->message, "Select up to %d cards.", max_targets);
-      else
-        sprintf(this_test->message, "Select %d cards.", max_targets);
-    }
-    default_test.id = 904;
-    default_test.id_flag = DOESNT_MATCH;
-  }
-  else if (!this_test->id)
-  {
-    this_test->id = 904;
-    this_test->id_flag = DOESNT_MATCH;
-  }
-  else if (this_test->id != 904 || this_test->id_flag != DOESNT_MATCH)
-    backtrace_and_abort(
-        "functions/tutors.c:1277\nthis_test->id == 904 && this_test->id_flag == DOESNT_MATCH");
-
-  int count0 = new_special_count_grave(0, this_test);
-  int count1 = new_special_count_grave(1, this_test);
-  int minimum = cannot_cancel ? max_targets : 0;
-  int can_choose0 = count0 > minimum && (!graveyard_has_shroud(0) || (mode & SFG_NOTARGET));
-  int can_choose1 = count1 > minimum && (!graveyard_has_shroud(1) || (mode & SFG_NOTARGET));
-  int legal_count = (can_choose0 ? count0 : 0) + (can_choose1 ? count1 : 0);
-  if (!legal_count)
-  {
-    if (cannot_cancel)
-      spell_fizzled = 1;
-    return 0;
-  }
-  if (legal_count < max_targets)
-  {
-    max_targets = legal_count;
-    if (cannot_cancel)
-    {
-      spell_fizzled = 1;
-      return 0;
-    }
-  }
-  int face_down_cards[max_targets];
-  for (int i = 0; i < max_targets; ++i)
-    ret_location[i].player = ret_location[i].card = -1;
-
-  int both_graveyards = can_choose0 && can_choose1;
-  int selection_required = both_graveyards ? 0 : cannot_cancel;
-  int retries = 3, selected = 0;
-  target_t graveyard;
-  graveyard.player = can_choose0 ^ 1;
-  for (;;)
-  {
-    if (both_graveyards)
-    {
-      target_definition_t td;
-      base_target_definition(player, card, &td, 0);
-      td.zone = TARGET_ZONE_PLAYERS;
-      td.allow_cancel = (mode ^ SFG_CANNOT_CANCEL) & SFG_CANNOT_CANCEL;
-      if (mode & SFG_NOTARGET)
-        td.illegal_abilities = 0;
-      load_text(NULL, "TARGET_GRAVEYARD");
-      if (!select_target(player, card - 1000, &td, text_lines[0], &graveyard))
-      {
-        spell_fizzled = 1;
-        for (int i = 0; i < selected; ++i)
-          turn_card_in_grave_face_up(ret_location[i].player >> 16, ret_location[i].player & 0xffff,
-                                     face_down_cards[i]);
-        return -1;
-      }
-    }
-    while (selected < max_targets)
-    {
-      if (both_graveyards)
-        hack_override_show_deck_done_button_label = "Rechoose GY";
-      int ai_mode = graveyard.player == player ? ai_mode_own_graveyard : ai_mode_opponent_graveyard;
-      int position =
-          new_select_a_card(player, graveyard.player,
-                            (mode & SFG_NOTARGET) ? TUTOR_FROM_GRAVE_NOTARGET : TUTOR_FROM_GRAVE,
-                            selection_required, ai_mode, -1, this_test);
-      hack_override_show_deck_done_button_label = NULL;
-      if (position == -1)
-        break;
-      ret_location[selected].player = (graveyard.player << 16) | position;
-      ret_location[selected].card = graveyard_source[graveyard.player][position];
-      face_down_cards[selected] = turn_card_in_grave_face_down(graveyard.player, position);
-      ++selected;
-    }
-    if (selected >= max_targets || !both_graveyards || ai_is_speculating == 1 ||
-        (player == AI && !(trace_mode & 2)) || --retries == 0)
-      break;
-    spell_fizzled = 0;
-  }
-  for (int i = 0; i < selected; ++i)
-    turn_card_in_grave_face_up(ret_location[i].player >> 16, ret_location[i].player & 0xffff,
-                               face_down_cards[i]);
-  if (cannot_cancel && selected < max_targets)
-    spell_fizzled = 1;
-  return selected;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 global tutoring and control transfer. */
-
 /* ManalinkEh 2022: 0x2651990; original functions/tutors.c:389. */
 int new_global_tutor(int player, int targ_player, int search_location, int destination,
                           int must_select, int ai_selection_mode, test_definition_t *this_test)
@@ -1875,6 +1627,10 @@ int new_global_tutor(int player, int targ_player, int search_location, int desti
   return this_test->qty < 2 ? card_added : really_tutored;
 }
 
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 specialized activation costs. */
 
 /* ManalinkEh 2022: 0x26524d0; original functions/tutors.c:689. */
 int global_tutor(int player, int targ_player, int search_location, int destination,
@@ -1901,9 +1657,9 @@ int global_tutor(int player, int targ_player, int search_location, int destinati
 
 #endif
 
-
 #ifndef SHANDALAR
-/* Recovered October 2022 library reveal and selection logic. */
+/* Recovered October 2022 global tutoring and control transfer. */
+
 /* ManalinkEh 2022: 0x26526c0; original functions/tutors.c:757.
  * Native behavior: the 50-byte local is passed with a formatting bound of 100. */
 int reveal_top_cards_of_library(int player, int num_cards)
@@ -1927,7 +1683,6 @@ int reveal_top_cards_of_library(int player, int num_cards)
   }
   return count;
 }
-
 
 /* ManalinkEh 2022: 0x2654d60; original functions/tutors.c:796. */
 int reveal_top_cards_of_library_and_choose_fn_who_chooses(
@@ -2139,7 +1894,10 @@ int reveal_top_cards_of_library_and_choose_fn_who_chooses(
   }
 }
 
+#endif
 
+#ifndef SHANDALAR
+/* Recovered October 2022 library reveal and selection logic. */
 /* ManalinkEh 2022: 0x2655580; original functions/tutors.c:779. */
 int reveal_top_cards_of_library_and_choose(int src_player, int src_card, int t_player,
                                                 int num_cards, int must_select,
@@ -2155,6 +1913,35 @@ int reveal_top_cards_of_library_and_choose(int src_player, int src_card, int t_p
   return result;
 }
 
+/* ManalinkEh 2022: 0x2655740; original functions/tutors.c:784.
+ * Native behavior: this frontend ignores fn and passes NULL to the worker. */
+int reveal_top_cards_of_library_and_choose_fn(int src_player, int src_card, int t_player,
+                                                   int num_cards, int must_select,
+                                                   tutor_t destination_chosen,
+                                                   int reveal_chosen,
+                                                   tutor_t destination_rest,
+                                                   int reveal_rest, test_definition_t *test,
+                                                   library_reveal_callback_t fn)
+{
+  int result;
+  result = reveal_top_cards_of_library_and_choose_fn_who_chooses(
+      src_player, src_card, t_player, src_player, num_cards, must_select, destination_chosen,
+      reveal_chosen, destination_rest, reveal_rest, test, (library_reveal_callback_t)0x0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x26557a0; original functions/tutors.c:790. */
+int reveal_top_cards_of_library_and_choose_who_chooses(
+    int src_player, int src_card, int t_player, int who_chooses, int num_cards, int must_select,
+    tutor_t destination_chosen, int reveal_chosen,
+    tutor_t destination_rest, int reveal_rest, test_definition_t *test)
+{
+  int result;
+  result = reveal_top_cards_of_library_and_choose_fn_who_chooses(
+      src_player, src_card, t_player, who_chooses, num_cards, must_select, destination_chosen,
+      reveal_chosen, destination_rest, reveal_rest, test, (library_reveal_callback_t)0x0);
+  return result;
+}
 
 /* ManalinkEh 2022: 0x26555e0; original functions/tutors.c:1009. */
 int reveal_top_cards_of_library_and_choose_type(int src_player, int src_card, int t_player,
@@ -2183,70 +1970,241 @@ int reveal_top_cards_of_library_and_choose_type(int src_player, int src_card, in
       reveal_chosen, destination_rest, reveal_rest, &test, NULL);
 }
 
-
-/* ManalinkEh 2022: 0x2655740; original functions/tutors.c:784.
- * Native behavior: this frontend ignores fn and passes NULL to the worker. */
-int reveal_top_cards_of_library_and_choose_fn(int src_player, int src_card, int t_player,
-                                                   int num_cards, int must_select,
-                                                   tutor_t destination_chosen,
-                                                   int reveal_chosen,
-                                                   tutor_t destination_rest,
-                                                   int reveal_rest, test_definition_t *test,
-                                                   library_reveal_callback_t fn)
+/* ManalinkEh 2022: 0x2651660; original functions/tutors.c:1180. */
+static int select_multiple_cards_from_graveyard_to_array_part(
+    int player, int targ_player, int must_select_all, int ai_selection_mode,
+    test_definition_t *this_test, int max_targets, target_t *ret_location)
 {
-  int result;
-  result = reveal_top_cards_of_library_and_choose_fn_who_chooses(
-      src_player, src_card, t_player, src_player, num_cards, must_select, destination_chosen,
-      reveal_chosen, destination_rest, reveal_rest, test, (library_reveal_callback_t)0x0);
-  return result;
+  test_definition_t default_test;
+  if (!this_test)
+  {
+    this_test = &default_test;
+    new_default_test_definition(this_test, 0, "");
+    if (ai_is_speculating != 1)
+    {
+      if (max_targets == 1)
+        strncpy(default_test.message, "Select a card.", 15);
+      else if (!must_select_all)
+        sprintf(this_test->message, "Select up to %d cards.", max_targets);
+      else
+        sprintf(this_test->message, "Select %d cards.", max_targets);
+    }
+    default_test.id = 904;
+    default_test.id_flag = DOESNT_MATCH;
+  }
+  else if (!this_test->id)
+  {
+    this_test->id = 904;
+    this_test->id_flag = DOESNT_MATCH;
+  }
+  else if (this_test->id != 904 || this_test->id_flag != DOESNT_MATCH)
+    backtrace_and_abort(
+        "functions/tutors.c:1188\nthis_test->id == 904 && this_test->id_flag == DOESNT_MATCH");
+
+  for (int i = 0; i < max_targets; ++i)
+    ret_location[i].player = ret_location[i].card = -1;
+  if (graveyard_has_shroud(targ_player))
+  {
+    if (must_select_all)
+      spell_fizzled = 1;
+    return 0;
+  }
+  int grave_count = count_graveyard(targ_player);
+  if (!grave_count || (max_targets > grave_count && must_select_all))
+  {
+    if (must_select_all)
+      spell_fizzled = 1;
+    return 0;
+  }
+  if (max_targets > grave_count)
+    max_targets = grave_count;
+  if (max_targets < 1)
+  {
+    qsort(ret_location, max_targets, sizeof(*ret_location), qsort_compare_target_player_descending);
+    return max_targets;
+  }
+  int selected = 0;
+  while (selected < max_targets)
+  {
+    int position = new_select_a_card(player, targ_player, TUTOR_FROM_GRAVE, must_select_all > 0,
+                                     ai_selection_mode, -1, this_test);
+    if (position == -1)
+      break;
+    ret_location[selected].player = position;
+    ret_location[selected].card = turn_card_in_grave_face_down(targ_player, position);
+    ++selected;
+  }
+  for (int i = 0; i < selected; ++i)
+    turn_card_in_grave_face_up(targ_player, ret_location[i].player, ret_location[i].card);
+  qsort(ret_location, selected, sizeof(*ret_location), qsort_compare_target_player_descending);
+  if (selected < max_targets && must_select_all)
+    spell_fizzled = 1;
+  return selected;
 }
 
-
-/* ManalinkEh 2022: 0x26557a0; original functions/tutors.c:790. */
-int reveal_top_cards_of_library_and_choose_who_chooses(
-    int src_player, int src_card, int t_player, int who_chooses, int num_cards, int must_select,
-    tutor_t destination_chosen, int reveal_chosen,
-    tutor_t destination_rest, int reveal_rest, test_definition_t *test)
+/* ManalinkEh 2022: 0x2652b10; original functions/tutors.c:1170. */
+int select_multiple_cards_from_graveyard(int player, int targ_player, int must_select_all,
+                                              int ai_selection_mode,
+                                              test_definition_t *this_test, int max_targets,
+                                              target_t *ret_location)
 {
   int result;
-  result = reveal_top_cards_of_library_and_choose_fn_who_chooses(
-      src_player, src_card, t_player, who_chooses, num_cards, must_select, destination_chosen,
-      reveal_chosen, destination_rest, reveal_rest, test, (library_reveal_callback_t)0x0);
-  return result;
+  if (max_targets == 0)
+  {
+    return 0;
+  }
+  if (max_targets - 1U < 0x13)
+  {
+    result = select_multiple_cards_from_graveyard_to_array_part(
+        player, targ_player, must_select_all, ai_selection_mode, this_test, max_targets,
+        ret_location);
+    return result;
+  }
+  backtrace_and_abort("functions/tutors.c:1175\nmax_targets > 0 && max_targets <= 19");
+  __builtin_unreachable();
 }
 
 #endif
-
 
 #ifndef SHANDALAR
-/* ManalinkEh 2022: 0x2650ca0; original functions/tutors.c:18. */
-int show_deck_force_expansion(int player, const int *deck, int num_cards, const char *prompt,
-                              int suppress_done_label, const char *done_label, EXPANSION_t expansion)
+/* ManalinkEh 2022: 0x2652b90; original functions/tutors.c:1180. */
+int select_multiple_cards_from_graveyard_to_array(int player, int targ_player,
+                                                       int must_select_all, int ai_selection_mode,
+                                                       test_definition_t *this_test,
+                                                       int max_targets, target_t *ret_location)
 {
-  call_sub_437E20_unless_ai_is_speculating();
-  hack_show_deck_force_expansion = expansion;
-  int result = show_deck_exe(player, deck, num_cards, prompt, suppress_done_label,
-                             (int32_t)(intptr_t)done_label);
-  hack_show_deck_force_expansion = 0;
-  return result;
+  int result;
+
+  if (max_targets != 0)
+  {
+    result = select_multiple_cards_from_graveyard_to_array_part(
+        player, targ_player, must_select_all, ai_selection_mode, this_test, max_targets,
+        ret_location);
+    return result;
+  }
+  return 0;
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* Recovered October 2022 inline mechanics; native callers retain their expansions. */
-static int select_a_card_from_deck_automatic(int player, int targ_player, int test_type,
-                                              test_definition_t *this_test)
+/* ManalinkEh 2022: 0x2652be0; original functions/tutors.c:1266. */
+int select_multiple_cards_from_either_graveyard(int player, int card, select_grave_t mode,
+                                                int ai_mode_own_graveyard,
+                                                int ai_mode_opponent_graveyard,
+                                                test_definition_t *this_test, int max_targets,
+                                                target_t *ret_location)
 {
-  if (get_tutoring_denial(player))
-    return -1;
-  int pos = 0;
-  if (check_battlefield_for_id(1 - targ_player, CARD_ID_AVEN_MINDCENSOR) && count_deck(targ_player) > 3)
-    pos = count_deck(targ_player) - 4;
-  for (; pos < count_deck(player); ++pos)
-    if (new_make_test(targ_player, deck_ptr[targ_player][pos], test_type, this_test))
-      return pos;
-  return -1;
+  if (max_targets == 0)
+    return 0;
+  if ((unsigned int)max_targets - 1 > 18)
+    backtrace_and_abort("functions/tutors.c:1270\nmax_targets > 0 && max_targets <= 19");
+
+  int cannot_cancel = mode & SFG_CANNOT_CANCEL;
+  test_definition_t default_test;
+  if (!this_test)
+  {
+    this_test = &default_test;
+    new_default_test_definition(this_test, 0, "");
+    if (ai_is_speculating != 1)
+    {
+      if (max_targets == 1)
+        strncpy(default_test.message, "Select a card.", 15);
+      else if (!cannot_cancel)
+        sprintf(this_test->message, "Select up to %d cards.", max_targets);
+      else
+        sprintf(this_test->message, "Select %d cards.", max_targets);
+    }
+    default_test.id = 904;
+    default_test.id_flag = DOESNT_MATCH;
+  }
+  else if (!this_test->id)
+  {
+    this_test->id = 904;
+    this_test->id_flag = DOESNT_MATCH;
+  }
+  else if (this_test->id != 904 || this_test->id_flag != DOESNT_MATCH)
+    backtrace_and_abort(
+        "functions/tutors.c:1277\nthis_test->id == 904 && this_test->id_flag == DOESNT_MATCH");
+
+  int count0 = new_special_count_grave(0, this_test);
+  int count1 = new_special_count_grave(1, this_test);
+  int minimum = cannot_cancel ? max_targets : 0;
+  int can_choose0 = count0 > minimum && (!graveyard_has_shroud(0) || (mode & SFG_NOTARGET));
+  int can_choose1 = count1 > minimum && (!graveyard_has_shroud(1) || (mode & SFG_NOTARGET));
+  int legal_count = (can_choose0 ? count0 : 0) + (can_choose1 ? count1 : 0);
+  if (!legal_count)
+  {
+    if (cannot_cancel)
+      spell_fizzled = 1;
+    return 0;
+  }
+  if (legal_count < max_targets)
+  {
+    max_targets = legal_count;
+    if (cannot_cancel)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+  }
+  int face_down_cards[max_targets];
+  for (int i = 0; i < max_targets; ++i)
+    ret_location[i].player = ret_location[i].card = -1;
+
+  int both_graveyards = can_choose0 && can_choose1;
+  int selection_required = both_graveyards ? 0 : cannot_cancel;
+  int retries = 3, selected = 0;
+  target_t graveyard;
+  graveyard.player = can_choose0 ^ 1;
+  for (;;)
+  {
+    if (both_graveyards)
+    {
+      target_definition_t td;
+      base_target_definition(player, card, &td, 0);
+      td.zone = TARGET_ZONE_PLAYERS;
+      td.allow_cancel = (mode ^ SFG_CANNOT_CANCEL) & SFG_CANNOT_CANCEL;
+      if (mode & SFG_NOTARGET)
+        td.illegal_abilities = 0;
+      load_text(NULL, "TARGET_GRAVEYARD");
+      if (!select_target(player, card - 1000, &td, text_lines[0], &graveyard))
+      {
+        spell_fizzled = 1;
+        for (int i = 0; i < selected; ++i)
+          turn_card_in_grave_face_up(ret_location[i].player >> 16, ret_location[i].player & 0xffff,
+                                     face_down_cards[i]);
+        return -1;
+      }
+    }
+    while (selected < max_targets)
+    {
+      if (both_graveyards)
+        hack_override_show_deck_done_button_label = "Rechoose GY";
+      int ai_mode = graveyard.player == player ? ai_mode_own_graveyard : ai_mode_opponent_graveyard;
+      int position =
+          new_select_a_card(player, graveyard.player,
+                            (mode & SFG_NOTARGET) ? TUTOR_FROM_GRAVE_NOTARGET : TUTOR_FROM_GRAVE,
+                            selection_required, ai_mode, -1, this_test);
+      hack_override_show_deck_done_button_label = NULL;
+      if (position == -1)
+        break;
+      ret_location[selected].player = (graveyard.player << 16) | position;
+      ret_location[selected].card = graveyard_source[graveyard.player][position];
+      face_down_cards[selected] = turn_card_in_grave_face_down(graveyard.player, position);
+      ++selected;
+    }
+    if (selected >= max_targets || !both_graveyards || ai_is_speculating == 1 ||
+        (player == AI && !(trace_mode & 2)) || --retries == 0)
+      break;
+    spell_fizzled = 0;
+  }
+  for (int i = 0; i < selected; ++i)
+    turn_card_in_grave_face_up(ret_location[i].player >> 16, ret_location[i].player & 0xffff,
+                               face_down_cards[i]);
+  if (cannot_cancel && selected < max_targets)
+    spell_fizzled = 1;
+  return selected;
 }
 #endif

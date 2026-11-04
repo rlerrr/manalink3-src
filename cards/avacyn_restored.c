@@ -1,6 +1,7 @@
 #include "manalink.h"
 
 // ------------ General functions
+
 int miracle(int player, int card, event_t event)
 {
 
@@ -559,11 +560,10 @@ static void pump_if_angel(int s_player, int s_card, int t_player, int t_card)
 }
 
 int card_defy_death(int player, int card, event_t event){
-/*
-Defy Death |3|W|W
-Sorcery
-Return target creature card from your graveyard to the battlefield. If it's an Angel, put two +1/+1 counters on it.
-*/
+  /* Defy Death |3|W|W
+   * Sorcery
+   * Return target creature card from your graveyard to the battlefield. If it's an Angel, put two +1/+1 counters on it. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -590,11 +590,9 @@ Return target creature card from your graveyard to the battlefield. If it's an A
 }
 
 int card_devout_chaplain(int player, int card, event_t event){
-/*
-Devout Chaplain |2|W
-Creature — Human Cleric 2/2
-{T}, Tap two untapped Humans you control: Exile target artifact or enchantment.
-*/
+  /* Devout Chaplain |2|W
+   * Creature — Human Cleric 2/2
+   * {T}, Tap two untapped Humans you control: Exile target artifact or enchantment. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -1028,12 +1026,11 @@ When ~ enters the battlefield, target creature you control gains protection from
 }
 
 int card_moonlight_geist(int player, int card, event_t event){
-/*
-Moonlight Geist |2|W
-Creature — Spirit 2/1
-Flying
-{3}{W}: Prevent all combat damage that would be dealt to and dealt by Moonlight Geist this turn.
-*/
+  /* Moonlight Geist |2|W
+   * Creature — Spirit 2/1
+   * Flying
+   * {3}{W}: Prevent all combat damage that would be dealt to and dealt by Moonlight Geist this turn. */
+
 	if (event == EVENT_CHECK_ABILITIES){
 		if (affect_me(player, card) && card_moonlight_geist(player, card, EVENT_CAN_ACTIVATE)){
 			if (current_turn == 1-player){ check_abilities_power -= get_power(player, card); }
@@ -1119,13 +1116,11 @@ When ~ enters the battlefield, you may exile target non-Angel creature you contr
 }
 
 int card_riders_of_gavony(int player, int card, event_t event){
-/*
-Riders of Gavony |2|W|W
-Creature — Human Knight 3/3
-Vigilance
-As Riders of Gavony enters the battlefield, choose a creature type.
-Human creatures you control have protection from creatures of the chosen type.
-*/
+  /* Riders of Gavony |2|W|W
+   * Creature — Human Knight 3/3
+   * Vigilance
+   * As Riders of Gavony enters the battlefield, choose a creature type.
+   * Human creatures you control have protection from creatures of the chosen type. */
 
 	vigilance(player, card, event);
 	if (event == EVENT_RESOLVE_SPELL){
@@ -1245,6 +1240,7 @@ int card_zealous_strike(int player, int card, event_t event){
 }
 
 //BLUE
+
 int card_alchemists_apprentice(int player, int card, event_t event){
 /* CARD_ID_ALCHEMISTS_APPRENTICE	12300
 Alchemist's Apprentice	|1|U
@@ -1259,11 +1255,9 @@ Sacrifice ~: Draw a card. */
 }
 
 int card_amass_the_components(int player, int card, event_t event){
-/*
-Amass the Components |3|U
-Sorcery
-Draw three cards, then put a card from your hand on the bottom of your library.
-*/
+  /* Amass the Components |3|U
+   * Sorcery
+   * Draw three cards, then put a card from your hand on the bottom of your library. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		draw_cards(player, 3);
@@ -1644,11 +1638,10 @@ int card_geist_snatch(int player, int card, event_t event){
 }
 
 int card_ghostform(int player, int card, event_t event){
-/*
-Ghostform |1|U
-Sorcery
-Up to two target creatures can't be blocked this turn.
-*/
+  /* Ghostform |1|U
+   * Sorcery
+   * Up to two target creatures can't be blocked this turn. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1731,12 +1724,10 @@ Exile two target artifacts, creatures, and/or lands you control, then return tho
 
 int card_ghostly_touch(int player, int card, event_t event)
 {
-/*
-Ghostly Touch |1|U
-Enchantment — Aura
-Enchant creature
-Enchanted creature has "Whenever this creature attacks, you may tap or untap target permanent."
-*/
+  /* Ghostly Touch |1|U
+   * Enchantment — Aura
+   * Enchant creature
+   * Enchanted creature has "Whenever this creature attacks, you may tap or untap target permanent." */
 
 	card_instance_t* instance = get_card_instance(player, card);
 	if (instance->damage_target_player >= 0){
@@ -1806,6 +1797,12 @@ static int effect_infinite_reflection(int player, int card, event_t event)
 
 int card_infinite_reflection(int player, int card, event_t event)
 {
+  /* Infinite Reflection	|5|U
+   * Enchantment - Aura
+   * Enchant creature
+   * When ~ enters the battlefield attached to a creature, each other nontoken creature you control becomes a copy of that creature.
+   * Nontoken creatures you control enter the battlefield as a copy of enchanted creature. */
+
   card_instance_t *instance;
   int c;
   card_instance_t *aura;
@@ -2100,11 +2097,10 @@ Draw a card for each Human you control. */
 // Mysthollow Griffin --> skipped
 
 int card_nephalia_smugglers(int player, int card, event_t event){
-/*
-Nephalia Smuggler |U
-Creature — Human Rogue 1/1, U (1)
-{3}{U}, {T}: Exile another target creature you control, then return that card to the battlefield under your control.
-*/
+  /* Nephalia Smuggler |U
+   * Creature — Human Rogue 1/1, U (1)
+   * {3}{U}, {T}: Exile another target creature you control, then return that card to the battlefield under your control. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2399,6 +2395,11 @@ int card_stolen_goods(int player, int card, event_t event){
 }
 
 int card_tamiyo_the_moon_sage(int player, int card, event_t event){
+  /* Tamiyo, the Moon Sage	|3|U|U
+   * Legendary Planeswalker - Tamiyo (4)
+   * +1: Tap target permanent. It doesn't untap during its controller's next untap step.
+   * -2: Draw a card for each tapped creature target player controls.
+   * -8: You get an emblem with "You have no maximum hand size" and "Whenever a card is put into your graveyard from anywhere, you may return it to your hand." */
 
 	/* Planeswalker - Tamiyo (4)
 	 * +1: Tap target permanent. It doesn't untap during its controller's next untap step.
@@ -2662,6 +2663,7 @@ As long as ~ is paired with another creature, both creatures have flying. */
 }
 
 // BLACK
+
 int card_appetite_for_brains(int player, int card, event_t event){
 /* CARD_ID_APPETITE_FOR_BRAINS	12307
 Appetite for Brains	|B
@@ -2819,7 +2821,6 @@ Whenever ~ or another creature dies, target player loses 1 life and you gain 1 l
 	return 0;
 }
 
-
 // Bloodflow Connoisseur --> Scarland Thrinax
 
 // Butcher Ghoul --> Young Wolf
@@ -2856,7 +2857,223 @@ That player discards that card. Activate this ability only any time you could ca
 									&td, "TARGET_PLAYER");
 }
 
+/* ManalinkEh 2022: 0x2347c00; original cards/avacyn_restored.c:2759. */
+int card_dark_impostor(int player, int card, event_t event)
+{
+  /* Dark Impostor	|2|B
+   * Creature - Vampire Assassin 2/2
+   * |4|B|B: Exile target creature and put a +1/+1 counter on this creature.
+   * This creature has all activated abilities of all creature cards exiled with it. */
 
+  card_instance_t *parent;
+  int iid;
+  int choice;
+  int16_t *stored_iids_end;
+  short borrowed_iid;
+  unsigned short borrowed_csv_id;
+  unsigned int first_available_or_choice;
+  int available_count_or_result;
+  card_instance_t *impostor;
+  int16_t *stored_iid_cursor;
+  unsigned int twelfth_ability_available;
+  inst_info_t stored_ability_info;
+  unsigned int second_ability_available;
+  unsigned int third_ability_available;
+  unsigned int fourth_ability_available;
+  unsigned int fifth_ability_available;
+  unsigned int sixth_ability_available;
+  unsigned int seventh_ability_available;
+  unsigned int eighth_ability_available;
+  unsigned int ninth_ability_available;
+  target_definition_t *creature_target_definition;
+  unsigned int ability_count_or_tenth_available;
+  card_instance_t *activation;
+  unsigned int eleventh_ability_available;
+  target_definition_t td;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    impostor = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      int can_activate;
+      int16_t iids[12];
+      if (can_use_activated_abilities(player, card) == 0)
+      {
+        return 0;
+      }
+
+      stored_iid_cursor = iids;
+      can_activate = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 4, 2, 0, 0, 0,
+                                               0, 0, &td, NULL);
+      available_count_or_result = retrieve_stored_iids(impostor, 0x3032, stored_iid_cursor);
+      if (0 < available_count_or_result)
+      {
+        stored_iids_end = stored_iid_cursor + available_count_or_result;
+        do
+        {
+
+          available_count_or_result = dispatch_event_to_single_card_overriding_function(
+              player, card, EVENT_CAN_ACTIVATE, (int)*stored_iid_cursor);
+          if (available_count_or_result != 0)
+          {
+            if (available_count_or_result == 99)
+            {
+              return 99;
+            }
+            can_activate = 1;
+          }
+          stored_iid_cursor = stored_iid_cursor + 1;
+        } while (stored_iids_end != stored_iid_cursor);
+        return can_activate;
+      }
+      return can_activate;
+    }
+    activation = impostor;
+    if (event == EVENT_ACTIVATE)
+    {
+      int16_t iids[12];
+      int16_t stolen_abilities[12];
+      char stolen_abilities_name[12][100];
+
+      stored_iid_cursor = iids;
+      impostor->number_of_targets = '\0';
+      available_count_or_result = retrieve_stored_iids(impostor, 0x3032, stored_iid_cursor);
+      if (available_count_or_result < 1)
+      {
+        first_available_or_choice = 0;
+        second_ability_available = 0;
+        third_ability_available = 0;
+        fourth_ability_available = 0;
+        fifth_ability_available = 0;
+        sixth_ability_available = 0;
+        seventh_ability_available = 0;
+        eighth_ability_available = 0;
+        ninth_ability_available = 0;
+        ability_count_or_tenth_available = 0;
+        eleventh_ability_available = 0;
+        twelfth_ability_available = 0;
+      }
+      else
+      {
+        stored_iids_end = stored_iid_cursor + available_count_or_result;
+        ability_count_or_tenth_available = 0;
+        do
+        {
+          borrowed_iid = *stored_iid_cursor;
+          if (dispatch_event_to_single_card_overriding_function(player, card, EVENT_CAN_ACTIVATE,
+                                                                (int)borrowed_iid) != 0)
+          {
+            stored_iid_cursor = stored_iid_cursor + 1;
+            borrowed_csv_id = cards_data[borrowed_iid].id;
+            available_count_or_result = ability_count_or_tenth_available + 1;
+            stolen_abilities[ability_count_or_tenth_available] = borrowed_iid;
+            strcpy(stolen_abilities_name[ability_count_or_tenth_available],
+                   cards_ptr[borrowed_csv_id]->name);
+            ability_count_or_tenth_available = available_count_or_result;
+          }
+          else
+            stored_iid_cursor = stored_iid_cursor + 1;
+        } while (stored_iids_end != stored_iid_cursor);
+        twelfth_ability_available = (unsigned int)(0xb < (int)ability_count_or_tenth_available);
+        eleventh_ability_available = (unsigned int)(10 < (int)ability_count_or_tenth_available);
+        ninth_ability_available = (unsigned int)(8 < (int)ability_count_or_tenth_available);
+        eighth_ability_available = (unsigned int)(7 < (int)ability_count_or_tenth_available);
+        seventh_ability_available = (unsigned int)(6 < (int)ability_count_or_tenth_available);
+        sixth_ability_available = (unsigned int)(5 < (int)ability_count_or_tenth_available);
+        fifth_ability_available = (unsigned int)(4 < (int)ability_count_or_tenth_available);
+        fourth_ability_available = (unsigned int)(3 < (int)ability_count_or_tenth_available);
+        third_ability_available = (unsigned int)(2 < (int)ability_count_or_tenth_available);
+        second_ability_available = (unsigned int)(1 < (int)ability_count_or_tenth_available);
+        first_available_or_choice = (unsigned int)(0 < (int)ability_count_or_tenth_available);
+        ability_count_or_tenth_available =
+            (unsigned int)(9 < (int)ability_count_or_tenth_available);
+      }
+      available_count_or_result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 4,
+                                                            2, 0, 0, 0, 0, 0, &td, NULL);
+      choice = dialog_impl(
+          player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL, "Kill & steal ability",
+          available_count_or_result, 5, stolen_abilities_name[0], first_available_or_choice, 1,
+          stolen_abilities_name[1], second_ability_available, 1, stolen_abilities_name[2],
+          third_ability_available, 1, stolen_abilities_name[3], fourth_ability_available, 1,
+          stolen_abilities_name[4], fifth_ability_available, 1, stolen_abilities_name[5],
+          sixth_ability_available, 1, stolen_abilities_name[6], seventh_ability_available, 1,
+          stolen_abilities_name[7], eighth_ability_available, 1, stolen_abilities_name[8],
+          ninth_ability_available, 1, stolen_abilities_name[9], ability_count_or_tenth_available, 1,
+          stolen_abilities_name[10], eleventh_ability_available, 1, stolen_abilities_name[11],
+          twelfth_ability_available, 1, 0, 0, 0, 0);
+      if (choice == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (choice != 1)
+      {
+
+        borrowed_iid = stolen_abilities[choice - 2];
+        dispatch_event_to_single_card_overriding_function(player, card, EVENT_ACTIVATE,
+                                                          (int)borrowed_iid);
+        if (spell_fizzled == 1)
+        {
+          return 0;
+        }
+        set_inst_info(impostor, 0x3032, (int)borrowed_iid, (uint16_t)choice);
+        return 0;
+      }
+
+      available_count_or_result = generic_activated_ability(player, card, EVENT_ACTIVATE, 4, 4, 2,
+                                                            0, 0, 0, 0, 0, &td, "TARGET_CREATURE");
+      if (spell_fizzled != 1)
+      {
+        set_inst_info(impostor, 0x3032, 0, 1);
+        return available_count_or_result;
+      }
+      return available_count_or_result;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    activation = get_card_instance(player, card);
+  }
+  creature_target_definition = &td;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    stored_ability_info = inst_info(activation, 0x3032);
+    first_available_or_choice =
+        ((uint32_t)stored_ability_info.id | ((uint32_t)stored_ability_info.data2 << 16)) >> 0x10;
+    if (first_available_or_choice == 1)
+    {
+      if (valid_target(creature_target_definition) != 0)
+      {
+
+        parent = get_card_instance(activation->parent_controller, activation->parent_card);
+        iid = get_original_internal_card_id(activation->targets[0].player,
+                                            activation->targets[0].card);
+        kill_target0(player, card, KILL_EXILE);
+        add_counters(player, card, activation->parent_controller, activation->parent_card,
+                     COUNTER_P1_P1, 1);
+        if (has_an_activated_ability(iid) != 0)
+        {
+          store_iid(parent, 0x3032, (int16_t)iid);
+        }
+      }
+    }
+    else if (1 < first_available_or_choice)
+    {
+
+      dispatch_event_to_single_card_overriding_function(player, card, EVENT_RESOLVE_ACTIVATION,
+                                                        stored_ability_info.data);
+    }
+  }
+  return 0;
+}
 
 int card_demonic_taskmaster(int player, int card, event_t event){
 /* CARD_ID_DEMONIC_TASKMASTER	12344
@@ -2953,6 +3170,12 @@ Target creature gets -X/-X until end of turn. */
 
 int card_descent_into_madness(int player, int card, event_t event)
 {
+  /* CARD_ID_DESCENT_INTO_MADNESS	12347
+   * Descent into Madness	|3|B|B
+   * Enchantment
+   * At the beginning of your upkeep, put a despair counter on ~, then each player exiles X permanents he or she controls and/or cards from his or her hand,
+   * where X is the number of despair counters on ~. */
+
   card_instance_t *instance = get_card_instance(player, card);
   target_definition_t td;
   target_definition_t td1;
@@ -3124,11 +3347,9 @@ Enchanted creature gets -1/-1 and is a |Sblack Zombie in addition to its other c
 
 int card_gloom_surgeon(int player, int card, event_t event)
 {
-/*
-Gloom Surgeon |1|B
-Creature — Spirit 2/1
-If combat damage would be dealt to Gloom Surgeon, prevent that damage and exile that many cards from the top of your library.
-*/
+  /* Gloom Surgeon |1|B
+   * Creature — Spirit 2/1
+   * If combat damage would be dealt to Gloom Surgeon, prevent that damage and exile that many cards from the top of your library. */
 
 	card_instance_t* damage = combat_damage_being_prevented(event);
 	if (damage && damage->damage_target_card == card && damage->damage_target_player == player)
@@ -3142,11 +3363,10 @@ If combat damage would be dealt to Gloom Surgeon, prevent that damage and exile 
 }
 
 int card_grave_exchange(int player, int card, event_t event){
-/*
-Grave Exchange |4|B|B|
-Sorcery
-Return target creature card from your graveyard to your hand. Target player sacrifices a creature.
-*/
+  /* Grave Exchange |4|B|B|
+   * Sorcery
+   * Return target creature card from your graveyard to your hand. Target player sacrifices a creature. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -3276,12 +3496,11 @@ static int harvester_of_souls_legacy(int player, int card, event_t event)
 }
 
 int card_harvester_of_souls(int player, int card, event_t event){
-/*
-Harvester of Souls |4|B|B
-Creature — Demon 5/5
-Deathtouch
-Whenever another nontoken creature dies, you may draw a card.
-*/
+  /* Harvester of Souls |4|B|B
+   * Creature — Demon 5/5
+   * Deathtouch
+   * Whenever another nontoken creature dies, you may draw a card. */
+
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		int found = 0;
 		int c;
@@ -3449,12 +3668,10 @@ int card_maalfeld_twins(int player, int card, event_t event){
 }
 
 int card_marrow_bats(int player, int card, event_t event){
-/*
-Marrow Bats |4|B
-Creature — Bat Skeleton 4/1
-Flying
-Pay 4 life: Regenerate Marrow Bats.
-*/
+  /* Marrow Bats |4|B
+   * Creature — Bat Skeleton 4/1
+   * Flying
+   * Pay 4 life: Regenerate Marrow Bats. */
 
 	if( event == EVENT_CAN_ACTIVATE && can_pay_life(player, 4) ){
 		return regeneration(player, card, event, MANACOST0);
@@ -3573,12 +3790,11 @@ When ~ dies, each player loses 3 life. */
 }
 
 int card_treacherous_pit_dweller(int player, int card, event_t event){
-	/*
-	  Treacherous Pit-Dweller |B|B
-	  Creature - Demon 4/3
-	  When Treacherous Pit-Dweller enters the battlefield from a graveyard, target opponent gains control of it.
-	  Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)
-	*/
+  /* Treacherous Pit-Dweller |B|B
+   * 	  Creature - Demon 4/3
+   * 	  When Treacherous Pit-Dweller enters the battlefield from a graveyard, target opponent gains control of it.
+   * 	  Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.) */
+
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && reason_for_trigger_controller == player ){
 		if( check_special_flags3(trigger_cause_controller, trigger_cause, SF3_REANIMATED) ){
 			etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -3682,6 +3898,7 @@ When enchanted creature dies, return that card to the battlefield under your con
 }
 
 //RED
+
 // Archwing Dragon --> Viashivan Sandstalker
 
 int card_aggravate(int player, int card, event_t event){
@@ -3876,12 +4093,11 @@ Discard your hand, then draw two cards. */
 }
 
 int card_dual_casting(int player, int card, event_t event){
-/*
-Dual Casting |1|R
-Enchantment — Aura
-Enchant creature
-Enchanted creature has "{R}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy."
-*/
+  /* Dual Casting |1|R
+   * Enchantment — Aura
+   * Enchant creature
+   * Enchanted creature has "{R}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy." */
+
 	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int t_player = instance->damage_target_player;
@@ -4114,12 +4330,11 @@ Haste
 }
 
 int card_malicious_intent(int player, int card, event_t event){
-/*
-Malicious Intent |1|R
-Enchantment — Aura
-Enchant creature
-Enchanted creature has "{T}: Target creature can't block this turn."
-*/
+  /* Malicious Intent |1|R
+   * Enchantment — Aura
+   * Enchant creature
+   * Enchanted creature has "{T}: Target creature can't block this turn." */
+
 	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int t_player = instance->damage_target_player;
@@ -4156,6 +4371,11 @@ Enchanted creature has "{T}: Target creature can't block this turn."
 
 int card_malignus(int player, int card, event_t event)
 {
+  /* Malignus	|3|R|R
+   * Creature - Elemental Spirit 100/100
+   * ~'s power and toughness are each equal to half the highest life total among your opponents, rounded up.
+   * Damage that would be dealt by ~ can't be prevented. */
+
   my_damage_cannot_be_prevented(player, card, event);
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
@@ -4308,6 +4528,7 @@ static void block_deal1dam(int player, int card, int blocking_player, int blocki
 {
   damage_creature(blocking_player, blocking_card, 1, player, card);
 }
+
 int card_somberwald_vigilante(int player, int card, event_t event)
 {
   /* Somberwald Vigilante	|R
@@ -4320,6 +4541,10 @@ int card_somberwald_vigilante(int player, int card, event_t event)
 }
 
 int card_stonewright(int player, int card, event_t event){
+  /* Stonewright	|R
+   * Creature - Human Shaman 1/1
+   * Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)
+   * As long as ~ is paired with another creature, each of those creatures has "|R: This creature gets +1/+0 until end of turn." */
 
 	if( is_paired(player, card) ){
 
@@ -4433,6 +4658,11 @@ int card_thunderous_wrath(int player, int card, event_t event){
 }
 
 int card_tibalt_the_fiend_blooded(int player, int card, event_t event){
+  /* Tibalt, the Fiend-Blooded	|R|R
+   * Legendary Planeswalker - Tibalt (2)
+   * +1: Draw a card, then discard a card at random.
+   * -4: Tibalt deals damage equal to the number of cards in target player's hand to that player.
+   * -6: Gain control of all creatures until end of turn. Untap them. They gain haste until end of turn. */
 
 	/* Planeswalker - Tibalt (2)
 	 * +1: Draw a card, then discard a card at random.
@@ -4509,12 +4739,11 @@ int card_tibalt_the_fiend_blooded(int player, int card, event_t event){
 }
 
 int card_tyrant_of_discord(int player, int card, event_t event){
-/*
-Tyrant of Discord |4|R|R|R
-Creature — Elemental 7/7
-When Tyrant of Discord enters the battlefield, target opponent chooses a permanent he or she controls at random and sacrifices it.
-If a nonland permanent is sacrificed this way, repeat this process.
-*/
+  /* Tyrant of Discord |4|R|R|R
+   * Creature — Elemental 7/7
+   * When Tyrant of Discord enters the battlefield, target opponent chooses a permanent he or she controls at random and sacrifices it.
+   * If a nonland permanent is sacrificed this way, repeat this process. */
+
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -4642,7 +4871,6 @@ When ~ enters the battlefield, gain control of target permanent until end of tur
 
 // GREEN
 
-
 int card_abundant_growth(int player, int card, event_t event){
 	/* Abundant Growth	|G
 	 * Enchantment - Aura
@@ -4657,7 +4885,6 @@ int card_abundant_growth(int player, int card, event_t event){
 
 	return enchanted_land_has_T_add_n_mana_of_any_one_color(player, card, event, 1);
 }
-
 
 int card_blessing_of_nature(int player, int card, event_t event){
 /* CARD_ID_BLESSINGS_OF_NATURE	12315
@@ -4720,6 +4947,12 @@ Creatures with flying can't block creatures you control. */
 
 int card_champion_of_lambholt(int player, int card, event_t event)
 {
+  /* CARD_ID_CHAMPION_OF_LAMBHOLT	12329
+   * Champion of Lambholt	|1|G|G
+   * Creature - Human Warrior 1/1
+   * Creatures with power less than ~'s power can't block creatures you control.
+   * Whenever another creature enters the battlefield under your control, put a +1/+1 counter on ~. */
+
   card_instance_t *instance;
   int blocker_power;
   int champion_power;
@@ -4874,6 +5107,11 @@ Destroy target creature with flying and all Equipment attached to that creature.
 
 int card_druids_repository(int player, int card, event_t event)
 {
+  /* Druids' Repository	|1|G|G
+   * Enchantment
+   * Whenever a creature you control attacks, put a charge counter on ~.
+   * Remove a charge counter from ~: Add one mana of any color to your mana pool. */
+
   int result;
   card_instance_t *instance;
   store_attackers(player, card, event, 0, player, -1, NULL);
@@ -5147,6 +5385,13 @@ Exile the top card of your library. If it's a permanent card, you may put it ont
 }
 
 int card_rain_of_thorns(int player, int card, event_t event){
+  /* Rain of Thorns	|4|G|G
+   * Sorcery
+   * Choose one or more -
+   * * Destroy target artifact.
+   * * Destroy target enchantment.
+   * * Destroy target land. */
+
 /*
 Rain of Thorns English
 Sorcery, 4GG (6)
@@ -5269,11 +5514,10 @@ Miracle |G (You may cast this card for its miracle cost when you draw it if it's
 }
 
 int card_sheltering_word(int player, int card, event_t event){
-	/*
-	  Sheltering Word |1|G
-	  Instant
-	  Target creature you control gains hexproof until end of turn. You gain life equal to that creature's toughness.
-	*/
+  /* Sheltering Word |1|G
+   * 	  Instant
+   * 	  Target creature you control gains hexproof until end of turn. You gain life equal to that creature's toughness. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -5397,11 +5641,10 @@ static int terrifying_presence_effect(int player, int card, event_t event)
 }
 
 int card_terrifying_presence(int player, int card, event_t event){
-/*
-Terrifying Presence |1|G
-Instant
-Prevent all combat damage that would be dealt by creatures other than target creature this turn.
-*/
+  /* Terrifying Presence |1|G
+   * Instant
+   * Prevent all combat damage that would be dealt by creatures other than target creature this turn. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -5450,6 +5693,10 @@ Whenever another nontoken creature enters the battlefield under your control, yo
 
 int card_timberland_guide(int player, int card, event_t event)
 {
+  /* Bond Beetle	|G
+   * Creature - Insect 0/1
+   * When ~ enters the battlefield, put a +1/+1 counter on target creature. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -5698,7 +5945,81 @@ static int check_targets_for_bruna(int player, int card, int mode){
 	return result;
 }
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2340190; original cards/avacyn_restored.c:5705. */
+static void bruna_ability(int player, int card, event_t event)
+{
+  while (check_targets_for_bruna(player, card, 0) != 0)
+  {
+    if (player == 0)
+    {
+      target_definition_t td;
+      base_target_definition(0, card, &td, 4);
+      td.required_subtype = 0x4002;
+      card_instance_t *instance = get_card_instance(0, card);
+      instance->number_of_targets = 0;
+      if (!pick_next_target_noload(&td, "Select an Aura card with enchant creature."))
+      {
+        spell_fizzled = 0;
+        break;
+      }
+      card_instance_t *aura =
+          get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      aura->damage_target_player = 0;
+      aura->damage_target_card = card;
+    }
+    else
+    {
+      int result = check_targets_for_bruna(player, card, 1);
+      if (result >= 0)
+      {
+        card_instance_t *aura = get_card_instance(1 - player, result);
+        aura->damage_target_player = player;
+        aura->damage_target_card = card;
+      }
+    }
+  }
+  test_definition_t this_test;
+  new_default_test_definition(&this_test, 4, "Select an Aura card with enchant creature.");
+  this_test.subtype = 0x4002;
+  while (new_special_count_grave(player, &this_test))
+  {
+    int result = new_global_tutor(player, player, 2, 1, 0, 2, &this_test);
+    if (result < 0)
+      break;
+    put_into_play_aura_attached_to_target(player, result, player, card);
+  }
+  this_test.zone = 0x100;
+  while (check_battlefield_for_special_card(player, card, player, 0, &this_test))
+  {
+    int result = new_select_a_card(player, player, 4, 0, 2, -1, &this_test);
+    if (result < 0)
+      break;
+    put_into_play_aura_attached_to_target(player, result, player, card);
+  }
+}
+#endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x234ffc0; original cards/avacyn_restored.c:5758. */
+int card_bruna_light_of_alabaster(int player, int card, event_t event)
+{
+  /* Bruna, Light of Alabaster	|3|W|W|U
+   * Legendary Creature - Angel 5/5
+   * Flying, vigilance
+   * Whenever ~ attacks or blocks, you may attach to it any number of Auras on the battlefield and you may put onto the battlefield attached to it any number
+   * of Aura cards that could enchant it from your graveyard and/or hand. */
+
+  check_legend_rule(player, card, event);
+  vigilance(player, card, event);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+    bruna_ability(player, card, event);
+  if (blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG))
+    bruna_ability(player, card, event);
+  return 0;
+}
+#endif
 
 int card_gisela_blade_of_goldnight(int player, int card, event_t event)
 {
@@ -5772,6 +6093,12 @@ Whenever a creature enters the battlefield under your control, you may have ~ be
 
 int card_angelic_armaments(int player, int card, event_t event)
 {
+  /* CARD_ID_ANGELIC_ARMAMENTS	12305
+   * Angelic Armaments	|3
+   * Artifact - Equipment
+   * Equipped creature gets +2/+2, has flying, and is a |Swhite Angel in addition to its other colors and types.
+   * Equip |4 */
+
   int result;
   attached_is_additional_color(player, card, event, COLOR_TEST_WHITE);
   attached_is_additional_subtype(player, card, event, SUBTYPE_ANGEL);
@@ -5940,6 +6267,11 @@ Artifact Creature - Construct 3/3
 
 int card_otherworld_atlas(int player, int card, event_t event)
 {
+  /* Otherworld Atlas	|4
+   * Artifact - Book
+   * |T: Put a charge counter on this artifact.
+   * |T: Each player draws a card for each charge counter on this artifact. */
+
   enum
   {
     CHOICE_COUNTER = 1,
@@ -6284,7 +6616,6 @@ Whenever an Angel enters the battlefield under your control, you gain 1 life.
 	return mana_producer(player, card, event);
 }
 
-
 int card_slayers_stronghold(int player, int card, event_t event){
 /* Slayers' Stronghold	""
  * Land
@@ -6346,292 +6677,3 @@ int card_slayers_stronghold(int player, int card, event_t event){
 
 	return 0;
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2347c00; original cards/avacyn_restored.c:2759. */
-int card_dark_impostor(int player, int card, event_t event)
-{
-  card_instance_t *parent;
-  int iid;
-  int choice;
-  int16_t *stored_iids_end;
-  short borrowed_iid;
-  unsigned short borrowed_csv_id;
-  unsigned int first_available_or_choice;
-  int available_count_or_result;
-  card_instance_t *impostor;
-  int16_t *stored_iid_cursor;
-  unsigned int twelfth_ability_available;
-  inst_info_t stored_ability_info;
-  unsigned int second_ability_available;
-  unsigned int third_ability_available;
-  unsigned int fourth_ability_available;
-  unsigned int fifth_ability_available;
-  unsigned int sixth_ability_available;
-  unsigned int seventh_ability_available;
-  unsigned int eighth_ability_available;
-  unsigned int ninth_ability_available;
-  target_definition_t *creature_target_definition;
-  unsigned int ability_count_or_tenth_available;
-  card_instance_t *activation;
-  unsigned int eleventh_ability_available;
-  target_definition_t td;
-
-  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
-  {
-    default_target_definition(player, card, &td, 2);
-    impostor = get_card_instance(player, card);
-    if (event == EVENT_CAN_ACTIVATE)
-    {
-      int can_activate;
-      int16_t iids[12];
-      if (can_use_activated_abilities(player, card) == 0)
-      {
-        return 0;
-      }
-
-      stored_iid_cursor = iids;
-      can_activate = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 4, 2, 0, 0, 0,
-                                               0, 0, &td, NULL);
-      available_count_or_result = retrieve_stored_iids(impostor, 0x3032, stored_iid_cursor);
-      if (0 < available_count_or_result)
-      {
-        stored_iids_end = stored_iid_cursor + available_count_or_result;
-        do
-        {
-
-          available_count_or_result = dispatch_event_to_single_card_overriding_function(
-              player, card, EVENT_CAN_ACTIVATE, (int)*stored_iid_cursor);
-          if (available_count_or_result != 0)
-          {
-            if (available_count_or_result == 99)
-            {
-              return 99;
-            }
-            can_activate = 1;
-          }
-          stored_iid_cursor = stored_iid_cursor + 1;
-        } while (stored_iids_end != stored_iid_cursor);
-        return can_activate;
-      }
-      return can_activate;
-    }
-    activation = impostor;
-    if (event == EVENT_ACTIVATE)
-    {
-      int16_t iids[12];
-      int16_t stolen_abilities[12];
-      char stolen_abilities_name[12][100];
-
-      stored_iid_cursor = iids;
-      impostor->number_of_targets = '\0';
-      available_count_or_result = retrieve_stored_iids(impostor, 0x3032, stored_iid_cursor);
-      if (available_count_or_result < 1)
-      {
-        first_available_or_choice = 0;
-        second_ability_available = 0;
-        third_ability_available = 0;
-        fourth_ability_available = 0;
-        fifth_ability_available = 0;
-        sixth_ability_available = 0;
-        seventh_ability_available = 0;
-        eighth_ability_available = 0;
-        ninth_ability_available = 0;
-        ability_count_or_tenth_available = 0;
-        eleventh_ability_available = 0;
-        twelfth_ability_available = 0;
-      }
-      else
-      {
-        stored_iids_end = stored_iid_cursor + available_count_or_result;
-        ability_count_or_tenth_available = 0;
-        do
-        {
-          borrowed_iid = *stored_iid_cursor;
-          if (dispatch_event_to_single_card_overriding_function(player, card, EVENT_CAN_ACTIVATE,
-                                                                (int)borrowed_iid) != 0)
-          {
-            stored_iid_cursor = stored_iid_cursor + 1;
-            borrowed_csv_id = cards_data[borrowed_iid].id;
-            available_count_or_result = ability_count_or_tenth_available + 1;
-            stolen_abilities[ability_count_or_tenth_available] = borrowed_iid;
-            strcpy(stolen_abilities_name[ability_count_or_tenth_available],
-                   cards_ptr[borrowed_csv_id]->name);
-            ability_count_or_tenth_available = available_count_or_result;
-          }
-          else
-            stored_iid_cursor = stored_iid_cursor + 1;
-        } while (stored_iids_end != stored_iid_cursor);
-        twelfth_ability_available = (unsigned int)(0xb < (int)ability_count_or_tenth_available);
-        eleventh_ability_available = (unsigned int)(10 < (int)ability_count_or_tenth_available);
-        ninth_ability_available = (unsigned int)(8 < (int)ability_count_or_tenth_available);
-        eighth_ability_available = (unsigned int)(7 < (int)ability_count_or_tenth_available);
-        seventh_ability_available = (unsigned int)(6 < (int)ability_count_or_tenth_available);
-        sixth_ability_available = (unsigned int)(5 < (int)ability_count_or_tenth_available);
-        fifth_ability_available = (unsigned int)(4 < (int)ability_count_or_tenth_available);
-        fourth_ability_available = (unsigned int)(3 < (int)ability_count_or_tenth_available);
-        third_ability_available = (unsigned int)(2 < (int)ability_count_or_tenth_available);
-        second_ability_available = (unsigned int)(1 < (int)ability_count_or_tenth_available);
-        first_available_or_choice = (unsigned int)(0 < (int)ability_count_or_tenth_available);
-        ability_count_or_tenth_available =
-            (unsigned int)(9 < (int)ability_count_or_tenth_available);
-      }
-      available_count_or_result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 4,
-                                                            2, 0, 0, 0, 0, 0, &td, NULL);
-      choice = dialog_impl(
-          player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL, "Kill & steal ability",
-          available_count_or_result, 5, stolen_abilities_name[0], first_available_or_choice, 1,
-          stolen_abilities_name[1], second_ability_available, 1, stolen_abilities_name[2],
-          third_ability_available, 1, stolen_abilities_name[3], fourth_ability_available, 1,
-          stolen_abilities_name[4], fifth_ability_available, 1, stolen_abilities_name[5],
-          sixth_ability_available, 1, stolen_abilities_name[6], seventh_ability_available, 1,
-          stolen_abilities_name[7], eighth_ability_available, 1, stolen_abilities_name[8],
-          ninth_ability_available, 1, stolen_abilities_name[9], ability_count_or_tenth_available, 1,
-          stolen_abilities_name[10], eleventh_ability_available, 1, stolen_abilities_name[11],
-          twelfth_ability_available, 1, 0, 0, 0, 0);
-      if (choice == 0)
-      {
-        spell_fizzled = 1;
-        return 0;
-      }
-      if (choice != 1)
-      {
-
-        borrowed_iid = stolen_abilities[choice - 2];
-        dispatch_event_to_single_card_overriding_function(player, card, EVENT_ACTIVATE,
-                                                          (int)borrowed_iid);
-        if (spell_fizzled == 1)
-        {
-          return 0;
-        }
-        set_inst_info(impostor, 0x3032, (int)borrowed_iid, (uint16_t)choice);
-        return 0;
-      }
-
-      available_count_or_result = generic_activated_ability(player, card, EVENT_ACTIVATE, 4, 4, 2,
-                                                            0, 0, 0, 0, 0, &td, "TARGET_CREATURE");
-      if (spell_fizzled != 1)
-      {
-        set_inst_info(impostor, 0x3032, 0, 1);
-        return available_count_or_result;
-      }
-      return available_count_or_result;
-    }
-  }
-  else
-  {
-    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 2);
-    activation = get_card_instance(player, card);
-  }
-  creature_target_definition = &td;
-  if (event == EVENT_RESOLVE_ACTIVATION)
-  {
-
-    stored_ability_info = inst_info(activation, 0x3032);
-    first_available_or_choice =
-        ((uint32_t)stored_ability_info.id | ((uint32_t)stored_ability_info.data2 << 16)) >> 0x10;
-    if (first_available_or_choice == 1)
-    {
-      if (valid_target(creature_target_definition) != 0)
-      {
-
-        parent = get_card_instance(activation->parent_controller, activation->parent_card);
-        iid = get_original_internal_card_id(activation->targets[0].player,
-                                            activation->targets[0].card);
-        kill_target0(player, card, KILL_EXILE);
-        add_counters(player, card, activation->parent_controller, activation->parent_card,
-                     COUNTER_P1_P1, 1);
-        if (has_an_activated_ability(iid) != 0)
-        {
-          store_iid(parent, 0x3032, (int16_t)iid);
-        }
-      }
-    }
-    else if (1 < first_available_or_choice)
-    {
-
-      dispatch_event_to_single_card_overriding_function(player, card, EVENT_RESOLVE_ACTIVATION,
-                                                        stored_ability_info.data);
-    }
-  }
-  return 0;
-}
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x2340190; original cards/avacyn_restored.c:5705. */
-static void bruna_ability(int player, int card, event_t event)
-{
-  while (check_targets_for_bruna(player, card, 0) != 0)
-  {
-    if (player == 0)
-    {
-      target_definition_t td;
-      base_target_definition(0, card, &td, 4);
-      td.required_subtype = 0x4002;
-      card_instance_t *instance = get_card_instance(0, card);
-      instance->number_of_targets = 0;
-      if (!pick_next_target_noload(&td, "Select an Aura card with enchant creature."))
-      {
-        spell_fizzled = 0;
-        break;
-      }
-      card_instance_t *aura =
-          get_card_instance(instance->targets[0].player, instance->targets[0].card);
-      aura->damage_target_player = 0;
-      aura->damage_target_card = card;
-    }
-    else
-    {
-      int result = check_targets_for_bruna(player, card, 1);
-      if (result >= 0)
-      {
-        card_instance_t *aura = get_card_instance(1 - player, result);
-        aura->damage_target_player = player;
-        aura->damage_target_card = card;
-      }
-    }
-  }
-  test_definition_t this_test;
-  new_default_test_definition(&this_test, 4, "Select an Aura card with enchant creature.");
-  this_test.subtype = 0x4002;
-  while (new_special_count_grave(player, &this_test))
-  {
-    int result = new_global_tutor(player, player, 2, 1, 0, 2, &this_test);
-    if (result < 0)
-      break;
-    put_into_play_aura_attached_to_target(player, result, player, card);
-  }
-  this_test.zone = 0x100;
-  while (check_battlefield_for_special_card(player, card, player, 0, &this_test))
-  {
-    int result = new_select_a_card(player, player, 4, 0, 2, -1, &this_test);
-    if (result < 0)
-      break;
-    put_into_play_aura_attached_to_target(player, result, player, card);
-  }
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x234ffc0; original cards/avacyn_restored.c:5758. */
-int card_bruna_light_of_alabaster(int player, int card, event_t event)
-{
-  check_legend_rule(player, card, event);
-  vigilance(player, card, event);
-  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
-  if (event == EVENT_DAT_ABILITY)
-    bruna_ability(player, card, event);
-  if (blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG))
-    bruna_ability(player, card, event);
-  return 0;
-}
-
-#endif

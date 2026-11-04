@@ -204,7 +204,6 @@ static int coldsnap_pitchspell(int player, int card, event_t event, test_definit
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
-
 //-------- CARDS
 
 static int effect_valkyrie(int player, int card, event_t event)
@@ -283,6 +282,12 @@ Flying, vigilance
 
 int card_allosaurus_rider(int player, int card, event_t event)
 {
+  /* CARD_ID_ALLOSAURUS_RIDER	8330
+   * Allosaurus Rider	|5|G|G
+   * Creature - Elf Warrior 101/101
+   * You may exile two |Sgreen cards from your hand rather than pay ~'s mana cost.
+   * ~'s power and toughness are each equal to 1 plus the number of lands you control. */
+
   test_definition_t this_test;
   if (event - EVENT_POWER < 2)
   {
@@ -450,14 +455,13 @@ Draw a card at the beginning of the next turn's upkeep. */
 }
 
 int card_blizzard_specter(int player, int card, event_t event){
-/*
-Blizzard Specter |2|U|B
-Snow Creature — Specter 2/3
-Flying
-Whenever Blizzard Specter deals combat damage to a player, choose one —
-• That player returns a permanent he or she controls to its owner's hand.
-• That player discards a card.
-*/
+  /* Blizzard Specter |2|U|B
+   * Snow Creature — Specter 2/3
+   * Flying
+   * Whenever Blizzard Specter deals combat damage to a player, choose one —
+   * • That player returns a permanent he or she controls to its owner's hand.
+   * • That player discards a card. */
+
 	if (damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_BE_COMBAT_DAMAGE))
 	{
 		card_instance_t* instance = get_card_instance(player, card);
@@ -533,11 +537,13 @@ static int rtrue(int player, int card, int number_of_age_counters)
 {
   return 1;
 }
+
 static int produce_mana_red_thunk(int player, int card, int number_of_age_counters)
 {
   produce_mana(player, COLOR_RED, number_of_age_counters);
   return 1;
 }
+
 int card_braid_of_fire(int player, int card, event_t event)
 {
   /* Braid of Fire	|1|R
@@ -612,10 +618,166 @@ int card_coldsteel_heart(int player, int card, event_t event){
 	return plain_mana_producer(player, card, event);
 }
 
+/* ManalinkEh 2022: 0x2162120; original cards/coldsnap.c:586. */
+int card_commandeer(int player, int card, event_t event)
+{
+  /* Commandeer	|5|U|U
+   * Instant
+   * You may exile two blue cards from your hand rather than pay this spell's mana cost.
+   * Gain control of target noncreature spell. You may choose new targets for it. (If that spell is an artifact, enchantment, or planeswalker, the permanent enters under your control.) */
+
+  int result;
+  card_instance_t *target_spell;
+  int card_00;
+  target_definition_t *spell_target_definition;
+  card_instance_t *instance;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  if ((event == EVENT_CAN_CAST) || (event == EVENT_MODIFY_COST))
+  {
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.illegal_type = TYPE_CREATURE;
+    new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
+    this_test.color = 4;
+    this_test.zone = 0x100;
+    this_test.id = CARD_ID_RULES_ENGINE;
+    this_test.id_flag = 1;
+    instance = get_card_instance(player, card);
+    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
+    if (event == EVENT_CAN_CAST)
+    {
+      return counterspell(player, card, EVENT_CAN_CAST, &td, -1);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      counterspell_target_definition(player, card, &td, 0xff);
+      td.illegal_type = TYPE_CREATURE;
+      new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
+      this_test.color = 4;
+      this_test.zone = 0x100;
+      this_test.id = CARD_ID_RULES_ENGINE;
+      this_test.id_flag = 1;
+      instance = get_card_instance(player, card);
+      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
+      spell_target_definition = &td;
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      result = casting_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      target_spell = get_card_instance(card_on_stack_controller, card_on_stack);
+      if (target_spell->number_of_targets == '\x01')
+      {
+        instance->info_slot = 1;
+        return deflect_one_target(player, card, EVENT_CAST_SPELL, NULL);
+      }
+      target_spell = get_card_instance(card_on_stack_controller, card_on_stack);
+      if (target_spell->number_of_targets < 2)
+      {
+        return counterspell(player, card, EVENT_CAST_SPELL, spell_target_definition, 0);
+      }
+      instance->info_slot = 2;
+      return deflect_multi_targets(player, card, EVENT_CAST_SPELL, NULL);
+    }
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      counterspell_target_definition(player, card, &td, 0xff);
+      td.illegal_type = TYPE_CREATURE;
+      new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
+      this_test.color = 4;
+      this_test.zone = 0x100;
+      this_test.id = CARD_ID_RULES_ENGINE;
+      this_test.id_flag = 1;
+      get_card_instance(player, card);
+      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CHANGE_TARGET, &this_test);
+      return 0;
+    }
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.illegal_type = TYPE_CREATURE;
+    new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
+    this_test.color = 4;
+    this_test.zone = 0x100;
+    this_test.id = CARD_ID_RULES_ENGINE;
+    this_test.id_flag = 1;
+    instance = get_card_instance(player, card);
+    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
+  }
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+  result = counterspell_validate(player, card, NULL, 0);
+  if (result != 0)
+  {
+    result = instance->info_slot;
+    if (result == 1)
+    {
+      deflect_one_target(player, card, EVENT_RESOLVE_SPELL, NULL);
+      result = instance->info_slot;
+    }
+    if (result == 2)
+    {
+      deflect_multi_targets(player, card, EVENT_RESOLVE_SPELL, NULL);
+    }
+    result = is_what(instance->targets[0].player, instance->targets[0].card, 0x144);
+    if (result != 0)
+    {
+      target_spell = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      result = target_spell->internal_card_id;
+      if (result != -1)
+      {
+        obliterate_card(instance->targets[0].player, instance->targets[0].card);
+        card_00 = add_card_to_hand(player, result);
+        put_into_play(player, card_00);
+        result = instance->targets[0].player;
+        if (result != player)
+        {
+          if (result == 1)
+          {
+            add_state(player, card_00, 0x1000);
+          }
+          else
+          {
+            remove_state(player, card_00, 0x1000);
+          }
+        }
+      }
+    }
+  }
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+
 static int has_snow_mana_thunk(int player, int card, int number_of_age_counters)
 {
   return has_snow_mana(player, number_of_age_counters, 0);
 }
+
 static int charge_snow_mana_while_processing(int player, int card, int number_of_age_counters)
 {
   put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_TRIGGER, 0, 0);
@@ -624,9 +786,9 @@ static int charge_snow_mana_while_processing(int player, int card, int number_of
   obliterate_top_card_of_stack();
   return rval;
 }
-int card_cover_of_winter(int player, int card, event_t event){
 
-	/* Cumulative upkeep |I
+int card_cover_of_winter(int player, int card, event_t event){
+  /* Cumulative upkeep |I
 	 * If a creature would deal combat damage to you and/or one or more creatures you control, prevent X of that damage, where X is the number of age counters
 	 * on ~.
 	 * |I: Put an age counter on ~. */
@@ -693,6 +855,12 @@ int card_darien_king_of_kjeldor(int player, int card, event_t event){
 }
 
 int card_dark_depths(int player, int card, event_t event){
+  /* Dark Depths	""
+   * Legendary Snow Land
+   * ~ enters the battlefield with ten ice counters on it.
+   * |3: Remove an ice counter from ~.
+   * When ~ has no ice counters on it, sacrifice it. If you do, put a legendary 20/20 |Sblack Avatar creature token with flying and indestructible named Marit Lage onto the battlefield. */
+
   enum
   {
     CHOICE_MANA = 1,
@@ -700,11 +868,7 @@ int card_dark_depths(int player, int card, event_t event){
   };
 
 
-	/* Dark Depths	""
-	 * Legendary Snow Land
-	 * ~ enters the battlefield with ten ice counters on it.
-	 * |3: Remove an ice counter from ~.
-	 * When ~ has no ice counters on it, sacrifice it. If you do, put a legendary 20/20 |Sblack Avatar creature token with flying and indestructible named Marit Lage onto the battlefield. */
+
 
 	card_instance_t *instance = get_card_instance(player, card);
 	check_legend_rule(player, card, event);
@@ -792,11 +956,10 @@ static int target_for_deepfire_elemental(int player, int card, int mode){
 }
 
 int card_deepfire_elemental(int player, int card, event_t event){
-/*
-Deepfire Elemental |4|B|R
-Creature � Elemental 4/4
-{X}{X}{1}: Destroy target artifact or creature with converted mana cost X.
-*/
+  /* Deepfire Elemental |4|B|R
+   * Creature � Elemental 4/4
+   * {X}{X}{1}: Destroy target artifact or creature with converted mana cost X. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -886,12 +1049,11 @@ int card_diamond_faerie(int player, int card, event_t event){
 }
 
 int card_disciple_of_tevesh_szat(int player, int card, event_t event){
-/*
-Disciple of Tevesh Szat |2|B|B
-Creature � Human Cleric 3/1
-{T}: Target creature gets -1/-1 until end of turn.
-{4}{B}{B}, {T}, Sacrifice Disciple of Tevesh Szat: Target creature gets -6/-6 until end of turn.
-*/
+  /* Disciple of Tevesh Szat |2|B|B
+   * Creature � Human Cleric 3/1
+   * {T}: Target creature gets -1/-1 until end of turn.
+   * {4}{B}{B}, {T}, Sacrifice Disciple of Tevesh Szat: Target creature gets -6/-6 until end of turn. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -947,6 +1109,42 @@ Creature � Human Cleric 3/1
 		}
 	}
 	return 0;
+}
+
+/* ManalinkEh 2022: 0x2163780; original cards/coldsnap.c:1035. */
+int card_drelnoch(int player, int card, event_t event)
+{
+  /* Drelnoch	|4|U
+   * Creature - Yeti Mutant 3/3
+   * Whenever this creature becomes blocked, you may draw two cards. */
+
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated(player, card, AL_STATIC);
+    if ((event == EVENT_DECLARE_BLOCKERS) && (result == 0))
+    {
+      result = is_attacking(player, card);
+      if (result != 0)
+      {
+        result = is_unblocked(player, card);
+        if (result == 0)
+        {
+          result = count_deck(player);
+          result = do_dialog(player, player, card, -1, -1, " Draw two cards\n Pass",
+                             (unsigned int)(0x10 < result));
+          if (result == 0)
+          {
+            draw_cards(player, 2);
+          }
+        }
+      }
+    }
+  }
+  return 0;
 }
 
 int card_earthen_goo(int player, int card, event_t event)
@@ -1044,6 +1242,103 @@ When enchanted creature is dealt damage, destroy it. */
 	if (!IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS){ return 0; }
 
 	return disabling_aura(player, card, event);
+}
+
+/* ManalinkEh 2022: 0x2163d80; original cards/coldsnap.c:1151. */
+int card_fury_of_the_horde(int player, int card, event_t event)
+{
+  /* Fury of the Horde	|5|R|R
+   * Sorcery
+   * You may exile two red cards from your hand rather than pay this spell's mana cost.
+   * Untap all creatures that attacked this turn. After this main phase, there is an additional combat phase followed by an additional main phase. */
+
+  int result;
+  test_definition_t this_test;
+  test_definition_t this_test1;
+
+  if ((event == EVENT_CAN_CAST) || (event == EVENT_MODIFY_COST))
+  {
+    new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
+    this_test.id = (int)cards_data[iid_draw_a_card].id;
+    this_test.color = 0x10;
+    this_test.zone = 0x100;
+    this_test.id_flag = 1;
+    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
+    if (event == EVENT_CAN_CAST)
+    {
+      return basic_spell(player, card, EVENT_CAN_CAST);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
+      this_test.id = (int)cards_data[iid_draw_a_card].id;
+      this_test.color = 0x10;
+      this_test.zone = 0x100;
+      this_test.id_flag = 1;
+      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      result = -0x30;
+      if (current_turn == player)
+      {
+        result = (unsigned int)((current_phase == 0x1e) ? 48 : -48);
+      }
+      ai_modifier = ai_modifier + result;
+      result = casting_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
+      if (result != 0)
+      {
+        return 0;
+      }
+      spell_fizzled = 1;
+      return 0;
+    }
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
+      this_test.id = (int)cards_data[iid_draw_a_card].id;
+      this_test.color = 0x10;
+      this_test.zone = 0x100;
+      this_test.id_flag = 1;
+      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CHANGE_TARGET, &this_test);
+      return 0;
+    }
+    new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
+    this_test.id = (int)cards_data[iid_draw_a_card].id;
+    this_test.color = 0x10;
+    this_test.zone = 0x100;
+    this_test.id_flag = 1;
+    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
+  }
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+  default_test_definition(&this_test1, 2);
+  this_test1.state = 0x44;
+  extra_combat_effect(player, card, EVENT_RESOLVE_SPELL, 1, &this_test1, 1);
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
 }
 
 int card_garza_zol_plague_queen(int player, int card, event_t event){
@@ -1159,6 +1454,31 @@ If you do, return this card from your graveyard to your hand. Otherwise, exile t
 	return card_raise_dead(player, card, event);
 }
 
+/* ManalinkEh 2022: 0x21646a0; original cards/coldsnap.c:1306. */
+int card_gristle_grinner(int player, int card, event_t event)
+{
+  /* Gristle Grinner	|4|B
+   * Creature - Zombie 3/3
+   * Whenever a creature dies, this creature gets +2/+2 until end of turn. */
+
+  card_instance_t *instance;
+
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
+  }
+  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      pump_until_eot_merge_previous(player, card, player, card, 2, 2);
+      return 0;
+    }
+  }
+  return 0;
+}
+
 int card_gutless_ghoul(int player, int card, event_t event){
 /* CARD_ID_GUTLESS_GHOUL	8380
 Gutless Ghoul	|2|B
@@ -1174,6 +1494,12 @@ Snow Creature - Zombie 2/2
 
 int card_haakon_stromgald_scourge(int player, int card, event_t event)
 {
+  /* Haakon, Stromgald Scourge	|1|B|B
+   * Legendary Creature - Zombie Knight 3/3
+   * You may cast ~ from your graveyard, but not from anywhere else.
+   * As long as Haakon is on the battlefield, you may play Knight cards from your graveyard.
+   * When Haakon dies, you lose 2 life. */
+
   int grave_index_or_result;
   card_instance_t *instance;
   int knight_iid_or_timing;
@@ -1311,6 +1637,7 @@ static int opponent_controls_lands(int player, int card, int number_of_age_count
 	  return 1;
   return 0;
 }
+
 static int gain_control_of_lands(int player, int card, int number_of_age_counters)
 {
   target_definition_t td;
@@ -1330,8 +1657,16 @@ static int gain_control_of_lands(int player, int card, int number_of_age_counter
   else
 	return 0;
 }
+
 int card_herald_of_leshrac(int player, int card, event_t event)
 {
+  /* Herald of Leshrac	|6|B
+   * Creature - Avatar 2/4
+   * Flying
+   * Cumulative upkeep-Gain control of a land you don't control.
+   * ~ gets +1/+1 for each land you control but don't own.
+   * When ~ leaves the battlefield, each player gains control of each land he or she owns that you control. */
+
   int c;
   card_instance_t *instance;
   int temporary_card;
@@ -1573,15 +1908,14 @@ int card_jesters_scepter(int player, int card, event_t event){
 }
 
 int card_jokulmorder(int player, int card, event_t event){
-/*
-Jokulmorder |4|U|U|U
-Creature — Leviathan 12/12
-Trample
-Jokulmorder enters the battlefield tapped.
-When Jokulmorder enters the battlefield, sacrifice it unless you sacrifice five lands.
-Jokulmorder doesn't untap during your untap step.
-Whenever you play an Island, you may untap Jokulmorder.
-*/
+  /* Jokulmorder |4|U|U|U
+   * Creature — Leviathan 12/12
+   * Trample
+   * Jokulmorder enters the battlefield tapped.
+   * When Jokulmorder enters the battlefield, sacrifice it unless you sacrifice five lands.
+   * Jokulmorder doesn't untap during your untap step.
+   * Whenever you play an Island, you may untap Jokulmorder. */
+
 	comes_into_play_tapped(player, card, event);
 
 	does_not_untap(player, card, event);
@@ -1634,6 +1968,7 @@ static int can_pay_jotun_grunt_upkeep(int player, int card, int number_of_age_co
   int gy[2] = { count_graveyard(0) / 2, count_graveyard(1) / 2 };
   return gy[0] + gy[1] >= number_of_age_counters;
 }
+
 static int pay_jotun_grunt_upkeep(int player, int card, int number_of_age_counters)
 {
   int gy[2] = { count_graveyard(0) / 2, count_graveyard(1) / 2 };
@@ -1662,6 +1997,7 @@ static int pay_jotun_grunt_upkeep(int player, int card, int number_of_age_counte
 
   return 1;
 }
+
 int card_jotun_grunt(int player, int card, event_t event)
 {
   /* Jotun Grunt	|1|W
@@ -1696,6 +2032,11 @@ int card_jotun_owl_keeper(int player, int card, event_t event)
 
 int card_juniper_order_ranger(int player, int card, event_t event)
 {
+  /* CARD_ID_JUNIPER_ORDER_RANGER	8392
+   * Juniper Order Ranger	|3|G|W
+   * Creature - Human Knight 2/4
+   * Whenever another creature enters the battlefield under your control, put a +1/+1 counter on that creature and a +1/+1 counter on ~. */
+
   test_definition_t test;
   if (trigger_condition == TRIGGER_COMES_INTO_PLAY)
   {
@@ -1719,6 +2060,7 @@ static int flip_coins(int player, int card, int number_of_age_counters)
 	flip_a_coin(player, card);
   return 1;
 }
+
 int card_karplusan_minotaur(int player, int card, event_t event)
 {
   /* Karplusan Minotaur	|2|R|R	0x200a4ee
@@ -1901,11 +2243,10 @@ int card_lightning_serpent(int player, int card, event_t event){
 
 int card_lovisa_coldeyes(int player, int card, event_t event)
 {
-/*
-Lovisa Coldeyes |3|R|R
-Legendary Creature — Human 3/3
-Each creature that's a Barbarian, a Warrior, or a Berserker gets +2/+2 and has haste.
-*/
+  /* Lovisa Coldeyes |3|R|R
+   * Legendary Creature — Human 3/3
+   * Each creature that's a Barbarian, a Warrior, or a Berserker gets +2/+2 and has haste. */
+
 	check_legend_rule(player, card, event);
 
 	if( (event == EVENT_ABILITIES || event == EVENT_POWER || event == EVENT_TOUGHNESS) && in_play(player, card) &&
@@ -1997,11 +2338,10 @@ Creature — Human Shaman 1/1
 }
 
 int card_martyr_of_bones(int player, int card, event_t event){
-/*
-Martyr of Bones |B
-Creature — Human Wizard 1/1
-{1}, Reveal X black cards from your hand, Sacrifice Martyr of Bones: Exile up to X target cards from a single graveyard.
-*/
+  /* Martyr of Bones |B
+   * Creature — Human Wizard 1/1
+   * {1}, Reveal X black cards from your hand, Sacrifice Martyr of Bones: Exile up to X target cards from a single graveyard. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2067,11 +2407,9 @@ Creature — Human Wizard 1/1
 }
 
 int card_martyr_of_frost(int player, int card, event_t event){
-/*
-Martyr of Frost |U
-Creature � Human Wizard 1/1
-{2}, Reveal X blue cards from your hand, Sacrifice Martyr of Frost: Counter target spell unless its controller pays {X}.
-*/
+  /* Martyr of Frost |U
+   * Creature � Human Wizard 1/1
+   * {2}, Reveal X blue cards from your hand, Sacrifice Martyr of Frost: Counter target spell unless its controller pays {X}. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -2103,11 +2441,10 @@ Creature � Human Wizard 1/1
 }
 
 int card_martyr_of_sands(int player, int card, event_t event){
-/*
-Martyr of Sands |W
-Creature — Human Cleric 1/1
-{1}, Reveal X white cards from your hand, Sacrifice Martyr of Sands: You gain three times X life.
-*/
+  /* Martyr of Sands |W
+   * Creature — Human Cleric 1/1
+   * {1}, Reveal X white cards from your hand, Sacrifice Martyr of Sands: You gain three times X life. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2138,11 +2475,10 @@ Creature — Human Cleric 1/1
 }
 
 int card_martyr_of_spores(int player, int card, event_t event){
-/*
-Martyr of Spores |G
-Creature — Human Shaman 1/1
-{1}, Reveal X green cards from your hand, Sacrifice Martyr of Spores: Target creature gets +X/+X until end of turn.
-*/
+  /* Martyr of Spores |G
+   * Creature — Human Shaman 1/1
+   * {1}, Reveal X green cards from your hand, Sacrifice Martyr of Spores: Target creature gets +X/+X until end of turn. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2178,6 +2514,38 @@ Creature — Human Shaman 1/1
 	}
 
 	return 0;
+}
+
+/* ManalinkEh 2022: 0x21674a0; original cards/coldsnap.c:2325. */
+int card_mishras_bauble(int player, int card, event_t event)
+{
+  /* Mishra's Bauble	|0
+   * Artifact
+   * |T, Sacrifice this artifact: Look at the top card of target player's library. Draw a card at the beginning of the next turn's upkeep. */
+
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (!IS_GAA_EVENT(event))
+    return 0;
+
+  default_target_definition(player, card, &td, 0);
+  td.zone = TARGET_ZONE_PLAYERS;
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+  {
+
+    instance = get_card_instance(player, card);
+    if (*deck_ptr[instance->targets[0].player] != -1)
+    {
+      show_deck(player, deck_ptr[instance->targets[0].player], 1,
+                "Here\'s the first card of deck.", 0, EXE_STR(ENGINE_DONE_LABEL));
+    }
+    cantrip(player, card, 1);
+  }
+  result = generic_activated_ability(player, card, event, 0xc, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_PLAYER");
+  return result;
 }
 
 int card_mouth_of_ronom(int player, int card, event_t event){
@@ -2247,12 +2615,14 @@ int card_mouth_of_ronom(int player, int card, event_t event){
 }
 
 int card_ohran_viper(int player, int card, event_t event){
+  /* Ohran Viper	|1|G|G
+   * Snow Creature - Snake 1/3
+   * Whenever ~ deals combat damage to a creature, destroy that creature at end of combat.
+   * Whenever ~ deals combat damage to a player, you may draw a card. */
+
 	// original code : 012053FC
 
-	/* Ohran Viper	|1|G|G
-	 * Snow Creature - Snake 1/3
-	 * Whenever ~ deals combat damage to a creature, destroy that creature at end of combat.
-	 * Whenever ~ deals combat damage to a player, you may draw a card. */
+
 
 	if( damage_dealt_by_me(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE|DDBM_MUST_DAMAGE_PLAYER|DDBM_TRIGGER_OPTIONAL) ){
 		draw_a_card(player);
@@ -2361,6 +2731,7 @@ static int sacrifice_creatures(int player, int card, int number_of_age_counters)
 {
   return impose_sacrifice(player, card, player, number_of_age_counters, TYPE_CREATURE,MATCH, 0,0, 0,0, 0,0, -1,0) == number_of_age_counters;
 }
+
 int card_phyrexian_soulgorger(int player, int card, event_t event)
 {
   /* Phyrexian Soulgorger	|3
@@ -2370,11 +2741,14 @@ int card_phyrexian_soulgorger(int player, int card, event_t event)
   return 0;
 }
 
-int card_resize(int player, int card, event_t event){//UNUSEDCARD
-	/* Resize	|1|G
-	 * Instant
-	 * Target creature gets +3/+3 until end of turn.
-	 * Recover |1|G */
+int card_resize(int player, int card, event_t event){
+  /* Resize	|1|G
+   * Instant
+   * Target creature gets +3/+3 until end of turn.
+   * Recover |1|G */
+
+//UNUSEDCARD
+
 	return vanilla_instant_pump(player, card, event, ANYBODY, player, 3, 3, 0, 0);
 }
 
@@ -2469,6 +2843,13 @@ int card_rimebound_dead(int player, int card, event_t event){
 
 int card_rimefeather_owl(int player, int card, event_t event)
 {
+  /* Rimefeather Owl	|5|U|U
+   * Snow Creature - Bird 100/100
+   * Flying
+   * ~'s power and toughness are each equal to the number of snow permanents on the battlefield.
+   * |1|I: Put an ice counter on target permanent.
+   * Permanents with ice counters on them are snow. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td1;
@@ -2534,6 +2915,12 @@ int card_rimefeather_owl(int player, int card, event_t event)
 
 int card_rimescale_dragon(int player, int card, event_t event)
 {
+  /* Rimescale Dragon	|5|R|R
+   * Snow Creature - Dragon 5/5
+   * Flying
+   * |2|I: Tap target creature and put an ice counter on it.
+   * Creatures with ice counters on them don't untap during their controllers' untap steps. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td1;
@@ -2631,6 +3018,19 @@ Add |R|R to your mana pool, then add |R to your mana pool for each card named ~ 
 	return basic_spell(player, card, event);
 }
 
+/* ManalinkEh 2022: 0x2168a60; original cards/coldsnap.c:2781. */
+int card_ronom_hulk(int player, int card, event_t event)
+{
+  /* Ronom Hulk	|4|G
+   * Creature - Beast 5/6
+   * Protection from snow
+   * Cumulative upkeep |1 (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.) */
+
+  protection_from_subtype(player, card, event, SUBTYPE_SNOW);
+  cumulative_upkeep(player, card, event, 1, 0, 0, 0, 0, 0);
+  return 0;
+}
+
 int card_ronom_unicorn(int player, int card, event_t event){
 /* CARD_ID_RONOM_UNICORN	8437
 Ronom Unicorn	|1|W
@@ -2679,6 +3079,13 @@ int card_rune_snag(int player, int card, event_t event){
 
 int card_scrying_sheets(int player, int card, event_t event)
 {
+  /* CARD_ID_SCRYING_SHEETS	8439
+   * Scrying Sheets	""
+   * Snow Land
+   * |T: Add |C to your mana pool.
+   * |1|I, |T: Look at the top card of your library. If that card is snow, you may reveal it and put it into your hand.
+   * (|I can be paid with one mana from a snow permanent.) */
+
   int *deck;
   int result;
   card_instance_t *instance;
@@ -2817,11 +3224,10 @@ static int sek_kuar_deathkeeper_effect(int player, int card, event_t event)
 }
 
 int card_sek_kuar_death_keeper(int player, int card, event_t event){
-/*
-Sek'Kuar, Deathkeeper |2|B|R|G
-Legendary Creature — Orc Shaman 4/3, 2BRG (5)
-Whenever another nontoken creature you control dies, put a 3/1 black and red Graveborn creature token with haste onto the battlefield.
-*/
+  /* Sek'Kuar, Deathkeeper |2|B|R|G
+   * Legendary Creature — Orc Shaman 4/3, 2BRG (5)
+   * Whenever another nontoken creature you control dies, put a 3/1 black and red Graveborn creature token with haste onto the battlefield. */
+
 	check_legend_rule(player, card, event);
 
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
@@ -2907,6 +3313,22 @@ At the beginning of your upkeep, put a +1/+1 counter on enchanted creature if it
 	return vanilla_aura(player, card, event, player);
 }
 
+/* ManalinkEh 2022: 0x2160760; original cards/coldsnap.c:3061. */
+static char *can_have_counters_placed_on_it_shim(int who_chooses, int player, int card,
+                                                 int targeting_player, int targeting_card)
+{
+  int result;
+  char *rejection;
+
+  result = can_have_counters_placed_on_it(player, card);
+  rejection = NULL;
+  if (result == 0)
+  {
+    rejection = "can\'t have counters";
+  }
+  return rejection;
+}
+
 static int can_put_p1_p1_counter_on_opp(int player, int card, int number_of_age_counters)
 {
   if (check_battlefield_for_id(player, CARD_ID_BLIGHTBEETLE))
@@ -2918,6 +3340,7 @@ static int can_put_p1_p1_counter_on_opp(int player, int card, int number_of_age_
   td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   return can_target(&td);
 }
+
 static int put_p1_p1_counter_on_opp(int player, int card, int number_of_age_counters)
 {
   card_instance_t *instance;
@@ -2953,6 +3376,7 @@ static int put_p1_p1_counter_on_opp(int player, int card, int number_of_age_coun
   }
   return 1;
 }
+
 int card_sheltering_ancient(int player, int card, event_t event)
 {
   /* Sheltering Ancient	|1|G
@@ -3333,11 +3757,10 @@ You may cast any revealed cards with the same name as this spell without paying 
 }
 
 int card_tamanoa(int player, int card, event_t event){
-/*
-Tamanoa |W|R|G
-Creature — Spirit 2/4
-Whenever a noncreature source you control deals damage, you gain that much life.
-*/
+  /* Tamanoa |W|R|G
+   * Creature — Spirit 2/4
+   * Whenever a noncreature source you control deals damage, you gain that much life. */
+
 	if( event == EVENT_DEAL_DAMAGE ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
@@ -3520,6 +3943,7 @@ static int opp_gains_life(int player, int card, int number_of_age_counters)
   gain_life(1-player, number_of_age_counters);
   return 1;
 }
+
 int card_wall_of_shards(int player, int card, event_t event)
 {
   /* Wall of Shards	|1|W
@@ -3617,6 +4041,12 @@ int card_wilderness_elemental(int player, int card, event_t event){
 
 int card_woolly_razorback(int player, int card, event_t event)
 {
+  /* Woolly Razorback	|2|W|W
+   * Creature - Boar Beast 7/7
+   * ~ enters the battlefield with three ice counters on it.
+   * As long as ~ has an ice counter on it, prevent all combat damage it would deal and it has defender.
+   * Whenever ~ blocks, remove an ice counter from it. */
+
   char damage_player;
   card_instance_t *instance;
   int result;
@@ -3652,390 +4082,15 @@ int card_woolly_razorback(int player, int card, event_t event)
   return 0;
 }
 
-int card_zur_the_enchanter(int player, int card, event_t event){
-/*
-Zur the Enchanter |1|W|U|B
-Legendary Creature — Human Wizard 1/4
-Flying
-Whenever Zur the Enchanter attacks, you may search your library for an enchantment card with converted mana cost 3 or less and
-	put it onto the battlefield. If you do, shuffle your library.
-*/
-	check_legend_rule(player, card, event);
-
-	dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
-	if (event == EVENT_DAT_ABILITY){
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_ENCHANTMENT, "Select an enchantment with CMC 3 or less.");
-		this_test.cmc = 4;
-		this_test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
-		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_VALUE, &this_test);
-	}
-
-	return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2168a60; original cards/coldsnap.c:2781. */
-int card_ronom_hulk(int player, int card, event_t event)
-{
-  protection_from_subtype(player, card, event, SUBTYPE_SNOW);
-  cumulative_upkeep(player, card, event, 1, 0, 0, 0, 0, 0);
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2162120; original cards/coldsnap.c:586. */
-int card_commandeer(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *target_spell;
-  int card_00;
-  target_definition_t *spell_target_definition;
-  card_instance_t *instance;
-  target_definition_t td;
-  test_definition_t this_test;
-
-  if ((event == EVENT_CAN_CAST) || (event == EVENT_MODIFY_COST))
-  {
-    counterspell_target_definition(player, card, &td, 0xff);
-    td.illegal_type = TYPE_CREATURE;
-    new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
-    this_test.color = 4;
-    this_test.zone = 0x100;
-    this_test.id = CARD_ID_RULES_ENGINE;
-    this_test.id_flag = 1;
-    instance = get_card_instance(player, card);
-    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
-    if (event == EVENT_CAN_CAST)
-    {
-      return counterspell(player, card, EVENT_CAN_CAST, &td, -1);
-    }
-  }
-  else
-  {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-      counterspell_target_definition(player, card, &td, 0xff);
-      td.illegal_type = TYPE_CREATURE;
-      new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
-      this_test.color = 4;
-      this_test.zone = 0x100;
-      this_test.id = CARD_ID_RULES_ENGINE;
-      this_test.id_flag = 1;
-      instance = get_card_instance(player, card);
-      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
-      spell_target_definition = &td;
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-      result = casting_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
-      if (result == 0)
-      {
-        spell_fizzled = 1;
-        return 0;
-      }
-      target_spell = get_card_instance(card_on_stack_controller, card_on_stack);
-      if (target_spell->number_of_targets == '\x01')
-      {
-        instance->info_slot = 1;
-        return deflect_one_target(player, card, EVENT_CAST_SPELL, NULL);
-      }
-      target_spell = get_card_instance(card_on_stack_controller, card_on_stack);
-      if (target_spell->number_of_targets < 2)
-      {
-        return counterspell(player, card, EVENT_CAST_SPELL, spell_target_definition, 0);
-      }
-      instance->info_slot = 2;
-      return deflect_multi_targets(player, card, EVENT_CAST_SPELL, NULL);
-    }
-    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
-    {
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-      counterspell_target_definition(player, card, &td, 0xff);
-      td.illegal_type = TYPE_CREATURE;
-      new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
-      this_test.color = 4;
-      this_test.zone = 0x100;
-      this_test.id = CARD_ID_RULES_ENGINE;
-      this_test.id_flag = 1;
-      get_card_instance(player, card);
-      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CHANGE_TARGET, &this_test);
-      return 0;
-    }
-    counterspell_target_definition(player, card, &td, 0xff);
-    td.illegal_type = TYPE_CREATURE;
-    new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
-    this_test.color = 4;
-    this_test.zone = 0x100;
-    this_test.id = CARD_ID_RULES_ENGINE;
-    this_test.id_flag = 1;
-    instance = get_card_instance(player, card);
-    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
-  }
-  if (event != EVENT_RESOLVE_SPELL)
-  {
-    return 0;
-  }
-  result = counterspell_validate(player, card, NULL, 0);
-  if (result != 0)
-  {
-    result = instance->info_slot;
-    if (result == 1)
-    {
-      deflect_one_target(player, card, EVENT_RESOLVE_SPELL, NULL);
-      result = instance->info_slot;
-    }
-    if (result == 2)
-    {
-      deflect_multi_targets(player, card, EVENT_RESOLVE_SPELL, NULL);
-    }
-    result = is_what(instance->targets[0].player, instance->targets[0].card, 0x144);
-    if (result != 0)
-    {
-      target_spell = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-      result = target_spell->internal_card_id;
-      if (result != -1)
-      {
-        obliterate_card(instance->targets[0].player, instance->targets[0].card);
-        card_00 = add_card_to_hand(player, result);
-        put_into_play(player, card_00);
-        result = instance->targets[0].player;
-        if (result != player)
-        {
-          if (result == 1)
-          {
-            add_state(player, card_00, 0x1000);
-          }
-          else
-          {
-            remove_state(player, card_00, 0x1000);
-          }
-        }
-      }
-    }
-  }
-  kill_card(player, card, KILL_DESTROY);
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2163d80; original cards/coldsnap.c:1151. */
-int card_fury_of_the_horde(int player, int card, event_t event)
-{
-  int result;
-  test_definition_t this_test;
-  test_definition_t this_test1;
-
-  if ((event == EVENT_CAN_CAST) || (event == EVENT_MODIFY_COST))
-  {
-    new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
-    this_test.id = (int)cards_data[iid_draw_a_card].id;
-    this_test.color = 0x10;
-    this_test.zone = 0x100;
-    this_test.id_flag = 1;
-    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
-    if (event == EVENT_CAN_CAST)
-    {
-      return basic_spell(player, card, EVENT_CAN_CAST);
-    }
-  }
-  else
-  {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-      new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
-      this_test.id = (int)cards_data[iid_draw_a_card].id;
-      this_test.color = 0x10;
-      this_test.zone = 0x100;
-      this_test.id_flag = 1;
-      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-      result = -0x30;
-      if (current_turn == player)
-      {
-        result = (unsigned int)((current_phase == 0x1e) ? 48 : -48);
-      }
-      ai_modifier = ai_modifier + result;
-      result = casting_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
-      if (result != 0)
-      {
-        return 0;
-      }
-      spell_fizzled = 1;
-      return 0;
-    }
-    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
-    {
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-      new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
-      this_test.id = (int)cards_data[iid_draw_a_card].id;
-      this_test.color = 0x10;
-      this_test.zone = 0x100;
-      this_test.id_flag = 1;
-      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CHANGE_TARGET, &this_test);
-      return 0;
-    }
-    new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
-    this_test.id = (int)cards_data[iid_draw_a_card].id;
-    this_test.color = 0x10;
-    this_test.zone = 0x100;
-    this_test.id_flag = 1;
-    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
-  }
-  if (event != EVENT_RESOLVE_SPELL)
-  {
-    return 0;
-  }
-  default_test_definition(&this_test1, 2);
-  this_test1.state = 0x44;
-  extra_combat_effect(player, card, EVENT_RESOLVE_SPELL, 1, &this_test1, 1);
-  kill_card(player, card, KILL_DESTROY);
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x21646a0; original cards/coldsnap.c:1306. */
-int card_gristle_grinner(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-
-  if (event == EVENT_GRAVEYARD_FROM_PLAY)
-  {
-    count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
-  }
-  if (resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-  {
-    instance = in_play(player, card);
-    if (instance != NULL)
-    {
-      pump_until_eot_merge_previous(player, card, player, card, 2, 2);
-      return 0;
-    }
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x2160760; original cards/coldsnap.c:3061. */
-static char *can_have_counters_placed_on_it_shim(int who_chooses, int player, int card,
-                                                 int targeting_player, int targeting_card)
-{
-  int result;
-  char *rejection;
-
-  result = can_have_counters_placed_on_it(player, card);
-  rejection = NULL;
-  if (result == 0)
-  {
-    rejection = "can\'t have counters";
-  }
-  return rejection;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x21674a0; original cards/coldsnap.c:2325. */
-int card_mishras_bauble(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  target_definition_t td;
-
-  if (!IS_GAA_EVENT(event))
-    return 0;
-
-  default_target_definition(player, card, &td, 0);
-  td.zone = TARGET_ZONE_PLAYERS;
-  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-  {
-
-    instance = get_card_instance(player, card);
-    if (*deck_ptr[instance->targets[0].player] != -1)
-    {
-      show_deck(player, deck_ptr[instance->targets[0].player], 1,
-                "Here\'s the first card of deck.", 0, EXE_STR(ENGINE_DONE_LABEL));
-    }
-    cantrip(player, card, 1);
-  }
-  result = generic_activated_ability(player, card, event, 0xc, 0, 0, 0, 0, 0, 0, 0, &td,
-                                     "TARGET_PLAYER");
-  return result;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2163780; original cards/coldsnap.c:1035. */
-int card_drelnoch(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-
-  instance = in_play(player, card);
-  if (instance != NULL)
-  {
-    result = is_humiliated(player, card, AL_STATIC);
-    if ((event == EVENT_DECLARE_BLOCKERS) && (result == 0))
-    {
-      result = is_attacking(player, card);
-      if (result != 0)
-      {
-        result = is_unblocked(player, card);
-        if (result == 0)
-        {
-          result = count_deck(player);
-          result = do_dialog(player, player, card, -1, -1, " Draw two cards\n Pass",
-                             (unsigned int)(0x10 < result));
-          if (result == 0)
-          {
-            draw_cards(player, 2);
-          }
-        }
-      }
-    }
-  }
-  return 0;
-}
-
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x216b6c0; original cards/coldsnap.c:3799. */
 int card_zombie_musher(int player, int card, event_t event)
 {
+  /* Zombie Musher	|3|B
+   * Snow Creature - Zombie 2/3
+   * Snow landwalk (This creature can't be blocked as long as defending player controls a snow land.)
+   * |S: Regenerate this creature. (|S can be paid with one mana from a snow source.) */
+
   int mana_cost_or_result;
   int abilities_available;
   if (event == EVENT_BLOCK_LEGALITY)
@@ -4073,5 +4128,25 @@ int card_zombie_musher(int player, int card, event_t event)
   }
   return 0;
 }
-
 #endif
+
+int card_zur_the_enchanter(int player, int card, event_t event){
+  /* Zur the Enchanter |1|W|U|B
+   * Legendary Creature — Human Wizard 1/4
+   * Flying
+   * Whenever Zur the Enchanter attacks, you may search your library for an enchantment card with converted mana cost 3 or less and
+   * 	put it onto the battlefield. If you do, shuffle your library. */
+
+	check_legend_rule(player, card, event);
+
+	dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+	if (event == EVENT_DAT_ABILITY){
+		test_definition_t this_test;
+		new_default_test_definition(&this_test, TYPE_ENCHANTMENT, "Select an enchantment with CMC 3 or less.");
+		this_test.cmc = 4;
+		this_test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
+		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_VALUE, &this_test);
+	}
+
+	return 0;
+}

@@ -3,6 +3,9 @@
 // ---- GLOBAL FUNCTIONS
 
 // ---- CARDS
+
+int card_decompose(int player, int card, event_t event);
+
 int card_academy_rector(int player, int card, event_t event)
 {
 /* CARD_ID_ACADEMY_RECTOR	4091
@@ -33,7 +36,6 @@ Whenever an opponent casts a creature spell, ~ deals 1 damage to that player. */
 	}
 	return global_enchantment(player, card, event);
 }
-
 
 int card_apprentice_necromancer(int player, int card, event_t event){
 /* CARD_ID_APPRENTICE_NECROMANCER	4092
@@ -381,11 +383,9 @@ Creature - Elf Shaman 1/1
 }
 
 int card_emperor_crocodile(int player, int card, event_t event){
-	/*
-	  Emperor Crocodile |3|G
-	  Creature - Crocodile 5/5
-	  When you control no other creatures, sacrifice Emperor Crocodile.
-	*/
+  /* Emperor Crocodile |3|G
+   * 	  Creature - Crocodile 5/5
+   * 	  When you control no other creatures, sacrifice Emperor Crocodile. */
 
 	if( event == EVENT_STATIC_EFFECTS && ! is_humiliated(player, card, AL_STATIC) ){
 		test_definition_t this_test;
@@ -430,13 +430,11 @@ int card_eradicate(int player, int card, event_t event){
 }
 
 int card_extruder(int player, int card, event_t event){
-/*
-Extruder |4
-Artifact Creature - Juggernaut 4/3
-Echo {4} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep,
-		sacrifice it unless you pay its echo cost.)
-Sacrifice an artifact: Put a +1/+1 counter on target creature.
-*/
+  /* Extruder |4
+   * Artifact Creature - Juggernaut 4/3
+   * Echo {4} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep,
+   * 		sacrifice it unless you pay its echo cost.)
+   * Sacrifice an artifact: Put a +1/+1 counter on target creature. */
 
 	echo(player, card, event, MANACOST_X(4));
 
@@ -642,11 +640,10 @@ int card_flicker2(int player, int card, event_t event){
 }
 
 int card_fodder_cannon(int player, int card, event_t event){
-	/*
-	  Fodder Cannon |4
-	  Artifact
-	  {4}, {T}, Sacrifice a creature: Fodder Cannon deals 4 damage to target creature.
-	*/
+  /* Fodder Cannon |4
+   * 	  Artifact
+   * 	  {4}, {T}, Sacrifice a creature: Fodder Cannon deals 4 damage to target creature. */
+
 	if (!IS_GAA_EVENT(event))
 		return 0;
 
@@ -834,7 +831,6 @@ At the beginning of each player's end step, if that player didn't cast a spell t
 
 	return global_enchantment(player, card, event);
 }
-
 
 int card_iridescent_drake(int player, int card, event_t event){
 
@@ -1463,7 +1459,6 @@ int card_quash(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_COUNTERSPELL, &td, NULL, 1, NULL);
 }
 
-int card_decompose(int player, int card, event_t event);
 int card_rapid_decay(int player, int card, event_t event)
 {
   /* Rapid Decay	|1|B
@@ -1478,11 +1473,10 @@ int card_rapid_decay(int player, int card, event_t event)
 }
 
 int card_ravenous_rats(int player, int card, event_t event){
-	/*
-	  Ravenous Rats |1|B
-	  Creature - Rat 1/1
-	  When Ravenous Rats enters the battlefield, target opponent discards a card.
-	*/
+  /* Ravenous Rats |1|B
+   * 	  Creature - Rat 1/1
+   * 	  When Ravenous Rats enters the battlefield, target opponent discards a card. */
+
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -1498,7 +1492,6 @@ int card_ravenous_rats(int player, int card, event_t event){
 
 	return 0;
 }
-
 
 int card_rayne_academy_chancellor(int player, int card, event_t event)
 {
@@ -1874,11 +1867,10 @@ Whenever enchanted creature deals damage to a player, return target creature tha
 // Skittering horror code is the same for Skittering Skirge in urza_saga.c
 
 int card_solidarity2(int player, int card, event_t event){
-	/*
-	  Solidarity |3|W
-	  Instant
-	  Creatures you control get +0/+5 until end of turn.
-	*/
+  /* Solidarity |3|W
+   * 	  Instant
+   * 	  Creatures you control get +0/+5 until end of turn. */
+
 	if(event == EVENT_RESOLVE_SPELL ){
 		pump_subtype_until_eot(player, card, player, -1, 0, 5, 0, 0);
 		kill_card(player, card, KILL_DESTROY);
@@ -2032,12 +2024,11 @@ When you control no enchantments, sacrifice ~. */
 }
 
 int card_thieving_magpie(int player, int card, event_t event){
-/*
-Thieving Magpie |2|U|U
-Creature — Bird 1/3
-Flying (This creature can't be blocked except by creatures with flying or reach.)
-Whenever Thieving Magpie deals damage to an opponent, draw a card.
-*/
+  /* Thieving Magpie |2|U|U
+   * Creature — Bird 1/3
+   * Flying (This creature can't be blocked except by creatures with flying or reach.)
+   * Whenever Thieving Magpie deals damage to an opponent, draw a card. */
+
 	int result = damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_OPPONENT);
 	if( result ){
 		draw_cards(player, result);
@@ -2405,11 +2396,79 @@ Pay 1 life: Draw a card. */
 	return generic_activated_ability(player, card, event, 0, MANACOST0, 1, NULL, NULL);
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2107da0; original cards/urza_destiny.c:2397. */
+int card_archery_training(int player, int card, event_t event)
+{
+  /* Archery Training	|W
+   * Enchantment - Aura
+   * Enchant creature
+   * At the beginning of your upkeep, you may put an arrow counter on this Aura.
+   * Enchanted creature has "|T: This creature deals X damage to target attacking or blocking creature, where X is the number of arrow counters on ~." */
+
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  result = duh_mode(player);
+  upkeep_trigger_ability_mode(player, card, event, player,
+                              (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    add_counters(player, card, player, card, COUNTER_ARROW, 1);
+  }
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    instance = get_card_instance(player, card);
+    if (-1 < instance->damage_target_player)
+    {
+
+      instance = get_card_instance(player, card);
+      if (event == EVENT_ACTIVATE)
+      {
+        default_target_definition(player, card, &td, 2);
+        td.required_state = TARGET_STATE_IN_COMBAT;
+      }
+      else
+      {
+        if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+        {
+          default_target_definition(player, card, &td, 2);
+          td.preferred_controller = player;
+          return aura(player, card, event, &td, NULL);
+        }
+        default_target_definition(player, card, &td, 2);
+        td.required_state = TARGET_STATE_IN_COMBAT;
+        if (event == EVENT_RESOLVE_ACTIVATION)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            result = count_counters(player, card, COUNTER_ARROW);
+            damage_target0(player, card, result);
+          }
+        }
+      }
+      return granted_generic_activated_ability(player, card, (int)instance->damage_target_player,
+                                               instance->damage_target_card, event, 5, 0, 0, 0, 0,
+                                               0, 0, 0, &td, "TARGET_ATTACKING_BLOCKING_CREATURE");
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+  return aura(player, card, event, &td, NULL);
+}
+#endif
 
 /* ManalinkEh 2022: 0x2107ff0; original cards/urza_destiny.c:2433. */
 int card_blizzard_elemental(int player, int card, event_t event)
 {
+  /* Blizzard Elemental	|5|U|U
+   * Creature - Elemental 5/5
+   * Flying
+   * |3|U: Untap this creature. */
+
   card_instance_t *instance;
   int result;
   if (!IS_GAA_EVENT(event))
@@ -2426,6 +2485,10 @@ int card_blizzard_elemental(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x21080b0; original cards/urza_destiny.c:2451. */
 int card_braidwood_sextant(int player, int card, event_t event)
 {
+  /* Braidwood Sextant	|1
+   * Artifact
+   * |2, |T, Sacrifice this artifact: Search your library for a basic land card, reveal that card, put it into your hand, then shuffle. */
+
   int result;
   if (!IS_GAA_EVENT(event))
     return 0;
@@ -2437,245 +2500,13 @@ int card_braidwood_sextant(int player, int card, event_t event)
   return result;
 }
 
-/* ManalinkEh 2022: 0x21087f0; original cards/urza_destiny.c:2599. */
-int card_disease_carriers(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  target_definition_t td;
-  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (result != 0)
-  {
-    default_target_definition(player, card, &td, 2);
-    td.special = TARGET_SPECIAL_NOT_ME;
-    td.allow_cancel = 0;
-    instance = get_card_instance(player, card);
-    result = can_target(&td);
-    if (result != 0)
-    {
-      pick_target(&td, "TARGET_CREATURE");
-      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -2, -2);
-      return 0;
-    }
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x21089e0; original cards/urza_destiny.c:2646. */
-int card_encroach(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  ec_definition_t this_definition;
-  target_definition_t td;
-  test_definition_t this_test;
-
-  if (!IS_GS_EVENT(player, card, event))
-  {
-    return 0;
-  }
-  default_target_definition(player, card, &td, 0);
-  td.zone = TARGET_ZONE_PLAYERS;
-  instance = get_card_instance(player, card);
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    if (valid_target(&td))
-    {
-      new_default_test_definition(&this_test, 1, "Choose a nonbasic land card.");
-      this_test.subtype = 0x2000;
-      this_test.subtype_flag = 1;
-      default_ec_definition(instance->targets[0].player, player, &this_definition);
-      new_effect_coercion(&this_definition, &this_test);
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
-}
-
-/* ManalinkEh 2022: 0x2108d90; original cards/urza_destiny.c:2719. */
-int card_goblin_festival(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  target_definition_t td;
-  if (event == EVENT_ACTIVATE)
-  {
-    default_target_definition(player, card, &td, 0x102);
-    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-    get_card_instance(player, card);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      result = global_enchantment(player, card, event);
-      return result;
-    }
-    default_target_definition(player, card, &td, 0x102);
-    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-    instance = get_card_instance(player, card);
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      result = valid_target(&td);
-      if (result != 0)
-      {
-        damage_target0(player, card, 1);
-        result = flip_a_coin(player, card);
-        if (result == 0)
-        {
-          give_control_of_self(instance->parent_controller, instance->parent_card);
-        }
-      }
-    }
-  }
-  result =
-      generic_activated_ability(player, card, event, 4, 2, 0, 0, 0, 0, 0, 0, &td, "TARGET_ANY");
-  return result;
-}
-
-/* ManalinkEh 2022: 0x2108f30; original cards/urza_destiny.c:2746. */
-int card_goblin_masons(int player, int card, event_t event)
-{
-  int result;
-  target_definition_t td;
-  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (result != 0)
-  {
-    default_target_definition(player, card, &td, 0x47);
-    td.required_subtype = 0xd1;
-    td.allow_cancel = 0;
-    result = can_target(&td);
-    if (result != 0)
-    {
-      result = new_pick_target(&td, "Select target wall.", 0, 0x80);
-      if (result != 0)
-      {
-        action_on_target(player, card, 0, ACT_KILL_DESTROY);
-      }
-    }
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x2109550; original cards/urza_destiny.c:2869. */
-int card_magnify(int player, int card, event_t event)
-{
-  int result;
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    pump_creatures_until_eot(player, card, 2, 0, 1, 1, 0, 0, NULL);
-    kill_card(player, card, KILL_DESTROY);
-  }
-  result = basic_spell(player, card, event);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x2109bd0; original cards/urza_destiny.c:2985. */
-int card_plague_dogs(int player, int card, event_t event)
-{
-  int result;
-  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (result != 0)
-  {
-    pump_subtype_until_eot(player, card, 2, -1, -1, -1, 0, 0);
-  }
-  if (!IS_GAA_EVENT(event))
-    return 0;
-  if (event == EVENT_RESOLVE_ACTIVATION)
-  {
-    draw_cards(player, 1);
-  }
-  result = generic_activated_ability(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x2109e10; original cards/urza_destiny.c:3026. */
-int card_rescue(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  target_definition_t td;
-  if (event != EVENT_CAN_CAST)
-  {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 0x47);
-        td.preferred_controller = player;
-        td.allowed_controller = player;
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          if (valid_target(&td))
-          {
-            instance = get_card_instance(player, card);
-            bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        return generic_spell(player, card, event, 1, &td, "TARGET_PERMANENT_YOU_CONTROL", 1, NULL);
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
-  }
-  default_target_definition(player, card, &td, 0x47);
-  td.allowed_controller = player;
-  td.preferred_controller = player;
-  return generic_spell(player, card, event, 1, &td, "TARGET_PERMANENT_YOU_CONTROL", 1, NULL);
-}
-
-/* ManalinkEh 2022: 0x210a1d0; original cards/urza_destiny.c:3097. */
-int card_storage_matrix(int player, int card, event_t event) { return 0; }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2109300; original cards/urza_destiny.c:2824. */
-int card_landslide(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  const char *msg;
-  target_definition_t td;
-  test_definition_t test;
-
-  default_target_definition(player, card, &td, 0x100);
-  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    result = valid_target(&td);
-    if (result != 0)
-    {
-      instance = get_card_instance(player, card);
-      msg = get_hacked_land_text(player, card, "Select a %s.", 0x5006);
-      new_default_test_definition(&test, 1, msg);
-      test.subtype = get_hacked_subtype(player, card, 0x5006);
-      test.qty = 500;
-      result = new_sacrifice(player, card, player, SAC_DONE | SAC_NO_CANCEL, &test);
-      damage_creature(instance->targets[0].player, instance->targets[0].card, result, player, card);
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER_OR_PLANESWALKER", 1, NULL);
-  return result;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
 /* ManalinkEh 2022: 0x2108160; original cards/urza_destiny.c:2467. */
 int card_bubbling_beebles(int player, int card, event_t event)
 {
+  /* Bubbling Beebles	|4|U
+   * Creature - Beeble 3/3
+   * This creature can't be blocked as long as defending player controls an enchantment. */
+
   card_instance_t *instance;
   int result;
 
@@ -2698,11 +2529,79 @@ int card_bubbling_beebles(int player, int card, event_t event)
   return 0;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21081f0; original cards/urza_destiny.c:2482. */
+int card_capashen_standard(int player, int card, event_t event)
+{
+  /* Capashen Standard	|W
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +1/+1.
+   * |2, Sacrifice this Aura: Draw a card. */
+
+  int result;
+
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      attached_gets_pt(player, card, event, 1, 1);
+      result = aura(player, card, event, NULL, NULL);
+      return result;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      draw_cards(player, 1);
+    }
+  }
+  return generic_activated_ability(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+}
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21082e0; original cards/urza_destiny.c:2501. */
+int card_chime_of_night(int player, int card, event_t event)
+{
+  /* Chime of Night	|1|B
+   * Enchantment - Aura
+   * Enchant creature
+   * When this Aura is put into a graveyard from the battlefield, destroy target nonblack creature. */
+
+  int result;
+  card_instance_t *instance;
+  const char *prompt;
+  target_definition_t td;
+
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+
+    default_target_definition(player, card, &td, 2);
+    td.illegal_color = get_sleighted_color_test(player, card, 2);
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      prompt = get_sleighted_color_text(player, card, "Select target non%s creature.", 1);
+      result = new_pick_target(&td, prompt, 0, 0x80);
+      if (result != 0)
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      }
+    }
+  }
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif
 
 /* ManalinkEh 2022: 0x21083f0; original cards/urza_destiny.c:2522. */
 int card_compost(int player, int card, event_t event)
 {
+  /* Compost	|1|G
+   * Enchantment
+   * Whenever a black card is put into an opponent's graveyard from anywhere, you may draw a card. */
+
   int i;
   xtrigger_t current_trigger;
   int result_or_ai_player;
@@ -2786,89 +2685,15 @@ int card_compost(int player, int card, event_t event)
   return global_enchantment(player, card, event);
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2109460; original cards/urza_destiny.c:2853. */
-int card_lurking_jackals(int player, int card, event_t event)
-{
-  int result;
-
-  if ((((event == EVENT_STATIC_EFFECTS) && (life[1 - player] < 0xb)) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    result = is_what(player, card, 4);
-    if (result != 0)
-    {
-      result = is_humiliated(player, card, AL_STATIC);
-      if (result == 0)
-      {
-        animate_self_remove_type(player, card, 3, 2, TYPE_ENCHANTMENT, KEYWORD_0, SP_KEYWORD_0,
-                                 COLOR_TEST_0, 1);
-      }
-    }
-  }
-  has_subtype_if_animated_self(player, card, event, SUBTYPE_JACKAL);
-  result = global_enchantment(player, card, event);
-  return result;
-}
-
 #ifndef SHANDALAR
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x21081f0; original cards/urza_destiny.c:2482. */
-int card_capashen_standard(int player, int card, event_t event)
-{
-  int result;
-
-  if (event != EVENT_ACTIVATE)
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      attached_gets_pt(player, card, event, 1, 1);
-      result = aura(player, card, event, NULL, NULL);
-      return result;
-    }
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      draw_cards(player, 1);
-    }
-  }
-  return generic_activated_ability(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
-}
-
-/* ManalinkEh 2022: 0x21082e0; original cards/urza_destiny.c:2501. */
-int card_chime_of_night(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  const char *prompt;
-  target_definition_t td;
-
-  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (result != 0)
-  {
-
-    default_target_definition(player, card, &td, 2);
-    td.illegal_color = get_sleighted_color_test(player, card, 2);
-    instance = get_card_instance(player, card);
-    result = can_target(&td);
-    if (result != 0)
-    {
-      prompt = get_sleighted_color_text(player, card, "Select target non%s creature.", 1);
-      result = new_pick_target(&td, prompt, 0, 0x80);
-      if (result != 0)
-      {
-        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-      }
-    }
-  }
-  result = aura(player, card, event, NULL, NULL);
-  return result;
-}
-
 /* ManalinkEh 2022: 0x21086d0; original cards/urza_destiny.c:2578. */
 int card_disappear(int player, int card, event_t event)
 {
+  /* Disappear	|2|U|U
+   * Enchantment - Aura
+   * Enchant creature
+   * |U: Return enchanted creature and this Aura to their owners' hands. */
+
   card_instance_t *instance;
 
   instance = in_play(player, card);
@@ -2894,10 +2719,45 @@ int card_disappear(int player, int card, event_t event)
   }
   return aura(player, card, event, NULL, NULL);
 }
+#endif
 
+/* ManalinkEh 2022: 0x21087f0; original cards/urza_destiny.c:2599. */
+int card_disease_carriers(int player, int card, event_t event)
+{
+  /* Disease Carriers	|2|B|B
+   * Creature - Rat 2/2
+   * When this creature dies, target creature gets -2/-2 until end of turn. */
+
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.special = TARGET_SPECIAL_NOT_ME;
+    td.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      pick_target(&td, "TARGET_CREATURE");
+      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -2, -2);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x21088c0; original cards/urza_destiny.c:2622. */
 int card_dying_wail(int player, int card, event_t event)
 {
+  /* Dying Wail	|1|B
+   * Enchantment - Aura
+   * Enchant creature
+   * When enchanted creature dies, target player discards two cards. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -2935,10 +2795,52 @@ int card_dying_wail(int player, int card, event_t event)
   result = aura(player, card, event, NULL, NULL);
   return result;
 }
+#endif
 
+/* ManalinkEh 2022: 0x21089e0; original cards/urza_destiny.c:2646. */
+int card_encroach(int player, int card, event_t event)
+{
+  /* Encroach	|B
+   * Sorcery
+   * Target player reveals their hand. You choose a nonbasic land card from it. That player discards that card. */
+
+  card_instance_t *instance;
+  ec_definition_t this_definition;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  if (!IS_GS_EVENT(player, card, event))
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 0);
+  td.zone = TARGET_ZONE_PLAYERS;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target(&td))
+    {
+      new_default_test_definition(&this_test, 1, "Choose a nonbasic land card.");
+      this_test.subtype = 0x2000;
+      this_test.subtype_flag = 1;
+      default_ec_definition(instance->targets[0].player, player, &this_definition);
+      new_effect_coercion(&this_definition, &this_test);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
+}
+
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2108bb0; original cards/urza_destiny.c:2684. */
 int card_festering_wound(int player, int card, event_t event)
 {
+  /* Festering Wound	|1|B
+   * Enchantment - Aura
+   * Enchant creature
+   * At the beginning of your upkeep, you may put an infection counter on this Aura.
+   * At the beginning of the upkeep of enchanted creature's controller, this Aura deals X damage to that player, where X is the number of infection counters on this Aura. */
+
   card_instance_t *instance;
   int result;
 
@@ -2976,10 +2878,91 @@ int card_festering_wound(int player, int card, event_t event)
   result = aura(player, card, event, NULL, NULL);
   return result;
 }
+#endif
 
+/* ManalinkEh 2022: 0x2108d90; original cards/urza_destiny.c:2719. */
+int card_goblin_festival(int player, int card, event_t event)
+{
+  /* Goblin Festival	|1|R
+   * Enchantment
+   * |2: This enchantment deals 1 damage to any target. Flip a coin. If you lose the flip, choose one of your opponents. That player gains control of this enchantment. */
+
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = global_enchantment(player, card, event);
+      return result;
+    }
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        damage_target0(player, card, 1);
+        result = flip_a_coin(player, card);
+        if (result == 0)
+        {
+          give_control_of_self(instance->parent_controller, instance->parent_card);
+        }
+      }
+    }
+  }
+  result =
+      generic_activated_ability(player, card, event, 4, 2, 0, 0, 0, 0, 0, 0, &td, "TARGET_ANY");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2108f30; original cards/urza_destiny.c:2746. */
+int card_goblin_masons(int player, int card, event_t event)
+{
+  /* Goblin Masons	|1|R
+   * Creature - Goblin 2/1
+   * When this creature dies, destroy target Wall. */
+
+  int result;
+  target_definition_t td;
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.required_subtype = 0xd1;
+    td.allow_cancel = 0;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "Select target wall.", 0, 0x80);
+      if (result != 0)
+      {
+        action_on_target(player, card, 0, ACT_KILL_DESTROY);
+      }
+    }
+  }
+  return 0;
+}
+
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2108ff0; original cards/urza_destiny.c:2766. */
 int card_illuminated_wings(int player, int card, event_t event)
 {
+  /* Illuminated Wings	|1|U
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature has flying.
+   * |2, Sacrifice this Aura: Draw a card. */
+
   int result;
 
   if (event != EVENT_ACTIVATE)
@@ -2997,10 +2980,18 @@ int card_illuminated_wings(int player, int card, event_t event)
   }
   return generic_activated_ability(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
 }
+#endif
 
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x21090e0; original cards/urza_destiny.c:2784. */
 int card_incendiary(int player, int card, event_t event)
 {
+  /* Incendiary	|R
+   * Enchantment - Aura
+   * Enchant creature
+   * At the beginning of your upkeep, you may put a fuse counter on this Aura.
+   * When enchanted creature dies, this Aura deals X damage to any target, where X is the number of fuse counters on this Aura. */
+
   int result;
   card_instance_t *instance;
   int damage_triggers_remaining;
@@ -3048,245 +3039,96 @@ int card_incendiary(int player, int card, event_t event)
   }
   return aura(player, card, event, NULL, NULL);
 }
+#endif
 
-/* ManalinkEh 2022: 0x21099f0; original cards/urza_destiny.c:2939. */
-int card_mark_of_fury(int player, int card, event_t event)
+/* ManalinkEh 2022: 0x2109300; original cards/urza_destiny.c:2824. */
+int card_landslide(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  int result;
+  /* Landslide	|R
+   * Sorcery
+   * Sacrifice any number of Mountains. ~ deals that much damage to target player or planeswalker. */
 
-  instance = in_play(player, card);
-  if (instance != NULL)
+  int result;
+  card_instance_t *instance;
+  const char *msg;
+  target_definition_t td;
+  test_definition_t test;
+
+  default_target_definition(player, card, &td, 0x100);
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+  if (event == EVENT_RESOLVE_SPELL)
   {
-    result = is_humiliated(player, card, AL_TRIG);
-    if (result == 0)
+    result = valid_target(&td);
+    if (result != 0)
     {
-      result = eot_trigger(player, card, event);
-      if (result != 0)
-      {
-        bounce_permanent(player, card);
-      }
+      instance = get_card_instance(player, card);
+      msg = get_hacked_land_text(player, card, "Select a %s.", 0x5006);
+      new_default_test_definition(&test, 1, msg);
+      test.subtype = get_hacked_subtype(player, card, 0x5006);
+      test.qty = 500;
+      result = new_sacrifice(player, card, player, SAC_DONE | SAC_NO_CANCEL, &test);
+      damage_creature(instance->targets[0].player, instance->targets[0].card, result, player, card);
     }
+    kill_card(player, card, KILL_DESTROY);
   }
-  attached_gets_kw(player, card, event, KEYWORD_0, SP_KEYWORD_HASTE);
-  result = aura(player, card, event, NULL, NULL);
+  result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER_OR_PLANESWALKER", 1, NULL);
   return result;
 }
 
-/* ManalinkEh 2022: 0x2109aa0; original cards/urza_destiny.c:2956. */
-int card_mask_of_law_and_grace(int player, int card, event_t event)
+/* ManalinkEh 2022: 0x2109460; original cards/urza_destiny.c:2853. */
+int card_lurking_jackals(int player, int card, event_t event)
 {
+  /* Lurking Jackals	|B
+   * Enchantment
+   * When an opponent has 10 or less life, if this permanent is an enchantment, it becomes a 3/2 Jackal creature. */
+
   int result;
 
-  attached_gets_kw(player, card, event, KEYWORD_PROT_RED | KEYWORD_PROT_BLACK, SP_KEYWORD_0);
-  result = aura(player, card, event, NULL, NULL);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x2109b00; original cards/urza_destiny.c:2967. */
-int card_momentum(int player, int card, event_t event)
-{
-  int result;
-
-  result = duh_mode(player);
-  upkeep_trigger_ability_mode(player, card, event, player,
-                              (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
-  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  if ((((event == EVENT_STATIC_EFFECTS) && (life[1 - player] < 0xb)) && (card == affected_card)) &&
+      (player == affected_card_controller))
   {
-    add_counters(player, card, player, card, COUNTER_GROWTH, 1);
-  }
-  result = count_counters(player, card, COUNTER_GROWTH);
-  attached_gets_pt(player, card, event, result, result);
-  result = aura(player, card, event, NULL, NULL);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x2109ce0; original cards/urza_destiny.c:3005. */
-int card_private_research(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-
-  result = duh_mode(player);
-  upkeep_trigger_ability_mode(player, card, event, player,
-                              (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
-  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
-  {
-    add_counters(player, card, player, card, COUNTER_PAGE, 1);
-  }
-  instance = in_play(player, card);
-  if (instance != NULL)
-  {
-    instance = get_card_instance(player, card);
-    if (-1 < instance->damage_target_player)
+    result = is_what(player, card, 4);
+    if (result != 0)
     {
-      result = is_humiliated(player, card, AL_TRIG);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
-        result = attached_creature_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-        if (result != 0)
-        {
-          result = count_counters(player, card, COUNTER_PAGE);
-          draw_cards(player, result);
-        }
+        animate_self_remove_type(player, card, 3, 2, TYPE_ENCHANTMENT, KEYWORD_0, SP_KEYWORD_0,
+                                 COLOR_TEST_0, 1);
       }
     }
   }
-  result = aura(player, card, event, NULL, NULL);
+  has_subtype_if_animated_self(player, card, event, SUBTYPE_JACKAL);
+  result = global_enchantment(player, card, event);
   return result;
 }
-#endif
 
-#ifndef SHANDALAR
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2107da0; original cards/urza_destiny.c:2397. */
-int card_archery_training(int player, int card, event_t event)
+/* ManalinkEh 2022: 0x2109550; original cards/urza_destiny.c:2869. */
+int card_magnify(int player, int card, event_t event)
 {
+  /* Magnify	|G
+   * Instant
+   * All creatures get +1/+1 until end of turn. */
+
   int result;
-  card_instance_t *instance;
-  target_definition_t td;
-
-  result = duh_mode(player);
-  upkeep_trigger_ability_mode(player, card, event, player,
-                              (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
-  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  if (event == EVENT_RESOLVE_SPELL)
   {
-    add_counters(player, card, player, card, COUNTER_ARROW, 1);
+    pump_creatures_until_eot(player, card, 2, 0, 1, 1, 0, 0, NULL);
+    kill_card(player, card, KILL_DESTROY);
   }
-  instance = in_play(player, card);
-  if (instance != NULL)
-  {
-    instance = get_card_instance(player, card);
-    if (-1 < instance->damage_target_player)
-    {
-
-      instance = get_card_instance(player, card);
-      if (event == EVENT_ACTIVATE)
-      {
-        default_target_definition(player, card, &td, 2);
-        td.required_state = TARGET_STATE_IN_COMBAT;
-      }
-      else
-      {
-        if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-        {
-          default_target_definition(player, card, &td, 2);
-          td.preferred_controller = player;
-          return aura(player, card, event, &td, NULL);
-        }
-        default_target_definition(player, card, &td, 2);
-        td.required_state = TARGET_STATE_IN_COMBAT;
-        if (event == EVENT_RESOLVE_ACTIVATION)
-        {
-          result = valid_target(&td);
-          if (result != 0)
-          {
-            result = count_counters(player, card, COUNTER_ARROW);
-            damage_target0(player, card, result);
-          }
-        }
-      }
-      return granted_generic_activated_ability(player, card, (int)instance->damage_target_player,
-                                               instance->damage_target_card, event, 5, 0, 0, 0, 0,
-                                               0, 0, 0, &td, "TARGET_ATTACKING_BLOCKING_CREATURE");
-    }
-  }
-  default_target_definition(player, card, &td, 2);
-  td.preferred_controller = player;
-  return aura(player, card, event, &td, NULL);
+  result = basic_spell(player, card, event);
+  return result;
 }
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x2109f60; original cards/urza_destiny.c:3050. */
-int card_scrying_glass(int player, int card, event_t event)
-{
-  int p;
-  card_instance_t *instance;
-  int target_valid;
-  int unmatched_guess;
-  int color_or_card_index;
-  unsigned char chosen_color;
-  unsigned int chosen_color_test;
-  target_definition_t td;
-
-  if (event == EVENT_ACTIVATE)
-  {
-    default_target_definition(player, card, &td, 0);
-    td.zone = TARGET_ZONE_PLAYERS;
-    get_card_instance(player, card);
-    return generic_activated_ability(player, card, event,
-                                     (GAA_UNTAPPED | GAA_CAN_ONLY_TARGET_OPPONENT), 3, 0, 0, 0, 0,
-                                     0, 0, &td, NULL);
-  }
-  if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-  {
-    return 0;
-  }
-  default_target_definition(player, card, &td, 0);
-  td.zone = TARGET_ZONE_PLAYERS;
-  instance = get_card_instance(player, card);
-  if ((event != EVENT_RESOLVE_ACTIVATION) || (target_valid = valid_target(&td), target_valid == 0))
-    return generic_activated_ability(player, card, event,
-                                     (GAA_UNTAPPED | GAA_CAN_ONLY_TARGET_OPPONENT), 3, 0, 0, 0, 0,
-                                     0, 0, &td, NULL);
-  p = instance->targets[0].player;
-  if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
-  {
-    unmatched_guess = internal_rand(hand_count[p]);
-    unmatched_guess = unmatched_guess + 1;
-    color_or_card_index = choose_a_color(player, get_deck_color(player, p));
-    chosen_color = (unsigned char)color_or_card_index;
-    reveal_target_player_hand(p);
-  }
-  else
-  {
-    do
-    {
-      unmatched_guess = choose_a_number(player, "Choose a number greater than 0.", hand_count[p]);
-    } while (unmatched_guess < 1);
-    color_or_card_index = choose_a_color(player, get_deck_color(player, p));
-    chosen_color = (unsigned char)color_or_card_index;
-    reveal_target_player_hand(p);
-    if (active_cards_count[p] < 1)
-      return generic_activated_ability(player, card, event,
-                                       (GAA_UNTAPPED | GAA_CAN_ONLY_TARGET_OPPONENT), 3, 0, 0, 0, 0,
-                                       0, 0, &td, NULL);
-  }
-  if (0 < active_cards_count[p])
-  {
-    chosen_color_test = 1 << (chosen_color & 0x1f);
-    color_or_card_index = 0;
-    do
-    {
-      instance = in_hand(p, color_or_card_index);
-      if (instance != NULL)
-      {
-        unmatched_guess =
-            unmatched_guess + -1 + (unsigned int)(((int)instance->color & chosen_color_test) == 0);
-      }
-      color_or_card_index = color_or_card_index + 1;
-    } while (color_or_card_index < active_cards_count[p]);
-  }
-  if (unmatched_guess == 0)
-  {
-    draw_cards(player, 1);
-  }
-  return generic_activated_ability(player, card, event,
-                                   (GAA_UNTAPPED | GAA_CAN_ONLY_TARGET_OPPONENT), 3, 0, 0, 0, 0, 0,
-                                   0, &td, NULL);
-}
-
-#endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x21095e0; original cards/urza_destiny.c:2883. */
 int card_mantis_engine(int player, int card, event_t event)
 {
+  /* Mantis Engine	|5
+   * Artifact Creature - Insect 3/3
+   * |2: This creature gains flying until end of turn. (It can't be blocked except by creatures with flying or reach.)
+   * |2: This creature gains first strike until end of turn. (It deals combat damage before creatures without first strike.) */
+
   enum
   {
     CHOICE_FLYING = 1,
@@ -3375,5 +3217,291 @@ int card_mantis_engine(int player, int card, event_t event)
   }
   return 0;
 }
-
 #endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21099f0; original cards/urza_destiny.c:2939. */
+int card_mark_of_fury(int player, int card, event_t event)
+{
+  /* Mark of Fury	|R
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature has haste.
+   * At the beginning of the end step, return this Aura to its owner's hand. */
+
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      result = eot_trigger(player, card, event);
+      if (result != 0)
+      {
+        bounce_permanent(player, card);
+      }
+    }
+  }
+  attached_gets_kw(player, card, event, KEYWORD_0, SP_KEYWORD_HASTE);
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2109aa0; original cards/urza_destiny.c:2956. */
+int card_mask_of_law_and_grace(int player, int card, event_t event)
+{
+  /* Mask of Law and Grace	|W
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature has protection from black and from red. */
+
+  int result;
+
+  attached_gets_kw(player, card, event, KEYWORD_PROT_RED | KEYWORD_PROT_BLACK, SP_KEYWORD_0);
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2109b00; original cards/urza_destiny.c:2967. */
+int card_momentum(int player, int card, event_t event)
+{
+  /* Momentum	|2|G
+   * Enchantment - Aura
+   * Enchant creature
+   * At the beginning of your upkeep, you may put a growth counter on this Aura.
+   * Enchanted creature gets +1/+1 for each growth counter on this Aura. */
+
+  int result;
+
+  result = duh_mode(player);
+  upkeep_trigger_ability_mode(player, card, event, player,
+                              (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    add_counters(player, card, player, card, COUNTER_GROWTH, 1);
+  }
+  result = count_counters(player, card, COUNTER_GROWTH);
+  attached_gets_pt(player, card, event, result, result);
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif
+
+/* ManalinkEh 2022: 0x2109bd0; original cards/urza_destiny.c:2985. */
+int card_plague_dogs(int player, int card, event_t event)
+{
+  /* Plague Dogs	|4|B
+   * Creature - Phyrexian Zombie Dog 3/3
+   * When this creature dies, all creatures get -1/-1 until end of turn.
+   * |2, Sacrifice this creature: Draw a card. */
+
+  int result;
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    pump_subtype_until_eot(player, card, 2, -1, -1, -1, 0, 0);
+  }
+  if (!IS_GAA_EVENT(event))
+    return 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    draw_cards(player, 1);
+  }
+  result = generic_activated_ability(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2109ce0; original cards/urza_destiny.c:3005. */
+int card_private_research(int player, int card, event_t event)
+{
+  /* Private Research	|U
+   * Enchantment - Aura
+   * Enchant creature
+   * At the beginning of your upkeep, you may put a page counter on this Aura.
+   * When enchanted creature dies, draw a card for each page counter on this Aura. */
+
+  int result;
+  card_instance_t *instance;
+
+  result = duh_mode(player);
+  upkeep_trigger_ability_mode(player, card, event, player,
+                              (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    add_counters(player, card, player, card, COUNTER_PAGE, 1);
+  }
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    instance = get_card_instance(player, card);
+    if (-1 < instance->damage_target_player)
+    {
+      result = is_humiliated(player, card, AL_TRIG);
+      if (result == 0)
+      {
+        result = attached_creature_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+        if (result != 0)
+        {
+          result = count_counters(player, card, COUNTER_PAGE);
+          draw_cards(player, result);
+        }
+      }
+    }
+  }
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif
+
+/* ManalinkEh 2022: 0x2109e10; original cards/urza_destiny.c:3026. */
+int card_rescue(int player, int card, event_t event)
+{
+  /* Rescue	|U
+   * Instant
+   * Return target permanent you control to its owner's hand. */
+
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x47);
+        td.preferred_controller = player;
+        td.allowed_controller = player;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          if (valid_target(&td))
+          {
+            instance = get_card_instance(player, card);
+            bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        return generic_spell(player, card, event, 1, &td, "TARGET_PERMANENT_YOU_CONTROL", 1, NULL);
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  return generic_spell(player, card, event, 1, &td, "TARGET_PERMANENT_YOU_CONTROL", 1, NULL);
+}
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2109f60; original cards/urza_destiny.c:3050. */
+int card_scrying_glass(int player, int card, event_t event)
+{
+  /* Scrying Glass	|2
+   * Artifact
+   * |3, |T: Choose a number greater than 0 and a color. Target opponent reveals their hand. If that opponent reveals exactly the chosen number of cards of the chosen color, you draw a card. */
+
+  int p;
+  card_instance_t *instance;
+  int target_valid;
+  int unmatched_guess;
+  int color_or_card_index;
+  unsigned char chosen_color;
+  unsigned int chosen_color_test;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0);
+    td.zone = TARGET_ZONE_PLAYERS;
+    get_card_instance(player, card);
+    return generic_activated_ability(player, card, event,
+                                     (GAA_UNTAPPED | GAA_CAN_ONLY_TARGET_OPPONENT), 3, 0, 0, 0, 0,
+                                     0, 0, &td, NULL);
+  }
+  if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 0);
+  td.zone = TARGET_ZONE_PLAYERS;
+  instance = get_card_instance(player, card);
+  if ((event != EVENT_RESOLVE_ACTIVATION) || (target_valid = valid_target(&td), target_valid == 0))
+    return generic_activated_ability(player, card, event,
+                                     (GAA_UNTAPPED | GAA_CAN_ONLY_TARGET_OPPONENT), 3, 0, 0, 0, 0,
+                                     0, 0, &td, NULL);
+  p = instance->targets[0].player;
+  if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+  {
+    unmatched_guess = internal_rand(hand_count[p]);
+    unmatched_guess = unmatched_guess + 1;
+    color_or_card_index = choose_a_color(player, get_deck_color(player, p));
+    chosen_color = (unsigned char)color_or_card_index;
+    reveal_target_player_hand(p);
+  }
+  else
+  {
+    do
+    {
+      unmatched_guess = choose_a_number(player, "Choose a number greater than 0.", hand_count[p]);
+    } while (unmatched_guess < 1);
+    color_or_card_index = choose_a_color(player, get_deck_color(player, p));
+    chosen_color = (unsigned char)color_or_card_index;
+    reveal_target_player_hand(p);
+    if (active_cards_count[p] < 1)
+      return generic_activated_ability(player, card, event,
+                                       (GAA_UNTAPPED | GAA_CAN_ONLY_TARGET_OPPONENT), 3, 0, 0, 0, 0,
+                                       0, 0, &td, NULL);
+  }
+  if (0 < active_cards_count[p])
+  {
+    chosen_color_test = 1 << (chosen_color & 0x1f);
+    color_or_card_index = 0;
+    do
+    {
+      instance = in_hand(p, color_or_card_index);
+      if (instance != NULL)
+      {
+        unmatched_guess =
+            unmatched_guess + -1 + (unsigned int)(((int)instance->color & chosen_color_test) == 0);
+      }
+      color_or_card_index = color_or_card_index + 1;
+    } while (color_or_card_index < active_cards_count[p]);
+  }
+  if (unmatched_guess == 0)
+  {
+    draw_cards(player, 1);
+  }
+  return generic_activated_ability(player, card, event,
+                                   (GAA_UNTAPPED | GAA_CAN_ONLY_TARGET_OPPONENT), 3, 0, 0, 0, 0, 0,
+                                   0, &td, NULL);
+}
+#endif
+
+/* ManalinkEh 2022: 0x210a1d0; original cards/urza_destiny.c:3097. */
+int card_storage_matrix(int player, int card, event_t event) {
+  /* Storage Matrix	|3
+   * Artifact
+   * As long as this artifact is untapped, each player chooses artifact, creature, or land during their untap step. That player can untap only permanents of the chosen type this step. */
+
+ return 0; }

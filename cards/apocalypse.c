@@ -5,6 +5,10 @@ static int ap_disciples(int player, int card, event_t event, color_test_t colors
 
 // Functions
 
+int card_whirlpool_rider(int player, int card, event_t event);
+
+static int whirlpool_rider_part(int player, int card, event_t event);
+
 int recruiting(int player, int card, int subtype, int cards_to_look)
 {
   int *library;
@@ -53,7 +57,17 @@ static void recruiter(int player, int card, event_t event, int subtype){
 	}
 }
 
-
+#ifndef SHANDALAR
+static void phyrexians(int player, int card, event_t event, int amount)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    lose_life(player, amount);
+    draw_cards(player, amount);
+  }
+}
+#endif
 
 void volver(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white,
 			int colorless2, int black2, int blue2, int green2, int red2, int white2, int kicker1_priority, int kicker2_priority
@@ -138,64 +152,6 @@ void volver(int player, int card, event_t event, int colorless, int black, int b
 			}
 		}
 	}
-}
-
-
-
-static int desolation_creature(int player, int card, event_t event, type_t type){
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( ! has_mana(player, COLOR_WHITE, 2) ){
-			ai_modifier -= count_subtype(player, type, -1)*10;
-		}
-	}
-
-	kicker(player, card, event, MANACOST_W(2));
-
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-
-	if( event == EVENT_ETB_ABILITY ){
-		test_definition_t test;
-		default_test_definition(&test, type);
-		new_manipulate_all(player, card, player, &test, ACT_KILL_DESTROY);
-		if( kicked(player, card) ){
-			new_manipulate_all(player, card, 1-player, &test, ACT_KILL_DESTROY);
-		}
-	}
-
-	return 0;
-}
-
-// Cards
-int card_aether_mutation(int player, int card, event_t event){
-	/* AEther Mutation	|3|G|U
-	 * Sorcery
-	 * Return target creature to its owner's hand. Put X 1/1 |Sgreen Saproling creature tokens onto the battlefield, where X is that creature's converted mana cost. */
-
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
-
-	target_definition_t td1;
-	default_target_definition(player, card, &td1, TYPE_CREATURE);
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td1);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		pick_target(&td1, "TARGET_CREATURE");
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( valid_target(&td1) ){
-			generate_tokens_by_id(player, card, CARD_ID_SAPROLING, get_cmc(instance->targets[0].player, instance->targets[0].card));
-			bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-	return 0;
 }
 
 #ifndef SHANDALAR
@@ -437,17 +393,72 @@ static int ap_disciples(int player, int card, event_t event, color_test_t colors
   }
   return 0;
 }
-
 #endif
+
+static int desolation_creature(int player, int card, event_t event, type_t type){
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		if( ! has_mana(player, COLOR_WHITE, 2) ){
+			ai_modifier -= count_subtype(player, type, -1)*10;
+		}
+	}
+
+	kicker(player, card, event, MANACOST_W(2));
+
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY ){
+		test_definition_t test;
+		default_test_definition(&test, type);
+		new_manipulate_all(player, card, player, &test, ACT_KILL_DESTROY);
+		if( kicked(player, card) ){
+			new_manipulate_all(player, card, 1-player, &test, ACT_KILL_DESTROY);
+		}
+	}
+
+	return 0;
+}
+
+// Cards
+
+int card_aether_mutation(int player, int card, event_t event){
+	/* AEther Mutation	|3|G|U
+	 * Sorcery
+	 * Return target creature to its owner's hand. Put X 1/1 |Sgreen Saproling creature tokens onto the battlefield, where X is that creature's converted mana cost. */
+
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
+	target_definition_t td1;
+	default_target_definition(player, card, &td1, TYPE_CREATURE);
+
+	card_instance_t *instance = get_card_instance(player, card);
+
+	if( event == EVENT_CAN_CAST ){
+		return can_target(&td1);
+	}
+
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		pick_target(&td1, "TARGET_CREATURE");
+	}
+
+	if( event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(&td1) ){
+			generate_tokens_by_id(player, card, CARD_ID_SAPROLING, get_cmc(instance->targets[0].player, instance->targets[0].card));
+			bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+		}
+		kill_card(player, card, KILL_DESTROY);
+	}
+	return 0;
+}
 
 /* ManalinkEh 2022: 0x2061850; original cards/apocalypse.c:332. */
 int card_ana_disciple(int player, int card, event_t event){
-/*
-Ana Disciple |G
-Creature — Human Wizard 1/1
-{U}, {T}: Target creature gains flying until end of turn.
-{B}, {T}: Target creature gets -2/-0 until end of turn.
-*/
+  /* Ana Disciple |G
+   * Creature — Human Wizard 1/1
+   * {U}, {T}: Target creature gains flying until end of turn.
+   * {B}, {T}: Target creature gets -2/-0 until end of turn. */
+
 	#ifndef SHANDALAR
 	return ap_disciples(player, card, event, COLOR_TEST_BLUE | COLOR_TEST_BLACK);
 #else
@@ -456,6 +467,9 @@ Creature — Human Wizard 1/1
 }
 
 int card_ana_sanctuary(int player, int card, event_t event){
+  /* Ana Sanctuary	|2|G
+   * Enchantment
+   * At the beginning of your upkeep, if you control a blue or black permanent, target creature gets +1/+1 until end of turn. If you control a blue permanent and a black permanent, that creature gets +5/+5 until end of turn instead. */
 
 	if( trigger_condition == TRIGGER_UPKEEP && affect_me(player, card) ){
 		target_definition_t td;
@@ -509,13 +523,12 @@ int card_ana_sanctuary(int player, int card, event_t event){
 }
 
 int card_anavolver(int player, int card, event_t event){
-	/*
-	  Anavolver |3|G
-	  Creature - Volver 3/3
-	  Kicker {1}{U} and/or {B} (You may pay an additional {1}{U} and/or {B} as you cast this spell.)
-	  If Anavolver was kicked with its {1}{U} kicker, it enters the battlefield with two +1/+1 counters on it and with flying.
-	  If Anavolver was kicked with its {B} kicker, it enters the battlefield with a +1/+1 counter on it and with "Pay 3 life: Regenerate Anavolver."
-	*/
+  /* Anavolver |3|G
+   * 	  Creature - Volver 3/3
+   * 	  Kicker {1}{U} and/or {B} (You may pay an additional {1}{U} and/or {B} as you cast this spell.)
+   * 	  If Anavolver was kicked with its {1}{U} kicker, it enters the battlefield with two +1/+1 counters on it and with flying.
+   * 	  If Anavolver was kicked with its {B} kicker, it enters the battlefield with a +1/+1 counter on it and with "Pay 3 life: Regenerate Anavolver." */
+
 	volver(player, card, event, MANACOST_XU(1, 1), MANACOST_B(1), 10, 5);
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -560,7 +573,6 @@ Creature - Giant 6/6
 
 	return 0;
 }
-
 
 int card_bloodfire_dwarf(int player, int card, event_t event){
 /* CARD_ID_BLOODFIRE_DWARF	5336
@@ -697,12 +709,11 @@ int card_captains_maneuver(int player, int card, event_t event){
 
 /* ManalinkEh 2022: 0x2062680; original cards/apocalypse.c:586. */
 int card_ceta_disciple(int player, int card, event_t event){
-/*
-Ceta Disciple |U
-Creature — Merfolk Wizard 1/1
-{R}, {T}: Target creature gets +2/+0 until end of turn.
-{G}, {T}: Add one mana of any color to your mana pool.
-*/
+  /* Ceta Disciple |U
+   * Creature — Merfolk Wizard 1/1
+   * {R}, {T}: Target creature gets +2/+0 until end of turn.
+   * {G}, {T}: Add one mana of any color to your mana pool. */
+
 	#ifndef SHANDALAR
 	return ap_disciples(player, card, event, COLOR_TEST_RED | COLOR_TEST_GREEN);
 #else
@@ -711,13 +722,12 @@ Creature — Merfolk Wizard 1/1
 }
 
 int card_cetavolver(int player, int card, event_t event){
-	/*
-	  Cetavolver English |1|U
-	  Creature - Volver 1/1
-	  Kicker {1}{R} and/or {G} (You may pay an additional {1}{R} and/or {G} as you cast this spell.)
-	  If Cetavolver was kicked with its {1}{R} kicker, it enters the battlefield with two +1/+1 counters on it and with first strike.
-	  If Cetavolver was kicked with its {G} kicker, it enters the battlefield with a +1/+1 counter on it and with trample.
-	*/
+  /* Cetavolver English |1|U
+   * 	  Creature - Volver 1/1
+   * 	  Kicker {1}{R} and/or {G} (You may pay an additional {1}{R} and/or {G} as you cast this spell.)
+   * 	  If Cetavolver was kicked with its {1}{R} kicker, it enters the battlefield with two +1/+1 counters on it and with first strike.
+   * 	  If Cetavolver was kicked with its {G} kicker, it enters the battlefield with a +1/+1 counter on it and with trample. */
+
 	volver(player, card, event, MANACOST_XR(1, 1), MANACOST_G(1), 5, 10);
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -772,6 +782,14 @@ If you control a |Sred permanent and a |Sgreen permanent, instead draw two cards
 
 int card_order_chaos(int player, int card, event_t event)
 {
+  /* Order // Chaos	|3|W // |2|R
+   * Instant // Instant
+   * Order:
+   * Exile target attacking creature.
+   *
+   * Chaos:
+   * Creatures can't block this turn. */
+
   card_instance_t *instance;
   int can_play_first_half;
   unsigned int half_flags;
@@ -893,6 +911,39 @@ Target creature gets +2/+2 until end of turn. Another target creature gets -2/-2
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x2063090; original cards/apocalypse.c:757. */
+int card_credit_voucher(int player, int card, event_t event)
+{
+  /* Credit Voucher	|2
+   * Artifact
+   * |2, |T, Sacrifice this artifact: Shuffle any number of cards from your hand into your library, then draw that many cards. */
+
+  int result;
+  int selected;
+  test_definition_t test;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    new_default_test_definition(&test, 0xff, "Select a card to shuffle into library.");
+    result = 0;
+    if (hand_count[player] != 0)
+    {
+      result = 0;
+      do
+      {
+        selected = new_select_a_card(player, player, 4, 0, 2, -1, &test);
+        if (selected < 0)
+          break;
+        put_on_top_of_deck(player, selected);
+        result = result + 1;
+      } while (hand_count[player] != 0);
+    }
+    shuffle(player);
+    draw_cards(player, result);
+  }
+  result = generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
 static const char* is_blocking_crm(int who_chooses, int player, int card, int targeting_player, int targeting_card)
 {
   if (is_blocking(card, targeting_card))
@@ -910,6 +961,14 @@ static const char* crm_is_blocking_him(int who_chooses, int player, int card, in
 }
 
 int card_cromat(int player, int card, event_t event){
+  /* Cromat	|W|U|B|R|G
+   * Legendary Creature - Illusion 5/5
+   * |W|B: Destroy target creature blocking or blocked by ~.
+   * |U|R: ~ gains flying until end of turn.
+   * |B|G: Regenerate ~.
+   * |R|W: ~ gets +1/+1 until end of turn.
+   * |G|U: Put ~ on top of its owner's library. */
+
 	/*
 	  Cromat English
 
@@ -1114,12 +1173,11 @@ int card_death_grasp(int player, int card, event_t event){
 
 /* ManalinkEh 2022: 0x2063de0; original cards/apocalypse.c:1003. */
 int card_dega_disciple(int player, int card, event_t event){
-/*
-Dega Disciple |W
-Creature — Human Wizard 1/1
-{B}, {T}: Target creature gets -2/-0 until end of turn.
-{R}, {T}: Target creature gets +2/+0 until end of turn.
-*/
+  /* Dega Disciple |W
+   * Creature — Human Wizard 1/1
+   * {B}, {T}: Target creature gets -2/-0 until end of turn.
+   * {R}, {T}: Target creature gets +2/+0 until end of turn. */
+
 	#ifndef SHANDALAR
 	return ap_disciples(player, card, event, COLOR_TEST_RED | COLOR_TEST_BLACK);
 #else
@@ -1162,13 +1220,12 @@ If you control a |Sblack permanent and a |Sred permanent, you gain 4 life instea
 }
 
 int card_degavolver(int player, int card, event_t event){
-	/*
-	  Degavolver |1|W
-	  Creature - Volver 1/1
-	  Kicker {1}{B} and/or {R} (You may pay an additional {1}{B} and/or {R} as you cast this spell.)
-	  If Degavolver was kicked with its {1}{B} kicker, it enters the battlefield with two +1/+1 counters on it and with "Pay 3 life: Regenerate Degavolver."
-	  If Degavolver was kicked with its {R} kicker, it enters the battlefield with a +1/+1 counter on it and with first strike.
-	*/
+  /* Degavolver |1|W
+   * 	  Creature - Volver 1/1
+   * 	  Kicker {1}{B} and/or {R} (You may pay an additional {1}{B} and/or {R} as you cast this spell.)
+   * 	  If Degavolver was kicked with its {1}{B} kicker, it enters the battlefield with two +1/+1 counters on it and with "Pay 3 life: Regenerate Degavolver."
+   * 	  If Degavolver was kicked with its {R} kicker, it enters the battlefield with a +1/+1 counter on it and with first strike. */
+
 	volver(player, card, event, MANACOST_XB(1, 1), MANACOST_R(1), 5, 10);
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -1197,19 +1254,22 @@ int card_degavolver(int player, int card, event_t event){
 
 int card_desolation_angel(int player, int card, event_t event)
 {
-  /*
-Desolation Angel |3|B|B
-Creature — Angel 5/4
-Kicker {W}{W} (You may pay an additional {W}{W} as you cast this spell.)
-Flying
-When Desolation Angel enters the battlefield, destroy all lands you control. If it was kicked, destroy all lands instead.
-*/
+  /* Desolation Angel |3|B|B
+   * Creature — Angel 5/4
+   * Kicker {W}{W} (You may pay an additional {W}{W} as you cast this spell.)
+   * Flying
+   * When Desolation Angel enters the battlefield, destroy all lands you control. If it was kicked, destroy all lands instead. */
 
 return desolation_creature(player, card, event, TYPE_LAND);
 }
 
 int card_desolation_giant(int player, int card, event_t event)
 {
+  /* Desolation Giant	|2|R|R
+   * Creature - Giant 3/3
+   * Kicker |W|W (You may pay an additional |W|W as you cast this spell.)
+   * When this creature enters, destroy all other creatures you control. If it was kicked, destroy all other creatures instead. */
+
   /*
 Desolation Giant English
 Creature — Giant 3/3, 2RR (4)
@@ -1313,6 +1373,13 @@ Whenever a creature you control attacks, it gets +2/+2 until end of turn. */
 
 int card_fire_ice(int player, int card, event_t event)
 {
+  /* Fire // Ice	|1|R|/|1|U	0x2001380
+   * Instant // Instant
+   * Fire deals 2 damage divided as you choose among one or two targets.
+   * //
+   * Tap target permanent.
+   * Draw a card. */
+
   card_instance_t *instance;
   int ice_available;
   int can_play_first_half;
@@ -1418,14 +1485,12 @@ Whenever ~ deals damage to an opponent, you draw a card and that opponent discar
 	return 0;
 }
 
-
 int card_gerrard_capashen(int player, int card, event_t event){
-/*
-Gerrard Capashen |3|W|W
-Legendary Creature — Human Soldier 3/4
-At the beginning of your upkeep, you gain 1 life for each card in target opponent's hand.
-{3}{W}: Tap target creature. Activate this ability only if Gerrard Capashen is attacking.
-*/
+  /* Gerrard Capashen |3|W|W
+   * Legendary Creature — Human Soldier 3/4
+   * At the beginning of your upkeep, you gain 1 life for each card in target opponent's hand.
+   * {3}{W}: Tap target creature. Activate this ability only if Gerrard Capashen is attacking. */
+
 	check_legend_rule(player, card, event);
 
 	if( trigger_condition == TRIGGER_UPKEEP && affect_me(player, card) ){
@@ -1474,11 +1539,10 @@ At the beginning of your upkeep, you gain 1 life for each card in target opponen
 }
 
 int card_gerrards_verdict(int player, int card, event_t event){
-/*
-Gerrard's Verdict |W|B
-Sorcery
-Target player discards two cards. You gain 3 life for each land card discarded this way.
-*/
+  /* Gerrard's Verdict |W|B
+   * Sorcery
+   * Target player discards two cards. You gain 3 life for each land card discarded this way. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1635,13 +1699,12 @@ int check_deck_for_test(int player, test_definition_t *test){
 
 int card_guided_passage(int player, int card, event_t event)
 {
-  /*
-  Guided Passage |U|R|G
-  Sorcery
-  Reveal the cards in your library. An opponent chooses from among them a creature card, a land
-  card, and a noncreature, nonland card. You put the chosen cards into your hand. Then shuffle your
-  library.
-  */
+  /* Guided Passage |U|R|G
+   *   Sorcery
+   *   Reveal the cards in your library. An opponent chooses from among them a creature card, a land
+   *   card, and a noncreature, nonland card. You put the chosen cards into your hand. Then shuffle your
+   *   library. */
+
   if (event == EVENT_RESOLVE_SPELL)
   {
     int tutored = 0;
@@ -1687,11 +1750,9 @@ int card_guided_passage(int player, int card, event_t event)
 }
 
 int card_index2(int player, int card, event_t event){
-/*
-Index |U
-Sorcery
-Look at the top five cards of your library, then put them back in any order.
-*/
+  /* Index |U
+   * Sorcery
+   * Look at the top five cards of your library, then put them back in any order. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		rearrange_top_x(player, player, 5);
@@ -1857,11 +1918,10 @@ int card_last_stand(int player, int card, event_t event){
 }
 
 int card_lay_of_the_land(int player, int card, event_t event){
-	/*
-	  Lay of the Land |G
-	  Sorcery
-	  Search your library for a basic land card, reveal it, put it into your hand, then shuffle your library.
-	*/
+  /* Lay of the Land |G
+   * 	  Sorcery
+   * 	  Search your library for a basic land card, reveal it, put it into your hand, then shuffle your library. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		tutor_basic_lands(player, TUTOR_HAND, 1);
 		kill_card(player, card, KILL_DESTROY);
@@ -1869,7 +1929,6 @@ int card_lay_of_the_land(int player, int card, event_t event){
 
 	return basic_spell(player, card, event);
 }
-
 
 int card_legacy_weapon(int player, int card, event_t event){
 
@@ -1902,6 +1961,14 @@ int card_legacy_weapon(int player, int card, event_t event){
 
 int card_life_death(int player, int card, event_t event)
 {
+  /* Life // Death	|G // |1|B
+   * Sorcery // Sorcery
+   * Life:
+   * All lands you control become 1/1 creatures until end of turn. They're still lands.
+   *
+   * Death:
+   * Return target creature card from your graveyard to the battlefield. You lose life equal to its mana value. */
+
   card_instance_t *instance;
   unsigned int death_available;
   int result;
@@ -2013,13 +2080,25 @@ int card_mystic_snake(int player, int card, event_t event){
 	return 0;
 }
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2066c10; original cards/apocalypse.c:1873. */
+int card_necra_disciple(int player, int card, event_t event)
+{
+  /* Necra Disciple	|B
+   * Creature - Human Wizard 1/1
+   * |G, |T: Add one mana of any color.
+   * |W, |T: Prevent the next 1 damage that would be dealt to any target this turn. */
+
+  return ap_disciples(player, card, event, COLOR_TEST_WHITE | COLOR_TEST_GREEN);
+}
+#endif
+
 int card_necra_sanctuary(int player, int card, event_t event){
-/*
-Necra Sanctuary |2|B
-Enchantment
-At the beginning of your upkeep, if you control a green or white permanent, target player loses 1 life.
-If you control a green permanent and a white permanent, that player loses 3 life instead.
-*/
+  /* Necra Sanctuary |2|B
+   * Enchantment
+   * At the beginning of your upkeep, if you control a green or white permanent, target player loses 1 life.
+   * If you control a green permanent and a white permanent, that player loses 3 life instead. */
+
 	if( trigger_condition == TRIGGER_UPKEEP && affect_me(player, card) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -2071,13 +2150,12 @@ If you control a green permanent and a white permanent, that player loses 3 life
 }
 
 int card_necravolver(int player, int card, event_t event){
-	/*
-	  Necravolver |2|B
-	  Creature - Volver 2/2
-	  Kicker {1}{G} and/or {W} (You may pay an additional {1}{G} and/or {W} as you cast this spell.)
-	  If Necravolver was kicked with its {1}{G} kicker, it enters the battlefield with two +1/+1 counters on it and with trample.
-	  If Necravolver was kicked with its {W} kicker, it enters the battlefield with a +1/+1 counter on it and with "Whenever Necravolver deals damage, you gain that much life."
-	*/
+  /* Necravolver |2|B
+   * 	  Creature - Volver 2/2
+   * 	  Kicker {1}{G} and/or {W} (You may pay an additional {1}{G} and/or {W} as you cast this spell.)
+   * 	  If Necravolver was kicked with its {1}{G} kicker, it enters the battlefield with two +1/+1 counters on it and with trample.
+   * 	  If Necravolver was kicked with its {W} kicker, it enters the battlefield with a +1/+1 counter on it and with "Whenever Necravolver deals damage, you gain that much life." */
+
 	volver(player, card, event, MANACOST_XG(1, 1), MANACOST_W(1), 8, 10);
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -2190,11 +2268,10 @@ int card_penumbra_wurm(int player, int card, event_t event){
 }
 
 int card_pernicious_deed(int player, int card, event_t event){
-/*
-Pernicious Deed |1|B|G
-Enchantment
-{X}, Sacrifice Pernicious Deed: Destroy each artifact, creature, and enchantment with converted mana cost X or less.
-*/
+  /* Pernicious Deed |1|B|G
+   * Enchantment
+   * {X}, Sacrifice Pernicious Deed: Destroy each artifact, creature, and enchantment with converted mana cost X or less. */
+
 	if( event == EVENT_CAN_ACTIVATE ){
 		return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL);
 	}
@@ -2407,6 +2484,19 @@ int card_quicksilver_dagger(int player, int card, event_t event){
 	return targeted_aura(player, card, event, &td, "TARGET_CREATURE");
 }
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20680a0; original cards/apocalypse.c:2278. */
+int card_raka_disciple(int player, int card, event_t event)
+{
+  /* Raka Disciple	|R
+   * Creature - Minotaur Wizard 1/1
+   * |W, |T: Prevent the next 1 damage that would be dealt to any target this turn.
+   * |U, |T: Target creature gains flying until end of turn. */
+
+  return ap_disciples(player, card, event, COLOR_TEST_WHITE | COLOR_TEST_BLUE);
+}
+#endif
+
 int card_raka_sanctuary(int player, int card, event_t event){
 /* CARD_ID_RAKA_SANCTUARY	5426
 Raka Sanctuary	|2|R
@@ -2461,13 +2551,12 @@ If you control a |Swhite permanent and a |Sblue permanent, ~ deals 3 damage to t
 }
 
 int card_rakavolver(int player, int card, event_t event){
-	/*
-	  Rakavolver |2|R
-	  Creature - Volver 2/2
-	  Kicker {1}{W} and/or {U} (You may pay an additional {1}{W} and/or {U} as you cast this spell.)
-	  If Rakavolver was kicked with its {1}{W} kicker, it enters the battlefield with two +1/+1 counters on it and with "Whenever Rakavolver deals damage, you gain that much life."
-	  If Rakavolver was kicked with its {U} kicker, it enters the battlefield with a +1/+1 counter on it and with flying.
-	*/
+  /* Rakavolver |2|R
+   * 	  Creature - Volver 2/2
+   * 	  Kicker {1}{W} and/or {U} (You may pay an additional {1}{W} and/or {U} as you cast this spell.)
+   * 	  If Rakavolver was kicked with its {1}{W} kicker, it enters the battlefield with two +1/+1 counters on it and with "Whenever Rakavolver deals damage, you gain that much life."
+   * 	  If Rakavolver was kicked with its {U} kicker, it enters the battlefield with a +1/+1 counter on it and with flying. */
+
 	volver(player, card, event, MANACOST_XW(1, 1), MANACOST_U(1), 8, 10);
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -2704,11 +2793,10 @@ Creatures you control get +1/+1 until end of turn. If ~ was kicked, Zombie creat
 }
 
 int card_suffocating_blast(int player, int card, event_t event){
-/*
-Suffocating Blast |1|U|U|R
-Instant
-Counter target spell and Suffocating Blast deals 3 damage to target creature.
-*/
+  /* Suffocating Blast |1|U|U|R
+   * Instant
+   * Counter target spell and Suffocating Blast deals 3 damage to target creature. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -2948,15 +3036,108 @@ int card_urborg_uprising(int player, int card, event_t event)
   return rval;
 }
 
+/* ManalinkEh 2022: 0x2069960; original cards/apocalypse.c:2829. */
+int card_whirlpool_rider(int player, int card, event_t event)
+{
+  /* Whirlpool Rider	|1|U
+   * Creature - Merfolk 1/1
+   * When this creature enters, shuffle the cards from your hand into your library, then draw that many cards. */
+
+  int card_00;
+  card_00 = player;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  whirlpool_rider_part(player, card_00, card);
+  return 0;
+}
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2060dd0; original cards/apocalypse.c:2829. */
+static int whirlpool_rider_part(int player, int card, event_t event)
+{
+  int result;
+
+  result = reshuffle_hand_into_deck(player, 0);
+  result = draw_cards(player, result);
+  return result;
+}
+#endif
+
+/* ManalinkEh 2022: 0x20699b0; original cards/apocalypse.c:2844. */
+int card_whirlpool_drake(int player, int card, event_t event)
+{
+  /* Whirlpool Drake	|3|U
+   * Creature - Drake 2/2
+   * Flying
+   * When this creature enters, shuffle the cards from your hand into your library, then draw that many cards.
+   * When this creature dies, shuffle the cards from your hand into your library, then draw that many cards. */
+
+  int result;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    result = player;
+    etb_ability(player, card, EVENT_ETB, RESOLVE_TRIGGER_MANDATORY);
+    whirlpool_rider_part(player, result, card);
+    return 0;
+  }
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0)
+  {
+    return 0;
+  }
+  result = reshuffle_hand_into_deck(player, 0);
+  draw_cards(player, result);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2069a60; original cards/apocalypse.c:2866. */
+int card_whirlpool_warrior(int player, int card, event_t event)
+{
+  /* Whirlpool Warrior	|2|U
+   * Creature - Merfolk Warrior 2/2
+   * When this creature enters, shuffle the cards from your hand into your library, then draw that many cards.
+   * |R, Sacrifice this creature: Each player shuffles the cards from their hand into their library, then draws that many cards. */
+
+  int amount;
+  int result;
+  unsigned int player_00;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  result = current_turn;
+  if (event == EVENT_ETB)
+  {
+    result = player;
+    etb_ability(player, card, EVENT_ETB, RESOLVE_TRIGGER_MANDATORY);
+    whirlpool_rider_part(player, result, card);
+    return 0;
+  }
+  if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+  {
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      return 0;
+    }
+    amount = reshuffle_hand_into_deck(current_turn, 0);
+    draw_cards(result, amount);
+    player_00 = current_turn ^ 1;
+    result = reshuffle_hand_into_deck(player_00, 0);
+    draw_cards(player_00, result);
+    return 0;
+  }
+  return generic_activated_ability(player, card, event, 8, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
+}
+
 int card_wild_research(int player, int card, event_t event){
-/*
-Wild Research |2|R
-Enchantment, 2R (3)
-{1}{W}: Search your library for an enchantment card and reveal that card. Put it into your hand, then discard a card at random.
-		Then shuffle your library.
-{1}{U}: Search your library for an instant card and reveal that card. Put it into your hand, then discard a card at random.
-		Then shuffle your library.
-*/
+  /* Wild Research |2|R
+   * Enchantment, 2R (3)
+   * {1}{W}: Search your library for an enchantment card and reveal that card. Put it into your hand, then discard a card at random.
+   * 		Then shuffle your library.
+   * {1}{U}: Search your library for an instant card and reveal that card. Put it into your hand, then discard a card at random.
+   * 		Then shuffle your library. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return global_enchantment(player, card, event);
 	}
@@ -3012,152 +3193,3 @@ Enchantment, 2R (3)
 
 	return 0;
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int card_whirlpool_rider(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x2063090; original cards/apocalypse.c:757. */
-int card_credit_voucher(int player, int card, event_t event)
-{
-  int result;
-  int selected;
-  test_definition_t test;
-  if (event == EVENT_RESOLVE_ACTIVATION)
-  {
-    new_default_test_definition(&test, 0xff, "Select a card to shuffle into library.");
-    result = 0;
-    if (hand_count[player] != 0)
-    {
-      result = 0;
-      do
-      {
-        selected = new_select_a_card(player, player, 4, 0, 2, -1, &test);
-        if (selected < 0)
-          break;
-        put_on_top_of_deck(player, selected);
-        result = result + 1;
-      } while (hand_count[player] != 0);
-    }
-    shuffle(player);
-    draw_cards(player, result);
-  }
-  result = generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
-  return result;
-}
-
-static int whirlpool_rider_part(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x2069960; original cards/apocalypse.c:2829. */
-int card_whirlpool_rider(int player, int card, event_t event)
-{
-  int card_00;
-  card_00 = player;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event != EVENT_ETB)
-  {
-    return 0;
-  }
-  whirlpool_rider_part(player, card_00, card);
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x20699b0; original cards/apocalypse.c:2844. */
-int card_whirlpool_drake(int player, int card, event_t event)
-{
-  int result;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event == EVENT_ETB)
-  {
-    result = player;
-    etb_ability(player, card, EVENT_ETB, RESOLVE_TRIGGER_MANDATORY);
-    whirlpool_rider_part(player, result, card);
-    return 0;
-  }
-  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (result == 0)
-  {
-    return 0;
-  }
-  result = reshuffle_hand_into_deck(player, 0);
-  draw_cards(player, result);
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x2069a60; original cards/apocalypse.c:2866. */
-int card_whirlpool_warrior(int player, int card, event_t event)
-{
-  int amount;
-  int result;
-  unsigned int player_00;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  result = current_turn;
-  if (event == EVENT_ETB)
-  {
-    result = player;
-    etb_ability(player, card, EVENT_ETB, RESOLVE_TRIGGER_MANDATORY);
-    whirlpool_rider_part(player, result, card);
-    return 0;
-  }
-  if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
-  {
-    if (event != EVENT_RESOLVE_ACTIVATION)
-    {
-      return 0;
-    }
-    amount = reshuffle_hand_into_deck(current_turn, 0);
-    draw_cards(result, amount);
-    player_00 = current_turn ^ 1;
-    result = reshuffle_hand_into_deck(player_00, 0);
-    draw_cards(player_00, result);
-    return 0;
-  }
-  return generic_activated_ability(player, card, event, 8, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
-}
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 typed consumers and compiler parts. */
-
-/* ManalinkEh 2022: 0x2060dd0; original cards/apocalypse.c:2829. */
-static int whirlpool_rider_part(int player, int card, event_t event)
-{
-  int result;
-
-  result = reshuffle_hand_into_deck(player, 0);
-  result = draw_cards(player, result);
-  return result;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x2066c10; original cards/apocalypse.c:1873. */
-int card_necra_disciple(int player, int card, event_t event)
-{
-  return ap_disciples(player, card, event, COLOR_TEST_WHITE | COLOR_TEST_GREEN);
-}
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x20680a0; original cards/apocalypse.c:2278. */
-int card_raka_disciple(int player, int card, event_t event)
-{
-  return ap_disciples(player, card, event, COLOR_TEST_WHITE | COLOR_TEST_BLUE);
-}
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
-static void phyrexians(int player, int card, event_t event, int amount)
-{
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event == EVENT_ETB)
-  {
-    lose_life(player, amount);
-    draw_cards(player, amount);
-  }
-}
-#endif

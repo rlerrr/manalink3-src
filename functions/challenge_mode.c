@@ -1480,7 +1480,6 @@ void apply_challenge_puzzle_upkeep(void)
   }
 }
 
-
 void apply_challenge_vanguard(void){
 	int avatars[] = { CARD_ID_AVATAR_CHAOS_ORB , CARD_ID_AVATAR_SERRA_ANGEL, CARD_ID_AVATAR_MOMIR_VIG,
 					CARD_ID_AVATAR_HEARTWOOD_STORYTELLER, CARD_ID_AVATAR_ONI_OF_WILD_PLACES,

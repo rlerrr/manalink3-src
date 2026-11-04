@@ -8,6 +8,7 @@ void test_enters_the_battlefield_with_counters(int player, int card, event_t eve
                                                     counter_t type, int number);
 
 // Functions
+
 static void cmc_mod_for_prowl(int player, int card, event_t event, int sub1, int sub2, int colorless, int black, int blue, int green, int red, int white)
 {
   if (event == EVENT_MODIFY_COST)
@@ -183,6 +184,7 @@ void test_enters_the_battlefield_with_counters(int player, int card, event_t eve
 }
 
 // Cards
+
 int card_ambassador_oak(int player, int card, event_t event){
 	/* Ambassador Oak	|3|G
 	 * Creature - Treefolk Warrior 3/3
@@ -220,11 +222,9 @@ Kithkin spells and Soldier spells you cast cost |1 less to cast. */
 
 int card_battletide_alchemist(int player, int card, event_t event)
 {
-/*
-Battletide Alchemist |3|W|W
-Creature — Kithkin Cleric 3/4
-If a source would deal damage to a player, you may prevent X of that damage, where X is the number of Clerics you control.
-*/
+  /* Battletide Alchemist |3|W|W
+   * Creature — Kithkin Cleric 3/4
+   * If a source would deal damage to a player, you may prevent X of that damage, where X is the number of Clerics you control. */
 
   if (!in_play(player, card) || is_humiliated(player, card, AL_STATIC) ||
       event != EVENT_PREVENT_DAMAGE)
@@ -267,7 +267,6 @@ int card_bitterblossom(int player, int card, event_t event){
 
 	return global_enchantment(player, card, event);
 }
-
 
 int card_blightsoil_druid(int player, int card, event_t event){
 /* CARD_ID_BLIGHTSOIL_DRUID	9325
@@ -377,6 +376,24 @@ Reinforce 1-|1|R (|1|R, Discard this card: Put a +1/+1 counter on target creatur
 	return reinforce(player, card, event, 1, MANACOST_XR(1, 1));
 }
 
+/* ManalinkEh 2022: 0x227f410; original cards/morningtide.c:350. */
+int card_burrenton_bombardier(int player, int card, event_t event)
+{
+  /* Burrenton Bombardier	|2|W
+   * Creature - Kithkin Soldier 2/2
+   * Flying
+   * Reinforce 2-|2|W (|2|W, Discard this card: Put two +1/+1 counters on target creature.) */
+
+  int result;
+
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    return 0;
+  }
+  result = reinforce(player, card, event, 2, 2, 0, 0, 0, 0, 1);
+  return result;
+}
+
 int card_chameleon_colossus(int player, int card, event_t event){
 
   /* Chameleon Colossus	|2|G|G
@@ -457,12 +474,11 @@ If you do, put one of those cards on top of your library and the rest on the bot
 }
 
 int card_declaration_of_naught(int player, int card, event_t event){
-/*
-Declaration of Naught |U|U
-Enchantment
-As Declaration of Naught enters the battlefield, name a card.
-{U}: Counter target spell with the chosen name.
-*/
+  /* Declaration of Naught |U|U
+   * Enchantment
+   * As Declaration of Naught enters the battlefield, name a card.
+   * {U}: Counter target spell with the chosen name. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int iid = -1;
@@ -860,11 +876,10 @@ static int forfend_effect(int player, int card, event_t event)
 }
 
 int card_forfend(int player, int card, event_t event){
-/*
-Forfend |1|W
-Instant
-Prevent all damage that would be dealt to creatures this turn.
-*/
+  /* Forfend |1|W
+   * Instant
+   * Prevent all damage that would be dealt to creatures this turn. */
+
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		ai_modifier += (count_subtype(player, TYPE_CREATURE, -1) * 8);
 	}
@@ -1053,12 +1068,10 @@ When target creature dies this turn, return that card to the battlefield under i
 }
 
 int card_greatbow_doyen(int player, int card, event_t event){
-/*
-Greatbow Doyen |4|G
-Creature — Elf Archer 2/4
-Other Archer creatures you control get +1/+1.
-Whenever an Archer you control deals damage to a creature, that Archer deals that much damage to that creature's controller.
-*/
+  /* Greatbow Doyen |4|G
+   * Creature — Elf Archer 2/4
+   * Other Archer creatures you control get +1/+1.
+   * Whenever an Archer you control deals damage to a creature, that Archer deals that much damage to that creature's controller. */
 
 	boost_creature_type(player, card, event, SUBTYPE_ARCHER, 1, 1, 0, BCT_CONTROLLER_ONLY);
 
@@ -1109,13 +1122,12 @@ Whenever an Archer you control deals damage to a creature, that Archer deals tha
 }
 
 int card_grimoire_thief(int player, int card, event_t event){
-	/*
-	  Grimoire Thief |U|U
-	  Creature - Merfolk Rogue 2/2
-	  Whenever Grimoire Thief becomes tapped, exile the top three cards of target opponent's library face down.
-	  You may look at cards exiled with Grimoire Thief.
-	  {U}, Sacrifice Grimoire Thief: Turn all cards exiled with Grimoire Thief face up. Counter all spells with those names.
-	*/
+  /* Grimoire Thief |U|U
+   * 	  Creature - Merfolk Rogue 2/2
+   * 	  Whenever Grimoire Thief becomes tapped, exile the top three cards of target opponent's library face down.
+   * 	  You may look at cards exiled with Grimoire Thief.
+   * 	  {U}, Sacrifice Grimoire Thief: Turn all cards exiled with Grimoire Thief face up. Counter all spells with those names. */
+
 	if (event == EVENT_TAP_CARD && affect_me(player, card) ){
 		target_definition_t td_player;
 		default_target_definition(player, card, &td_player, 0);
@@ -1446,7 +1458,6 @@ When ~ enters the battlefield, if its prowl cost was paid, draw a card. */
 
 	return prowl(player, card, event, SUBTYPE_FAERIE, SUBTYPE_ROGUE, MANACOST_XU(2, 1));
 }
-
 
 int card_leafcrown_elder(int player, int card, event_t event){
 /* CARD_ID_LEAF_CROWNED_ELDER	9377
@@ -1840,7 +1851,6 @@ Counter target noncreature spell. */
 	return generic_spell(player, card, event, GS_COUNTERSPELL, &td, NULL, 1, NULL);
 }
 
-
 static int nevermaker_effect(int player, int card, event_t event)
 {
 
@@ -1983,7 +1993,6 @@ int card_noggin_whack(int player, int card, event_t event){
 
 	return 0;
 }
-
 
 int card_notorious_throng(int player, int card, event_t event){
 	/* Notorious Throng	|3|U
@@ -2139,6 +2148,12 @@ Evoke |B (You may cast this spell for its evoke cost. If you do, it's sacrificed
 
 int card_oonas_blackguard(int player, int card, event_t event)
 {
+  /* Oona's Blackguard	|1|B
+   * Creature - Faerie Rogue 1/1
+   * Flying
+   * Each other Rogue creature you control enters with an additional +1/+1 counter on it.
+   * Whenever a creature you control with a +1/+1 counter on it deals combat damage to a player, that player discards a card. */
+
   int result;
   unsigned int damage_counts;
   card_instance_t *damage_or_blackguard;
@@ -2419,11 +2434,15 @@ then puts that card on the top or bottom. A player wins if his or her card had a
 	return basic_spell(player, card, event);
 }
 
-
-
-
 int card_reveillark(int player, int card, event_t event)
 {
+  /* CARD_ID_REVEILLARK	9418
+   * Reveillark	|4|W
+   * Creature - Elemental 4/3
+   * Flying
+   * When ~ leaves the battlefield, return up to two target creature cards with power 2 or less from your graveyard to the battlefield.
+   * Evoke |5|W (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters the battlefield.) */
+
   int result;
   int i;
   test_definition_t this_test;
@@ -2498,12 +2517,11 @@ A player wins if his or her card had a higher converted mana cost.) */
 }
 
 int card_rhys_the_exiled(int player, int card, event_t event){
-/*
-Rhys the Exiled |2|G
-Legendary Creature — Elf Warrior 3/2
-Whenever Rhys the Exiled attacks, you gain 1 life for each Elf you control.
-{B}, Sacrifice an Elf: Regenerate Rhys the Exiled.
-*/
+  /* Rhys the Exiled |2|G
+   * Legendary Creature — Elf Warrior 3/2
+   * Whenever Rhys the Exiled attacks, you gain 1 life for each Elf you control.
+   * {B}, Sacrifice an Elf: Regenerate Rhys the Exiled. */
+
 	check_legend_rule(player, card, event);
 
 	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
@@ -2866,7 +2884,6 @@ static int forbidden_land_sacrifices_for_ai(int unused1, int unused2, int player
 	return 0;
 }
 
-
 int card_scapeshift(int player, int card, event_t event){
 /* CARD_ID_SCAPESHIFT	9426
 Scapeshift	|2|G|G
@@ -2929,11 +2946,10 @@ Sacrifice any number of lands. Search your library for up to that many land card
 }
 
 int card_scarblade_elite(int player, int card, event_t event){
-/*
-Scarblade Elite |B|B
-Creature — Elf Assassin 2/2
-{T}, Exile an Assassin card from your graveyard: Destroy target creature.
-*/
+  /* Scarblade Elite |B|B
+   * Creature — Elf Assassin 2/2
+   * {T}, Exile an Assassin card from your graveyard: Destroy target creature. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -3039,6 +3055,11 @@ int card_shard_volley(int player, int card, event_t event){
 
 int card_shared_animosity(int player, int card, event_t event)
 {
+  /* CARD_ID_SHARED_ANIMOSITY	9430
+   * Shared Animosity	|2|R
+   * Enchantment
+   * Whenever a creature you control attacks, it gets +1/+0 until end of turn for each other attacking creature that shares a creature type with it. */
+
   store_attackers(player, card, event, 0, player, -1, NULL);
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
   if (event == EVENT_DAT_ABILITY)
@@ -3136,10 +3157,14 @@ Creature - Merfolk Wizard 2/2
 	return 0;
 }
 
-
-
 int card_slithermuse(int player, int card, event_t event)
 {
+  /* CARD_ID_SLITHERMUSE	9433
+   * Slithermuse	|2|U|U
+   * Creature - Elemental 3/3
+   * When ~ leaves the battlefield, choose an opponent. If that player has more cards in hand than you, draw cards equal to the difference.
+   * Evoke |3|U (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters the battlefield.) */
+
   int result;
   leaves_play(player, card, event, 1, 1);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
@@ -3166,10 +3191,14 @@ int card_slithermuse(int player, int card, event_t event)
   return result;
 }
 
-
-
 int card_spitebellows(int player, int card, event_t event)
 {
+  /* CARD_ID_SPITEBELLOWS	9434
+   * Spitebellows	|5|R
+   * Creature - Elemental 6/1
+   * When ~ leaves the battlefield, it deals 6 damage to target creature.
+   * Evoke |1|R|R (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters the battlefield.) */
+
   int result;
   card_instance_t *instance;
   target_definition_t td1;
@@ -3350,6 +3379,84 @@ Look at the top four cards of your library. Put one of them into your hand and t
 	}
 
 	return prowl(player, card, event, SUBTYPE_ROGUE, -1, MANACOST_U(1));
+}
+
+/* ManalinkEh 2022: 0x227dcf0; original cards/morningtide.c:3261. */
+static int thornbite_staff_effect(int player, int card, event_t event)
+{
+  int target_card;
+  card_instance_t *instance;
+  int result;
+  card_instance_t *dying_permanent;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
+           result != 0x24e9))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+  {
+    return 0;
+  }
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    instance = get_card_instance(player, card);
+    dying_permanent = in_play(affected_card_controller, affected_card);
+    if ((dying_permanent != NULL) &&
+        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+    {
+
+      if ((instance->damage_target_card == affected_card) &&
+          (instance->damage_target_player == affected_card_controller))
+      {
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (instance->targets[0xb].player < 0)
+        {
+          instance->targets[0xb].player = 0;
+        }
+        SET_BYTE2(instance->targets[0xb].player) = 1;
+      }
+      count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
+    }
+  }
+  result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+    return 0;
+  if (result != 0)
+  {
+    result = check_status(player, card, 0x10000);
+    if (result == 0)
+    {
+
+      instance = get_card_instance(player, card);
+      instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      result = instance->targets[0].player;
+      target_card = instance->targets[0].card;
+      if ((-1 < result) && (-1 < target_card))
+      {
+        untap_card(result, target_card);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
 int card_thornbite_staff(int player, int card, event_t event){
@@ -3607,6 +3714,13 @@ int card_vengeful_firebrand(int player, int card, event_t event){
 
 int card_veterans_armaments(int player, int card, event_t event)
 {
+  /* CARD_ID_VETERANS_ARMAMENTS	9454
+   * Veteran's Armaments	|2
+   * Tribal Artifact - Soldier Equipment
+   * Equipped creature has "Whenever this creature attacks or blocks, it gets +1/+1 until end of turn for each attacking creature."
+   * Whenever a Soldier creature enters the battlefield, you may attach ~ to it.
+   * Equip |2 */
+
   card_instance_t *instance;
   int result;
   auto_attaching_equipment(player, card, event, SUBTYPE_SOLDIER);
@@ -3639,10 +3753,13 @@ int card_veterans_armaments(int player, int card, event_t event)
   return basic_equipment(player, card, event, 2);
 }
 
-
-
 int card_walker_of_the_grove(int player, int card, event_t event)
 {
+  /* Walker of the Grove	|6|G|G
+   * Creature - Elemental 7/7
+   * When ~ leaves the battlefield, put a 4/4 |Sgreen Elemental creature token onto the battlefield.
+   * Evoke |4|G */
+
   int result;
   token_generation_t token;
   leaves_play(player, card, event, 1, 1);
@@ -3723,105 +3840,3 @@ int card_wolf_skull_shaman(int player, int card, event_t event){
 	}
 	return 0;
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x227f410; original cards/morningtide.c:350. */
-int card_burrenton_bombardier(int player, int card, event_t event)
-{
-  int result;
-
-  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
-  {
-    return 0;
-  }
-  result = reinforce(player, card, event, 2, 2, 0, 0, 0, 0, 1);
-  return result;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x227dcf0; original cards/morningtide.c:3261. */
-static int thornbite_staff_effect(int player, int card, event_t event)
-{
-  int target_card;
-  card_instance_t *instance;
-  int result;
-  card_instance_t *dying_permanent;
-
-  if (event == EVENT_STATIC_EFFECTS)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-
-      instance = get_card_instance(player, card);
-      if ((-1 < instance->damage_target_player) &&
-          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           result != 0x24e9))
-      {
-        kill_card(player, card, KILL_EXILE);
-      }
-    }
-  }
-  instance = get_card_instance(player, card);
-  if ((-1 < instance->damage_target_player) &&
-      (result = effect_follows_control_of_attachment(player, card, event), result != 0))
-  {
-    return 0;
-  }
-  if (event == EVENT_GRAVEYARD_FROM_PLAY)
-  {
-    instance = get_card_instance(player, card);
-    dying_permanent = in_play(affected_card_controller, affected_card);
-    if ((dying_permanent != NULL) &&
-        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
-    {
-
-      if ((instance->damage_target_card == affected_card) &&
-          (instance->damage_target_player == affected_card_controller))
-      {
-        instance->damage_target_card = -1;
-        instance->damage_target_player = -1;
-        remove_status(player, card, 0x10000);
-        if (instance->targets[0xb].player < 0)
-        {
-          instance->targets[0xb].player = 0;
-        }
-        SET_BYTE2(instance->targets[0xb].player) = 1;
-      }
-      count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
-    }
-  }
-  result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (result == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
-    return 0;
-  if (result != 0)
-  {
-    result = check_status(player, card, 0x10000);
-    if (result == 0)
-    {
-
-      instance = get_card_instance(player, card);
-      instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-      result = instance->targets[0].player;
-      target_card = instance->targets[0].card;
-      if ((-1 < result) && (-1 < target_card))
-      {
-        untap_card(result, target_card);
-      }
-      kill_card(player, card, KILL_EXILE);
-    }
-  }
-  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
-  {
-    kill_card(player, card, KILL_EXILE);
-  }
-  return 0;
-}
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x227ed50; original cards/morningtide.c:148. */
-
-
-#endif

@@ -127,7 +127,6 @@ int devouring(int player, int card){
 	return dc;
 }
 
-
 void devour(int player, int card, event_t event, int number)
 {
   int result;
@@ -902,11 +901,10 @@ int card_broodmate_dragon(int player, int card, event_t event){
 }
 
 int card_bull_cerodon(int player, int card, event_t event){
-	/*
-	  Bull Cerodon |4|W|R
-	  Creature - Beast 5/5
-	  Vigilance, haste
-	*/
+  /* Bull Cerodon |4|W|R
+   * 	  Creature - Beast 5/5
+   * 	  Vigilance, haste */
+
 	vigilance(player, card, event);
 	haste(player, card, event);
 	return 0;
@@ -975,13 +973,11 @@ static int check_clarion_ultimatum_targets(int iid, int card, int player, int un
 }
 
 int card_clarion_ultimatum(int player, int card, event_t event){
-	/*
-	  Clarion Ultimatum |W|W|W|U|U|G|G
-	  Sorcery
-	  Choose five permanents you control.
-	  For each of those permanents, you may search your library for a card with the same name as that permanent.
-	  Put those cards onto the battlefield tapped, then shuffle your library.
-	*/
+  /* Clarion Ultimatum |W|W|W|U|U|G|G
+   * 	  Sorcery
+   * 	  Choose five permanents you control.
+   * 	  For each of those permanents, you may search your library for a card with the same name as that permanent.
+   * 	  Put those cards onto the battlefield tapped, then shuffle your library. */
 
 	if( event == EVENT_CAN_CAST ){
 		return basic_spell(player, card, event);
@@ -1497,12 +1493,11 @@ All damage that would be dealt to you is dealt to ~ instead. */
 }
 
 int card_esper_battlemage(int player, int card, event_t event){
-/*
-Esper Battlemage |2|U
-Artifact Creature — Human Wizard 2/2
-{W}, {T}: Prevent the next 2 damage that would be dealt to you this turn.
-{B}, {T}: Target creature gets -1/-1 until end of turn.
-*/
+  /* Esper Battlemage |2|U
+   * Artifact Creature — Human Wizard 2/2
+   * {W}, {T}: Prevent the next 2 damage that would be dealt to you this turn.
+   * {B}, {T}: Target creature gets -1/-1 until end of turn. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1862,7 +1857,6 @@ int card_flameblast_dragon(int player, int card, event_t event)
 	return 0;
 }
 
-
 int card_fleshbag_marauder(int player, int card, event_t event){
 /* CARD_ID_FLESHBAG_MARAUDER	9972
 Fleshbag Marauder	|2|B
@@ -1917,7 +1911,6 @@ static int gather_specimens_legacy(int player, int card, event_t event)
 
   return 0;
 }
-
 
 int card_gather_specimens(int player, int card, event_t event){
 /* CARD_ID_GATHER_SPECIMENS	9973
@@ -2049,6 +2042,19 @@ Goblin creatures attack each turn if able. */
 	all_must_attack_if_able(player, event, SUBTYPE_GOBLIN);
 
 	return global_enchantment(player, card, event);
+}
+
+/* ManalinkEh 2022: 0x213d9d0; original cards/shards_of_alara.c:2043. */
+int card_goblin_champion(int player, int card, event_t event)
+{
+  /* Goblin Champion	|R
+   * Creature - Goblin Warrior 0/1
+   * Haste
+   * Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.) */
+
+  haste(player, card, event);
+  exalted(player, card, event, 0, 0);
+  return 0;
 }
 
 // goblin deathriders --> vanilla
@@ -2708,6 +2714,19 @@ int card_jund_panorama(int player, int card, event_t event){
 	return panorama(player, card, event, SUBTYPE_SWAMP, SUBTYPE_FOREST, SUBTYPE_MOUNTAIN);
 }
 
+/* ManalinkEh 2022: 0x213fb20; original cards/shards_of_alara.c:2705. */
+int card_kathari_screecher(int player, int card, event_t event)
+{
+  /* Kathari Screecher	|2|U
+   * Creature - Bird Soldier 2/2
+   * Flying
+   * Unearth |2|U (|2|U: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.) */
+
+  int result;
+  result = unearth(player, event, 2, 0, 1, 0, 0, 0);
+  return result;
+}
+
 int card_kederekt_creeper(int player, int card, event_t event){
 	/* Kederekt Creeper	|U|B|R
 	 * Creature - Horror 2/3
@@ -2920,7 +2939,6 @@ Instant
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
-
 
 int card_manaplasm(int player, int card, event_t event)
 {
@@ -3355,12 +3373,10 @@ Artifact
 }
 
 int card_ooze_garden(int player, int card, event_t event){
-/*
-Ooze Garden |1|G
-Enchantment
-{1}{G}, Sacrifice a non-Ooze creature: Put an X/X green Ooze creature token onto the battlefield, where X is the sacrificed
-		creature's power. Activate this ability only any time you could cast a sorcery.
-*/
+  /* Ooze Garden |1|G
+   * Enchantment
+   * {1}{G}, Sacrifice a non-Ooze creature: Put an X/X green Ooze creature token onto the battlefield, where X is the sacrificed
+   * 		creature's power. Activate this ability only any time you could cast a sorcery. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return global_enchantment(player, card, event);
@@ -3504,12 +3520,11 @@ static int prince_of_thralls_effect(int player, int card, event_t event)
 }
 
 int card_prince_of_thralls(int player, int card, event_t event){
-/*
-Prince of Thralls |4|U|B|B|R
-Creature — Demon 7/7
-Whenever a permanent an opponent controls is put into a graveyard, put that card onto the battlefield under your control unless
-	that opponent pays 3 life.
-*/
+  /* Prince of Thralls |4|U|B|B|R
+   * Creature — Demon 7/7
+   * Whenever a permanent an opponent controls is put into a graveyard, put that card onto the battlefield under your control unless
+   * 	that opponent pays 3 life. */
+
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		int found = 0;
 		int c;
@@ -3990,12 +4005,11 @@ int card_realm_razer(int player, int card, event_t event)
 }
 
 int card_relic_of_progenitus(int player, int card, event_t event){
-/*
-Relic of Progenitus |1
-Artifact
-{T}: Target player exiles a card from his or her graveyard.
-{1}, Exile Relic of Progenitus: Exile all cards from all graveyards. Draw a card.
-*/
+  /* Relic of Progenitus |1
+   * Artifact
+   * {T}: Target player exiles a card from his or her graveyard.
+   * {1}, Exile Relic of Progenitus: Exile all cards from all graveyards. Draw a card. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -4659,6 +4673,12 @@ int card_sigil_blessing(int player, int card, event_t event){
 
 int card_sigil_of_distinction(int player, int card, event_t event)
 {
+  /* Sigil of Distinction	|X
+   * Artifact - Equipment
+   * ~ enters the battlefield with X charge counters on it.
+   * Equipped creature gets +1/+1 for each charge counter on ~.
+   * Equip-Remove a charge counter from ~. */
+
   char equipped_player;
   card_instance_t *instance;
   int counter_count_or_equipped_card;
@@ -4737,13 +4757,11 @@ int card_sigil_of_distinction(int player, int card, event_t event)
 }
 
 int card_skill_borrower(int player, int card, event_t event){
-/*
-Skill Borrower |2|U
-Artifact Creature — Human Wizard 1/3
-Play with the top card of your library revealed.
-As long as the top card of your library is an artifact or creature card, Skill Borrower has all activated abilities of that card.
-	(If any of the abilities use that card's name, use this creature's name instead.)
-*/
+  /* Skill Borrower |2|U
+   * Artifact Creature — Human Wizard 1/3
+   * Play with the top card of your library revealed.
+   * As long as the top card of your library is an artifact or creature card, Skill Borrower has all activated abilities of that card.
+   * 	(If any of the abilities use that card's name, use this creature's name instead.) */
 
 	reveal_top_card(player, card, event);
 	int iid = deck_ptr[player][0];
@@ -4890,12 +4908,11 @@ Vigilance
 }
 
 int card_stoic_angel(int player, int card, event_t event){
-	/*
-	  Stoic Angel English |1|W|U|G
-	  Creature - Angel 3/4, 1WUG (4)
-	  Flying, vigilance
-	  Players can't untap more than one creature during their untap steps.
-	*/
+  /* Stoic Angel English |1|W|U|G
+   * 	  Creature - Angel 3/4, 1WUG (4)
+   * 	  Flying, vigilance
+   * 	  Players can't untap more than one creature during their untap steps. */
+
 	vigilance(player, card, event);
 	return card_smoke(player, card, event);
 }
@@ -4928,6 +4945,7 @@ int card_tar_fiend(int player, int card, event_t event){
 
 	return 0;
 }
+
 static int tezzeret_the_seeker_legacy(int player, int card, event_t event){
 	if( event == EVENT_CHANGE_TYPE ){
 		test_definition_t this_test;
@@ -4943,6 +4961,12 @@ static int tezzeret_the_seeker_legacy(int player, int card, event_t event){
 
 int card_tezzeret_the_seeker(int player, int card, event_t event)
 {
+  /* Tezzeret the Seeker	|3|U|U
+   * Planeswalker - Tezzeret (4)
+   * +1: Untap up to two target artifacts.
+   * -X: Search your library for an artifact card with converted mana cost X or less and put it onto the battlefield. Then shuffle your library.
+   * -5: Artifacts you control become 5/5 artifact creatures until end of turn. */
+
   enum
   {
     CHOICE_UNTAP = 1,
@@ -5155,6 +5179,11 @@ This creature enters the battlefield with three times that many +1/+1 counters o
 
 int card_tidehollow_sculler(int player, int card, event_t event)
 {
+  /* Tidehollow Sculler	|W|B
+   * Artifact Creature - Zombie 2/2
+   * When this creature enters, target opponent reveals their hand and you choose a nonland card from it. Exile that card.
+   * When this creature leaves the battlefield, return the exiled card to its owner's hand. */
+
   unsigned int encoded_exile_entry;
   int opponent;
   unsigned int *exile_entry;
@@ -5357,11 +5386,10 @@ static int vicious_shadows_effect(int player, int card, event_t event)
 }
 
 int card_vicious_shadows(int player, int card, event_t event){
-/*
-Vicious Shadows |6|R
-Enchantment
-Whenever a creature dies, you may have Vicious Shadows deal damage to target player equal to the number of cards in that player's hand.
-*/
+  /* Vicious Shadows |6|R
+   * Enchantment
+   * Whenever a creature dies, you may have Vicious Shadows deal damage to target player equal to the number of cards in that player's hand. */
+
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		int found = 0;
 		int c;
@@ -5445,7 +5473,6 @@ Destroy three target permanents. */
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PERMANENT", 3, NULL);
 }
 
-
 int card_viscera_dragger(int player, int card, event_t event){
 /* CARD_ID_VISCERA_DRAGGER	10097
 Viscera Dragger	|3|B
@@ -5520,6 +5547,11 @@ Creature - Cat Warrior 1/1
 
 int card_worldheart_phoenix(int player, int card, event_t event)
 {
+  /* Worldheart Phoenix	|3|R
+   * Creature - Phoenix 2/2
+   * Flying
+   * You may cast ~ from your graveyard by paying |W|U|B|R|G rather than paying its mana cost. If you do, it enters the battlefield with two +1/+1 counters on it. */
+
   int result;
   if (event == EVENT_GRAVEYARD_ABILITY)
   {
@@ -5547,22 +5579,4 @@ int card_worldheart_phoenix(int player, int card, event_t event)
     }
   }
   return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x213d9d0; original cards/shards_of_alara.c:2043. */
-int card_goblin_champion(int player, int card, event_t event)
-{
-  haste(player, card, event);
-  exalted(player, card, event, 0, 0);
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x213fb20; original cards/shards_of_alara.c:2705. */
-int card_kathari_screecher(int player, int card, event_t event)
-{
-  int result;
-  result = unearth(player, event, 2, 0, 1, 0, 0, 0);
-  return result;
 }

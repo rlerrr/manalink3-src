@@ -1,5 +1,7 @@
 #include "manalink.h"
 
+static int prototype_portal_impl(int player, int card, event_t event);
+
 static void imprint(int player, int card, int store_player, int store_card);
 static int find_imprint_legacy_next(int player, int card, int *index);
 
@@ -100,6 +102,29 @@ int metalcraft(int player, int card){
 		return 1;
 	}
 	return 0;
+}
+
+/* ManalinkEh 2022: 0x2438330; original cards/scars_of_mirrodin.c:96. */
+void minus_proliferate_auto_single_permanent_or_player(int player, int card, int p, int c)
+{
+  int result;
+  counter_t type;
+
+  if (c != -1)
+  {
+    result = count_counters(p, c, ~COUNTER_P1_P1);
+    if (0 < result)
+    {
+
+      type = choose_existing_counter_type(player, player, card, p, c,
+                                          CECT_AI_NO_DIALOG | CECT_AI_CAN_CANCEL, -1, -1);
+      if (type != COUNTER_invalid)
+      {
+        remove_counters(player, card, p, c, type, 1);
+      }
+    }
+  }
+  return;
 }
 
 void proliferate_auto_single_permanent_or_player(int player, int card, int p, int c)
@@ -305,6 +330,8 @@ static void ai_mod_for_proliferate(int player, int mana_spent){
 	ai_modifier += mod;
 }
 
+// ------- Cards
+
 static int generic_artifact_with_proliferate(int player, int card, event_t event, int manacost, int times_proliferate){
 
 	if( event == EVENT_ACTIVATE ){
@@ -330,7 +357,53 @@ static int generic_artifact_with_proliferate(int player, int card, event_t event
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(manacost), 0, NULL, NULL);
 }
 
-// ------- Cards
+/* ManalinkEh 2022: 0x2436e90; original cards/scars_of_mirrodin.c:308. */
+static int imprint_legacy(int player, int card, event_t event) { return 0; }
+
+/* ManalinkEh 2022: 0x24372c0; original cards/scars_of_mirrodin.c:314. */
+static void imprint(int player, int card, int store_player, int store_card)
+{
+  uint8_t previous_target_count;
+  int legacy_id;
+  card_instance_t *instance;
+
+  legacy_id = create_legacy_effect(player, card, imprint_legacy);
+  instance = get_card_instance(player, legacy_id);
+  instance->targets[0].card = store_card;
+  previous_target_count = instance->number_of_targets;
+  instance->targets[0].player = store_player;
+  instance->number_of_targets = previous_target_count + '\x01';
+  add_status(player, legacy_id, 0x10000);
+  return;
+}
+
+/* ManalinkEh 2022: 0x2437100; original cards/scars_of_mirrodin.c:342. */
+static int find_imprint_legacy_next(int player, int card, int *index)
+{
+  card_instance_t *candidate_legacy;
+  card_instance_t *imprint_source;
+  int card_00;
+
+  card_00 = *index;
+  if (card_00 < active_cards_count[player])
+  {
+    do
+    {
+      candidate_legacy = get_card_instance(player, card_00);
+      if ((((candidate_legacy->internal_card_id == LEGACY_EFFECT_CUSTOM) &&
+            (candidate_legacy->info_slot_fn == imprint_legacy)) &&
+           (imprint_source = in_play(player, card), imprint_source != NULL)) &&
+          ((player == candidate_legacy->damage_source_player &&
+            (card == candidate_legacy->damage_source_card))))
+      {
+        *index = card_00;
+        return card_00;
+      }
+      card_00 = card_00 + 1;
+    } while (card_00 < active_cards_count[player]);
+  }
+  return -1;
+}
 
 int card_wurmcoil_engine(int player, int card, event_t event){
 	/* Wurmcoil Engine	|6
@@ -542,6 +615,9 @@ int card_koth_emblem(int player, int card, event_t event){
 }
 
 int card_venser_emblem(int player, int card, event_t event){
+  /* Venser, the Sojourner Emblem	""
+   * Emblem - Venser
+   * Whenever you cast a spell, exile target permanent. */
 
 	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
 	if (event == EVENT_SPA){
@@ -735,7 +811,6 @@ int card_elspeth_tirel(int player, int card, event_t event){
 	return planeswalker(player, card, event, 4);
 }
 
-
 int card_tempered_steel(int player, int card, event_t event){
   /* Tempered Steel	|1|W|W
    * Enchantment
@@ -753,7 +828,6 @@ int card_tempered_steel(int player, int card, event_t event){
 
 	return global_enchantment(player, card, event);
 }
-
 
 int card_myr_galvanizer(int player, int card, event_t event){
 	/* Myr Galvanizer	|3
@@ -832,6 +906,12 @@ int card_spikeshot_elder(int player, int card, event_t event){
 
 int card_argentum_armor(int player, int card, event_t event)
 {
+  /* Argentum Armor	|6
+   * Artifact - Equipment
+   * Equipped creature gets +6/+6.
+   * Whenever equipped creature attacks, destroy target permanent.
+   * Equip |6 */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -922,7 +1002,6 @@ int card_glint_hawk(int player, int card, event_t event){
 
 	return 0;
 }
-
 
 int card_genesis_wave(int player, int card, event_t event){
 /* Genesis Wave	|X|G|G|G
@@ -1121,6 +1200,10 @@ int card_ezuri_renegade_leader(int player, int card, event_t event){
 
 int card_skinrender(int player, int card, event_t event)
 {
+  /* Skinrender	|2|B|B
+   * Creature - Zombie 3/3
+   * When ~ enters the battlefield, put three -1/-1 counters on target creature. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -1272,7 +1355,6 @@ int card_skithiryx_blight_dragon(int player, int card, event_t event){
 	return 0;
 }
 
-
 int card_mimic_vat(int player, int card, event_t event){
 /* Mimic Vat	|3
  * Artifact
@@ -1391,6 +1473,11 @@ int card_mimic_vat(int player, int card, event_t event){
 
 int card_contagion_clasp(int player, int card, event_t event)
 {
+  /* Contagion Clasp	|2
+   * Artifact
+   * When ~ enters the battlefield, put a -1/-1 counter on target creature.
+   * |4, |T: Proliferate. */
+
   int result;
   card_instance_t *instance;
 
@@ -1446,7 +1533,6 @@ int card_contagion_engine(int player, int card, event_t event){
 	return generic_artifact_with_proliferate(player, card, event, 4, 2);
 }
 
-
 int card_thrummingbird(int player, int card, event_t event){
 	/* Thrummingbird	|1|U
 	 * Creature - Bird Horror 1/1
@@ -1467,6 +1553,11 @@ int card_thrummingbird(int player, int card, event_t event){
 
 int card_lux_cannon(int player, int card, event_t event)
 {
+  /* Lux Cannon	|4
+   * Artifact
+   * |T: Put a charge counter on ~.
+   * |T, Remove three charge counters from ~: Destroy target permanent. */
+
   enum
   {
     CHOICE_COUNTER = 1,
@@ -2031,6 +2122,13 @@ int card_generic_som_tapland(int player, int card, event_t event)
 
 int card_nim_deathmantle(int player, int card, event_t event)
 {
+  /* Nim Deathmantle	|2
+   * Artifact - Equipment
+   * Equipped creature gets +2/+2, has intimidate, and is a |Sblack Zombie.
+   * Whenever a nontoken creature is put into your graveyard from the battlefield, you may pay |4. If you do, return that card to the
+   * 		battlefield and attach ~ to it.
+   * Equip |4 */
+
   attached_is_additional_color(player, card, event, COLOR_TEST_BLACK);
   attached_is_additional_subtype(player, card, event, SUBTYPE_ZOMBIE);
   if (in_play(player, card))
@@ -2710,13 +2808,11 @@ int card_chimeric_mass(int player, int card, event_t event){
 }
 
 int card_clone_shell(int player, int card, event_t event){
-	/*
-	  Clone Shell |5
-	  Artifact Creature - Shapeshifter 2/2
-	  Imprint -	When Clone Shell enters the battlefield, look at the top four cards of your library, exile one face down,
-	  then put the rest on the bottom of your library in any order.
-	  When Clone Shell dies, turn the exiled card face up. If it's a creature card, put it onto the battlefield under your control.
-	*/
+  /* Clone Shell |5
+   * 	  Artifact Creature - Shapeshifter 2/2
+   * 	  Imprint -	When Clone Shell enters the battlefield, look at the top four cards of your library, exile one face down,
+   * 	  then put the rest on the bottom of your library in any order.
+   * 	  When Clone Shell dies, turn the exiled card face up. If it's a creature card, put it onto the battlefield under your control. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 	if (event == EVENT_ETB_ABILITY){
@@ -2935,6 +3031,12 @@ int card_darksteel_axe(int player, int card, event_t event){
 
 int card_darksteel_juggernaut(int player, int card, event_t event)
 {
+  /* Darksteel Juggernaut	|5
+   * Artifact Creature - Juggernaut 100/100
+   * Indestructible
+   * ~'s power and toughness are each equal to the number of artifacts you control.
+   * ~ attacks each turn if able. */
+
   int newval;
   indestructible(player, card, event);
   attack_if_able(player, card, event);
@@ -3309,6 +3411,10 @@ int card_fulgent_distraction(int player, int card, event_t event){
 
 int card_fume_spitter(int player, int card, event_t event)
 {
+  /* Fume Spitter	|B
+   * Creature - Horror 1/1
+   * Sacrifice ~: Put a -1/-1 counter on target creature. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -3917,6 +4023,11 @@ int card_grasp_of_darkness(int player, int card, event_t event){
 
 int card_grindclock(int player, int card, event_t event)
 {
+  /* Grindclock	|2
+   * Artifact
+   * |T: Put a charge counter on ~.
+   * |T: Target player puts the top X cards of his or her library into his or her graveyard, where X is the number of charge counters on ~. */
+
   enum
   {
     CHOICE_CHARGE = 1,
@@ -4288,6 +4399,11 @@ int card_infiltration_lens(int player, int card, event_t event)
 
 int card_instill_infection(int player, int card, event_t event)
 {
+  /* Instill Infection	|3|B
+   * Instant
+   * Put a -1/-1 counter on target creature.
+   * Draw a card. */
+
   target_definition_t td;
   if (!IS_GS_EVENT(player, card, event))
   {
@@ -4448,7 +4564,6 @@ int card_lifesmith(int player, int card, event_t event)
   return 0;
 }
 
-
 int card_liquidmetal_coating(int player, int card, event_t event){
 	/* Liquimetal Coating	|2
 	 * Artifact
@@ -4475,6 +4590,11 @@ int card_liquidmetal_coating(int player, int card, event_t event){
 
 int card_livewire_lash(int player, int card, event_t event)
 {
+  /* Livewire Lash	|2	0x20042fb
+   * Artifact - Equipment
+   * Equipped creature gets +2/+0 and has "Whenever this creature becomes the target of a spell, this creature deals 2 damage to any target."
+   * Equip |2 */
+
   uint8_t saved_target_count;
   int32_t saved_target_player;
   int32_t saved_target_card;
@@ -4954,7 +5074,6 @@ int card_origin_spellbomb(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST_X(1), 0, NULL, NULL);
 }
 
-
 int card_oxidda_daredevil(int player, int card, event_t event){
 	/* Oxidda Daredevil	|1|R
 	 * Creature - Goblin Artificer 2/1
@@ -4985,6 +5104,16 @@ int card_painful_quandary(int player, int card, event_t event){
 
 	return global_enchantment(player, card, event);
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+static int imprint_legacymatches(card_instance_t *instance, int player, int card)
+{
+  return instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
+         instance->info_slot_fn == imprint_legacy && in_play(player, card) &&
+         instance->damage_source_player == player && instance->damage_source_card == card;
+}
+#endif
 
 int card_painsmith(int player, int card, event_t event)
 {
@@ -5097,106 +5226,6 @@ etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   }
   return 0;
 }
-
-#ifndef SHANDALAR
-/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
-static int prototype_portal_impl(int player, int card, event_t event)
-{
-  if (!IS_GAA_EVENT(event))
-  {
-    return 0;
-  }
-
-  card_instance_t *instance = get_card_instance(player, card);
-
-  enum
-  {
-    CHOICE_CREATE_TOKEN = 1,
-    CHOICE_SHOW_EXILED
-  };
-
-  if (event == EVENT_CAN_ACTIVATE)
-  {
-    if (generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL))
-    {
-      int result = exiledby_choose(
-          player, card, CARD_ID_PROTOTYPE_PORTAL,
-          EXBY_CAN_CAST | EXBY_TEST_CAN_CAST | EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC, 0, "", 1);
-      return result;
-    }
-    if (!IS_AI(player))
-    {
-      if (exiledby_count(player, card, ANYBODY))
-      {
-        return 1;
-      }
-    }
-  }
-
-  if (event == EVENT_ACTIVATE)
-  {
-    int choice = CHOICE_CREATE_TOKEN;
-    instance->info_slot = choice;
-    instance->targets[1].card = -1;
-    if (!IS_AI(player))
-    {
-      int abils[3] = {0, 0, 1};
-      if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST0, 0,
-                                    NULL, NULL))
-      {
-        abils[1] = exiledby_choose(player, card, CARD_ID_PROTOTYPE_PORTAL,
-                                   EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC, event, "", 1);
-      }
-      choice = DIALOG(player, card, event, DLG_RANDOM, "Create a token", abils[1], 1,
-                      "Show exiled card", abils[2], 1);
-    }
-    if (!choice)
-    {
-      spell_fizzled = 1;
-      return 0;
-    }
-    if (choice == CHOICE_SHOW_EXILED)
-    {
-      exiledby_choose(player, card, CARD_ID_PROTOTYPE_PORTAL, EXBY_CHOOSE, 0, "Creature", 0);
-      spell_fizzled = 1;
-      return 0;
-    }
-    if (choice == CHOICE_CREATE_TOKEN)
-    {
-      int rval = exiledby_choose(player, card, CARD_ID_PROTOTYPE_PORTAL,
-                                 EXBY_CHOOSE | EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC, event, "", 1);
-      if (rval)
-      {
-        int *loc = (int *)rval;
-        if (loc)
-        {
-          int *loc2 = exiledby_find(player, card, *loc, NULL, NULL);
-          int iid = *loc2 & ~0x80000000;
-          instance->targets[1].card = iid;
-          return generic_activated_ability(player, card, event, GAA_UNTAPPED,
-                                           MANACOST_X(get_cmc_by_internal_id(iid)), 0, NULL, NULL);
-        }
-        else
-        {
-          spell_fizzled = 1;
-        }
-      }
-      else
-      {
-        spell_fizzled = 1;
-      }
-    }
-  }
-
-  if (event == EVENT_RESOLVE_ACTIVATION)
-  {
-    generate_token_by_id(instance->parent_controller, instance->parent_card,
-                         cards_data[instance->targets[1].card].id);
-  }
-
-  return 0;
-}
-#endif
 
 int card_prototype_portal(int player, int card, event_t event){
 	/* Prototype Portal	|4
@@ -5810,14 +5839,12 @@ static int has_damaged_player(int player, int card){
 }
 
 int card_steel_hellkite(int player, int card, event_t event){
-/*
-Steel Hellkite |6
-Artifact Creature - Dragon 5/5
-Flying
-{2}: Steel Hellkite gets +1/+0 until end of turn.
-{X}: Destroy each nonland permanent with converted mana cost X whose controller was dealt combat damage by Steel Hellkite this turn.
-	  Activate this ability only once each turn.
-*/
+  /* Steel Hellkite |6
+   * Artifact Creature - Dragon 5/5
+   * Flying
+   * {2}: Steel Hellkite gets +1/+0 until end of turn.
+   * {X}: Destroy each nonland permanent with converted mana cost X whose controller was dealt combat damage by Steel Hellkite this turn.
+   * 	  Activate this ability only once each turn. */
 
 	if( event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST ){
 		return generic_shade_merge_pt(player, card, event, 0, MANACOST_X(2), 1, 0);
@@ -5992,6 +6019,12 @@ int card_tower_of_calamities(int player, int card, event_t event){
 
 int card_trigon_of_corruption(int player, int card, event_t event)
 {
+  /* Trigon of Corruption	|4
+   * Artifact
+   * ~ enters the battlefield with three charge counters on it.
+   * |B|B, |T: Put a charge counter on ~.
+   * |2, |T, Remove a charge counter from ~: Put a -1/-1 counter on target creature. */
+
   int trigon_choice_or_result;
   int ability_result;
   card_instance_t *instance;
@@ -6647,6 +6680,9 @@ int card_wall_of_tanglecord(int player, int card, event_t event){
 	return generic_shade(player, card, event, 0, MANACOST_G(1), 0, 0, KEYWORD_REACH, 0);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int imprint_legacy(int player, int card, event_t event);
+
 int card_whitesuns_passage(int player, int card, event_t event){
 	/* Whitesun's Passage	|1|W
 	 * Instant
@@ -6709,6 +6745,8 @@ int card_wing_puncture(int player, int card, event_t event){
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 int card_withstand_death(int player, int card, event_t event)
 {
   /* Withstand Death	|G
@@ -6717,6 +6755,8 @@ int card_withstand_death(int player, int card, event_t event)
 
   return vanilla_instant_pump(player, card, event, ANYBODY, player, 0,0, 0,SP_KEYWORD_INDESTRUCTIBLE);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
 int card_palladium_myr(int player, int card, event_t event){
 	/* Kozilek's Channeler	|5
@@ -6735,125 +6775,32 @@ int card_palladium_myr(int player, int card, event_t event){
 	return mana_producing_creature(player, card, event, 18, COLOR_COLORLESS, 2);
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int imprint_legacy(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x2436e90; original cards/scars_of_mirrodin.c:308. */
-static int imprint_legacy(int player, int card, event_t event) { return 0; }
-
-/* ManalinkEh 2022: 0x24372c0; original cards/scars_of_mirrodin.c:314. */
-static void imprint(int player, int card, int store_player, int store_card)
-{
-  uint8_t previous_target_count;
-  int legacy_id;
-  card_instance_t *instance;
-
-  legacy_id = create_legacy_effect(player, card, imprint_legacy);
-  instance = get_card_instance(player, legacy_id);
-  instance->targets[0].card = store_card;
-  previous_target_count = instance->number_of_targets;
-  instance->targets[0].player = store_player;
-  instance->number_of_targets = previous_target_count + '\x01';
-  add_status(player, legacy_id, 0x10000);
-  return;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2437100; original cards/scars_of_mirrodin.c:342. */
-static int find_imprint_legacy_next(int player, int card, int *index)
-{
-  card_instance_t *candidate_legacy;
-  card_instance_t *imprint_source;
-  int card_00;
-
-  card_00 = *index;
-  if (card_00 < active_cards_count[player])
-  {
-    do
-    {
-      candidate_legacy = get_card_instance(player, card_00);
-      if ((((candidate_legacy->internal_card_id == LEGACY_EFFECT_CUSTOM) &&
-            (candidate_legacy->info_slot_fn == imprint_legacy)) &&
-           (imprint_source = in_play(player, card), imprint_source != NULL)) &&
-          ((player == candidate_legacy->damage_source_player &&
-            (card == candidate_legacy->damage_source_card))))
-      {
-        *index = card_00;
-        return card_00;
-      }
-      card_00 = card_00 + 1;
-    } while (card_00 < active_cards_count[player]);
-  }
-  return -1;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2438330; original cards/scars_of_mirrodin.c:96. */
-void minus_proliferate_auto_single_permanent_or_player(int player, int card, int p, int c)
-{
-  int result;
-  counter_t type;
-
-  if (c != -1)
-  {
-    result = count_counters(p, c, ~COUNTER_P1_P1);
-    if (0 < result)
-    {
-
-      type = choose_existing_counter_type(player, player, card, p, c,
-                                          CECT_AI_NO_DIALOG | CECT_AI_CAN_CANCEL, -1, -1);
-      if (type != COUNTER_invalid)
-      {
-        remove_counters(player, card, p, c, type, 1);
-      }
-    }
-  }
-  return;
-}
-
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24383e0; original cards/scars_of_mirrodin.c:106. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2438530; original cards/scars_of_mirrodin.c:141. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2438700; original cards/scars_of_mirrodin.c:171. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* Recovered October 2022 inline-only helpers; native code remains in their callers. */
-static int imprint_legacymatches(card_instance_t *instance, int player, int card)
-{
-  return instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
-         instance->info_slot_fn == imprint_legacy && in_play(player, card) &&
-         instance->damage_source_player == player && instance->damage_source_card == card;
-}
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
 static int find_imprint_legacy(int player, int card)
 {
   int index = 0;
   return find_imprint_legacy_next(player, card, &index);
 }
+#endif
 
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
 static void validate_imprinted_card(int player, int card)
 {
   int legacy = find_imprint_legacy(player, card);
@@ -6863,5 +6810,102 @@ static void validate_imprinted_card(int player, int card)
     if (find_iid_in_rfg(instance->targets[0].player, instance->targets[0].card) == -1)
       kill_card(player, legacy, KILL_EXILE);
   }
+}
+
+static int prototype_portal_impl(int player, int card, event_t event)
+{
+  if (!IS_GAA_EVENT(event))
+  {
+    return 0;
+  }
+
+  card_instance_t *instance = get_card_instance(player, card);
+
+  enum
+  {
+    CHOICE_CREATE_TOKEN = 1,
+    CHOICE_SHOW_EXILED
+  };
+
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL))
+    {
+      int result = exiledby_choose(
+          player, card, CARD_ID_PROTOTYPE_PORTAL,
+          EXBY_CAN_CAST | EXBY_TEST_CAN_CAST | EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC, 0, "", 1);
+      return result;
+    }
+    if (!IS_AI(player))
+    {
+      if (exiledby_count(player, card, ANYBODY))
+      {
+        return 1;
+      }
+    }
+  }
+
+  if (event == EVENT_ACTIVATE)
+  {
+    int choice = CHOICE_CREATE_TOKEN;
+    instance->info_slot = choice;
+    instance->targets[1].card = -1;
+    if (!IS_AI(player))
+    {
+      int abils[3] = {0, 0, 1};
+      if (generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST0, 0,
+                                    NULL, NULL))
+      {
+        abils[1] = exiledby_choose(player, card, CARD_ID_PROTOTYPE_PORTAL,
+                                   EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC, event, "", 1);
+      }
+      choice = DIALOG(player, card, event, DLG_RANDOM, "Create a token", abils[1], 1,
+                      "Show exiled card", abils[2], 1);
+    }
+    if (!choice)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == CHOICE_SHOW_EXILED)
+    {
+      exiledby_choose(player, card, CARD_ID_PROTOTYPE_PORTAL, EXBY_CHOOSE, 0, "Creature", 0);
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == CHOICE_CREATE_TOKEN)
+    {
+      int rval = exiledby_choose(player, card, CARD_ID_PROTOTYPE_PORTAL,
+                                 EXBY_CHOOSE | EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC, event, "", 1);
+      if (rval)
+      {
+        int *loc = (int *)rval;
+        if (loc)
+        {
+          int *loc2 = exiledby_find(player, card, *loc, NULL, NULL);
+          int iid = *loc2 & ~0x80000000;
+          instance->targets[1].card = iid;
+          return generic_activated_ability(player, card, event, GAA_UNTAPPED,
+                                           MANACOST_X(get_cmc_by_internal_id(iid)), 0, NULL, NULL);
+        }
+        else
+        {
+          spell_fizzled = 1;
+        }
+      }
+      else
+      {
+        spell_fizzled = 1;
+      }
+    }
+  }
+
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    generate_token_by_id(instance->parent_controller, instance->parent_card,
+                         cards_data[instance->targets[1].card].id);
+  }
+
+  return 0;
 }
 #endif

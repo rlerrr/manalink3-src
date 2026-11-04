@@ -661,6 +661,14 @@ int tap_all_creatures(void){return 1;}
 int
 card_cryptic_command2(int player, int card, event_t event)
 {
+  /* Cryptic Command	|1|U|U|U
+   * Instant
+   * Choose two -
+   * * Counter target spell.
+   * * Return target permanent to its owner's hand.
+   * * Tap all creatures your opponents control.
+   * * Draw a card. */
+
   // Choose two - Counter target spell; or return target permanent to its owner's hand; or tap all creatures your opponents control; or draw a card.
 
   card_instance_t* instance = get_card_instance(player, card);

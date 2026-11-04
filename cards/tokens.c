@@ -30,6 +30,10 @@ int card_insect(int player, int card, event_t event){
 
 int card_gold(int player, int card, event_t event)
 {
+  /* Gold	""
+   * Token Artifact - Gold
+   * Sacrifice this token: Add one mana of any color. */
+
   // Used externally
   if (event == EVENT_CAN_ACTIVATE)
 	return can_sacrifice_this_as_cost(player, card) && can_produce_mana(player, card);
@@ -122,6 +126,10 @@ int card_thopter2(int player, int card, event_t event){
 }
 
 int card_triskelavite(int player, int card, event_t event){
+  /* Triskelavite	""(token)	0x200cd11
+   * Artifact Creature - Triskelavite 1/1
+   * Flying
+   * Sacrifice this creature: This creature deals 1 damage to any target. */
 
   target_definition_t td;
   default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -145,6 +153,9 @@ int card_triskelavite(int player, int card, event_t event){
 }
 
 int card_minion(int player, int card, event_t event){
+  /* Minion	""
+   * Token Creature - Minion * / * */
+
 	if (card == -1){
 		return 0;
 	}
@@ -178,6 +189,7 @@ int card_wolf_token(int player, int card, event_t event)
 }
 
 // token made by kalitas
+
 int card_vampire(int player, int card, event_t event){
 	if (card == -1){
 		return 0;
@@ -440,6 +452,21 @@ int card_survivor_token(int player, int card, event_t event){
 	return generic_token(player, card, event);
 }
 
+#ifndef SHANDALAR
+static int find_any_attached_legacy_effect(CardFunction func_ptr, int target_player_id, int target_card)
+{
+  for (int card = 0; card < active_cards_count[target_player_id]; ++card)
+  {
+    card_instance_t *instance = in_play(target_player_id, card);
+    if (instance && instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
+        instance->info_slot_fn == func_ptr && instance->damage_target_player == target_player_id &&
+        instance->damage_target_card == target_card)
+      return card;
+  }
+  return -1;
+}
+#endif
+
 int card_assassin_token(int player, int card, event_t event)
 {
   if (get_special_infos(player, card) == 66 && damage_dealt_by_me(player, card, event,
@@ -520,6 +547,10 @@ int card_cleric_token(int player, int card, event_t event){
 }
 
 int card_eldrazi_spawn(int player, int card, event_t event){
+  /* Eldrazi Spawn	""
+   * Token Creature - Eldrazi Spawn 0/1
+   * Sacrifice this creature: Add |C. */
+
 	if( event == EVENT_CAN_ACTIVATE && get_special_infos(player, card) != 66 ){
 		return 1;
 	}
@@ -542,36 +573,26 @@ int card_angel_token(int player, int card, event_t event){
 	return generic_token(player, card, event);
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
 /* ManalinkEh 2022: 0x2582e50; original cards/tokens.c:589. */
 int card_etherium_cell(int player, int card, event_t event)
 {
+  /* Etherium Cell	""
+   * Token Artifact
+   * |T, Sacrifice this artifact: Add one mana of any color. */
+
   int result;
   result = artifact_mana_all_one_color(player, card, event, 1, 1);
   return result;
 }
 
-/* October 2022 COFF entry 0x2582f30: native tail jump to card_etherium_cell. */
-int card_treasure(int player, int card, event_t event)
-{
-  return card_etherium_cell(player, card, event);
-}
-
-/* October 2022 COFF entry 0x2582f20: native tail jump to generic_token. */
-int card_pirate_token(int player, int card, event_t event)
+/* October 2022 COFF entry 0x2582e90: native tail jump to generic_token. */
+int card_horse_token(int player, int card, event_t event)
 {
   return generic_token(player, card, event);
 }
 
 /* October 2022 COFF entry 0x2582ea0: native tail jump to generic_token. */
 int card_cat_dragon_token(int player, int card, event_t event)
-{
-  return generic_token(player, card, event);
-}
-
-/* October 2022 COFF entry 0x2582e90: native tail jump to generic_token. */
-int card_horse_token(int player, int card, event_t event)
 {
   return generic_token(player, card, event);
 }
@@ -593,9 +614,45 @@ int card_dinosaur_token(int player, int card, event_t event)
   return result;
 }
 
+/* October 2022 COFF entry 0x2582f20: native tail jump to generic_token. */
+int card_pirate_token(int player, int card, event_t event)
+{
+  return generic_token(player, card, event);
+}
+
+/* October 2022 COFF entry 0x2582f30: native tail jump to card_etherium_cell. */
+int card_treasure(int player, int card, event_t event)
+{
+  return card_etherium_cell(player, card, event);
+}
+
+/* ManalinkEh 2022: 0x2582f40; original cards/tokens.c:623. */
+int card_construct(int player, int card, event_t event)
+{
+  int result;
+
+  result = get_special_infos(player, card);
+  if (result == 0x42)
+  {
+    result = is_humiliated(player, card, AL_STATIC);
+    if ((((result == 0) && (event - EVENT_POWER < 2)) && (card == affected_card)) &&
+        (player == affected_card_controller))
+    {
+      result = count_subtype(player, 0x40, -1);
+      event_result = event_result + result;
+    }
+  }
+  result = generic_token(player, card, event);
+  return result;
+}
+
 /* ManalinkEh 2022: 0x2582fd0; original cards/tokens.c:632. */
 int card_devil(int player, int card, event_t event)
 {
+  /* Devil	""	0x200ec1f
+   * Creature - Devil 1/1
+   * When this creature dies, it deals 1 damage to any target. */
+
   int result;
   target_definition_t td;
   result = get_special_infos(player, card);
@@ -616,76 +673,6 @@ int card_devil(int player, int card, event_t event)
           damage_target0(player, card, 1);
         }
       }
-    }
-  }
-  result = generic_token(player, card, event);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x2583130; original cards/tokens.c:658. */
-int card_food(int player, int card, event_t event)
-{
-  int result;
-  if (event != EVENT_ACTIVATE)
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      result = generic_token(player, card, event);
-      return result;
-    }
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      gain_life(player, 3);
-    }
-  }
-  return generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
-}
-
-/* ManalinkEh 2022: 0x25831f0; original cards/tokens.c:666. */
-int card_satyr(int player, int card, event_t event)
-{
-  int result;
-  result = get_special_infos(player, card);
-  if (result == 0x42)
-  {
-    cannot_block(player, card, event);
-  }
-  result = generic_token(player, card, event);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x2583310; original cards/tokens.c:691. */
-int card_pest_token(int player, int card, event_t event)
-{
-  int result;
-  result = get_special_infos(player, card);
-  if (result == 0x42)
-  {
-    result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if (result != 0)
-    {
-      gain_life(player, 1);
-    }
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2582f40; original cards/tokens.c:623. */
-int card_construct(int player, int card, event_t event)
-{
-  int result;
-
-  result = get_special_infos(player, card);
-  if (result == 0x42)
-  {
-    result = is_humiliated(player, card, AL_STATIC);
-    if ((((result == 0) && (event - EVENT_POWER < 2)) && (card == affected_card)) &&
-        (player == affected_card_controller))
-    {
-      result = count_subtype(player, 0x40, -1);
-      event_result = event_result + result;
     }
   }
   result = generic_token(player, card, event);
@@ -713,6 +700,42 @@ int card_sculpture_token(int player, int card, event_t event)
     return result;
   }
   return 0;
+}
+
+/* ManalinkEh 2022: 0x2583130; original cards/tokens.c:658. */
+int card_food(int player, int card, event_t event)
+{
+  /* Food	""
+   * Token Artifact - Food
+   * |2, |T, Sacrifice this token: You gain 3 life. */
+
+  int result;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = generic_token(player, card, event);
+      return result;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      gain_life(player, 3);
+    }
+  }
+  return generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+}
+
+/* ManalinkEh 2022: 0x25831f0; original cards/tokens.c:666. */
+int card_satyr(int player, int card, event_t event)
+{
+  int result;
+  result = get_special_infos(player, card);
+  if (result == 0x42)
+  {
+    cannot_block(player, card, event);
+  }
+  result = generic_token(player, card, event);
+  return result;
 }
 
 /* ManalinkEh 2022: 0x2583240; original cards/tokens.c:676. */
@@ -744,19 +767,18 @@ int card_nightmare_token(int player, int card, event_t event)
   return generic_token(player, card, event);
 }
 
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
-static int find_any_attached_legacy_effect(CardFunction func_ptr, int target_player_id, int target_card)
+/* ManalinkEh 2022: 0x2583310; original cards/tokens.c:691. */
+int card_pest_token(int player, int card, event_t event)
 {
-  for (int card = 0; card < active_cards_count[target_player_id]; ++card)
+  int result;
+  result = get_special_infos(player, card);
+  if (result == 0x42)
   {
-    card_instance_t *instance = in_play(target_player_id, card);
-    if (instance && instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
-        instance->info_slot_fn == func_ptr && instance->damage_target_player == target_player_id &&
-        instance->damage_target_card == target_card)
-      return card;
+    result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result != 0)
+    {
+      gain_life(player, 1);
+    }
   }
-  return -1;
+  return 0;
 }
-#endif

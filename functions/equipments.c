@@ -1,6 +1,5 @@
 #include "manalink.h"
 
-
 void unattach(int equipment_controller, int equipment_card)
 {
   if (is_equipping(equipment_controller, equipment_card))
@@ -105,7 +104,6 @@ void equip_target_creature(int equipment_controller, int equipment_card, int t_p
   call_card_function(equipment_controller, equipment_card, EVENT_EQUIPMENT_ATTACHED);
 }
 
-
 card_instance_t* is_equipping(int player, int card)
 {
   card_instance_t* instance = get_card_instance(player, card);
@@ -121,8 +119,6 @@ card_instance_t* is_equipping(int player, int card)
     }
   return NULL;
 }
-
-
 
 int check_for_equipment_targets(int player, int card)
 {
@@ -168,8 +164,6 @@ int get_updated_equip_cost(int player, int card, int equip_cost)
     }
   return new_cost;
 }
-
-
 
 int can_activate_basic_equipment(int player, int card, event_t event, int equip_cost)
 {
@@ -379,9 +373,6 @@ int is_equipped(int player, int card){
 	return equipments_attached_to_me(player, card, EATM_CHECK);
 }
 
-
-
-
 #ifndef SHANDALAR
 /* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
 static int check_for_equipment_targets_impl(int player, int card, target_definition_t *td)
@@ -390,7 +381,6 @@ static int check_for_equipment_targets_impl(int player, int card, target_definit
   return can_target(td);
 }
 #endif
-
 
 #ifndef SHANDALAR
 /* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */

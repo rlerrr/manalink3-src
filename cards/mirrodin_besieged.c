@@ -7,10 +7,25 @@ void battle_cry(int player, int card, event_t event);
 
 // GLOBAL FUNCTIONS
 
-
-
-
 // CARDS
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x232b5e0; original cards/mirrodin_besieged.c:5. */
+void battle_cry(int player, int card, event_t event)
+{
+  test_definition_t test;
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event != EVENT_DAT_ABILITY)
+  {
+    return;
+  }
+  new_default_test_definition(&test, 2, "");
+  test.state = 4;
+  test.not_me = 1;
+  pump_creatures_until_eot(player, card, current_turn, 0, 1, 0, 0, 0, &test);
+  return;
+}
+#endif
 
 int card_thopter_assembly(int player, int card, event_t event){
 	/* Thopter Assembly	|6
@@ -111,12 +126,11 @@ static int glissa_the_traitor_effect(int player, int card, event_t event)
 }
 
 int card_glissa_the_traitor(int player, int card, event_t event){
-/*
-Glissa, the Traitor |B|G|G
-Legendary Creature — Zombie Elf 3/3
-First strike, deathtouch
-Whenever a creature an opponent controls dies, you may return target artifact card from your graveyard to your hand.
-*/
+  /* Glissa, the Traitor |B|G|G
+   * Legendary Creature — Zombie Elf 3/3
+   * First strike, deathtouch
+   * Whenever a creature an opponent controls dies, you may return target artifact card from your graveyard to your hand. */
+
 	deathtouch(player, card, event);
 
 	check_legend_rule(player, card, event);
@@ -177,6 +191,11 @@ Whenever a creature an opponent controls dies, you may return target artifact ca
 
 int card_hero_of_bladehold( int player, int card, event_t event)
 {
+  /* Hero of Bladehold	|2|W|W
+   * Creature - Human Knight 3/4
+   * Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)
+   * Whenever this creature attacks, create two 1/1 white Soldier creature tokens that are tapped and attacking. */
+
   // Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)
   // Whenever ~ attacks, put two 1/1 |Swhite Soldier creature tokens onto the battlefield tapped and attacking.
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
@@ -572,13 +591,12 @@ Whenever ~ attacks, attacking creatures gain flying and lifelink until end of tu
 }
 
 int card_steel_sabotage(int player, int card, event_t event ){
-/*
-Steel Sabotage |U
-Instant
-Choose one —
-• Counter target artifact spell.
-• Return target artifact to its owner's hand.
-*/
+  /* Steel Sabotage |U
+   * Instant
+   * Choose one —
+   * • Counter target artifact spell.
+   * • Return target artifact to its owner's hand. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -735,13 +753,11 @@ static int sangromancer_effect(int player, int card, event_t event)
 }
 
 int card_sangromancer(int player, int card, event_t event ){
-/*
-Sangromancer |2|B|B
-Creature — Vampire Shaman 3/3
-Flying
-Whenever a creature an opponent controls dies, you may gain 3 life.
-Whenever an opponent discards a card, you may gain 3 life.
-*/
+  /* Sangromancer |2|B|B
+   * Creature — Vampire Shaman 3/3
+   * Flying
+   * Whenever a creature an opponent controls dies, you may gain 3 life.
+   * Whenever an opponent discards a card, you may gain 3 life. */
 
 	if( discard_trigger(player, card, event, 1-player, RESOLVE_TRIGGER_DUH, 0) ){
 		gain_life(player, 3);
@@ -790,9 +806,13 @@ Whenever an opponent discards a card, you may gain 3 life.
 	return 0;
 }
 
-
 int card_phyrexian_hydra(int player, int card, event_t event)
 {
+  /* Phyrexian Hydra |3|G|G
+   * Creature — Hydra 7/7
+   * Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)
+   * If damage would be dealt to Phyrexian Hydra, prevent that damage. Put a -1/-1 counter on Phyrexian Hydra for each 1 damage prevented this way. */
+
   card_instance_t *instance;
   int result;
   int num;
@@ -969,14 +989,12 @@ Hexproof (This creature can't be the target of spells or abilities your opponent
 	return regeneration(player, card, event, MANACOST_XG(1, 1));
 }
 
-
 int card_spine_of_ish_sah(int player, int card, event_t event ){
-/*
-Spine of Ish Sah |7
-Artifact
-When Spine of Ish Sah enters the battlefield, destroy target permanent.
-When Spine of Ish Sah is put into a graveyard from the battlefield, return Spine of Ish Sah to its owner's hand.
-*/
+  /* Spine of Ish Sah |7
+   * Artifact
+   * When Spine of Ish Sah enters the battlefield, destroy target permanent.
+   * When Spine of Ish Sah is put into a graveyard from the battlefield, return Spine of Ish Sah to its owner's hand. */
+
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -1451,7 +1469,6 @@ int lead_the_stampede_effect(int player, int card, int amount)
   return result;
 }
 
-
 int card_lead_the_stampede(int player, int card, event_t event){
 /* CARD_ID_LEAD_THE_STAMPEDE	11471
 Lead the Stampede	|2|G
@@ -1720,6 +1737,11 @@ When ~ dies, each player loses 4 life. */
 
 int card_chocking_fumes(int player, int card, event_t event)
 {
+  /* CARD_ID_CHOKING_FUMES	11427
+   * Choking Fumes	|2|W
+   * Instant
+   * Put a -1/-1 counter on each attacking creature. */
+
   int count;
   card_instance_t *instance;
   int attacker_card_or_priority;
@@ -1991,6 +2013,7 @@ static int cryptoplasm_legacy(int player, int card, event_t event)
   }
   return 0;
 }
+
 int card_cryptoplasm(int player, int card, event_t event)
 {
 
@@ -2059,12 +2082,11 @@ Artifact
 }
 
 int card_distant_memories(int player, int card, event_t event){
-/*
-Distant Memories |2|U|U
-Sorcery
-Search your library for a card, exile it, then shuffle your library. Any opponent may have you put that card into your hand.
-	If no player does, you draw three cards.
-*/
+  /* Distant Memories |2|U|U
+   * Sorcery
+   * Search your library for a card, exile it, then shuffle your library. Any opponent may have you put that card into your hand.
+   * 	If no player does, you draw three cards. */
+
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		ai_modifier += (count_subtype(player, TYPE_LAND, -1)*8);
 	}
@@ -2104,6 +2126,90 @@ Artifact Creature - Hound 3/3
   if (event == EVENT_CAN_CAST)
     return 1;
   return generic_shade_merge_pt(player, card, event, 0, MANACOST_XB(2, 1), 1, 1);
+}
+
+/* ManalinkEh 2022: 0x232acc0; original cards/mirrodin_besieged.c:2033. */
+static int fangren_marauder_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int death_count;
+  card_instance_t *dying_permanent;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
+           result != 0x2cb1))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    instance = get_card_instance(player, card);
+    if ((-1 < instance->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+    {
+      return 0;
+    }
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    {
+
+      instance = get_card_instance(player, card);
+      dying_permanent = in_play(affected_card_controller, affected_card);
+      if ((dying_permanent != NULL) &&
+          (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+      {
+
+        if ((instance->damage_target_card == affected_card) &&
+            (instance->damage_target_player == affected_card_controller))
+        {
+          instance->damage_target_card = -1;
+          instance->damage_target_player = -1;
+          remove_status(player, card, 0x10000);
+          if (instance->targets[0xb].player < 0)
+          {
+            instance->targets[0xb].player = 0;
+          }
+          SET_BYTE2(instance->targets[0xb].player) = 1;
+        }
+        count_for_gfp_ability(player, card, 0x77, 2, 0x40, NULL);
+      }
+    }
+  }
+  result = duh_mode(player);
+  death_count = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if ((death_count != 0) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+
+    death_count = death_count & 0xff;
+    if (death_count != 0)
+    {
+      do
+      {
+        death_count = death_count - 1;
+        gain_life(player, 5);
+      } while (0 < (int)death_count);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }
 
 int card_fangren_marauder(int player, int card, event_t event){
@@ -2149,12 +2255,11 @@ Whenever an artifact is put into a graveyard from the battlefield, you may gain 
 }
 
 int card_frantic_salvage(int player, int card, event_t event){
-/*
-Frantic Salvage |3|W
-Instant
-Put any number of target artifact cards from your graveyard on top of your library.
-Draw a card.
-*/
+  /* Frantic Salvage |3|W
+   * Instant
+   * Put any number of target artifact cards from your graveyard on top of your library.
+   * Draw a card. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -2192,6 +2297,10 @@ int card_gnathosaur(int player, int card, event_t event){
 
 int card_gore_vassal(int player, int card, event_t event)
 {
+  /* Gore Vassal	|2|W
+   * Creature - Phyrexian Dog 2/1
+   * Sacrifice this creature: Put a -1/-1 counter on target creature. Then if that creature's toughness is 1 or greater, regenerate it. */
+
   int target_card;
   card_instance_t *instance;
   unsigned int favorable_target;
@@ -2504,11 +2613,10 @@ static int magnetic_mine_effect(int player, int card, event_t event)
 }
 
 int card_magnetic_mine(int player, int card, event_t event){
-/*
-Magnetic Mine |4
-Artifact
-Whenever another artifact is put into a graveyard from the battlefield, Magnetic Mine deals 2 damage to that artifact's controller.
-*/
+  /* Magnetic Mine |4
+   * Artifact
+   * Whenever another artifact is put into a graveyard from the battlefield, Magnetic Mine deals 2 damage to that artifact's controller. */
+
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		int found = 0;
 		int c;
@@ -2655,12 +2763,10 @@ int card_mirrorworks(int player, int card, event_t event)
 }
 
 int card_mitotic_manipulation(int player, int card, event_t event){
-/*
-Mitotic Manipulation |1|U|U
-Sorcery, 1UU (3)
-Look at the top seven cards of your library. You may put one of those cards onto the battlefield if it has the same name as a permanent.
-Put the rest on the bottom of your library in any order.
-*/
+  /* Mitotic Manipulation |1|U|U
+   * Sorcery, 1UU (3)
+   * Look at the top seven cards of your library. You may put one of those cards onto the battlefield if it has the same name as a permanent.
+   * Put the rest on the bottom of your library in any order. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int amount = MIN(7, count_deck(player));
@@ -2817,12 +2923,10 @@ int card_myr_turbine(int player, int card, event_t event){
 }
 
 int card_myr_welder(int player, int card, event_t event ){
-/*
-Myr Welder |3
-Artifact Creature — Myr 1/4
-Imprint — {T}: Exile target artifact card from a graveyard.
-Myr Welder has all activated abilities of all cards exiled with it.
-*/
+  /* Myr Welder |3
+   * Artifact Creature — Myr 1/4
+   * Imprint — {T}: Exile target artifact card from a graveyard.
+   * Myr Welder has all activated abilities of all cards exiled with it. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -3089,13 +3193,12 @@ When ~ enters the battlefield, target opponent loses 3 life. */
 
 int card_piston_sledge(int player, int card, event_t event)
 {
-/*
-Piston Sledge |3
-Artifact — Equipment
-When Piston Sledge enters the battlefield, attach it to target creature you control.
-Equipped creature gets +3/+1.
-Equip—Sacrifice an artifact.
-*/
+  /* Piston Sledge |3
+   * Artifact — Equipment
+   * When Piston Sledge enters the battlefield, attach it to target creature you control.
+   * Equipped creature gets +3/+1.
+   * Equip—Sacrifice an artifact. */
+
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -3178,6 +3281,11 @@ Return all cards from your graveyard to your hand. Exile ~. You have no maximum 
 
 int card_psychosis_crawler(int player, int card, event_t event)
 {
+  /* Psychosis Crawler	|5
+   * Artifact Creature - Horror 100/100
+   * ~'s power and toughness are each equal to the number of cards in your hand.
+   * Whenever you draw a card, each opponent loses 1 life. */
+
   int result;
   result = card_drawn_trigger(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (result != 0)
@@ -3194,11 +3302,9 @@ int card_psychosis_crawler(int player, int card, event_t event)
 }
 
 int card_quicksilve_geyser(int player, int card, event_t event){
-	/*
-	  Quicksilver Geyser |4|U
-	  Instant
-	  Return up to two target nonland permanents to their owners' hands.
-	*/
+  /* Quicksilver Geyser |4|U
+   * 	  Instant
+   * 	  Return up to two target nonland permanents to their owners' hands. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -3569,6 +3675,10 @@ Creature - Vedalken Wizard 1/2
 
 int card_vedalken_infuser(int player, int card, event_t event)
 {
+  /* Vedalken Infuser	|3|U
+   * Creature - Vedalken Wizard 1/4
+   * At the beginning of your upkeep, you may put a charge counter on target artifact. */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -3646,11 +3756,10 @@ static int virulent_wound_legacy(int player, int card, event_t event)
 }
 
 int card_virulent_wound(int player, int card, event_t event){
-/*
-Virulent Wound |B
-Instant
-Put a -1/-1 counter on target creature. When that creature dies this turn, its controller gets a poison counter.
-*/
+  /* Virulent Wound |B
+   * Instant
+   * Put a -1/-1 counter on target creature. When that creature dies this turn, its controller gets a poison counter. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -3681,6 +3790,11 @@ static int is_nonland_permanent_by_iid(int iid, int unused1, int unused2, int un
 
 int card_phyrexian_revoker(int player, int card, event_t event)
 {
+  /* Phyrexian Revoker	|2
+   * Artifact Creature - Phyrexian Horror 2/1
+   * As this creature enters, choose a nonland card name.
+   * Activated abilities of sources with the chosen name can't be activated. */
+
   int choice;
   card_instance_t *instance;
   int chosen_csv_id;
@@ -3757,111 +3871,3 @@ int card_phyrexian_revoker(int player, int card, event_t event)
   create_card_name_legacy(player, card, chosen_csv_id);
   return 0;
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x232acc0; original cards/mirrodin_besieged.c:2033. */
-static int fangren_marauder_effect(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-  unsigned int death_count;
-  card_instance_t *dying_permanent;
-
-  if (event == EVENT_STATIC_EFFECTS)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-
-      instance = get_card_instance(player, card);
-      if ((-1 < instance->damage_target_player) &&
-          (result = get_id((int)instance->damage_target_player, instance->damage_target_card),
-           result != 0x2cb1))
-      {
-        kill_card(player, card, KILL_EXILE);
-      }
-    }
-    instance = get_card_instance(player, card);
-    if ((-1 < instance->damage_target_player) &&
-        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
-    {
-      return 0;
-    }
-  }
-  else
-  {
-    instance = get_card_instance(player, card);
-    if ((-1 < instance->damage_target_player) &&
-        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
-    {
-      return 0;
-    }
-    if (event == EVENT_GRAVEYARD_FROM_PLAY)
-    {
-
-      instance = get_card_instance(player, card);
-      dying_permanent = in_play(affected_card_controller, affected_card);
-      if ((dying_permanent != NULL) &&
-          (result = is_this_dying(affected_card_controller, affected_card), result != 0))
-      {
-
-        if ((instance->damage_target_card == affected_card) &&
-            (instance->damage_target_player == affected_card_controller))
-        {
-          instance->damage_target_card = -1;
-          instance->damage_target_player = -1;
-          remove_status(player, card, 0x10000);
-          if (instance->targets[0xb].player < 0)
-          {
-            instance->targets[0xb].player = 0;
-          }
-          SET_BYTE2(instance->targets[0xb].player) = 1;
-        }
-        count_for_gfp_ability(player, card, 0x77, 2, 0x40, NULL);
-      }
-    }
-  }
-  result = duh_mode(player);
-  death_count = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
-  if ((death_count != 0) && (result = check_status(player, card, 0x10000), result == 0))
-  {
-
-    death_count = death_count & 0xff;
-    if (death_count != 0)
-    {
-      do
-      {
-        death_count = death_count - 1;
-        gain_life(player, 5);
-      } while (0 < (int)death_count);
-    }
-    kill_card(player, card, KILL_EXILE);
-  }
-  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
-  {
-    kill_card(player, card, KILL_EXILE);
-  }
-  return 0;
-}
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 attacker/keyword helpers. */
-
-/* ManalinkEh 2022: 0x232b5e0; original cards/mirrodin_besieged.c:5. */
-void battle_cry(int player, int card, event_t event)
-{
-  test_definition_t test;
-  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
-  if (event != EVENT_DAT_ABILITY)
-  {
-    return;
-  }
-  new_default_test_definition(&test, 2, "");
-  test.state = 4;
-  test.not_me = 1;
-  pump_creatures_until_eot(player, card, current_turn, 0, 1, 0, 0, 0, &test);
-  return;
-}
-
-#endif

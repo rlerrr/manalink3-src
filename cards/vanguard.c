@@ -146,7 +146,6 @@ static int get_random_card_special(int min, int max, int colors, int no_mana_pro
 	return result;
 }
 
-
 static int create_random_singleton_deck(int player, int colors, int min, int max, int decksize){
 
 	// The standard formula for a deck is 60% cards / 40% lands
@@ -858,7 +857,6 @@ static int legacy_avatar(int player, int card, event_t event, int (*func_ptr)(in
   return 0;
 }
 
-
 static int effect_avatar_oni_of_wild_places(int player, int card, event_t event){
 	vanguard_card(player, card, event, 7, 18, 0);
 
@@ -921,6 +919,12 @@ static int get_random_creature(int cost){
 }
 
 int card_momir(int player, int card, event_t event){
+  /* Momir Vig, Simic Visionary Avatar	""
+   * Vanguard
+   * |X, Discard a card: Create a token that's a copy of a creature card with mana value X chosen at random. Activate only as a sorcery and only once each turn.
+   * Starting hand size modifier: +0.
+   * Starting life total modifier: +4. */
+
 	vanguard_card(player, card, event, 7, 24, 0);
 	int AI_max = 10;
 	card_instance_t *instance = get_card_instance(player, card);
@@ -1004,11 +1008,23 @@ int card_momir(int player, int card, event_t event){
 }
 
 int card_avatar_oni_of_wild_places(int player, int card, event_t event){
+  /* Oni of Wild Places Avatar	""
+   * Vanguard
+   * Creatures you control have haste.
+   * At the beginning of your upkeep, return a creature you control to its owner's hand.
+   * Starting hand size modifier: +0.
+   * Starting life total modifier: -2. */
+
 	return legacy_avatar(player, card, event, &effect_avatar_oni_of_wild_places );
 }
 
-
 int card_avatar_elvish_champion(int player, int card, event_t event){
+  /* Elvish Champion Avatar	""
+   * Vanguard
+   * You begin the game with a 1/1 green Elf creature token on the battlefield. It has "|T: Add |G."
+   * Starting hand size modifier: +0.
+   * Starting life total modifier: -5. */
+
 	return legacy_avatar(player, card, event, &effect_avatar_elvish_champion );
 }
 
@@ -1084,6 +1100,12 @@ static int effect_avatar_akroma(int player, int card, event_t event){
 }
 
 int card_avatar_akroma(int player, int card, event_t event){
+  /* Akroma, Angel of Wrath Avatar	""
+   * Vanguard
+   * Whenever a creature you control enters, it gains two abilities chosen at random from among flying, first strike, trample, haste, protection from black, protection from red, and vigilance.
+   * Starting hand size modifier: +1.
+   * Starting life total modifier: +7. */
+
 	return legacy_avatar(player, card, event, &effect_avatar_akroma );
 }
 
@@ -1198,11 +1220,24 @@ int card_face_the_horde(int player, int card, event_t event){
 }
 
 int card_avatar_goblin_warchief(int player, int card, event_t event){
+  /* Goblin Warchief Avatar	""
+   * Vanguard
+   * Attacking creatures you control get +1/+0.
+   * Starting hand size modifier: +1.
+   * Starting life total modifier: +2. */
+
 	return card_face_the_horde(player, card, event);
 	//	return legacy_avatar(player, card, event, &effect_avatar_goblin_warchief );
 }
 
 int card_avatar_heartwood_storyteller(int player, int card, event_t event){
+  /* Heartwood Storyteller Avatar	""
+   * Vanguard
+   * The first creature spell you cast each turn costs |1 less to cast.
+   * The first noncreature spell each opponent casts each turn costs |1 more to cast.
+   * Starting hand size modifier: -1.
+   * Starting life total modifier: +4. */
+
 	vanguard_card(player, card, event, 6, 24, 0);
 	card_instance_t *instance = get_card_instance(player, card);
 	if(event == EVENT_MODIFY_COST_GLOBAL ){
@@ -1258,6 +1293,12 @@ int card_avatar_heartwood_storyteller(int player, int card, event_t event){
 
 int card_avatar_mirri_the_cursed(int player, int card, event_t event)
 {
+  /* Mirri the Cursed Avatar	""
+   * Vanguard
+   * Creatures you control have "|T: Another target creature gets -1/-1 until end of turn. Put a +1/+1 counter on this creature."
+   * Starting hand size modifier: -2.
+   * Starting life total modifier: -3. */
+
   card_instance_t *parent;
   int target_player;
   card_instance_t *instance;
@@ -1335,6 +1376,12 @@ int card_avatar_mirri_the_cursed(int player, int card, event_t event)
 }
 
 int card_avatar_nekrataal(int player, int card, event_t event){
+  /* Nekrataal Avatar	""
+   * Vanguard
+   * Creature spells you cast cost |B less to cast. This effect reduces only the amount of colored mana you pay.
+   * Starting hand size modifier: -1.
+   * Starting life total modifier: -4. */
+
 	vanguard_card(player, card, event, 6, 16, 0);
 	if(event == EVENT_MODIFY_COST_GLOBAL ){
 		if( affected_card_controller == player ){
@@ -1353,6 +1400,12 @@ static int effect_avatar_royal_assassin(int player, int card, event_t event){
 }
 
 int card_avatar_royal_assassin(int player, int card, event_t event){
+  /* Royal Assassin Avatar	""
+   * Vanguard
+   * At the beginning of your upkeep, you draw a card and you lose 1 life.
+   * Starting hand size modifier: -2.
+   * Starting life total modifier: +0. */
+
 	return legacy_avatar(player, card, event, &effect_avatar_royal_assassin );
 }
 
@@ -1382,6 +1435,12 @@ static int effect_avatar_serra_angel(int player, int card, event_t event){
 }
 
 int card_avatar_serra_angel(int player, int card, event_t event){
+  /* Serra Angel Avatar	""
+   * Vanguard
+   * Whenever you cast a spell, you gain 2 life.
+   * Starting hand size modifier: +0.
+   * Starting life total modifier: -1. */
+
 	return legacy_avatar(player, card, event, &effect_avatar_serra_angel );
 }
 
@@ -1401,6 +1460,12 @@ static int effect_avatar_reaper_king(int player, int card, event_t event){
 }
 
 int card_avatar_reaper_king(int player, int card, event_t event){
+  /* Reaper King Avatar	""
+   * Vanguard
+   * Each creature you control gets +1/+1 for each of its colors.
+   * Starting hand size modifier: -2.
+   * Starting life total modifier: -5. */
+
 	return legacy_avatar(player, card, event, &effect_avatar_reaper_king );
 }
 
@@ -1418,6 +1483,12 @@ static int effect_avatar_prodigal_sorcerer(int player, int card, event_t event){
 }
 
 int card_avatar_prodigal_sorcerer(int player, int card, event_t event){
+  /* Prodigal Sorcerer Avatar	""
+   * Vanguard
+   * At the beginning of your upkeep, look at the top card of your library. You may put that card into your graveyard.
+   * Starting hand size modifier: +0.
+   * Starting life total modifier: +5. */
+
 	return legacy_avatar(player, card, event, &effect_avatar_prodigal_sorcerer );
 }
 
@@ -1881,6 +1952,44 @@ int commander_enters_the_battlefield(int edh_player, int edh_card, int commander
   return card;
 }
 
+/* ManalinkEh 2022: 0x22c3610; original cards/vanguard.c:1662. */
+static int general_in_rfg_comm_zone(int player, int card, int commander_code)
+{
+  int result;
+  card_instance_t *instance;
+  if (commander_code == 1)
+  {
+    result = count_counters(player, card, COUNTER_VORTEX);
+    if (result < 1)
+    {
+      return 1;
+    }
+    instance = get_card_instance(player, card);
+    result = instance->targets[3].player;
+    if (result != -1)
+    {
+      return (unsigned int)((char)result == '\x01');
+    }
+  }
+  else
+  {
+    result = count_counters(player, card, COUNTER_VELOCITY);
+    if (result < 1)
+    {
+      return 1;
+    }
+    instance = get_card_instance(player, card);
+    if (instance->targets[3].card != -1)
+    {
+      return (unsigned int)((char)SET_BYTE1(instance->targets[3].player) == '\x01');
+    }
+  }
+  return 0;
+}
+
+// instance->targets[2].player / card : internal_card_id of both commanders
+// instance->targets[3].player : keeps track of whether general is in play (2), in the Command Zone (1), or if we've lost track of it (4) (BYTE0 and BYTE1)
+// instance->targets[4].player / card : if the Commander is in play, its "card" value is stored here.
 static int can_play_commander(int player, int card, event_t event, int commander_code)
 {
   card_ptr_t *tasigur_cost;
@@ -2013,9 +2122,797 @@ static int can_play_commander(int player, int card, event_t event, int commander
   return 0;
 }
 
-// instance->targets[2].player / card : internal_card_id of both commanders
-// instance->targets[3].player : keeps track of whether general is in play (2), in the Command Zone (1), or if we've lost track of it (4) (BYTE0 and BYTE1)
-// instance->targets[4].player / card : if the Commander is in play, its "card" value is stored here.
+/* ManalinkEh 2022: 0x22c64f0; original cards/vanguard.c:1803. */
+int locate_edh_card(int player)
+{
+  for (int i = 0; i < active_cards_count[player]; ++i)
+    if (in_play(player, i) && get_id(player, i) == CARD_ID_ELDER_DRAGON_HIGHLANDER)
+      return i;
+  return -1;
+}
+
+/* ManalinkEh 2022: 0x22c6940; original cards/vanguard.c:1813. */
+int get_commander_storm_count(int player)
+{
+  int edh_card = locate_edh_card(player);
+  if (edh_card == -1)
+    return 0;
+  return count_counters(player, edh_card, COUNTER_VORTEX) / 2;
+}
+
+/* ManalinkEh 2022: 0x22c6590; original cards/vanguard.c:1830. */
+static int put_commander_from_command_zone_to_impl(int player, int where, int which_com, int *rv)
+{
+  int packed_state_or_iid;
+  unsigned int selected_slot;
+  int id;
+  int edh_or_added_card;
+  card_instance_t *instance;
+  int first_cmc;
+  int second_cmc;
+  int first_priority_cmc;
+  int second_priority_cmc;
+  char partner_state;
+  unsigned int commander_slot;
+  unsigned int choice_or_priority;
+  int cid[3];
+  char buffer1[100];
+  char buffer2[100];
+
+  edh_or_added_card = locate_edh_card(player);
+  if (edh_or_added_card != -1)
+  {
+
+    instance = get_card_instance(player, edh_or_added_card);
+    packed_state_or_iid = instance->targets[3].player;
+    if (packed_state_or_iid < 0)
+    {
+      return -1;
+    }
+    cid[0] = -1;
+    cid[1] = (char)packed_state_or_iid == 1 ? instance->targets[2].player : -1;
+    partner_state = (char)((unsigned int)packed_state_or_iid >> 8);
+    cid[2] = partner_state == 1 ? instance->targets[2].card : -1;
+    if ((cid[1] & cid[2]) == -1)
+      return -1;
+    id = cid[2];
+    packed_state_or_iid = cid[1];
+    scnprintf(buffer1, 100, " %s", cards_ptr[cards_data[cid[1]].id]->name);
+    scnprintf(buffer2, 100, " %s", cards_ptr[cards_data[id].id]->name);
+    choice_or_priority = which_com;
+    if (which_com == 0)
+    {
+      first_cmc = get_cmc_by_internal_id(packed_state_or_iid);
+      second_cmc = get_cmc_by_internal_id(id);
+      first_priority_cmc = get_cmc_by_internal_id(packed_state_or_iid);
+      second_priority_cmc = get_cmc_by_internal_id(id);
+      choice_or_priority = 0;
+      if (second_priority_cmc < first_priority_cmc)
+      {
+        choice_or_priority = 10;
+      }
+      choice_or_priority = dialog_impl(
+          player, edh_or_added_card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL, DLG_AUTOCHOOSE_IF_1,
+          DLG_NO_CANCEL, buffer1, (packed_state_or_iid ^ 0xffffffffU) >> 0x1f, choice_or_priority,
+          buffer2, (id ^ 0xffffffffU) >> 0x1f, ((second_cmc <= first_cmc) ? 0 : 10), 0, 0, 0, 0);
+    }
+
+    commander_slot = 1;
+    edh_or_added_card = -1;
+    selected_slot = choice_or_priority & 1;
+    do
+    {
+      if ((selected_slot != 0) && (-1 < packed_state_or_iid))
+      {
+        remove_card_from_rfg(player, (unsigned int)cards_data[packed_state_or_iid].id);
+        if (commander_slot == 1)
+        {
+          *(uint8_t *)&instance->targets[3].player = 4;
+        }
+        else if (commander_slot == 2)
+        {
+          SET_BYTE1(instance->targets[3].player) = 4;
+        }
+        edh_or_added_card = add_card_to_hand(player, packed_state_or_iid);
+        if (rv != NULL)
+        {
+          rv[commander_slot] = edh_or_added_card;
+        }
+        set_special_flags2(player, edh_or_added_card, 0x1000000);
+        if (where == 5)
+        {
+          add_state(player, edh_or_added_card, 0x10);
+        }
+        if (where == 4 || where == 5)
+          put_into_play(player, edh_or_added_card);
+      }
+      commander_slot = commander_slot + 1;
+      if (commander_slot == 3)
+      {
+        return edh_or_added_card;
+      }
+      selected_slot = choice_or_priority & commander_slot;
+      packed_state_or_iid = cid[commander_slot];
+    } while (true);
+  }
+  return -1;
+}
+
+/* ManalinkEh 2022: 0x22c6990; original cards/vanguard.c:1877. */
+int put_all_commanders_from_command_zone_to(int player, int where, int *rv)
+{
+  int result;
+
+  result = put_commander_from_command_zone_to_impl(player, where, 3, rv);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22c69d0; original cards/vanguard.c:1886. */
+int get_commander_id(int player, int commander_code)
+{
+  int32_t edh_card;
+  card_instance_t *instance;
+
+  edh_card = locate_edh_card(player);
+  if (edh_card != -1)
+  {
+    if (commander_code == 2)
+    {
+      instance = get_card_instance(player, edh_card);
+      return instance->targets[2].card;
+    }
+    instance = get_card_instance(player, edh_card);
+    edh_card = instance->targets[2].player;
+  }
+  return edh_card;
+}
+
+/* ManalinkEh 2022: 0x22c6a20; original cards/vanguard.c:1895. */
+void put_commander_in_the_command_zone_from_play(int player, int card)
+{
+  uint16_t commander_csvid;
+  uint16_t partner_csvid;
+  int player_00;
+  int iid;
+  int card_00;
+  int result;
+  card_instance_t *instance;
+
+  player_00 = get_owner(player, card);
+  iid = get_original_internal_card_id(player, card);
+  commander_csvid = cards_data[iid].id;
+  card_00 = locate_edh_card(player_00);
+  if (card_00 == -1)
+  {
+    return;
+  }
+
+  result = get_commander_id(player_00, 1);
+  partner_csvid = cards_data[result].id;
+  result = get_commander_id(player_00, 2);
+  if (commander_csvid == cards_data[result].id)
+  {
+    dispatch_event(player, card, 0x1c00);
+    get_card_instance(player_00, card_00);
+  }
+  else
+  {
+    dispatch_event(player, card, 0x1c00);
+    instance = get_card_instance(player_00, card_00);
+    if (commander_csvid != partner_csvid)
+    {
+      return;
+    }
+    *(uint16_t *)&instance->targets[3].player = 0x101;
+  }
+  add_card_to_rfg(player_00, iid);
+  obliterate_card(player, card);
+  return;
+}
+
+/* ManalinkEh 2022: 0x22c3b20; original cards/vanguard.c:1919. */
+static int prismatic_piper_check(int player, int card, int card_color, int to_compare)
+{
+  card_instance_t *instance;
+  unsigned int color_count_or_mask;
+  unsigned int identity_color_count;
+
+  instance = get_card_instance(player, card);
+  if ((player == 1) && ((cards_data[instance->targets[2].player].id == CARD_ID_THE_PRISMATIC_PIPER ||
+                         (cards_data[instance->targets[2].card].id == CARD_ID_THE_PRISMATIC_PIPER))))
+  {
+    color_count_or_mask = num_bits_set(card_color);
+    identity_color_count = num_bits_set(to_compare);
+    if (color_count_or_mask - 1 <= identity_color_count)
+    {
+      color_count_or_mask = card_color & (to_compare ^ 0xffffffffU);
+      instance = get_card_instance(1, card);
+      instance->targets[6].card = color_count_or_mask;
+      return color_count_or_mask;
+    }
+  }
+  return 0;
+}
+
+/*
+** AVATAR - Arcanis, the Omnipotent	""
+Vanguard (+1/-3)
+|X, Return a creature you control with converted mana cost X to its owner's hand: Draw a number of cards chosen at random between 0 and X. X can't be 0.
+*/
+
+/*
+** AVATAR - Arcbound Overseer	""
+Vanguard (+0/+3)
+At the beginning of your upkeep, you may put a +1/+1 counter on target creature you control.
+At the beginning of your upkeep, you may put a charge counter on target permanent you control.
+*/
+
+/*
+** AVATAR - Ashling the Pilgrim	""
+Vanguard (-1/+6)
+|2: Ashling the Pilgrim deals 1 damage to each creature and each player.
+*/
+
+/*
+** AVATAR - Ashling, the Extinguisher	""
+Vanguard (+1/-3)
+|5: Destroy all nonland permanents. Activate this ability only once and only during your turn.
+*/
+
+/*
+** AVATAR - Ashnod	""
+Vanguard (+1/-8)
+Whenever a creature deals damage to you, destroy it.
+*/
+
+/*
+** AVATAR - Barrin	""
+Vanguard (+0/+6)
+Sacrifice a permanent: Return target creature to its owner's hand.
+*/
+
+/*
+** AVATAR - Birds of Paradise	""
+Vanguard (+0/-3)
+Lands you control have "|T: Add one mana of any color."
+*/
+
+/*
+** AVATAR - Bosh, Iron Golem	""
+Vanguard (+0/-2)
+|X, Sacrifice an artifact with converted mana cost X: Bosh, Iron Golem deals X damage to any target.
+*/
+
+/*
+** AVATAR - Braids, Conjurer Adept	""
+Vanguard (+0/+3)
+|2: Each player may put a land card from their hand onto the battlefield tapped.
+|3: Each player may put a noncreature artifact card from their hand onto the battlefield.
+|4: Each player may put a creature card from their hand onto the battlefield. Activate this ability only any time you could cast a sorcery.
+*/
+
+/*
+** AVATAR - Chronatog	""
+Vanguard (-1/+1)
+You have no maximum hand size.
+|0: Draw three cards. You skip your next turn. Activate this ability only once each turn.
+*/
+
+/*
+** AVATAR - Crovax	""
+Vanguard (+2/+0)
+Whenever a creature you control deals damage to a creature or player, you gain 1 life.
+*/
+
+/*
+** AVATAR - Dakkon Blackblade	""
+Vanguard (+1/+0)
+You may play any colored card from your hand as a copy of a basic land card chosen at random that can produce mana of one of the card's colors.
+*/
+
+/*
+** AVATAR - Dauntless Escort	""
+Vanguard (+1/+1)
+Creatures you control have exalted.
+*/
+
+/*
+** AVATAR - Diamond Faerie	""
+Vanguard (+0/+5)
+|I: Target creature you control gets +1/+1 until end of turn.
+*/
+
+/*
+** AVATAR - Eight-and-a-Half-Tails	""
+Vanguard (+2/-3)
+|1: Until end of turn, target permanent you control gains protection from a color chosen at random from colors it doesn't have protection from.
+*/
+
+/*
+** AVATAR - Eladamri, Lord of Leaves	""
+Vanguard (-1/+2)
+At the beginning of each player's precombat main phase, that player adds |G|G.
+*/
+
+/*
+** AVATAR - Eladamri	""
+Vanguard (-1/+15)
+|0: The next 1 damage that would be dealt to target creature you control is dealt to you instead.
+*/
+
+/*
+** AVATAR - Enigma Sphinx	""
+Vanguard (+0/+5)
+Whenever you cast a colored artifact spell for the first time each turn, search your library for a colored artifact card chosen at random whose converted mana cost is less than that spell's converted mana cost. You may play that card without paying its mana cost. If you don't, put that card on the bottom of your library.
+*/
+
+/*
+** AVATAR - Ertai	""
+Vanguard (-1/+4)
+Creatures you control have hexproof.
+*/
+
+/*
+** AVATAR - Etched Oracle	""
+Vanguard (+1/-4)
+You may pay |W|U|B|R|G rather than pay the mana cost for spells that you cast.
+*/
+
+/*
+** AVATAR - Fallen Angel	""
+Vanguard (+0/-5)
+Whenever a creature you control dies, target opponent loses 1 life and you gain 1 life.
+*/
+
+/*
+** AVATAR - Figure of Destiny	""
+Vanguard (+0/+3)
+|X: Put a +1/+1 counter on target creature with fewer than X +1/+1 counters on it.
+*/
+
+/*
+** AVATAR - Flametongue Kavu	""
+Vanguard (+0/-6)
+Whenever a nontoken creature enters the battlefield under your control, that creature deals X damage to target creature, where X is a number chosen at random from 0 to 4.
+*/
+
+/*
+** AVATAR - Frenetic Efreet	""
+Vanguard (-1/-3)
+Each permanent you control has phasing.
+At the beginning of your end step, flip a coin. If you win the flip, take an extra turn after this one.
+*/
+
+/*
+** AVATAR - Gerrard	""
+Vanguard (-4/+0)
+At the beginning of your draw step, draw an additional card.
+*/
+
+/*
+** AVATAR - Gix	""
+Vanguard (-2/+18)
+|3: Return target creature card from your graveyard to your hand.
+*/
+
+/*
+** AVATAR - Greven il-Vec	""
+Vanguard (-1/+2)
+Whenever a creature you control deals damage to a creature, destroy the other creature. It can't be regenerated.
+*/
+
+/*
+** AVATAR - Grinning Demon	""
+Vanguard (-1/-2)
+Whenever a nontoken creature you control dies, target opponent discards a card.
+*/
+
+/*
+** AVATAR - Haakon, Stromgald Scourge	""
+Vanguard (+0/-3)
+Pay 1 life: You may play target creature card in your graveyard this turn.
+Whenever you play a creature card from your graveyard, it becomes a |Sblack Zombie Knight.
+If a Zombie Knight would be put into your graveyard from the battlefield, exile it instead.
+*/
+
+/*
+** AVATAR - Hanna	""
+Vanguard (+1/-5)
+Spells you cast cost |1 less to cast.
+*/
+
+/*
+** AVATAR - Hell's Caretaker	""
+Vanguard (-1/-4)
+|3, Sacrifice a creature: Return target creature card from your graveyard to the battlefield.
+*/
+
+/*
+** AVATAR - Hermit Druid	""
+Vanguard (-2/-2)
+At the beginning of your upkeep, put a land card from your library chosen at random onto the battlefield.
+*/
+
+/*
+** AVATAR - Higure, the Still Wind	""
+Vanguard (-1/+3)
+Whenever a nontoken creature you control deals combat damage to an opponent, choose a creature card at random from your library, reveal that card, and put it into your hand. Then shuffle your library.
+*/
+
+/*
+** AVATAR - Ink-Eyes, Servant of Oni	""
+Vanguard (+0/-3)
+At the beginning of the game, look at target opponent's hand and choose a nonland card from it. That player discards that card.
+|X, Pay X life: Put target creature card with converted mana cost X from an opponent's graveyard onto the battlefield under your control.
+*/
+
+/*
+** AVATAR - Jaya Ballard	""
+Vanguard (+0/+1)
+|X: Jaya Ballard deals an amount of damage chosen at random from 0 to X to any target. Activate this ability only once each turn.
+*/
+
+/*
+** AVATAR - Jhoira of the Ghitu	""
+Vanguard (+1/+0)
+|3, Discard a card: Copy three instant cards chosen at random. You may cast one of the copies without paying its mana cost.
+|3, Discard a card: Copy three sorcery cards chosen at random. You may cast one of the copies without paying its mana cost. Activate this ability only any time you could cast a sorcery.
+*/
+
+/*
+** AVATAR - Karn	""
+Vanguard (+1/+6)
+Each noncreature artifact you control is an artifact creature with power and toughness each equal to its converted mana cost.
+*/
+
+/*
+** AVATAR - Karona, False God	""
+Vanguard (-1/+8)
+At the beginning of your upkeep, exchange control of a permanent you control chosen at random and a permanent target opponent controls chosen at random.
+*/
+
+/*
+** AVATAR - Kresh the Bloodbraided	""
+Vanguard (+1/-3)
+Whenever a creature you control is devoured, create an X/X |Sgreen Ooze creature token, where X is the devoured creature's power.
+*/
+
+/*
+** AVATAR - Loxodon Hierarch	""
+Vanguard (+0/+12)
+Sacrifice a permanent: Regenerate target creature you control.
+*/
+
+/*
+** AVATAR - Lyna	""
+Vanguard (+2/-4)
+Creatures you control have shadow.
+*/
+
+/*
+** AVATAR - Lyzolda, the Blood Witch	""
+Vanguard (-1/-1)
+Hellbent - As long as you have no cards in hand, if a source you control would deal damage to a permanent or player, it deals double that damage to that permanent or player instead.
+Hellbent - At the beginning of your end step, if you have no cards in hand, each of your opponents discards a card.
+*/
+
+/*
+** AVATAR - Maelstrom Archangel	""
+Vanguard (+0/+5)
+At end of combat, for each creature you controlled at the time it dealt combat damage to a player this turn, copy a random card with the same mana cost as that creature. You may pay |3. If you do, choose one of those copies. If a copy of a permanent card is chosen, you may create a token that's a copy of that card. If a copy of an instant or sorcery card is chosen, you may cast the copy without paying its mana cost.
+*/
+
+/*
+** AVATAR - Malfegor	""
+Vanguard (+2/-2)
+Whenever a creature enters the battlefield under your control, if it was unearthed, it gets +3/+0.
+Whenever a creature you control is exiled, if it was unearthed, shuffle that card into its owner's library.
+*/
+
+/*
+** AVATAR - Maralen of the Mornsong	""
+Vanguard (+0/-3)
+At the beginning of the game, you may pay any amount of life.
+You can't draw cards.
+At the beginning of your draw step, look at the top X cards of your library, where X is the amount of life paid with Maralen of the Mornsong. Put one of them into your hand, then shuffle your library.
+*/
+
+/*
+** AVATAR - Maraxus	""
+Vanguard (+1/+2)
+Creatures you control get +1/+0.
+*/
+
+/*
+** AVATAR - Maro	""
+Vanguard (+2/-7)
+Tap an untapped creature you control, Discard a card: Target creature you control gets +X/+X until end of turn, where X is the number of cards in your hand.
+*/
+
+/*
+** AVATAR - Master of the Wild Hunt	""
+Vanguard (+1/+3)
+|2|G: Create a |Sgreen creature token that's a 2/2 Wolf, a 2/3 Antelope with |H2forestwalk, a 3/2 Cat with shroud, or a 4/4 Rhino with trample, chosen at random.
+*/
+
+/*
+** AVATAR - Mayael the Anima	""
+Vanguard (+1/+5)
+At the beginning of your upkeep, reveal the top card of your library. If it's a creature card with power 5 or greater, put it into your hand. Otherwise, you may put it on the bottom of your library.
+*/
+
+/*
+** AVATAR - Mirri	""
+Vanguard (+0/+5)
+If a basic land you control is tapped for mana, it produces mana of a color of your choice instead of any other type.
+*/
+
+/*
+** AVATAR - Mirror Entity	""
+Vanguard (+1/-2)
+|X: Choose a creature type. Until end of turn, creatures you control of the chosen type have base power and toughness X/X and gain all creature types.
+*/
+
+/*
+** AVATAR - Mishra	""
+Vanguard (+0/-3)
+If a creature you control would deal damage, it deals double that damage instead.
+*/
+
+/*
+** AVATAR - Morinfen	""
+Vanguard (+0/+30)
+At the beginning of your upkeep, you lose 1 life for each permanent you control.
+*/
+
+/*
+** AVATAR - Multani	""
+Vanguard (-3/-2)
+Creatures you control get +X/+0, where X is the number of cards in your hand.
+*/
+
+/*
+** AVATAR - Murderous Redcap	""
+Vanguard (+0/-2)
+Whenever a creature enters the battlefield under your control with a counter on it, you may have it deal damage equal to its power to any target.
+*/
+
+/*
+** AVATAR - Necropotence	""
+Vanguard (+0/+4)
+Skip your draw step.
+At the beginning of your end step, if it's not the first turn of the game, put a death counter on Necropotence. You draw X cards and you lose X life, where X is the number of death counters on Necropotence.
+*/
+
+/*
+** AVATAR - Oracle	""
+Vanguard (+1/+9)
+|0: Untap target attacking creature you control and remove it from combat.
+*/
+
+/*
+** AVATAR - Orcish Squatters	""
+Vanguard (-1/-1)
+At the beginning of your precombat main phase, add |C for each land target opponent controls.
+*/
+
+/*
+** AVATAR - Orim	""
+Vanguard (+0/+12)
+Creatures you control have reach.
+*/
+
+/*
+** AVATAR - Peacekeeper	""
+Vanguard (+0/+9)
+|3: For each opponent who controls a creature, create a token that's a copy of a card named Arrest and attach it to a creature that player controls chosen at random.
+*/
+
+/*
+** AVATAR - Phage the Untouchable	""
+Vanguard (+0/-5)
+Pay 1 life: Until end of turn, whenever a creature deals combat damage to you, destroy that creature.
+Pay 1 life: Until end of turn, whenever target creature you control deals combat damage to a creature, destroy the damaged creature.
+*/
+
+/*
+** AVATAR - Platinum Angel	""
+Vanguard (-1/-2)
+If you control an artifact, a creature, an enchantment, and a land, you can't lose the game and your opponents can't win the game.
+*/
+
+/*
+** AVATAR - Raksha Golden Cub	""
+Vanguard (+1/+9)
+Creatures you control get +0/+1.
+Equipped creatures you control get +1/+0 and have first strike.
+*/
+
+/*
+** AVATAR - Rith, the Awakener	""
+Vanguard (+0/+6)
+Whenever a creature you control deals combat damage to a player, you may pay |5. If you do, create a 5/5 |Sred Dragon creature token with flying.
+*/
+
+/*
+** AVATAR - Rofellos	""
+Vanguard (-2/+4)
+Whenever a creature you control dies, draw a card.
+*/
+
+/*
+** AVATAR - Rumbling Slum	""
+Vanguard (+1/+1)
+At the beginning of your upkeep, Rumbling Slum deals 1 damage to each opponent.
+*/
+
+/*
+** AVATAR - Sakashima the Impostor	""
+Vanguard (+0/+1)
+|2: Choose a creature you control. It becomes a copy of target creature except for its name.
+*/
+
+/*
+** AVATAR - Selenia	""
+Vanguard (+1/+7)
+Creatures you control have vigilance.
+*/
+
+/*
+** AVATAR - Serra	""
+Vanguard (+1/+1)
+Creatures you control get +0/+2.
+*/
+
+/*
+** AVATAR - Seshiro the Anointed	""
+Vanguard (+0/-1)
+At the beginning of the game, choose a creature type. Creatures you control, creature spells you control, and creature cards you own in any zone other than the battlefield or the stack have the chosen type in addition to their other types.
+*/
+
+/*
+** AVATAR - Sidar Kondo	""
+Vanguard (-1/+12)
+|3: Target creature gets +3/+3 until end of turn.
+*/
+
+/*
+** AVATAR - Sisay	""
+Vanguard (-2/-3)
+Whenever you tap a land for mana, add one mana of any type that land produced.
+*/
+
+/*
+** AVATAR - Sisters of Stone Death	""
+Vanguard (+1/-5)
+Each creature you control must be blocked if able.
+|4: Exile target creature that's blocking a creature you control.
+*/
+
+/*
+** AVATAR - Sliver Queen, Brood Mother	""
+Vanguard (+0/+8)
+|3: Create a 1/1 colorless Sliver creature token.
+*/
+
+/*
+** AVATAR - Sliver Queen	""
+Vanguard (+0/+7)
+Whenever you cast a non-Sliver creature spell, exile that spell. If you do, create a token that's a copy of a random non-Shapeshifter Sliver creature card with the same converted mana cost as that spell.
+*/
+
+/*
+** AVATAR - Squee, Goblin Nabob	""
+Vanguard (+3/-4)
+|1: Prevent the next 1 damage that would be dealt to target creature you control this turn.
+*/
+
+/*
+** AVATAR - Squee	""
+Vanguard (+3/-4)
+Your opponents play with their hands revealed.
+*/
+
+/*
+** AVATAR - Stalking Tiger	""
+Vanguard (+0/+2)
+Whenever you cast a creature spell, you may pay |1. If you do, draw a card.
+*/
+
+/*
+** AVATAR - Starke	""
+Vanguard (+0/-2)
+At the beginning of your draw step, you may draw an additional card. If you do, put a card from your hand on the bottom of your library.
+*/
+
+/*
+** AVATAR - Stonehewer Giant	""
+Vanguard (+1/-5)
+Whenever a creature enters the battlefield under your control, create a token that's a copy of a random Equipment card with converted mana cost less than that creature's converted mana cost. Attach that Equipment to that creature.
+*/
+
+/*
+** AVATAR - Stuffy Doll	""
+Vanguard (+0/-6)
+|0: If damage would be dealt to you this turn by a source of your choice, prevent that damage. Stuffy Doll deals damage to you and target opponent or planeswalker equal to half the damage prevented this way, rounded up. Activate this ability only once each turn.
+*/
+
+/*
+** AVATAR - Tahngarth	""
+Vanguard (-1/+7)
+Creatures you control have haste.
+*/
+
+/*
+** AVATAR - Takara	""
+Vanguard (+3/-8)
+Sacrifice a creature: Takara deals 1 damage to any target.
+*/
+
+/*
+** AVATAR - Tawnos	""
+Vanguard (+3/-4)
+You may cast artifact, creature, and enchantment spells as though they had flash.
+*/
+
+/*
+** AVATAR - Teysa, Orzhov Scion	""
+Vanguard (+0/-2)
+Whenever a nontoken creature dies, create a 1/1 |Swhite Spirit creature token with flying.
+*/
+
+/*
+** AVATAR - Titania	""
+Vanguard (+2/-5)
+You may play an additional land on each of your turns.
+*/
+
+/*
+** AVATAR - Tradewind Rider	""
+Vanguard (+1/+4)
+|3: Each player returns a permanent they control to its owner's hand unless they pay 2 life.
+*/
+
+/*
+** AVATAR - Two-Headed Giant of Foriys	""
+Vanguard (+1/-4)
+Creatures you control have menace.
+Each creature you control can block an additional creature each combat.
+*/
+
+/*
+** AVATAR - Urza	""
+Vanguard (-1/+10)
+|3: Urza deals 1 damage to any target.
+*/
+
+/*
+** AVATAR - Vampire Nocturnus	""
+Vanguard (-1/-2)
+Play with the top card of your library revealed.
+As long as the top card of your library is |Sblack, |Sblack creatures you control get +2/+1.
+*/
+
+/*
+** AVATAR - Viridian Zealot	""
+Vanguard (+0/+2)
+|2, Sacrifice a creature: Destroy target artifact or enchantment. Search your library for a card with the same name as the sacrificed creature, reveal that card, and put it into your hand. Then shuffle your library.
+*/
+
+/*
+** AVATAR - Volrath	""
+Vanguard (+2/-3)
+Whenever a creature you control is put into your graveyard from the battlefield, you may put it on top of your library.
+*/
+
+/*
+** AVATAR - Xantcha	""
+Vanguard (+1/+3)
+Sacrifice a permanent: Regenerate target creature.
+*/
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 int card_edh(int player, int card, event_t event)
 {
   enum
@@ -3041,6 +3938,13 @@ int card_4_starting_hand(int player, int card, event_t event){
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int get_commander_storm_count(int player);
+int put_all_commanders_from_command_zone_to(int player, int where, int *rv);
+int get_commander_id(int player, int commander_code);
+static int put_commander_from_command_zone_to_impl(int player, int where, int which_com, int *rv);
+void put_commander_in_the_command_zone_from_play(int player, int card);
+
 int card_5_starting_hand(int player, int card, event_t event){
 	vanguard_card(player, card, event, 5, 20, 99);
 	return 0;
@@ -3081,848 +3985,12 @@ int card_random_singleton_deck(int player, int card, event_t event){
 	return 0;
 }
 
-/*
-** AVATAR - Arcanis, the Omnipotent	""
-Vanguard (+1/-3)
-|X, Return a creature you control with converted mana cost X to its owner's hand: Draw a number of cards chosen at random between 0 and X. X can't be 0.
-*/
-
-/*
-** AVATAR - Arcbound Overseer	""
-Vanguard (+0/+3)
-At the beginning of your upkeep, you may put a +1/+1 counter on target creature you control.
-At the beginning of your upkeep, you may put a charge counter on target permanent you control.
-*/
-
-/*
-** AVATAR - Ashling the Pilgrim	""
-Vanguard (-1/+6)
-|2: Ashling the Pilgrim deals 1 damage to each creature and each player.
-*/
-
-/*
-** AVATAR - Ashling, the Extinguisher	""
-Vanguard (+1/-3)
-|5: Destroy all nonland permanents. Activate this ability only once and only during your turn.
-*/
-
-/*
-** AVATAR - Ashnod	""
-Vanguard (+1/-8)
-Whenever a creature deals damage to you, destroy it.
-*/
-
-/*
-** AVATAR - Barrin	""
-Vanguard (+0/+6)
-Sacrifice a permanent: Return target creature to its owner's hand.
-*/
-
-/*
-** AVATAR - Birds of Paradise	""
-Vanguard (+0/-3)
-Lands you control have "|T: Add one mana of any color."
-*/
-
-/*
-** AVATAR - Bosh, Iron Golem	""
-Vanguard (+0/-2)
-|X, Sacrifice an artifact with converted mana cost X: Bosh, Iron Golem deals X damage to any target.
-*/
-
-/*
-** AVATAR - Braids, Conjurer Adept	""
-Vanguard (+0/+3)
-|2: Each player may put a land card from their hand onto the battlefield tapped.
-|3: Each player may put a noncreature artifact card from their hand onto the battlefield.
-|4: Each player may put a creature card from their hand onto the battlefield. Activate this ability only any time you could cast a sorcery.
-*/
-
-/*
-** AVATAR - Chronatog	""
-Vanguard (-1/+1)
-You have no maximum hand size.
-|0: Draw three cards. You skip your next turn. Activate this ability only once each turn.
-*/
-
-/*
-** AVATAR - Crovax	""
-Vanguard (+2/+0)
-Whenever a creature you control deals damage to a creature or player, you gain 1 life.
-*/
-
-/*
-** AVATAR - Dakkon Blackblade	""
-Vanguard (+1/+0)
-You may play any colored card from your hand as a copy of a basic land card chosen at random that can produce mana of one of the card's colors.
-*/
-
-/*
-** AVATAR - Dauntless Escort	""
-Vanguard (+1/+1)
-Creatures you control have exalted.
-*/
-
-/*
-** AVATAR - Diamond Faerie	""
-Vanguard (+0/+5)
-|I: Target creature you control gets +1/+1 until end of turn.
-*/
-
-/*
-** AVATAR - Eight-and-a-Half-Tails	""
-Vanguard (+2/-3)
-|1: Until end of turn, target permanent you control gains protection from a color chosen at random from colors it doesn't have protection from.
-*/
-
-/*
-** AVATAR - Eladamri, Lord of Leaves	""
-Vanguard (-1/+2)
-At the beginning of each player's precombat main phase, that player adds |G|G.
-*/
-
-/*
-** AVATAR - Eladamri	""
-Vanguard (-1/+15)
-|0: The next 1 damage that would be dealt to target creature you control is dealt to you instead.
-*/
-
-/*
-** AVATAR - Enigma Sphinx	""
-Vanguard (+0/+5)
-Whenever you cast a colored artifact spell for the first time each turn, search your library for a colored artifact card chosen at random whose converted mana cost is less than that spell's converted mana cost. You may play that card without paying its mana cost. If you don't, put that card on the bottom of your library.
-*/
-
-/*
-** AVATAR - Ertai	""
-Vanguard (-1/+4)
-Creatures you control have hexproof.
-*/
-
-/*
-** AVATAR - Etched Oracle	""
-Vanguard (+1/-4)
-You may pay |W|U|B|R|G rather than pay the mana cost for spells that you cast.
-*/
-
-/*
-** AVATAR - Fallen Angel	""
-Vanguard (+0/-5)
-Whenever a creature you control dies, target opponent loses 1 life and you gain 1 life.
-*/
-
-/*
-** AVATAR - Figure of Destiny	""
-Vanguard (+0/+3)
-|X: Put a +1/+1 counter on target creature with fewer than X +1/+1 counters on it.
-*/
-
-/*
-** AVATAR - Flametongue Kavu	""
-Vanguard (+0/-6)
-Whenever a nontoken creature enters the battlefield under your control, that creature deals X damage to target creature, where X is a number chosen at random from 0 to 4.
-*/
-
-/*
-** AVATAR - Frenetic Efreet	""
-Vanguard (-1/-3)
-Each permanent you control has phasing.
-At the beginning of your end step, flip a coin. If you win the flip, take an extra turn after this one.
-*/
-
-/*
-** AVATAR - Gerrard	""
-Vanguard (-4/+0)
-At the beginning of your draw step, draw an additional card.
-*/
-
-/*
-** AVATAR - Gix	""
-Vanguard (-2/+18)
-|3: Return target creature card from your graveyard to your hand.
-*/
-
-/*
-** AVATAR - Greven il-Vec	""
-Vanguard (-1/+2)
-Whenever a creature you control deals damage to a creature, destroy the other creature. It can't be regenerated.
-*/
-
-/*
-** AVATAR - Grinning Demon	""
-Vanguard (-1/-2)
-Whenever a nontoken creature you control dies, target opponent discards a card.
-*/
-
-/*
-** AVATAR - Haakon, Stromgald Scourge	""
-Vanguard (+0/-3)
-Pay 1 life: You may play target creature card in your graveyard this turn.
-Whenever you play a creature card from your graveyard, it becomes a |Sblack Zombie Knight.
-If a Zombie Knight would be put into your graveyard from the battlefield, exile it instead.
-*/
-
-/*
-** AVATAR - Hanna	""
-Vanguard (+1/-5)
-Spells you cast cost |1 less to cast.
-*/
-
-/*
-** AVATAR - Hell's Caretaker	""
-Vanguard (-1/-4)
-|3, Sacrifice a creature: Return target creature card from your graveyard to the battlefield.
-*/
-
-/*
-** AVATAR - Hermit Druid	""
-Vanguard (-2/-2)
-At the beginning of your upkeep, put a land card from your library chosen at random onto the battlefield.
-*/
-
-/*
-** AVATAR - Higure, the Still Wind	""
-Vanguard (-1/+3)
-Whenever a nontoken creature you control deals combat damage to an opponent, choose a creature card at random from your library, reveal that card, and put it into your hand. Then shuffle your library.
-*/
-
-/*
-** AVATAR - Ink-Eyes, Servant of Oni	""
-Vanguard (+0/-3)
-At the beginning of the game, look at target opponent's hand and choose a nonland card from it. That player discards that card.
-|X, Pay X life: Put target creature card with converted mana cost X from an opponent's graveyard onto the battlefield under your control.
-*/
-
-/*
-** AVATAR - Jaya Ballard	""
-Vanguard (+0/+1)
-|X: Jaya Ballard deals an amount of damage chosen at random from 0 to X to any target. Activate this ability only once each turn.
-*/
-
-/*
-** AVATAR - Jhoira of the Ghitu	""
-Vanguard (+1/+0)
-|3, Discard a card: Copy three instant cards chosen at random. You may cast one of the copies without paying its mana cost.
-|3, Discard a card: Copy three sorcery cards chosen at random. You may cast one of the copies without paying its mana cost. Activate this ability only any time you could cast a sorcery.
-*/
-
-/*
-** AVATAR - Karn	""
-Vanguard (+1/+6)
-Each noncreature artifact you control is an artifact creature with power and toughness each equal to its converted mana cost.
-*/
-
-/*
-** AVATAR - Karona, False God	""
-Vanguard (-1/+8)
-At the beginning of your upkeep, exchange control of a permanent you control chosen at random and a permanent target opponent controls chosen at random.
-*/
-
-/*
-** AVATAR - Kresh the Bloodbraided	""
-Vanguard (+1/-3)
-Whenever a creature you control is devoured, create an X/X |Sgreen Ooze creature token, where X is the devoured creature's power.
-*/
-
-/*
-** AVATAR - Loxodon Hierarch	""
-Vanguard (+0/+12)
-Sacrifice a permanent: Regenerate target creature you control.
-*/
-
-/*
-** AVATAR - Lyna	""
-Vanguard (+2/-4)
-Creatures you control have shadow.
-*/
-
-/*
-** AVATAR - Lyzolda, the Blood Witch	""
-Vanguard (-1/-1)
-Hellbent - As long as you have no cards in hand, if a source you control would deal damage to a permanent or player, it deals double that damage to that permanent or player instead.
-Hellbent - At the beginning of your end step, if you have no cards in hand, each of your opponents discards a card.
-*/
-
-/*
-** AVATAR - Maelstrom Archangel	""
-Vanguard (+0/+5)
-At end of combat, for each creature you controlled at the time it dealt combat damage to a player this turn, copy a random card with the same mana cost as that creature. You may pay |3. If you do, choose one of those copies. If a copy of a permanent card is chosen, you may create a token that's a copy of that card. If a copy of an instant or sorcery card is chosen, you may cast the copy without paying its mana cost.
-*/
-
-/*
-** AVATAR - Malfegor	""
-Vanguard (+2/-2)
-Whenever a creature enters the battlefield under your control, if it was unearthed, it gets +3/+0.
-Whenever a creature you control is exiled, if it was unearthed, shuffle that card into its owner's library.
-*/
-
-/*
-** AVATAR - Maralen of the Mornsong	""
-Vanguard (+0/-3)
-At the beginning of the game, you may pay any amount of life.
-You can't draw cards.
-At the beginning of your draw step, look at the top X cards of your library, where X is the amount of life paid with Maralen of the Mornsong. Put one of them into your hand, then shuffle your library.
-*/
-
-/*
-** AVATAR - Maraxus	""
-Vanguard (+1/+2)
-Creatures you control get +1/+0.
-*/
-
-/*
-** AVATAR - Maro	""
-Vanguard (+2/-7)
-Tap an untapped creature you control, Discard a card: Target creature you control gets +X/+X until end of turn, where X is the number of cards in your hand.
-*/
-
-/*
-** AVATAR - Master of the Wild Hunt	""
-Vanguard (+1/+3)
-|2|G: Create a |Sgreen creature token that's a 2/2 Wolf, a 2/3 Antelope with |H2forestwalk, a 3/2 Cat with shroud, or a 4/4 Rhino with trample, chosen at random.
-*/
-
-/*
-** AVATAR - Mayael the Anima	""
-Vanguard (+1/+5)
-At the beginning of your upkeep, reveal the top card of your library. If it's a creature card with power 5 or greater, put it into your hand. Otherwise, you may put it on the bottom of your library.
-*/
-
-/*
-** AVATAR - Mirri	""
-Vanguard (+0/+5)
-If a basic land you control is tapped for mana, it produces mana of a color of your choice instead of any other type.
-*/
-
-/*
-** AVATAR - Mirror Entity	""
-Vanguard (+1/-2)
-|X: Choose a creature type. Until end of turn, creatures you control of the chosen type have base power and toughness X/X and gain all creature types.
-*/
-
-/*
-** AVATAR - Mishra	""
-Vanguard (+0/-3)
-If a creature you control would deal damage, it deals double that damage instead.
-*/
-
-/*
-** AVATAR - Morinfen	""
-Vanguard (+0/+30)
-At the beginning of your upkeep, you lose 1 life for each permanent you control.
-*/
-
-/*
-** AVATAR - Multani	""
-Vanguard (-3/-2)
-Creatures you control get +X/+0, where X is the number of cards in your hand.
-*/
-
-/*
-** AVATAR - Murderous Redcap	""
-Vanguard (+0/-2)
-Whenever a creature enters the battlefield under your control with a counter on it, you may have it deal damage equal to its power to any target.
-*/
-
-/*
-** AVATAR - Necropotence	""
-Vanguard (+0/+4)
-Skip your draw step.
-At the beginning of your end step, if it's not the first turn of the game, put a death counter on Necropotence. You draw X cards and you lose X life, where X is the number of death counters on Necropotence.
-*/
-
-/*
-** AVATAR - Oracle	""
-Vanguard (+1/+9)
-|0: Untap target attacking creature you control and remove it from combat.
-*/
-
-/*
-** AVATAR - Orcish Squatters	""
-Vanguard (-1/-1)
-At the beginning of your precombat main phase, add |C for each land target opponent controls.
-*/
-
-/*
-** AVATAR - Orim	""
-Vanguard (+0/+12)
-Creatures you control have reach.
-*/
-
-/*
-** AVATAR - Peacekeeper	""
-Vanguard (+0/+9)
-|3: For each opponent who controls a creature, create a token that's a copy of a card named Arrest and attach it to a creature that player controls chosen at random.
-*/
-
-/*
-** AVATAR - Phage the Untouchable	""
-Vanguard (+0/-5)
-Pay 1 life: Until end of turn, whenever a creature deals combat damage to you, destroy that creature.
-Pay 1 life: Until end of turn, whenever target creature you control deals combat damage to a creature, destroy the damaged creature.
-*/
-
-/*
-** AVATAR - Platinum Angel	""
-Vanguard (-1/-2)
-If you control an artifact, a creature, an enchantment, and a land, you can't lose the game and your opponents can't win the game.
-*/
-
-/*
-** AVATAR - Raksha Golden Cub	""
-Vanguard (+1/+9)
-Creatures you control get +0/+1.
-Equipped creatures you control get +1/+0 and have first strike.
-*/
-
-/*
-** AVATAR - Rith, the Awakener	""
-Vanguard (+0/+6)
-Whenever a creature you control deals combat damage to a player, you may pay |5. If you do, create a 5/5 |Sred Dragon creature token with flying.
-*/
-
-/*
-** AVATAR - Rofellos	""
-Vanguard (-2/+4)
-Whenever a creature you control dies, draw a card.
-*/
-
-/*
-** AVATAR - Rumbling Slum	""
-Vanguard (+1/+1)
-At the beginning of your upkeep, Rumbling Slum deals 1 damage to each opponent.
-*/
-
-/*
-** AVATAR - Sakashima the Impostor	""
-Vanguard (+0/+1)
-|2: Choose a creature you control. It becomes a copy of target creature except for its name.
-*/
-
-/*
-** AVATAR - Selenia	""
-Vanguard (+1/+7)
-Creatures you control have vigilance.
-*/
-
-/*
-** AVATAR - Serra	""
-Vanguard (+1/+1)
-Creatures you control get +0/+2.
-*/
-
-/*
-** AVATAR - Seshiro the Anointed	""
-Vanguard (+0/-1)
-At the beginning of the game, choose a creature type. Creatures you control, creature spells you control, and creature cards you own in any zone other than the battlefield or the stack have the chosen type in addition to their other types.
-*/
-
-/*
-** AVATAR - Sidar Kondo	""
-Vanguard (-1/+12)
-|3: Target creature gets +3/+3 until end of turn.
-*/
-
-/*
-** AVATAR - Sisay	""
-Vanguard (-2/-3)
-Whenever you tap a land for mana, add one mana of any type that land produced.
-*/
-
-/*
-** AVATAR - Sisters of Stone Death	""
-Vanguard (+1/-5)
-Each creature you control must be blocked if able.
-|4: Exile target creature that's blocking a creature you control.
-*/
-
-/*
-** AVATAR - Sliver Queen, Brood Mother	""
-Vanguard (+0/+8)
-|3: Create a 1/1 colorless Sliver creature token.
-*/
-
-/*
-** AVATAR - Sliver Queen	""
-Vanguard (+0/+7)
-Whenever you cast a non-Sliver creature spell, exile that spell. If you do, create a token that's a copy of a random non-Shapeshifter Sliver creature card with the same converted mana cost as that spell.
-*/
-
-/*
-** AVATAR - Squee, Goblin Nabob	""
-Vanguard (+3/-4)
-|1: Prevent the next 1 damage that would be dealt to target creature you control this turn.
-*/
-
-/*
-** AVATAR - Squee	""
-Vanguard (+3/-4)
-Your opponents play with their hands revealed.
-*/
-
-/*
-** AVATAR - Stalking Tiger	""
-Vanguard (+0/+2)
-Whenever you cast a creature spell, you may pay |1. If you do, draw a card.
-*/
-
-/*
-** AVATAR - Starke	""
-Vanguard (+0/-2)
-At the beginning of your draw step, you may draw an additional card. If you do, put a card from your hand on the bottom of your library.
-*/
-
-/*
-** AVATAR - Stonehewer Giant	""
-Vanguard (+1/-5)
-Whenever a creature enters the battlefield under your control, create a token that's a copy of a random Equipment card with converted mana cost less than that creature's converted mana cost. Attach that Equipment to that creature.
-*/
-
-/*
-** AVATAR - Stuffy Doll	""
-Vanguard (+0/-6)
-|0: If damage would be dealt to you this turn by a source of your choice, prevent that damage. Stuffy Doll deals damage to you and target opponent or planeswalker equal to half the damage prevented this way, rounded up. Activate this ability only once each turn.
-*/
-
-/*
-** AVATAR - Tahngarth	""
-Vanguard (-1/+7)
-Creatures you control have haste.
-*/
-
-/*
-** AVATAR - Takara	""
-Vanguard (+3/-8)
-Sacrifice a creature: Takara deals 1 damage to any target.
-*/
-
-/*
-** AVATAR - Tawnos	""
-Vanguard (+3/-4)
-You may cast artifact, creature, and enchantment spells as though they had flash.
-*/
-
-/*
-** AVATAR - Teysa, Orzhov Scion	""
-Vanguard (+0/-2)
-Whenever a nontoken creature dies, create a 1/1 |Swhite Spirit creature token with flying.
-*/
-
-/*
-** AVATAR - Titania	""
-Vanguard (+2/-5)
-You may play an additional land on each of your turns.
-*/
-
-/*
-** AVATAR - Tradewind Rider	""
-Vanguard (+1/+4)
-|3: Each player returns a permanent they control to its owner's hand unless they pay 2 life.
-*/
-
-/*
-** AVATAR - Two-Headed Giant of Foriys	""
-Vanguard (+1/-4)
-Creatures you control have menace.
-Each creature you control can block an additional creature each combat.
-*/
-
-/*
-** AVATAR - Urza	""
-Vanguard (-1/+10)
-|3: Urza deals 1 damage to any target.
-*/
-
-/*
-** AVATAR - Vampire Nocturnus	""
-Vanguard (-1/-2)
-Play with the top card of your library revealed.
-As long as the top card of your library is |Sblack, |Sblack creatures you control get +2/+1.
-*/
-
-/*
-** AVATAR - Viridian Zealot	""
-Vanguard (+0/+2)
-|2, Sacrifice a creature: Destroy target artifact or enchantment. Search your library for a card with the same name as the sacrificed creature, reveal that card, and put it into your hand. Then shuffle your library.
-*/
-
-/*
-** AVATAR - Volrath	""
-Vanguard (+2/-3)
-Whenever a creature you control is put into your graveyard from the battlefield, you may put it on top of your library.
-*/
-
-/*
-** AVATAR - Xantcha	""
-Vanguard (+1/+3)
-Sacrifice a permanent: Regenerate target creature.
-*/
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x22c3610; original cards/vanguard.c:1662. */
-static int general_in_rfg_comm_zone(int player, int card, int commander_code)
-{
-  int result;
-  card_instance_t *instance;
-  if (commander_code == 1)
-  {
-    result = count_counters(player, card, COUNTER_VORTEX);
-    if (result < 1)
-    {
-      return 1;
-    }
-    instance = get_card_instance(player, card);
-    result = instance->targets[3].player;
-    if (result != -1)
-    {
-      return (unsigned int)((char)result == '\x01');
-    }
-  }
-  else
-  {
-    result = count_counters(player, card, COUNTER_VELOCITY);
-    if (result < 1)
-    {
-      return 1;
-    }
-    instance = get_card_instance(player, card);
-    if (instance->targets[3].card != -1)
-    {
-      return (unsigned int)((char)SET_BYTE1(instance->targets[3].player) == '\x01');
-    }
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x22c3b20; original cards/vanguard.c:1919. */
-static int prismatic_piper_check(int player, int card, int card_color, int to_compare)
-{
-  card_instance_t *instance;
-  unsigned int color_count_or_mask;
-  unsigned int identity_color_count;
-
-  instance = get_card_instance(player, card);
-  if ((player == 1) && ((cards_data[instance->targets[2].player].id == CARD_ID_THE_PRISMATIC_PIPER ||
-                         (cards_data[instance->targets[2].card].id == CARD_ID_THE_PRISMATIC_PIPER))))
-  {
-    color_count_or_mask = num_bits_set(card_color);
-    identity_color_count = num_bits_set(to_compare);
-    if (color_count_or_mask - 1 <= identity_color_count)
-    {
-      color_count_or_mask = card_color & (to_compare ^ 0xffffffffU);
-      instance = get_card_instance(1, card);
-      instance->targets[6].card = color_count_or_mask;
-      return color_count_or_mask;
-    }
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x22c64f0; original cards/vanguard.c:1803. */
-int locate_edh_card(int player)
-{
-  for (int i = 0; i < active_cards_count[player]; ++i)
-    if (in_play(player, i) && get_id(player, i) == CARD_ID_ELDER_DRAGON_HIGHLANDER)
-      return i;
-  return -1;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int get_commander_storm_count(int player);
-int put_all_commanders_from_command_zone_to(int player, int where, int *rv);
-int get_commander_id(int player, int commander_code);
-static int put_commander_from_command_zone_to_impl(int player, int where, int which_com, int *rv);
-void put_commander_in_the_command_zone_from_play(int player, int card);
-
-/* ManalinkEh 2022: 0x22c6940; original cards/vanguard.c:1813. */
-int get_commander_storm_count(int player)
-{
-  int edh_card = locate_edh_card(player);
-  if (edh_card == -1)
-    return 0;
-  return count_counters(player, edh_card, COUNTER_VORTEX) / 2;
-}
-
-/* ManalinkEh 2022: 0x22c6590; original cards/vanguard.c:1830. */
-static int put_commander_from_command_zone_to_impl(int player, int where, int which_com, int *rv)
-{
-  int packed_state_or_iid;
-  unsigned int selected_slot;
-  int id;
-  int edh_or_added_card;
-  card_instance_t *instance;
-  int first_cmc;
-  int second_cmc;
-  int first_priority_cmc;
-  int second_priority_cmc;
-  char partner_state;
-  unsigned int commander_slot;
-  unsigned int choice_or_priority;
-  int cid[3];
-  char buffer1[100];
-  char buffer2[100];
-
-  edh_or_added_card = locate_edh_card(player);
-  if (edh_or_added_card != -1)
-  {
-
-    instance = get_card_instance(player, edh_or_added_card);
-    packed_state_or_iid = instance->targets[3].player;
-    if (packed_state_or_iid < 0)
-    {
-      return -1;
-    }
-    cid[0] = -1;
-    cid[1] = (char)packed_state_or_iid == 1 ? instance->targets[2].player : -1;
-    partner_state = (char)((unsigned int)packed_state_or_iid >> 8);
-    cid[2] = partner_state == 1 ? instance->targets[2].card : -1;
-    if ((cid[1] & cid[2]) == -1)
-      return -1;
-    id = cid[2];
-    packed_state_or_iid = cid[1];
-    scnprintf(buffer1, 100, " %s", cards_ptr[cards_data[cid[1]].id]->name);
-    scnprintf(buffer2, 100, " %s", cards_ptr[cards_data[id].id]->name);
-    choice_or_priority = which_com;
-    if (which_com == 0)
-    {
-      first_cmc = get_cmc_by_internal_id(packed_state_or_iid);
-      second_cmc = get_cmc_by_internal_id(id);
-      first_priority_cmc = get_cmc_by_internal_id(packed_state_or_iid);
-      second_priority_cmc = get_cmc_by_internal_id(id);
-      choice_or_priority = 0;
-      if (second_priority_cmc < first_priority_cmc)
-      {
-        choice_or_priority = 10;
-      }
-      choice_or_priority = dialog_impl(
-          player, edh_or_added_card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL, DLG_AUTOCHOOSE_IF_1,
-          DLG_NO_CANCEL, buffer1, (packed_state_or_iid ^ 0xffffffffU) >> 0x1f, choice_or_priority,
-          buffer2, (id ^ 0xffffffffU) >> 0x1f, ((second_cmc <= first_cmc) ? 0 : 10), 0, 0, 0, 0);
-    }
-
-    commander_slot = 1;
-    edh_or_added_card = -1;
-    selected_slot = choice_or_priority & 1;
-    do
-    {
-      if ((selected_slot != 0) && (-1 < packed_state_or_iid))
-      {
-        remove_card_from_rfg(player, (unsigned int)cards_data[packed_state_or_iid].id);
-        if (commander_slot == 1)
-        {
-          *(uint8_t *)&instance->targets[3].player = 4;
-        }
-        else if (commander_slot == 2)
-        {
-          SET_BYTE1(instance->targets[3].player) = 4;
-        }
-        edh_or_added_card = add_card_to_hand(player, packed_state_or_iid);
-        if (rv != NULL)
-        {
-          rv[commander_slot] = edh_or_added_card;
-        }
-        set_special_flags2(player, edh_or_added_card, 0x1000000);
-        if (where == 5)
-        {
-          add_state(player, edh_or_added_card, 0x10);
-        }
-        if (where == 4 || where == 5)
-          put_into_play(player, edh_or_added_card);
-      }
-      commander_slot = commander_slot + 1;
-      if (commander_slot == 3)
-      {
-        return edh_or_added_card;
-      }
-      selected_slot = choice_or_priority & commander_slot;
-      packed_state_or_iid = cid[commander_slot];
-    } while (true);
-  }
-  return -1;
-}
-
-/* ManalinkEh 2022: 0x22c6990; original cards/vanguard.c:1877. */
-int put_all_commanders_from_command_zone_to(int player, int where, int *rv)
-{
-  int result;
-
-  result = put_commander_from_command_zone_to_impl(player, where, 3, rv);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x22c69d0; original cards/vanguard.c:1886. */
-int get_commander_id(int player, int commander_code)
-{
-  int32_t edh_card;
-  card_instance_t *instance;
-
-  edh_card = locate_edh_card(player);
-  if (edh_card != -1)
-  {
-    if (commander_code == 2)
-    {
-      instance = get_card_instance(player, edh_card);
-      return instance->targets[2].card;
-    }
-    instance = get_card_instance(player, edh_card);
-    edh_card = instance->targets[2].player;
-  }
-  return edh_card;
-}
-
-/* ManalinkEh 2022: 0x22c6a20; original cards/vanguard.c:1895. */
-void put_commander_in_the_command_zone_from_play(int player, int card)
-{
-  uint16_t commander_csvid;
-  uint16_t partner_csvid;
-  int player_00;
-  int iid;
-  int card_00;
-  int result;
-  card_instance_t *instance;
-
-  player_00 = get_owner(player, card);
-  iid = get_original_internal_card_id(player, card);
-  commander_csvid = cards_data[iid].id;
-  card_00 = locate_edh_card(player_00);
-  if (card_00 == -1)
-  {
-    return;
-  }
-
-  result = get_commander_id(player_00, 1);
-  partner_csvid = cards_data[result].id;
-  result = get_commander_id(player_00, 2);
-  if (commander_csvid == cards_data[result].id)
-  {
-    dispatch_event(player, card, 0x1c00);
-    get_card_instance(player_00, card_00);
-  }
-  else
-  {
-    dispatch_event(player, card, 0x1c00);
-    instance = get_card_instance(player_00, card_00);
-    if (commander_csvid != partner_csvid)
-    {
-      return;
-    }
-    *(uint16_t *)&instance->targets[3].player = 0x101;
-  }
-  add_card_to_rfg(player_00, iid);
-  obliterate_card(player, card);
-  return;
-}
-
-
 #ifndef SHANDALAR
 /* Recovered October 2022 flag and combat-query consumers. */
 int general_has_partner(int csvid);
 int get_partner_with_id(int csvid);
 
 /* ManalinkEh 2022: 0x22c63c0; original cards/vanguard.c:1466. */
-
-
 
 /* ManalinkEh 2022: 0x22c6410; original cards/vanguard.c:1531. */
 int get_partner_with_id(int csvid)
@@ -3958,19 +4026,6 @@ int get_partner_with_id(int csvid)
 
 #endif
 
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x22c69b0; original cards/vanguard.c:1881. */
-int put_commander_from_command_zone_to(int player, int where)
-{
-  int result;
-  result = put_commander_from_command_zone_to_impl(player, where, 0, NULL);
-  return result;
-}
-
-#endif
-
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x22c6540; original cards/vanguard.c:1686. */
 int is_commander_in_command_zone(int player)
@@ -3983,6 +4038,17 @@ int is_commander_in_command_zone(int player)
       return ((state >> 8) | state) & 1;
   }
   return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22c69b0; original cards/vanguard.c:1881. */
+int put_commander_from_command_zone_to(int player, int where)
+{
+  int result;
+  result = put_commander_from_command_zone_to_impl(player, where, 0, NULL);
+  return result;
 }
 
 #endif

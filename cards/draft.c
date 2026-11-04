@@ -308,8 +308,6 @@ static void load_set(int player, int card, int num_set, int set){
 	}
 }
 
-
-
 #ifdef ROTISSERIE
 static void make_rotisserie_pack(void){
 	int set = sets[0];

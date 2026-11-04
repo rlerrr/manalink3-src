@@ -1,4 +1,3 @@
-
 #include "manalink.h"
 
 /* Canonical recovered helper declarations. */
@@ -50,130 +49,108 @@ int generic_animating_aura_with_added_subtype(int player, int card, event_t even
                                                    int pow, int tou, int key, int s_key,
                                                    subtype_t subtype);
 
-
-
-
-
-
-
-
-
 // An aura that does absolutely nothing itself.
-
-
-
-
-
-
-
 
 // An aura with enchant creature that does absolutely nothing itself.
 
-
 // A frontend to vanilla_aura() with AI settings for Pacifism-like auras.
 
-
-
-
-int count_auras_enchanting_me(int player, int card){
-	card_instance_t* aura;
-	int result = 0;
-	int i, count;
-	for (i = 0; i < 2; i++){
-		for (count = 0; count < active_cards_count[i]; ++count){
-			if( (aura = in_play(i, count)) && is_what(i, count, TYPE_ENCHANTMENT) && has_subtype(i, count, SUBTYPE_AURA) &&
-				aura->damage_target_player == player && aura->damage_target_card == card
-			  ){
-				result++;
-			}
-		}
-	}
-	return result;
-}
-
-static int is_enchanted_impl(int player, int card, int subtype){
-	card_instance_t* aura;
-	int i, count;
-	for (i = 0; i < 2; i++){
-		for (count = 0; count < active_cards_count[i]; ++count){
-			if( (aura = in_play(i, count)) && is_what(i, count, TYPE_ENCHANTMENT) && has_subtype(i, count, SUBTYPE_AURA) &&
-				aura->damage_target_player == player && aura->damage_target_card == card
-			  ){
-				int result = 1;
-				if( subtype > 0 && ! has_subtype(i, count, subtype) ){
-					result = 0;
-				}
-				if( result ){
-					return 1;
-				}
-			}
-		}
-	}
-	return 0;
-}
-
-int is_enchanted(int player, int card){
-	return is_enchanted_impl(player, card, 0);
-}
-
-
-
-/* Uses targets[9] to store the player/card it was attached to at the time it was activated.  Should be called *before* the EVENT_RESOLVE_ACTIVATION handler if
- * td is provided. */
-int aura_granting_activated_ability(int player, int card, event_t event, int preferred_controller, int mode,
-									int cless, int black, int blue, int green, int red, int white,
-									uint32_t variable_costs, target_definition_t *td, const char *prompt)
-{
-  int rval = attachment_granting_activated_ability(player, card, event, mode, cless, black, blue, green, red, white, variable_costs, td, prompt);
-  return rval ? rval : vanilla_aura(player, card, event, preferred_controller);
-}
-
-
-
-static int is_enchanted_by_another_stealing_aura(int player, int card, int orig_aura_player, int orig_aura_card){
-	card_instance_t* aura;
-	int i, count;
-	for( i = 0; i < 2; i++ ){
-		for( count = 0; count < active_cards_count[i]; ++count ){
-			if( (aura = in_play(i, count)) && is_what(i, count, TYPE_ENCHANTMENT) && has_subtype(i, count, SUBTYPE_AURA) ){
-				if( !( i == orig_aura_player && count == orig_aura_card ) ){
-					if( aura->damage_target_player == player && aura->damage_target_card == card &&
-						check_special_flags3(i, count, SF3_IS_STEALING_AURA)
-					  ){
-						return 1;
-					}
-				}
-			}
-		}
-	}
-	return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 void attached_gets_pt(int player, int card, event_t event, int power, int toughness);
 
 static void attached_gets_pt_part(int player, int card, event_t event, int power,
                                        int toughness);
+
+static void attached_set_pt_part(int player, int card, event_t event, int power, int toughness);
+
+static void disabling_aura_ai_part(int player, int card, event_t event);
+
+void attached_is_additional_subtype(int player, int card, event_t event, subtype_t subtype);
+void attached_is_forced_subtype(int player, int card, event_t event, subtype_t subtype);
+void attached_is_additional_color(int player, int card, event_t event, color_test_t color);
+
+void attached_gets_kw(int player, int card, event_t event, keyword_t keyword,
+                      sp_keyword_t sp_keyword);
+
+void attached_gets_sp_kw2(int player, int card, event_t event, sp_keyword2_t sp_keyword2);
+
+#ifndef SHANDALAR
+
+static int aura_impl(int player, int card, event_t event, target_definition_t *td,
+                     const char *prompt, int literal_prompt);
+int aura(int player, int card, event_t event, target_definition_t *td, char *prompt);
+int aura_pref_controller(int player, int card, event_t event, int pref_controller, char *prompt);
+
+#endif
+
+#ifndef SHANDALAR
+
+static int targeted_aura_impl(int player, int card, event_t event,
+                                   target_definition_t *td, const char *prompt, int custom_prompt,
+                                   int flags);
+static int when_enchanted_permanent_dies_return_aura_to_hand_legacy(int player, int card,
+                                                                         event_t event);
+
+#endif
+
+#ifndef SHANDALAR
+
+static int generic_animating_aura_impl(int player, int card, event_t event,
+                                            target_definition_t *td, const char *prompt, int pow,
+                                            int tou, int key, int s_key, int custom_prompt,
+                                            subtype_t added_subtype);
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26e6850; original functions/auras.c:3. */
+int attach_aura_to_target(int aura_player, int aura_card, event_t event, int t_player,
+                               int t_card)
+{
+  int result;
+  card_instance_t *instance;
+  result = check_for_guardian_beast_protection(t_player, t_card);
+  if (result != 0)
+  {
+    return 0;
+  }
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    set_special_flags(aura_player, aura_card, 0x2000000);
+  }
+  instance = get_card_instance(aura_player, aura_card);
+  instance->damage_target_player = (int8_t)t_player;
+  instance->damage_target_card = t_card;
+  return 1;
+}
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26e7730; original functions/auras.c:16. */
+int aura_attached_to_me(int player, int card, event_t event, resolve_trigger_t trigger_mode,
+                             test_definition_t *test2)
+{
+  if (trigger_condition != TRIGGER_COMES_INTO_PLAY || card != affected_card ||
+      player != affected_card_controller || reason_for_trigger_controller != player ||
+      is_humiliated(player, card, AL_TRIG))
+    return 0;
+  test_definition_t this_test;
+  default_test_definition(&this_test, TYPE_ENCHANTMENT);
+  this_test.subtype = 0x4000;
+  if (!new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, &this_test))
+    return 0;
+  card_instance_t *aura = get_card_instance(trigger_cause_controller, trigger_cause);
+  if (aura->damage_target_player != player || aura->damage_target_card != card)
+    return 0;
+  if (test2 && !new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, test2))
+    return 0;
+  if (event == EVENT_TRIGGER)
+  {
+    event_result |= trigger_mode;
+    return 0;
+  }
+  return event == EVENT_RESOLVE_TRIGGER;
+}
+#endif
 
 /* ManalinkEh 2022: 0x26e7870; original functions/auras.c:41. */
 void attached_gets_pt(int player, int card, event_t event, int power, int toughness)
@@ -186,7 +163,36 @@ void attached_gets_pt(int player, int card, event_t event, int power, int toughn
   return;
 }
 
-static void attached_set_pt_part(int player, int card, event_t event, int power, int toughness);
+/* ManalinkEh 2022: 0x26e65a0; original functions/auras.c:41. */
+static void attached_gets_pt_part(int player, int card, event_t event, int power,
+                                       int toughness)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if ((instance != NULL) && (-1 < instance->damage_target_card))
+  {
+    result = is_humiliated(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      if (event == EVENT_POWER)
+      {
+        if ((instance->damage_target_card == affected_card) &&
+            (instance->damage_target_player == affected_card_controller))
+        {
+          event_result = event_result + power;
+        }
+      }
+      else if (((event == EVENT_TOUGHNESS) && (instance->damage_target_card == affected_card)) &&
+               (instance->damage_target_player == affected_card_controller))
+      {
+        event_result = event_result + toughness;
+      }
+    }
+  }
+  return;
+}
 
 /* ManalinkEh 2022: 0x26e78b0; original functions/auras.c:62. */
 void attached_set_pt(int player, int card, event_t event, int power, int toughness)
@@ -199,23 +205,92 @@ void attached_set_pt(int player, int card, event_t event, int power, int toughne
   return;
 }
 
-static void disabling_aura_ai_part(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x26e8710; original functions/auras.c:528. */
-void disabling_aura_ai(int player, int card, event_t event)
+/* ManalinkEh 2022: 0x26e6650; original functions/auras.c:62. */
+static void attached_set_pt_part(int player, int card, event_t event, int power, int toughness)
 {
-  if ((player == 1) && (((unsigned char)trace_mode & 2) == 0))
+  card_instance_t *instance = in_play(player, card);
+  if (instance && instance->damage_target_card >= 0 && !is_humiliated(player, card, AL_STATIC) &&
+      instance->damage_target_card == affected_card &&
+      instance->damage_target_player == affected_card_controller)
   {
-    disabling_aura_ai_part(1, card, event);
-    return;
+    if (event == EVENT_POWER && power >= 0)
+      set_base_pt(power);
+    else if (event == EVENT_TOUGHNESS && toughness >= 0)
+      set_base_pt(toughness);
+  }
+}
+
+/* ManalinkEh 2022: 0x26e78f0; original functions/auras.c:82. */
+void attached_gets_kw(int player, int card, event_t event, keyword_t keyword,
+                      sp_keyword_t sp_keyword)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_ABILITIES)
+  {
+
+    instance = in_play(player, card);
+    if (instance == NULL)
+    {
+      return;
+    }
+    if (instance->damage_target_card < 0)
+    {
+      return;
+    }
+    result = is_humiliated(player, card, AL_STATIC);
+    if (result != 0)
+    {
+      return;
+    }
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      get_sleighted_hacked_suppressed_ability(player, card, (int)instance->damage_target_player,
+                                              &keyword, &sp_keyword);
+      event_result = event_result | keyword;
+    }
+  }
+
+  if ((((sp_keyword != SP_KEYWORD_0) && (instance = in_play(player, card), instance != NULL)) &&
+       (-1 < instance->damage_target_card)) &&
+      (result = is_humiliated(player, card, AL_STATIC), result == 0))
+  {
+    special_abilities((int)instance->damage_target_player, instance->damage_target_card, event,
+                      sp_keyword, player, card);
   }
   return;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void attached_is_additional_subtype(int player, int card, event_t event, subtype_t subtype);
-void attached_is_forced_subtype(int player, int card, event_t event, subtype_t subtype);
-void attached_is_additional_color(int player, int card, event_t event, color_test_t color);
+/* ManalinkEh 2022: 0x26e7a30; original functions/auras.c:109. */
+void attached_gets_sp_kw2(int player, int card, event_t event, sp_keyword2_t sp_keyword2)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_ABILITIES)
+  {
+
+    instance = in_play(player, card);
+    if ((instance != NULL) && (-1 < instance->damage_target_card))
+    {
+      result = is_humiliated(player, card, AL_STATIC);
+
+      if ((sp_keyword2 != SP_KEYWORD2_0) && ((result == 0 && (-1 < instance->damage_target_card))))
+      {
+        result = is_humiliated(player, card, AL_STATIC);
+        if (result == 0)
+        {
+          special_abilities2((int)instance->damage_target_player, instance->damage_target_card,
+                             EVENT_ABILITIES, sp_keyword2);
+          return;
+        }
+      }
+    }
+  }
+  return;
+}
 
 /* ManalinkEh 2022: 0x26e7ad0; original functions/auras.c:129. */
 void disable_attached(int player, int card, event_t event, int disabling_mode)
@@ -436,184 +511,170 @@ void attached_is_forced_color(int player, int card, event_t event, color_test_t 
   return;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void attached_gets_kw(int player, int card, event_t event, keyword_t keyword,
-                      sp_keyword_t sp_keyword);
-
-/* ManalinkEh 2022: 0x26e78f0; original functions/auras.c:82. */
-void attached_gets_kw(int player, int card, event_t event, keyword_t keyword,
-                      sp_keyword_t sp_keyword)
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26e7fd0; original functions/auras.c:213. */
+int this_effect_doesnt_remove_this(int player, int card, event_t event)
 {
-  card_instance_t *instance;
+  static target_t recalculating_ward = {-1, -1};
+  int enchanted_card;
+  card_instance_t *aura_instance;
+  card_instance_t *enchanted_instance;
   int result;
+  int enchanted_player;
+  target_definition_t td;
 
-  if (event == EVENT_ABILITIES)
+  if (event == EVENT_STATIC_EFFECTS)
   {
-
-    instance = in_play(player, card);
-    if (instance == NULL)
+    aura_instance = in_play(player, card);
+    if ((aura_instance != NULL) && (aura_instance->damage_target_player != -1))
     {
-      return;
-    }
-    if (instance->damage_target_card < 0)
-    {
-      return;
-    }
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result != 0)
-    {
-      return;
-    }
-    if ((instance->damage_target_card == affected_card) &&
-        (instance->damage_target_player == affected_card_controller))
-    {
-      get_sleighted_hacked_suppressed_ability(player, card, (int)instance->damage_target_player,
-                                              &keyword, &sp_keyword);
-      event_result = event_result | keyword;
-    }
-  }
-
-  if ((((sp_keyword != SP_KEYWORD_0) && (instance = in_play(player, card), instance != NULL)) &&
-       (-1 < instance->damage_target_card)) &&
-      (result = is_humiliated(player, card, AL_STATIC), result == 0))
-  {
-    special_abilities((int)instance->damage_target_player, instance->damage_target_card, event,
-                      sp_keyword, player, card);
-  }
-  return;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void attached_gets_sp_kw2(int player, int card, event_t event, sp_keyword2_t sp_keyword2);
-
-/* ManalinkEh 2022: 0x26e7a30; original functions/auras.c:109. */
-void attached_gets_sp_kw2(int player, int card, event_t event, sp_keyword2_t sp_keyword2)
-{
-  card_instance_t *instance;
-  int result;
-
-  if (event == EVENT_ABILITIES)
-  {
-
-    instance = in_play(player, card);
-    if ((instance != NULL) && (-1 < instance->damage_target_card))
-    {
-      result = is_humiliated(player, card, AL_STATIC);
-
-      if ((sp_keyword2 != SP_KEYWORD2_0) && ((result == 0 && (-1 < instance->damage_target_card))))
+      if (recalculating_ward.card != card)
       {
-        result = is_humiliated(player, card, AL_STATIC);
+        enchanted_instance = in_play((int)aura_instance->damage_target_player, aura_instance->damage_target_card);
+        if (enchanted_instance == NULL)
+        {
+          kill_card(player, card, KILL_STATE_BASED_ACTION);
+          return 1;
+        }
+        recalculating_ward.player = player;
+        enchanted_player = (int)aura_instance->damage_target_player;
+        recalculating_ward.card = card;
+        enchanted_card = aura_instance->damage_target_card;
+        enchanted_instance->regen_status = enchanted_instance->regen_status | 0x8000000;
+        get_abilities(enchanted_player, enchanted_card, EVENT_ABILITIES, -1);
+        default_target_definition(player, card, &td, 2);
+        td.flags = td.flags | 3;
+        result = validate_arbitrary_target(&td, enchanted_player, enchanted_card);
+        recalculating_ward.player = -1;
+        recalculating_ward.card = -1;
+        enchanted_instance->regen_status = enchanted_instance->regen_status | 0x8000000;
         if (result == 0)
         {
-          special_abilities2((int)instance->damage_target_player, instance->damage_target_card,
-                             EVENT_ABILITIES, sp_keyword2);
-          return;
+          kill_card(player, card, KILL_STATE_BASED_ACTION);
         }
-      }
-    }
-  }
-  return;
-}
-
-
-/* Recovered October 2022 Aura compiler parts. */
-
-/* ManalinkEh 2022: 0x26e65a0; original functions/auras.c:41. */
-static void attached_gets_pt_part(int player, int card, event_t event, int power,
-                                       int toughness)
-{
-  card_instance_t *instance;
-  int result;
-
-  instance = in_play(player, card);
-  if ((instance != NULL) && (-1 < instance->damage_target_card))
-  {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
-    {
-      if (event == EVENT_POWER)
-      {
-        if ((instance->damage_target_card == affected_card) &&
-            (instance->damage_target_player == affected_card_controller))
+        else
         {
-          event_result = event_result + power;
+          get_abilities(enchanted_player, enchanted_card, EVENT_ABILITIES, -1);
         }
       }
-      else if (((event == EVENT_TOUGHNESS) && (instance->damage_target_card == affected_card)) &&
-               (instance->damage_target_player == affected_card_controller))
-      {
-        event_result = event_result + toughness;
-      }
+      return 1;
     }
   }
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26e6650; original functions/auras.c:62. */
-static void attached_set_pt_part(int player, int card, event_t event, int power, int toughness)
-{
-  card_instance_t *instance = in_play(player, card);
-  if (instance && instance->damage_target_card >= 0 && !is_humiliated(player, card, AL_STATIC) &&
-      instance->damage_target_card == affected_card &&
-      instance->damage_target_player == affected_card_controller)
+  else if ((event == EVENT_ABILITIES) && (recalculating_ward.player == player))
   {
-    if (event == EVENT_POWER && power >= 0)
-      set_base_pt(power);
-    else if (event == EVENT_TOUGHNESS && toughness >= 0)
-      set_base_pt(toughness);
+    return (unsigned int)(recalculating_ward.card == card);
   }
+  return 0;
 }
-
-
-/* ManalinkEh 2022: 0x26e6710; original functions/auras.c:528. */
-static void disabling_aura_ai_part(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  card_instance_t *target_instance;
-  int result;
-  if (event == EVENT_CAST_SPELL)
-  {
-    if (((affected_card == card) && (affected_card_controller == player)) && (spell_fizzled != 1))
-    {
-      instance = get_card_instance(player, card);
-      target_instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-      ai_modifier =
-          (unsigned int)((instance->targets[0].player == 1 - player) ? 24 : -24) + ai_modifier;
-      if (((target_instance->regen_status & 0x800000) != 0) && ((target_instance->token_status & 0x800) == 0))
-      {
-        ai_modifier = ai_modifier + -0x30;
-      }
-      if ((instance->damage_target_player < '\0') && (instance->damage_target_card < 0))
-      {
-        instance = get_card_instance(player, card);
-        result = another_copy_attached(player, card, instance->internal_card_id);
-        if (result != 0)
-        {
-          ai_modifier = ai_modifier + -0x60;
-        }
-      }
-    }
-  }
-  else if (event == EVENT_SHOULD_AI_PLAY)
-  {
-    instance = get_card_instance(player, card);
-    if (instance->damage_target_player == '\0')
-    {
-      instance = get_card_instance(0, instance->damage_target_card);
-      ai_modifier = ai_modifier + instance->attack_rating / 2;
-    }
-  }
-  return;
-}
+#endif
 
 #ifndef SHANDALAR
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int aura_impl(int player, int card, event_t event, target_definition_t *td,
-                     const char *prompt, int literal_prompt);
-int aura(int player, int card, event_t event, target_definition_t *td, char *prompt);
-int aura_pref_controller(int player, int card, event_t event, int pref_controller, char *prompt);
+/* ManalinkEh 2022: 0x26e8180; original functions/auras.c:255. */
+void pump_attached(int player, int card, event_t event, pump_ability_t *ability_mod)
+{
+  int power;
+  color_test_t color;
+  subtype_t subtype;
+  card_instance_t *aura_instance;
+  int result;
+  card_instance_t *instance;
+  unsigned int granted_keywords;
+  pump_ability_t default_ability_mod;
 
+  aura_instance = in_play(player, card);
+  if ((((event == EVENT_RESOLVE_SPELL) &&
+        (result = has_subtype(player, card, SUBTYPE_AURA), player == 1)) &&
+       (result != 0)) &&
+      ((((unsigned char)trace_mode & 2) == 0 &&
+        (((0 < ability_mod->pow_mod || 0 < ability_mod->tou_mod ||
+           (ability_mod->key_mod != KEYWORD_0)) ||
+          ((ability_mod->skey_mod & ~SP_KEYWORD_CANNOT_BLOCK) != SP_KEYWORD_0))))))
+  {
+    instance = get_card_instance(aura_instance->targets[0].player, aura_instance->targets[0].card);
+    granted_keywords = get_special_abilities_by_instance(instance);
+    if ((((granted_keywords & 0x20) != 0) && ((instance->regen_status & 0x800000) != 0)) &&
+        ((instance->token_status & 0x800) == 0))
+    {
+      ai_modifier = ai_modifier + -0x18;
+    }
+  }
+  else if (aura_instance == NULL)
+  {
+    return;
+  }
+  if (((-1 < aura_instance->damage_target_card) &&
+       (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
+      (result = is_what((int)aura_instance->damage_target_player, aura_instance->damage_target_card, 2),
+       result != 0))
+  {
+    if (ability_mod == NULL)
+    {
+      ability_mod = &default_ability_mod;
+      default_pump_ability_definition(player, card, ability_mod, 0, 0, 0, 0);
+    }
+    result = ability_mod->tou_mod;
+    power = ability_mod->pow_mod;
+    if (result != 0 || power != 0)
+    {
+      if ((ability_mod->paue_flags & 0x100000) == 0)
+      {
+        if ((uint32_t)event - (uint32_t)EVENT_POWER < 2U)
+        {
+          attached_gets_pt_part(player, card, event, power, result);
+        }
+      }
+      else if ((uint32_t)event - (uint32_t)EVENT_POWER < 2U)
+      {
+        attached_set_pt_part(player, card, event, power, result);
+      }
+    }
+    if (ability_mod->skey_mod != SP_KEYWORD_0 || ability_mod->key_mod != KEYWORD_0)
+    {
+      attached_gets_kw(player, card, event, ability_mod->key_mod, ability_mod->skey_mod);
+    }
+    if (ability_mod->disabling_mode != 0)
+    {
+      disable_attached(player, card, event, ability_mod->disabling_mode);
+    }
+    color = ability_mod->color;
+    if (color != COLOR_TEST_0)
+    {
+      if ((ability_mod->paue_flags & 0x20000) == 0)
+      {
+        attached_is_additional_color(player, card, event, color);
+      }
+      else
+      {
+        attached_is_forced_color(player, card, event, color);
+      }
+    }
+    subtype = ability_mod->subtype;
+    if (subtype != SUBTYPE_INVALID)
+    {
+      if ((ability_mod->paue_flags & 0x40000U) == 0)
+      {
+        if ((ability_mod->paue_flags & 0x80000U) != 0)
+        {
+          attached_is_additional_subtype(player, card, event, subtype);
+        }
+      }
+      else
+      {
+        attached_is_forced_subtype(player, card, event, subtype);
+      }
+    }
+    if (ability_mod->can_block_additional_creatures != 0)
+    {
+      event_flags = event_flags | 0x100000;
+      attached_creature_can_block_additional(player, card, event,
+                                             ability_mod->can_block_additional_creatures);
+    }
+  }
+  return;
+}
+#endif
+
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e68d0; original functions/auras.c:331. */
 static int aura_impl(int player, int card, event_t event, target_definition_t *td,
                      const char *prompt, int literal_prompt)
@@ -779,7 +840,9 @@ static int aura_impl(int player, int card, event_t event, target_definition_t *t
         ((uint32_t)(int32_t)instance->damage_target_player << 8) | instance->damage_target_card;
   return 0;
 }
+#endif
 
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e84a0; original functions/auras.c:505. */
 int aura(int player, int card, event_t event, target_definition_t *td, char *prompt)
 {
@@ -805,7 +868,9 @@ int aura(int player, int card, event_t event, target_definition_t *td, char *pro
   }
   return aura_impl(player, card, event, td, prompt, 0);
 }
+#endif
 
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e8560; original functions/auras.c:511. */
 int aura_literal_prompt(int player, int card, event_t event, target_definition_t *td,
                         char *prompt)
@@ -832,7 +897,9 @@ int aura_literal_prompt(int player, int card, event_t event, target_definition_t
   }
   return aura_impl(player, card, event, td, prompt, 1);
 }
+#endif
 
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e8620; original functions/auras.c:517. */
 int aura_pref_controller(int player, int card, event_t event, int pref_controller, char *prompt)
 {
@@ -851,37 +918,123 @@ int aura_pref_controller(int player, int card, event_t event, int pref_controlle
 }
 #endif
 
-
-#ifndef SHANDALAR
-/* Recovered October 2022 Aura targeting and attachment helpers. */
-static int targeted_aura_impl(int player, int card, event_t event,
-                                   target_definition_t *td, const char *prompt, int custom_prompt,
-                                   int flags);
-static int when_enchanted_permanent_dies_return_aura_to_hand_legacy(int player, int card,
-                                                                         event_t event);
-
-/* ManalinkEh 2022: 0x26e6850; original functions/auras.c:3. */
-int attach_aura_to_target(int aura_player, int aura_card, event_t event, int t_player,
-                               int t_card)
+/* ManalinkEh 2022: 0x26e8710; original functions/auras.c:528. */
+void disabling_aura_ai(int player, int card, event_t event)
 {
-  int result;
-  card_instance_t *instance;
-  result = check_for_guardian_beast_protection(t_player, t_card);
-  if (result != 0)
+  if ((player == 1) && (((unsigned char)trace_mode & 2) == 0))
   {
-    return 0;
+    disabling_aura_ai_part(1, card, event);
+    return;
   }
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    set_special_flags(aura_player, aura_card, 0x2000000);
-  }
-  instance = get_card_instance(aura_player, aura_card);
-  instance->damage_target_player = (int8_t)t_player;
-  instance->damage_target_card = t_card;
-  return 1;
+  return;
 }
 
+/* ManalinkEh 2022: 0x26e6710; original functions/auras.c:528. */
+static void disabling_aura_ai_part(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  card_instance_t *target_instance;
+  int result;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (((affected_card == card) && (affected_card_controller == player)) && (spell_fizzled != 1))
+    {
+      instance = get_card_instance(player, card);
+      target_instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      ai_modifier =
+          (unsigned int)((instance->targets[0].player == 1 - player) ? 24 : -24) + ai_modifier;
+      if (((target_instance->regen_status & 0x800000) != 0) && ((target_instance->token_status & 0x800) == 0))
+      {
+        ai_modifier = ai_modifier + -0x30;
+      }
+      if ((instance->damage_target_player < '\0') && (instance->damage_target_card < 0))
+      {
+        instance = get_card_instance(player, card);
+        result = another_copy_attached(player, card, instance->internal_card_id);
+        if (result != 0)
+        {
+          ai_modifier = ai_modifier + -0x60;
+        }
+      }
+    }
+  }
+  else if (event == EVENT_SHOULD_AI_PLAY)
+  {
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player == '\0')
+    {
+      instance = get_card_instance(0, instance->damage_target_card);
+      ai_modifier = ai_modifier + instance->attack_rating / 2;
+    }
+  }
+  return;
+}
 
+#ifndef SHANDALAR
+static int generic_aura_impl(int player, int card, event_t event, target_definition_t *td,
+                               char *prompt, int p_plus, int t_plus, int k_plus, int k_special,
+                               int subtype, int clr, int flags)
+{
+  pump_ability_t ability;
+  default_pump_ability_definition(player, card, &ability, p_plus, t_plus, k_plus, k_special);
+  ability.subtype = subtype;
+  ability.color = clr;
+  if (flags & 8) ability.paue_flags |= 0x80000;
+  if (flags & 16) ability.paue_flags |= 0x40000;
+  if (flags & 32) ability.paue_flags |= 0x20000;
+  if (flags & 1) ability.disabling_mode |= 0x28;
+  if (flags & 2) ability.disabling_mode |= 0x7e;
+  if (flags & 4) ability.disabling_mode |= 0x38;
+  pump_attached(player, card, event, &ability);
+  return aura(player, card, event, td, prompt);
+}
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26e8740; original functions/auras.c:580. */
+int generic_aura(int player, int card, event_t event, int pref_controller, int p_plus,
+                      int t_plus, int k_plus, int k_special, int subtype, int clr, int flags)
+{
+  int result;
+  pump_ability_t ability_mod;
+  target_definition_t td;
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = pref_controller;
+  default_pump_ability_definition(player, card, &ability_mod, p_plus, t_plus, k_plus,
+                                       k_special);
+  ability_mod.subtype = subtype;
+  ability_mod.color = clr;
+  if ((flags & 8U) != 0)
+  {
+    ability_mod.paue_flags = ability_mod.paue_flags | 0x80000;
+  }
+  if ((flags & 0x10U) != 0)
+  {
+    ability_mod.paue_flags = ability_mod.paue_flags | 0x40000;
+  }
+  if ((flags & 0x20U) != 0)
+  {
+    ability_mod.paue_flags = ability_mod.paue_flags | 0x20000;
+  }
+  if ((flags & 1U) != 0)
+  {
+    ability_mod.disabling_mode = ability_mod.disabling_mode | 0x28;
+  }
+  if ((flags & 2U) != 0)
+  {
+    ability_mod.disabling_mode = ability_mod.disabling_mode | 0x7e;
+  }
+  if ((flags & 4U) != 0)
+  {
+    ability_mod.disabling_mode = ability_mod.disabling_mode | 0x38;
+  }
+  pump_attached(player, card, event, &ability_mod);
+  result = aura(player, card, event, &td, "TARGET_CREATURE");
+  return result;
+}
+#endif
+
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e7160; original functions/auras.c:587. */
 static int targeted_aura_impl(int player, int card, event_t event,
                                    target_definition_t *td, const char *prompt, int custom_prompt,
@@ -915,35 +1068,9 @@ static int targeted_aura_impl(int player, int card, event_t event,
   }
   return aura_impl(player, card, event, td, prompt, custom_prompt);
 }
+#endif
 
-
-/* ManalinkEh 2022: 0x26e7730; original functions/auras.c:16. */
-int aura_attached_to_me(int player, int card, event_t event, resolve_trigger_t trigger_mode,
-                             test_definition_t *test2)
-{
-  if (trigger_condition != TRIGGER_COMES_INTO_PLAY || card != affected_card ||
-      player != affected_card_controller || reason_for_trigger_controller != player ||
-      is_humiliated(player, card, AL_TRIG))
-    return 0;
-  test_definition_t this_test;
-  default_test_definition(&this_test, TYPE_ENCHANTMENT);
-  this_test.subtype = 0x4000;
-  if (!new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, &this_test))
-    return 0;
-  card_instance_t *aura = get_card_instance(trigger_cause_controller, trigger_cause);
-  if (aura->damage_target_player != player || aura->damage_target_card != card)
-    return 0;
-  if (test2 && !new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, test2))
-    return 0;
-  if (event == EVENT_TRIGGER)
-  {
-    event_result |= trigger_mode;
-    return 0;
-  }
-  return event == EVENT_RESOLVE_TRIGGER;
-}
-
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e8860; original functions/auras.c:610. */
 int targeted_aura(int player, int card, event_t event, target_definition_t *td,
                        const char *prompt)
@@ -952,8 +1079,9 @@ int targeted_aura(int player, int card, event_t event, target_definition_t *td,
   result = targeted_aura_impl(player, card, event, td, prompt, 0, 0);
   return result;
 }
+#endif
 
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e8890; original functions/auras.c:614. */
 int targeted_aura_custom_prompt(int player, int card, event_t event,
                                      target_definition_t *td, const char *prompt)
@@ -962,8 +1090,9 @@ int targeted_aura_custom_prompt(int player, int card, event_t event,
   result = targeted_aura_impl(player, card, event, td, prompt, 1, 0);
   return result;
 }
+#endif
 
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e88c0; original functions/auras.c:618. */
 int disabling_targeted_aura(int player, int card, event_t event, target_definition_t *td,
                                  const char *prompt, int mode)
@@ -977,8 +1106,9 @@ int disabling_targeted_aura(int player, int card, event_t event, target_definiti
   }
   return result;
 }
+#endif
 
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e8920; original functions/auras.c:628. */
 int vanilla_aura(int player, int card, event_t event, int pref_controller)
 {
@@ -989,8 +1119,9 @@ int vanilla_aura(int player, int card, event_t event, int pref_controller)
   result = aura(player, card, event, &td, "TARGET_CREATURE");
   return result;
 }
+#endif
 
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e8980; original functions/auras.c:637. */
 int disabling_aura(int player, int card, int event)
 {
@@ -1000,8 +1131,9 @@ int disabling_aura(int player, int card, int event)
   result = disabling_targeted_aura(player, card, event, &td, "Select target creature.", 0);
   return result;
 }
+#endif
 
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e89e0; original functions/auras.c:644. */
 int aura_with_variable_pt_boost_depending_on_condition(int player, int card, event_t event,
                                                             target_definition_t *td,
@@ -1048,8 +1180,50 @@ int aura_with_variable_pt_boost_depending_on_condition(int player, int card, eve
   }
   return targeted_aura_impl(player, card, event, td, "TARGET_CREATURE", 0, 0);
 }
+#endif
 
+int count_auras_enchanting_me(int player, int card){
+	card_instance_t* aura;
+	int result = 0;
+	int i, count;
+	for (i = 0; i < 2; i++){
+		for (count = 0; count < active_cards_count[i]; ++count){
+			if( (aura = in_play(i, count)) && is_what(i, count, TYPE_ENCHANTMENT) && has_subtype(i, count, SUBTYPE_AURA) &&
+				aura->damage_target_player == player && aura->damage_target_card == card
+			  ){
+				result++;
+			}
+		}
+	}
+	return result;
+}
 
+static int is_enchanted_impl(int player, int card, int subtype){
+	card_instance_t* aura;
+	int i, count;
+	for (i = 0; i < 2; i++){
+		for (count = 0; count < active_cards_count[i]; ++count){
+			if( (aura = in_play(i, count)) && is_what(i, count, TYPE_ENCHANTMENT) && has_subtype(i, count, SUBTYPE_AURA) &&
+				aura->damage_target_player == player && aura->damage_target_card == card
+			  ){
+				int result = 1;
+				if( subtype > 0 && ! has_subtype(i, count, subtype) ){
+					result = 0;
+				}
+				if( result ){
+					return 1;
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+int is_enchanted(int player, int card){
+	return is_enchanted_impl(player, card, 0);
+}
+
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e8c90; original functions/auras.c:707. */
 void put_into_play_aura_attached_to_target(int aura_player, int aura_card, int t_player,
                                                 int t_card)
@@ -1066,8 +1240,19 @@ void put_into_play_aura_attached_to_target(int aura_player, int aura_card, int t
   put_into_play(aura_player, aura_card);
   return;
 }
+#endif
 
+/* Uses targets[9] to store the player/card it was attached to at the time it was activated.  Should be called *before* the EVENT_RESOLVE_ACTIVATION handler if
+ * td is provided. */
+int aura_granting_activated_ability(int player, int card, event_t event, int preferred_controller, int mode,
+									int cless, int black, int blue, int green, int red, int white,
+									uint32_t variable_costs, target_definition_t *td, const char *prompt)
+{
+  int rval = attachment_granting_activated_ability(player, card, event, mode, cless, black, blue, green, red, white, variable_costs, td, prompt);
+  return rval ? rval : vanilla_aura(player, card, event, preferred_controller);
+}
 
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e8d90; original functions/auras.c:729. */
 int gain_control_and_attach_as_aura(int player, int card, event_t event, int t_player,
                                          int t_card)
@@ -1130,8 +1315,28 @@ int gain_control_and_attach_as_aura(int player, int card, event_t event, int t_p
   }
   return 0;
 }
+#endif
 
+static int is_enchanted_by_another_stealing_aura(int player, int card, int orig_aura_player, int orig_aura_card){
+	card_instance_t* aura;
+	int i, count;
+	for( i = 0; i < 2; i++ ){
+		for( count = 0; count < active_cards_count[i]; ++count ){
+			if( (aura = in_play(i, count)) && is_what(i, count, TYPE_ENCHANTMENT) && has_subtype(i, count, SUBTYPE_AURA) ){
+				if( !( i == orig_aura_player && count == orig_aura_card ) ){
+					if( aura->damage_target_player == player && aura->damage_target_card == card &&
+						check_special_flags3(i, count, SF3_IS_STEALING_AURA)
+					  ){
+						return 1;
+					}
+				}
+			}
+		}
+	}
+	return 0;
+}
 
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e8f40; original functions/auras.c:792. */
 void end_of_stealing_aura_effect(int player, int card)
 {
@@ -1173,8 +1378,9 @@ void end_of_stealing_aura_effect(int player, int card)
   gain_control_permanently_no_sound(1 - instance->damage_target_player,
                                     instance->damage_target_player, instance->damage_target_card);
 }
+#endif
 
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e9110; original functions/auras.c:810. */
 int generic_stealing_aura(int player, int card, event_t event, target_definition_t *td,
                                const char *prompt)
@@ -1237,155 +1443,9 @@ int generic_stealing_aura(int player, int card, event_t event, target_definition
   }
   return 0;
 }
-
-
-/* ManalinkEh 2022: 0x26e6500; original functions/auras.c:962. */
-static int when_enchanted_permanent_dies_return_aura_to_hand_legacy(int player, int card,
-                                                                         event_t event)
-{
-  card_instance_t *instance;
-  int result;
-
-  instance = get_card_instance(player, card);
-  result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (result == 0)
-  {
-    return 0;
-  }
-  seek_grave_for_id_to_reanimate(player, card, instance->targets[0].player,
-                                 (unsigned int)cards_data[instance->targets[0].card].id,
-                                 REANIMATE_RETURN_TO_HAND);
-  kill_card(player, card, KILL_EXILE);
-  return 0;
-}
-
-
-/* ManalinkEh 2022: 0x26e94c0; original functions/auras.c:974. */
-void when_enchanted_permanent_dies_return_aura_to_hand(int player, int card, event_t event)
-{
-  card_instance_t *instance = get_card_instance(player, card);
-  card_instance_t *active_aura = in_play(player, card);
-  int dying_card = affected_card;
-  if (active_aura && instance->damage_target_player != -1 && event == EVENT_GRAVEYARD_FROM_PLAY)
-  {
-    int enchanted_player;
-    if (instance->damage_target_card == affected_card &&
-        (enchanted_player = instance->damage_target_player) == affected_card_controller &&
-        in_play(enchanted_player, affected_card))
-    {
-      card_instance_t *dying = get_card_instance(enchanted_player, dying_card);
-      if ((unsigned char)(dying->kill_code - 1) < 3)
-        set_special_flags3(player, card, SF3_ENCHANTED_PERMANENT_DYING);
-    }
-    if (card == affected_card && player == affected_card_controller && in_play(player, card) &&
-        (unsigned char)(instance->kill_code - 1) < 3 &&
-        check_special_flags3(player, card, SF3_ENCHANTED_PERMANENT_DYING))
-    {
-      int legacy = create_legacy_effect(player, card,
-                                        when_enchanted_permanent_dies_return_aura_to_hand_legacy);
-      card_instance_t *legacy_instance = get_card_instance(player, legacy);
-      int owner = get_owner(player, card);
-      legacy_instance->targets[0].player = owner;
-      legacy_instance = get_card_instance(player, legacy);
-      int original_iid = get_original_internal_card_id(player, card);
-      legacy_instance->targets[0].card = original_iid;
-      get_card_instance(player, legacy)->targets[11].player = 66;
-    }
-  }
-}
-
-
-/* ManalinkEh 2022: 0x26e9630; original functions/auras.c:1003. */
-void cannot_be_enchanted_granted(int granting_player, int granting_card, event_t event,
-                                      int t_player, int t_card)
-{
-  char query_mode;
-  if (granting_player == -1)
-  {
-    misc_protection(t_player, t_card, event);
-  }
-  else
-  {
-    special_abilities2(t_player, t_card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
-  }
-  if (((((event == EVENT_PROT_MISC) && (t_card == affected_card)) &&
-        (t_player == affected_card_controller)) &&
-       ((query_mode = (char)((unsigned int)event_result >> 0x18),
-         query_mode == '\x02' ||
-             ((query_mode == '\x05' &&
-               (has_subtype(attacking_card_controller, attacking_card, SUBTYPE_AURA) != 0)))))) &&
-      ((granting_player == -1 ||
-        ((granting_player != attacking_card_controller || (granting_card != attacking_card))))))
-  {
-    event_result = event_result | 1;
-  }
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26e9710; original functions/auras.c:1014. */
-void cannot_be_enchanted(int player, int card, event_t event)
-{
-  cannot_be_enchanted_granted(-1, -1, event, player, card);
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26e9750; original functions/auras.c:1018. */
-int enchant_player(int player, int card, event_t event, target_definition_t *td)
-{
-  int32_t selected_card;
-  card_instance_t *instance;
-
-  instance = get_card_instance(player, card);
-  td->flags = td->flags | 2;
-  if (event == EVENT_SHOULD_AI_PLAY)
-  {
-    return should_ai_play(player, card);
-  }
-  if (event != EVENT_CAN_CAST)
-  {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-      {
-        if (check_special_flags(player, card, 0x20000000) == 0)
-        {
-          load_text(NULL, "TARGET_PLAYER");
-          if (select_target(td->player, td->card, td, text_lines[0], NULL) == 0)
-          {
-            spell_fizzled = 1;
-          }
-        }
-      }
-    }
-    else if (event == EVENT_RESOLVE_SPELL)
-    {
-      if (valid_target(td) != 0)
-      {
-        selected_card = instance->targets[0].card;
-        instance->targets[4].player = instance->targets[0].player;
-        instance->damage_target_player = (int8_t)instance->targets[0].player;
-        instance->targets[4].card = selected_card;
-        return 0;
-      }
-      kill_card(player, card, KILL_SACRIFICE);
-    }
-    return 0;
-  }
-  return can_target(td);
-}
-
 #endif
 
-
 #ifndef SHANDALAR
-/* Recovered October 2022 ability writers and Aura pump consumers. */
-static int generic_animating_aura_impl(int player, int card, event_t event,
-                                            target_definition_t *td, const char *prompt, int pow,
-                                            int tou, int key, int s_key, int custom_prompt,
-                                            subtype_t added_subtype);
-
 /* ManalinkEh 2022: 0x26e7250; original functions/auras.c:847. */
 static int generic_animating_aura_impl(int player, int card, event_t event, target_definition_t *td,
                                        const char *prompt, int pow, int tou, int key, int s_key,
@@ -1486,156 +1546,9 @@ static int generic_animating_aura_impl(int player, int card, event_t event, targ
   }
   return targeted_aura_impl(player, card, event, td, prompt, custom_prompt != 0, 0);
 }
+#endif
 
-
-/* ManalinkEh 2022: 0x26e8180; original functions/auras.c:255. */
-void pump_attached(int player, int card, event_t event, pump_ability_t *ability_mod)
-{
-  int power;
-  color_test_t color;
-  subtype_t subtype;
-  card_instance_t *aura_instance;
-  int result;
-  card_instance_t *instance;
-  unsigned int granted_keywords;
-  pump_ability_t default_ability_mod;
-
-  aura_instance = in_play(player, card);
-  if ((((event == EVENT_RESOLVE_SPELL) &&
-        (result = has_subtype(player, card, SUBTYPE_AURA), player == 1)) &&
-       (result != 0)) &&
-      ((((unsigned char)trace_mode & 2) == 0 &&
-        (((0 < ability_mod->pow_mod || 0 < ability_mod->tou_mod ||
-           (ability_mod->key_mod != KEYWORD_0)) ||
-          ((ability_mod->skey_mod & ~SP_KEYWORD_CANNOT_BLOCK) != SP_KEYWORD_0))))))
-  {
-    instance = get_card_instance(aura_instance->targets[0].player, aura_instance->targets[0].card);
-    granted_keywords = get_special_abilities_by_instance(instance);
-    if ((((granted_keywords & 0x20) != 0) && ((instance->regen_status & 0x800000) != 0)) &&
-        ((instance->token_status & 0x800) == 0))
-    {
-      ai_modifier = ai_modifier + -0x18;
-    }
-  }
-  else if (aura_instance == NULL)
-  {
-    return;
-  }
-  if (((-1 < aura_instance->damage_target_card) &&
-       (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
-      (result = is_what((int)aura_instance->damage_target_player, aura_instance->damage_target_card, 2),
-       result != 0))
-  {
-    if (ability_mod == NULL)
-    {
-      ability_mod = &default_ability_mod;
-      default_pump_ability_definition(player, card, ability_mod, 0, 0, 0, 0);
-    }
-    result = ability_mod->tou_mod;
-    power = ability_mod->pow_mod;
-    if (result != 0 || power != 0)
-    {
-      if ((ability_mod->paue_flags & 0x100000) == 0)
-      {
-        if ((uint32_t)event - (uint32_t)EVENT_POWER < 2U)
-        {
-          attached_gets_pt_part(player, card, event, power, result);
-        }
-      }
-      else if ((uint32_t)event - (uint32_t)EVENT_POWER < 2U)
-      {
-        attached_set_pt_part(player, card, event, power, result);
-      }
-    }
-    if (ability_mod->skey_mod != SP_KEYWORD_0 || ability_mod->key_mod != KEYWORD_0)
-    {
-      attached_gets_kw(player, card, event, ability_mod->key_mod, ability_mod->skey_mod);
-    }
-    if (ability_mod->disabling_mode != 0)
-    {
-      disable_attached(player, card, event, ability_mod->disabling_mode);
-    }
-    color = ability_mod->color;
-    if (color != COLOR_TEST_0)
-    {
-      if ((ability_mod->paue_flags & 0x20000) == 0)
-      {
-        attached_is_additional_color(player, card, event, color);
-      }
-      else
-      {
-        attached_is_forced_color(player, card, event, color);
-      }
-    }
-    subtype = ability_mod->subtype;
-    if (subtype != SUBTYPE_INVALID)
-    {
-      if ((ability_mod->paue_flags & 0x40000U) == 0)
-      {
-        if ((ability_mod->paue_flags & 0x80000U) != 0)
-        {
-          attached_is_additional_subtype(player, card, event, subtype);
-        }
-      }
-      else
-      {
-        attached_is_forced_subtype(player, card, event, subtype);
-      }
-    }
-    if (ability_mod->can_block_additional_creatures != 0)
-    {
-      event_flags = event_flags | 0x100000;
-      attached_creature_can_block_additional(player, card, event,
-                                             ability_mod->can_block_additional_creatures);
-    }
-  }
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26e8740; original functions/auras.c:580. */
-int generic_aura(int player, int card, event_t event, int pref_controller, int p_plus,
-                      int t_plus, int k_plus, int k_special, int subtype, int clr, int flags)
-{
-  int result;
-  pump_ability_t ability_mod;
-  target_definition_t td;
-  default_target_definition(player, card, &td, 2);
-  td.preferred_controller = pref_controller;
-  default_pump_ability_definition(player, card, &ability_mod, p_plus, t_plus, k_plus,
-                                       k_special);
-  ability_mod.subtype = subtype;
-  ability_mod.color = clr;
-  if ((flags & 8U) != 0)
-  {
-    ability_mod.paue_flags = ability_mod.paue_flags | 0x80000;
-  }
-  if ((flags & 0x10U) != 0)
-  {
-    ability_mod.paue_flags = ability_mod.paue_flags | 0x40000;
-  }
-  if ((flags & 0x20U) != 0)
-  {
-    ability_mod.paue_flags = ability_mod.paue_flags | 0x20000;
-  }
-  if ((flags & 1U) != 0)
-  {
-    ability_mod.disabling_mode = ability_mod.disabling_mode | 0x28;
-  }
-  if ((flags & 2U) != 0)
-  {
-    ability_mod.disabling_mode = ability_mod.disabling_mode | 0x7e;
-  }
-  if ((flags & 4U) != 0)
-  {
-    ability_mod.disabling_mode = ability_mod.disabling_mode | 0x38;
-  }
-  pump_attached(player, card, event, &ability_mod);
-  result = aura(player, card, event, &td, "TARGET_CREATURE");
-  return result;
-}
-
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e9370; original functions/auras.c:950. */
 int generic_animating_aura(int player, int card, event_t event, target_definition_t *td,
                                 const char *prompt, int pow, int tou, int key, int s_key)
@@ -1645,8 +1558,9 @@ int generic_animating_aura(int player, int card, event_t event, target_definitio
                                             0, SUBTYPE_INVALID);
   return result;
 }
+#endif
 
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e93e0; original functions/auras.c:954. */
 int generic_animating_aura_custom_prompt(int player, int card, event_t event,
                                               target_definition_t *td, const char *prompt, int pow,
@@ -1657,8 +1571,9 @@ int generic_animating_aura_custom_prompt(int player, int card, event_t event,
                                             1, SUBTYPE_INVALID);
   return result;
 }
+#endif
 
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e9450; original functions/auras.c:958. */
 int generic_animating_aura_with_added_subtype(int player, int card, event_t event,
                                                    target_definition_t *td, const char *prompt,
@@ -1670,86 +1585,147 @@ int generic_animating_aura_with_added_subtype(int player, int card, event_t even
                                             1, subtype);
   return result;
 }
-
 #endif
 
-
 #ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26e7fd0; original functions/auras.c:213. */
-int this_effect_doesnt_remove_this(int player, int card, event_t event)
+/* ManalinkEh 2022: 0x26e6500; original functions/auras.c:962. */
+static int when_enchanted_permanent_dies_return_aura_to_hand_legacy(int player, int card,
+                                                                         event_t event)
 {
-  static target_t recalculating_ward = {-1, -1};
-  int enchanted_card;
-  card_instance_t *aura_instance;
-  card_instance_t *enchanted_instance;
+  card_instance_t *instance;
   int result;
-  int enchanted_player;
-  target_definition_t td;
 
-  if (event == EVENT_STATIC_EFFECTS)
+  instance = get_card_instance(player, card);
+  result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0)
   {
-    aura_instance = in_play(player, card);
-    if ((aura_instance != NULL) && (aura_instance->damage_target_player != -1))
-    {
-      if (recalculating_ward.card != card)
-      {
-        enchanted_instance = in_play((int)aura_instance->damage_target_player, aura_instance->damage_target_card);
-        if (enchanted_instance == NULL)
-        {
-          kill_card(player, card, KILL_STATE_BASED_ACTION);
-          return 1;
-        }
-        recalculating_ward.player = player;
-        enchanted_player = (int)aura_instance->damage_target_player;
-        recalculating_ward.card = card;
-        enchanted_card = aura_instance->damage_target_card;
-        enchanted_instance->regen_status = enchanted_instance->regen_status | 0x8000000;
-        get_abilities(enchanted_player, enchanted_card, EVENT_ABILITIES, -1);
-        default_target_definition(player, card, &td, 2);
-        td.flags = td.flags | 3;
-        result = validate_arbitrary_target(&td, enchanted_player, enchanted_card);
-        recalculating_ward.player = -1;
-        recalculating_ward.card = -1;
-        enchanted_instance->regen_status = enchanted_instance->regen_status | 0x8000000;
-        if (result == 0)
-        {
-          kill_card(player, card, KILL_STATE_BASED_ACTION);
-        }
-        else
-        {
-          get_abilities(enchanted_player, enchanted_card, EVENT_ABILITIES, -1);
-        }
-      }
-      return 1;
-    }
+    return 0;
   }
-  else if ((event == EVENT_ABILITIES) && (recalculating_ward.player == player))
-  {
-    return (unsigned int)(recalculating_ward.card == card);
-  }
+  seek_grave_for_id_to_reanimate(player, card, instance->targets[0].player,
+                                 (unsigned int)cards_data[instance->targets[0].card].id,
+                                 REANIMATE_RETURN_TO_HAND);
+  kill_card(player, card, KILL_EXILE);
   return 0;
 }
-
 #endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26e94c0; original functions/auras.c:974. */
+void when_enchanted_permanent_dies_return_aura_to_hand(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  card_instance_t *active_aura = in_play(player, card);
+  int dying_card = affected_card;
+  if (active_aura && instance->damage_target_player != -1 && event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    int enchanted_player;
+    if (instance->damage_target_card == affected_card &&
+        (enchanted_player = instance->damage_target_player) == affected_card_controller &&
+        in_play(enchanted_player, affected_card))
+    {
+      card_instance_t *dying = get_card_instance(enchanted_player, dying_card);
+      if ((unsigned char)(dying->kill_code - 1) < 3)
+        set_special_flags3(player, card, SF3_ENCHANTED_PERMANENT_DYING);
+    }
+    if (card == affected_card && player == affected_card_controller && in_play(player, card) &&
+        (unsigned char)(instance->kill_code - 1) < 3 &&
+        check_special_flags3(player, card, SF3_ENCHANTED_PERMANENT_DYING))
+    {
+      int legacy = create_legacy_effect(player, card,
+                                        when_enchanted_permanent_dies_return_aura_to_hand_legacy);
+      card_instance_t *legacy_instance = get_card_instance(player, legacy);
+      int owner = get_owner(player, card);
+      legacy_instance->targets[0].player = owner;
+      legacy_instance = get_card_instance(player, legacy);
+      int original_iid = get_original_internal_card_id(player, card);
+      legacy_instance->targets[0].card = original_iid;
+      get_card_instance(player, legacy)->targets[11].player = 66;
+    }
+  }
+}
+#endif
 
 #ifndef SHANDALAR
-/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
-static int generic_aura_impl(int player, int card, event_t event, target_definition_t *td,
-                               char *prompt, int p_plus, int t_plus, int k_plus, int k_special,
-                               int subtype, int clr, int flags)
+/* ManalinkEh 2022: 0x26e9630; original functions/auras.c:1003. */
+void cannot_be_enchanted_granted(int granting_player, int granting_card, event_t event,
+                                      int t_player, int t_card)
 {
-  pump_ability_t ability;
-  default_pump_ability_definition(player, card, &ability, p_plus, t_plus, k_plus, k_special);
-  ability.subtype = subtype;
-  ability.color = clr;
-  if (flags & 8) ability.paue_flags |= 0x80000;
-  if (flags & 16) ability.paue_flags |= 0x40000;
-  if (flags & 32) ability.paue_flags |= 0x20000;
-  if (flags & 1) ability.disabling_mode |= 0x28;
-  if (flags & 2) ability.disabling_mode |= 0x7e;
-  if (flags & 4) ability.disabling_mode |= 0x38;
-  pump_attached(player, card, event, &ability);
-  return aura(player, card, event, td, prompt);
+  char query_mode;
+  if (granting_player == -1)
+  {
+    misc_protection(t_player, t_card, event);
+  }
+  else
+  {
+    special_abilities2(t_player, t_card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
+  }
+  if (((((event == EVENT_PROT_MISC) && (t_card == affected_card)) &&
+        (t_player == affected_card_controller)) &&
+       ((query_mode = (char)((unsigned int)event_result >> 0x18),
+         query_mode == '\x02' ||
+             ((query_mode == '\x05' &&
+               (has_subtype(attacking_card_controller, attacking_card, SUBTYPE_AURA) != 0)))))) &&
+      ((granting_player == -1 ||
+        ((granting_player != attacking_card_controller || (granting_card != attacking_card))))))
+  {
+    event_result = event_result | 1;
+  }
+  return;
+}
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26e9710; original functions/auras.c:1014. */
+void cannot_be_enchanted(int player, int card, event_t event)
+{
+  cannot_be_enchanted_granted(-1, -1, event, player, card);
+  return;
+}
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26e9750; original functions/auras.c:1018. */
+int enchant_player(int player, int card, event_t event, target_definition_t *td)
+{
+  int32_t selected_card;
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  td->flags = td->flags | 2;
+  if (event == EVENT_SHOULD_AI_PLAY)
+  {
+    return should_ai_play(player, card);
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        if (check_special_flags(player, card, 0x20000000) == 0)
+        {
+          load_text(NULL, "TARGET_PLAYER");
+          if (select_target(td->player, td->card, td, text_lines[0], NULL) == 0)
+          {
+            spell_fizzled = 1;
+          }
+        }
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      if (valid_target(td) != 0)
+      {
+        selected_card = instance->targets[0].card;
+        instance->targets[4].player = instance->targets[0].player;
+        instance->damage_target_player = (int8_t)instance->targets[0].player;
+        instance->targets[4].card = selected_card;
+        return 0;
+      }
+      kill_card(player, card, KILL_SACRIFICE);
+    }
+    return 0;
+  }
+  return can_target(td);
 }
 #endif

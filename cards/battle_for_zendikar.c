@@ -2574,6 +2574,11 @@ int card_demons_grasp(int player, int card, event_t event)
 
 int card_drana_liberator_of_malakir(int player, int card, event_t event)
 {
+  /* Drana, Liberator of Malakir	|1|B|B	0x200dfea
+   * Legendary Creature - Vampire Ally 2/3
+   * Flying, first strike
+   * Whenever ~ deals combat damage to a player, put a +1/+1 counter on each attacking creature you control. */
+
   int num;
   card_instance_t *instance;
   int live_count_or_result;
@@ -2944,6 +2949,10 @@ int card_vampiric_rites(int player, int card, event_t event)
 
 int card_voracious_null(int player, int card, event_t event)
 {
+  /* Voracious Null	|2|B	0x200e03a
+   * Creature - Zombie 2/2
+   * |1|B, Sacrifice another creature: Put two +1/+1 counters on ~. Activate this ability only any time you could cast a sorcery. */
+
   card_instance_t *activation;
   card_instance_t *parent_creature;
   if (event == EVENT_RESOLVE_ACTIVATION)
@@ -3251,6 +3260,13 @@ int card_serpentine_spike(int player, int card, event_t event)
 
 int card_vile_aggregate(int player, int card, event_t event)
 {
+  /* Vile Aggregate	|2|R	0x200e067
+   * Creature - Eldrazi Drone 100/5
+   * Devoid
+   * ~'s power is equal to the number of colorless creatures you control.
+   * Trample
+   * Ingest */
+
   int newval;
   test_definition_t test;
   ingest(player, card, event);
@@ -3585,11 +3601,6 @@ int card_valakut_invoker(int player, int card, event_t event)
  * Instant
  * Destroy target land. */
 
-/* Zada, Hedron Grinder	|3|R	0x000000
- * Legendary Creature - Goblin Ally 3/3
- * Whenever you cast an instant or sorcery spell that targets only ~, copy that spell for each other creature you control
- * that the spell could target. Each copy targets a different one of those creatures. */
-
 /*** Green ***/
 
 /* Blisterpod	|G	=>card_carrier_thrall
@@ -3740,6 +3751,11 @@ int card_void_attendant(int player, int card, event_t event)
 
 int card_earthen_arms(int player, int card, event_t event)
 {
+  /* Earthen Arms	|1|G	0x200e0d5
+   * Sorcery
+   * Put two +1/+1 counters on target permanent.
+   * Awaken 4-|6|G */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -3798,6 +3814,10 @@ int card_greenwarden_of_murasa(int player, int card, event_t event)
 
 int card_infuse_with_the_elements(int player, int card, event_t event)
 {
+  /* Infuse with the Elements	|3|G	0x200e0df
+   * Instant
+   * Converge - Put X +1/+1 counters on target creature, where X is the number of colors of mana spent to cast ~. That creature gains trample until end of turn. */
+
   store_num_colors_paid_in_info_slot(player, card, event);
   if (!IS_GS_EVENT(player, card, event))
     return 0;
@@ -4183,6 +4203,83 @@ int card_brutal_expulsion(int player, int card, event_t event)
   return 0;
 }
 
+/* ManalinkEh 2022: 0x244cb90; original cards/battle_for_zendikar.c:4214. */
+static int catacomb_sifter_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  card_instance_t *dying_permanent;
+  unsigned int death_count;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x3bbb))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (effect_follows_control_of_attachment(player, card, event) != 0))
+  {
+    return 0;
+  }
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    instance = get_card_instance(player, card);
+    dying_permanent = in_play(affected_card_controller, affected_card);
+    if ((dying_permanent != NULL) &&
+        (is_this_dying(affected_card_controller, affected_card) != 0))
+    {
+
+      if ((instance->damage_target_card == affected_card) &&
+          (instance->damage_target_player == affected_card_controller))
+      {
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (instance->targets[0xb].player < 0)
+        {
+          instance->targets[0xb].player = 0;
+        }
+        SET_BYTE2(instance->targets[0xb].player) = 1;
+        return 0;
+      }
+      count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
+    }
+  }
+  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (death_count == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+    return 0;
+  if (death_count != 0)
+  {
+    if (!check_status(player, card, 0x10000))
+    {
+
+      death_count = death_count & 0xff;
+      if (death_count != 0)
+      {
+        do
+        {
+          death_count = death_count - 1;
+          scry(player, 1);
+        } while (0 < (int)death_count);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
 int card_catacomb_sifter(int player, int card, event_t event)
 {
   /* Catacomb Sifter	|1|B|G	0x200e120
@@ -4430,6 +4527,11 @@ int card_bring_to_light(int player, int card, event_t event)
   return basic_spell(player, card, event);
 }
 
+/* Grove Rumbler	|2|R|G	=>zendikar.c:card_steppe_lynx
+ * Creature - Elemental 3/3
+ * Trample
+ * Landfall - Whenever a land enters the battlefield under your control, ~ gets +2/+2 until end of turn. */
+
 int card_dranas_emissary(int player, int card, event_t event)
 {
   /* Drana's Emissary	|1|W|B	0x200e148
@@ -4446,11 +4548,6 @@ int card_dranas_emissary(int player, int card, event_t event)
 
   return 0;
 }
-
-/* Grove Rumbler	|2|R|G	=>zendikar.c:card_steppe_lynx
- * Creature - Elemental 3/3
- * Trample
- * Landfall - Whenever a land enters the battlefield under your control, ~ gets +2/+2 until end of turn. */
 
 int card_grovetender_druids(int player, int card, event_t event)
 {
@@ -4475,15 +4572,16 @@ int card_grovetender_druids(int player, int card, event_t event)
 
 	return 0;
 }
-
 int card_kiora_master_of_the_depths(int player, int card, event_t event)
 {
-	check_legend_rule(player, card, event);
   /* Kiora, Master of the Depths	|2|G|U	0x200e29c
    * Planeswalker - Kiora (4)
    * +1: Untap up to one target creature and up to one target land.
    * -2: Reveal the top four cards of your library. You may put a creature card and/or a land card from among them into your hand. Put the rest into your graveyard.
    * -8: You get an emblem with "Whenever a creature enters the battlefield under your control, you may have it fight target creature." Then put three 8/8 |Sblue Octopus creature tokens onto the battlefield. */
+
+	check_legend_rule(player, card, event);
+
 
   if (IS_ACTIVATING(event))
 	{
@@ -4590,6 +4688,7 @@ int card_kiora_master_of_the_depths(int player, int card, event_t event)
 
   return planeswalker(player, card, event, 4);
 }
+
 int card_kiora_master_of_the_depths_emblem(int player, int card, event_t event)
 {
   /* Kiora, Master of the Depths Emblem	""	0x200e2a1
@@ -4743,7 +4842,6 @@ int card_noyan_dar_roil_shaper(int player, int card, event_t event)
 	}
 	return 0;
 }
-
 static int omnath_death_trigger(int player, int card, event_t event)
 {
   if (event == EVENT_GRAVEYARD_FROM_PLAY)
@@ -4799,6 +4897,7 @@ static int omnath_death_trigger(int player, int card, event_t event)
   }
   return 0;
 }
+
 int card_omnath_locus_of_rage(int player, int card, event_t event)
 {
   /* Omnath, Locus of Rage	|3|R|R|G|G	0x200e161
@@ -4884,6 +4983,11 @@ int card_skyrider_elf(int player, int card, event_t event)
 
 int card_veteran_warleader(int player, int card, event_t event)
 {
+  /* Veteran Warleader	|1|G|W	0x200e175
+   * Creature - Human Soldier Ally 100/100
+   * ~'s power and toughness are each equal to the number of creatures you control.
+   * Tap another untapped Ally you control: ~ gains your choice of first strike, vigilance, or trample until end of turn. */
+
   enum
   {
     CHOICE_FIRST_STRIKE = 1,
@@ -5092,13 +5196,13 @@ int card_hedron_archive(int player, int card, event_t event)
 
   return card_sol_ring(player, card, event);
 }
-
 static void mark_if_blocked_by_colorless(int any_ptr, int unused, int blocking_controller, int blocking_card)
 {
   int* any = (int*)any_ptr;
   if (!*any && !(get_color(blocking_controller, blocking_card) & COLOR_TEST_ANY_COLORED))
 	*any = 1;
 }
+
 int card_hedron_blade(int player, int card, event_t event)
 {
   /* Hedron Blade	|1	0x200e184
@@ -5123,6 +5227,11 @@ int card_hedron_blade(int player, int card, event_t event)
 
   return vanilla_equipment(player, card, event, 2, 1,1, 0,0);
 }
+
+/* Pilgrim's Eye	|3	=>worldwake.c:card_pilgrims_eye
+ * Artifact Creature - Thopter 1/1
+ * Flying
+ * When ~ enters the battlefield, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle your library. */
 
 int card_pathway_arrows(int player, int card, event_t event)
 {
@@ -5206,10 +5315,13 @@ int card_pathway_arrows(int player, int card, event_t event)
 #undef ACTIVATE
 }
 
-/* Pilgrim's Eye	|3	=>worldwake.c:card_pilgrims_eye
- * Artifact Creature - Thopter 1/1
- * Flying
- * When ~ enters the battlefield, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle your library. */
+/*** Land ***/
+
+/* Ally Encampment	""	0x000000
+ * Land
+ * |T: Add |1 to your mana pool.
+ * |T: Add one mana of any color to your mana pool. Spend this mana only to cast an Ally spell.
+ * |1, |T, Sacrifice ~: Return target Ally you control to its owner's hand. */
 
 int card_slab_hammer(int player, int card, event_t event)
 {
@@ -5237,19 +5349,11 @@ int card_slab_hammer(int player, int card, event_t event)
 	}
 	return basic_equipment(player, card, event, 2);
 }
-
-/*** Land ***/
-
-/* Ally Encampment	""	0x000000
- * Land
- * |T: Add |1 to your mana pool.
- * |T: Add one mana of any color to your mana pool. Spend this mana only to cast an Ally spell.
- * |1, |T, Sacrifice ~: Return target Ally you control to its owner's hand. */
-
 static void blighted_cataract_impl(int player, int card, target_definition_t* td)
 {
   draw_cards(player, 2);
 }
+
 int card_blighted_cataract(int player, int card, event_t event)
 {
   /* Blighted Cataract	""	0x200e193
@@ -5258,12 +5362,12 @@ int card_blighted_cataract(int player, int card, event_t event)
    * |5|U, |T, Sacrifice ~: Draw two cards. */
   return blighted_land(player, card, event, MANACOST_XU(5,1), "Draw",1, NULL,NULL, blighted_cataract_impl);
 }
-
 static void blighted_fen_impl(int player, int card, target_definition_t* td)
 {
   if (valid_target(td))
 	impose_sacrifice(player, card, 1-player, 1, TYPE_CREATURE,MATCH, 0,0, 0,0, 0,0, -1,0);
 }
+
 int card_blighted_fen(int player, int card, event_t event)
 {
   /* Blighted Fen	""	0x200e198
@@ -5280,12 +5384,12 @@ int card_blighted_fen(int player, int card, event_t event)
 	}
   return blighted_land(player, card, event, MANACOST_XB(4,1), "Opponent sacrifices",creature_count[1-player] > 0, &td,"TARGET_OPPONENT", blighted_fen_impl);
 }
-
 static void blighted_gorge_impl(int player, int card, target_definition_t* td)
 {
   if (valid_target(td))
 	damage_target0(player, card, 2);
 }
+
 int card_blighted_gorge(int player, int card, event_t event)
 {
   /* Blighted Gorge	""	0x200e19d
@@ -5300,11 +5404,11 @@ int card_blighted_gorge(int player, int card, event_t event)
 	}
   return blighted_land(player, card, event, MANACOST_XR(4,1), "Deal damage",1, &td,"TARGET_ANY", blighted_gorge_impl);
 }
-
 static void blighted_steppe_impl(int player, int card, target_definition_t* td)
 {
   gain_life(player, 2 * count_subtype(player, TYPE_CREATURE, -1));
 }
+
 int card_blighted_steppe(int player, int card, event_t event)
 {
   /* Blighted Steppe	""	0x200e1a2
@@ -5313,11 +5417,11 @@ int card_blighted_steppe(int player, int card, event_t event)
    * |3|W, |T, Sacrifice ~: You gain 2 life for each creature you control. */
   return blighted_land(player, card, event, MANACOST_XW(3,1), "Gain life",creature_count[player] > 0, NULL,NULL, blighted_steppe_impl);
 }
-
 static void blighted_woodland_impl(int player, int card, target_definition_t* td)
 {
   tutor_basic_lands(player, TUTOR_PLAY_TAPPED, 2);
 }
+
 int card_blighted_woodland(int player, int card, event_t event)
 {
   /* Blighted Woodland	""	0x200e1a7
@@ -5326,6 +5430,14 @@ int card_blighted_woodland(int player, int card, event_t event)
    * |3|G, |T, Sacrifice ~: Search your library for up to two basic land cards and put them onto the battlefield tapped. Then shuffle your library. */
   return blighted_land(player, card, event, MANACOST_XG(3,1), "Search for lands",1, NULL,NULL, blighted_woodland_impl);
 }
+
+/* Cinder Glade	""	=>card_tangoland
+ * Land - |H2Mountain |H2Forest
+ * ~ enters the battlefield tapped unless you control two or more basic lands. */
+
+/* Evolving Wilds	""	=>m11.c:card_terramorphic_expanse
+ * Land
+ * |T, Sacrifice ~: Search your library for a basic land card and put it onto the battlefield tapped. Then shuffle your library. */
 
 int card_tangoland(int player, int card, event_t event)
 {
@@ -5350,14 +5462,6 @@ int card_tangoland(int player, int card, event_t event)
 
   return plain_mana_producer(player, card, event);
 }
-
-/* Cinder Glade	""	=>card_tangoland
- * Land - |H2Mountain |H2Forest
- * ~ enters the battlefield tapped unless you control two or more basic lands. */
-
-/* Evolving Wilds	""	=>m11.c:card_terramorphic_expanse
- * Land
- * |T, Sacrifice ~: Search your library for a basic land card and put it onto the battlefield tapped. Then shuffle your library. */
 
 int card_fertile_thicket(int player, int card, event_t event)
 {
@@ -5454,6 +5558,10 @@ int card_lumbering_falls(int player, int card, event_t event)
   return mana_producer(player, card, event);
 }
 
+/* Prairie Stream	""	=>card_tangoland
+ * Land - |H2Plains |H2Island
+ * ~ enters the battlefield tapped unless you control two or more basic lands. */
+
 int card_mortuary_mire(int player, int card, event_t event)
 {
   /* Mortuary Mire	""	0x200e1bb
@@ -5476,10 +5584,6 @@ int card_mortuary_mire(int player, int card, event_t event)
 
   return mana_producer(player, card, event);
 }
-
-/* Prairie Stream	""	=>card_tangoland
- * Land - |H2Plains |H2Island
- * ~ enters the battlefield tapped unless you control two or more basic lands. */
 
 int card_sanctum_of_ugin(int player, int card, event_t event)
 {
@@ -5536,6 +5640,11 @@ int card_sandstone_bridge(int player, int card, event_t event)
   return mana_producer(player, card, event);
 }
 
+/* Shrine of the Forsaken Gods	""	0x000000
+ * Land
+ * |T: Add |1 to your mana pool.
+ * |T: Add |2 to your mana pool. Spend this mana only to cast colorless spells. Activate this ability only if you control seven or more lands. */
+
 int card_shambling_vent(int player, int card, event_t event)
 {
   /* Shambling Vent	""	0x200e1d4
@@ -5579,10 +5688,9 @@ int card_shambling_vent(int player, int card, event_t event)
   return mana_producer(player, card, event);
 }
 
-/* Shrine of the Forsaken Gods	""	0x000000
- * Land
- * |T: Add |1 to your mana pool.
- * |T: Add |2 to your mana pool. Spend this mana only to cast colorless spells. Activate this ability only if you control seven or more lands. */
+/* Smoldering Marsh	""	=>card_tangoland
+ * Land - |H2Swamp |H2Mountain
+ * ~ enters the battlefield tapped unless you control two or more basic lands. */
 
 int card_skyline_cascade(int player, int card, event_t event)
 {
@@ -5616,22 +5724,9 @@ int card_skyline_cascade(int player, int card, event_t event)
 
   return mana_producer(player, card, event);
 }
-
-/* Smoldering Marsh	""	=>card_tangoland
- * Land - |H2Swamp |H2Mountain
- * ~ enters the battlefield tapped unless you control two or more basic lands. */
-
 static void spawning_bed_impl(int player, int card, target_definition_t* td)
 {
   generate_tokens_by_id(player, card, CARD_ID_ELDRAZI_SCION, 3);
-}
-int card_spawning_bed(int player, int card, event_t event)
-{
-  /* Spawning Bed	""	0x200e1ac
-   * Land
-   * |T: Add |1 to your mana pool.
-   * |6, |T, Sacrifice ~: Put three 1/1 colorless Eldrazi Scion creature tokens onto the battlefield. They have "Sacrifice this creature: Add |1 to your mana pool." */
-  return blighted_land(player, card, event, MANACOST_X(6), "Eldrazi Scion tokens",0, NULL,NULL, spawning_bed_impl);
 }
 
 /* Sunken Hollow	""	=>card_tangoland
@@ -5655,88 +5750,24 @@ int card_spawning_bed(int player, int card, event_t event)
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
-/* ManalinkEh 2022: 0x244cb90; original cards/battle_for_zendikar.c:4214. */
-static int catacomb_sifter_effect(int player, int card, event_t event)
+int card_spawning_bed(int player, int card, event_t event)
 {
-  card_instance_t *instance;
-  card_instance_t *dying_permanent;
-  unsigned int death_count;
-
-  if (event == EVENT_STATIC_EFFECTS)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-
-      instance = get_card_instance(player, card);
-      if ((-1 < instance->damage_target_player) &&
-          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x3bbb))
-      {
-        kill_card(player, card, KILL_EXILE);
-      }
-    }
-  }
-  instance = get_card_instance(player, card);
-  if ((-1 < instance->damage_target_player) &&
-      (effect_follows_control_of_attachment(player, card, event) != 0))
-  {
-    return 0;
-  }
-  if (event == EVENT_GRAVEYARD_FROM_PLAY)
-  {
-    instance = get_card_instance(player, card);
-    dying_permanent = in_play(affected_card_controller, affected_card);
-    if ((dying_permanent != NULL) &&
-        (is_this_dying(affected_card_controller, affected_card) != 0))
-    {
-
-      if ((instance->damage_target_card == affected_card) &&
-          (instance->damage_target_player == affected_card_controller))
-      {
-        instance->damage_target_card = -1;
-        instance->damage_target_player = -1;
-        remove_status(player, card, 0x10000);
-        if (instance->targets[0xb].player < 0)
-        {
-          instance->targets[0xb].player = 0;
-        }
-        SET_BYTE2(instance->targets[0xb].player) = 1;
-        return 0;
-      }
-      count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
-    }
-  }
-  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (death_count == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
-    return 0;
-  if (death_count != 0)
-  {
-    if (!check_status(player, card, 0x10000))
-    {
-
-      death_count = death_count & 0xff;
-      if (death_count != 0)
-      {
-        do
-        {
-          death_count = death_count - 1;
-          scry(player, 1);
-        } while (0 < (int)death_count);
-      }
-      kill_card(player, card, KILL_EXILE);
-    }
-  }
-  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
-  {
-    kill_card(player, card, KILL_EXILE);
-  }
-  return 0;
+  /* Spawning Bed	""	0x200e1ac
+   * Land
+   * |T: Add |1 to your mana pool.
+   * |6, |T, Sacrifice ~: Put three 1/1 colorless Eldrazi Scion creature tokens onto the battlefield. They have "Sacrifice this creature: Add |1 to your mana pool." */
+  return blighted_land(player, card, event, MANACOST_X(6), "Eldrazi Scion tokens",0, NULL,NULL, spawning_bed_impl);
 }
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24558a0; original cards/battle_for_zendikar.c:3584. */
 int card_zada_hedron_grinder(int player, int card, event_t event)
 {
+  /* Zada, Hedron Grinder	|3|R	0x000000
+   * Legendary Creature - Goblin Ally 3/3
+   * Whenever you cast an instant or sorcery spell that targets only ~, copy that spell for each other creature you control
+   * that the spell could target. Each copy targets a different one of those creatures. */
+
   card_instance_t *triggering_spell;
   card_instance_t *candidate_creature;
   int creature_match;

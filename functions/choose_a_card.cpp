@@ -503,7 +503,6 @@ extern "C" void choose_a_card_get_last_options(color_test_t *cols, type_t *typs)
 }
 #endif
 
-
 #ifndef SHANDALAR
 /* Recovered October 2022 inline-only helpers; native code remains in their callers. */
 static int color_test_to_ctl(color_test_t col)
@@ -566,7 +565,6 @@ static type_t ctl_to_type(int ctl)
   }
 }
 #endif
-
 
 #ifndef SHANDALAR
 /* Original chooser enum operators, recovered from native inline instances. */

@@ -347,6 +347,11 @@ int card_hidden_agenda(int player, int card, event_t event){
 }
 
 int card_bragos_favor(int player, int card, event_t event){
+  /* Brago's Favor	""
+   * Conspiracy
+   * Hidden agenda (Start the game with this conspiracy face down in the command zone and secretly choose a card name. You may turn this conspiracy face up any time and reveal that name.)
+   * Spells with the chosen name you cast cost |1 less to cast. */
+
 	/*
 	  Brago's Favor
 	  Conspiracy
@@ -363,6 +368,11 @@ int card_bragos_favor(int player, int card, event_t event){
 }
 
 int card_double_stroke(int player, int card, event_t event){
+  /* Double Stroke	""
+   * Conspiracy
+   * Hidden agenda (Start the game with this conspiracy face down in the command zone and secretly choose a card name. You may turn this conspiracy face up any time and reveal that name.)
+   * Whenever you cast an instant or sorcery spell with the chosen name, you may copy it. You may choose new targets for the copy. */
+
 	/*
 	  Double Stroke
 	  Conspiracy
@@ -378,6 +388,11 @@ int card_double_stroke(int player, int card, event_t event){
 }
 
 int card_immediate_action(int player, int card, event_t event){
+  /* Immediate Action	""
+   * Conspiracy
+   * Hidden agenda (Start the game with this conspiracy face down in the command zone and secretly choose a card name. You may turn this conspiracy face up any time and reveal that name.)
+   * Creatures you control with the chosen name have haste. */
+
 	/*
 	  Immediate Action
 	  Conspiracy
@@ -395,6 +410,11 @@ int card_immediate_action(int player, int card, event_t event){
 }
 
 int card_iterative_analysis(int player, int card, event_t event){
+  /* Iterative Analysis	""
+   * Conspiracy
+   * Hidden agenda (Start the game with this conspiracy face down in the command zone and secretly choose a card name. You may turn this conspiracy face up any time and reveal that name.)
+   * Whenever you cast an instant or sorcery spell with the chosen name, you may draw a card. */
+
 	/*
 	  Iterative Analysis
 	  Conspiracy
@@ -411,6 +431,11 @@ int card_iterative_analysis(int player, int card, event_t event){
 
 int card_muzzios_preparations(int player, int card, event_t event)
 {
+  /* Muzzio's Preparations	""
+   * Conspiracy
+   * Hidden agenda (Start the game with this conspiracy face down in the command zone and secretly choose a card name. You may turn this conspiracy face up any time and reveal that name.)
+   * Each creature you control with the chosen name enters with an additional +1/+1 counter on it. */
+
   int cast_csv_id;
   int hidden_csv_id;
   if ((event == EVENT_CAST_SPELL) && (affected_card_controller == player))
@@ -426,6 +451,11 @@ int card_muzzios_preparations(int player, int card, event_t event)
 }
 
 int card_secret_summoning(int player, int card, event_t event){
+  /* Secret Summoning	""
+   * Conspiracy
+   * Hidden agenda (Start the game with this conspiracy face down in the command zone and secretly choose a card name. You may turn this conspiracy face up any time and reveal that name.)
+   * Whenever a creature you control with the chosen name enters, you may search your library for any number of cards with that name, reveal them, put them into your hand, then shuffle. */
+
 	/*
 	  Secret Summoning
 	  Conspiracy
@@ -446,6 +476,11 @@ int card_secret_summoning(int player, int card, event_t event){
 }
 
 int card_secret_of_paradise(int player, int card, event_t event){
+  /* Secrets of Paradise	""
+   * Conspiracy
+   * Hidden agenda (Start the game with this conspiracy face down in the command zone and secretly choose a card name. You may turn this conspiracy face up any time and reveal that name.)
+   * Creatures you control with the chosen name have "|T: Add one mana of any color." */
+
 	/*
 	  Secrets of Paradise
 	  Conspiracy
@@ -495,6 +530,11 @@ int card_secret_of_paradise(int player, int card, event_t event){
 }
 
 int card_unexpected_potential(int player, int card, event_t event){
+  /* Unexpected Potential	""
+   * Conspiracy
+   * Hidden agenda (Start the game with this conspiracy face down in the command zone and secretly choose a card name. You may turn this conspiracy face up any time and reveal that name.)
+   * You may spend mana as though it were mana of any color to cast spells with the chosen name. */
+
 	/*
 	  Unexpected Potential
 	  Conspiracy
@@ -510,7 +550,6 @@ int card_unexpected_potential(int player, int card, event_t event){
 
 	return 0;
 }
-
 
 /*
 
@@ -552,18 +591,20 @@ While voting, you get an additional vote. (The votes can be for different choice
 */
 
 int card_apex_hawks(int player, int card, event_t event){
-	/*
-	  Apex Hawks |2|w
-	  Creature - Bird
-	  Multikicker 1W
-	  Flying
-	  Apex Hawks enters the battlefield with a +1/+1 counter for each time it was kicked.
-	*/
+  /* Apex Hawks |2|w
+   * 	  Creature - Bird
+   * 	  Multikicker 1W
+   * 	  Flying
+   * 	  Apex Hawks enters the battlefield with a +1/+1 counter for each time it was kicked. */
+
 	multikicked_with_1_1_counters(player, card, event, MANACOST_XW(1, 1));
 	return 0;
 }
 
 int card_councils_judgement(int player, int card, event_t event){
+  /* Council's Judgment	|1|W|W
+   * Sorcery
+   * Will of the council - Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes. */
 
 	// to insert
 	// Council's Judgment 1WW
@@ -671,6 +712,10 @@ Flying, vigilance
 */
 
 int card_council_guardian(int player, int card, event_t event){
+  /* Council Guardian	|5|W
+   * Creature - Giant Soldier 5/5
+   * Will of the council - When this creature enters, starting with you, each player votes for blue, black, red, or green. This creature gains protection from each color with the most votes or tied for most votes. */
+
 	// Council Guardian 5W
 	// Creature - Giant Soldier
 	// Will of the council - When Council Guardian enters the battlefield, starting with you, each player votes for blue, black, red, or green. Council Guardian gains protection from each color with the most votes or tied for most votes.
@@ -732,12 +777,11 @@ int card_council_guardian(int player, int card, event_t event){
 }
 
 int card_custodi_soulbinders(int player, int card, event_t event){
-	/*
-	  Custodi Soulbinders |3|W
-	  Creature - Human Cleric
-	  Custodi Soulbinders enters the battlefield with X +1/+1 counters on it, where X is the number of other creatures on the battlefield.
-	  2W, remove a +1/+1 counter from Custodi Soulbinders: Put a 1/1 white Spirit creature token with flying onto the battlefield.
-	*/
+  /* Custodi Soulbinders |3|W
+   * 	  Creature - Human Cleric
+   * 	  Custodi Soulbinders enters the battlefield with X +1/+1 counters on it, where X is the number of other creatures on the battlefield.
+   * 	  2W, remove a +1/+1 counter from Custodi Soulbinders: Put a 1/1 white Spirit creature token with flying onto the battlefield. */
+
 	if ((event == EVENT_CAST_SPELL || event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE) && affect_me(player, card)){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
@@ -759,14 +803,13 @@ int card_custodi_soulbinders(int player, int card, event_t event){
 }
 
 int card_custodi_squire(int player, int card, event_t event){
-	/*
-	  Custodi Squire |4|W
-	  Creature - Spirit Cleric
-	  Flying
-	  Will of the council - When Custodi Squire enters the battlefield, starting with you,
-	  each player votes for an artifact, creature, or enchantment card in your graveyard.
-	  Return each card with the most votes or tied for the most votes to your hand.
-	*/
+  /* Custodi Squire |4|W
+   * 	  Creature - Spirit Cleric
+   * 	  Flying
+   * 	  Will of the council - When Custodi Squire enters the battlefield, starting with you,
+   * 	  each player votes for an artifact, creature, or enchantment card in your graveyard.
+   * 	  Return each card with the most votes or tied for the most votes to your hand. */
+
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -792,11 +835,11 @@ int card_custodi_squire(int player, int card, event_t event){
 	return 0;
 }
 
-
-
-
-
 int card_rousing_of_souls(int player, int card, event_t event){
+  /* Rousing of Souls	|2|W
+   * Sorcery
+   * Parley - Each player reveals the top card of their library. For each nonland card revealed this way, you create a 1/1 white Spirit creature token with flying. Then each player draws a card. */
+
 	// Rousing of Souls 2W
 	// Sorcery
 	// Parley - Each player reveals the top card of his or her library. For each nonland card revealed this way, you put a 1/1 white Spirit creature token with flying onto the battlefield. Then each player draws a card.
@@ -821,13 +864,11 @@ int card_rousing_of_souls(int player, int card, event_t event){
 }
 
 int card_unquestioned_authority(int player, int card, event_t event){
-	/*
-	  Unquestioned Authority |2|W
-	  Enchantment - Aura
-	  Enchant creature
-	  When Unquestioned Authority enters the battlefield, draw a card.
-	  Enchanted creature has protection from creatures.
-	*/
+  /* Unquestioned Authority |2|W
+   * 	  Enchantment - Aura
+   * 	  Enchant creature
+   * 	  When Unquestioned Authority enters the battlefield, draw a card.
+   * 	  Enchanted creature has protection from creatures. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
@@ -843,6 +884,11 @@ int card_unquestioned_authority(int player, int card, event_t event){
 *************/
 
 int card_academy_elite(int player, int card, event_t event){
+  /* Academy Elite	|3|U
+   * Creature - Human Wizard 0/0
+   * This creature enters with X +1/+1 counters on it, where X is the number of instant and sorcery cards in all graveyards.
+   * |2|U, Remove a +1/+1 counter from this creature: Draw a card, then discard a card. */
+
 	/*
 	  Academy Elite 3U
 	  Creature - Human Wizard
@@ -906,12 +952,11 @@ int card_academy_elite(int player, int card, event_t event){
 
 int fx_change_landtype(int player, int card, event_t event);
 int card_grixis_illusionist(int player, int card, event_t event, int clr, int pow, int tou, int key, int s_key){
-	/*
-	  Grixis Illusionist |U REPRINT
-	  Creature - Human Wizard
-	  T: Target land you control becomes the basic land type of your choice until end of turn.
-	  1/1
-	*/
+  /* Grixis Illusionist |U REPRINT
+   * 	  Creature - Human Wizard
+   * 	  T: Target land you control becomes the basic land type of your choice until end of turn.
+   * 	  1/1 */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -937,13 +982,12 @@ int card_grixis_illusionist(int player, int card, event_t event, int clr, int po
 }
 
 int card_enclave_elite(int player, int card, event_t event){
-	/*
-	  Enclave Elite |2|U REPRINT
-	  Creature - Merfolk Soldier
-	  Multikicker 1U
-	  Islandwalk
-	  Enclave Elite enters the battlefield with a +1/+1 counter on it for each time it was kicked.
-	*/
+  /* Enclave Elite |2|U REPRINT
+   * 	  Creature - Merfolk Soldier
+   * 	  Multikicker 1U
+   * 	  Islandwalk
+   * 	  Enclave Elite enters the battlefield with a +1/+1 counter on it for each time it was kicked. */
+
 	multikicked_with_1_1_counters(player, card, event, MANACOST_XU(1, 1));
 	return 0;
 }
@@ -1021,25 +1065,23 @@ static int counter_first_spell_ability_that_targets_me_every_turn(int player, in
 }
 
 int card_jetting_glasskite(int player, int card, event_t event){
-	/*
-	  Jetting Glasskite |4|U|U REPRINT
-	  Creature - Spirit
-	  Flying
-	  Whenever Jetting Glasskite becomes the target of a spell or ability for the first time in a turn, counter that spell or ability.
-	  4/4
-	*/
+  /* Jetting Glasskite |4|U|U REPRINT
+   * 	  Creature - Spirit
+   * 	  Flying
+   * 	  Whenever Jetting Glasskite becomes the target of a spell or ability for the first time in a turn, counter that spell or ability.
+   * 	  4/4 */
+
 	counter_first_spell_ability_that_targets_me_every_turn(player, card, event);
 	return 0;
 }
 
 int card_minamo_scrollkeeper(int player, int card, event_t event){
-	/*
-	  Minamo Scrollkeeper |1|U REPRINT
-	  Creature - Human Wizard
-	  Defender
-	  Your maximum hand size is increased by one.
-	  2/3
-	*/
+  /* Minamo Scrollkeeper |1|U REPRINT
+   * 	  Creature - Human Wizard
+   * 	  Defender
+   * 	  Your maximum hand size is increased by one.
+   * 	  2/3 */
+
 	if( ! is_humiliated(player, card, AL_STATIC) && event == EVENT_MAX_HAND_SIZE && current_turn == player ){
 		event_result++;
 	}
@@ -1048,20 +1090,23 @@ int card_minamo_scrollkeeper(int player, int card, event_t event){
 }
 
 int card_marchesas_emissary(int player, int card, event_t event){
-	/*
-	  Marchesa's Emissary |3|U
-	  Creature - Human Rogue
-	  Hexproof
-	  Dethrone
-	  2/2
+  /* Marchesa's Emissary |3|U
+   * 	  Creature - Human Rogue
+   * 	  Hexproof
+   * 	  Dethrone
+   * 	  2/2 */
 
-	*/
 	hexproof(player, card, event);
 	dethrone(player, card, event);
 	return 0;
 }
 
 int card_marchesas_infiltrator(int player, int card, event_t event){
+  /* Marchesa's Infiltrator	|2|U
+   * Creature - Human Rogue 1/1
+   * Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
+   * Whenever this creature deals combat damage to a player, draw a card. */
+
 	/*
 	  Marchesa's Infiltrator 2U
 	  Creature - Human Rogue
@@ -1077,6 +1122,10 @@ int card_marchesas_infiltrator(int player, int card, event_t event){
 }
 
 int card_muzzio_visionary_architect(int player, int card, event_t event){
+  /* Muzzio, Visionary Architect	|1|U|U
+   * Legendary Creature - Human Artificer 1/3
+   * |3|U, |T: Look at the top X cards of your library, where X is the greatest mana value among artifacts you control. You may put an artifact card from among them onto the battlefield. Put the rest on the bottom of your library in any order. */
+
 	/*
 	  Muzzio, Visionary Architect 1UU
 	  Legendary Creature - Human Artificer
@@ -1104,6 +1153,10 @@ int card_muzzio_visionary_architect(int player, int card, event_t event){
 }
 
 int card_plea_for_power(int player, int card, event_t event){
+  /* Plea for Power	|3|U
+   * Sorcery
+   * Will of the council - Starting with you, each player votes for time or knowledge. If time gets more votes, take an extra turn after this one. If knowledge gets more votes or the vote is tied, draw three cards. */
+
 	/*
 	  Plea for Power 3U
 	  Sorcery
@@ -1130,17 +1183,11 @@ int card_plea_for_power(int player, int card, event_t event){
 }
 
 int card_screaming_seahawk(int player, int card, event_t event){
-	/*
-	  Screaming Seahawk |4|U REPRINT
-	  Creature - Bird
-	  Flying
-	  When Screaming Seahawk enters the battlefield, you may search your library for a card named Screaming Seahawk, reveal it, and put it into your hand. If you do, shuffle your library.
-	  2/2
-	*/
-	/* Daru Cavalier	|3|W
-	 * Creature - Human Soldier 2/2
-	 * First strike
-	 * When ~ enters the battlefield, you may search your library for a card named ~, reveal it, and put it into your hand. If you do, shuffle your library. */
+  /* Screaming Seahawk |4|U REPRINT
+   * 	  Creature - Bird
+   * 	  Flying
+   * 	  When Screaming Seahawk enters the battlefield, you may search your library for a card named Screaming Seahawk, reveal it, and put it into your hand. If you do, shuffle your library.
+   * 	  2/2 */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
 
@@ -1156,6 +1203,10 @@ int card_screaming_seahawk(int player, int card, event_t event){
 }
 
 int card_split_decision(int player, int card, event_t event){
+  /* Split Decision	|1|U
+   * Instant
+   * Will of the council - Choose target instant or sorcery spell. Starting with you, each player votes for denial or duplication. If denial gets more votes, counter the spell. If duplication gets more votes or the vote is tied, copy the spell. You may choose new targets for the copy. */
+
 /*
 Split Decision 1U
 Instant
@@ -1198,13 +1249,11 @@ If denial gets more votes, counter that spell. If duplication gets more votes or
 }
 
 int card_stasis_cell(int player, int card, event_t event){
-	/*
-	  Stasis Cell |4|D REPRINT
-	  Enchantment - Aura
-	  Enchant creature
-	  Enchanted creature doesn't untap during its controller's untap step.
-	  3U: Attach Stasis Cell to target creature.
-	*/
+  /* Stasis Cell |4|D REPRINT
+   * 	  Enchantment - Aura
+   * 	  Enchant creature
+   * 	  Enchanted creature doesn't untap during its controller's untap step.
+   * 	  3U: Attach Stasis Cell to target creature. */
 
 	card_instance_t* instance = get_card_instance(player, card);
 	if (instance->damage_target_player >= 0){
@@ -1225,14 +1274,12 @@ int card_stasis_cell(int player, int card, event_t event){
 }
 
 int card_travellers_cloak(int player, int card, event_t event){
-	/*
-	  Traveler's Cloak |2|U REPRINT
-	  Enchantment - Aura
-	  Enchant creature
-	  As Traveler's Cloak enters the battlefield, choose a land type.
-	  When Traveler's Cloak enters the battlefield, draw a card.
-	  Enchanted creature has landwalk of the chosen type.
-	*/
+  /* Traveler's Cloak |2|U REPRINT
+   * 	  Enchantment - Aura
+   * 	  Enchant creature
+   * 	  As Traveler's Cloak enters the battlefield, choose a land type.
+   * 	  When Traveler's Cloak enters the battlefield, draw a card.
+   * 	  Enchanted creature has landwalk of the chosen type. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 	if (event == EVENT_ETB_ABILITY){ draw_cards(player, 1); }
@@ -1253,13 +1300,12 @@ int card_travellers_cloak(int player, int card, event_t event){
 }
 
 int card_wind_dancer(int player, int card, event_t event){
-	/*
-	  Wind Dancer |1|U REPRINT
-	  Creature - Faerie
-	  Flying
-	  T: Target creature gains flying until end of turn.
-	  1/1
-	*/
+  /* Wind Dancer |1|U REPRINT
+   * 	  Creature - Faerie
+   * 	  Flying
+   * 	  T: Target creature gains flying until end of turn.
+   * 	  1/1 */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1285,13 +1331,12 @@ int card_wind_dancer(int player, int card, event_t event){
 *************/
 
 int card_bite_of_the_black_rose(int player, int card, event_t event){
-	/*
-	  Bite of the Black Rose |3|B
-	  Sorcery
-	  Will of the Council - Starting with you, each player votes for sickness or psychosis.
-	  If sickness gets more votes, creatures your opponents control get -2/-2 until end of turn.
-	  If psychosis gets more votes or the vote is tied, each opponent discards two cards.
-	*/
+  /* Bite of the Black Rose |3|B
+   * 	  Sorcery
+   * 	  Will of the Council - Starting with you, each player votes for sickness or psychosis.
+   * 	  If sickness gets more votes, creatures your opponents control get -2/-2 until end of turn.
+   * 	  If psychosis gets more votes or the vote is tied, each opponent discards two cards. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		char pos1[100] = "Sickness (Infest on opponent)";
 		char pos2[100] = "Psychosis (Mind Rot on opponent)";
@@ -1321,6 +1366,11 @@ int card_bite_of_the_black_rose(int player, int card, event_t event){
 }
 
 int card_drakestown_forgotten(int player, int card, event_t event){
+  /* Drakestown Forgotten	|4|B
+   * Creature - Zombie 0/0
+   * This creature enters with X +1/+1 counters on it, where X is the number of creature cards in all graveyards.
+   * |2|B, Remove a +1/+1 counter from this creature: Target creature gets -1/-1 until end of turn. */
+
 	/*
 	  Drakestown Forgotten 4B
 	  Creature - Zombie
@@ -1355,12 +1405,10 @@ Whenever players finish voting, each opponent who voted for a choice you didn't 
 
 int card_infectious_horror(int player, int card, event_t event)
 {
-  /*
-	  Infectious Horror |3|B REPRINT
-	  Creature - Zombie Horror
-	  Whenever Infectious Horror attacks, each opponent loses 2 life.
-	  2/2
-	*/
+  /* Infectious Horror |3|B REPRINT
+   * 	  Creature - Zombie Horror
+   * 	  Whenever Infectious Horror attacks, each opponent loses 2 life.
+   * 	  2/2 */
 
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
   if (event == EVENT_DAT_ABILITY)
@@ -1369,12 +1417,10 @@ int card_infectious_horror(int player, int card, event_t event)
 }
 
 int card_necromantic_thirst(int player, int card, event_t event){
-	/*
-	  Necromantic Thirst |2|B|B REPRINT
-	  Enchantment - Aura
-	  Enchant creature
-	  Whenever enchanted creature deals combat damage to a player, you may return target creature card from your graveyard to your hand.
-	*/
+  /* Necromantic Thirst |2|B|B REPRINT
+   * 	  Enchantment - Aura
+   * 	  Enchant creature
+   * 	  Whenever enchanted creature deals combat damage to a player, you may return target creature card from your graveyard to your hand. */
 
 	if( get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -1395,6 +1441,12 @@ int card_necromantic_thirst(int player, int card, event_t event){
 }
 
 int card_quag_vampires(int player, int card, event_t event){
+  /* Quag Vampires	|B
+   * Creature - Vampire Rogue 1/1
+   * Multikicker |1|B (You may pay an additional |1|B any number of times as you cast this spell.)
+   * Swampwalk (This creature can't be blocked as long as defending player controls a Swamp.)
+   * This creature enters with a +1/+1 counter on it for each time it was kicked. */
+
 	/*
 	  Quag Vampires |B
 	  reature - Vampire Rogue
@@ -1408,6 +1460,10 @@ int card_quag_vampires(int player, int card, event_t event){
 }
 
 int card_reign_of_the_pit(int player, int card, event_t event){
+  /* Reign of the Pit	|4|B|B
+   * Sorcery
+   * Each player sacrifices a creature of their choice. Create an X/X black Demon creature token with flying, where X is the total power of the creatures sacrificed this way. */
+
 	/*
 	  Reign of the Pit 4BB
 	  Sorcery
@@ -1435,11 +1491,10 @@ int card_reign_of_the_pit(int player, int card, event_t event){
 }
 
 int card_stronghold_discipline(int player, int card, event_t event){
-	/*
-	  Stronghold Discipline |2|B|B REPRINT
-	  Sorcery
-	  Each player loses 1 life for each creature he or she controls.
-	*/
+  /* Stronghold Discipline |2|B|B REPRINT
+   * 	  Sorcery
+   * 	  Each player loses 1 life for each creature he or she controls. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		int i;
 		for(i=0; i<2; i++){
@@ -1453,6 +1508,10 @@ int card_stronghold_discipline(int player, int card, event_t event){
 }
 
 int card_tyrants_choice(int player, int card, event_t event){
+  /* Tyrant's Choice	|1|B
+   * Sorcery
+   * Will of the council - Starting with you, each player votes for death or torture. If death gets more votes, each opponent sacrifices a creature of their choice. If torture gets more votes or the vote is tied, each opponent loses 4 life. */
+
 	/*
 	  Tyrant's Choice 1B
 	  Sorcery
@@ -1486,10 +1545,14 @@ int card_tyrants_choice(int player, int card, event_t event){
 * 	Red	     *
 *************/
 
-
-
 int card_boldwyr_intimidator(int player, int card, event_t event)
 {
+  /* Boldwyr Intimidator	|5|R|R
+   * Creature - Giant Warrior 5/5
+   * Cowards can't block Warriors.
+   * |R: Target creature becomes a Coward until end of turn.
+   * |2|R: Target creature becomes a Warrior until end of turn. */
+
   int choice;
   card_instance_t *instance;
   int mode_or_available;
@@ -1660,24 +1723,20 @@ int card_deathforge_shaman(int player, int card, event_t event){
 }
 
 int card_enraged_evolutionary(int player, int card, event_t event){
-	/*
-	  Enraged Revolutionary |2|R
-	  Creature - Human Warrior
-	  Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
-	  2/1
+  /* Enraged Revolutionary |2|R
+   * 	  Creature - Human Warrior
+   * 	  Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
+   * 	  2/1 */
 
-	*/
 	dethrone(player, card, event);
 	return 0;
 }
 
 int card_flowstone_blade(int player, int card, event_t event){
-	/*
-	  Flowstone Blade |R REPRINT
-	  Enchantment - Aura
-	  Enchant creature
-	  R: Enchanted creature gets +1/-1 until end of turn.
-	*/
+  /* Flowstone Blade |R REPRINT
+   * 	  Enchantment - Aura
+   * 	  Enchant creature
+   * 	  R: Enchanted creature gets +1/-1 until end of turn. */
 
 	if (IS_GAA_EVENT(event)){
 		card_instance_t* instance = get_card_instance(player, card);
@@ -1714,13 +1773,11 @@ static const char* already_chosen(int who_chooses, int player, int card){
 }
 
 int card_grenzos_rebuttal(int player, int card, event_t event){
-	/*
-	  Grenzo's Rebuttal |4|R|R
-	  Sorcery
-	  Put a 4/4 red Ogre creature token onto the battlefield.
-	  Starting with you, each player chooses an artifact, a creature, and a land from among the permanents controlled by the player to his or her left.
-	  Destroy each permanent chosen this way.
-	*/
+  /* Grenzo's Rebuttal |4|R|R
+   * 	  Sorcery
+   * 	  Put a 4/4 red Ogre creature token onto the battlefield.
+   * 	  Starting with you, each player chooses an artifact, a creature, and a land from among the permanents controlled by the player to his or her left.
+   * 	  Destroy each permanent chosen this way. */
 
 	card_instance_t *instance = get_card_instance( player, card);
 
@@ -1773,13 +1830,12 @@ int card_grenzos_rebuttal(int player, int card, event_t event){
 }
 
 int card_ignition_team(int player, int card, event_t event){
-	/*
-	  Ignition Team |5|R|R
-	  Creature - Goblin Warrior
-	  Ignition Team enters the battlefield with X +1/+1 counters on it, where X i the number of tapped lands on the battlefield.
-	  2R, Remove a +1/+1 counter from Ignition Team. Target land becomes a 4/4 red Elemental creature until end of turn. It's still a land.
-	  0/0
-	*/
+  /* Ignition Team |5|R|R
+   * 	  Creature - Goblin Warrior
+   * 	  Ignition Team enters the battlefield with X +1/+1 counters on it, where X i the number of tapped lands on the battlefield.
+   * 	  2R, Remove a +1/+1 counter from Ignition Team. Target land becomes a 4/4 red Elemental creature until end of turn. It's still a land.
+   * 	  0/0 */
+
 	if( (event == EVENT_CAST_SPELL || event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE) && affect_me(player, card) ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_LAND);
@@ -1812,11 +1868,10 @@ Creature - Lizard Warrior
 */
 
 int card_mana_geyser(int player, int card, event_t event){
-	/*
-	  Mana Geyser |3|R|R REPRINT
-	  Sorcery
-	  Add R to your mana pool for each tapped land your opponents control.
-	*/
+  /* Mana Geyser |3|R|R REPRINT
+   * 	  Sorcery
+   * 	  Add R to your mana pool for each tapped land your opponents control. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_LAND);
@@ -1862,6 +1917,12 @@ Enchanted creatures has "T: This creature deals 1 damage to target creature or p
 
 int card_scourge_of_the_throne(int player, int card, event_t event)
 {
+  /* Scourge of the Throne	|4|R|R
+   * Creature - Dragon 5/5
+   * Flying
+   * Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
+   * Whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life, untap all attacking creatures. After this phase, there is an additional combat phase. */
+
   card_instance_t *instance;
   test_definition_t this_test;
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
@@ -1905,6 +1966,11 @@ int card_skitter_of_the_lizard(int player, int card, event_t event){
 }
 
 int card_treasonous_ogre(int player, int card, event_t event){
+  /* Treasonous Ogre	|3|R
+   * Creature - Ogre Shaman 2/3
+   * Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
+   * Pay 3 life: Add |R. */
+
 	/*
 	  Treasonous Ogre 3R
 	  Creature - Ogre Shaman
@@ -1931,13 +1997,12 @@ int card_treasonous_ogre(int player, int card, event_t event){
 }
 
 int card_uncontrollable_anger(int player, int card, event_t event){
-	/*
-	  Uncontrollable Anger |2|R|R REPRINT
-	  Enchantment - Aura
-	  Flash
-	  Enchant creature
-	  Enchanted creature gets +2/+2 and attacks each turn if able.
-	*/
+  /* Uncontrollable Anger |2|R|R REPRINT
+   * 	  Enchantment - Aura
+   * 	  Flash
+   * 	  Enchant creature
+   * 	  Enchanted creature gets +2/+2 and attacks each turn if able. */
+
 	return generic_aura(player, card, event, player, 2, 2, 0, SP_KEYWORD_MUST_ATTACK, 0, 0, 0);
 }
 
@@ -1963,11 +2028,9 @@ int card_vent_sentinel(int player, int card, event_t event){
 }
 
 int card_wrap_in_flames(int player, int card, event_t event){
-	/*
-	  Wrap in Flames |3|R REPRINT
-	  Sorcery
-	  Wrap in Flames deals 1 damage to each of up to three target creatures. Those creatures can't block this turn.
-	*/
+  /* Wrap in Flames |3|R REPRINT
+   * 	  Sorcery
+   * 	  Wrap in Flames deals 1 damage to each of up to three target creatures. Those creatures can't block this turn. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -1997,12 +2060,10 @@ int card_wrap_in_flames(int player, int card, event_t event){
 *************/
 
 int card_predators_howl(int player, int card, event_t event){
-	/*
-	  Predator's Howl |3|G
-	  Instant
-	  Put a 2/2 green Wolf creature token onto the battlefield.
-	  Morbid - Put three 2/2 green Wolf creature tokens onto the battlefield instead if a creature died this turn.
-	*/
+  /* Predator's Howl |3|G
+   * 	  Instant
+   * 	  Put a 2/2 green Wolf creature token onto the battlefield.
+   * 	  Morbid - Put three 2/2 green Wolf creature tokens onto the battlefield instead if a creature died this turn. */
 
 	if (event == EVENT_RESOLVE_SPELL ){
 		token_generation_t token;
@@ -2019,6 +2080,11 @@ int card_predators_howl(int player, int card, event_t event){
 }
 
 int card_realm_seeker(int player, int card, event_t event){
+  /* Realm Seekers	|4|G|G
+   * Creature - Elf Scout 0/0
+   * This creature enters with X +1/+1 counters on it, where X is the total number of cards in all players' hands.
+   * |2|G, Remove a +1/+1 counter from this creature: Search your library for a land card, reveal it, put it into your hand, then shuffle. */
+
 	/*
 	  Realm Seekers 4GG
 	  Creature - Elf Scout
@@ -2039,6 +2105,10 @@ int card_realm_seeker(int player, int card, event_t event){
 }
 
 int card_selvalas_charge(int player, int card, event_t event){
+  /* Selvala's Charge	|4|G
+   * Sorcery
+   * Parley - Each player reveals the top card of their library. For each nonland card revealed this way, you create a 3/3 green Elephant creature token. Then each player draws a card. */
+
 	/*
 	  Selvala's Charge 4G
 	  Sorcery
@@ -2066,13 +2136,12 @@ int card_selvalas_charge(int player, int card, event_t event){
 }
 
 int card_selvalas_enforcer(int player, int card, event_t event){
-	/*
-	  Selvala's Enforcer |3|G
-	  Creature - Elf Warrior
-	  Parley - When Selvala's Enforcer enters the battlefield, each player reveals the top card of his or her library.
-	  For each nonland card revealed this way, put a +1/+1 counter on Selvala's Enforcer. Then each player draws a card.
-	  2/2
-	*/
+  /* Selvala's Enforcer |3|G
+   * 	  Creature - Elf Warrior
+   * 	  Parley - When Selvala's Enforcer enters the battlefield, each player reveals the top card of his or her library.
+   * 	  For each nonland card revealed this way, put a +1/+1 counter on Selvala's Enforcer. Then each player draws a card.
+   * 	  2/2 */
+
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -2090,29 +2159,31 @@ int card_selvalas_enforcer(int player, int card, event_t event){
 
 int card_charging_rhino(int player, int card, event_t event)
 {
+  /* Charging Rhino	|3|G|G
+   * Creature - Rhino 4/4
+   * This creature can't be blocked by more than one creature. */
+
   maxblockers_1(player, card, event);
   return 0;
 }
 
 int card_gnarlid_pack(int player, int card, event_t event){
-	/*
-	  Gnarlid Pack |1|G REPRINT
-	  Creature - Beast
-	  Multikicker 1G (You may pay an additional 1G any number of times as you cast this spell.)
-	  Gnarlid Pack enters the battlefield with a +1/+1 counter on it for each time it was kicked.
-	  2/2
-	*/
+  /* Gnarlid Pack |1|G REPRINT
+   * 	  Creature - Beast
+   * 	  Multikicker 1G (You may pay an additional 1G any number of times as you cast this spell.)
+   * 	  Gnarlid Pack enters the battlefield with a +1/+1 counter on it for each time it was kicked.
+   * 	  2/2 */
+
 	multikicked_with_1_1_counters(player, card, event, MANACOST_XG(1, 1));
 	return 0;
 }
 
 int card_provoke(int player, int card, event_t event){
-	/*
-	  Provoke |1|G REPRINT
-	  Instant
-	  Untap target creature you don't control. That creature blocks this turn if able.
-	  Draw a card.
-	*/
+  /* Provoke |1|G REPRINT
+   * 	  Instant
+   * 	  Untap target creature you don't control. That creature blocks this turn if able.
+   * 	  Draw a card. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -2146,6 +2217,11 @@ Reach
 *************/
 
 int card_brago_king_eternal(int player, int card, event_t event){
+  /* Brago, King Eternal	|2|W|U
+   * Legendary Creature - Spirit Noble 2/4
+   * Flying
+   * Whenever Brago deals combat damage to a player, exile any number of target nonland permanents you control, then return those cards to the battlefield under their owner's control. */
+
 	/*
 	 * Brago, King Eternal	|2|W|U
 	 * Legendary Creautre - Spirit 2/4
@@ -2303,6 +2379,10 @@ static int test_targets_opponents_permanent(int iid, int me, int player, int car
 
 int card_dack_faydens_emblem(int player, int card, event_t event)
 {
+  /* Dack Fayden Emblem	""
+   * Emblem - Dack
+   * Whenever you cast a spell that targets one or more permanents, gain control of those permanents. */
+
   // Whenever you cast a spell that targets one or more permanents, gain control of those permanents.
 
 	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && player == reason_for_trigger_controller && trigger_cause_controller == player)
@@ -2328,6 +2408,10 @@ int card_dack_faydens_emblem(int player, int card, event_t event)
 }
 
 int card_deathreap_ritual(int player, int card, event_t event){
+  /* Deathreap Ritual	|2|B|G
+   * Enchantment
+   * Morbid - At the beginning of each end step, if a creature died this turn, you may draw a card. */
+
 	/*
 	  Deathreap Ritual 2BG
 	  Enchantment
@@ -2350,6 +2434,10 @@ int card_deathreap_ritual(int player, int card, event_t event){
 }
 
 int card_extract_from_darkness(int player, int card, event_t event){
+  /* Extract from Darkness	|3|U|B
+   * Sorcery
+   * Each player mills two cards. Then you put a creature card from a graveyard onto the battlefield under your control. */
+
 	/*
 	  Extract from Darkness 3UB
 	  Sorcery
@@ -2466,6 +2554,11 @@ int card_flamewright(int player, int card, event_t event){
 }
 
 int card_grenzo_dungeon_warden(int player, int card, event_t event){
+  /* Grenzo, Dungeon Warden	|X|B|R
+   * Legendary Creature - Goblin Rogue 2/2
+   * Grenzo enters with X +1/+1 counters on it.
+   * |2: Put the bottom card of your library into your graveyard. If it's a creature card with power less than or equal to Grenzo's power, put it onto the battlefield. */
+
 	/*
 	  Grenzo, Dungeon Warden XBR
 	  Legendary Creature - Goblin Rogue
@@ -2604,6 +2697,12 @@ int marchesa_effect(int player, int card, event_t event)
 
 int card_marchesa_the_black_rose(int player, int card, event_t event)
 {
+  /* Marchesa, the Black Rose	|1|U|B|R
+   * Legendary Creature - Human Wizard 3/3
+   * Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
+   * Other creatures you control have dethrone.
+   * Whenever a creature you control with a +1/+1 counter on it dies, return that card to the battlefield under your control at the beginning of the next end step. */
+
   card_instance_t *instance;
   int c;
   card_instance_t *existing_legacy;
@@ -2673,13 +2772,12 @@ int card_marchesa_the_black_rose(int player, int card, event_t event)
 }
 
 int card_marchesas_smuggler(int player, int card, event_t event, int clr, int pow, int tou, int key, int s_key){
-	/*
-	  Marchesa's Smuggler |U|R
-	  Creature - Human Rogue
-	  Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
-	  1UR: Target creature you control gains haste until end of turn and can't be blocked this turn.
-	  1/1
-	*/
+  /* Marchesa's Smuggler |U|R
+   * 	  Creature - Human Rogue
+   * 	  Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
+   * 	  1UR: Target creature you control gains haste until end of turn and can't be blocked this turn.
+   * 	  1/1 */
+
 	dethrone(player, card, event);
 
 	if( ! IS_GAA_EVENT(event) ){
@@ -2702,6 +2800,10 @@ int card_marchesas_smuggler(int player, int card, event_t event, int clr, int po
 }
 
 int card_selvala_explorer_returned(int player, int card, event_t event){
+  /* Selvala, Explorer Returned	|1|G|W
+   * Legendary Creature - Elf Scout 2/4
+   * Parley - |T: Each player reveals the top card of their library. For each nonland card revealed this way, add |G and you gain 1 life. Then each player draws a card. (Activate only as an instant.) */
+
 	/*
 	  Selvala, Explorer Returned 1GW
 	  Legendary Creature - Elf Scout
@@ -2734,12 +2836,10 @@ Flying, first strike
 */
 
 int card_wood_sage(int player, int card, event_t event){
-	/*
-	  Wood Sage |U|G REPRINT
-	  Creature - Human Druid
-	  T: Name a creature card. Reveal the top four cards of your library and put all of them with that name into your hand. Put the rest into your graveyard.
-	  1/1
-	*/
+  /* Wood Sage |U|G REPRINT
+   * 	  Creature - Human Druid
+   * 	  T: Name a creature card. Reveal the top four cards of your library and put all of them with that name into your hand. Put the rest into your graveyard.
+   * 	  1/1 */
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		int *deck = deck_ptr[player];
@@ -2816,7 +2916,6 @@ Flying
 Paliano's creations provide ample opportunities to plot the downfall of a neighbor.
 2/1
 
-
 Cogwork Tracker |4
 Artifact Creature - Hound Construct
 Reveal Cogwork Tracker as you draft it and note the player who passed it to you.
@@ -2860,11 +2959,10 @@ During the draft, you may turn Whispergear Sneak face down. If you do, look at a
 */
 
 int card_reito_lantern(int player, int card, event_t event){
-	/*
-	  Reito Lantern |2 REPRINT
-	  Artifact
-	  3: Put target card from a graveyard on the bottom of its owner's library.
-	*/
+  /* Reito Lantern |2 REPRINT
+   * 	  Artifact
+   * 	  3: Put target card from a graveyard on the bottom of its owner's library. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2885,12 +2983,11 @@ int card_reito_lantern(int player, int card, event_t event){
 }
 
 int card_runed_servitor(int player, int card, event_t event){
-	/*
-	  Runed Servitor |2 REPRINT
-	  Artifact Creature - Construct
-	  When Runed Servitor dies, each player draws a card.
-	  2/2
-	*/
+  /* Runed Servitor |2 REPRINT
+   * 	  Artifact Creature - Construct
+   * 	  When Runed Servitor dies, each player draws a card.
+   * 	  2/2 */
+
 	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		draw_cards(player, 1);
 		draw_cards(1-player, 1);
@@ -2900,13 +2997,12 @@ int card_runed_servitor(int player, int card, event_t event){
 }
 
 int card_silent_arbiter(int player, int card, event_t event){
-	/*
-	  Silent Arbiter |4 REPRINT
-	  Artifact Creature - Construct
-	  No more than one creature can attack each combat.
-	  No more than one creature can block each combat.
-	  1/5
-	*/
+  /* Silent Arbiter |4 REPRINT
+   * 	  Artifact Creature - Construct
+   * 	  No more than one creature can attack each combat.
+   * 	  No more than one creature can block each combat.
+   * 	  1/5 */
+
 	if( ! is_humiliated(player, card, AL_STATIC) ){
 		no_more_than_x_creatures_can_attack(player, card, event, ANYBODY, 1);
 		no_more_than_x_creatures_can_block(player, card, event, ANYBODY, 1);
@@ -2916,11 +3012,10 @@ int card_silent_arbiter(int player, int card, event_t event){
 }
 
 int card_spectral_searchlight(int player, int card, event_t event){
-	/*
-	  Spectral Searchlight |3 REPRINT
-	  Artifact
-	  T: Choose a player. That player adds one mana of any color he or she chooses to his or her mana pool.
-	*/
+  /* Spectral Searchlight |3 REPRINT
+   * 	  Artifact
+   * 	  T: Choose a player. That player adds one mana of any color he or she chooses to his or her mana pool. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2962,6 +3057,10 @@ int card_spectral_searchlight(int player, int card, event_t event){
 }
 
 int card_vedalken_orrery(int player, int card, event_t event){
+  /* Vedalken Orrery	|4
+   * Artifact
+   * You may cast spells as though they had flash. */
+
 	// to insert
 	// Also code for Leyline of Anticipation
 	/*

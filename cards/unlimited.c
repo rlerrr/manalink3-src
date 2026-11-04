@@ -269,10 +269,6 @@ int lace(int player, int card, event_t event, int color_test)
   return 0;
 }
 
-
-
-
-
 void damage_enchanted_permanent_controller_at_upkeep(int player, int card, event_t event, int dmg){
 
 	if( ! is_humiliated(player, card, AL_TRIG) && get_card_instance(player, card)->damage_target_player > -1 ){
@@ -843,12 +839,14 @@ Enchanted creature has protection from |Sblack. This effect doesn't remove ~. */
 
 int card_blessing(int player, int card, event_t event)
 {
-  // 0x4b9d20.  Since the function at 0x4af110 checks for it by address, 0x4b9d20 jumps here; don't change the address in ct_all.csv to this.
-
   /* Blessing	|W|W
    * Enchantment - Aura
    * Enchant creature
    * |W: Enchanted creature gets +1/+1 until end of turn. */
+
+  // 0x4b9d20.  Since the function at 0x4af110 checks for it by address, 0x4b9d20 jumps here; don't change the address in ct_all.csv to this.
+
+
 
 	if (event == EVENT_SHOULD_AI_PLAY){
 	    ai_modifier += (get_card_instance(player, card)->damage_target_player != player) ? 0 : (player == AI ? 12 : -12) * landsofcolor_controlled[player][COLOR_WHITE];
@@ -1180,11 +1178,13 @@ Activate this ability only during your upkeep. */
 
 int card_clone(int player, int card, event_t event)
 {
-  // 0x451cf0
-
   /* Clone	|3|U
    * Creature - Shapeshifter 0/0
    * You may have ~ enter the battlefield as a copy of any creature on the battlefield. */
+
+  // 0x451cf0
+
+
   // Used externally
 
   enters_the_battlefield_as_copy_of_any_creature(player, card, event);
@@ -1274,7 +1274,6 @@ Sorcery
 Remove ~ from your deck before playing if you're not playing for ante.
 Discard your hand, ante the top card of your library, then draw seven cards. */
 
-
 int card_control_magic(int player, int card, event_t event)
 {
   /* CARD_ID_CONTROL_MAGIC	44
@@ -1351,6 +1350,9 @@ Counter target spell. */
 }
 
 int card_craw_wurm(int player, int card, event_t event ){
+  /* Craw Wurm	|4|G|G
+   * Creature - Wurm 6/4 */
+
 	// original code : 00401000
 	// This hack was used for the Wurm token when we had the 2000 card limit, not it's useless. This code pointer could be recycled.
 	if( get_special_infos(player, card) == 66 ){
@@ -2153,7 +2155,6 @@ When ~ enters the battlefield, if enchanted creature has flying, ~ deals 2 damag
 	return vanilla_aura(player, card, event, 1-player);
 }
 
-
 int card_earthquake(int player, int card, event_t event){
 /* CARD_ID_EARTHQUAKE	75
 Earthquake	|X|R
@@ -2180,6 +2181,12 @@ Sorcery
 
 int card_evil_presence(int player, int card, event_t event)
 {
+  /* CARD_ID_EVIL_PRESENCE	77
+   * Evil Presence	|B
+   * Enchantment - Aura
+   * Enchant land
+   * Enchanted land is |Ha Swamp. */
+
   int result;
   result = enchanted_land_is_basic_land_type(player, card, event, SUBTYPE_SWAMP, 1, NULL);
   return result;
@@ -2259,12 +2266,14 @@ int card_farmstead(int player, int card, event_t event){
 
 int card_fastbond(int player, int card, event_t event)
 {
-  // 0x4316C0
-
   /* Fastbond	|G
    * Enchantment
    * You may play any number of additional lands on each of your turns.
    * Whenever you play a land, if it wasn't the first land you played this turn, ~ deals 1 damage to you. */
+
+  // 0x4316C0
+
+
    
    if( event == EVENT_CAN_ACTIVATE){
 	   return 0;
@@ -2314,6 +2323,9 @@ At the beginning of the upkeep of enchanted enchantment's controller, ~ deals 1 
 }
 
 int card_fire_elemental(int player, int card, event_t event ){
+  /* Fire Elemental	|3|R|R
+   * Creature - Elemental 5/4 */
+
 	// original code : 00401000
 	// This hack was used for the Elemental token when we had the 2000 card limit, not it's useless. This code pointer could be recycled.
 
@@ -2331,13 +2343,15 @@ int card_fire_elemental(int player, int card, event_t event ){
 }
 
 int card_fireball(int player, int card, event_t event){
+  /* Fireball	|X|R	0x200566f
+   * Sorcery
+   * This spell costs |1 more to cast for each target beyond the first.
+   * ~ deals X damage divided evenly, rounded down, among any number of targets. */
+
 	// Until the special window used for paying the manacost is decoded, let's leave it in this way.
 	// int fireball_dialog@0x470E30(int player, int iid_fireball, int generic_mana_available_for_x, int number_of_targets_available, int* out_generic_mana_selected, int* out_number_of_targets_selected, int* amount of damage to deal to each target).  Returns 0 if the cancel button was selected (but doesn't set spell_fizzled to 1); returns 1 if OK was selected.
 	// !!!DOM: target creature or player => any target
-	/* Fireball	|X|R	0x200566f
-	 * Sorcery
-	 * This spell costs |1 more to cast for each target beyond the first.
-	 * ~ deals X damage divided evenly, rounded down, among any number of targets. */
+
 	return generic_x_spell_recoded(player, card, event, card_fireball_exe(player, card, event));
 }
 
@@ -2385,6 +2399,10 @@ Enchanted creature has flying. */
 }
 
 int card_fog(int player, int card, event_t event){
+  /* Fog	|G
+   * Instant
+   * Prevent all combat damage that would be dealt this turn. */
+
 	// Used externally
 	// original code : 004A3700
 	// also code for Holy Day and Darkness
@@ -2490,6 +2508,11 @@ Copy target instant or sorcery spell, except that the copy is |Sred. You may cho
 
 int card_fungusaur(int player, int card, event_t event)
 {
+  /* CARD_ID_FUNGUSAUR	94
+   * Fungusaur	|3|G
+   * Creature - Fungus Lizard 2/2
+   * Whenever ~ is dealt damage, put a +1/+1 counter on it. */
+
   card_instance_t *instance;
   int result;
 
@@ -2659,6 +2682,12 @@ Artifact
 
 int card_gloom2(int player, int card, event_t event)
 {
+  /* CARD_ID_GLOOM	100
+   * Gloom	|2|B
+   * Enchantment
+   * |SWhite spells cost |3 more to cast.
+   * Activated abilities of |Swhite enchantments cost |3 more to activate. */
+
   int result;
   card_instance_t *instance;
   unsigned int spell_color;
@@ -2747,6 +2776,9 @@ Flying
 }
 
 int card_grey_ogre(int player, int card, event_t event ){
+  /* Gray Ogre	|2|R
+   * Creature - Ogre 2/2 */
+
 	// original code : 00401000
 
 	// This was the old hack for Ogre token when we had the 2000 card limit. Now it's unused so the code pointer could be recycled
@@ -2815,7 +2847,6 @@ static int guardian_angel_legacy(int player, int card, event_t event)
   return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION,
                                    MANACOST_X(1), 0, &td, "TARGET_DAMAGE");
 }
-
 
 int card_guardian_angel(int player, int card, event_t event)
 {
@@ -2961,13 +2992,15 @@ that player divides that creature's combat damage, not its controller, among any
 
 int card_holy_armor(int player, int card, event_t event)
 {
-  // 0x4b9910.  Since the function at 0x4af110 checks for it by address, 0x4b9910 jumps here; don't change the address in ct_all.csv to this.
-
   /* Holy Armor	|W
    * Enchantment - Aura
    * Enchant creature
    * Enchanted creature gets +0/+2.
    * |W: Enchanted creature gets +0/+1 until end of turn. */
+
+  // 0x4b9910.  Since the function at 0x4af110 checks for it by address, 0x4b9910 jumps here; don't change the address in ct_all.csv to this.
+
+
 
   if (event == EVENT_SHOULD_AI_PLAY)
 	// Originally +/- 12*lands, and didn't check controller of enchanted creature.
@@ -3005,6 +3038,9 @@ Enchanted creature gets +1/+2. */
 }
 
 int card_howl_from_beyond(int player, int card, event_t event){
+  /* Howl from Beyond	|X|B
+   * Instant
+   * Target creature gets +X/+0 until end of turn. */
 
 	// 0x4a3310
 
@@ -3060,11 +3096,13 @@ At the beginning of each player's draw step, if ~ is untapped, that player draws
 // Hurloon Minotaur --> vanilla
 
 int card_hurricane(int player, int card, event_t event){
+  /* CARD_ID_HURRICANE	116
+   * Hurricane	|X|G
+   * Sorcery
+   * ~ deals X damage to each creature with flying and each player. */
+
 	// 0x41c940
-/* CARD_ID_HURRICANE	116
-Hurricane	|X|G
-Sorcery
-~ deals X damage to each creature with flying and each player. */
+
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
@@ -3079,12 +3117,14 @@ Sorcery
 
 int card_hypnotic_specter(int player, int card, event_t event)
 {
-  // 0x4c4210
-
   /* Hypnotic Specter	|1|B|B
    * Creature - Specter 2/2
    * Flying
    * Whenever ~ deals damage to an opponent, that player discards a card at random. */
+
+  // 0x4c4210
+
+
 
   whenever_i_deal_damage_to_a_player_he_discards_a_card(player, card, event, DDBM_MUST_DAMAGE_OPPONENT, 1);
   return 0;
@@ -3115,11 +3155,13 @@ Destroy target land. */
 }
 
 int card_icy_manipulator(int player, int card, event_t event){
+  /* CARD_ID_ICY_MANIPULATOR	119
+   * Icy Manipulator	|4
+   * Artifact
+   * |1, |T: Tap target artifact, creature, or land. */
+
 	// Used externally
-/* CARD_ID_ICY_MANIPULATOR	119
-Icy Manipulator	|4
-Artifact
-|1, |T: Tap target artifact, creature, or land. */
+
 
 	if (!IS_GAA_EVENT(event)  ){
 		return 0;
@@ -3180,16 +3222,350 @@ static int effect_illusionary_mask(int player, int card, event_t event){
 }
 
 int hack_illusionary_mask_event = EVENT_CAN_ACTIVATE;
+/* ManalinkEh 2022: 0x24bae70; original cards/unlimited.c:210. */
+char *black_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card)
+{
+  card_instance_t *damage;
+  card_instance_t *source_permanent;
+  unsigned int required_color;
+  int result;
+  unsigned int source_color;
+
+  damage = get_card_instance(player, card);
+  if (damage->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((damage->damage_target_player == who_chooses) && (damage->damage_target_card == -1))
+  {
+    source_color = (unsigned int)damage->initial_color;
+    source_permanent = in_play((int)damage->damage_source_player, damage->damage_source_card);
+    if (source_permanent != NULL)
+    {
+      source_color = get_color((int)damage->damage_source_player, damage->damage_source_card);
+    }
+    required_color = get_sleighted_color_test(targeting_player, targeting_card, 2);
+    if ((required_color & source_color) == 0)
+    {
+      return "illegal color of damage source";
+    }
+    result = is_what((int)damage->damage_source_player, damage->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags((int)damage->damage_source_player,
+                                                       damage->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
+}
+
+/* ManalinkEh 2022: 0x24baf60; original cards/unlimited.c:235. */
+char *blue_damage_source(int who_chooses, int player, int card, int targeting_player,
+                         int targeting_card)
+{
+  card_instance_t *damage;
+  card_instance_t *source_permanent;
+  unsigned int required_color;
+  int result;
+  unsigned int source_color;
+
+  damage = get_card_instance(player, card);
+  if (damage->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((damage->damage_target_player == who_chooses) && (damage->damage_target_card == -1))
+  {
+    source_color = (unsigned int)damage->initial_color;
+    source_permanent = in_play((int)damage->damage_source_player, damage->damage_source_card);
+    if (source_permanent != NULL)
+    {
+      source_color = get_color((int)damage->damage_source_player, damage->damage_source_card);
+    }
+    required_color = get_sleighted_color_test(targeting_player, targeting_card, 4);
+    if ((required_color & source_color) == 0)
+    {
+      return "illegal color of damage source";
+    }
+    result = is_what((int)damage->damage_source_player, damage->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags((int)damage->damage_source_player,
+                                                       damage->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
+}
+
+/* ManalinkEh 2022: 0x24bb050; original cards/unlimited.c:260. */
+char *green_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card)
+{
+  card_instance_t *damage;
+  card_instance_t *source_permanent;
+  unsigned int required_color;
+  int result;
+  unsigned int source_color;
+
+  damage = get_card_instance(player, card);
+  if (damage->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((damage->damage_target_player == who_chooses) && (damage->damage_target_card == -1))
+  {
+    source_color = (unsigned int)damage->initial_color;
+    source_permanent = in_play((int)damage->damage_source_player, damage->damage_source_card);
+    if (source_permanent != NULL)
+    {
+      source_color = get_color((int)damage->damage_source_player, damage->damage_source_card);
+    }
+    required_color = get_sleighted_color_test(targeting_player, targeting_card, 8);
+    if ((required_color & source_color) == 0)
+    {
+      return "illegal color of damage source";
+    }
+    result = is_what((int)damage->damage_source_player, damage->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags((int)damage->damage_source_player,
+                                                       damage->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
+}
+
+/* ManalinkEh 2022: 0x24bb140; original cards/unlimited.c:285. */
+char *red_damage_source(int who_chooses, int player, int card, int targeting_player,
+                        int targeting_card)
+{
+  card_instance_t *damage;
+  card_instance_t *source_permanent;
+  unsigned int required_color;
+  int result;
+  unsigned int source_color;
+
+  damage = get_card_instance(player, card);
+  if (damage->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((damage->damage_target_player == who_chooses) && (damage->damage_target_card == -1))
+  {
+    source_color = (unsigned int)damage->initial_color;
+    source_permanent = in_play((int)damage->damage_source_player, damage->damage_source_card);
+    if (source_permanent != NULL)
+    {
+      source_color = get_color((int)damage->damage_source_player, damage->damage_source_card);
+    }
+    required_color = get_sleighted_color_test(targeting_player, targeting_card, 0x10);
+    if ((required_color & source_color) == 0)
+    {
+      return "illegal color of damage source";
+    }
+    result = is_what((int)damage->damage_source_player, damage->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags((int)damage->damage_source_player,
+                                                       damage->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
+}
+
+/* ManalinkEh 2022: 0x24bb230; original cards/unlimited.c:310. */
+char *white_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card)
+{
+  card_instance_t *damage;
+  card_instance_t *source_permanent;
+  unsigned int required_color;
+  int result;
+  unsigned int source_color;
+
+  damage = get_card_instance(player, card);
+  if (damage->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((damage->damage_target_player == who_chooses) && (damage->damage_target_card == -1))
+  {
+    source_color = (unsigned int)damage->initial_color;
+    source_permanent = in_play((int)damage->damage_source_player, damage->damage_source_card);
+    if (source_permanent != NULL)
+    {
+      source_color = get_color((int)damage->damage_source_player, damage->damage_source_card);
+    }
+    required_color = get_sleighted_color_test(targeting_player, targeting_card, 0x20);
+    if ((required_color & source_color) == 0)
+    {
+      return "illegal color of damage source";
+    }
+    result = is_what((int)damage->damage_source_player, damage->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags((int)damage->damage_source_player,
+                                                       damage->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
+}
+
+// ironroot trefolk --> vanilla
+
+// island --> better leave it hardcoded
+
+/* ManalinkEh 2022: 0x24bfd80; original cards/unlimited.c:1049. */
+int card_celestial_prism(int player, int card, event_t event)
+{
+  /* Celestial Prism	|3
+   * Artifact
+   * |2, |T: Add one mana of any color. */
+
+  int result;
+  card_instance_t *instance;
+  color_t color;
+
+  if (event == EVENT_COUNT_MANA)
+  {
+    if (((((card == affected_card) && (player == affected_card_controller)) &&
+          (result = is_tapped(player, card), result == 0)) &&
+         ((result = is_animated_and_sick(player, card),
+           result == 0 && (result = can_produce_mana(player, card), result != 0)))) &&
+        (result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0), result != 0))
+    {
+      declare_mana_available_hex(player, 0x3e, 1);
+      declare_mana_available(player, 0, -1);
+    }
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = is_tapped(player, card);
+    if (((result == 0) && (result = is_animated_and_sick(player, card), result == 0)) &&
+        ((result = can_produce_mana(player, card),
+          result != 0 && ((result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0),
+                           result != 0 && (instance = get_card_instance(player, card),
+                                           instance->targets[1].player != 1))))))
+    {
+      return 1;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+
+    instance = get_card_instance(player, card);
+    color = choose_mana_all_one_color(player, COLOR_TEST_ANY_COLORED, 1, "What kind of mana?",
+                                           COLOR_TEST_COLORLESS);
+    if (color == ~COLOR_COLORLESS)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    instance->targets[1].player = 1;
+    charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0);
+    instance->targets[1].player = 0;
+    if (spell_fizzled != 1)
+    {
+      produce_mana_tapped(player, card, color, 1);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x24c3440; original cards/unlimited.c:2322. */
+int enchanted_land_is_basic_land_type(int player, int card, event_t event, subtype_t subtype,
+                                      int hackable, target_definition_t *td)
+{
+  card_instance_t *aura;
+  int result;
+  card_instance_t *instance;
+  target_definition_t td_default;
+
+  aura = in_play(player, card);
+
+  if (((aura != NULL) &&
+       (aura = get_card_instance(player, card), -1 < aura->damage_target_player)) &&
+      (aura = get_card_instance(player, card), event == EVENT_CHANGE_TYPE))
+  {
+    if (aura->damage_target_card != affected_card)
+    {
+      return 0;
+    }
+    if (aura->damage_target_player != affected_card_controller)
+    {
+      return 0;
+    }
+
+    instance = get_card_instance((int)aura->damage_target_player, aura->damage_target_card);
+    if (hackable != 0)
+    {
+      subtype = get_hacked_subtype(player, card, subtype);
+    }
+    result = land_into_new_basic_land_type(instance->internal_card_id, subtype);
+    if ((cards_data[instance->internal_card_id].type == '\x01') &&
+        (instance->internal_card_id == result))
+    {
+      aura->dummy3 = event_result;
+      return 0;
+    }
+    event_result = aura->dummy3;
+    if ((cards_data[event_result].type == '\x01') && (event_result == result))
+    {
+      return 0;
+    }
+    event_result = result;
+    aura->dummy3 = result;
+    return 0;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card || player != affected_card_controller)
+      return 0;
+  }
+  else if (event != EVENT_CAN_CAST && event != EVENT_RESOLVE_SPELL &&
+           event != EVENT_CAN_CHANGE_TARGET && event != EVENT_CHANGE_TARGET)
+    return 0;
+  if (td == NULL)
+  {
+    default_target_definition(player, card, &td_default, 1);
+    td = &td_default;
+  }
+  if (event == EVENT_CAST_SPELL && player == affected_card_controller)
+  {
+    aura = get_card_instance(player, card);
+    generic_spell(player, card, EVENT_CAST_SPELL, 1, td, "TARGET_LAND", 1, NULL);
+    if (spell_fizzled == 1)
+    {
+      return 0;
+    }
+    result = has_subtype(aura->targets[0].player, aura->targets[0].card, subtype);
+    if ((result == 0) && (aura->targets[0].player != player))
+    {
+      ai_modifier = ai_modifier + 0x18;
+      return 0;
+    }
+    ai_modifier = ai_modifier + -0x18;
+    return 0;
+  }
+  return targeted_aura(player, card, event, td, "TARGET_LAND");
+}
+
 int card_illusionary_mask(int player, int card, event_t event){
-/*
-Illusionary Mask |2
-Artifact
-{X}: You may choose a creature card in your hand whose mana cost could be paid by some amount of, or all of, the mana you spent on {X}.
-	If you do, you may cast that card face down as a 2/2 creature spell without paying its mana cost.
-	If the creature that spell becomes as it resolves has not been turned face up and would assign or deal damage, be dealt damage, or
-	become tapped, instead it's turned face up and assigns or deals damage, is dealt damage, or becomes tapped. Activate this ability only
-	any time you could cast a sorcery.
-*/
+  /* Illusionary Mask |2
+   * Artifact
+   * {X}: You may choose a creature card in your hand whose mana cost could be paid by some amount of, or all of, the mana you spent on {X}.
+   * 	If you do, you may cast that card face down as a 2/2 creature spell without paying its mana cost.
+   * 	If the creature that spell becomes as it resolves has not been turned face up and would assign or deal damage, be dealt damage, or
+   * 	become tapped, instead it's turned face up and assigns or deals damage, is dealt damage, or becomes tapped. Activate this ability only
+   * 	any time you could cast a sorcery. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -3291,12 +3667,14 @@ Enchanted creature can attack as though it had haste.
 }
 
 int card_invisibility(int player, int card, event_t event){
+  /* CARD_ID_INVISIBILITY	122
+   * Invisibility	|U|U
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature can't be blocked except by Walls. */
+
   // 0x431c40
-/* CARD_ID_INVISIBILITY	122
-Invisibility	|U|U
-Enchantment - Aura
-Enchant creature
-Enchanted creature can't be blocked except by Walls. */
+
 
 	if(event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t* instance = get_card_instance(player, card);
@@ -3315,11 +3693,13 @@ Enchanted creature can't be blocked except by Walls. */
 }
 
 int card_ironclaw_orcs(int player, int card, event_t event){
+  /* CARD_ID_IRONCLAW_ORCS	124
+   * Ironclaw Orcs	|1|R
+   * Creature - Orc 2/2
+   * ~ can't block creatures with power 2 or greater. */
+
 	// to insert
-/* CARD_ID_IRONCLAW_ORCS	124
-Ironclaw Orcs	|1|R
-Creature - Orc 2/2
-~ can't block creatures with power 2 or greater. */
+
 
 	if( event == EVENT_BLOCK_LEGALITY && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) &&
 		get_power(attacking_card_controller, attacking_card) > 1 )
@@ -3338,12 +3718,13 @@ Whenever a player casts a |Sred spell, you may pay |1. If you do, you gain 1 lif
 	return lifegaining_charm(player, card, event, ANYBODY, COLOR_TEST_RED, 1+player, 1);
 }
 
-// ironroot trefolk --> vanilla
-
-// island --> better leave it hardcoded
-
 int card_island_sanctuary(int player, int card, event_t event)
 {
+  /* Island Sanctuary	|1|W
+   * Enchantment
+   * If you would draw a card during your draw step, instead you may skip that draw. If you do, until your next turn, you can't be attacked except by creatures
+   * with flying and/or |H2islandwalk. */
+
   enum
   {
     SANC_AI_WILL_ACTIVATE = 1,
@@ -3556,12 +3937,14 @@ Artifact
 }
 
 int card_juggernaut(int player, int card, event_t event){
+  /* CARD_ID_JUGGERNAUT	132
+   * Juggernaut	|4
+   * Artifact Creature - Juggernaut 5/3
+   * ~ attacks each turn if able.
+   * ~ can't be blocked by Walls. */
+
 	// original code : 00453C40
-/* CARD_ID_JUGGERNAUT	132
-Juggernaut	|4
-Artifact Creature - Juggernaut 5/3
-~ attacks each turn if able.
-~ can't be blocked by Walls. */
+
 
 	if( ! is_humiliated(player, card, AL_STATIC) ){
 		attack_if_able(player, card, event);
@@ -3625,6 +4008,11 @@ At the beginning of each player's upkeep, ~ deals damage to that player equal to
 
 int card_keldon_warlord(int player, int card, event_t event)
 {
+  /* CARD_ID_KELDON_WARLORD	135
+   * Keldon Warlord	|2|R|R
+   * Creature - Human Barbarian 100/100
+   * ~'s power and toughness are each equal to the number of non-Wall creatures you control. */
+
   int newval;
   test_definition_t this_test;
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
@@ -3885,11 +4273,10 @@ int card_lightning_bolt(int player, int card, event_t event){
 }
 
 int card_living_lands(int player, int card, event_t event){
-	/*
-	  Living Lands |3|G
-	  Enchantment
-	  All Forests are 1/1 creatures that are still lands.
-	*/
+  /* Living Lands |3|G
+   * 	  Enchantment
+   * 	  All Forests are 1/1 creatures that are still lands. */
+
 	if( event == EVENT_CHANGE_TYPE ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_LAND);
@@ -3901,13 +4288,13 @@ int card_living_lands(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
+// Mahamothi Djinn --> vanilla
+
 int card_living_wall(int player, int card, event_t event){
-	/*
-	  Living Wall |4
-	  Artifact Creature - Wall 0/6
-	  Defender (This creature can't attack.)
-	  {1}: Regenerate Living Wall.
-	*/
+  /* Living Wall |4
+   * 	  Artifact Creature - Wall 0/6
+   * 	  Defender (This creature can't attack.)
+   * 	  {1}: Regenerate Living Wall. */
 
 	return regeneration(player, card, event, MANACOST_X(1));
 }
@@ -3925,6 +4312,12 @@ Other Merfolk creatures get +1/+1 and have |H2islandwalk. (They can't be blocked
 
 int card_living_artifact(int player, int card, event_t event)
 {
+  /* Living Artifact	|G
+   * Enchantment - Aura
+   * Enchant artifact
+   * Whenever you're dealt damage, put that many vitality counters on ~.
+   * At the beginning of your upkeep, you may remove a vitality counter from ~. If you do, you gain 1 life. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -4013,6 +4406,8 @@ All creatures able to block enchanted creature do so. */
   return generic_aura(player, card, event, player, 0,0, 0,SP_KEYWORD_LURE, 0,0,0);
 }
 
+// Merfolk of the Pearl Trident, Mesa Pegasus --> Vanilla
+
 int ai_can_hack_card(int player, int card){
 	int colors_to_hack = cards_ptr[get_id(player, card)]->hack_colors;
 	if( ! check_special_flags3(player, card, SF3_HARDCODED_HACK_WORDS_REPLACED) ){
@@ -4021,6 +4416,10 @@ int ai_can_hack_card(int player, int card){
 	}
 	return colors_to_hack;
 }
+
+// Mons's Goblin Raiders --> vanilla
+
+// Mountain --> hardcoded, for now
 
 int card_magical_hack(int player, int card, event_t event){
 /* CARD_ID_MAGICAL_HACK	153
@@ -4087,15 +4486,15 @@ Change the text of target spell or permanent by replacing all instances of one b
 	return 0;
 }
 
-// Mahamothi Djinn --> vanilla
-
 int card_mana_flare(int player, int card, event_t event){
+  /* CARD_ID_MANA_FLARE	155
+   * Mana Flare	|2|R
+   * Enchantment
+   * Whenever a player taps a land for mana, that player adds one mana to his or her mana pool of any type that land produced. */
+
 	// Used externally
 	//0x4B8940; also code for Heartbeat of Spring, Zhur-Taa Ancient
-/* CARD_ID_MANA_FLARE	155
-Mana Flare	|2|R
-Enchantment
-Whenever a player taps a land for mana, that player adds one mana to his or her mana pool of any type that land produced. */
+
 
 
 	if( ! is_humiliated(player, card, AL_TRIG) ){
@@ -4339,8 +4738,6 @@ Creatures with power 3 or greater don't untap during their controllers' untap st
 	return 0;
 }
 
-// Merfolk of the Pearl Trident, Mesa Pegasus --> Vanilla
-
 int card_mind_twist(int player, int card, event_t event){
 /* CARD_ID_MIND_TWIST	162
 Mind Twist	|X|B
@@ -4366,10 +4763,6 @@ Target player discards X cards at random. */
 
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_X_SPELL, &td, "TARGET_PLAYER", 1, NULL);
 }
-
-// Mons's Goblin Raiders --> vanilla
-
-// Mountain --> hardcoded, for now
 
 int card_mox_emerald(int player, int card, event_t event)
 {
@@ -4418,6 +4811,8 @@ Look at the top three cards of target player's library, then put them back in an
 
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_X_SPELL, &td, "TARGET_PLAYER", 1, NULL);
 }
+
+// obsianus golem --> vanilla
 
 int card_nshadow(int player, int card, event_t event){
 /* CARD_ID_NETHER_SHADOW	171
@@ -4534,6 +4929,7 @@ Activate this ability only during an opponent's turn, before attackers are decla
   return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET|GAA_BEFORE_ATTACKERS|GAA_IN_OPPONENT_TURN, MANACOST_X(0), 0, &td, "ERHNAM_DJINN");
 }
 
+// pearled unicorn --> vanilla
 int card_nevinyrrals_disk(int player, int card, event_t event){
 /* CARD_ID_NEVINYRRALS_DISK	173
 Nevinyrral's Disk	|4
@@ -4555,6 +4951,11 @@ Artifact
 
 int card_nightmare2(int player, int card, event_t event)
 {
+  /* Nightmare	|5|B
+   * Creature - Nightmare Horse 100/100
+   * Flying
+   * ~'s power and toughness are each equal to the number of |H1Swamps you control. */
+
   int result;
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
@@ -4594,16 +4995,16 @@ Creature - Human Knight 3/3
 
 int card_northern_paladin(int player, int card, event_t event)
 {
-  // 0x4c6a70
-
   /* Northern Paladin	|2|W|W
    * Creature - Human Knight 3/3
    * |W|W, |T: Destroy target |Sblack permanent. */
 
+  // 0x4c6a70
+
+
+
   return northern_southern_paladin(player, card, event, COLOR_BLACK);
 }
-
-// obsianus golem --> vanilla
 
 int card_orcish_artillery(int player, int card, event_t event){
 	/* Goblin Artillery	|1|R|R	0x200c096
@@ -4631,6 +5032,8 @@ int card_orcish_artillery(int player, int card, event_t event){
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_ANY");
 }
+
+// phantom monster --> vanilla
 
 int card_orcish_oriflamme(int player, int card, event_t event){
 /* CARD_ID_ORCISH_ORIFLAMME	178
@@ -4676,7 +5079,8 @@ At the beginning of the upkeep of enchanted creature's controller, that player m
 	return disabling_aura(player, card, event);
 }
 
-// pearled unicorn --> vanilla
+// plains, plateau --> hardcoded, for now
+
 static const char* is_damaging_attached_creature(int who_chooses, int player, int card, int targeting_player, int targeting_card){
 	card_instance_t *instance = get_card_instance(player, card);
 	if( instance->internal_card_id == damage_card && instance->damage_target_player == targeting_player && instance->damage_target_card == targeting_card &&
@@ -4686,8 +5090,6 @@ static const char* is_damaging_attached_creature(int who_chooses, int player, in
 	}
 	return "must damage Personal Incarnation";
 }
-
-
 
 int pestilence_impl(int player, int card, event_t event, int sac_at_eot_if_no_creatures, color_t color)
 {
@@ -4791,6 +5193,13 @@ At the beginning of your upkeep, sacrifice ~ unless you pay |U. */
 
 int card_phantasmal_terrain(int player, int card, event_t event)
 {
+  /* CARD_ID_PHANTASMAL_TERRAIN	184
+   * Phantasmal Terrain	|U|U
+   * Enchantment - Aura
+   * Enchant land
+   * As ~ enters the battlefield, choose a basic land type.
+   * Enchanted land is the chosen type. */
+
   card_instance_t *instance;
   int result;
   int blt[5];
@@ -4822,8 +5231,6 @@ int card_phantasmal_terrain(int player, int card, event_t event)
   return enchanted_land_is_basic_land_type(player, card, event, instance->targets[1].player, 0, NULL);
 }
 
-// phantom monster --> vanilla
-
 int card_pirate_ship(int player, int card, event_t event){
 	/* Pirate Ship	|4|U	0x200c0af
 	 * Creature - Human Pirate 4/3
@@ -4836,6 +5243,11 @@ int card_pirate_ship(int player, int card, event_t event){
 
 int card_plague_rats(int player, int card, event_t event)
 {
+  /* CARD_ID_PLAGUE_RATS	187
+   * Plague Rats	|2|B
+   * Creature - Rat 100/100
+   * ~'s power and toughness are each equal to the number of creatures named ~ on the battlefield. */
+
   int newval;
   if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
       (player == affected_card_controller))
@@ -4846,7 +5258,7 @@ int card_plague_rats(int player, int card, event_t event)
   return 0;
 }
 
-// plains, plateau --> hardcoded, for now
+// Raging River --> hardcoded, for now. Or Korath, you could do this if you want
 
 int card_power_leak(int player, int card, event_t event){
 /* CARD_ID_POWER_LEAK	190
@@ -4917,7 +5329,6 @@ At the beginning of each player's upkeep, ~ deals X damage to that player, where
 
 	return global_enchantment(player, card, event);
 }
-
 
 int card_power_sink(int player, int card, event_t event){
 	/* Power Sink	|X|U
@@ -5031,6 +5442,10 @@ int card_psionic_blast(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_ANY", 1, NULL);
 }
 
+/* Resurrection	|2|W|W => portal_1_2_3k.c:Breath of Life
+ * Sorcery
+ * Return target creature card from your graveyard to the battlefield. */
+
 int card_psychic_venom(int player, int card, event_t event){
 /* CARD_ID_PSYCHIC_VENOM	195
 Psychic Venom	|1|U
@@ -5066,7 +5481,7 @@ Target spell or permanent becomes |Swhite. (Mana symbols on that permanent remai
 	return lace(player, card, event, COLOR_TEST_WHITE);
 }
 
-// Raging River --> hardcoded, for now. Or Korath, you could do this if you want
+// Roc of Kher Ridges --> vanilla
 
 int card_raise_dead(int player, int card, event_t event){
 /* CARD_ID_RAISE_DEAD	198
@@ -5182,10 +5597,6 @@ Return target card from your graveyard to your hand. */
 	return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &this_test);
 }
 
-/* Resurrection	|2|W|W => portal_1_2_3k.c:Breath of Life
- * Sorcery
- * Return target creature card from your graveyard to the battlefield. */
-
 int card_reverse_damage(int player, int card, event_t event){
 /* CARD_ID_REVERSE_DAMAGE	204
 Reverse Damage	|1|W|W
@@ -5215,6 +5626,10 @@ The next time a source of your choice would deal damage to you this turn, preven
 	return generic_spell(player, card, event, GS_DAMAGE_PREVENTION | GS_CAN_TARGET, &td, "TARGET_DAMAGE", 1, NULL);
 }
 
+// savannah --> hardcoded, for now
+
+// savannah lions, scathe zombies --> vanilla
+
 int card_righteousness(int player, int card, event_t event){
 /* CARD_ID_RIGHTEOUSNESS	205
 Righteousness	|W
@@ -5241,7 +5656,9 @@ Target blocking creature gets +7/+7 until end of turn. */
 	return vanilla_pump(player, card, event, &td, 7, 7, 0, 0);
 }
 
-// Roc of Kher Ridges --> vanilla
+// scrubland --> hardcoded, for now
+
+// scryb sprites --> vanilla
 
 static const char* target_must_be_damage_targeting_this_rock_hydra(int who_chooses, int player, int card, int targeting_player, int targeting_card)
 {
@@ -5253,6 +5670,13 @@ static const char* target_must_be_damage_targeting_this_rock_hydra(int who_choos
 
 int card_rock_hydra(int player, int card, event_t event)
 {
+  /* Rock Hydra	|X|R|R
+   * Creature - Hydra 0/0
+   * This creature enters with X +1/+1 counters on it.
+   * For each 1 damage that would be dealt to this creature, if it has a +1/+1 counter on it, remove a +1/+1 counter from it and prevent that 1 damage.
+   * |R: Prevent the next 1 damage that would be dealt to this creature this turn.
+   * |R|R|R: Put a +1/+1 counter on this creature. Activate only during your upkeep. */
+
   // 00454ed0
 
   /* ~ enters the battlefield with X +1/+1 counters on it.
@@ -5412,6 +5836,8 @@ Creature - Human Assassin 1/1
 									&td, "Select target tapped creature.");
 }
 
+// shanodin dryads --> vanilla
+
 int card_sacrifice(int player, int card, event_t event){
 /* CARD_ID_SACRIFICE	210
 Sacrifice	|B
@@ -5450,6 +5876,11 @@ Add an amount of |B to your mana pool equal to the sacrificed creature's convert
 
 	return generic_spell(player, card, event, GS_SAC_CREATURE_AS_COST, NULL, NULL, 1, NULL);
 }
+
+/* Shivan Dragon	|4|R|R => fifth_dawn.c:Furnace Whelp
+ * Creature - Dragon 5/5
+ * Flying
+ * |R: ~ gets +1/+0 until end of turn. */
 
 int card_samite_healer(int player, int card, event_t event){
 	/* Alabaster Wall	|2|W	0x200c10e
@@ -5490,12 +5921,16 @@ int card_samite_healer(int player, int card, event_t event){
 									&td, "TARGET_DAMAGE");
 }
 
-// savannah --> hardcoded, for now
-
-// savannah lions, scathe zombies --> vanilla
+// sinkhole --> ice storm
 
 int card_scavenging_ghoul(int player, int card, event_t event)
 {
+  /* CARD_ID_SCAVENGING_GHOUL	215
+   * Scavenging Ghoul	|3|B
+   * Creature - Zombie 2/2
+   * At the beginning of each end step, put a corpse counter on ~ for each creature that died this turn.
+   * Remove a corpse counter from ~: Regenerate ~. */
+
   int result;
   if ((0 < creatures_dead_this_turn) &&
       ((event == EVENT_SHOULD_AI_PLAY || (result = eot_trigger(player, card, event), result != 0))))
@@ -5527,10 +5962,6 @@ int card_scavenging_ghoul(int player, int card, event_t event)
   }
   return 0;
 }
-
-// scrubland --> hardcoded, for now
-
-// scryb sprites --> vanilla
 
 int card_sea_serpent(int player, int card, event_t event){
 /* CARD_ID_SEA_SERPENT	218
@@ -5585,8 +6016,6 @@ Vigilance (Attacking doesn't cause this creature to tap.) */
 	return 0;
 }
 
-// shanodin dryads --> vanilla
-
 int card_shatter(int player, int card, event_t event ){
 /* CARD_ID_SHATTER	223
 Shatter	|1|R
@@ -5611,11 +6040,6 @@ Destroy target artifact. */
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_ARTIFACT", 1, NULL);
 }
-
-/* Shivan Dragon	|4|R|R => fifth_dawn.c:Furnace Whelp
- * Creature - Dragon 5/5
- * Flying
- * |R: ~ gets +1/+0 until end of turn. */
 
 int card_simulacrum(int player, int card, event_t event){
 /* CARD_ID_SIMULACRUM	225
@@ -5656,8 +6080,6 @@ You gain life equal to the damage dealt to you this turn. ~ deals damage to targ
 
 	return 0;
 }
-
-// sinkhole --> ice storm
 
 static int effect_sirens_call(int player, int card, event_t event)
 {
@@ -5722,12 +6144,11 @@ int ai_can_sleight_card(int player, int card)
 }
 
 int card_sleight_of_mind(int player, int card, event_t event){
-/*
-Sleight of Mind |U
-Instant
-Change the text of target spell or permanent by replacing all instances of one color word with another.
-(For example, you may change "target black spell" to "target blue spell." This effect lasts indefinitely.)
-*/
+  /* Sleight of Mind |U
+   * Instant
+   * Change the text of target spell or permanent by replacing all instances of one color word with another.
+   * (For example, you may change "target black spell" to "target blue spell." This effect lasts indefinitely.) */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -5798,13 +6219,17 @@ Players can't untap more than one creature during their untap steps. */
 	return global_enchantment(player, card, event);
 }
 
+// stone rain --> ice storm
+
 int card_sol_ring(int player, int card, event_t event)
 {
-  //0x424b30
-
   /* Sol Ring	|1
    * Artifact
    * |T: Add |2 to your mana pool. */
+
+  //0x424b30
+
+
   // Used externally
 
   if (event == EVENT_CAST_SPELL && affect_me(player, card))
@@ -5824,6 +6249,9 @@ int card_sol_ring(int player, int card, event_t event)
 
   return 0;
 }
+
+// sunglasses of urza --> hardcoded, for now
+// swamp --> hardcoded, for now
 
 static int soul_net_effect(int player, int card, event_t event)
 {
@@ -5909,6 +6337,8 @@ static int soul_net_effect(int player, int card, event_t event)
   return 0;
 }
 
+// taiga --> hardcoded, for now
+
 int card_soul_net(int player, int card, event_t event){
 /* CARD_ID_SOUL_NET	231
 Soul Net	|1
@@ -5968,12 +6398,13 @@ Whenever a creature dies, you may pay |1. If you do, you gain 1 life. */
 }
 
 int card_spell_blast(int player, int card, event_t event){
+  /* Spell Blast	|X|U
+   * Instant
+   * Counter target spell with converted mana cost X. */
 
 	// 0x40a740
 
-	/* Spell Blast	|X|U
-	 * Instant
-	 * Counter target spell with converted mana cost X. */
+
 
 #if 1
 	return generic_x_spell_recoded(player, card, event, card_spell_blast_exe(player, card, event));
@@ -6078,14 +6509,14 @@ Creature - Giant 3/4
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_UNTAPPED, MANACOST0, 0, &td, "TARGET_CREATURE");
 }
 
-// stone rain --> ice storm
-
 int card_stream_of_life(int player, int card, event_t event){
+  /* CARD_ID_STREAM_OF_LIFE	237
+   * Stream of Life	|X|G
+   * Sorcery
+   * Target player gains X life. */
+
 	// Original code : 0x41c300
-/* CARD_ID_STREAM_OF_LIFE	237
-Stream of Life	|X|G
-Sorcery
-Target player gains X life. */
+
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -6111,15 +6542,16 @@ Target player gains X life. */
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_X_SPELL, &td, "TARGET_PLAYER", 1, NULL);
 }
 
-// sunglasses of urza --> hardcoded, for now
-// swamp --> hardcoded, for now
+// timber wolves --> vanilla
 
 int card_swords_to_plowshares(int player, int card, event_t event){
+  /* CARD_ID_SWORDS_TO_PLOWSHARES	240
+   * Swords to Plowshares	|W
+   * Instant
+   * Exile target creature. Its controller gains life equal to its power. */
+
 	// original code : 004A3750
-/* CARD_ID_SWORDS_TO_PLOWSHARES	240
-Swords to Plowshares	|W
-Instant
-Exile target creature. Its controller gains life equal to its power. */
+
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -6139,8 +6571,6 @@ Exile target creature. Its controller gains life equal to its power. */
 	}
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
-
-// taiga --> hardcoded, for now
 
 int card_terror(int player, int card, event_t event){
 /* CARD_ID_TERROR	242
@@ -6168,6 +6598,7 @@ Destroy target nonartifact, non|Sblack creature. It can't be regenerated. */
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select target nonartifact, nonblack creature.", 1, NULL);
 }
 
+// Does everything Timetwister does except kill the card at resolution.
 int card_the_hive(int player, int card, event_t event){
 	/* The Hive	|5
 	 * Artifact
@@ -6187,11 +6618,13 @@ static void destroy_nonwall_at_end_of_combat(int player, int card, int t_player,
 
 int card_thicket_basilisk(int player, int card, event_t event)
 {
+  /* CARD_ID_THICKET_BASILISK	244
+   * Thicket Basilisk	|3|G|G
+   * Creature - Basilisk 2/4
+   * Whenever ~ blocks or becomes blocked by a non-Wall creature, destroy that creature at end of combat. */
+
   // 0x4ca9e0
-/* CARD_ID_THICKET_BASILISK	244
-Thicket Basilisk	|3|G|G
-Creature - Basilisk 2/4
-Whenever ~ blocks or becomes blocked by a non-Wall creature, destroy that creature at end of combat. */
+
 
   if (event == EVENT_CHANGE_TYPE && affect_me(player, card) && !is_humiliated(player, card, AL_TRIG))
 	get_card_instance(player, card)->destroys_if_blocked |= DIFB_DESTROYS_NONWALLS;
@@ -6208,6 +6641,8 @@ Whenever ~ blocks or becomes blocked by a non-Wall creature, destroy that creatu
   return 0;
 }
 
+// tropical island --> hardcoded, for now
+
 int card_thoughtlace(int player, int card, event_t event){
 /* CARD_ID_THOUGHTLACE	245
 Thoughtlace	|U
@@ -6216,6 +6651,8 @@ Target spell or permanent becomes |Sblue. (Mana symbols on that permanent remain
 
 	return lace(player, card, event, COLOR_TEST_BLUE);
 }
+
+// tundra --> hardcoded, for now
 
 int card_throne_of_bone(int player, int card, event_t event){
 /* CARD_ID_THRONE_OF_BONE	246
@@ -6226,18 +6663,18 @@ Whenever a player casts a |Sblack spell, you may pay |1. If you do, you gain 1 l
 	return lifegaining_charm(player, card, event, 2, COLOR_TEST_BLACK, 1+player, 1);
 }
 
-// timber wolves --> vanilla
-
 int card_time_vault(int player, int card, event_t event)
 {
+  /* CARD_ID_TIME_VAULT	248
+   * Time Vault	|2
+   * Artifact
+   * ~ enters the battlefield tapped.
+   * ~ doesn't untap during your untap step.
+   * If you would begin your turn while ~ is tapped, you may skip that turn instead. If you do, untap ~.
+   * |T: Take an extra turn after this one. */
+
   // 0x420280
-/* CARD_ID_TIME_VAULT	248
-Time Vault	|2
-Artifact
-~ enters the battlefield tapped.
-~ doesn't untap during your untap step.
-If you would begin your turn while ~ is tapped, you may skip that turn instead. If you do, untap ~.
-|T: Take an extra turn after this one. */
+
 
 	card_instance_t *instance = get_card_instance( player, card );
   // ~ enters the battlefield tapped.
@@ -6279,12 +6716,14 @@ If you would begin your turn while ~ is tapped, you may skip that turn instead. 
 }
 
 int card_time_walk(int player, int card, event_t event ){
+  /* CARD_ID_TIME_WALK	249
+   * Time Walk	|1|U
+   * Sorcery
+   * Take an extra turn after this one. */
+
 	// Used externally
 	// original code : 0041B710
-/* CARD_ID_TIME_WALK	249
-Time Walk	|1|U
-Sorcery
-Take an extra turn after this one. */
+
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) )
 		ai_modifier += 96;
@@ -6297,7 +6736,13 @@ Take an extra turn after this one. */
 	return basic_spell(player, card, event);
 }
 
-// Does everything Timetwister does except kill the card at resolution.
+/* CARD_ID_UNDERGROUND_SEA	258
+Underground Sea	""
+Land - |H2Island |H2Swamp
+(|T: Add |H|U or |H|B to your mana pool.) */
+
+// underground sea --> hardcoded, for now
+
 int resolve_timetwister(int player, int card, event_t event)
 {
   // Each player shuffles his or her hand and graveyard into his or her library, then draws seven cards.
@@ -6331,11 +6776,13 @@ int resolve_timetwister(int player, int card, event_t event)
 
 int card_timetwister(int player, int card, event_t event)
 {
-  // 0x41C030
-
   /* Timetwister	|2|U
    * Sorcery
    * Each player shuffles his or her hand and graveyard into his or her library, then draws seven cards. */
+
+  // 0x41C030
+
+
 
   int rval = resolve_timetwister(player, card, event);
   if (event == EVENT_RESOLVE_SPELL)
@@ -6360,8 +6807,6 @@ Destroy all enchantments. */
 	return basic_spell(player, card, event);
 }
 
-// tropical island --> hardcoded, for now
-
 int card_tsunami(int player, int card, event_t event){
 /* CARD_ID_TSUNAMI	253
 Tsunami	|3|G
@@ -6370,8 +6815,6 @@ Destroy all |H1Islands. */
 
 	return basic_landtype_killer(player, card, event, SUBTYPE_ISLAND);
 }
-
-// tundra --> hardcoded, for now
 
 int card_tunnel(int player, int card, event_t event){
 /* CARD_ID_TUNNEL	255
@@ -6400,11 +6843,13 @@ Destroy target Wall. It can't be regenerated. */
 
 int card_twiddle(int player, int card, event_t event)
 {
+  /* CARD_ID_TWIDDLE	256
+   * Twiddle	|U
+   * Instant
+   * You may tap or untap target artifact, creature, or land. */
+
   // 0x4a2fc0
-/* CARD_ID_TWIDDLE	256
-Twiddle	|U
-Instant
-You may tap or untap target artifact, creature, or land. */
+
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -6443,13 +6888,6 @@ Trample
 	return 0;
 }
 
-/* CARD_ID_UNDERGROUND_SEA	258
-Underground Sea	""
-Land - |H2Island |H2Swamp
-(|T: Add |H|U or |H|B to your mana pool.) */
-
-// underground sea --> hardcoded, for now
-
 int card_unholy_strenght(int player, int card, event_t event){
 /* CARD_ID_UNHOLY_STRENGTH	259
 Unholy Strength	|B
@@ -6459,6 +6897,17 @@ Enchanted creature gets +2/+1. */
 
 	return generic_aura(player, card, event, player, 2, 1, 0, 0, 0, 0, 0);
 }
+
+// volcanin island --> hardcoded, for now
+
+/* Wall of Air	|1|U|U => vanilla
+ * Creature - Wall 1/5
+ * Defender, flying */
+
+/* Wall of Bone	|2|B => Drudge Skeletons
+ * Creature - Skeleton Wall 1/4
+ * Defender
+ * |B: Regenerate ~. */
 
 int card_unsummon(int player, int card, event_t event){
 /* CARD_ID_UNSUMMON	260
@@ -6484,6 +6933,23 @@ Return target creature to its owner's hand. */
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
+/* Wall of Fire	|1|R|R => fifth_dawn.c:Furnace Whelp
+ * Creature - Wall 0/5
+ * Defender
+ * |R: ~ gets +1/+0 until end of turn. */
+
+/* Wall of Ice	|2|G => vanilla
+ * Creature - Wall 0/7
+ * Defender */
+
+/* Wall of Stone	|1|R|R => vanilla
+ * Creature - Wall 0/8
+ * Defender */
+
+/* Wall of Swords	|3|W => vanilla
+ * Creature - Wall 3/5
+ * Defender, flying */
+
 int card_uthden_troll(int player, int card, event_t event){
 /* CARD_ID_UTHDEN_TROLL	261
 Uthden Troll	|2|R
@@ -6492,6 +6958,10 @@ Creature - Troll 2/2
 
 	return regeneration(player, card, event, MANACOST_R(1));
 }
+
+/* Wall of Wood	|G => vanilla
+ * Creature - Wall 0/3
+ * Defender */
 
 int card_verduran_enchantress(int player, int card, event_t event){
 /* CARD_ID_VERDURAN_ENCHANTRESS	262
@@ -6505,6 +6975,8 @@ Whenever you cast an enchantment spell, you may draw a card. */
 	}
 	return 0;
 }
+
+// war mammoth --> vanilla
 
 static int effect_vesuvan_doppelganger(int player, int card, event_t event){
 	if (effect_follows_control_of_attachment(player, card, event))
@@ -6543,6 +7015,8 @@ static int effect_vesuvan_doppelganger(int player, int card, event_t event){
 
   return 0;
 }
+
+// water elemental --> vanilla
 
 int card_vesuvan_doppelganger(int player, int card, event_t event)
 {
@@ -6664,17 +7138,6 @@ Destroy X target |H1Mountains. ~ deals damage to each creature and each player e
 	return 0;
 }
 
-// volcanin island --> hardcoded, for now
-
-/* Wall of Air	|1|U|U => vanilla
- * Creature - Wall 1/5
- * Defender, flying */
-
-/* Wall of Bone	|2|B => Drudge Skeletons
- * Creature - Skeleton Wall 1/4
- * Defender
- * |B: Regenerate ~. */
-
 int card_wall_of_brambles(int player, int card, event_t event){
 	/* Wall of Brambles	|2|G
 	 * Creature - Plant Wall 2/3
@@ -6684,23 +7147,6 @@ int card_wall_of_brambles(int player, int card, event_t event){
 	return regeneration(player, card, event, MANACOST_G(1));
 }
 
-/* Wall of Fire	|1|R|R => fifth_dawn.c:Furnace Whelp
- * Creature - Wall 0/5
- * Defender
- * |R: ~ gets +1/+0 until end of turn. */
-
-/* Wall of Ice	|2|G => vanilla
- * Creature - Wall 0/7
- * Defender */
-
-/* Wall of Stone	|1|R|R => vanilla
- * Creature - Wall 0/8
- * Defender */
-
-/* Wall of Swords	|3|W => vanilla
- * Creature - Wall 3/5
- * Defender, flying */
-
 int card_wall_of_water(int player, int card, event_t event){
 	/* Wall of Water	|1|U|U
 	 * Creature - Wall 0/5
@@ -6708,10 +7154,6 @@ int card_wall_of_water(int player, int card, event_t event){
 	 * |U: ~ gets +1/+0 until end of turn. */
 	return generic_shade_merge_pt(player, card, event, 0, MANACOST_U(1), 1, 0);
 }
-
-/* Wall of Wood	|G => vanilla
- * Creature - Wall 0/3
- * Defender */
 
 int card_wanderlust(int player, int card, event_t event){
 /* CARD_ID_WANDERLUST	276
@@ -6731,7 +7173,7 @@ At the beginning of the upkeep of enchanted creature's controller, ~ deals 1 dam
 	return targeted_aura(player, card, event, &td, "TARGET_CREATURE");
 }
 
-// war mammoth --> vanilla
+// will-'o-the-wisp --> drudge skeletons
 
 int card_warp_artifact(int player, int card, event_t event){
 /* CARD_ID_WARP_ARTIFACT	278
@@ -6751,8 +7193,6 @@ At the beginning of the upkeep of enchanted artifact's controller, ~ deals 1 dam
 	return targeted_aura(player, card, event, &td, "TARGET_ARTIFACT");
 }
 
-// water elemental --> vanilla
-
 int card_weakness(int player, int card, event_t event){
 /* CARD_ID_WEAKNESS	280
 Weakness	|B
@@ -6764,6 +7204,8 @@ Enchanted creature gets -2/-1. */
       return vanilla_instant_pump(player, card, event, ANYBODY, 1-player, -2, -1, 0, 0);
 	return generic_aura(player, card, event, 1-player, -2, -1, 0, 0, 0, 0, 0);
 }
+
+// word of command --> uncodeable
 
 int card_web(int player, int card, event_t event){
 /* CARD_ID_WEB	281
@@ -6818,7 +7260,6 @@ Protection from |Sblack (This creature can't be blocked, targeted, dealt damage,
 	return 0;
 }
 
-
 int card_white_ward(int player, int card, event_t event){
 /* CARD_ID_WHITE_WARD	284
 White Ward	|W
@@ -6839,8 +7280,6 @@ Whenever enchanted land is tapped for mana, its controller adds |G to his or her
 	return wild_growth_aura(player, card, event, -1, COLOR_GREEN, 1);
 }
 
-// will-'o-the-wisp --> drudge skeletons
-
 int card_winter_orb(int player, int card, event_t event){
 /* CARD_ID_WINTER_ORB	287
 Winter Orb	|2
@@ -6856,6 +7295,20 @@ As long as ~ is untapped, players can't untap more than one land during their un
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+char *black_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card);
+char *blue_damage_source(int who_chooses, int player, int card, int targeting_player,
+                         int targeting_card);
+char *green_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card);
+char *red_damage_source(int who_chooses, int player, int card, int targeting_player,
+                        int targeting_card);
+char *white_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card);
+int enchanted_land_is_basic_land_type(int player, int card, event_t event, subtype_t subtype,
+                                      int hackable, target_definition_t *td);
+
 int card_wooden_sphere(int player, int card, event_t event){
 /* CARD_ID_WOODEN_SPHERE	288
 Wooden Sphere	|1
@@ -6864,8 +7317,6 @@ Whenever a player casts a |Sgreen spell, you may pay |1. If you do, you gain 1 l
 
 	return lifegaining_charm(player, card, event, ANYBODY, COLOR_TEST_GREEN, 1+player, 1);
 }
-
-// word of command --> uncodeable
 
 int card_wrath_of_god(int player, int card, event_t event){
 /* CARD_ID_WRATH_OF_GOD	290
@@ -7020,12 +7471,15 @@ int zombie_master_shared_ability(int player, int card, event_t event)
   return 0;
 }
 
-int card_zombie_master(int player, int card, event_t event){//not actually used; see card_zombie_master2 in recoded_cards.c
-/* CARD_ID_ZOMBIE_MASTER	291
-Zombie Master	|1|B|B
-Creature - Zombie 2/3
-Other Zombie creatures have |H2swampwalk. (They can't be blocked as long as defending player controls |Ha Swamp.)
-Other Zombies have "|B: Regenerate this permanent." */
+int card_zombie_master(int player, int card, event_t event){
+  /* CARD_ID_ZOMBIE_MASTER	291
+   * Zombie Master	|1|B|B
+   * Creature - Zombie 2/3
+   * Other Zombie creatures have |H2swampwalk. (They can't be blocked as long as defending player controls |Ha Swamp.)
+   * Other Zombies have "|B: Regenerate this permanent." */
+
+//not actually used; see card_zombie_master2 in recoded_cards.c
+
 
 	if( event == EVENT_ABILITIES && affect_me(player, card )){
 		return 0;
@@ -7048,13 +7502,13 @@ static void create_zombie_master_legacies(int player, int card){
 	obliterate_card(1-player, fake);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 int card_zombie_master2(int player, int card, event_t event){
-	/*
-	  Zombie Master |1|B|B
-	  Creature - Zombie 2/3
-	  Other Zombie creatures have swampwalk.
-	  Other Zombies have "{B}: Regenerate this permanent."
-	*/
+  /* Zombie Master |1|B|B
+   * 	  Creature - Zombie 2/3
+   * 	  Other Zombie creatures have swampwalk.
+   * 	  Other Zombies have "{B}: Regenerate this permanent." */
 
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		//Create the legacies for the fake ability here, in case something already in play is transformed into a Zombie Master.
@@ -7082,349 +7536,6 @@ int card_zombie_master2(int player, int card, event_t event){
 	return 0;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-char *black_damage_source(int who_chooses, int player, int card, int targeting_player,
-                          int targeting_card);
-char *blue_damage_source(int who_chooses, int player, int card, int targeting_player,
-                         int targeting_card);
-char *green_damage_source(int who_chooses, int player, int card, int targeting_player,
-                          int targeting_card);
-char *red_damage_source(int who_chooses, int player, int card, int targeting_player,
-                        int targeting_card);
-char *white_damage_source(int who_chooses, int player, int card, int targeting_player,
-                          int targeting_card);
-int enchanted_land_is_basic_land_type(int player, int card, event_t event, subtype_t subtype,
-                                      int hackable, target_definition_t *td);
-
-/* ManalinkEh 2022: 0x24bae70; original cards/unlimited.c:210. */
-char *black_damage_source(int who_chooses, int player, int card, int targeting_player,
-                          int targeting_card)
-{
-  card_instance_t *damage;
-  card_instance_t *source_permanent;
-  unsigned int required_color;
-  int result;
-  unsigned int source_color;
-
-  damage = get_card_instance(player, card);
-  if (damage->internal_card_id != damage_card)
-  {
-    return "must be a damage card";
-  }
-  if ((damage->damage_target_player == who_chooses) && (damage->damage_target_card == -1))
-  {
-    source_color = (unsigned int)damage->initial_color;
-    source_permanent = in_play((int)damage->damage_source_player, damage->damage_source_card);
-    if (source_permanent != NULL)
-    {
-      source_color = get_color((int)damage->damage_source_player, damage->damage_source_card);
-    }
-    required_color = get_sleighted_color_test(targeting_player, targeting_card, 2);
-    if ((required_color & source_color) == 0)
-    {
-      return "illegal color of damage source";
-    }
-    result = is_what((int)damage->damage_source_player, damage->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags((int)damage->damage_source_player,
-                                                       damage->damage_source_card, 0x40),
-                          result == 0))
-    {
-      return NULL;
-    }
-  }
-  return "must be damage dealt to you";
-}
-
-/* ManalinkEh 2022: 0x24baf60; original cards/unlimited.c:235. */
-char *blue_damage_source(int who_chooses, int player, int card, int targeting_player,
-                         int targeting_card)
-{
-  card_instance_t *damage;
-  card_instance_t *source_permanent;
-  unsigned int required_color;
-  int result;
-  unsigned int source_color;
-
-  damage = get_card_instance(player, card);
-  if (damage->internal_card_id != damage_card)
-  {
-    return "must be a damage card";
-  }
-  if ((damage->damage_target_player == who_chooses) && (damage->damage_target_card == -1))
-  {
-    source_color = (unsigned int)damage->initial_color;
-    source_permanent = in_play((int)damage->damage_source_player, damage->damage_source_card);
-    if (source_permanent != NULL)
-    {
-      source_color = get_color((int)damage->damage_source_player, damage->damage_source_card);
-    }
-    required_color = get_sleighted_color_test(targeting_player, targeting_card, 4);
-    if ((required_color & source_color) == 0)
-    {
-      return "illegal color of damage source";
-    }
-    result = is_what((int)damage->damage_source_player, damage->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags((int)damage->damage_source_player,
-                                                       damage->damage_source_card, 0x40),
-                          result == 0))
-    {
-      return NULL;
-    }
-  }
-  return "must be damage dealt to you";
-}
-
-/* ManalinkEh 2022: 0x24bb050; original cards/unlimited.c:260. */
-char *green_damage_source(int who_chooses, int player, int card, int targeting_player,
-                          int targeting_card)
-{
-  card_instance_t *damage;
-  card_instance_t *source_permanent;
-  unsigned int required_color;
-  int result;
-  unsigned int source_color;
-
-  damage = get_card_instance(player, card);
-  if (damage->internal_card_id != damage_card)
-  {
-    return "must be a damage card";
-  }
-  if ((damage->damage_target_player == who_chooses) && (damage->damage_target_card == -1))
-  {
-    source_color = (unsigned int)damage->initial_color;
-    source_permanent = in_play((int)damage->damage_source_player, damage->damage_source_card);
-    if (source_permanent != NULL)
-    {
-      source_color = get_color((int)damage->damage_source_player, damage->damage_source_card);
-    }
-    required_color = get_sleighted_color_test(targeting_player, targeting_card, 8);
-    if ((required_color & source_color) == 0)
-    {
-      return "illegal color of damage source";
-    }
-    result = is_what((int)damage->damage_source_player, damage->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags((int)damage->damage_source_player,
-                                                       damage->damage_source_card, 0x40),
-                          result == 0))
-    {
-      return NULL;
-    }
-  }
-  return "must be damage dealt to you";
-}
-
-/* ManalinkEh 2022: 0x24bb140; original cards/unlimited.c:285. */
-char *red_damage_source(int who_chooses, int player, int card, int targeting_player,
-                        int targeting_card)
-{
-  card_instance_t *damage;
-  card_instance_t *source_permanent;
-  unsigned int required_color;
-  int result;
-  unsigned int source_color;
-
-  damage = get_card_instance(player, card);
-  if (damage->internal_card_id != damage_card)
-  {
-    return "must be a damage card";
-  }
-  if ((damage->damage_target_player == who_chooses) && (damage->damage_target_card == -1))
-  {
-    source_color = (unsigned int)damage->initial_color;
-    source_permanent = in_play((int)damage->damage_source_player, damage->damage_source_card);
-    if (source_permanent != NULL)
-    {
-      source_color = get_color((int)damage->damage_source_player, damage->damage_source_card);
-    }
-    required_color = get_sleighted_color_test(targeting_player, targeting_card, 0x10);
-    if ((required_color & source_color) == 0)
-    {
-      return "illegal color of damage source";
-    }
-    result = is_what((int)damage->damage_source_player, damage->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags((int)damage->damage_source_player,
-                                                       damage->damage_source_card, 0x40),
-                          result == 0))
-    {
-      return NULL;
-    }
-  }
-  return "must be damage dealt to you";
-}
-
-/* ManalinkEh 2022: 0x24bb230; original cards/unlimited.c:310. */
-char *white_damage_source(int who_chooses, int player, int card, int targeting_player,
-                          int targeting_card)
-{
-  card_instance_t *damage;
-  card_instance_t *source_permanent;
-  unsigned int required_color;
-  int result;
-  unsigned int source_color;
-
-  damage = get_card_instance(player, card);
-  if (damage->internal_card_id != damage_card)
-  {
-    return "must be a damage card";
-  }
-  if ((damage->damage_target_player == who_chooses) && (damage->damage_target_card == -1))
-  {
-    source_color = (unsigned int)damage->initial_color;
-    source_permanent = in_play((int)damage->damage_source_player, damage->damage_source_card);
-    if (source_permanent != NULL)
-    {
-      source_color = get_color((int)damage->damage_source_player, damage->damage_source_card);
-    }
-    required_color = get_sleighted_color_test(targeting_player, targeting_card, 0x20);
-    if ((required_color & source_color) == 0)
-    {
-      return "illegal color of damage source";
-    }
-    result = is_what((int)damage->damage_source_player, damage->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags((int)damage->damage_source_player,
-                                                       damage->damage_source_card, 0x40),
-                          result == 0))
-    {
-      return NULL;
-    }
-  }
-  return "must be damage dealt to you";
-}
-
-/* ManalinkEh 2022: 0x24c3440; original cards/unlimited.c:2322. */
-int enchanted_land_is_basic_land_type(int player, int card, event_t event, subtype_t subtype,
-                                      int hackable, target_definition_t *td)
-{
-  card_instance_t *aura;
-  int result;
-  card_instance_t *instance;
-  target_definition_t td_default;
-
-  aura = in_play(player, card);
-
-  if (((aura != NULL) &&
-       (aura = get_card_instance(player, card), -1 < aura->damage_target_player)) &&
-      (aura = get_card_instance(player, card), event == EVENT_CHANGE_TYPE))
-  {
-    if (aura->damage_target_card != affected_card)
-    {
-      return 0;
-    }
-    if (aura->damage_target_player != affected_card_controller)
-    {
-      return 0;
-    }
-
-    instance = get_card_instance((int)aura->damage_target_player, aura->damage_target_card);
-    if (hackable != 0)
-    {
-      subtype = get_hacked_subtype(player, card, subtype);
-    }
-    result = land_into_new_basic_land_type(instance->internal_card_id, subtype);
-    if ((cards_data[instance->internal_card_id].type == '\x01') &&
-        (instance->internal_card_id == result))
-    {
-      aura->dummy3 = event_result;
-      return 0;
-    }
-    event_result = aura->dummy3;
-    if ((cards_data[event_result].type == '\x01') && (event_result == result))
-    {
-      return 0;
-    }
-    event_result = result;
-    aura->dummy3 = result;
-    return 0;
-  }
-  if (event == EVENT_CAST_SPELL)
-  {
-    if (card != affected_card || player != affected_card_controller)
-      return 0;
-  }
-  else if (event != EVENT_CAN_CAST && event != EVENT_RESOLVE_SPELL &&
-           event != EVENT_CAN_CHANGE_TARGET && event != EVENT_CHANGE_TARGET)
-    return 0;
-  if (td == NULL)
-  {
-    default_target_definition(player, card, &td_default, 1);
-    td = &td_default;
-  }
-  if (event == EVENT_CAST_SPELL && player == affected_card_controller)
-  {
-    aura = get_card_instance(player, card);
-    generic_spell(player, card, EVENT_CAST_SPELL, 1, td, "TARGET_LAND", 1, NULL);
-    if (spell_fizzled == 1)
-    {
-      return 0;
-    }
-    result = has_subtype(aura->targets[0].player, aura->targets[0].card, subtype);
-    if ((result == 0) && (aura->targets[0].player != player))
-    {
-      ai_modifier = ai_modifier + 0x18;
-      return 0;
-    }
-    ai_modifier = ai_modifier + -0x18;
-    return 0;
-  }
-  return targeted_aura(player, card, event, td, "TARGET_LAND");
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x24bfd80; original cards/unlimited.c:1049. */
-int card_celestial_prism(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  color_t color;
-
-  if (event == EVENT_COUNT_MANA)
-  {
-    if (((((card == affected_card) && (player == affected_card_controller)) &&
-          (result = is_tapped(player, card), result == 0)) &&
-         ((result = is_animated_and_sick(player, card),
-           result == 0 && (result = can_produce_mana(player, card), result != 0)))) &&
-        (result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0), result != 0))
-    {
-      declare_mana_available_hex(player, 0x3e, 1);
-      declare_mana_available(player, 0, -1);
-    }
-  }
-  else if (event == EVENT_CAN_ACTIVATE)
-  {
-    result = is_tapped(player, card);
-    if (((result == 0) && (result = is_animated_and_sick(player, card), result == 0)) &&
-        ((result = can_produce_mana(player, card),
-          result != 0 && ((result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0),
-                           result != 0 && (instance = get_card_instance(player, card),
-                                           instance->targets[1].player != 1))))))
-    {
-      return 1;
-    }
-  }
-  else if (event == EVENT_ACTIVATE)
-  {
-
-    instance = get_card_instance(player, card);
-    color = choose_mana_all_one_color(player, COLOR_TEST_ANY_COLORED, 1, "What kind of mana?",
-                                           COLOR_TEST_COLORLESS);
-    if (color == ~COLOR_COLORLESS)
-    {
-      spell_fizzled = 1;
-      return 0;
-    }
-    instance->targets[1].player = 1;
-    charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0);
-    instance->targets[1].player = 0;
-    if (spell_fizzled != 1)
-    {
-      produce_mana_tapped(player, card, color, 1);
-      return 0;
-    }
-  }
-  return 0;
-}
-
 #ifndef SHANDALAR
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
@@ -7445,25 +7556,25 @@ static int ward_enchantment(int player, int card, event_t event, int keyword)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24bd8f0; original cards/unlimited.c:162. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24bc200; original cards/unlimited.c:4602. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24bf650; original cards/unlimited.c:900. */
 int card_blaze_of_glory(int player, int card, event_t event)
 {
+  /* Blaze of Glory	|W
+   * Instant
+   * Cast this spell only during combat before blockers are declared.
+   * Target creature defending player controls can block any number of creatures this turn. It blocks each attacking creature this turn if able. */
+
   if (event == EVENT_CAN_CAST)
   {
     if ((int32_t)current_phase > 0x16)
@@ -7495,7 +7606,6 @@ int card_blaze_of_glory(int player, int card, event_t event)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24bad70; original cards/unlimited.c:4819. */
 static const char *is_damaging_stored_creature(int who_chooses, int player, int card)
@@ -7508,7 +7618,6 @@ static const char *is_damaging_stored_creature(int who_chooses, int player, int 
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24bc2e0; original cards/unlimited.c:4828. */
@@ -7558,11 +7667,16 @@ int effect_personal_incarnation(int player, int card, event_t event)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24ca360; original cards/unlimited.c:4879. */
 int card_personal_incarnation(int player, int card, event_t event)
 {
+  /* CARD_ID_PERSONAL_INCARNATION	181
+   * Personal Incarnation	|3|W|W|W
+   * Creature - Avatar Incarnation 6/6
+   * |0: The next 1 damage that would be dealt to ~ this turn is dealt to its owner instead. Only ~'s owner may activate this ability.
+   * When ~ dies, its owner loses half his or her life, rounded up. */
+
   if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) &&
       life[get_owner(player, card)] > 0)
   {
@@ -7637,9 +7751,7 @@ int card_personal_incarnation(int player, int card, event_t event)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24cd640; original cards/unlimited.c:5971. */
-
 
 #endif

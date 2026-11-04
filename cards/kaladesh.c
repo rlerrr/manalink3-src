@@ -17,8 +17,6 @@ static void make_thopter(int player, int card, int amount)
 	generate_token(&token);
 }
 
-
-
 static void etb_fabricate(int player, int card, event_t event, int amount, int priority_counters,
                           int priority_servo)
 {
@@ -182,7 +180,6 @@ static void boost_if_you_control_an_artifact(int player, int card, event_t event
     }
   }
 }
-
 
 // Cards
 
@@ -570,7 +567,6 @@ Destroy all creatures. You gain 1 life for each creature destroyed this way.
 	return basic_spell(player, card, event);
 }
 
-
 /*
 Gearshift Ace |1|W	0x401000 (vanilla, the effect is in "crew")
 Creature - Dwarf Pilot
@@ -675,6 +671,11 @@ Servos and Thopters you control get +1/+1.
 
 int card_ninth_bridge_patrol(int player, int card, event_t event)
 {
+  /* Ninth Bridge Patrol |1|W	0x200f15b
+   * Creature - Dwarf Soldier
+   * Whenever another creature you control leaves the battlefield, put a +1/+1 counter on Ninth Bridge Patrol.
+   * 1/1 */
+
   card_instance_t *instance;
   int result;
   test_definition_t test;
@@ -782,7 +783,6 @@ Destroy target creature with power 3 or greater. Scry 1.
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select target creature with power 3 or greater.", 1, NULL);
 }
 
-
 /*
 Tasseled Dromedary |W	0x401000 (vanilla)
 Creature - Camel
@@ -885,7 +885,6 @@ then return that card to the battlefield under its owner's control.
 
 	return 0;
 }
-
 
 // Blue
 
@@ -1000,7 +999,6 @@ Return target permanent you control and target permanent you don't control to th
 
 	return 0;
 }
-
 
 int card_aethersquall_ancient(int player, int card, event_t event){
 /*
@@ -1243,7 +1241,6 @@ Counter target spell. Draw a card, then discard a card.
 
 	return 0;
 }
-
 
 int card_gearseeker_serpent(int player, int card, event_t event){
 /*
@@ -1524,7 +1521,6 @@ When Minister of Inquiries enters the battlefield, you get |E|E (two energy coun
 									(GVC_PLAYER_COUNTERS(PCOUNTER_ENERGY, 1)), &td, "TARGET_PLAYER");
 }
 
-
 /*
 Nimble Innovator |3|U	0x2003c4d (Carven Caryatid)
 Creature - Vedalken Artificer
@@ -1797,7 +1793,6 @@ Scry 1. (Look at the top card of your library. You may put that card on the bott
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select target tapped creature.", 1, NULL);
 }
 
-
 int card_shrewd_negotiation(int player, int card, event_t event){
 /*
 Shrewd Negotiation |4|U	0x200f200
@@ -1858,7 +1853,6 @@ Draw three cards. If you control no artifacts, discard a card.
 	return basic_spell(player, card, event);
 }
 
-
 /*
 Thriving Turtle |U	0x200f16f (Thriving Ibex)
 Creature - Turtle
@@ -1907,7 +1901,6 @@ If that card would be put into your graveyard this turn, exile it instead.
 	return flash(player, card, event);
 }
 
-
 /*
 Vedalken Blademaster |2|U	0x200ce74 (Jeskai Windscout)
 Creature - Vedalken Soldier
@@ -1939,6 +1932,13 @@ Whenever an artifact enters the battlefield under your control, Weldfast Wingsmi
 
 int card_aetherborn_marauder(int player, int card, event_t event)
 {
+  /* Aetherborn Marauder |3|B	0x200f214
+   * Creature - Aetherborn Rogue
+   * Flying, lifelink
+   * When Aetherborn Marauder enters the battlefield, move any number of +1/+1 counters from other permanents you control
+   * onto Aetherborn Marauder.
+   * 2/2 */
+
   card_instance_t *instance;
   int counter_count_or_card_limit;
   int remaining_toughness_or_choice;
@@ -2578,7 +2578,6 @@ You draw two cards, lose 2 life, and get |E|E (two energy counters).
 	return basic_spell(player, card, event);
 }
 
-
 int card_lost_legacy(int player, int card, event_t event){
 /*
 Lost Legacy |1|B|B	0x200f25f
@@ -2765,7 +2764,6 @@ Whenever an artifact you control is put into a graveyard from the battlefield, t
 	return 0;
 }
 
-
 int card_maulfist_squad(int player, int card, event_t event){
 /*
 Maulfist Squad |3|B	0x200f26e
@@ -2780,6 +2778,13 @@ Fabricate 1 (When this creature enters the battlefield, put a +1/+1 counter on i
 
 int card_midnight_oil(int player, int card, event_t event)
 {
+  /* Midnight Oil |2|B|B	0x200f273
+   * Enchantment
+   * Midnight Oil enters the battlefield with seven hour counters on it.
+   * At the beginning of your draw step, draw an additional card and remove two hour counters from Midnight Oil.
+   * Your maximum hand size is equal to the number of hour counters on Midnight Oil.
+   * Whenever you discard a card, you lose 1 life. */
+
   enters_the_battlefield_with_counters(player, card, event, COUNTER_HOUR, 7);
   if (event == EVENT_DRAW_PHASE && current_turn == player)
   {
@@ -3119,7 +3124,6 @@ Fabricate 2 (When this creature enters the battlefield, put two +1/+1 counters o
 	return 0;
 }
 
-
 // Red
 
 int card_aethertorch_renegade(int player, int card, event_t event){
@@ -3281,13 +3285,15 @@ Draw three cards.
 }
 
 int card_chandra_torch_of_defiance(int player, int card, event_t event){
+  /* Chandra, Torch of Defiance	|2|R|R	0x200f2b4
+   * Legendary Planeswalker - Chandra (4)
+   * +1: Exile the top card of your library. You may cast that card. If you don't, ~ deals 2 damage to each opponent.
+   * +1: Add |R|R.
+   * -3: ~ deals 4 damage to target creature.
+   * -7: You get an emblem with "Whenever you cast a spell, this emblem deals 5 damage to any target." */
+
 	check_legend_rule(player, card, event);
-	/* Chandra, Torch of Defiance	|2|R|R	0x200f2b4
-	 * Legendary Planeswalker - Chandra (4)
-	 * +1: Exile the top card of your library. You may cast that card. If you don't, ~ deals 2 damage to each opponent.
-	 * +1: Add |R|R.
-	 * -3: ~ deals 4 damage to target creature.
-	 * -7: You get an emblem with "Whenever you cast a spell, this emblem deals 5 damage to any target." */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return planeswalker(player, card, event, 4);
 	}
@@ -3379,9 +3385,9 @@ int card_chandra_torch_of_defiance(int player, int card, event_t event){
 }
 
 int card_chandra_torch_of_defiance_emblem(int player, int card, event_t event){
-	/* Chandra, Torch of Defiance Emblem	""	0x200f2b9
-	 * Emblem - Chandra
-	 * Whenever you cast a spell, this emblem deals 5 damage to any target. */
+  /* Chandra, Torch of Defiance Emblem	""	0x200f2b9
+   * Emblem - Chandra
+   * Whenever you cast a spell, this emblem deals 5 damage to any target. */
 
 	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
 	if (event == EVENT_SPA){
@@ -3405,6 +3411,14 @@ Chandra's Pyrohelix deals 2 damage divided as you choose among one or two target
 
 int card_combustible_gearhulk(int player, int card, event_t event)
 {
+  /* Combustible Gearhulk |4|R|R	0x200f2be
+   * Artifact Creature - Construct
+   * First strike
+   * When Combustible Gearhulk enters the battlefield, target opponent may have you draw three cards.
+   * If the player doesn't, put the top three cards of your library into your graveyard, then Combustible Gearhulk deals damage to
+   * that player equal to the total converted mana cost of those cards.
+   * 6/6 */
+
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
@@ -4097,7 +4111,6 @@ Flying
 	return 0;
 }
 
-
 int card_spark_of_creativity(int player, int card, event_t event){
 /*
 Spark of Creativity |R	0x200f313
@@ -4146,7 +4159,6 @@ If you don't, you may play that card until end of turn.
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
-
 
 /*
 Speedway Fanatic |1|R	0x200bb46 (Raging Goblin, the rest of the effect is in "vehicle")
@@ -4295,7 +4307,6 @@ Welding Sparks deals X damage to target creature, where X is 3 plus the number o
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-
 // Green
 
 int card_appetite_for_the_unnatural(int player, int card, event_t event ){
@@ -4388,7 +4399,6 @@ When Armorcraft Judge enters the battlefield, draw a card for each creature you 
 
 	return 0;
 }
-
 
 int card_attune_with_aether(int player, int card, event_t event ){
 /*
@@ -4545,6 +4555,11 @@ Put the rest onto the battlefield under your control.
 
 int card_durable_handicraft(int player, int card, event_t event)
 {
+  /* Durable Handicraft |1|G	0x200f363
+   * Enchantment
+   * Whenever a creature enters the battlefield under your control, you may pay |1. If you do, put a +1/+1 counter on that creature.
+   * |5|G, Sacrifice Durable Handicraft: Put a +1/+1 counter on each creature you control. */
+
   int remaining_triggers_or_available;
   int payment_choice_or_available;
   test_definition_t test;
@@ -4611,6 +4626,10 @@ Fabricate 2 (When this creature enters the battlefield, put two +1/+1 counters o
 
 int card_fairgrounds_trumpeter(int player, int card, event_t event)
 {
+  /* Fairgrounds Trumpeter	|2|G
+   * Creature - Elephant 2/2
+   * At the beginning of each end step, if a +1/+1 counter was put on a permanent under your control this turn, put a +1/+1 counter on this creature. */
+
   int result;
   if (trigger_condition != TRIGGER_EOT)
   {
@@ -4679,7 +4698,6 @@ Creature - Elf Scout
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_XG(2, 1), 0, &td, "TARGET_CREATURE");
 }
 
-
 int card_highspire_artisan(int player, int card, event_t event){
 /*
 Highspire Artisan |2|G	0x200f377
@@ -4696,6 +4714,11 @@ Fabricate 1 (When this creature enters the battlefield, put a +1/+1 counter on i
 
 int card_kujar_seedsculptor(int player, int card, event_t event)
 {
+  /* Kujar Seedsculptor |1|G	0x200f37c
+   * Creature - Elf Druid
+   * When Kujar Seedsculptor enters the battlefield, put a +1/+1 counter on target creature you control.
+   * 1/2 */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -4922,11 +4945,10 @@ Planeswalker - Nissa
 }
 
 int card_nissa_vital_force_emblem(int player, int card, event_t event){
-/*
-Nissa, Vital Force Emblem	0x200f395
-Emblem - Nissa
-Whenever a land enters the battlefield under your control, you may draw a card.
-*/
+  /* Nissa, Vital Force Emblem	0x200f395
+   * Emblem - Nissa
+   * Whenever a land enters the battlefield under your control, you may draw a card. */
+
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_LAND);
@@ -5030,7 +5052,6 @@ Legendary Creature - Human Artificer
 
 	return 0;
 }
-
 
 /*
 Peema Outrider |2|G|G	0x200f147 (Glint-Sleeve Artisan)
@@ -5175,7 +5196,6 @@ Choose one -
 	return 0;
 }
 
-
 /*
 Thriving Rhino |2|G	0x200f16f (Thriving Ibex)
 Creature - Rhino
@@ -5186,6 +5206,12 @@ Whenever Thriving Rhino attacks, you may pay |E|E. If you do, put a +1/+1 counte
 
 int card_verdurous_gearhulk(int player, int card, event_t event)
 {
+  /* Verdurous Gearhulk |3|G|G	0x200f3b8
+   * Artifact Creature - Construct
+   * Trample
+   * When Verdurous Gearhulk enters the battlefield, distribute four +1/+1 counters among any number of target creatures you control.
+   * 4/4 */
+
   int target_card;
   card_instance_t *instance;
   int result;
@@ -5325,7 +5351,6 @@ Return X target cards from your graveyard to your hand. Exile Wildest Dreams.
 	return 0;
 }
 
-
 int card_wily_bandar(int player, int card, event_t event){
 /*
 Wily Bandar |G	0x200f3c7
@@ -5381,10 +5406,16 @@ Whenever an artifact enters the battlefield under your control, scry 1.
 	return 0;
 }
 
-
-
 int card_depala_pilot_exemplar(int player, int card, event_t event)
 {
+  /* Depala, Pilot Exemplar |1|R|W	0x200f3d6
+   * Legendary Creature - Dwarf Pilot
+   * Other Dwarves you control get +1/+1.
+   * Each Vehicle you control gets +1/+1 as long as it's a creature.
+   * Whenever Depala, Pilot Exemplar becomes tapped, you may pay |X. If you do, reveal the top X cards of your library,
+   * 	put all Dwarf and Vehicle cards from among them into your hand, then put the rest on the bottom of your library in a random order.
+   * 3/3 */
+
   check_legend_rule(player, card, event);
   boost_creature_type(player, card, event, SUBTYPE_DWARF, 1, 1, 0, BCT_CONTROLLER_ONLY);
   boost_creature_type(player, card, event, SUBTYPE_VEHICLE, 1, 1, 0,
@@ -5976,12 +6007,10 @@ static int aetherworks_marvel_legacy(int player, int card, event_t event)
 }
 
 int card_aetherworks_marvel(int player, int card, event_t event){
-/*
-Aetherworks Marvel |4
-Legendary Artifact
-Whenever a permanent you control is put into a graveyard, you get |E (an energy counter).
-|T, Pay |E|E|E|E|E|E: Look at the top six cards of your library. You may cast a card from among them without paying its mana cost. Put the rest on the bottom of your library in a random order.
-*/
+  /* Aetherworks Marvel |4
+   * Legendary Artifact
+   * Whenever a permanent you control is put into a graveyard, you get |E (an energy counter).
+   * |T, Pay |E|E|E|E|E|E: Look at the top six cards of your library. You may cast a card from among them without paying its mana cost. Put the rest on the bottom of your library in a random order. */
 
 	check_legend_rule(player, card, event);
 
@@ -6125,7 +6154,6 @@ Whenever one or more +1/+1 counters are placed on a permanent you control, you m
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST_X(3), 0,
 									&td, "Select target permanent or player.");
 }
-
 
 int card_aradara_express(int player, int card, event_t event){
 /*
@@ -6421,7 +6449,6 @@ Crew 5 (Tap any number of creatures you control with total power 5 or more: This
 	return vehicle(player, card, event, 5);
 }
 
-
 /*
 Dukhara Peafowl |4	0x2004512 (Gust Skimmer)
 Artifact Creature - Bird
@@ -6452,7 +6479,6 @@ int card_dynavolt_tower(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0,
 									GVC_PLAYER_COUNTERS(PCOUNTER_ENERGY, 5), &td, "TARGET_ANY");
 }
-
 
 int card_eager_construct(int player, int card, event_t event){
 /*
@@ -6774,7 +6800,6 @@ When Metalspinner's Puzzleknot enters the battlefield, you draw a card and you l
 	return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, MANACOST_XB(2, 1), 0, NULL, NULL);
 }
 
-
 int card_metalwork_colossus(int player, int card, event_t event){
 /*
 Metalwork Colossus |11	0x200f494
@@ -7028,25 +7053,33 @@ Crew 1 (Tap any number of creatures you control with total power 1 or more: This
 	return vehicle(player, card, event, 1);
 }
 
-/*
-Panharmonicon |4	0x401000 (vanilla, the effect is handled in "etb_ability" and "new_specific_cip")
-Artifact
-If an artifact or creature entering the battlefield causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.
-*/
+/* ManalinkEh 2022: 0x23af410; original cards/kaladesh.c:7067. */
+int card_panharmonicon(int player, int card, event_t event)
+{
+  /* Panharmonicon	|4
+   * Artifact
+   * If an artifact or creature entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time. */
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    card_counts[player][CCOUNTS_PANHARMONICON] = card_counts[player][CCOUNTS_PANHARMONICON] + '\x01';
+  }
+  return 0;
+}
 
 int card_perpetual_timepiece(int player, int card, event_t event){
+  /* Perpetual Timepiece |2	0x200f4a8
+   * Artifact
+   * |T: Put the top two cards of your library into your graveyard.
+   * |2, Exile Perpetual Timepiece: Shuffle any number of target cards from your graveyard into your library. */
+
   enum
   {
     CHOICE_MILL = 1,
     CHOICE_SHUFFLE = 2
   };
 
-/*
-Perpetual Timepiece |2	0x200f4a8
-Artifact
-|T: Put the top two cards of your library into your graveyard.
-|2, Exile Perpetual Timepiece: Shuffle any number of target cards from your graveyard into your library.
-*/
+
 
 	if (!IS_GAA_EVENT(event)){ return 0; }
 	card_instance_t* instance = get_card_instance(player, card);
@@ -7082,6 +7115,8 @@ Artifact
 	return 0;
 }
 
+// Prophetic Prism: reprint ROE
+
 int card_prakhata_pillar_bug(int player, int card, event_t event){
 /*
 Prakhata Pillar-Bug |3	0x200f4ad
@@ -7091,9 +7126,6 @@ Artifact Creature - Insect
 */
 	return generic_shade(player, card, event, 0, MANACOST_B(1), 0, 0, 0, SP_KEYWORD_LIFELINK);
 }
-
-
-// Prophetic Prism: reprint ROE
 
 int card_renegade_freighter(int player, int card, event_t event)
 {
@@ -7225,6 +7257,13 @@ Crew 3 (Tap any number of creatures you control with total power 3 or more: This
 	return vehicle(player, card, event, 3);
 }
 
+/*
+Snare Thopter |4	0x200bb46 (Raging Goblin)
+Artifact Creature - Thopter
+Flying, haste
+3/2
+*/
+
 int card_smugglers_copter(int player, int card, event_t event)
 {
   /*
@@ -7249,13 +7288,6 @@ Crew 1 (Tap any number of creatures you control with total power 1 or more: This
   return vehicle(player, card, event, 1);
 }
 
-/*
-Snare Thopter |4	0x200bb46 (Raging Goblin)
-Artifact Creature - Thopter
-Flying, haste
-3/2
-*/
-
 int card_torch_gauntlet(int player, int card, event_t event){
 /*
 Torch Gauntlet |2	0x200f4d0
@@ -7266,7 +7298,26 @@ Equip |2 (|2: Attach to target creature you control. Equip only as a sorcery.)
 	return vanilla_equipment(player, card, event, 2, 2, 0, 0, 0);
 }
 
+/* ManalinkEh 2022: 0x23afec0; original cards/kaladesh.c:7356. */
+int card_weldfast_monitor(int player, int card, event_t event)
+{
+  /* Weldfast Monitor	|3
+   * Artifact Creature - Lizard 3/2
+   * |R: This creature gains menace until end of turn. */
 
+  int result;
+  result = generic_shade(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0x10000);
+  return result;
+}
+
+/*
+Workshop Assistant |3	0x2003b5d (Junk Diver)
+Artifact Creature - Construct
+When Workshop Assistant dies, return another target artifact card from your graveyard to your hand.
+1/2
+*/
+
+// Land
 
 int card_whirlemaker(int player, int card, event_t event){
 /*
@@ -7282,6 +7333,34 @@ Artifact
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(4), 0, NULL, NULL);
 }
+
+/*
+Blooming Marsh	0x2003c0c (card_generic_som_tapland)
+Land
+Blooming Marsh enters the battlefield tapped unless you control two or fewer other lands.
+|T: Add |B or |G to your mana pool.
+*/
+
+/*
+Botanical Sanctum	0x2003c0c (card_generic_som_tapland)
+Land
+Botanical Sanctum enters the battlefield tapped unless you control two or fewer other lands.
+|T: Add |G or |U to your mana pool.
+*/
+
+/*
+Concealed Courtyard	0x2003c0c (card_generic_som_tapland)
+Land
+Concealed Courtyard enters the battlefield tapped unless you control two or fewer other lands.
+|T: Add |W or |B to your mana pool.
+*/
+
+/*
+Inspiring Vantage	0x2003c0c (card_generic_som_tapland)
+Land
+Inspiring Vantage enters the battlefield tapped unless you control two or fewer other lands.
+|T: Add |R or |W to your mana pool.
+*/
 
 int card_woodweavers_puzzleknot(int player, int card, event_t event){
 /*
@@ -7300,16 +7379,6 @@ When Woodweaver's Puzzleknot enters the battlefield, you gain 3 life and get |E|
 
 	return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, MANACOST_XG(2, 1), 0, NULL, NULL);
 }
-
-
-/*
-Workshop Assistant |3	0x2003b5d (Junk Diver)
-Artifact Creature - Construct
-When Workshop Assistant dies, return another target artifact card from your graveyard to your hand.
-1/2
-*/
-
-// Land
 
 int card_aether_hub(int player, int card, event_t event){
 /*
@@ -7340,32 +7409,13 @@ When Aether Hub enters the battlefield, you get |E (an energy counter).
 }
 
 /*
-Blooming Marsh	0x2003c0c (card_generic_som_tapland)
+Spirebluff Canal	0x2003c0c (card_generic_som_tapland)
 Land
-Blooming Marsh enters the battlefield tapped unless you control two or fewer other lands.
-|T: Add |B or |G to your mana pool.
+Spirebluff Canal enters the battlefield tapped unless you control two or fewer other lands.
+|T: Add |U or |R to your mana pool.
 */
 
-/*
-Botanical Sanctum	0x2003c0c (card_generic_som_tapland)
-Land
-Botanical Sanctum enters the battlefield tapped unless you control two or fewer other lands.
-|T: Add |G or |U to your mana pool.
-*/
-
-/*
-Concealed Courtyard	0x2003c0c (card_generic_som_tapland)
-Land
-Concealed Courtyard enters the battlefield tapped unless you control two or fewer other lands.
-|T: Add |W or |B to your mana pool.
-*/
-
-/*
-Inspiring Vantage	0x2003c0c (card_generic_som_tapland)
-Land
-Inspiring Vantage enters the battlefield tapped unless you control two or fewer other lands.
-|T: Add |R or |W to your mana pool.
-*/
+// Special cards (only on pre-constructed decks)
 
 int card_inventors_fair(int player, int card, event_t event){
 /*
@@ -7433,6 +7483,11 @@ At the beginning of your upkeep, if you control three or more artifacts, you gai
 	return 0;
 }
 
+/*
+Flame Lash |3|R	0x200cce4 (Lightning Blast)
+Instant
+Flame Lash deals 4 damage to target creature or player.
+*/
 
 int card_sequestered_stash(int player, int card, event_t event){
 /*
@@ -7500,15 +7555,6 @@ Land
 
 	return 0;
 }
-
-/*
-Spirebluff Canal	0x2003c0c (card_generic_som_tapland)
-Land
-Spirebluff Canal enters the battlefield tapped unless you control two or fewer other lands.
-|T: Add |U or |R to your mana pool.
-*/
-
-// Special cards (only on pre-constructed decks)
 
 int card_chandra_pyrogenius(int player, int card, event_t event){
 	/* Chandra, Pyrogenius	|4|R|R	0x200f4f3
@@ -7581,11 +7627,7 @@ int card_chandra_pyrogenius(int player, int card, event_t event){
 	return planeswalker(player, card, event, 5);
 }
 
-/*
-Flame Lash |3|R	0x200cce4 (Lightning Blast)
-Instant
-Flame Lash deals 4 damage to target creature or player.
-*/
+// Stone Quarry: reprint SOI
 
 int card_liberating_combustion(int player, int card, event_t event){
 /*
@@ -7625,6 +7667,12 @@ Liberating Combustion deals 6 damage to target creature. You may search your lib
 
 int card_renegade_firebrand(int player, int card, event_t event)
 {
+  /* Renegade Firebrand |2|R	0x200f4fd
+   * Creature - Human Warrior
+   * As long as you control a Chandra planeswalker, Renegade Firebrand gets +1/+0 and has first strike.
+   * (It deals combat damage before creatures without first strike.)
+   * 3/2 */
+
   card_instance_t *instance;
   int result;
   test_definition_t this_test;
@@ -7657,7 +7705,11 @@ int card_renegade_firebrand(int player, int card, event_t event)
   return 0;
 }
 
-// Stone Quarry: reprint SOI
+/*
+Terrain Elemental |1|G (vanilla)
+Creature - Elemental
+3/2
+*/
 
 int card_nissa_natures_artisan(int player, int card, event_t event){
 /*
@@ -7727,8 +7779,22 @@ Planeswalker - Nissa
 	return planeswalker(player, card, event, 5);
 }
 
+/*
+Servo	0x20076a4 (Rhino token, the "basic" token form)
+Token Artifact Creature - Servo
+1/1
+*/
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 int card_guardian_of_the_great_conduit(int player, int card, event_t event)
 {
+  /* Guardian of the Great Conduit |3|G	0x200f507
+   * Creature - Elemental
+   * Reach (This creature can block creatures with flying.)
+   * As long as you control a Nissa planeswalker, Guardian of the Great Conduit gets +2/+0 and has vigilance. (Attacking doesn't cause it to tap.)
+   * 2/4 */
+
   card_instance_t *instance;
   int result;
   test_definition_t this_test;
@@ -7761,12 +7827,7 @@ int card_guardian_of_the_great_conduit(int player, int card, event_t event)
   return 0;
 }
 
-
-/*
-Terrain Elemental |1|G (vanilla)
-Creature - Elemental
-3/2
-*/
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
 int card_verdant_crescendo(int player, int card, event_t event){
 /*
@@ -7790,47 +7851,8 @@ and put it into your hand. Then shuffle your library.
 	return basic_spell(player, card, event);
 }
 
-/*
-Servo	0x20076a4 (Rhino token, the "basic" token form)
-Token Artifact Creature - Servo
-1/1
-*/
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x23afec0; original cards/kaladesh.c:7356. */
-int card_weldfast_monitor(int player, int card, event_t event)
-{
-  int result;
-  result = generic_shade(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0x10000);
-  return result;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x23af410; original cards/kaladesh.c:7067. */
-int card_panharmonicon(int player, int card, event_t event)
-{
-  if (event == EVENT_STATIC_EFFECTS)
-  {
-    card_counts[player][CCOUNTS_PANHARMONICON] = card_counts[player][CCOUNTS_PANHARMONICON] + '\x01';
-  }
-  return 0;
-}
-
-
 #ifndef SHANDALAR
 /* Recovered October 2022 inline-only helpers; native code remains in their callers. */
-static int is_vehicle_or_dwarf(int player, int iid)
-{
-  return has_subtype_by_id(player, cards_data[iid].id, SUBTYPE_DWARF) ||
-         has_subtype_by_id(player, cards_data[iid].id, SUBTYPE_VEHICLE);
-}
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
 static void fabricate(int player, int card, int amount, int priority_counters, int priority_servo)
 {
   enum
@@ -7848,5 +7870,14 @@ static void fabricate(int player, int card, int amount, int priority_counters, i
     add_counters(player, card, player, card, COUNTER_P1_P1, amount);
   else if (choice == CHOICE_SERVO)
     generate_tokens_by_id(player, card, CARD_ID_SERVO, amount);
+}
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
+static int is_vehicle_or_dwarf(int player, int iid)
+{
+  return has_subtype_by_id(player, cards_data[iid].id, SUBTYPE_DWARF) ||
+         has_subtype_by_id(player, cards_data[iid].id, SUBTYPE_VEHICLE);
 }
 #endif

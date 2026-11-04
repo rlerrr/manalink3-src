@@ -265,7 +265,6 @@ static int leg_color_hoser(int player, int card, event_t event, int permanent_co
 	return 0;
 }
 
-
 // Cards
 static void destroy_green_or_white_at_end_of_combat(int player, int card, int t_player, int t_card)
 {
@@ -365,14 +364,15 @@ as long as at least one has "bands with other legendary creatures." Bands are bl
 one of which has "bands with other legendary creatures," are blocking or being blocked by the same creature, you divide that creature's combat damage,
 not its controller, among any of the creatures it's being blocked by or is blocking.) */
 
-
 int card_aerathi_berserker(int player, int card, event_t event)
 {
-  // 0x415c90
-
   /* AErathi Berserker	|2|R|R|R
    * Creature - Human Berserker 2/4
    * Rampage 3 */
+
+  // 0x415c90
+
+
 
   rampage(player, card, event, 3);
   return 0;
@@ -441,13 +441,11 @@ static int effect_carpet(int player, int card, event_t event){
 	return 0;
 }
 
-
 int card_al_abaras_carpet(int player, int card, event_t event){
-/*
-Al-abara's Carpet |5
-Artifact
-{5}, {T}: Prevent all damage that would be dealt to you this turn by attacking creatures without flying.
-*/
+  /* Al-abara's Carpet |5
+   * Artifact
+   * {5}, {T}: Prevent all damage that would be dealt to you this turn by attacking creatures without flying. */
+
 	if( event == EVENT_ACTIVATE && current_phase == PHASE_AFTER_BLOCKING ){
 		int mod = 0;
 		CYCLE_ALL_CARDS(p, c, 	{
@@ -614,6 +612,12 @@ static int effect_all_hallows_eve(int player, int card, event_t event)
 
 int card_all_hallows_eve(int player, int card, event_t event)
 {
+  /* All Hallow's Eve	|2|B|B
+   * Sorcery
+   * Exile ~ with two scream counters on it.
+   * At the beginning of your upkeep, if ~ is exiled with a scream counter on it, remove a scream counter from it. If there are no more scream counters on it,
+   * put it into your graveyard and each player returns all creature cards from his or her graveyard to the battlefield. */
+
   int result;
   if (event == EVENT_CAN_CAST)
   {
@@ -673,11 +677,13 @@ Creatures you control get +1/+1 as long as you control no nonartifact, non|Swhit
 }
 
 int card_angus_mackenzie(int player, int card, event_t event){
+  /* Angus Mackenzie	|G|W|U
+   * Legendary Creature - Human Cleric 2/2
+   * |G|W|U, |T: Prevent all combat damage that would be dealt this turn. Activate this ability only before the combat damage step. */
+
 	// original code : 00406250
 
-	/* Angus Mackenzie	|G|W|U
-	 * Legendary Creature - Human Cleric 2/2
-	 * |G|W|U, |T: Prevent all combat damage that would be dealt this turn. Activate this ability only before the combat damage step. */
+
 
 	check_legend_rule(player, card, event);
 
@@ -1014,6 +1020,9 @@ Whenever enchanted creature deals damage to you, ~ deals that much damage to tha
 // barbary apes --> vanilla
 
 int card_barktooth_warbeard(int player, int card, event_t event){
+  /* Barktooth Warbeard	|4|B|R|R
+   * Legendary Creature - Human Warrior 6/5 */
+
 	// Also code for Jasmine Boreal, Jedit Ojanen, Jerrard of the Closed Fist, Kasimir the Lone Wolf, Lady Orca, Ramirez DePietro,
 	// Sir Shandlar of Eberyn, Sivitri Scarzam, The Lady of the Mountain, Tobias Andrion, Torsten Von Ursus,
 	check_legend_rule(player, card, event);
@@ -1350,12 +1359,11 @@ static int brine_hag_effect(int player, int card, event_t event)
 }
 
 int card_brine_hag(int player, int card, event_t event){
-/*
-Brine Hag |2|U|U
-Creature — Hag 2/2
-When Brine Hag dies, change the base power and toughness of all creatures that dealt damage to it this turn to 0/2.
-	(This effect lasts indefinitely.)
-*/
+  /* Brine Hag |2|U|U
+   * Creature — Hag 2/2
+   * When Brine Hag dies, change the base power and toughness of all creatures that dealt damage to it this turn to 0/2.
+   * 	(This effect lasts indefinitely.) */
+
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		int found = 0;
 		int c;
@@ -1405,7 +1413,6 @@ as long as at least one has "bands with other legendary creatures." Bands are bl
 one of which has "bands with other legendary creatures," are blocking or being blocked by the same creature, you divide that creature's combat damage,
 not its controller, among any of the creatures it's being blocked by or is blocking.) */
 
-
 int card_caverns_of_despair(int player, int card, event_t event){
 /* CARD_ID_CAVERNS_OF_DESPAIR	592
 Caverns of Despair	|2|R|R
@@ -1453,7 +1460,6 @@ int card_chain_lightning(int player, int card, event_t event){
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_ANY", 1, NULL);
 }
-
 
 int card_chains_of_mephistopheles(int player, int card, event_t event){
 
@@ -1548,6 +1554,13 @@ If ~ would be destroyed, regenerate it.
 
 int card_cocoon(int player, int card, event_t event)
 {
+  /* Cocoon	|G
+   * Enchantment - Aura
+   * Enchant creature you control
+   * Enchanted creature doesn't untap during your untap step if ~ has a pupa counter on it.
+   * When ~ enters the battlefield, tap enchanted creature and put three pupa counters on ~.
+   * At the beginning of your upkeep, remove a pupa counter from ~. If you can't, sacrifice it, put a +1/+1 counter on enchanted creature, and that creature gains flying. */
+
   char enchanted_player;
   card_instance_t *instance;
   int enchanted_card_or_result;
@@ -1612,11 +1625,13 @@ int card_cocoon(int player, int card, event_t event)
 
 int card_concordant_crossroads(int player, int card, event_t event)
 {
-  // 0x416220
-
   /* Concordant Crossroads	|G
    * World Enchantment
    * All creatures have haste. */
+
+  // 0x416220
+
+
 
   boost_subtype(player, card, event, -1, 0,0, 0,SP_KEYWORD_HASTE, BCT_INCLUDE_SELF);
   return enchant_world(player, card, event);
@@ -1638,6 +1653,11 @@ At the beginning of your upkeep, destroy ~ unless you pay |3|B|B|B. If ~ is dest
 
 int card_craw_giant(int player, int card, event_t event)
 {
+  /* Craw Giant	|3|G|G|G|G
+   * Creature - Giant 6/4
+   * Trample
+   * Rampage 2 */
+
   // 0x415ca0
 
   /* Craw Giant	|3|G|G|G|G
@@ -1952,6 +1972,11 @@ Any number of target creatures become |Sred until end of turn. */
 }
 
 int card_elder_land_wurm(int player, int card, event_t event){
+  /* Elder Land Wurm	|4|W|W|W
+   * Creature - Dragon Wurm 5/5
+   * Defender, trample
+   * When this creature blocks, it loses defender. */
+
  /* Ruling for Elder Land Wurm: 10/4/2004: Another effect can give Elder Land Wurm defender after it has lost it. Blocking again will
   * cause it to lose that instance of defender too. */
 	if (current_turn == 1-player && blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG) &&
@@ -2776,12 +2801,10 @@ Creature - Slug 1/1
 	return generic_activated_ability(player, card, event, 0, MANACOST_X(5), 0, NULL, NULL);
 }
 
-
-
 int card_giant_turtle(int player, int card, event_t event){
-/* Giant Turtle |1|G|G
-Creature � Turtle 2/4
-Giant Turtle can't attack if it attacked during your last turn. */
+  /* Giant Turtle |1|G|G
+   * Creature � Turtle 2/4
+   * Giant Turtle can't attack if it attacked during your last turn. */
 
 	if( event == EVENT_DECLARE_ATTACKERS && is_attacking(player, card) && ! is_humiliated(player, card, AL_STATIC) )
 		get_card_instance(player, card)->targets[1].player = 66;
@@ -2797,6 +2820,19 @@ Giant Turtle can't attack if it attacked during your last turn. */
 }
 
 static int glyph_of_delusion_wall_card = 0;
+/* ManalinkEh 2022: 0x21f3eb0; original cards/legends.c:2732. */
+int card_giant_strength(int player, int card, event_t event)
+{
+  /* CARD_ID_GIANT_STRENGTH	649
+   * Giant Strength	|R|R
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +2/+2. */
+
+  int result;
+  result = generic_aura(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
+  return result;
+}
 static const char* target_is_blocked_by_glyph_of_delusion_wall_card(int who_chooses, int player, int card)
 {
 	if (player == current_turn && is_blocking(glyph_of_delusion_wall_card, card)){
@@ -2805,8 +2841,15 @@ static const char* target_is_blocked_by_glyph_of_delusion_wall_card(int who_choo
 		return "not blocked by Wall";
 	}
 }
+
 int card_glyph_of_delusion(int player, int card, event_t event)
 {
+  /* Glyph of Delusion	|U
+   * Instant
+   * Put X glyph counters on target creature that target Wall blocked this turn, where X is the power of that blocked creature. The creature gains "This
+   * creature doesn't untap during your untap step if it has a glyph counter on it" and "At the beginning of your upkeep, remove a glyph counter from this
+   * creature." */
+
   card_instance_t *instance;
   int result;
   target_definition_t td_wall;
@@ -2952,13 +2995,12 @@ static int glyph_of_destruction_boost_legacy(int player, int card, event_t event
 }
 
 int card_glyph_of_destruction(int player, int card, event_t event){
-/*
-Glyph of Destruction |R
-Instant
-Target blocking Wall you control gets +10/+0 until end of combat.
-Prevent all damage that would be dealt to it this turn.
-Destroy it at the beginning of the next end step.
-*/
+  /* Glyph of Destruction |R
+   * Instant
+   * Target blocking Wall you control gets +10/+0 until end of combat.
+   * Prevent all damage that would be dealt to it this turn.
+   * Destroy it at the beginning of the next end step. */
+
 	if (!IS_GS_EVENT(player, card, event)){
 		return 0;
 	}
@@ -3119,14 +3161,13 @@ static int glyph_of_reincarnation_legacy(int player, int card, event_t event){
 }
 
 int card_glyph_of_reincarnation(int player, int card, event_t event){
-/*
-Glyph of Reincarnation |G
-Instant
-Cast Glyph of Reincarnation only after combat.
-Destroy all creatures that were blocked by target Wall this turn. They can't be regenerated.
-For each creature that died this way, put a creature card from the graveyard of the player who controlled that creature the last
-	time it became blocked by that Wall onto the battlefield under its owner's control.
-*/
+  /* Glyph of Reincarnation |G
+   * Instant
+   * Cast Glyph of Reincarnation only after combat.
+   * Destroy all creatures that were blocked by target Wall this turn. They can't be regenerated.
+   * For each creature that died this way, put a creature card from the graveyard of the player who controlled that creature the last
+   * 	time it became blocked by that Wall onto the battlefield under its owner's control. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -3187,11 +3228,13 @@ Creatures with |H2islandwalk can be blocked as though they didn't have |H2island
 
 int card_gravity_sphere(int player, int card, event_t event)
 {
-  // 0x416280
-
   /* Gravity Sphere	|2|R
    * World Enchantment
    * All creatures lose flying. */
+
+  // 0x416280
+
+
 
   if (event == EVENT_ABILITIES && is_what(affected_card_controller, affected_card, TYPE_CREATURE)
 	  && in_play(player, card) && in_play(affected_card_controller, affected_card)
@@ -3311,6 +3354,11 @@ Enchantment
 
 int card_green_mana_battery(int player, int card, event_t event)
 {
+  /* Green Mana Battery	|4
+   * Artifact
+   * |2, |T: Put a charge counter on this artifact.
+   * |T, Remove any number of charge counters from this artifact: Add |G, then add an additional |G for each charge counter removed this way. */
+
   // 0x4235A0
   return mana_battery(player, card, event, COLOR_GREEN);
 }
@@ -3348,12 +3396,11 @@ Legendary Creature - Human Rogue 3/5
 }
 
 int card_halfdane(int player, int card, event_t event){
-/*
-Halfdane |1|W|U|B
-Legendary Creature — Shapeshifter 3/3
-At the beginning of your upkeep, change Halfdane's base power and toughness to the power and toughness of target creature
-	other than Halfdane until the end of your next upkeep.
-*/
+  /* Halfdane |1|W|U|B
+   * Legendary Creature — Shapeshifter 3/3
+   * At the beginning of your upkeep, change Halfdane's base power and toughness to the power and toughness of target creature
+   * 	other than Halfdane until the end of your next upkeep. */
+
 	check_legend_rule(player, card, event);
 
 	if( !is_humiliated(player, card, AL_TRIG) && current_turn == player && trigger_condition == TRIGGER_UPKEEP && affect_me(player, card) ){
@@ -3470,8 +3517,15 @@ static int legacy_ht(int player, int card, event_t event){
 	return 0;
 }
 
+// headless horseman --> vanilla
 int card_hazezon_tamar(int player, int card, event_t event)
 {
+  /* Hazezon Tamar	|4|R|G|W
+   * Legendary Creature - Human Warrior 2/4
+   * When ~ enters the battlefield, put X 1/1 Sand Warrior creature tokens that are |Sred, |Sgreen, and |Swhite
+   * 		onto the battlefield at the beginning of your next upkeep, where X is the number of lands you control at that time.
+   * When Hazezon leaves the battlefield, exile all Sand Warriors. */
+
   card_instance_t *instance;
   int result;
   int card_00;
@@ -3514,7 +3568,6 @@ int card_hazezon_tamar(int player, int card, event_t event)
   return 0;
 }
 
-// headless horseman --> vanilla
 int card_heavens_gate(int player, int card, event_t event){
 /* CARD_ID_HEAVENS_GATE	668
 Heaven's Gate	|W
@@ -3586,6 +3639,8 @@ Creature - Horror 1/1
 	return 0;
 }
 
+// holy day --> fog
+
 int card_hellfire(int player, int card, event_t event){
 /* CARD_ID_HELLFIRE	671
 Hellfire	|2|B|B|B
@@ -3607,7 +3662,7 @@ Destroy all non|Sblack creatures. ~ deals X plus 3 damage to you, where X is the
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
-// holy day --> fog
+// hornet cobra
 
 int card_horn_of_deafening(int player, int card, event_t event){
 /* CARD_ID_HORN_OF_DEAFENING	673
@@ -3632,8 +3687,6 @@ Artifact
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_X(2), 0, &td, "TARGET_CREATURE");
 }
-
-// hornet cobra
 
 int card_horror_of_horrors(int player, int card, event_t event){
 /* CARD_ID_HORROR_OF_HORRORS	675
@@ -3736,11 +3789,10 @@ Creature - Human Artificer 2/2
 }
 
 int card_ichneumon_druid(int player, int card, event_t event){
-/*
-Ichneumon Druid |1|G|G
-Creature — Human Druid 1/1
-Whenever an opponent casts an instant spell other than the first instant spell that player casts each turn, Ichneumon Druid deals
-	4 damage to him or her.*/
+  /* Ichneumon Druid |1|G|G
+   * Creature — Human Druid 1/1
+   * Whenever an opponent casts an instant spell other than the first instant spell that player casts each turn, Ichneumon Druid deals
+   * 	4 damage to him or her. */
 
 	if( event == EVENT_CAST_SPELL && affected_card_controller == 1-player &&
 		is_what(affected_card_controller, affected_card, TYPE_INSTANT | TYPE_INTERRUPT) )
@@ -3872,11 +3924,9 @@ and creatures it was blocking that had become blocked by only that creature this
 }
 
 int card_in_the_eye_of_chaos(int player, int card, event_t event){
-/*
-In the Eye of Chaos |2|U
-World Enchantment
-Whenever a player casts an instant spell, counter it unless that player pays {X}, where X is its converted mana cost.
-*/
+  /* In the Eye of Chaos |2|U
+   * World Enchantment
+   * Whenever a player casts an instant spell, counter it unless that player pays {X}, where X is its converted mana cost. */
 
 	enchant_world(player, card, event);
 	sp_ability_trigger(ANYBODY, event, RESOLVE_TRIGGER_MANDATORY, TYPE_INSTANT | TYPE_INTERRUPT, NULL, player, card);
@@ -4119,12 +4169,10 @@ static int johan_legacy(int player, int card, event_t event){
 }
 
 int card_johan(int player, int card, event_t event){
-/*
-Johan |3|W|R|G
-Legendary Creature — Human Wizard 5/4,  (6)
-At the beginning of combat on your turn, you may have Johan gain "Johan can't attack" until end of combat.
-	If you do, attacking doesn't cause creatures you control to tap this combat if Johan is untapped.
-*/
+  /* Johan |3|W|R|G
+   * Legendary Creature — Human Wizard 5/4,  (6)
+   * At the beginning of combat on your turn, you may have Johan gain "Johan can't attack" until end of combat.
+   * 	If you do, attacking doesn't cause creatures you control to tap this combat if Johan is untapped. */
 
 	check_legend_rule(player, card, event);
 
@@ -4230,13 +4278,12 @@ static int get_permanent_with_highest_cmc(int player, int card, int sel_type, in
 }
 
 int card_juxtapose(int player, int card, event_t event){
-/*
-Juxtapose |3|U
-Sorcery
-You and target player exchange control of the creature you each control with the highest converted mana cost.
-Then exchange control of artifacts the same way.
-If two or more permanents a player controls are tied for highest cost, their controller chooses one of them.
-*/
+  /* Juxtapose |3|U
+   * Sorcery
+   * You and target player exchange control of the creature you each control with the highest converted mana cost.
+   * Then exchange control of artifacts the same way.
+   * If two or more permanents a player controls are tied for highest cost, their controller chooses one of them. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -4266,6 +4313,8 @@ If two or more permanents a player controls are tied for highest cost, their con
 
 	return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, NULL, 1, NULL);
 }
+
+// keepers of the faith --> vanilla
 
 int card_karakas(int player, int card, event_t event){
 	/* Karakas	""
@@ -4319,8 +4368,6 @@ int card_karakas(int player, int card, event_t event){
 	return 0;
 }
 
-// keepers of the faith --> vanilla
-
 int card_kei_takahashi(int player, int card, event_t event){
 /* CARD_ID_KEI_TAKAHASHI	697
 Kei Takahashi	|2|G|W
@@ -4363,11 +4410,13 @@ Flying
 
 int card_kismet(int player, int card, event_t event)
 {
-  // 0x4b56e0
-
   /* Kismet	|3|W
    * Enchantment
    * Artifacts, creatures, and lands played by your opponents enter the battlefield tapped. */
+
+  // 0x4b56e0
+
+
 
 	permanents_enters_battlefield_tapped(player, card, event, 1-player, TYPE_ARTIFACT | TYPE_CREATURE | TYPE_LAND, NULL);
 
@@ -4497,6 +4546,8 @@ Other Kobold creatures you control have first strike. */
 	return 0;
 }
 
+// kobold of kher keep --> vanilla
+
 int card_kobold_taskmaster(int player, int card, event_t event)
 {
 /* CARD_ID_KOBOLD_TASKMASTER	703
@@ -4507,8 +4558,6 @@ Other Kobold creatures you control get +1/+0. */
   boost_creature_type(player, card, event, SUBTYPE_KOBOLD, 1, 0, 0, BCT_CONTROLLER_ONLY);
   return 0;
 }
-
-// kobold of kher keep --> vanilla
 
 static int kry_shield_effect(int player, int card, event_t event){
 
@@ -4537,12 +4586,11 @@ static int kry_shield_effect(int player, int card, event_t event){
 }
 
 int card_kry_shield(int player, int card, event_t event){
-/*
-Kry Shield |2
-Artifact
-{2}, {T}: Prevent all damage that would be dealt this turn by target creature you control.
-	That creature gets +0/+X until end of turn, where X is its converted mana cost.
-*/
+  /* Kry Shield |2
+   * Artifact
+   * {2}, {T}: Prevent all damage that would be dealt this turn by target creature you control.
+   * 	That creature gets +0/+X until end of turn, where X is its converted mana cost. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -4594,11 +4642,13 @@ Legendary Creature - Human Archer 3/6
 
 int card_lady_evangela(int player, int card, event_t event)
 {
-  // original code : 0040CD80
-
   /* Lady Evangela	|W|U|B
    * Legendary Creature - Human Cleric 1/2
    * |W|B, |T: Prevent all combat damage that would be dealt by target creature this turn. */
+
+  // original code : 0040CD80
+
+
 
 	check_legend_rule(player, card, event);
 	if (!IS_GAA_EVENT(event)){ return 0; }
@@ -4615,12 +4665,11 @@ int card_lady_evangela(int player, int card, event_t event)
 }
 
 int card_land_equilibrium(int player, int card, event_t event){
-/*
-Land Equilibrium |2|U|U
-Enchantment
-If an opponent who controls at least as many lands as you do would put a land onto the battlefield, that player instead puts that land
-	onto the battlefield then sacrifices a land.
-*/
+  /* Land Equilibrium |2|U|U
+   * Enchantment
+   * If an opponent who controls at least as many lands as you do would put a land onto the battlefield, that player instead puts that land
+   * 	onto the battlefield then sacrifices a land. */
+
 	if( ! is_humiliated(player, card, AL_STATIC) && trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) &&
 		reason_for_trigger_controller == 1-player )
 	{
@@ -4654,7 +4703,6 @@ reveal them, and put them into your hand. If you do, shuffle your library. */
 
 	return global_enchantment(player, card, event);
 }
-
 
 static int lands_edge_effect(int player, int card, event_t event)
 {
@@ -4975,11 +5023,10 @@ int card_lesser_werewolf(int player, int card, event_t event){
 }
 
 int card_life_chisel(int player, int card, event_t event){
-/*
-Life Chisel |4
-Artifact
-Sacrifice a creature: You gain life equal to the sacrificed creature's toughness. Activate this ability only during your upkeep.
-*/
+  /* Life Chisel |4
+   * Artifact
+   * Sacrifice a creature: You gain life equal to the sacrificed creature's toughness. Activate this ability only during your upkeep. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -4996,7 +5043,6 @@ Sacrifice a creature: You gain life equal to the sacrificed creature's toughness
 	return generic_activated_ability_with_sacrifice_as_cost(player, card, event, GAA_ONLY_ON_UPKEEP | GAA_IN_YOUR_TURN, MANACOST0, 0, NULL, NULL,
 															0, &test, SARV_REPORT_TOUGHNESS);
 }
-
 static int effect_life_matrix(int player, int card, event_t event)
 {
   if (effect_follows_control_of_attachment(player, card, event))
@@ -5022,8 +5068,14 @@ static int effect_life_matrix(int player, int card, event_t event)
 
   return 0;
 }
+
 int card_life_matrix(int player, int card, event_t event)
 {
+  /* Life Matrix	|4
+   * Artifact
+   * |4, |T: Put a matrix counter on target creature and that creature gains "Remove a matrix counter from this creature: Regenerate this creature." Activate
+   * this ability only during your upkeep. */
+
   int result;
   card_instance_t *instance;
   card_instance_t *candidate_legacy;
@@ -5137,6 +5189,8 @@ First strike; legendary landwalk (This creature can't be blocked as long as defe
 	return 0;
 }
 
+// lost soul --> vanilla
+
 int card_lord_magnus(int player, int card, event_t event){
 	/* Lord Magnus	|3|G|W|W	0x200d66c
 	 * Legendary Creature - Human Druid 4/3
@@ -5147,8 +5201,6 @@ int card_lord_magnus(int player, int card, event_t event){
 	check_legend_rule(player, card, event);
 	return 0;
 }
-
-// lost soul --> vanilla
 
 int effect_mana_drain(int player, int card, event_t event){
 
@@ -5165,12 +5217,11 @@ int effect_mana_drain(int player, int card, event_t event){
 }
 
 int card_mana_drain(int player, int card, event_t event){
-/*
-Mana Drain |U|U
-Instant
-Counter target spell. At the beginning of your next main phase, add an amount of {C} to your mana pool equal to that spell's converted
-	mana cost.
-*/
+  /* Mana Drain |U|U
+   * Instant
+   * Counter target spell. At the beginning of your next main phase, add an amount of {C} to your mana pool equal to that spell's converted
+   * 	mana cost. */
+
 	if( event == EVENT_CAN_CAST ){
 		return counterspell(player, card, event, NULL, 0);
 	}
@@ -5250,7 +5301,6 @@ int card_master_of_the_hunt(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, 0, MANACOST_XG(2, 2), 0, NULL, NULL);
 }
 
-
 int card_mirror_universe(int player, int card, event_t event){
 /* CARD_ID_MIRROR_UNIVERSE	725
 Mirror Universe	|6
@@ -5287,6 +5337,12 @@ Creatures without flying can't attack. */
 
 	return global_enchantment(player, card, event);
 }
+
+// moss monster --> vanilla
+
+// mountain stronghold --> undoable
+
+// mountain yeti --> vanilla
 
 int card_mold_demon(int player, int card, event_t event){
 /* CARD_ID_MOLD_DEMON	727
@@ -5328,12 +5384,6 @@ When ~ enters the battlefield, sacrifice it unless you sacrifice two |H1Swamps. 
 
 	return 0;
 }
-
-// moss monster --> vanilla
-
-// mountain stronghold --> undoable
-
-// mountain yeti --> vanilla
 
 int card_nebuchadnezzar(int player, int card, event_t event){
 /* CARD_ID_NEBUCHADNEZZAR	731
@@ -5429,13 +5479,12 @@ int card_nether_void(int player, int card, event_t event){
 }
 
 int card_nicol_bolas2(int player, int card, event_t event){
-/*
-Nicol Bolas |2|U|U|B|B|R|R
-Legendary Creature — Elder Dragon 7/7
-Flying
-At the beginning of your upkeep, sacrifice Nicol Bolas unless you pay {U}{B}{R}.
-Whenever Nicol Bolas deals damage to an opponent, that player discards his or her hand.
-*/
+  /* Nicol Bolas |2|U|U|B|B|R|R
+   * Legendary Creature — Elder Dragon 7/7
+   * Flying
+   * At the beginning of your upkeep, sacrifice Nicol Bolas unless you pay {U}{B}{R}.
+   * Whenever Nicol Bolas deals damage to an opponent, that player discards his or her hand. */
+
 	check_legend_rule(player, card, event);
 
 	basic_upkeep(player, card, event, MANACOST_UBR(1, 1, 1));
@@ -5528,12 +5577,11 @@ static const char* is_damaging_me(int who_chooses, int player, int card){
 }
 
 int card_nova_pentacle(int player, int card, event_t event){
-/*
-Nova Pentacle |4
-Artifact
-{3}, {T}: The next time a source of your choice would deal damage to you this turn, that damage is dealt to target creature of
-	an opponent's choice instead.
-*/
+  /* Nova Pentacle |4
+   * Artifact
+   * {3}, {T}: The next time a source of your choice would deal damage to you this turn, that damage is dealt to target creature of
+   * 	an opponent's choice instead. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -5582,6 +5630,13 @@ Artifact
 
 int card_osai_vultures(int player, int card, event_t event)
 {
+  /* CARD_ID_OSAI_VULTURES	736
+   * Osai Vultures	|1|W
+   * Creature - Bird 1/1
+   * Flying
+   * At the beginning of each end step, if a creature died this turn, put a carrion counter on ~.
+   * Remove two carrion counters from ~: ~ gets +1/+1 until end of turn. */
+
   int result;
 
   if ((0 < creatures_dead_this_turn) &&
@@ -5759,12 +5814,14 @@ Legendary Land
 
 int card_petra_sphinx(int player, int card, event_t event)
 {
-  // 0x414d30
-
   /* Petra Sphinx	|2|W|W|W
    * Creature - Sphinx 3/4
    * |T: Target player names a card, then reveals the top card of his or her library. If that card is the named card, that player puts it into his or her
    * hand. If it isn't, the player puts it into his or her graveyard. */
+
+  // 0x414d30
+
+
 
   if (!IS_GAA_EVENT(event))
 	return 0;
@@ -5832,6 +5889,10 @@ int card_petra_sphinx(int player, int card, event_t event)
 }
 
 int card_pit_scorpion(int player, int card, event_t event){
+  /* Pit Scorpion	|2|B
+   * Creature - Scorpion 1/1
+   * Whenever this creature deals damage to a player, that player gets a poison counter. (A player with ten or more poison counters loses the game.) */
+
 /*
 Pit Scorpion English
 Creature — Scorpion 1/1, 2B (3)
@@ -6080,13 +6141,12 @@ int puppet_master_legacy(int player, int card, event_t event){
 }
 
 int card_puppet_master(int player, int card, event_t event){
-/*
-Puppet Master |U|U|U
-Enchantment — Aura
-Enchant creature
-When enchanted creature dies, return that card to its owner's hand.
-If that card is returned to its owner's hand this way, you may pay {U}{U}{U}. If you do, return Puppet Master to its owner's hand.
-*/
+  /* Puppet Master |U|U|U
+   * Enchantment — Aura
+   * Enchant creature
+   * When enchanted creature dies, return that card to its owner's hand.
+   * If that card is returned to its owner's hand this way, you may pay {U}{U}{U}. If you do, return Puppet Master to its owner's hand. */
+
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_TRIG) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int p = instance->damage_target_player;
@@ -6181,7 +6241,6 @@ Creatures with |H2swampwalk can be blocked as though they didn't have |H2swampwa
 	return global_enchantment(player, card, event);
 }
 
-
 static const char* not_already_disabled_by_qtg(int who_chooses, int player, int card){
 	if( ! check_special_flags2(player, card, SF2_QUARUM_TRENCH_GNOMES) ){
 		return NULL;
@@ -6191,11 +6250,10 @@ static const char* not_already_disabled_by_qtg(int who_chooses, int player, int 
 }
 
 int card_quarum_trench_gnomes(int player, int card, event_t event){
-/*
-Quarum Trench Gnomes |3|R
-Creature — Gnome 1/1
-{T}: If target Plains is tapped for mana, it produces colorless mana instead of white mana. (This effect lasts indefinitely.)
-*/
+  /* Quarum Trench Gnomes |3|R
+   * Creature — Gnome 1/1
+   * {T}: If target Plains is tapped for mana, it produces colorless mana instead of white mana. (This effect lasts indefinitely.) */
+
 	if (!IS_GAA_EVENT(event))
 		return 0;
 
@@ -6241,6 +6299,8 @@ Vigilance
 	return 0;
 }
 
+// raging bull --> vanilla
+
 int card_radjan_spirit(int player, int card, event_t event){
 /* CARD_ID_RADJAN_SPIRIT	756
 Radjan Spirit	|3|G
@@ -6271,8 +6331,6 @@ Creature - Spirit 3/2
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_CREATURE");
 }
-
-// raging bull --> vanilla
 
 int card_ragnar(int player, int card, event_t event){
 /* CARD_ID_RAGNAR	758
@@ -6350,13 +6408,12 @@ static int rapid_fire_legacy(int player, int card, event_t event){
 }
 
 int card_rapid_fire(int player, int card, event_t event){
-/*
-Rapid Fire |3|W
-Instant
-Cast Rapid Fire only before blockers are declared.
-Target creature gains first strike until end of turn. If it doesn't have rampage, that creature gains rampage 2 until end of turn.
-	(Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it beyond the first.)
-*/
+  /* Rapid Fire |3|W
+   * Instant
+   * Cast Rapid Fire only before blockers are declared.
+   * Target creature gains first strike until end of turn. If it doesn't have rampage, that creature gains rampage 2 until end of turn.
+   * 	(Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking it beyond the first.) */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -6403,6 +6460,7 @@ static const char* target_must_be_damage_targeting_this_rasputin(int who_chooses
 	return "must be damaging Rasputin Dreamweaver";
 }
 
+// Rebirth --> hardcoded, for now
 
 int card_rasputin_dreamweaver(int player, int card, event_t event){
 /* Rasputin Dreamweaver	|4|W|U
@@ -6488,8 +6546,6 @@ int card_rasputin_dreamweaver(int player, int card, event_t event){
 
 	return 0;
 }
-
-// Rebirth --> hardcoded, for now
 
 int card_recall(int player, int card, event_t event){
 	/* Recall	|X|X|U
@@ -6869,6 +6925,8 @@ Players play with their hands revealed. */
   return global_enchantment(player, card, event);
 }
 
+// righteous avengers --> vanilla
+
 int card_reverberation(int player, int card, event_t event){
 /* CARD_ID_REVERBERATION	773
 Reverberation	|2|U|U
@@ -6898,8 +6956,6 @@ All damage that would be dealt this turn by target sorcery spell is dealt to tha
 
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_DAMAGE_PREVENTION, &td, "TARGET_DAMAGE", 1, NULL);
 }
-
-// righteous avengers --> vanilla
 
 static const char* is_instant_or_aura_targetting_one_of_my_permanents(int who_chooses, int player, int card){
 
@@ -7061,15 +7117,6 @@ Counter target activated ability from an artifact source. (Mana abilities can't 
 	return 0;
 }
 
-int card_sea_kings_blessing(int player, int card, event_t event){
-/* CARD_ID_SEA_KINGS_BLESSING	779
-Sea Kings' Blessing	|U
-Instant
-Any number of target creatures become |Sblue until end of turn. */
-
-	return song(player, card, event, COLOR_TEST_BLUE);
-}
-
 // seafarer's quay --> impossible
 /* CARD_ID_SEAFARERS_QUAY	780
 Seafarer's Quay	""
@@ -7079,14 +7126,23 @@ at least one has "bands with other legendary creatures." Bands are blocked as a 
 one of which has "bands with other legendary creatures," are blocking or being blocked by the same creature, you divide that creature's combat damage,
 not its controller, among any of the creatures it's being blocked by or is blocking.) */
 
+int card_sea_kings_blessing(int player, int card, event_t event){
+/* CARD_ID_SEA_KINGS_BLESSING	779
+Sea Kings' Blessing	|U
+Instant
+Any number of target creatures become |Sblue until end of turn. */
+
+	return song(player, card, event, COLOR_TEST_BLUE);
+}
+
+// segovian leviathan --> vanilla
 
 int card_seeker2(int player, int card, event_t event){
-/*
-Seeker |2|W|W
-Enchantment — Aura
-Enchant creature
-Enchanted creature can't be blocked except by artifact creatures and/or white creatures.
-*/
+  /* Seeker |2|W|W
+   * Enchantment — Aura
+   * Enchant creature
+   * Enchanted creature can't be blocked except by artifact creatures and/or white creatures. */
+
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
 		if( event == EVENT_BLOCK_LEGALITY && attacking_card_controller == instance->damage_target_player &&
@@ -7105,8 +7161,6 @@ Enchanted creature can't be blocked except by artifact creatures and/or white cr
 	return vanilla_aura(player, card, event, player);
 }
 
-// segovian leviathan --> vanilla
-
 static const char* is_blocking_s(int who_chooses, int player, int card, int targeting_player, int targeting_card)
 {
   if (is_blocking(card, targeting_card))
@@ -7123,13 +7177,14 @@ static const char* s_is_blocking_him(int who_chooses, int player, int card, int 
 	return "must be blocked by Sentinel";
 }
 
+// poison snake --> pit scorpion
+
 int card_sentinel(int player, int card, event_t event){
-/*
-Sentinel |4
-Artifact Creature — Shapeshifter 1/1
-{0}: Change Sentinel's base toughness to 1 plus the power of target creature blocking or blocked by Sentinel.
-	(This effect lasts indefinitely.)
-*/
+  /* Sentinel |4
+   * Artifact Creature — Shapeshifter 1/1
+   * {0}: Change Sentinel's base toughness to 1 plus the power of target creature blocking or blocked by Sentinel.
+   * 	(This effect lasts indefinitely.) */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -7181,8 +7236,6 @@ Artifact Creature — Shapeshifter 1/1
 
 	return 0;
 }
-
-// poison snake --> pit scorpion
 
 int card_serpent_generator(int player, int card, event_t event){
 	/* Serpent Generator	|6
@@ -7285,11 +7338,10 @@ static int ai_modifier_for_shimian_night_stalker(int player, int card){
 }
 
 int card_shimian_night_stalker(int player, int card, event_t event){
-/*
-Shimian Night Stalker |3|B|B
-Creature — Nightstalker 4/4
-{B}, {T}: All damage that would be dealt to you this turn by target attacking creature is dealt to Shimian Night Stalker instead.
-*/
+  /* Shimian Night Stalker |3|B|B
+   * Creature — Nightstalker 4/4
+   * {B}, {T}: All damage that would be dealt to you this turn by target attacking creature is dealt to Shimian Night Stalker instead. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -7451,14 +7503,15 @@ Creature - Beast 1/2
 									&td, get_sleighted_color_text(player, card, "Select target %s creature.", COLOR_BLUE));
 }
 
+int card_spirit_link(int player, int card, event_t event){
+  /* CARD_ID_SPIRIT_LINK	794
+   * Spirit Link	|W
+   * Enchantment - Aura
+   * Enchant creature (Target a creature as you cast this. This card enters the battlefield attached to that creature.)
+   * Whenever enchanted creature deals damage, you gain that much life. */
 
+ //also code for Vampiric Link
 
-int card_spirit_link(int player, int card, event_t event){ //also code for Vampiric Link
-/* CARD_ID_SPIRIT_LINK	794
-Spirit Link	|W
-Enchantment - Aura
-Enchant creature (Target a creature as you cast this. This card enters the battlefield attached to that creature.)
-Whenever enchanted creature deals damage, you gain that much life. */
 
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_TRIG) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -7512,6 +7565,11 @@ int card_spiritual_sanctury(int player, int card, event_t event){
 
 int card_stangg(int player, int card, event_t event)
 {
+  /* Stangg	|4|R|G
+   * Legendary Creature - Human Warrior 3/4
+   * When ~ enters the battlefield, put a legendary 3/4 |Sred and |Sgreen Human Warrior creature token named ~ Twin onto the battlefield.
+   * When ~ leaves the battlefield, exile that token. When that token leaves the battlefield, sacrifice ~. */
+
   test_definition_t test;
   check_legend_rule(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -7533,6 +7591,8 @@ int card_stangg(int player, int card, event_t event)
 }
 
 int card_stangg_twin(int player, int card, event_t event){
+  /* Stangg Twin	""
+   * Token Legendary Creature - Human Warrior 3/4 */
 
 	check_legend_rule(player, card, event);
 
@@ -7577,11 +7637,13 @@ int card_storm_seeker(int player, int card, event_t event)
 
 int card_storm_world(int player, int card, event_t event)
 {
-  // 0x4160a0
-
   /* Storm World	|R
    * World Enchantment
    * At the beginning of each player's upkeep, ~ deals X damage to that player, where X is 4 minus the number of cards in his or her hand. */
+
+  // 0x4160a0
+
+
 
   upkeep_trigger_ability(player, card, event, ANYBODY);
 
@@ -7775,7 +7837,6 @@ For each of those cards, pay 4 life or put the card on top of your library. */
 
 	return global_enchantment(player, card, event);
 }
-
 
 int card_sylvan_paradise(int player, int card, event_t event){
 /* CARD_ID_SYLVAN_PARADISE	804
@@ -8024,6 +8085,8 @@ Tap target creature. Prevent all combat damage that would be dealt by that creat
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
+// tempest efreet --> undoable
+
 int card_teleport2(int player, int card, event_t event){
 /* CARD_ID_TELEPORT	809
 Teleport	|U|U|U
@@ -8063,8 +8126,7 @@ Target creature can't be blocked this turn. */
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-// tempest efreet --> undoable
-
+// At the beginning of each player's upkeep, destroy target nonartifact creature that player controls of his or her choice. It can't be regenerated.
 int card_tetsuo_umezawa(int player, int card, event_t event){
 /* CARD_ID_TETSUO_UMEZAWA	811
 Tetsuo Umezawa	|U|B|R
@@ -8094,7 +8156,6 @@ Legendary Creature - Human Archer 3/3
 									&td, "Select target tapped or blocking creature.");
 }
 
-// At the beginning of each player's upkeep, destroy target nonartifact creature that player controls of his or her choice. It can't be regenerated.
 void abyss_trigger(int player, int card, event_t event)
 {
   upkeep_trigger_ability(player, card, event, ANYBODY);
@@ -8118,11 +8179,13 @@ void abyss_trigger(int player, int card, event_t event)
 
 int card_the_abyss(int player, int card, event_t event)
 {
-  // 0x416140
-
   /* The Abyss	|3|B
    * World Enchantment
    * At the beginning of each player's upkeep, destroy target nonartifact creature that player controls of his or her choice. It can't be regenerated. */
+
+  // 0x416140
+
+
 
   abyss_trigger(player, card, event);
   return enchant_world(player, card, event);
@@ -8169,12 +8232,13 @@ All creatures have "At the beginning of your upkeep, destroy this creature unles
   return 0;
 }
 
+// thunder spirit --> vanilla
+
 int card_the_wretched(int player, int card, event_t event){
-/*
-The Wretched |3|B|B
-Creature — Demon 2/5
-At end of combat, gain control of all creatures blocking The Wretched for as long as you control The Wretched.
-*/
+  /* The Wretched |3|B|B
+   * Creature — Demon 2/5
+   * At end of combat, gain control of all creatures blocking The Wretched for as long as you control The Wretched. */
+
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( current_turn == player && event == EVENT_DECLARE_BLOCKERS ){
@@ -8205,8 +8269,6 @@ At end of combat, gain control of all creatures blocking The Wretched for as lon
 	return 0;
 }
 
-// thunder spirit --> vanilla
-
 static int time_elemental_legacy(int player, int card, event_t event){
 	if( event == EVENT_SHOULD_AI_PLAY || end_of_combat_trigger(player, card, event, 2) ){
 		card_instance_t *instance = get_card_instance( player, card );
@@ -8223,6 +8285,12 @@ static int time_elemental_legacy(int player, int card, event_t event){
 
 int card_time_elemental(int player, int card, event_t event)
 {
+  /* CARD_ID_TIME_ELEMENTAL	817
+   * Time Elemental	|2|U
+   * Creature - Elemental 0/2
+   * When ~ attacks or blocks, at end of combat, sacrifice it and it deals 5 damage to you.
+   * |2|U|U, |T: Return target permanent that isn't enchanted to its owner's hand. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -8439,8 +8507,17 @@ Switch target creature's power and toughness until end of turn. */
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
+// tundra wolves
+
 int card_triassic_egg(int player, int card, event_t event)
 {
+  /* Triassic Egg	|4
+   * Artifact
+   * |3, |T: Put a hatchling counter on ~.
+   * Sacrifice ~: Choose one - You may put a creature card from your hand onto the battlefield;
+   * or return target creature card from your graveyard to the battlefield.
+   * Activate this ability only if two or more hatchling counters are on ~. */
+
   enum
   {
     CHOICE_COUNTER = 1,
@@ -8576,8 +8653,6 @@ int card_triassic_egg(int player, int card, event_t event)
   return 0;
 }
 
-// tundra wolves
-
 int card_tuknir_deathlock(int player, int card, event_t event){
 /* CARD_ID_TUKNIR_DEATHLOCK	825
 Tuknir Deathlock	|R|R|G|G
@@ -8630,6 +8705,15 @@ Creatures with |H2islandwalk can be blocked as though they didn't have |H2island
 	return global_enchantment(player, card, event);
 }
 
+//unholy citadel --> impossible
+/* CARD_ID_UNHOLY_CITADEL	830
+Unholy Citadel	""
+Land
+|SBlack legendary creatures you control have "bands with other legendary creatures." (Any legendary creatures can attack in a band as long
+as at least one has "bands with other legendary creatures." Bands are blocked as a group. If at least two legendary creatures you control,
+one of which has "bands with other legendary creatures," are blocking or being blocked by the same creature, you divide that creature's combat damage,
+not its controller, among any of the creatures it's being blocked by or is blocking.) */
+
 int card_underworld_dreams(int player, int card, event_t event){
 /* CARD_ID_UNDERWORLD_DREAMS	829
 Underworld Dreams	|B|B|B
@@ -8641,15 +8725,6 @@ Whenever an opponent draws a card, ~ deals 1 damage to him or her. */
 	}
 	return global_enchantment(player, card, event);
 }
-
-//unholy citadel --> impossible
-/* CARD_ID_UNHOLY_CITADEL	830
-Unholy Citadel	""
-Land
-|SBlack legendary creatures you control have "bands with other legendary creatures." (Any legendary creatures can attack in a band as long
-as at least one has "bands with other legendary creatures." Bands are blocked as a group. If at least two legendary creatures you control,
-one of which has "bands with other legendary creatures," are blocking or being blocked by the same creature, you divide that creature's combat damage,
-not its controller, among any of the creatures it's being blocked by or is blocking.) */
 
 int card_untamed_wilds(int player, int card, event_t event){
 /* CARD_ID_UNTAMED_WILDS	831
@@ -8773,12 +8848,15 @@ Legendary Land
 	return 0;
 }
 
-int card_vampire_bats(int player, int card, event_t event){ // => Pit Imp and Phyrexian Battleflies
-/* CARD_ID_VAMPIRE_BATS	835
-Vampire Bats	|B
-Creature - Bat 0/1
-Flying (This creature can't be blocked except by creatures with flying or reach.)
-|B: ~ gets +1/+0 until end of turn. Activate this ability no more than twice each turn. */
+int card_vampire_bats(int player, int card, event_t event){
+  /* CARD_ID_VAMPIRE_BATS	835
+   * Vampire Bats	|B
+   * Creature - Bat 0/1
+   * Flying (This creature can't be blocked except by creatures with flying or reach.)
+   * |B: ~ gets +1/+0 until end of turn. Activate this ability no more than twice each turn. */
+
+ // => Pit Imp and Phyrexian Battleflies
+
 
 	 card_instance_t *instance = get_card_instance(player, card);
 
@@ -8805,15 +8883,14 @@ Flying (This creature can't be blocked except by creatures with flying or reach.
 }
 
 int card_vaevictis_asmadi(int player, int card, event_t event){
-/*
-Vaevictis Asmadi |2|B|B|R|R|G|G
-Legendary Creature — Elder Dragon 7/7
-Flying
-At the beginning of your upkeep, sacrifice Vaevictis Asmadi unless you pay {B}{R}{G}.
-{B}: Vaevictis Asmadi gets +1/+0 until end of turn.
-{R}: Vaevictis Asmadi gets +1/+0 until end of turn.
-{G}: Vaevictis Asmadi gets +1/+0 until end of turn.
-*/
+  /* Vaevictis Asmadi |2|B|B|R|R|G|G
+   * Legendary Creature — Elder Dragon 7/7
+   * Flying
+   * At the beginning of your upkeep, sacrifice Vaevictis Asmadi unless you pay {B}{R}{G}.
+   * {B}: Vaevictis Asmadi gets +1/+0 until end of turn.
+   * {R}: Vaevictis Asmadi gets +1/+0 until end of turn.
+   * {G}: Vaevictis Asmadi gets +1/+0 until end of turn. */
+
 	check_legend_rule(player, card, event);
 
 	basic_upkeep(player, card, event, MANACOST_BRG(1, 1, 1));
@@ -8853,6 +8930,13 @@ At the beginning of your upkeep, sacrifice Vaevictis Asmadi unless you pay {B}{R
 
 int card_venarian_gold(int player, int card, event_t event)
 {
+  /* Venarian Gold	|X|U|U
+   * Enchantment - Aura
+   * Enchant creature
+   * When ~ enters the battlefield, tap enchanted creature and put X sleep counters on it.
+   * Enchanted creature doesn't untap during its controller's untap step if it has a sleep counter on it.
+   * At the beginning of the upkeep of enchanted creature's controller, remove a sleep counter from that creature. */
+
   char enchanted_player;
   card_instance_t *instance;
   int enchanted_card_or_result;
@@ -8955,6 +9039,17 @@ Look at the top five cards of target player's library. You may then have that pl
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_X_SPELL, &td, "TARGET_PLAYER", 1, NULL);
 }
 
+// walking dead --> drudge skeletons
+
+// wall of caltrops --> impossible
+/* CARD_ID_WALL_OF_CALTROPS	840
+Wall of Caltrops	|1|W
+Creature - Wall 2/1
+Defender (This creature can't attack.)
+Whenever ~ blocks a creature, if at least one other Wall creature is blocking that creature and no non-Wall creatures are blocking that creature,
+~ gains banding until end of turn. (If any creatures with banding you control are blocking a creature, you divide that creature's combat damage,
+not its controller, among any of the creatures it's being blocked by.) */
+
 int card_voodoo_doll( int player, int card, event_t event){
 	/* Voodoo Doll	|6	0x200205a
 	 * Artifact
@@ -8992,17 +9087,6 @@ int card_voodoo_doll( int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST_X(2 * count_counters(player, card, COUNTER_PIN)), 0, &td1, "TARGET_ANY");
 }
 
-// walking dead --> drudge skeletons
-
-// wall of caltrops --> impossible
-/* CARD_ID_WALL_OF_CALTROPS	840
-Wall of Caltrops	|1|W
-Creature - Wall 2/1
-Defender (This creature can't attack.)
-Whenever ~ blocks a creature, if at least one other Wall creature is blocking that creature and no non-Wall creatures are blocking that creature,
-~ gains banding until end of turn. (If any creatures with banding you control are blocking a creature, you divide that creature's combat damage,
-not its controller, among any of the creatures it's being blocked by.) */
-
 static int effect_cant_attack_during_controllers_next_turn(int player, int card, event_t event)
 {
   // 0x4a0c10
@@ -9032,6 +9116,8 @@ static void add_effect_cant_attack_during_controllers_next_turn(int player, int 
 	}
 }
 
+// wall of earth, wall of heat, wall of light --> vanilla
+
 int card_wall_of_dust(int player, int card, event_t event)
 {
 /* CARD_ID_WALL_OF_DUST	841
@@ -9047,8 +9133,6 @@ Whenever ~ blocks a creature, that creature can't attack during its controller's
 
   return 0;
 }
-
-// wall of earth, wall of heat, wall of light --> vanilla
 
 int card_wall_of_opposition(int player, int card, event_t event){
 /* CARD_ID_WALL_OF_OPPOSITION	845
@@ -9084,6 +9168,13 @@ Prevent all damage that would be dealt to ~ by enchanted creatures. */
 
 int card_wall_of_shadows(int player, int card, event_t event)
 {
+  /* CARD_ID_WALL_OF_SHADOWS	847
+   * Wall of Shadows	|1|B|B
+   * Creature - Wall 0/1
+   * Defender (This creature can't attack.)
+   * Prevent all damage that would be dealt to ~ by creatures it's blocking.
+   * ~ can't be the target of spells that can target only Walls or of abilities that can target only Walls. */
+
   if (event == EVENT_CHECK_ABILITIES && affect_me(player, card) &&
       1 - player == current_turn && current_phase < 0x18 &&
       !is_humiliated(player, card, AL_STATIC))
@@ -9118,6 +9209,12 @@ At the beginning of your upkeep, change ~'s base toughness to 1 plus the number 
 
 int card_wall_of_vapor(int player, int card, event_t event)
 {
+  /* CARD_ID_WALL_OF_VAPOR	849
+   * Wall of Vapor	|3|U
+   * Creature - Wall 0/1
+   * Defender (This creature can't attack.)
+   * Prevent all damage that would be dealt to ~ by creatures it's blocking. */
+
   int result;
   card_instance_t *instance;
   card_instance_t *damage;
@@ -9182,12 +9279,10 @@ Defender (This creature can't attack.)
 }
 
 int card_whirling_dervish(int player, int card, event_t event){
-/*
-Whirling Dervish |G|G
-Creature — Human Monk 1/1
-Protection from black
-At the beginning of each end step, if Whirling Dervish dealt damage to an opponent this turn, put a +1/+1 counter on it.
-*/
+  /* Whirling Dervish |G|G
+   * Creature — Human Monk 1/1
+   * Protection from black
+   * At the beginning of each end step, if Whirling Dervish dealt damage to an opponent this turn, put a +1/+1 counter on it. */
 
 	if( damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_OPPONENT) ){
 		get_card_instance( player, card )->targets[1].player = 66;
@@ -9213,12 +9308,14 @@ Artifact
 }
 
 int card_willow_satyr(int player, int card, event_t event){
+  /* Willow Satyr	|2|G|G
+   * Creature - Satyr 1/1
+   * You may choose not to untap ~ during your untap step.
+   * |T: Gain control of target legendary creature for as long as you control ~ and ~ remains tapped. */
+
 	// original code : 0x407680
 
-	/* Willow Satyr	|2|G|G
-	 * Creature - Satyr 1/1
-	 * You may choose not to untap ~ during your untap step.
-	 * |T: Gain control of target legendary creature for as long as you control ~ and ~ remains tapped. */
+
 
 	choose_to_untap(player, card, event);
 
@@ -9360,6 +9457,10 @@ int card_wood_elemental(int player, int card, event_t event)
   return 0;
 }
 
+// zephyr falcon --> serra angel
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 int card_xira_arien(int player, int card, event_t event){
 /* CARD_ID_XIRA_ARIEN	858
 Xira Arien	|B|R|G
@@ -9383,19 +9484,6 @@ Flying
 	return 0;
 }
 
-// zephyr falcon --> serra angel
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x21f3eb0; original cards/legends.c:2732. */
-int card_giant_strength(int player, int card, event_t event)
-{
-  int result;
-  result = generic_aura(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
-  return result;
-}
-
-
 #ifndef SHANDALAR
 /* Recovered October 2022 pump effects and cleanup helpers. */
 static void spirit_link_effect_part(int player, int card, event_t event, int who_gains);
@@ -9414,7 +9502,6 @@ static void spirit_link_effect_part(int player, int card, event_t event, int who
   }
   return;
 }
-
 
 /* ManalinkEh 2022: 0x22006a0; original cards/legends.c:7383. */
 void spirit_link_effect(int player, int card, event_t event, int who_gains)

@@ -2,7 +2,6 @@
 #include "manalink.h"
 
 /***** Functions *****/
-
 static void modify_casting_cost_for_emerge(int player, int card, event_t event, int cless,
                                            int black, int blue, int green, int red, int white)
 {
@@ -107,7 +106,6 @@ static int pay_cost_for_emerge(int player, int card, event_t event, int cless, i
 /***** Cards *****/
 
 /*** Colorless ***/
-
 int card_abundant_maw(int player, int card, event_t event)
 {
   /* Abundant Maw	|8	0x200eed1
@@ -221,7 +219,6 @@ int card_distended_mindbender(int player, int card, event_t event)
 
 	return 0;
 }
-
 
 int card_drownyard_behemoth(int player, int card, event_t event)
 {
@@ -496,7 +493,6 @@ int card_wretched_gryff(int player, int card, event_t event)
 }
 
 /*** White ***/
-
 int card_blessed_alliance(int player, int card, event_t event){
 /* Blessed Alliance	|1|W	0x200ef08
  * Instant
@@ -726,7 +722,9 @@ int card_bruna_the_fading_light(int player, int card, event_t event){
 
 	return 0;
 }
+
 // Melds with:
+
 int card_gisela_the_broken_blade(int player, int card, event_t event){
  /*
  * Gisela, the Broken Blade	|2|W|W	0x200ef17
@@ -781,7 +779,9 @@ int card_gisela_the_broken_blade(int player, int card, event_t event){
 
 	return 0;
 }
+
 // Meld into:
+
 int card_brisela_voice_of_nightmare(int player, int card, event_t event){
 /* Brisela, Voice of Nightmares	""	0x200ef1c
  * Legendary Creature - Eldrazi Angel 9/10
@@ -1116,7 +1116,9 @@ int card_extricator_of_sin(int player, int card, event_t event)
 
 	return 0;
 }
+
 // --TRANSFORM--
+
 int card_extricator_of_flesh(int player, int card, event_t event)
 {
  /* Extricator of Flesh	""	0x200ef30
@@ -1273,10 +1275,12 @@ int card_lone_rider(int player, int card, event_t event)
 
   return 0;
 }
-// --TRANSFORM--
+
 /* It That Rides as One	""	=>m10.c:card_child_of_night	0x200415c
  * Creature - Eldrazi Horror 4/4
  * First strike, trample, lifelink */
+
+// --TRANSFORM--
 
 int card_long_road_home(int player, int card, event_t event)
 {
@@ -1609,7 +1613,6 @@ int card_thraben_standard_bearer(int player, int card, event_t event)
 }
 
 /*** Blue ***/
-
 int card_advanced_stitchwing(int player, int card, event_t event)
 {
 /* Advanced Stitchwing	|3|U|U	0x200ef3a
@@ -1722,7 +1725,9 @@ int card_curious_humunculus(int player, int card, event_t event)
 
 	return 0;
 }
+
 // --TRANSFORM--
+
 int card_voracious_reader(int player, int card, event_t event)
 {
 /* Voracious Reader	""	0x200ef49
@@ -1793,7 +1798,9 @@ int card_docent_of_perfection(int player, int card, event_t event)
 
   return 0;
 }
+
 // --TRANSFORM--
+
 int card_final_iteration(int player, int card, event_t event)
 {
   /* Final Iteration	""	0x200ecab
@@ -2026,7 +2033,9 @@ int card_grizzled_angler(int player, int card, event_t event)
 
   return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL);
 }
+
 // --TRANSFORM--
+
 int card_grisly_anglerfish(int player, int card, event_t event)
 {
   /* Grisly Anglerfish	""	0x200ecc4
@@ -2041,6 +2050,11 @@ int card_grisly_anglerfish(int player, int card, event_t event)
 
 int card_identity_thief(int player, int card, event_t event)
 {
+  /* Identity Thief	|2|U|U	0x200ef53
+   * Creature - Shapeshifter 0/3
+   * Whenever ~ attacks, you may exile another target nontoken creature. If you do, ~ becomes a copy of that creature until end of turn.
+   * Return the exiled card to the battlefield under its owner's control at the beginning of the next end step. */
+
   int result;
   card_instance_t *instance;
   card_instance_t *exiled_creature;
@@ -2224,7 +2238,49 @@ int card_mausoleum_wanderer(int player, int card, event_t event)
   return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME|GAA_SPELL_ON_STACK, MANACOST0, 0, &td, NULL);
 }
 
+// The true effect is in 'discard_card_impl'
 
+/*** Tokens ***/
+
+/* ManalinkEh 2022: 0x2478630; original cards/eldritch_moon.c:2226. */
+int card_minds_dilation(int player, int card, event_t event)
+{
+  /* Mind's Dilation	|5|U|U	0x200ef5d
+   * Enchantment
+   * Whenever an opponent casts his or her first spell each turn, that player exiles the top card of his or her library.
+   * If it's a nonland card, you may cast it without paying its mana cost. */
+
+  int opponent;
+  int exiled_iid_or_trigger;
+  int playable_or_choice;
+
+  opponent = 1 - player;
+  if (get_specific_storm_count(opponent) == 0)
+  {
+    exiled_iid_or_trigger = new_specific_spell_played(player, card, event, opponent, 2, NULL);
+    if ((exiled_iid_or_trigger != 0) && (*deck_ptr[opponent] != -1))
+    {
+
+      show_deck(player, deck_ptr[opponent], 1, "This card will be exiled by Mind\'s Dilation.", 0,
+                EXE_STR(ENGINE_DONE_LABEL));
+      exiled_iid_or_trigger = *deck_ptr[opponent];
+      rfg_top_card_of_deck(opponent);
+      playable_or_choice = can_legally_play_iid(player, exiled_iid_or_trigger);
+      if ((playable_or_choice != 0) && ((cards_data[exiled_iid_or_trigger].type & 1) == 0))
+      {
+        playable_or_choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_RANDOM,
+                                         DLG_NO_CANCEL, DLG_FULLCARD_ID(exiled_iid_or_trigger),
+                                         "Play this card", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
+        if (playable_or_choice == 1)
+        {
+          play_card_in_exile_for_free(player, opponent,
+                                      (unsigned int)cards_data[exiled_iid_or_trigger].id);
+        }
+      }
+    }
+  }
+  return global_enchantment(player, card, event);
+}
 
 int card_nebelgast_herald(int player, int card, event_t event)
 {
@@ -2451,7 +2507,6 @@ int card_wharf_infiltrator(int player, int card, event_t event)
 }
 
 /*** Black ***/
-
 int card_boon_of_emrakul(int player, int card, event_t event)
 {
   /* Boon of Emrakul	|2|B	0x200ecf6
@@ -2565,6 +2620,10 @@ int card_borrowed_malevolence(int player, int card, event_t event){
 
 int card_cemetery_recruitment(int player, int card, event_t event)
 {
+  /* Cemetery Recruitment	|1|B	0x200ecfb
+   * Sorcery
+   * Return target creature card from your graveyard to your hand. If it's a Zombie card, draw a card. */
+
   if (!IS_GS_EVENT(player, card, event))
     return 0;
   test_definition_t test;
@@ -2977,7 +3036,9 @@ int card_graf_rats(int player, int card, event_t event){
 
 	return 0;
 }
+
 // --MELD WITH--
+
 int card_midnight_scavengers(int player, int card, event_t event){
  /* Midnight Scavengers	|4|B	0x200ef80
  * Creature - Human Rogue 3/3
@@ -2999,7 +3060,9 @@ int card_midnight_scavengers(int player, int card, event_t event){
 
 	return 0;
 }
+
 // --MELD TO--
+
 int card_chittering_host(int player, int card, event_t event){
  /* Chittering Host	""	0x200ef85
  * Creature - Eldrazi Horror 5/6
@@ -3534,7 +3597,9 @@ int card_voldaren_pariah(int player, int card, event_t event)
 
   return madness(player, card, event, MANACOST_B(3));
 }
+
 // --TRANSFORM--
+
 int card_abolisher_of_bloodlines(int player, int card, event_t event)
 {
   /* Abolisher of Bloodlines	""	0x200ed46
@@ -3584,7 +3649,6 @@ int card_whispers_of_emrakul(int player, int card, event_t event)
 }
 
 /*** Red ***/
-
 int card_abandon_reason(int player, int card, event_t event)
 {
   /* Abandon Reason	|2|R	0x200ed50
@@ -3987,6 +4051,7 @@ static int fx_produce_mana_your_next_main_phase_this_turn(int player, int card, 
 
   return 0;
 }
+
 void produce_mana_your_next_main_phase_this_turn(int player, int card, int x, int b, int u, int g, int r, int w)
 {
   if (current_turn != player)
@@ -4027,7 +4092,9 @@ int card_conduit_of_storms(int player, int card, event_t event)
 
   return generic_activated_ability(player, card, event, 0, MANACOST_XR(3,2), 0, NULL, NULL);
 }
+
 // --TRANSFORM--
+
 int card_conduit_of_emrakul(int player, int card, event_t event)
 {
   /* Conduit of Emrakul	""	0x200ed69
@@ -4222,10 +4289,115 @@ int card_make_mischief(int player, int card, event_t event)
   return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_ANY", 1, NULL);
 }
 
-/* Mirrorwing Dragon	|3|R|R	0x000000
- * Creature - Dragon 4/5
- * Flying
- * Whenever a player casts an instant or sorcery spell that targets only ~, that player copies that spell for each other creature he or she controls that the spell could target. Each copy targets a different one of those creatures. */
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x247ea50; original cards/eldritch_moon.c:4282. */
+int card_mirrorwing_dragon(int player, int card, event_t event)
+{
+  /* Mirrorwing Dragon	|3|R|R	0x000000
+   * Creature - Dragon 4/5
+   * Flying
+   * Whenever a player casts an instant or sorcery spell that targets only ~, that player copies that spell for each other creature he or she controls that the spell could target. Each copy targets a different one of those creatures. */
+
+  int p;
+  int32_t copied_target_player;
+  card_instance_t *triggering_spell;
+  int trigger_eligible;
+  card_instance_t *candidate_or_copy;
+  int copy_card_or_type;
+  int copy_playable;
+  int target_index_or_controller;
+  unsigned int iid;
+  int i;
+  if (trigger_condition == TRIGGER_SPELL_CAST)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (reason_for_trigger_controller == player)) &&
+        ((((unsigned int)event - (unsigned int)EVENT_TRIGGER < 2U &&
+           (triggering_spell = in_play(player, card), triggering_spell != NULL)) &&
+          (trigger_eligible = is_humiliated(player, card, AL_TRIG), trigger_eligible == 0))))
+    {
+      triggering_spell = get_card_instance(trigger_cause_controller, trigger_cause);
+      trigger_eligible = target_me(player, card, trigger_cause_controller, trigger_cause);
+      if (((trigger_eligible != 0) &&
+           (candidate_or_copy = get_card_instance(trigger_cause_controller, trigger_cause),
+            candidate_or_copy->number_of_targets == '\x01')) &&
+          (trigger_eligible = is_what(trigger_cause_controller, trigger_cause, 0x38),
+           trigger_eligible != 0))
+      {
+        p = 0;
+        if (event == EVENT_TRIGGER)
+        {
+          event_result = event_result | 2;
+        }
+        else
+        {
+          do
+          {
+            for (i = 0; i < active_cards_count[p]; i = i + 1)
+            {
+              if ((((trigger_cause_controller == p) &&
+                    (candidate_or_copy = in_play(p, i), candidate_or_copy != NULL)) &&
+                   (copy_card_or_type = is_what(p, i, 2), i != card)) &&
+                  (copy_card_or_type != 0))
+              {
+                iid = triggering_spell->internal_card_id;
+                if (iid == 0xffffffff)
+                {
+                  iid = (unsigned int)triggering_spell->backup_internal_card_id;
+                }
+                copy_card_or_type = add_card_to_hand(trigger_cause_controller, iid);
+                candidate_or_copy = get_card_instance(trigger_cause_controller, copy_card_or_type);
+                candidate_or_copy->info_slot = triggering_spell->info_slot;
+                candidate_or_copy->eot_toughness = triggering_spell->eot_toughness;
+                target_index_or_controller = 1;
+                do
+                {
+                  copied_target_player =
+                      triggering_spell->targets[target_index_or_controller].player;
+                  candidate_or_copy->targets[target_index_or_controller].card =
+                      triggering_spell->targets[target_index_or_controller].card;
+                  candidate_or_copy->targets[target_index_or_controller].player =
+                      copied_target_player;
+                  target_index_or_controller = target_index_or_controller + 1;
+                } while (target_index_or_controller != 0x13);
+                candidate_or_copy->targets[0].card = i;
+                candidate_or_copy->targets[0].player = p;
+                candidate_or_copy->number_of_targets = '\x01';
+                set_special_flags2(trigger_cause_controller, copy_card_or_type, -0x80000000);
+                convert_to_token(trigger_cause_controller, copy_card_or_type);
+                set_special_flags(trigger_cause_controller, copy_card_or_type, 0x200c0000);
+                if (put_card_on_stack(trigger_cause_controller, copy_card_or_type, 0) == 0)
+                {
+                  copy_playable = can_legally_play_iid(trigger_cause_controller, iid);
+                  target_index_or_controller = trigger_cause_controller;
+                  if (copy_playable == 0)
+                  {
+                    obliterate_card(trigger_cause_controller, copy_card_or_type);
+                  }
+                  else
+                  {
+                    hand_count[trigger_cause_controller] =
+                        hand_count[trigger_cause_controller] + -1;
+                    real_put_into_play(target_index_or_controller, copy_card_or_type);
+                  }
+                }
+                else
+                {
+                  put_card_on_stack(trigger_cause_controller, copy_card_or_type, 1);
+                  put_card_on_stack3(trigger_cause_controller, copy_card_or_type);
+                }
+              }
+            }
+            p = p + 1;
+          } while (p < 2);
+        }
+      }
+    }
+    return 0;
+  }
+  return 0;
+}
+#endif
 
 int card_nahiris_wrath(int player, int card, event_t event){
 /* Nahiri's Wrath	|2|R	0x200efbc
@@ -4308,6 +4480,7 @@ static int fx_otherworldly_outburst(int player, int card, event_t event)
     kill_card(player, card, KILL_EXILE);
   return 0;
 }
+
 int card_otherworldly_outburst(int player, int card, event_t event)
 {
   /* Otherworldly Outburst	|R	0x200ed87
@@ -4560,7 +4733,9 @@ int card_smoldering_werewolf(int player, int card, event_t event)
 
   return generic_activated_ability(player, card, event, 0, MANACOST_XR(4,2), 0, NULL, NULL);
 }
+
 // --TRANSFORM--
+
 int card_erupting_dreadwolf(int player, int card, event_t event)
 {
   /* Erupting Dreadwolf	""	0x200ed91
@@ -4761,11 +4936,13 @@ int card_vildin_pack_outcast(int player, int card, event_t event)
 
   return 0;
 }
-// --TRANSFORM--
+
 /* Dronepack Kindred	""	=>legends.c:card_wall_of_opposition	0x200c519
  * Creature - Eldrazi Werewolf 5/7
  * Trample
  * |1: ~ gets +1/+0 until end of turn. */
+
+// --TRANSFORM--
 
 int card_weaver_of_lightning(int player, int card, event_t event)
 {
@@ -4791,7 +4968,6 @@ int card_weaver_of_lightning(int player, int card, event_t event)
 }
 
 /*** Green ***/
-
 int card_backwoods_survivalists(int player, int card, event_t event)
 {
   /* Backwoods Survivalists	|3|G	0x200edb4
@@ -5199,12 +5375,13 @@ int card_kessig_prowler(int player, int card, event_t event)
 
 	return generic_activated_ability(player, card, event, 0, MANACOST_XG(4,1), 0, NULL, NULL);
 }
+
 // * --TRANSFORM--
- /* Sinuous Predator	""	= conspiracy.c:card_charging_rhino (and unimplemented Stalking Tiger, Ironhoof Ox, Norwood Riders),
+
+/* Sinuous Predator	""	= conspiracy.c:card_charging_rhino (and unimplemented Stalking Tiger, Ironhoof Ox, Norwood Riders),
  * though it works poorly
  * Creature - Eldrazi Werewolf 4/4
  * ~ can't be blocked by more than one creature. */
-
 int card_noose_constrictor(int player, int card, event_t event)
 {
   /* Noose Constrictor	|1|G	0x200ee09
@@ -5325,7 +5502,9 @@ int card_shrill_howler(int player, int card, event_t event)
 
   return generic_activated_ability(player, card, event, 0, MANACOST_XG(5,1), 0, NULL, NULL);
 }
+
 // --TRANSFORM--
+
 int card_howling_chorus(int player, int card, event_t event)
 {
   /* Howling Chorus	""	0x0x200ede1
@@ -5470,10 +5649,8 @@ int card_ulvenwald_captive(int player, int card, event_t event)
 
   return mana_producer(player, card, event);
 }
+
 // --TRANSFORM--
-/* Ulvenwald Abomination	""	=>scars_of_mirrodin.c:card_palladium_myr	0x200acf5
- * Creature - Eldrazi Werewolf 4/6
- * |T: Add |C|C to your mana pool. */
 
 static int ulvenwald_observer_effect(int player, int card, event_t event)
 {
@@ -5544,6 +5721,10 @@ static int ulvenwald_observer_effect(int player, int card, event_t event)
 
   return 0;
 }
+
+/* Ulvenwald Abomination	""	=>scars_of_mirrodin.c:card_palladium_myr	0x200acf5
+ * Creature - Eldrazi Werewolf 4/6
+ * |T: Add |C|C to your mana pool. */
 
 int card_ulvenwald_observer(int player, int card, event_t event){
   /* Ulvenwald Observer	|4|G|G	0x200edfa
@@ -5666,7 +5847,6 @@ int card_woodcutters_grit(int player, int card, event_t event)
  * Vigilance */
 
 /*** Multi ***/
-
 int card_bloodhall_priest(int player, int card, event_t event)
 {
 	/* Bloodhall Priest	|2|B|R	0x200ee0e
@@ -5887,6 +6067,7 @@ static int fx_creatures_power_le_2_cant_block(int player, int card, event_t even
 
   return 0;
 }
+
 int card_mournwillow(int player, int card, event_t event)
 {
   /* Mournwillow	|1|B|G	0x200ee22
@@ -5911,6 +6092,13 @@ int card_mournwillow(int player, int card, event_t event)
 
 int card_spell_queller(int player, int card, event_t event)
 {
+  /* Spell Queller	|1|W|U	0x200eff8
+   * Creature - Spirit 2/3
+   * Flash
+   * Flying
+   * When ~ enters the battlefield, exile target spell with converted mana cost 4 or less.
+   * When ~ leaves the battlefield, the exiled card's owner may cast that card without paying its mana cost. */
+
   int exiled_card_or_result;
   int cast_result;
   card_instance_t *instance;
@@ -6113,9 +6301,10 @@ int card_tamiyo_field_researcher(int player, int card, event_t event){
 }
 
 int card_tamiyo_field_researcher_emblem(int player, int card, event_t event){
-/* Tamiyo, Field Researcher's Emblem	""	0x200f002
- * Emblem - Tamiyo
- * You may cast nonland cards from your hand without paying their mana costs. */
+  /* Tamiyo, Field Researcher's Emblem	""	0x200f002
+   * Emblem - Tamiyo
+   * You may cast nonland cards from your hand without paying their mana costs. */
+
 	return card_omniscience(player, card, event);
 }
 
@@ -6145,7 +6334,9 @@ int card_ulrich_of_the_krallenhorde(int player, int card, event_t event)
 
   return 0;
 }
+
 // --TRANSFORM--
+
 int card_ulrich_uncontested_alpha(int player, int card, event_t event)
 {
   /* Ulrich, Uncontested Alpha	""(RG)	0x200ee2c
@@ -6173,12 +6364,12 @@ int card_ulrich_uncontested_alpha(int player, int card, event_t event)
   return 0;
 }
 
-/*** Artifact ***/
-
 /* Cathar's Shield	|0	=>scars_of_mirrodin.c:card_accorder_shield	0x200416b
  * Artifact - Equipment
  * Equipped creature gets +0/+3 and has vigilance.
  * Equip |3 */
+
+/*** Artifact ***/
 
 int card_cryptolith_fragment(int player, int card, event_t event)
 {
@@ -6205,7 +6396,9 @@ int card_cryptolith_fragment(int player, int card, event_t event)
 	APNAP(p, lose_life(p, 1));
   return rval;
 }
+
 // --TRANSFORM--
+
 int card_aurora_of_emrakul(int player, int card, event_t event)
 {
   /* Aurora of Emrakul	""	0x200ee36
@@ -6313,6 +6506,13 @@ int card_soul_separator(int player, int card, event_t event)
 
 int card_stitchers_graft(int player, int card, event_t event)
 {
+  /* Stitcher's Graft	|1	0x200ee4a
+   * Artifact - Equipment
+   * Equipped creature gets +3/+3.
+   * Whenever equipped creature attacks, it doesn't untap during its controller's next untap step.
+   * Whenever ~ becomes unattached from a permanent, sacrifice that permanent.
+   * Equip |2 */
+
   if (in_play(player, card) && is_equipping(player, card) &&
       !is_humiliated(player, card, AL_STATIC))
   {
@@ -6392,7 +6592,6 @@ int card_thirsting_axe(int player, int card, event_t event)
 }
 
 /*** Land ***/
-
 int card_geier_reach_sanitarium(int player, int card, event_t event)
 {
   /* Geier Reach Sanitarium	""	0x200ee4f
@@ -6564,7 +6763,9 @@ int card_hanweir_battlements(int player, int card, event_t event){
 
 	return 0;
 }
+
 //* --MELD WITH--
+
 int card_hanweir_garrison(int player, int card, event_t event){
  /* Hanweir Garrison	|2|R	0x200f01b
  * Creature - Human Soldier 2/3
@@ -6583,7 +6784,9 @@ int card_hanweir_garrison(int player, int card, event_t event){
 
 	return 0;
 }
+
 // --MELD TO--
+
 int card_hanweir_the_writhing_township(int player, int card, event_t event){
  /* Hanweir, the Writhing Township	""	0x200f020
  * Legendary Creature - Eldrazi Ooze 7/4
@@ -6610,156 +6813,9 @@ int card_hanweir_the_writhing_township(int player, int card, event_t event){
  * If a spell or ability an opponent controls causes you to discard a card,
  * you may reveal that card and put it on top of your library instead of putting it anywhere else.
  * |T: Add |C to your mana pool. */
-// The true effect is in 'discard_card_impl'
-
-/*** Tokens ***/
 
 /* Eldrazi Horror	""	=>vanilla	0x401000
  * Creature - Eldrazi Horror 3/2 */
 
 /* Human Wizard	""	=>vanilla	0x401000
  * Creature - Human Wizard 1/1 */
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2478630; original cards/eldritch_moon.c:2226. */
-int card_minds_dilation(int player, int card, event_t event)
-{
-  int opponent;
-  int exiled_iid_or_trigger;
-  int playable_or_choice;
-
-  opponent = 1 - player;
-  if (get_specific_storm_count(opponent) == 0)
-  {
-    exiled_iid_or_trigger = new_specific_spell_played(player, card, event, opponent, 2, NULL);
-    if ((exiled_iid_or_trigger != 0) && (*deck_ptr[opponent] != -1))
-    {
-
-      show_deck(player, deck_ptr[opponent], 1, "This card will be exiled by Mind\'s Dilation.", 0,
-                EXE_STR(ENGINE_DONE_LABEL));
-      exiled_iid_or_trigger = *deck_ptr[opponent];
-      rfg_top_card_of_deck(opponent);
-      playable_or_choice = can_legally_play_iid(player, exiled_iid_or_trigger);
-      if ((playable_or_choice != 0) && ((cards_data[exiled_iid_or_trigger].type & 1) == 0))
-      {
-        playable_or_choice = dialog_impl(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_RANDOM,
-                                         DLG_NO_CANCEL, DLG_FULLCARD_ID(exiled_iid_or_trigger),
-                                         "Play this card", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
-        if (playable_or_choice == 1)
-        {
-          play_card_in_exile_for_free(player, opponent,
-                                      (unsigned int)cards_data[exiled_iid_or_trigger].id);
-        }
-      }
-    }
-  }
-  return global_enchantment(player, card, event);
-}
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x247ea50; original cards/eldritch_moon.c:4282. */
-int card_mirrorwing_dragon(int player, int card, event_t event)
-{
-  int p;
-  int32_t copied_target_player;
-  card_instance_t *triggering_spell;
-  int trigger_eligible;
-  card_instance_t *candidate_or_copy;
-  int copy_card_or_type;
-  int copy_playable;
-  int target_index_or_controller;
-  unsigned int iid;
-  int i;
-  if (trigger_condition == TRIGGER_SPELL_CAST)
-  {
-    if ((((card == affected_card) && (player == affected_card_controller)) &&
-         (reason_for_trigger_controller == player)) &&
-        ((((unsigned int)event - (unsigned int)EVENT_TRIGGER < 2U &&
-           (triggering_spell = in_play(player, card), triggering_spell != NULL)) &&
-          (trigger_eligible = is_humiliated(player, card, AL_TRIG), trigger_eligible == 0))))
-    {
-      triggering_spell = get_card_instance(trigger_cause_controller, trigger_cause);
-      trigger_eligible = target_me(player, card, trigger_cause_controller, trigger_cause);
-      if (((trigger_eligible != 0) &&
-           (candidate_or_copy = get_card_instance(trigger_cause_controller, trigger_cause),
-            candidate_or_copy->number_of_targets == '\x01')) &&
-          (trigger_eligible = is_what(trigger_cause_controller, trigger_cause, 0x38),
-           trigger_eligible != 0))
-      {
-        p = 0;
-        if (event == EVENT_TRIGGER)
-        {
-          event_result = event_result | 2;
-        }
-        else
-        {
-          do
-          {
-            for (i = 0; i < active_cards_count[p]; i = i + 1)
-            {
-              if ((((trigger_cause_controller == p) &&
-                    (candidate_or_copy = in_play(p, i), candidate_or_copy != NULL)) &&
-                   (copy_card_or_type = is_what(p, i, 2), i != card)) &&
-                  (copy_card_or_type != 0))
-              {
-                iid = triggering_spell->internal_card_id;
-                if (iid == 0xffffffff)
-                {
-                  iid = (unsigned int)triggering_spell->backup_internal_card_id;
-                }
-                copy_card_or_type = add_card_to_hand(trigger_cause_controller, iid);
-                candidate_or_copy = get_card_instance(trigger_cause_controller, copy_card_or_type);
-                candidate_or_copy->info_slot = triggering_spell->info_slot;
-                candidate_or_copy->eot_toughness = triggering_spell->eot_toughness;
-                target_index_or_controller = 1;
-                do
-                {
-                  copied_target_player =
-                      triggering_spell->targets[target_index_or_controller].player;
-                  candidate_or_copy->targets[target_index_or_controller].card =
-                      triggering_spell->targets[target_index_or_controller].card;
-                  candidate_or_copy->targets[target_index_or_controller].player =
-                      copied_target_player;
-                  target_index_or_controller = target_index_or_controller + 1;
-                } while (target_index_or_controller != 0x13);
-                candidate_or_copy->targets[0].card = i;
-                candidate_or_copy->targets[0].player = p;
-                candidate_or_copy->number_of_targets = '\x01';
-                set_special_flags2(trigger_cause_controller, copy_card_or_type, -0x80000000);
-                convert_to_token(trigger_cause_controller, copy_card_or_type);
-                set_special_flags(trigger_cause_controller, copy_card_or_type, 0x200c0000);
-                if (put_card_on_stack(trigger_cause_controller, copy_card_or_type, 0) == 0)
-                {
-                  copy_playable = can_legally_play_iid(trigger_cause_controller, iid);
-                  target_index_or_controller = trigger_cause_controller;
-                  if (copy_playable == 0)
-                  {
-                    obliterate_card(trigger_cause_controller, copy_card_or_type);
-                  }
-                  else
-                  {
-                    hand_count[trigger_cause_controller] =
-                        hand_count[trigger_cause_controller] + -1;
-                    real_put_into_play(target_index_or_controller, copy_card_or_type);
-                  }
-                }
-                else
-                {
-                  put_card_on_stack(trigger_cause_controller, copy_card_or_type, 1);
-                  put_card_on_stack3(trigger_cause_controller, copy_card_or_type);
-                }
-              }
-            }
-            p = p + 1;
-          } while (p < 2);
-        }
-      }
-    }
-    return 0;
-  }
-  return 0;
-}
-
-#endif

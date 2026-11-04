@@ -171,6 +171,12 @@ Creature - Human Artificer 2/2
 
 int card_argothian_pixies(int player, int card, event_t event)
 {
+  /* CARD_ID_ARGOTHIAN_PIXIES	469
+   * Argothian Pixies	|1|G
+   * Creature - Faerie 2/1
+   * ~ can't be blocked by artifact creatures.
+   * Prevent all damage that would be dealt to ~ by artifact creatures. */
+
   card_instance_t *instance;
   int result;
   test_definition_t this_test;
@@ -235,6 +241,11 @@ int card_argothian_pixies(int player, int card, event_t event)
 
 int card_argothian_treefolk(int player, int card, event_t event)
 {
+  /* CARD_ID_ARGOTHIAN_TREEFOLK	470
+   * Argothian Treefolk	|3|G|G
+   * Creature - Treefolk 3/5
+   * Prevent all damage that would be dealt to ~ by artifact sources. */
+
   card_instance_t *instance;
   int result;
   test_definition_t this_test;
@@ -286,6 +297,12 @@ int card_argothian_treefolk(int player, int card, event_t event)
 
 int card_armageddon_clock(int player, int card, event_t event)
 {
+  /* Armageddon Clock	|6
+   * Artifact
+   * At the beginning of your upkeep, put a doom counter on ~.
+   * At the beginning of your draw step, ~ deals damage equal to the number of doom counters on it to each player.
+   * |4: Remove a doom counter from ~. Any player may activate this ability but only during any upkeep step. */
+
   card_instance_t *instance;
   card_instance_t *clock;
   int cost_or_doom_count;
@@ -517,6 +534,11 @@ You may choose not to untap ~ during your untap step.
 
 int card_ashnods_transmogrant(int player, int card, event_t event)
 {
+  /* CARD_ID_ASHNODS_TRANSMOGRANT	476
+   * Ashnod's Transmogrant	|1
+   * Artifact
+   * |T, Sacrifice ~: Put a +1/+1 counter on target nonartifact creature. That creature becomes an artifact in addition to its other types. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -984,11 +1006,13 @@ Destroy target artifact with converted mana cost X. It can't be regenerated. ~ d
 
 int card_drafnas_restoration(int player, int card, event_t event)
 {
-  // 0x41F560
-
   /* Drafna's Restoration	|U
    * Sorcery
    * Return any number of target artifact cards from target player's graveyard to the top of his or her library in any order. */
+
+  // 0x41F560
+
+
 
   if (!IS_GS_EVENT(player, card, event))
 	return 0;
@@ -1037,6 +1061,11 @@ Artifact Creature - Construct 1/3
 
 int card_dwarven_weaponsmith(int player, int card, event_t event)
 {
+  /* CARD_ID_DWARVEN_WEAPONSMITH	493
+   * Dwarven Weaponsmith	|1|R
+   * Creature - Dwarf Artificer 1/1
+   * |T, Sacrifice an artifact: Put a +1/+1 counter on target creature. Activate this ability only during your upkeep. */
+
   card_instance_t *instance;
   unsigned int sacrifice_choice;
   int result;
@@ -1106,6 +1135,11 @@ int card_dwarven_weaponsmith(int player, int card, event_t event)
 
 int card_energy_flux(int player, int card, event_t event)
 {
+  /* CARD_ID_ENERGY_FLUX	494
+   * Energy Flux	|2|U
+   * Enchantment
+   * All artifacts have "At the beginning of your upkeep, sacrifice this artifact unless you pay |2." */
+
   int upkeeps_or_artifact_count;
   int ai_artifact_or_count;
   card_instance_t *instance;
@@ -1223,11 +1257,13 @@ int card_energy_flux(int player, int card, event_t event)
 
 int card_feldons_cane(int player, int card, event_t event)
 {
-  // 0x420E70
-
   /* Feldon's Cane	|1
    * Artifact
    * |T, Exile ~: Shuffle your graveyard into your library. */
+
+  // 0x420E70
+
+
 
 	if ( event == EVENT_RESOLVE_ACTIVATION ){
 		reshuffle_grave_into_deck(player, 0);
@@ -1238,6 +1274,11 @@ int card_feldons_cane(int player, int card, event_t event)
 
 int card_gaeas_avenger(int player, int card, event_t event)
 {
+  /* CARD_ID_GAEAS_AVENGER	496
+   * Gaea's Avenger	|1|G|G
+   * Creature - Treefolk 101/101
+   * ~'s power and toughness are each equal to 1 plus the number of artifacts your opponents control. */
+
   int result;
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
@@ -1465,11 +1506,13 @@ Artifact
 }
 
 int card_martyrs_of_korlis(int player, int card, event_t event ){
+  /* CARD_ID_MARTYRS_OF_KORLIS	505
+   * Martyrs of Korlis	|3|W|W
+   * Creature - Human 1/6
+   * As long as ~ is untapped, all damage that would be dealt to you by artifacts is dealt to ~ instead. */
+
 	// original code : 0x453EB0
-/* CARD_ID_MARTYRS_OF_KORLIS	505
-Martyrs of Korlis	|3|W|W
-Creature - Human 1/6
-As long as ~ is untapped, all damage that would be dealt to you by artifacts is dealt to ~ instead. */
+
 
 	if( event == EVENT_PREVENT_DAMAGE && ! is_tapped(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
@@ -1526,6 +1569,13 @@ Artifact
 }
 
 int card_mishras_factory(int player, int card, event_t event){
+  /* CARD_ID_MISHRAS_FACTORY	508
+   * Mishra's Factory	""
+   * Land
+   * |T: Add |C to your mana pool.
+   * |1: ~ becomes a 2/2 Assembly-Worker artifact creature until end of turn. It's still a land.
+   * |T: Target Assembly-Worker creature gets +1/+1 until end of turn. */
+
   enum
   {
     CHOICE_MANA = 1,
@@ -1533,12 +1583,7 @@ int card_mishras_factory(int player, int card, event_t event){
     CHOICE_PUMP = 3
   };
 
-/* CARD_ID_MISHRAS_FACTORY	508
-Mishra's Factory	""
-Land
-|T: Add |C to your mana pool.
-|1: ~ becomes a 2/2 Assembly-Worker artifact creature until end of turn. It's still a land.
-|T: Target Assembly-Worker creature gets +1/+1 until end of turn. */
+
 
     if (event == EVENT_CHECK_ABILITIES && affected_card_controller == player && CAN_TAP(player, card) &&
         can_use_activated_abilities(player, card) && has_mana_for_activated_ability(player, card, MANACOST0) &&
@@ -1779,6 +1824,13 @@ static int is_monolith(int id){
 
 int card_power_artifact(int player, int card, event_t event)
 {
+  /* CARD_ID_POWER_ARTIFACT	517
+   * Power Artifact	|U|U
+   * Enchantment - Aura
+   * Enchant artifact
+   * Enchanted artifact's activated abilities cost |2 less to activate.
+   * This effect can't reduce the amount of mana an ability costs to activate to less than one mana. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -1942,11 +1994,9 @@ you gain 1 life.*/
 }
 
 int card_priest_of_yawgmoth(int player, int card, event_t event){
-/*
-Priest of Yawgmoth |1|B
-Creature — Human Cleric 1/2
-{T}, Sacrifice an artifact: Add to your mana pool an amount of {B} equal to the sacrificed artifact's converted mana cost.
-*/
+  /* Priest of Yawgmoth |1|B
+   * Creature — Human Cleric 1/2
+   * {T}, Sacrifice an artifact: Add to your mana pool an amount of {B} equal to the sacrificed artifact's converted mana cost. */
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		if( generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL) ){
@@ -1986,6 +2036,11 @@ Creature — Human Cleric 1/2
 
 int card_primal_clay(int player, int card, event_t event)
 {
+  /* Primal Clay	|4
+   * Artifact Creature - Shapeshifter 100/100
+   * As ~ enters the battlefield, it becomes your choice of a 3/3 artifact creature, a 2/2 artifact creature with flying, or a 1/6 Wall artifact creature with
+   * defender in addition to its other types. */
+
   //0x4210a0
 
   /* Primal Clay	|4
@@ -2052,6 +2107,10 @@ int card_primal_clay(int player, int card, event_t event)
 
 int card_rakalite(int player, int card, event_t event)
 {
+  /* Rakalite	|6	0x200c30c
+   * Artifact
+   * |2: Prevent the next 1 damage that would be dealt to any target this turn. Return ~ to its owner's hand at the beginning of the next end step. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -2225,6 +2284,12 @@ Creature - Human Artificer 1/2
 
 int card_shapeshifter2(int player, int card, event_t event)
 {
+  /* Shapeshifter	|6
+   * Artifact Creature - Shapeshifter 100/207
+   * As ~ enters the battlefield, choose a number between 0 and 7.
+   * At the beginning of your upkeep, you may choose a number between 0 and 7.
+   * ~'s power is equal to the last chosen number and its toughness is equal to 7 minus that number. */
+
   card_instance_t *instance;
   unsigned int chosen_power;
   int32_t ai_toughness;
@@ -2291,7 +2356,6 @@ int card_shapeshifter2(int player, int card, event_t event)
   }
   return 0;
 }
-
 
 int card_shatterstorm(int player, int card, event_t event){
 /* CARD_ID_SHATTERSTORM	526
@@ -2385,7 +2449,6 @@ Land
 	return 0;
 }
 
-
 int card_su_chi(int player, int card, event_t event){
 /* CARD_ID_SU_CHI	529
 Su-Chi	|4
@@ -2475,11 +2538,10 @@ static int tablet_of_epityr_effect(int player, int card, event_t event)
 }
 
 int card_tablet_of_epityr(int player, int card, event_t event){
-/*
-Tablet of Epityr |1
-Artifact
-Whenever an artifact you control is put into a graveyard from the battlefield, you may pay {1}. If you do, you gain 1 life.
-*/
+  /* Tablet of Epityr |1
+   * Artifact
+   * Whenever an artifact you control is put into a graveyard from the battlefield, you may pay {1}. If you do, you gain 1 life. */
+
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		int found = 0;
 		int c;
@@ -2682,12 +2744,14 @@ You may choose not to untap ~ during your untap step.
 }
 
 int card_tetravite(int player, int card, event_t event){
+  /* Tetravite	""
+   * Artifact Creature - Tetravite 1/1
+   * Flying
+   * ~ can't be enchanted. */
+
 	// original code: 00421B70
 
-	/* Tetravite	""
-	 * Artifact Creature - Tetravite 1/1
-	 * Flying
-	 * ~ can't be enchanted. */
+
 
 	if( get_special_infos(player, card) > 0 ){
 		cannot_be_enchanted(player, card, event);
@@ -2706,6 +2770,15 @@ static const char* is_my_tetravite(int unused, int player, int card){
 
 int card_tetravus(int player, int card, event_t event)
 {
+  /* CARD_ID_TETRAVUS	534
+   * Tetravus	|6
+   * Artifact Creature - Construct 1/1
+   * Flying
+   * ~ enters the battlefield with three +1/+1 counters on it.
+   * At the beginning of your upkeep, you may remove any number of +1/+1 counters from ~. If you do, create that many 1/1 colorless Tetravite artifact creature tokens.
+   * They each have flying and "This creature can't be enchanted."
+   * At the beginning of your upkeep, you may exile any number of tokens created with ~. If you do, put that many +1/+1 counters on ~. */
+
   int i;
   int count;
   int choice;
@@ -2880,6 +2953,11 @@ int card_tetravus(int player, int card, event_t event)
 }
 
 int card_the_rack(int player, int card, event_t event){
+  /* The Rack	|1
+   * Artifact
+   * As this artifact enters, choose an opponent.
+   * At the beginning of the chosen player's upkeep, this artifact deals X damage to that player, where X is 3 minus the number of cards in their hand. */
+
 	// 0x420650
 	/*
 	  The Rack |1
@@ -3015,6 +3093,25 @@ If you don't, put it into its owner's graveyard. Then shuffle your library. */
 	}
 
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+}
+
+/* ManalinkEh 2022: 0x224caf0; original cards/antiquities.c:2728. */
+int triskelion_like_creature(int player, int card, event_t event, int amount_of_starting_counters,
+                             int c, int b, int u, int g, int r, int w)
+{
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
+                                      amount_of_starting_counters);
+  if (event != EVENT_ACTIVATE && event != EVENT_CAN_ACTIVATE &&
+      event != EVENT_RESOLVE_ACTIVATION && event != EVENT_CLEANUP)
+    return 0;
+
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
+  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+  if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
+    damage_target0(player, card, 1);
+  return generic_activated_ability(player, card, event, 0x44, c, b, u, g, r, w, 0,
+                                   &td, "TARGET_ANY");
 }
 
 int card_triskelion(int player, int card, event_t event){
@@ -3222,13 +3319,14 @@ static int urzas_miter_effect(int player, int card, event_t event)
   return 0;
 }
 
+// wall of spears --> vanilla
+
 int card_urzas_miter(int player, int card, event_t event){
-/*
-Urza's Miter |3
-Artifact
-Whenever an artifact you control is put into a graveyard from the battlefield, if it wasn't sacrificed, you may pay {3}.
-	If you do, draw a card.
-*/
+  /* Urza's Miter |3
+   * Artifact
+   * Whenever an artifact you control is put into a graveyard from the battlefield, if it wasn't sacrificed, you may pay {3}.
+   * 	If you do, draw a card. */
+
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		int found = 0;
 		int c;
@@ -3282,8 +3380,6 @@ Whenever an artifact you control is put into a graveyard from the battlefield, i
 	return 0;
 }
 
-// wall of spears --> vanilla
-
 int card_weakstone(int player, int card, event_t event ){
 /* CARD_ID_WEAKSTONE	546
 Weakstone	|4
@@ -3329,6 +3425,12 @@ Creature - Spirit 1/1
 									&td, "Select target noncreature artifact.");
 }
 
+// Yotian Soldier --> Serra Angel
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int triskelion_like_creature(int player, int card, event_t event, int amount_of_starting_counters,
+                             int c, int b, int u, int g, int r, int w);
+
 int card_yawgmoths_demon(int player, int card, event_t event){
 /* CARD_ID_YAWGMOTH_DEMON	548
 Yawgmoth Demon	|4|B|B
@@ -3363,48 +3465,17 @@ At the beginning of your upkeep, you may sacrifice an artifact. If you don't, ta
 	return 0;
 }
 
-// Yotian Soldier --> Serra Angel
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int triskelion_like_creature(int player, int card, event_t event, int amount_of_starting_counters,
-                             int c, int b, int u, int g, int r, int w);
-
-/* ManalinkEh 2022: 0x224caf0; original cards/antiquities.c:2728. */
-int triskelion_like_creature(int player, int card, event_t event, int amount_of_starting_counters,
-                             int c, int b, int u, int g, int r, int w)
-{
-  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
-                                      amount_of_starting_counters);
-  if (event != EVENT_ACTIVATE && event != EVENT_CAN_ACTIVATE &&
-      event != EVENT_RESOLVE_ACTIVATION && event != EVENT_CLEANUP)
-    return 0;
-
-  target_definition_t td;
-  default_target_definition(player, card, &td, TYPE_CREATURE | TARGET_TYPE_PLANESWALKER);
-  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-  if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
-    damage_target0(player, card, 1);
-  return generic_activated_ability(player, card, event, 0x44, c, b, u, g, r, w, 0,
-                                   &td, "TARGET_ANY");
-}
-
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x22444f0; original cards/antiquities.c:687. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2244410; original cards/antiquities.c:12. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2245110; original cards/antiquities.c:33. */
-
 
 #endif

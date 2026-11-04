@@ -1,5 +1,7 @@
 #include "manalink.h"
 
+void memcpy_suppress_size_warning(void *dest, const void *src, size_t size);
+
 /* Canonical recovered helper declarations. */
 int has_no_mana_cost(int player, int card);
 int copy_spell_from_stack(int player, int t_player, int t_card);
@@ -11,8 +13,6 @@ static int real_copy_spell(int player, int internal_id, int special_flags, int s
                                 card_instance_t *copied, target_t *forced_target);
 static int free_spell_card = -1;
 static int free_spell_player = -1;
-
-
 
 int played_for_free(int player, int card){
 	if( player > -1 && card > -1 ){
@@ -27,12 +27,6 @@ int not_played_from_hand(int player, int card){
 	}
 	return 0;
 }
-
-
-
-
-
-
 
 target_t totally_bletcherous_hack_dont_reset_x_value = {-1, -1};
 static int totally_bletcherous_hack_put_card_on_stack0_without_resetting_x_value(int player, int card)
@@ -189,6 +183,30 @@ int flashback_spell(int player, int g_pos){
 	return play_card_in_grave_for_free_impl(player, player, g_pos, SF_EXILE_ON_RESOLUTION | SF_FLASHBACK);
 }
 
+/* ManalinkEh 2022: 0x2669160; original functions/play_spell_for_free.c:277. */
+int escape_spell(int player, int g_pos)
+{
+  int escaped_iid_or_card;
+
+  escaped_iid_or_card = graveyard_ptr_mutable[player][g_pos];
+  if ((escaped_iid_or_card != -1) && (can_legally_play_iid(player, escaped_iid_or_card) != 0))
+  {
+    remove_card_from_grave(player, g_pos);
+    escaped_iid_or_card = add_card_to_hand(player, escaped_iid_or_card);
+    set_special_flags3(player, escaped_iid_or_card, 0x80000);
+    if (is_what(player, escaped_iid_or_card, 1) != 0)
+    {
+      set_special_flags3(player, escaped_iid_or_card, 0x20000);
+    }
+    if (real_play_spell_for_free(player, escaped_iid_or_card, 0x10000000) != 0)
+    {
+      return escaped_iid_or_card;
+    }
+    obliterate_card(player, escaped_iid_or_card);
+  }
+  return -1;
+}
+
 int play_card_in_exile_for_free_impl(int player, int t_player, int csvid, int special_flags2, int mana_paid_for_this){
 	int card_added = -1;
 	int iid = get_internal_card_id_from_csv_id(csvid);
@@ -213,12 +231,12 @@ int play_card_in_exile_for_free_impl(int player, int t_player, int csvid, int sp
 	return card_added;
 }
 
+// Needed for counterspells to correctly allow the Commander to be putted into the Command Zone and to cards that need to know how many mana was paid to play them
 int play_card_in_exile_for_free(int player, int t_player, int csvid)
 {
   return play_card_in_exile_for_free_impl(player, t_player, csvid, 0, -1);
 }
 
-// Needed for counterspells to correctly allow the Commander to be putted into the Command Zone and to cards that need to know how many mana was paid to play them
 int play_card_in_exile_for_free_commander(int player, int t_player, int csvid,
                                           int mana_paid_for_this)
 {
@@ -271,6 +289,8 @@ void opponent_plays_card_in_your_hand_for_free(int player, int card){
 	real_play_spell_for_free(1-player, card_added, 0);
 }
 
+void memset_suppress_size_warning(void* addr, int val, size_t sz);
+
 int put_into_play(int player, int card)
 {
   if (player < 0 || card < 0)
@@ -293,7 +313,7 @@ int put_into_play(int player, int card)
   return card;
 }
 
-void memset_suppress_size_warning(void* addr, int val, size_t sz);
+// If MPCFE_FACE_DOWN is set, the card should be obliterated instead of being put in to exile; otherwise, it should already be in exile before calling this.
 
 int compute_and_check_casting_cost(int player, int unused, int card)
 {
@@ -408,11 +428,6 @@ epilogue:
 
   return result;
 }
-
-
-
-// If MPCFE_FACE_DOWN is set, the card should be obliterated instead of being put in to exile; otherwise, it should already be in exile before calling this.
-
 
 static int spell_has_flashback_legacy(int player, int card, event_t event)
 {
@@ -708,6 +723,8 @@ void add_flag_to_special_effect(int player, int card, int flag){
 	instance->targets[0].card |= flag;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 int check_for_special_effect_card(int player, int csvid){
 	int i;
 	for(i=0; i<active_cards_count[player]; i++){
@@ -720,32 +737,36 @@ int check_for_special_effect_card(int player, int csvid){
 	return -1;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2669160; original functions/play_spell_for_free.c:277. */
-int escape_spell(int player, int g_pos)
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2667b10; original functions/play_spell_for_free.c:5. */
+int has_no_mana_cost(int player, int card)
 {
-  int escaped_iid_or_card;
-
-  escaped_iid_or_card = graveyard_ptr_mutable[player][g_pos];
-  if ((escaped_iid_or_card != -1) && (can_legally_play_iid(player, escaped_iid_or_card) != 0))
+  int csvid = player == -1 ? cards_data[card].id : get_id(player, card);
+  switch (csvid)
   {
-    remove_card_from_grave(player, g_pos);
-    escaped_iid_or_card = add_card_to_hand(player, escaped_iid_or_card);
-    set_special_flags3(player, escaped_iid_or_card, 0x80000);
-    if (is_what(player, escaped_iid_or_card, 1) != 0)
-    {
-      set_special_flags3(player, escaped_iid_or_card, 0x20000);
-    }
-    if (real_play_spell_for_free(player, escaped_iid_or_card, 0x10000000) != 0)
-    {
-      return escaped_iid_or_card;
-    }
-    obliterate_card(player, escaped_iid_or_card);
+  case CARD_ID_EVERMIND:
+  case CARD_ID_ANCESTRAL_VISION:
+  case CARD_ID_HYPERGENESIS:
+  case CARD_ID_LIVING_END:
+  case CARD_ID_LOTUS_BLOOM:
+  case CARD_ID_RESTORE_BALANCE:
+  case CARD_ID_WHEEL_OF_FATE:
+  case CARD_ID_CRASHING_FOOTFALLS:
+  case CARD_ID_MOX_TANTALITE:
+  case CARD_ID_ASMORANOMARDICADAISTINACULDACAR:
+  case CARD_ID_GAEAS_WILL:
+  case CARD_ID_GLIMPSE_OF_TOMORROW:
+  case CARD_ID_INEVITABLE_BETRAYAL:
+  case CARD_ID_PROFANE_TUTOR:
+  case CARD_ID_RESURGENT_BELIEF:
+  case CARD_ID_SOL_TALISMAN:
+    return 1;
+  default:
+    return 0;
   }
-  return -1;
 }
 
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2668490; original functions/play_spell_for_free.c:47. */
@@ -825,7 +846,6 @@ static int real_copy_spell(int player, int internal_id, int special_flags, int s
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2668690; original functions/play_spell_for_free.c:111. */
 int copy_spell(int player, int csvid)
@@ -837,7 +857,6 @@ int copy_spell(int player, int csvid)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26686d0; original functions/play_spell_for_free.c:116. */
@@ -860,7 +879,6 @@ int copy_spell_from_stack(int player, int t_player, int t_card)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2668720; original functions/play_spell_for_free.c:125. */
 int copy_spell_from_stack_set_target0(int player, int iid, card_instance_t *copied,
@@ -877,6 +895,29 @@ int copy_spell_from_stack_set_target0(int player, int iid, card_instance_t *copi
 
 #endif
 
+#ifndef SHANDALAR
+static int play_card_in_exile_for_free_and_exile_it(int player, int t_player, int csvid)
+{
+  int iid = get_internal_card_id_from_csv_id(csvid);
+  if (!can_legally_play_iid(player, iid))
+    return 0;
+  remove_card_from_rfg(t_player, csvid);
+  int card = add_card_to_hand(player, iid);
+  set_special_flags(player, card, SF_EXILE_ON_RESOLUTION);
+  if (player != t_player)
+  {
+    if (player == 0 && t_player == 1)
+      add_state(player, card, STATE_OWNED_BY_OPPONENT);
+    else
+      remove_state(player, card, STATE_OWNED_BY_OPPONENT);
+  }
+  int result = real_play_spell_for_free(player, card, (int)0x80000000U);
+  if (!result)
+    obliterate_card(player, card);
+  return result;
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26695a0; original functions/play_spell_for_free.c:535. */
@@ -1090,8 +1131,8 @@ int effect_may_play_card_from_exile(int player, int card, event_t event)
 
 #endif
 
-
 #ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
 /* ManalinkEh 2022: 0x2668150; original functions/play_spell_for_free.c:665. */
 int create_may_play_card_from_exile_effect(int player, int card, int whose_exile_zone,
                                                 int csvid, mpcfe_mode_t mode)
@@ -1121,63 +1162,5 @@ int create_may_play_card_from_exile_effect(int player, int card, int whose_exile
     }
   }
   return card_00;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x2667b10; original functions/play_spell_for_free.c:5. */
-int has_no_mana_cost(int player, int card)
-{
-  int csvid = player == -1 ? cards_data[card].id : get_id(player, card);
-  switch (csvid)
-  {
-  case CARD_ID_EVERMIND:
-  case CARD_ID_ANCESTRAL_VISION:
-  case CARD_ID_HYPERGENESIS:
-  case CARD_ID_LIVING_END:
-  case CARD_ID_LOTUS_BLOOM:
-  case CARD_ID_RESTORE_BALANCE:
-  case CARD_ID_WHEEL_OF_FATE:
-  case CARD_ID_CRASHING_FOOTFALLS:
-  case CARD_ID_MOX_TANTALITE:
-  case CARD_ID_ASMORANOMARDICADAISTINACULDACAR:
-  case CARD_ID_GAEAS_WILL:
-  case CARD_ID_GLIMPSE_OF_TOMORROW:
-  case CARD_ID_INEVITABLE_BETRAYAL:
-  case CARD_ID_PROFANE_TUTOR:
-  case CARD_ID_RESURGENT_BELIEF:
-  case CARD_ID_SOL_TALISMAN:
-    return 1;
-  default:
-    return 0;
-  }
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
-static int play_card_in_exile_for_free_and_exile_it(int player, int t_player, int csvid)
-{
-  int iid = get_internal_card_id_from_csv_id(csvid);
-  if (!can_legally_play_iid(player, iid))
-    return 0;
-  remove_card_from_rfg(t_player, csvid);
-  int card = add_card_to_hand(player, iid);
-  set_special_flags(player, card, SF_EXILE_ON_RESOLUTION);
-  if (player != t_player)
-  {
-    if (player == 0 && t_player == 1)
-      add_state(player, card, STATE_OWNED_BY_OPPONENT);
-    else
-      remove_state(player, card, STATE_OWNED_BY_OPPONENT);
-  }
-  int result = real_play_spell_for_free(player, card, (int)0x80000000U);
-  if (!result)
-    obliterate_card(player, card);
-  return result;
 }
 #endif

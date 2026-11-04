@@ -4,6 +4,7 @@ from pathlib import Path
 from capstone import Cs,CS_ARCH_X86,CS_MODE_32
 from canonicalize_helpers import ROOT,read,sha,span
 from inspect_release import Image,value,inherited_value
+from promote_recovery import strip_comments
 
 
 def verify(proof,image=None,root=ROOT,binary_only=False,*,rebuilt_path=None,rebuilt_debug_path=None):
@@ -62,8 +63,18 @@ def verify(proof,image=None,root=ROOT,binary_only=False,*,rebuilt_path=None,rebu
         assert current_symbols[row['binding']]=={destination},('Wrong veneer target',hex(at),row['binding'],hex(destination))
         if row.get('source_forwarder'):
             forward=row['source_forwarder'];text=read(root/forward['source']);a,b=span(text,forward['name'])
-            assert sha(text[a:b].encode())==forward['definition_sha256']
-            assert re.fullmatch(r'int\s+'+re.escape(forward['name'])+r'\(int player, int card, event_t event\)\s*\{\s*return '+re.escape(forward['callee'])+r'\(player, card, event\);\s*\}',text[a:b])
+            definition=text[a:b];projection=forward.get('source_layout_projection')
+            if projection:
+                # Preserve the historical pin while allowing a restored card
+                # description. Both forms must still be the same strict thunk.
+                assert sha(projection['before_definition'].encode())==forward['definition_sha256']
+                assert sha(definition.encode())==projection['after_sha256']
+                definitions=[projection['before_definition'],strip_comments(definition)]
+            else:
+                assert sha(definition.encode())==forward['definition_sha256']
+                definitions=[definition]
+            for candidate in definitions:
+                assert re.fullmatch(r'int\s+'+re.escape(forward['name'])+r'\(int player, int card, event_t event\)\s*\{\s*return '+re.escape(forward['callee'])+r'\(player, card, event\);\s*\}',candidate)
             assert row['native_tail_jump']['binding']=='_'+forward['callee']
             assert current_symbols[row['native_tail_jump']['binding']]
             decoder=Cs(CS_ARCH_X86,CS_MODE_32)

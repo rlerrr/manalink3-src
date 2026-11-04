@@ -657,7 +657,6 @@ booster_t pack_contents[198] = {
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26eb550; original functions/packs.c:650. */
 static void add_to_csvid_choices(csvid_choices_t *choices, int csvid)
@@ -704,7 +703,6 @@ static void add_to_csvid_choices(csvid_choices_t *choices, int csvid)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26eb660; original functions/packs.c:3042. */
@@ -789,7 +787,6 @@ static int add_card_to_pack(int *out_csvids, int pos, csvid_choices_t *choice, i
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26ec840; original functions/packs.c:3397. */
 int is_valid_pack(EXPANSION_t expansion, int booster)
@@ -830,7 +827,6 @@ int is_valid_pack(EXPANSION_t expansion, int booster)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26ec8a0; original functions/packs.c:2989. */
 int pack_size(EXPANSION_t expansion, int booster)
@@ -863,7 +859,6 @@ int pack_size(EXPANSION_t expansion, int booster)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26ed870; original functions/packs.c:3770. */
 void announce_expansion_choice(int player, int card, EXPANSION_t expansion)
@@ -889,7 +884,6 @@ void announce_expansion_choice(int player, int card, EXPANSION_t expansion)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 typedef struct count_and_card_t { int count; card_id_t csvid; } count_and_card_t;
@@ -1830,7 +1824,6 @@ static const count_and_card_t copies_neo_land[16] = {
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26eb8e0; original functions/packs.c:3158. */
 static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices);
@@ -2001,7 +1994,6 @@ static int make_pack_normal(EXPANSION_t expansion, int booster, int *out_csvids,
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26ec9b0; original functions/packs.c:3292. */
 int make_pack(EXPANSION_t expansion, int booster, int *out_csvids)
@@ -2038,7 +2030,6 @@ int make_pack(EXPANSION_t expansion, int booster, int *out_csvids)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26eca90; original functions/packs.c:3339. */
@@ -2089,7 +2080,6 @@ int test_packs(int run_time_test)
 
 #endif
 
-
 #ifndef SHANDALAR
 #include <windows.h>
 typedef struct pack_selection_t { EXPANSION_t expansion; int booster; } pack_selection_t;
@@ -2111,274 +2101,9 @@ typedef struct choose_a_pack_args_t {
 #define pack_draw_button EXE_FN(void, 0x4673c0, DRAWITEMSTRUCT *, HBRUSH, HPEN, HPEN, COLORREF, int)
 __attribute__((dllimport)) void blt_expansion_symbol(HDC hdc, const RECT *rect, int expansion, int rarity, int force_color);
 
-
 #endif
 
-
 #ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26ecc50; original functions/packs.c:3506. */
-static INT_PTR __stdcall dlgproc_choose_a_pack(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-  static HGDIOBJ winbk_questn = NULL;
-  static const char **expansion_names = NULL;
-  static HBRUSH brush = NULL;
-  static HPEN pen1 = NULL;
-  static HPEN pen2 = NULL;
-  static choose_a_pack_args_t *args = NULL;
-  _Static_assert(sizeof(choose_a_pack_args_t) == 64 &&
-                     offsetof(choose_a_pack_args_t, results) == 16,
-                 "native six-pack argument record");
-  _Static_assert(sizeof(DRAWITEMSTRUCT) == 48 && offsetof(DRAWITEMSTRUCT, hDC) == 24 &&
-                     offsetof(DRAWITEMSTRUCT, rcItem) == 28 &&
-                     offsetof(DRAWITEMSTRUCT, itemData) == 44,
-                 "native owner-draw record");
-  _Static_assert(sizeof(TEXTMETRICA) == 56 && sizeof(RECT) == 16, "native drawing scratch records");
-  if (msg == WM_COMMAND)
-  {
-    unsigned command = (uint16_t)wparam;
-    if (command != 1 && (command != 2 || args->allow_cancel == 0))
-      return 0;
-    for (int i = 0; i < 6; ++i)
-    {
-      args->results[i].expansion = EXPANSION_0;
-      args->results[i].booster = 0;
-    }
-    for (int i = 0; i < args->num_packs; ++i)
-    {
-      if (command == 1)
-      {
-        LRESULT selection = SendDlgItemMessageA(hwnd, i + 0x44d, 0x147, 0, 0);
-        if (selection != -1)
-        {
-          LRESULT data = SendDlgItemMessageA(hwnd, i + 0x44d, 0x150, selection, 0);
-          if (data != -1)
-          {
-            args->results[i].expansion = (uint32_t)data & 0xffff;
-            args->results[i].booster = ((uint32_t)data & 0x10000) == 0;
-          }
-        }
-      }
-    }
-    if (winbk_questn != NULL)
-    {
-      DeleteObject(winbk_questn);
-      winbk_questn = NULL;
-    }
-    if (brush != NULL)
-    {
-      DeleteObject(brush);
-      brush = NULL;
-    }
-    if (pen1 != NULL)
-    {
-      DeleteObject(pen1);
-      pen1 = NULL;
-    }
-    if (pen2 != NULL)
-    {
-      DeleteObject(pen2);
-      pen2 = NULL;
-    }
-    EndDialog(hwnd, command == 1);
-    return 0;
-  }
-  if (msg == WM_INITDIALOG)
-  {
-    char path[279];
-    sprintf(path, "%s\\WINBK_QuestN.pic", pack_path_duel_art);
-    winbk_questn = pack_read_graphics_file(path);
-    brush = CreateSolidBrush(0x100001c);
-    pen1 = CreatePen(0, 0, 0x1000072);
-    pen2 = CreatePen(0, 0, 0x10000ca);
-    SetDlgItemTextA(hwnd, 1, pack_str_ok);
-    SetDlgItemTextA(hwnd, 2, pack_str_cancel);
-    args = (choose_a_pack_args_t *)lparam;
-    if (args->num_packs > 6)
-      args->num_packs = 6;
-    else if (args->num_packs < 1)
-      args->num_packs = 1;
-    if (args->allow_cancel == 0)
-      ShowWindow(GetDlgItem(hwnd, 2), 0);
-    for (int i = args->num_packs; i < 6; ++i)
-      ShowWindow(GetDlgItem(hwnd, i + 0x44d), 0);
-    int num_textlines;
-    expansion_names = load_text_nocopy_from_file("Menus.txt", "EXPANSIONNAMES", &num_textlines);
-    for (int expansion = 1; expansion < 198 && num_textlines > expansion + 6; ++expansion)
-    {
-      char buf[300];
-      if (args->allow_boosters != 0 && is_valid_pack(expansion, 1))
-      {
-        int size = pack_size(expansion, 1);
-        const char *prefix = "14-";
-        if ((((uint32_t)expansion - 103) & 0xfffffffd) != 0 &&
-            ((uint32_t)expansion & 0xfffffffd) != 145)
-          prefix = "";
-        sprintf(buf, "%s (%s%d cards)", expansion_names[expansion + 7], prefix, size);
-        for (int i = 0; i < args->num_packs; ++i)
-        {
-          LRESULT result = SendDlgItemMessageA(hwnd, i + 0x44d, 0x143, 0, (LPARAM)buf);
-          if ((uint32_t)result + 2 > 1)
-            SendDlgItemMessageA(hwnd, i + 0x44d, 0x151, result, expansion);
-        }
-      }
-      if (args->allow_starters != 0 && is_valid_pack(expansion, 0))
-      {
-        int size = pack_size(expansion, 0);
-        sprintf(buf, "%s %s deck (%d cards)", expansion_names[expansion + 7],
-                expansion < 30 ? "starter" : "tournament", size);
-        for (int i = 0; i < args->num_packs; ++i)
-        {
-          LRESULT result = SendDlgItemMessageA(hwnd, i + 0x44d, 0x143, 0, (LPARAM)buf);
-          if ((uint32_t)result + 2 > 1)
-            SendDlgItemMessageA(hwnd, i + 0x44d, 0x151, result, expansion | 0x10000);
-        }
-      }
-    }
-    for (int i = 0; i < args->num_packs; ++i)
-      SendDlgItemMessageA(hwnd, i + 0x44d, 0x14e, 0, 0);
-    SetFocus(GetDlgItem(hwnd, 0x44d));
-    return 0;
-  }
-  if (msg == WM_DRAWITEM)
-  {
-    DRAWITEMSTRUCT *dis = (DRAWITEMSTRUCT *)lparam;
-    if (wparam < 3)
-    {
-      if (wparam == 0)
-        return 0;
-      COLORREF color = ((uint32_t)(dis->hwndItem == GetFocus()) - 1U & 0xffffffdbU) + 0x10000bfU;
-      pack_draw_button(dis, brush, pen1, pen2, color, 0);
-      return 1;
-    }
-    if ((uint32_t)wparam - 0x44d > 5 || dis->itemID == (UINT)-1)
-      return 0;
-    unsigned expansion = (uint16_t)dis->itemData;
-    COLORREF old_fg = SetTextColor(dis->hDC, GetSysColor(8));
-    COLORREF old_bk = SetBkColor(dis->hDC, GetSysColor(5));
-    TEXTMETRICA tm;
-    GetTextMetricsA(dis->hDC, &tm);
-    int bottom = dis->rcItem.bottom;
-    int top = dis->rcItem.top;
-    char buf[300];
-    SendMessageA(dis->hwndItem, 0x148, dis->itemID, (LPARAM)buf);
-    int width = (bottom - top) * 2;
-    ExtTextOutA(dis->hDC, width + 4, (bottom + top - tm.tmHeight) / 2, 6, &dis->rcItem, buf,
-                strlen(buf), NULL);
-    SetTextColor(dis->hDC, old_fg);
-    SetBkColor(dis->hDC, old_bk);
-    RECT rect;
-    rect.left = dis->rcItem.left;
-    rect.top = dis->rcItem.top;
-    rect.right = rect.left + width;
-    rect.bottom = dis->rcItem.bottom;
-    FillRect(dis->hDC, &rect, GetSysColorBrush(5));
-    blt_expansion_symbol(dis->hDC, &rect, expansion, (dis->itemState & 0x11) == 0 ? 1 : 4, -1);
-    if ((dis->itemState & 0x11) != 0)
-      DrawFocusRect(dis->hDC, &dis->rcItem);
-    return 1;
-  }
-  if (msg == WM_ERASEBKGND && winbk_questn != NULL)
-  {
-    RECT rect;
-    pack_set_palette_and_stretch_mode((HDC)wparam);
-    GetClientRect(hwnd, &rect);
-    EnterCriticalSection(pack_critical_section_for_painting);
-    int savedc = SaveDC(pack_dblbfr_hdc);
-    if (winbk_questn == NULL)
-      FillRect(pack_dblbfr_hdc, &rect, GetStockObject(2));
-    else
-      pack_blt_pic(pack_dblbfr_hdc, &rect, winbk_questn);
-    RestoreDC(pack_dblbfr_hdc, savedc);
-    GetClientRect(hwnd, &rect);
-    BitBlt((HDC)wparam, 0, 0, rect.right, rect.bottom, pack_dblbfr_hdc, 0, 0, 0xcc0020);
-    LeaveCriticalSection(pack_critical_section_for_painting);
-    return 1;
-  }
-  if (msg == WM_LBUTTONDOWN)
-  {
-    SendMessageA(hwnd, 0x112, 0xf012, 0);
-    return 0;
-  }
-  if ((uint32_t)msg - 0x30f < 3)
-    return pack_handle_palette_msgs(hwnd, msg, wparam, lparam);
-  return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26ed780; original functions/packs.c:3449. */
-LPCDLGTEMPLATE generate_choose_a_pack_dlg_template(void)
-{
-  static unsigned char templ[294] __attribute__((aligned(4))) = {
-    0x40, 0x08, 0x80, 0x90, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0xba, 0x00,
-    0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x4d, 0x00, 0x53, 0x00, 0x20, 0x00,
-    0x53, 0x00, 0x61, 0x00, 0x6e, 0x00, 0x73, 0x00, 0x20, 0x00, 0x53, 0x00, 0x65, 0x00, 0x72, 0x00,
-    0x69, 0x00, 0x66, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00,
-    0x07, 0x00, 0x05, 0x00, 0xac, 0x00, 0x48, 0x00, 0x4d, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x14, 0x00,
-    0xac, 0x00, 0x48, 0x00, 0x4e, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x23, 0x00, 0xac, 0x00, 0x48, 0x00,
-    0x4f, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50,
-    0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x32, 0x00, 0xac, 0x00, 0x48, 0x00, 0x50, 0x04, 0xff, 0xff,
-    0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00,
-    0x07, 0x00, 0x41, 0x00, 0xac, 0x00, 0x48, 0x00, 0x51, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x50, 0x00,
-    0xac, 0x00, 0x48, 0x00, 0x52, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x0b, 0x00, 0x01, 0x50, 0x00, 0x00, 0x00, 0x00, 0x26, 0x00, 0x5f, 0x00, 0x32, 0x00, 0x0e, 0x00,
-    0x01, 0x00, 0xff, 0xff, 0x80, 0x00, 0x4f, 0x00, 0x4b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x0b, 0x00, 0x01, 0x50, 0x00, 0x00, 0x00, 0x00, 0x63, 0x00, 0x5f, 0x00, 0x32, 0x00, 0x0e, 0x00,
-    0x02, 0x00, 0xff, 0xff, 0x80, 0x00, 0x43, 0x00, 0x61, 0x00, 0x6e, 0x00, 0x63, 0x00, 0x65, 0x00,
-    0x6c, 0x00, 0x00, 0x00, 0x00, 0x00,
-  };
-  return (LPCDLGTEMPLATE)templ;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26ed790; original functions/packs.c:3737. */
-int choose_packs(int num_packs, pack_flags_t flags, EXPANSION_t *expansions, int *is_booster)
-{
-  static int idx = -1;
-  choose_a_pack_args_t args;
-  if (num_packs > 6)
-    num_packs = 6;
-  else if (num_packs < 1)
-    num_packs = 1;
-  idx = (int32_t)((uint32_t)idx + 1U);
-  args.num_packs = num_packs;
-  args.allow_boosters = flags & PACK_ALLOW_BOOSTER;
-  args.allow_starters = flags & PACK_ALLOW_STARTER;
-  args.allow_cancel = flags & PACK_ALLOW_CANCEL;
-  for (int i = 0; i < 6; ++i)
-  {
-    args.results[i].expansion = EXPANSION_0;
-    args.results[i].booster = 0;
-  }
-  INT_PTR result =
-      DialogBoxIndirectParamA(pack_main_hinstance, generate_choose_a_pack_dlg_template(),
-                              pack_hwnd_MainClass, dlgproc_choose_a_pack, (LPARAM)&args);
-  if (result != 0)
-  {
-    for (int i = 0; i < num_packs; ++i)
-    {
-      expansions[i] = args.results[i].expansion;
-      if (is_booster != NULL)
-        is_booster[i] = args.results[i].booster;
-    }
-    return 1;
-  }
-  return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
 static int raw_has_subtype(csvid_t csvid, subtype_t subt)
 {
   const card_ptr_t *cp = cards_ptr[csvid];
@@ -2388,26 +2113,9 @@ static int raw_has_subtype(csvid_t csvid, subtype_t subt)
   return 0;
 }
 
-static int allow_duplicates(EXPANSION_t expansion, csvid_t csvid)
-{
-  switch (csvid)
-  {
-    case CARD_ID_FOREST:
-    case CARD_ID_ISLAND:
-    case CARD_ID_MOUNTAIN:
-    case CARD_ID_PLAINS:
-    case CARD_ID_SWAMP:
-      return 1;
-    default:
-      return (unsigned int)(csvid - CARD_ID_SNOW_COVERED_FOREST) <= 4U &&
-             expansion == EXPANSION_ICE_AGE;
-  }
-}
 #endif
 
-
 #ifndef SHANDALAR
-/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
 static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices)
 {
   static const int contraption_copies[3] = {16, 7, 2};
@@ -2873,5 +2581,281 @@ static void get_csvid_choices(EXPANSION_t expansion, csvid_choices_t *choices)
     add_to_csvid_choices(&choices[5], 0xa4);
     add_to_csvid_choices(&choices[5], 0x5b);
   }
+}
+
+#endif
+
+#ifndef SHANDALAR
+static int allow_duplicates(EXPANSION_t expansion, csvid_t csvid)
+{
+  switch (csvid)
+  {
+    case CARD_ID_FOREST:
+    case CARD_ID_ISLAND:
+    case CARD_ID_MOUNTAIN:
+    case CARD_ID_PLAINS:
+    case CARD_ID_SWAMP:
+      return 1;
+    default:
+      return (unsigned int)(csvid - CARD_ID_SNOW_COVERED_FOREST) <= 4U &&
+             expansion == EXPANSION_ICE_AGE;
+  }
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+/* ManalinkEh 2022: 0x26ed780; original functions/packs.c:3449. */
+LPCDLGTEMPLATE generate_choose_a_pack_dlg_template(void)
+{
+  static unsigned char templ[294] __attribute__((aligned(4))) = {
+    0x40, 0x08, 0x80, 0x90, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0xba, 0x00,
+    0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x4d, 0x00, 0x53, 0x00, 0x20, 0x00,
+    0x53, 0x00, 0x61, 0x00, 0x6e, 0x00, 0x73, 0x00, 0x20, 0x00, 0x53, 0x00, 0x65, 0x00, 0x72, 0x00,
+    0x69, 0x00, 0x66, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00,
+    0x07, 0x00, 0x05, 0x00, 0xac, 0x00, 0x48, 0x00, 0x4d, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x14, 0x00,
+    0xac, 0x00, 0x48, 0x00, 0x4e, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x23, 0x00, 0xac, 0x00, 0x48, 0x00,
+    0x4f, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50,
+    0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x32, 0x00, 0xac, 0x00, 0x48, 0x00, 0x50, 0x04, 0xff, 0xff,
+    0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00,
+    0x07, 0x00, 0x41, 0x00, 0xac, 0x00, 0x48, 0x00, 0x51, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x23, 0x50, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00, 0x50, 0x00,
+    0xac, 0x00, 0x48, 0x00, 0x52, 0x04, 0xff, 0xff, 0x85, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x0b, 0x00, 0x01, 0x50, 0x00, 0x00, 0x00, 0x00, 0x26, 0x00, 0x5f, 0x00, 0x32, 0x00, 0x0e, 0x00,
+    0x01, 0x00, 0xff, 0xff, 0x80, 0x00, 0x4f, 0x00, 0x4b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x0b, 0x00, 0x01, 0x50, 0x00, 0x00, 0x00, 0x00, 0x63, 0x00, 0x5f, 0x00, 0x32, 0x00, 0x0e, 0x00,
+    0x02, 0x00, 0xff, 0xff, 0x80, 0x00, 0x43, 0x00, 0x61, 0x00, 0x6e, 0x00, 0x63, 0x00, 0x65, 0x00,
+    0x6c, 0x00, 0x00, 0x00, 0x00, 0x00,
+  };
+  return (LPCDLGTEMPLATE)templ;
+}
+
+/* ManalinkEh 2022: 0x26ecc50; original functions/packs.c:3506. */
+static INT_PTR __stdcall dlgproc_choose_a_pack(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+  static HGDIOBJ winbk_questn = NULL;
+  static const char **expansion_names = NULL;
+  static HBRUSH brush = NULL;
+  static HPEN pen1 = NULL;
+  static HPEN pen2 = NULL;
+  static choose_a_pack_args_t *args = NULL;
+  _Static_assert(sizeof(choose_a_pack_args_t) == 64 &&
+                     offsetof(choose_a_pack_args_t, results) == 16,
+                 "native six-pack argument record");
+  _Static_assert(sizeof(DRAWITEMSTRUCT) == 48 && offsetof(DRAWITEMSTRUCT, hDC) == 24 &&
+                     offsetof(DRAWITEMSTRUCT, rcItem) == 28 &&
+                     offsetof(DRAWITEMSTRUCT, itemData) == 44,
+                 "native owner-draw record");
+  _Static_assert(sizeof(TEXTMETRICA) == 56 && sizeof(RECT) == 16, "native drawing scratch records");
+  if (msg == WM_COMMAND)
+  {
+    unsigned command = (uint16_t)wparam;
+    if (command != 1 && (command != 2 || args->allow_cancel == 0))
+      return 0;
+    for (int i = 0; i < 6; ++i)
+    {
+      args->results[i].expansion = EXPANSION_0;
+      args->results[i].booster = 0;
+    }
+    for (int i = 0; i < args->num_packs; ++i)
+    {
+      if (command == 1)
+      {
+        LRESULT selection = SendDlgItemMessageA(hwnd, i + 0x44d, 0x147, 0, 0);
+        if (selection != -1)
+        {
+          LRESULT data = SendDlgItemMessageA(hwnd, i + 0x44d, 0x150, selection, 0);
+          if (data != -1)
+          {
+            args->results[i].expansion = (uint32_t)data & 0xffff;
+            args->results[i].booster = ((uint32_t)data & 0x10000) == 0;
+          }
+        }
+      }
+    }
+    if (winbk_questn != NULL)
+    {
+      DeleteObject(winbk_questn);
+      winbk_questn = NULL;
+    }
+    if (brush != NULL)
+    {
+      DeleteObject(brush);
+      brush = NULL;
+    }
+    if (pen1 != NULL)
+    {
+      DeleteObject(pen1);
+      pen1 = NULL;
+    }
+    if (pen2 != NULL)
+    {
+      DeleteObject(pen2);
+      pen2 = NULL;
+    }
+    EndDialog(hwnd, command == 1);
+    return 0;
+  }
+  if (msg == WM_INITDIALOG)
+  {
+    char path[279];
+    sprintf(path, "%s\\WINBK_QuestN.pic", pack_path_duel_art);
+    winbk_questn = pack_read_graphics_file(path);
+    brush = CreateSolidBrush(0x100001c);
+    pen1 = CreatePen(0, 0, 0x1000072);
+    pen2 = CreatePen(0, 0, 0x10000ca);
+    SetDlgItemTextA(hwnd, 1, pack_str_ok);
+    SetDlgItemTextA(hwnd, 2, pack_str_cancel);
+    args = (choose_a_pack_args_t *)lparam;
+    if (args->num_packs > 6)
+      args->num_packs = 6;
+    else if (args->num_packs < 1)
+      args->num_packs = 1;
+    if (args->allow_cancel == 0)
+      ShowWindow(GetDlgItem(hwnd, 2), 0);
+    for (int i = args->num_packs; i < 6; ++i)
+      ShowWindow(GetDlgItem(hwnd, i + 0x44d), 0);
+    int num_textlines;
+    expansion_names = load_text_nocopy_from_file("Menus.txt", "EXPANSIONNAMES", &num_textlines);
+    for (int expansion = 1; expansion < 198 && num_textlines > expansion + 6; ++expansion)
+    {
+      char buf[300];
+      if (args->allow_boosters != 0 && is_valid_pack(expansion, 1))
+      {
+        int size = pack_size(expansion, 1);
+        const char *prefix = "14-";
+        if ((((uint32_t)expansion - 103) & 0xfffffffd) != 0 &&
+            ((uint32_t)expansion & 0xfffffffd) != 145)
+          prefix = "";
+        sprintf(buf, "%s (%s%d cards)", expansion_names[expansion + 7], prefix, size);
+        for (int i = 0; i < args->num_packs; ++i)
+        {
+          LRESULT result = SendDlgItemMessageA(hwnd, i + 0x44d, 0x143, 0, (LPARAM)buf);
+          if ((uint32_t)result + 2 > 1)
+            SendDlgItemMessageA(hwnd, i + 0x44d, 0x151, result, expansion);
+        }
+      }
+      if (args->allow_starters != 0 && is_valid_pack(expansion, 0))
+      {
+        int size = pack_size(expansion, 0);
+        sprintf(buf, "%s %s deck (%d cards)", expansion_names[expansion + 7],
+                expansion < 30 ? "starter" : "tournament", size);
+        for (int i = 0; i < args->num_packs; ++i)
+        {
+          LRESULT result = SendDlgItemMessageA(hwnd, i + 0x44d, 0x143, 0, (LPARAM)buf);
+          if ((uint32_t)result + 2 > 1)
+            SendDlgItemMessageA(hwnd, i + 0x44d, 0x151, result, expansion | 0x10000);
+        }
+      }
+    }
+    for (int i = 0; i < args->num_packs; ++i)
+      SendDlgItemMessageA(hwnd, i + 0x44d, 0x14e, 0, 0);
+    SetFocus(GetDlgItem(hwnd, 0x44d));
+    return 0;
+  }
+  if (msg == WM_DRAWITEM)
+  {
+    DRAWITEMSTRUCT *dis = (DRAWITEMSTRUCT *)lparam;
+    if (wparam < 3)
+    {
+      if (wparam == 0)
+        return 0;
+      COLORREF color = ((uint32_t)(dis->hwndItem == GetFocus()) - 1U & 0xffffffdbU) + 0x10000bfU;
+      pack_draw_button(dis, brush, pen1, pen2, color, 0);
+      return 1;
+    }
+    if ((uint32_t)wparam - 0x44d > 5 || dis->itemID == (UINT)-1)
+      return 0;
+    unsigned expansion = (uint16_t)dis->itemData;
+    COLORREF old_fg = SetTextColor(dis->hDC, GetSysColor(8));
+    COLORREF old_bk = SetBkColor(dis->hDC, GetSysColor(5));
+    TEXTMETRICA tm;
+    GetTextMetricsA(dis->hDC, &tm);
+    int bottom = dis->rcItem.bottom;
+    int top = dis->rcItem.top;
+    char buf[300];
+    SendMessageA(dis->hwndItem, 0x148, dis->itemID, (LPARAM)buf);
+    int width = (bottom - top) * 2;
+    ExtTextOutA(dis->hDC, width + 4, (bottom + top - tm.tmHeight) / 2, 6, &dis->rcItem, buf,
+                strlen(buf), NULL);
+    SetTextColor(dis->hDC, old_fg);
+    SetBkColor(dis->hDC, old_bk);
+    RECT rect;
+    rect.left = dis->rcItem.left;
+    rect.top = dis->rcItem.top;
+    rect.right = rect.left + width;
+    rect.bottom = dis->rcItem.bottom;
+    FillRect(dis->hDC, &rect, GetSysColorBrush(5));
+    blt_expansion_symbol(dis->hDC, &rect, expansion, (dis->itemState & 0x11) == 0 ? 1 : 4, -1);
+    if ((dis->itemState & 0x11) != 0)
+      DrawFocusRect(dis->hDC, &dis->rcItem);
+    return 1;
+  }
+  if (msg == WM_ERASEBKGND && winbk_questn != NULL)
+  {
+    RECT rect;
+    pack_set_palette_and_stretch_mode((HDC)wparam);
+    GetClientRect(hwnd, &rect);
+    EnterCriticalSection(pack_critical_section_for_painting);
+    int savedc = SaveDC(pack_dblbfr_hdc);
+    if (winbk_questn == NULL)
+      FillRect(pack_dblbfr_hdc, &rect, GetStockObject(2));
+    else
+      pack_blt_pic(pack_dblbfr_hdc, &rect, winbk_questn);
+    RestoreDC(pack_dblbfr_hdc, savedc);
+    GetClientRect(hwnd, &rect);
+    BitBlt((HDC)wparam, 0, 0, rect.right, rect.bottom, pack_dblbfr_hdc, 0, 0, 0xcc0020);
+    LeaveCriticalSection(pack_critical_section_for_painting);
+    return 1;
+  }
+  if (msg == WM_LBUTTONDOWN)
+  {
+    SendMessageA(hwnd, 0x112, 0xf012, 0);
+    return 0;
+  }
+  if ((uint32_t)msg - 0x30f < 3)
+    return pack_handle_palette_msgs(hwnd, msg, wparam, lparam);
+  return 0;
+}
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+/* ManalinkEh 2022: 0x26ed790; original functions/packs.c:3737. */
+int choose_packs(int num_packs, pack_flags_t flags, EXPANSION_t *expansions, int *is_booster)
+{
+  static int idx = -1;
+  choose_a_pack_args_t args;
+  if (num_packs > 6)
+    num_packs = 6;
+  else if (num_packs < 1)
+    num_packs = 1;
+  idx = (int32_t)((uint32_t)idx + 1U);
+  args.num_packs = num_packs;
+  args.allow_boosters = flags & PACK_ALLOW_BOOSTER;
+  args.allow_starters = flags & PACK_ALLOW_STARTER;
+  args.allow_cancel = flags & PACK_ALLOW_CANCEL;
+  for (int i = 0; i < 6; ++i)
+  {
+    args.results[i].expansion = EXPANSION_0;
+    args.results[i].booster = 0;
+  }
+  INT_PTR result =
+      DialogBoxIndirectParamA(pack_main_hinstance, generate_choose_a_pack_dlg_template(),
+                              pack_hwnd_MainClass, dlgproc_choose_a_pack, (LPARAM)&args);
+  if (result != 0)
+  {
+    for (int i = 0; i < num_packs; ++i)
+    {
+      expansions[i] = args.results[i].expansion;
+      if (is_booster != NULL)
+        is_booster[i] = args.results[i].booster;
+    }
+    return 1;
+  }
+  return 0;
 }
 #endif

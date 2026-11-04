@@ -61,6 +61,7 @@ static int expedition(int player, int card, event_t event){
 }
 
 // artifacts
+
 int card_adventuring_gear(int player, int card, event_t event){
 /* CARD_ID_ADVENTURING_GEAR	10492
 Adventuring Gear	|1
@@ -78,8 +79,113 @@ Equip |1 (|1: Attach to target creature you control. Equip only as a sorcery.) *
 	return basic_equipment(player, card, event, 1);
 }
 
+/* ManalinkEh 2022: 0x25d6740; original cards/zendikar.c:76. */
+static int blade_of_the_bloodchief_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  card_instance_t *equipment_or_creature;
+  unsigned int death_count;
+  card_instance_t *dying_permanent;
+  int equipped_card_or_result;
+  int vampire_match;
+  unsigned int num;
+  int target_player;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (equipped_card_or_result =
+               get_id((int)instance->damage_target_player, instance->damage_target_card),
+           equipped_card_or_result != 0x2909))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (equipped_card_or_result = effect_follows_control_of_attachment(player, card, event),
+       equipped_card_or_result != 0))
+  {
+    return 0;
+  }
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    instance = get_card_instance(player, card);
+    dying_permanent = in_play(affected_card_controller, affected_card);
+    if ((dying_permanent != NULL) &&
+        (equipped_card_or_result = is_this_dying(affected_card_controller, affected_card),
+         equipped_card_or_result != 0))
+    {
+
+      if ((instance->damage_target_card == affected_card) &&
+          (instance->damage_target_player == affected_card_controller))
+      {
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (instance->targets[0xb].player < 0)
+        {
+          instance->targets[0xb].player = 0;
+        }
+        SET_BYTE2(instance->targets[0xb].player) = 1;
+      }
+      count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
+    }
+  }
+  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (death_count == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+    return 0;
+  if (death_count != 0)
+  {
+    equipped_card_or_result = check_status(player, card, 0x10000);
+    if (equipped_card_or_result == 0)
+    {
+
+      instance = get_card_instance(player, card);
+      equipment_or_creature =
+          get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      target_player = (int)equipment_or_creature->damage_target_player;
+      equipped_card_or_result = equipment_or_creature->damage_target_card;
+      if (((-1 < target_player) && (-1 < equipped_card_or_result)) &&
+          (equipment_or_creature = in_play(target_player, equipped_card_or_result),
+           equipment_or_creature != NULL))
+      {
+
+        for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
+        {
+          vampire_match = has_subtype(target_player, equipped_card_or_result, SUBTYPE_VAMPIRE);
+          num = death_count;
+          if (vampire_match != 0)
+          {
+            num = death_count * 2;
+          }
+          add_counters(player, card, target_player, equipped_card_or_result, COUNTER_P1_P1, num);
+        }
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  if ((event == EVENT_CLEANUP) &&
+      (equipped_card_or_result = check_status(player, card, 0x10000), equipped_card_or_result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
 int card_blade_of_the_bloodchief(int player, int card, event_t event)
 {
+  /* CARD_ID_BLADE_OF_THE_BLOODCHIEF	10505
+   * Blade of the Bloodchief	|1
+   * Artifact - Equipment
+   * Whenever a creature dies, put a +1/+1 counter on equipped creature. If equipped creature is a Vampire, put two +1/+1 counters on it instead.
+   * Equip |1 */
+
   int c;
   char equipped_player;
   card_instance_t *instance;
@@ -299,7 +405,6 @@ At the beginning of your upkeep, sacrifice a creature. If you can't, sacrifice ~
 	return 0;
 }
 
-
 int card_eternity_vessel(int player, int card, event_t event)
 {
 /* CARD_ID_ETERNITY_VESSEL	10536
@@ -482,6 +587,7 @@ Equip |2 */
 }
 
 // lands
+
 int card_akoum_refuge(int player, int card, event_t event)
 {
   /* Akoum Refuge	""
@@ -907,6 +1013,7 @@ int card_valakut_the_molten_pinnacle(int player, int card, event_t event)
 }
 
 // green cards
+
 int card_baloth_cage_trap(int player, int card, event_t event){
 /* CARD_ID_BALOTH_CAGE_TRAP	10501
 Baloth Cage Trap	|3|G|G
@@ -1125,6 +1232,10 @@ Search your library for up to two basic land cards and put them onto the battlef
 }
 
 int card_joraga_bard(int player, int card, event_t event){
+  /* Joraga Bard	|3|G
+   * Creature - Elf Rogue Bard Ally 1/4
+   * Whenever this creature or another Ally you control enters, you may have Ally creatures you control gain vigilance until end of turn. */
+
 	ally_trigger(player, card, event, RESOLVE_TRIGGER_AI(player));
 	if( event == EVENT_ETB_ABILITY ){
 		pump_subtype_until_eot(player, card, player, SUBTYPE_ALLY, 0, 0, 0, SP_KEYWORD_VIGILANCE );
@@ -1159,6 +1270,64 @@ Landfall - Whenever a land enters the battlefield under your control, you may ad
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x25da520; original cards/zendikar.c:1205. */
+int card_lullmage_mentor(int player, int card, event_t event)
+{
+  /* Lullmage Mentor	|1|U|U
+   * Creature - Merfolk Wizard 2/2
+   * Whenever a spell or ability you control counters a spell, you may create a 1/1 blue Merfolk creature token.
+   * Tap seven untapped Merfolk you control: Counter target spell. */
+
+  card_instance_t *instance;
+  int result;
+
+  target_definition_t td;
+
+  if (event == EVENT_COUNTERSPELL)
+  {
+    if (attacking_card_controller == player)
+    {
+      result = do_dialog(player, player, card, -1, -1, " Create a Merfolk\n Pass", 0);
+      if (result == 0)
+      {
+        token_generation_t token;
+        default_token_definition(player, card, CARD_ID_MERFOLK, &token);
+        token.tou = 1;
+        token.pow = 1;
+        generate_token(&token);
+      }
+    }
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    td.illegal_state = TARGET_STATE_TAPPED;
+    td.required_subtype = 0x74;
+    td.illegal_abilities = 0;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    td.illegal_state = TARGET_STATE_TAPPED;
+    td.required_subtype = 0x74;
+    td.illegal_abilities = 0;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = counterspell_validate(player, card, NULL, 0);
+      if (result != 0)
+      {
+        real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+  }
+  return generic_activated_ability_with_tapsubtype_as_cost(
+      player, card, event, GAA_SPELL_ON_STACK, 0, 0, 0, 0, 0, 0, 0, NULL, NULL,
+      &td, 7);
+}
+
 int card_mold_shambler(int player, int card, event_t event){
 /* CARD_ID_MOLD_SHAMBLER	10613
 Mold Shambler	|3|G
@@ -1189,6 +1358,12 @@ When ~ enters the battlefield, if it was kicked, destroy target noncreature perm
 
 int card_nissa_revane(int player, int card, event_t event)
 {
+  /* Nissa Revane	|2|G|G
+   * Planeswalker - Nissa (2)
+   * +1: Search your library for a card named Nissa's Chosen and put it onto the battlefield. Then shuffle your library.
+   * +1: You gain 2 life for each Elf you control.
+   * -7: Search your library for any number of Elf creature cards and put them onto the battlefield. Then shuffle your library. */
+
   enum
   {
     CHOICE_NC = 1,
@@ -1462,6 +1637,11 @@ int card_primal_bellow(int player, int card, event_t event){
 
 int card_quest_for_the_gemblades(int player, int card, event_t event)
 {
+  /* Quest for the Gemblades	|1|G
+   * Enchantment
+   * Whenever a creature you control deals combat damage to a creature, you may put a quest counter on ~.
+   * Remove a quest counter from ~ and sacrifice it: Put four +1/+1 counters on target creature. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -1585,7 +1765,6 @@ Enchanted creature gets +2/+2 and has "|1|G: Regenerate this creature." */
 
 	return aura_granting_activated_ability(player, card, event, player, GAA_REGENERATION, MANACOST_XG(1, 1), 0, NULL, NULL);
 }
-
 
 int card_scute_mob(int player, int card, event_t event){
 /* CARD_ID_SCUTE_MOB	10655
@@ -1755,6 +1934,31 @@ int card_turntimber_ranger(int player, int card, event_t event){
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x25d6c60; original cards/zendikar.c:1823. */
+static int vov_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
+  if (event == EVENT_PROT_MISC)
+  {
+    instance = get_card_instance(player, card);
+    if ((((instance != NULL) && (instance->damage_target_card == affected_card)) &&
+         (instance->damage_target_player == affected_card_controller)) &&
+        ((((unsigned int)event_result >> 24 & 0xff) == '\x05' &&
+          (attacking_card_controller != player))))
+    {
+      event_result = event_result | 1;
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  return 0;
+}
+
 int card_vines_of_vastwood(int player, int card, event_t event){
 /* CARD_ID_VINES_OF_VASTWOOD	10707
 Vines of Vastwood	|G
@@ -1798,6 +2002,7 @@ Target creature can't be the target of spells or abilities your opponents contro
 }
 
 // black
+
 int card_bala_ged_thief(int player, int card, event_t event){
 /* CARD_ID_BALA_GED_THIEF	10500
 Bala Ged Thief	|3|B
@@ -2031,7 +2236,6 @@ Destroy target creature. You gain 4 life. */
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
-
 
 int card_gatekeeper_of_malakir(int player, int card, event_t event){
 /* CARD_ID_GATEKEEPER_OF_MALAKIR	10542
@@ -2405,6 +2609,11 @@ int card_ob_nixilis_the_fallen(int player, int card, event_t event){
 
 int card_quest_for_the_gravelord(int player, int card, event_t event)
 {
+  /* Quest for the Gravelord	|B
+   * Enchantment
+   * Whenever a creature dies, you may put a quest counter on ~.
+   * Remove three quest counters from ~ and sacrifice it: Put a 5/5 |Sblack Zombie Giant creature token onto the battlefield. */
+
   int result;
   unsigned int death_count;
   card_instance_t *instance;
@@ -2535,12 +2744,14 @@ static int effect_sorin_markov(int player, int card, event_t event){
 
 int card_sorin_markov(int player, int card, event_t event)
 {
-  check_legend_rule(player, card, event);
   /* Sorin Markov	|3|B|B|B	0x2001ccc
    * Legendary Planeswalker - Sorin (4)
    * +2: ~ deals 2 damage to any target and you gain 2 life.
    * -3: Target opponent's life total becomes 10.
    * -7: You control target player during that player's next turn. */
+
+  check_legend_rule(player, card, event);
+
   if (IS_ACTIVATING(event))
   {
 
@@ -2679,8 +2890,14 @@ static const char* target_must_have_counters(int who_chooses, int player, int ca
 {
   return count_counters(player, card, -1) ? NULL : "must have counters";
 }
+
 int card_vampire_hexmage(int player, int card, event_t event)
 {
+  /* Vampire Hexmage	|B|B
+   * Creature - Vampire Shaman 2/1
+   * First strike
+   * Sacrifice ~: Remove all counters from target permanent. */
+
   card_instance_t *instance;
   target_definition_t td;
   if (event != EVENT_ACTIVATE && event - EVENT_RESOLVE_ACTIVATION > 1 && event != EVENT_CLEANUP)
@@ -2780,8 +2997,8 @@ Target creature gets +3/+0 until end of turn. If ~ was kicked, that creature gai
 	return 0;
 }
 
-
 // red
+
 int card_bladetusk_boar(int player, int card, event_t event){
 /* CARD_ID_BLADETUSK_BOAR	10506
 Bladetusk Boar	|3|R
@@ -2828,13 +3045,15 @@ int card_burst_lightning(int player, int card, event_t event){
 }
 
 int card_chandra_ablaze(int player, int card, event_t event){
+  /* Chandra Ablaze	|4|R|R	0x2001b0f
+   * Legendary Planeswalker - Chandra (5)
+   * +1: Discard a card. If a |Sred card is discarded this way, ~ deals 4 damage to any target.
+   * -2: Each player discards their hand, then draws three cards.
+   * -7: Cast any number of |Sred instant and/or sorcery cards from your graveyard without paying their mana costs. */
+
 	check_legend_rule(player, card, event);
 
-	/* Chandra Ablaze	|4|R|R	0x2001b0f
-	 * Legendary Planeswalker - Chandra (5)
-	 * +1: Discard a card. If a |Sred card is discarded this way, ~ deals 4 damage to any target.
-	 * -2: Each player discards their hand, then draws three cards.
-	 * -7: Cast any number of |Sred instant and/or sorcery cards from your graveyard without paying their mana costs. */
+
 	if (IS_ACTIVATING(event)){
 
 		card_instance_t* instance = get_card_instance(player, card);
@@ -3349,13 +3568,12 @@ Whenever ~ or another Ally enters the battlefield under your control, you may pu
 }
 
 int card_lavaball_trap(int player, int card, event_t event){
-/*
-Lavaball Trap |6|R|R
-Instant — Trap
-If an opponent had two or more lands enter the battlefield under his or her control this turn, you may pay {3}{R}{R} rather than
-	pay Lavaball Trap's mana cost.
-Destroy two target lands. Lavaball Trap deals 4 damage to each creature.
-*/
+  /* Lavaball Trap |6|R|R
+   * Instant — Trap
+   * If an opponent had two or more lands enter the battlefield under his or her control this turn, you may pay {3}{R}{R} rather than
+   * 	pay Lavaball Trap's mana cost.
+   * Destroy two target lands. Lavaball Trap deals 4 damage to each creature. */
+
 	if( event == EVENT_MODIFY_COST && get_trap_condition(1-player, TRAP_LANDS_PLAYED) >= 2 ){
 		COST_COLORLESS -= 3;
 	}
@@ -3529,6 +3747,11 @@ static const char* doesnt_have_a_blaze_counter(int who_chooses, int player, int 
 
 int card_obsidian_fireheart(int player, int card, event_t event)
 {
+  /* Obsidian Fireheart	|1|R|R|R
+   * Creature - Elemental 4/4
+   * |1|R|R: Put a blaze counter on target land without a blaze counter on it. For as long as that land has a blaze counter on it, it has "At the beginning of
+   * your upkeep, this land deals 1 damage to you." */
+
   card_instance_t *instance;
   target_definition_t td;
 
@@ -3566,6 +3789,12 @@ int card_punishing_fire(int player, int card, event_t event){
 
 int card_pyromancer_ascension(int player, int card, event_t event)
 {
+  /* Pyromancer Ascension	|1|R
+   * Enchantment
+   * Whenever you cast an instant or sorcery spell that has the same name as a card in your graveyard, you may put a quest counter on ~.
+   * Whenever you cast an instant or sorcery spell while ~ has two or more quest counters on it, you may copy that spell. You may choose new targets for the
+   * copy. */
+
   int i;
   int *graveyard;
   int t_card;
@@ -3748,6 +3977,7 @@ int card_zektar_shrine_expedition(int player, int card, event_t event){
 }
 
 // white
+
 int card_armament_master(int player, int card, event_t event){
 /* CARD_ID_ARMAMENT_MASTER	10497
 Armament Master	|W|W
@@ -3897,11 +4127,13 @@ int card_conquerors_pledge(int player, int card, event_t event){
 }
 
 int card_day_of_judgment(int player, int card, event_t event){
+  /* CARD_ID_DAY_OF_JUDGMENT	10527
+   * Day of Judgment	|2|W|W
+   * Sorcery
+   * Destroy all creatures. */
+
 	// Used externally
-/* CARD_ID_DAY_OF_JUDGMENT	10527
-Day of Judgment	|2|W|W
-Sorcery
-Destroy all creatures. */
+
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t test;
@@ -4255,6 +4487,11 @@ You gain 2 life for each |H2Plains you control. */
 }
 
 int card_luminarch_ascension(int player, int card, event_t event){
+  /* Luminarch Ascension	|1|W
+   * Enchantment
+   * At the beginning of each opponent's end step, if you didn't lose life this turn, you may put a quest counter on this enchantment. (Damage causes loss of life.)
+   * |1|W: Create a 4/4 white Angel creature token with flying. Activate only if this enchantment has four or more quest counters on it. */
+
 /* Luminarch Ascension
  * |1|W
  * Enchantment
@@ -4292,6 +4529,12 @@ int card_luminarch_ascension(int player, int card, event_t event){
 
 int card_makindi_shieldmate(int player, int card, event_t event)
 {
+  /* CARD_ID_MAKINDI_SHIELDMATE	10602
+   * Makindi Shieldmate	|2|W
+   * Creature - Kor Soldier Ally 0/3
+   * Defender
+   * Whenever ~ or another Ally enters the battlefield under your control, you may put a +1/+1 counter on ~. */
+
   return card_oran_rief_survivalist(player, card, event);
 }
 
@@ -4376,6 +4619,12 @@ int card_pitfall_trap(int player, int card, event_t event){
 
 int card_quest_for_the_holy_relic(int player, int card, event_t event)
 {
+  /* Quest for the Holy Relic	|W
+   * Enchantment
+   * Whenever you cast a creature spell, you may put a quest counter on ~.
+   * Remove five quest counters from ~ and sacrifice it: Search your library for an Equipment card, put it onto the battlefield, and attach it to a creature
+   * you control. Then shuffle your library. */
+
   if (trigger_condition == TRIGGER_COMES_INTO_PLAY && card == affected_card &&
       player == affected_card_controller)
   {
@@ -4527,6 +4776,7 @@ At the beginning of your upkeep, you may choose a card type. If you do, each pla
 }
 
 // blue
+
 int card_aether_figment(int player, int card, event_t event){
 /* CARD_ID_AETHER_FIGMENT	10499
 Aether Figment	|1|U
@@ -4951,6 +5201,11 @@ Enchanted creature doesn't untap during its controller's untap step. */
 
 int card_quest_for_ancient_secrets(int player, int card, event_t event)
 {
+  /* Quest for Ancient Secrets	|U
+   * Enchantment
+   * Whenever a card is put into your graveyard from anywhere, you may put a quest counter on ~.
+   * Remove five quest counters from ~ and sacrifice it: Target player shuffles his or her graveyard into his or her library. */
+
   enable_xtrigger_flags |= ENABLE_XTRIGGER_MILLED;
   if (xtrigger_condition() == XTRIGGER_MILLED && affect_me(player, card) &&
       reason_for_trigger_controller == player && trigger_cause_controller == player &&
@@ -5173,6 +5428,13 @@ When ~ enters the battlefield, draw three cards. Then if it wasn't kicked, disca
 
 int card_spreading_seas(int player, int card, event_t event)
 {
+  /* CARD_ID_SPREADING_SEAS	10675
+   * Spreading Seas	|1|U
+   * Enchantment - Aura
+   * Enchant land
+   * When ~ enters the battlefield, draw a card.
+   * Enchanted land is |Han Island. */
+
   int result;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
@@ -5405,187 +5667,4 @@ Prevent all combat damage that would be dealt this turn by creatures without tra
 	}
 
 	return card_fog(player, card, event);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25d6740; original cards/zendikar.c:76. */
-static int blade_of_the_bloodchief_effect(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  card_instance_t *equipment_or_creature;
-  unsigned int death_count;
-  card_instance_t *dying_permanent;
-  int equipped_card_or_result;
-  int vampire_match;
-  unsigned int num;
-  int target_player;
-
-  if (event == EVENT_STATIC_EFFECTS)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-
-      instance = get_card_instance(player, card);
-      if ((-1 < instance->damage_target_player) &&
-          (equipped_card_or_result =
-               get_id((int)instance->damage_target_player, instance->damage_target_card),
-           equipped_card_or_result != 0x2909))
-      {
-        kill_card(player, card, KILL_EXILE);
-      }
-    }
-  }
-  instance = get_card_instance(player, card);
-  if ((-1 < instance->damage_target_player) &&
-      (equipped_card_or_result = effect_follows_control_of_attachment(player, card, event),
-       equipped_card_or_result != 0))
-  {
-    return 0;
-  }
-  if (event == EVENT_GRAVEYARD_FROM_PLAY)
-  {
-    instance = get_card_instance(player, card);
-    dying_permanent = in_play(affected_card_controller, affected_card);
-    if ((dying_permanent != NULL) &&
-        (equipped_card_or_result = is_this_dying(affected_card_controller, affected_card),
-         equipped_card_or_result != 0))
-    {
-
-      if ((instance->damage_target_card == affected_card) &&
-          (instance->damage_target_player == affected_card_controller))
-      {
-        instance->damage_target_card = -1;
-        instance->damage_target_player = -1;
-        remove_status(player, card, 0x10000);
-        if (instance->targets[0xb].player < 0)
-        {
-          instance->targets[0xb].player = 0;
-        }
-        SET_BYTE2(instance->targets[0xb].player) = 1;
-      }
-      count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
-    }
-  }
-  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (death_count == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
-    return 0;
-  if (death_count != 0)
-  {
-    equipped_card_or_result = check_status(player, card, 0x10000);
-    if (equipped_card_or_result == 0)
-    {
-
-      instance = get_card_instance(player, card);
-      equipment_or_creature =
-          get_card_instance(instance->targets[0].player, instance->targets[0].card);
-      target_player = (int)equipment_or_creature->damage_target_player;
-      equipped_card_or_result = equipment_or_creature->damage_target_card;
-      if (((-1 < target_player) && (-1 < equipped_card_or_result)) &&
-          (equipment_or_creature = in_play(target_player, equipped_card_or_result),
-           equipment_or_creature != NULL))
-      {
-
-        for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
-        {
-          vampire_match = has_subtype(target_player, equipped_card_or_result, SUBTYPE_VAMPIRE);
-          num = death_count;
-          if (vampire_match != 0)
-          {
-            num = death_count * 2;
-          }
-          add_counters(player, card, target_player, equipped_card_or_result, COUNTER_P1_P1, num);
-        }
-      }
-      kill_card(player, card, KILL_EXILE);
-    }
-  }
-  if ((event == EVENT_CLEANUP) &&
-      (equipped_card_or_result = check_status(player, card, 0x10000), equipped_card_or_result == 0))
-  {
-    kill_card(player, card, KILL_EXILE);
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25da520; original cards/zendikar.c:1205. */
-int card_lullmage_mentor(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-
-  target_definition_t td;
-
-  if (event == EVENT_COUNTERSPELL)
-  {
-    if (attacking_card_controller == player)
-    {
-      result = do_dialog(player, player, card, -1, -1, " Create a Merfolk\n Pass", 0);
-      if (result == 0)
-      {
-        token_generation_t token;
-        default_token_definition(player, card, CARD_ID_MERFOLK, &token);
-        token.tou = 1;
-        token.pow = 1;
-        generate_token(&token);
-      }
-    }
-    default_target_definition(player, card, &td, 2);
-    td.allowed_controller = player;
-    td.preferred_controller = player;
-    td.illegal_state = TARGET_STATE_TAPPED;
-    td.required_subtype = 0x74;
-    td.illegal_abilities = 0;
-    get_card_instance(player, card);
-  }
-  else
-  {
-    default_target_definition(player, card, &td, 2);
-    td.allowed_controller = player;
-    td.preferred_controller = player;
-    td.illegal_state = TARGET_STATE_TAPPED;
-    td.required_subtype = 0x74;
-    td.illegal_abilities = 0;
-    instance = get_card_instance(player, card);
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      result = counterspell_validate(player, card, NULL, 0);
-      if (result != 0)
-      {
-        real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
-      }
-    }
-  }
-  return generic_activated_ability_with_tapsubtype_as_cost(
-      player, card, event, GAA_SPELL_ON_STACK, 0, 0, 0, 0, 0, 0, 0, NULL, NULL,
-      &td, 7);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25d6c60; original cards/zendikar.c:1823. */
-static int vov_legacy(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-
-  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
-  if (event == EVENT_PROT_MISC)
-  {
-    instance = get_card_instance(player, card);
-    if ((((instance != NULL) && (instance->damage_target_card == affected_card)) &&
-         (instance->damage_target_player == affected_card_controller)) &&
-        ((((unsigned int)event_result >> 24 & 0xff) == '\x05' &&
-          (attacking_card_controller != player))))
-    {
-      event_result = event_result | 1;
-    }
-  }
-  else if (event == EVENT_CLEANUP)
-  {
-    kill_card(player, card, KILL_DESTROY);
-    return 0;
-  }
-  return 0;
 }

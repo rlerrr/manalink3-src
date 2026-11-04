@@ -353,7 +353,6 @@ int load_text(const char *ignored, const char *header)
   return num_lines;
 }
 
-
 #ifndef SHANDALAR
 /* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
 static char *destr_read_a_line(char **raw_file)

@@ -4,9 +4,148 @@
 void cascade(int player, int card, event_t event);
 
 // Functions
+
+static int sen_triplets_effect(int player, int card, event_t event);
+
+void do_multicascade(int player, int card, int override, int amount);
+void multicascade(int player, int card, event_t event, int amount);
+
+/* ManalinkEh 2022: 0x22fa680; original cards/alara_reborn.c:4. */
+void do_multicascade(int player, int card, int override, int amount)
+{
+  int exiled[500];
+  int my_cmc = get_cmc(player, card);
+  if (override >= 0)
+    my_cmc = override;
+  int *deck = deck_ptr[player];
+  for (int i = 0; i < amount; ++i)
+  {
+    int averna_check = 0;
+    for (int c = 0; c < active_cards_count[player]; ++c)
+      if (in_play(player, c) != NULL && get_id(player, c) == CARD_ID_AVERNA_THE_CHAOS_BLOOM &&
+          is_humiliated(player, c, AL_STATIC) == 0)
+        ++averna_check;
+
+    int lands_exiled = 0;
+    int exiled_index = 0;
+    int iid;
+    bool stopped = false;
+    do
+    {
+      iid = deck[exiled_index];
+      if (iid == -1)
+      {
+        stopped = true;
+        break;
+      }
+      iid = deck[0];
+      exiled[exiled_index] = iid;
+      rfg_top_card_of_deck(player);
+      int is_land = is_what(-1, iid, TYPE_LAND);
+      ++exiled_index;
+      lands_exiled = (lands_exiled + 1) - (unsigned int)(is_land == 0);
+      if (is_what(-1, iid, TYPE_LAND) == 0 && get_cmc_by_internal_id(iid) < my_cmc)
+      {
+        stopped = true;
+        break;
+      }
+    } while (exiled_index != 500);
+    if (exiled_index == 0)
+      continue;
+
+    if (!stopped && averna_check != 0)
+      iid = -1;
+    if (averna_check != 0 && lands_exiled != 0)
+    {
+      while (true)
+      {
+        test_definition_t test;
+        new_default_test_definition(&test, TYPE_LAND, "Select a Land card to put into play tapped.");
+        int selected = select_card_from_zone(player, player, exiled, exiled_index,
+                                             0, 1, -1, &test);
+        if (selected < 0)
+          break;
+        int added = add_card_to_hand(player, exiled[selected]);
+        add_state(player, added, STATE_TAPPED);
+        put_into_play(player, added);
+        for (int z = selected; z < exiled_index; ++z)
+          exiled[z] = exiled[z + 1];
+        --exiled_index;
+        --averna_check;
+        --lands_exiled;
+        if (averna_check == 0 || lands_exiled == 0)
+          break;
+      }
+    }
+    if (stopped && iid >= 0 && can_legally_play_iid(player, iid) != 0)
+    {
+      char buffer[1000];
+      unsigned short csvid = cards_data[iid].id;
+      scnprintf(buffer, 1000, " Play %s\n Do not play", cards_ptr[csvid]->name);
+      if (do_dialog(player, player, card, -1, -1, buffer, 0) == 0)
+      {
+        --exiled_index;
+        play_card_in_exile_for_free(player, player, (unsigned int)csvid);
+        exiled[exiled_index] = -1;
+      }
+    }
+    int total = count_deck(player) + exiled_index;
+    while (exiled_index > 0)
+    {
+      int destination = total - exiled_index;
+      if (exiled_index < 2)
+        deck_ptr[player][destination] = exiled[0];
+      else
+      {
+        int rnd = internal_rand(exiled_index);
+        deck_ptr[player][destination] = exiled[rnd];
+        for (int z = rnd; z < exiled_index; ++z)
+          exiled[z] = exiled[z + 1];
+      }
+      --exiled_index;
+    }
+  }
+  int *grave = graveyard_ptr_mutable[player];
+  int count = count_graveyard(player);
+  for (int k = count - 1; k >= 0; --k)
+    if (cards_data[grave[k]].id == CARD_ID_AURORA_PHOENIX)
+    {
+      add_card_to_hand(player, grave[k]);
+      remove_card_from_grave(player, k);
+    }
+}
+
 void do_cascade(int player, int card, int override) { do_multicascade(player, card, override, 1); }
 
+/* ManalinkEh 2022: 0x22fab70; original cards/alara_reborn.c:111. */
+void multicascade(int player, int card, event_t event, int amount)
+{
+  int result;
 
+  if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_token(player, card);
+    if (result == 0)
+    {
+      result = check_special_flags(player, card, 0x40000);
+      if (result == 0)
+      {
+        result = get_cmc(player, card);
+        do_multicascade(player, card, result, amount);
+        return;
+      }
+    }
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x22fabf0; original cards/alara_reborn.c:117. */
+void cascade(int player, int card, event_t event)
+{
+  multicascade(player, card, event, 1);
+  return;
+}
 
 static int has_mana_hybrid_arb(int player, int number, int first_color, int second_color, int colorless, int exc_clr){
 
@@ -416,6 +555,12 @@ Cascade (When you cast this spell, exile cards from the top of your library unti
 
 int card_blitz_hellion(int player, int card, event_t event)
 {
+  /* CARD_ID_BLITZ_HELLION	10245
+   * Blitz Hellion	|3|R|G
+   * Creature - Hellion 7/7
+   * Trample, haste
+   * At the beginning of the end step, ~'s owner shuffles it into his or her library. */
+
   haste(player, card, event);
   if (!eot_trigger(player, card, event))
   {
@@ -803,6 +948,9 @@ int card_dragon_broodmother(int player, int card, event_t event){
 }
 
 int card_drastic_revelation(int player, int card, event_t event){
+  /* Drastic Revelation	|2|U|B|R
+   * Sorcery
+   * Discard your hand. Draw seven cards, then discard three cards at random. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		discard_all(player);
@@ -814,8 +962,12 @@ int card_drastic_revelation(int player, int card, event_t event){
 	return basic_spell(player, card, event);
 }
 
-
 int card_enigma_sphinx(int player, int card, event_t event){
+  /* Enigma Sphinx	|4|W|U|B
+   * Artifact Creature - Sphinx 5/4
+   * Flying
+   * When this creature is put into your graveyard from the battlefield, put it into your library third from the top.
+   * Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.) */
 
 	cascade(player, card, event);
 	if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY)){
@@ -830,6 +982,9 @@ int card_enigma_sphinx(int player, int card, event_t event){
 }
 
 int card_enlisted_wurm(int player, int card, event_t event){
+  /* Enlisted Wurm	|4|G|W
+   * Creature - Wurm 5/5
+   * Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.) */
 
 	cascade(player, card, event);
 
@@ -845,6 +1000,10 @@ Cycling |2|U (|2|U, Discard this card: Draw a card.)
 
 int card_esper_stormblade(int player, int card, event_t event)
 {
+  /* Esper Stormblade	|WB|U
+   * Artifact Creature - Vedalken Wizard 2/1
+   * As long as you control another multicolored permanent, this creature gets +1/+1 and has flying. */
+
 	// As long as you control another multicolored permanent, ~ gets +1/+1 and has flying.
 	alara_reborn_blades(player, card, event, 0, KEYWORD_FLYING, 0);
 
@@ -884,14 +1043,23 @@ Artifact Creature — Human Knight 1/3
 Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)
 */
 
-/*
-Etherium Abomination |3|U|B 	0x0000000
-Artifact Creature — Horror 4/3
-Unearth {1}{U}{B} ({1}{U}{B}: Return this card from your graveyard to the battlefield. It gains haste.
-Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)
-*/
+/* ManalinkEh 2022: 0x22fcc40; original cards/alara_reborn.c:1026. */
+int card_etherium_abomination(int player, int card, event_t event)
+{
+  /* Etherium Abomination	|3|U|B
+   * Artifact Creature - Horror 4/3
+   * Unearth |1|U|B (|1|U|B: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.) */
+
+  int result;
+  result = unearth(player, event, 1, 1, 1, 0, 0, 0);
+  return result;
+}
 
 int card_ethersworn_shieldmage(int player, int card, event_t event){
+  /* Ethersworn Shieldmage	|1|W|U
+   * Artifact Creature - Vedalken Wizard 2/2
+   * Flash
+   * When this creature enters, prevent all damage that would be dealt to artifact creatures this turn. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 	if (event == EVENT_ETB_ABILITY){
@@ -945,6 +1113,12 @@ int card_etherwrought_page(int player, int card, event_t event){
 }
 
 int card_fieldmist_borderpost(int player, int card, event_t event){
+  /* Fieldmist Borderpost	|1|W|U
+   * Artifact
+   * You may pay |1 and return a basic land you control to its owner's hand rather than pay this spell's mana cost.
+   * This artifact enters tapped.
+   * |T: Add |W or |U. */
+
 	// also code for all the others borderposts
 
 	comes_into_play_tapped(player, card, event);
@@ -1038,6 +1212,10 @@ Destroy all blocking creatures and all blocked creatures.
 */
 
 int card_filigree_angel(int player, int card, event_t event){
+  /* Filigree Angel	|5|W|W|U
+   * Artifact Creature - Angel 4/4
+   * Flying
+   * When this creature enters, you gain 3 life for each artifact you control. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
@@ -1111,6 +1289,11 @@ Cycling |WU (|WU, Discard this card: Draw a card.)
 
 int card_glory_of_warfare(int player, int card, event_t event)
 {
+  /* Glory of Warfare	|2|R|W
+   * Enchantment
+   * During your turn, creatures you control get +2/+0.
+   * During turns other than yours, creatures you control get +0/+2. */
+
   card_instance_t *instance;
   int result;
   int toughness;
@@ -1153,6 +1336,10 @@ Devour 1 (As this enters the battlefield, you may sacrifice any number of creatu
 
 int card_grixis_grimblade(int player, int card, event_t event)
 {
+  /* Grixis Grimblade	|UR|B
+   * Creature - Zombie Warrior 2/1
+   * As long as you control another multicolored permanent, this creature gets +1/+1 and has deathtouch. (Any amount of damage it deals to a creature is enough to destroy that creature.) */
+
   // As long as you control another multicolored permanent, ~ gets +1/+1 and has deathtouch.
   return alara_reborn_blades(player, card, event, COLOR_BLACK, 0, SP_KEYWORD_DEATHTOUCH);
 }
@@ -1209,12 +1396,11 @@ int card_igneous_pouncer(int player, int card, event_t event)
 }
 
 int card_illusory_demon(int player, int card, event_t event){
-/*
-Illusory Demon |1|U|B
-Creature — Demon Illusion 4/3
-Flying
-When you cast a spell, sacrifice Illusory Demon.
-*/
+  /* Illusory Demon |1|U|B
+   * Creature — Demon Illusion 4/3
+   * Flying
+   * When you cast a spell, sacrifice Illusory Demon. */
+
 	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && ! is_humiliated(player, card, AL_TRIG) ){
 		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
 			kill_card(player, card, KILL_SACRIFICE);
@@ -1250,12 +1436,11 @@ int card_intimidation_bolt(int player, int card, event_t event){
 }
 
 int card_jenara_asura_of_war(int player, int card, event_t event){
-/*
-Jenara, Asura of War |W|U|G
-Legendary Creature — Angel 3/3
-Flying
-{1}{W}: Put a +1/+1 counter on Jenara, Asura of War.
-*/
+  /* Jenara, Asura of War |W|U|G
+   * Legendary Creature — Angel 3/3
+   * Flying
+   * {1}{W}: Put a +1/+1 counter on Jenara, Asura of War. */
+
 	check_legend_rule(player, card, event);
 
 	if( event != EVENT_RESOLVE_ACTIVATION ){
@@ -1282,6 +1467,10 @@ int card_jhessian_zombies(int player, int card, event_t event)
 
 int card_jund_hackblade(int player, int card, event_t event)
 {
+  /* Jund Hackblade	|BG|R
+   * Creature - Goblin Berserker 2/1
+   * As long as you control another multicolored permanent, this creature gets +1/+1 and has haste. */
+
   // As long as you control another multicolored permanent, ~ gets +1/+1 and has haste.
   return alara_reborn_blades(player, card, event, COLOR_RED, 0, SP_KEYWORD_HASTE);
 }
@@ -1294,13 +1483,12 @@ Cycling |2|R (|2|R, Discard this card: Draw a card.)
 */
 
 int card_karrthus_tyrant_of_jund(int player, int card, event_t event){
-/*
-Karrthus, Tyrant of Jund |4|B|R|G
-Legendary Creature — Dragon 7/7
-Flying, haste
-When Karrthus, Tyrant of Jund enters the battlefield, gain control of all Dragons, then untap all Dragons.
-Other Dragon creatures you control have haste.
-*/
+  /* Karrthus, Tyrant of Jund |4|B|R|G
+   * Legendary Creature — Dragon 7/7
+   * Flying, haste
+   * When Karrthus, Tyrant of Jund enters the battlefield, gain control of all Dragons, then untap all Dragons.
+   * Other Dragon creatures you control have haste. */
+
 	check_legend_rule(player, card, event);
 
 	haste(player, card, event);
@@ -1348,11 +1536,20 @@ int card_kathari_bomber(int player, int card, event_t event){
 }
 
 int card_kathari_remnant(int player, int card, event_t event){
+  /* Kathari Remnant	|2|U|B
+   * Creature - Bird Skeleton 0/1
+   * Flying
+   * |B: Regenerate this creature.
+   * Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.) */
+
 	cascade(player, card, event);
 	return regeneration(player, card, event, MANACOST_B(1));
 }
 
 int card_knight_of_new_alara(int player, int card, event_t event){
+  /* Knight of New Alara	|2|G|W
+   * Creature - Human Knight 2/2
+   * Each other multicolored creature you control gets +1/+1 for each of its colors. */
 
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affected_card_controller == player && affected_card != card  ){
@@ -1368,6 +1565,10 @@ int card_knight_of_new_alara(int player, int card, event_t event){
 
 int card_knotvine_paladin(int player, int card, event_t event)
 {
+  /* Knotvine Paladin	|G|W
+   * Creature - Human Knight 2/2
+   * Whenever this creature attacks, it gets +1/+1 until end of turn for each untapped creature you control. */
+
 	// Whenever ~ attacks, it gets +1/+1 until end of turn for each untapped creature you control.
 	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
 	if (event == EVENT_DAT_ABILITY)
@@ -1414,13 +1615,12 @@ int card_lavalanche(int player, int card, event_t event){
 // zombie wizard --> rhino token
 
 int card_lich_lord_of_unx(int player, int card, event_t event){
-/*
-Lich Lord of Unx |1|U|B
-Creature - Zombie Wizard 2/2
-{U}{B}, {T}: Put a 1/1 blue and black Zombie Wizard creature token onto the battlefield.
-{U}{U}{B}{B}: Target player loses X life and puts the top X cards of his or her library into his or her graveyard,
-				where X is the number of Zombies you control.
-*/
+  /* Lich Lord of Unx |1|U|B
+   * Creature - Zombie Wizard 2/2
+   * {U}{B}, {T}: Put a 1/1 blue and black Zombie Wizard creature token onto the battlefield.
+   * {U}{U}{B}{B}: Target player loses X life and puts the top X cards of his or her library into his or her graveyard,
+   * 				where X is the number of Zombies you control. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1484,6 +1684,12 @@ Creature - Zombie Wizard 2/2
 
 int card_lightning_reaver(int player, int card, event_t event)
 {
+  /* Lightning Reaver	|3|B|R
+   * Creature - Zombie Beast 3/3
+   * Haste; fear (This creature can't be blocked except by artifact creatures and/or black creatures.)
+   * Whenever this creature deals combat damage to a player, put a charge counter on it.
+   * At the beginning of your end step, this creature deals damage equal to the number of charge counters on it to each opponent. */
+
   int result;
   haste(player, card, event);
   fear(player, card, event);
@@ -1505,6 +1711,10 @@ int card_lightning_reaver(int player, int card, event_t event)
 
 int card_lord_of_extinction(int player, int card, event_t event)
 {
+  /* Lord of Extinction	|3|B|G
+   * Creature - Elemental 100/100
+   * ~'s power and toughness are each equal to the number of cards in all graveyards. */
+
   int newval;
   if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
       (player == affected_card_controller))
@@ -1526,23 +1736,28 @@ int card_lorescale_coatl(int player, int card, event_t event)
   return 0;
 }
 
+/* ManalinkEh 2022: 0x22fe8f0; original cards/alara_reborn.c:1708. */
+int card_magefire_wings(int player, int card, event_t event)
+{
+  /* Magefire Wings	|U|R	0x0000000
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +2/+0 and has flying. */
+
+  int result;
+  result = generic_aura(player, card, event, player, 2, 0, 0x20, 0, 0, 0, 0);
+  return result;
+}
+
 // madrush cyclops --> fervor
 
-/*
-Magefire Wings	|U|R	0x0000000
-Enchantment - Aura
-Enchant creature
-Enchanted creature gets +2/+0 and has flying.
-*/
-
 int card_maelstrom_nexus(int player, int card, event_t event){
-/*
-Maelstrom Nexus |W|U|B|R|G
-Enchantment
-The first spell you cast each turn has cascade.
-(When you cast your first spell, exile cards from the top of your library until you exile a nonland card that costs less.
-You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)
-*/
+  /* Maelstrom Nexus |W|U|B|R|G
+   * Enchantment
+   * The first spell you cast each turn has cascade.
+   * (When you cast your first spell, exile cards from the top of your library until you exile a nonland card that costs less.
+   * You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.) */
+
 	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && ! is_humiliated(player, card, AL_TRIG) ){
 		if( get_specific_storm_count(player) < 2 ){
 			if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
@@ -1555,6 +1770,9 @@ You may cast it without paying its mana cost. Put the exiled cards on the bottom
 }
 
 int card_maelstrom_pulse(int player, int card, event_t event){
+  /* Maelstrom Pulse	|1|B|G
+   * Sorcery
+   * Destroy target nonland permanent and all other permanents with the same name as that permanent. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -1603,18 +1821,35 @@ int card_mage_slayer(int player, int card, event_t event)
 	return basic_equipment(player, card, event, 3);
 }
 
-/*
-Marisi's Twinclaws	|2|RW|G	0x0000000
-Creature - Cat Warrior 2/4
-Double strike
-*/
+/* ManalinkEh 2022: 0x22fecc0; original cards/alara_reborn.c:1794. */
+int card_marisis_twinclaws(int player, int card, event_t event)
+{
+  /* Marisi's Twinclaws	|2|RW|G	0x0000000
+   * Creature - Cat Warrior 2/4
+   * Double strike */
 
-/*
-Marrow Chomper	|3|B|G	0x0000000
-Creature - Zombie Lizard 3/3
-Devour 2 (As this enters the battlefield, you may sacrifice any number of creatures. This creature enters the battlefield with twice that many +1/+1 counters on it.)
-When ~ enters the battlefield, you gain 2 life for each creature it devoured.
-*/
+  return arb_new_hybrid(player, card, event, COLOR_GREEN);
+}
+
+/* ManalinkEh 2022: 0x22fece0; original cards/alara_reborn.c:1803. */
+int card_marrow_chomper(int player, int card, event_t event)
+{
+  /* Marrow Chomper	|3|B|G	0x0000000
+   * Creature - Zombie Lizard 3/3
+   * Devour 2 (As this enters the battlefield, you may sacrifice any number of creatures. This creature enters the battlefield with twice that many +1/+1 counters on it.)
+   * When ~ enters the battlefield, you gain 2 life for each creature it devoured. */
+
+  card_instance_t *instance;
+  devour(player, card, event, 2);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  gain_life(player, instance->targets[1].card * 2);
+  return 0;
+}
 
 int card_mask_of_riddles(int player, int card, event_t event)
 {
@@ -1694,12 +1929,11 @@ int mind_funeral_effect(int player, int card, int t_player ){
 }
 
 int card_mind_funeral(int player, int card, event_t event){
-/*
-Mind Funeral |1|U|B
-Sorcery,
-Target opponent reveals cards from the top of his or her library until four land cards are revealed.
-That player puts all cards revealed this way into his or her graveyard.
-*/
+  /* Mind Funeral |1|U|B
+   * Sorcery,
+   * Target opponent reveals cards from the top of his or her library until four land cards are revealed.
+   * That player puts all cards revealed this way into his or her graveyard. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1731,12 +1965,6 @@ int card_monstrous_carabid(int player, int card, event_t event){
 
 	return cycling_hybrid(player, card, event, 1, COLOR_BLACK, COLOR_RED, 0);
 }
-
-/*
-Morbid Bloom	|4|B|G	0x0000000
-Sorcery
-Exile target creature card from a graveyard, then create X 1/1 |Sgreen Saproling creature tokens, where X is the exiled card's toughness.
-*/
 
 static int mycoid_shepherd_effect(int player, int card, event_t event)
 {
@@ -1813,14 +2041,19 @@ static int mycoid_shepherd_effect(int player, int card, event_t event)
   return 0;
 }
 
+/*
+Morbid Bloom	|4|B|G	0x0000000
+Sorcery
+Exile target creature card from a graveyard, then create X 1/1 |Sgreen Saproling creature tokens, where X is the exiled card's toughness.
+*/
+
 int card_mycoid_shepherd(int player, int card, event_t event)
 {
-  /*
-  Mycoid Shepherd |1|W|G|G
-  Creature — Fungus 5/4,
-  Whenever Mycoid Shepherd or another creature you control with power 5 or greater dies, you may
-  gain 5 life.
-  */
+  /* Mycoid Shepherd |1|W|G|G
+   *   Creature — Fungus 5/4,
+   *   Whenever Mycoid Shepherd or another creature you control with power 5 or greater dies, you may
+   *   gain 5 life. */
+
   if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
   {
     int found = 0;
@@ -1877,6 +2110,10 @@ int card_mycoid_shepherd(int player, int card, event_t event)
 
 int card_naya_hushblade(int player, int card, event_t event)
 {
+  /* Naya Hushblade	|RW|G
+   * Creature - Elf Rogue 2/1
+   * As long as you control another multicolored permanent, this creature gets +1/+1 and has shroud. (It can't be the target of spells or abilities.) */
+
   // As long as you control another multicolored permanent, ~ gets +1/+1 and has shroud.
   return alara_reborn_blades(player, card, event, COLOR_GREEN, KEYWORD_SHROUD, 0);
 }
@@ -1945,6 +2182,10 @@ int card_necromancers_covenant(int player, int card, event_t event){
 
 int card_nemesis_of_reason(int player, int card, event_t event)
 {
+  /* Nemesis of Reason	|3|U|B
+   * Creature - Leviathan Horror 3/7
+   * Whenever this creature attacks, defending player mills ten cards. */
+
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
   if (event == EVENT_DAT_ABILITY)
     mill(1-current_turn, 10);
@@ -1952,11 +2193,10 @@ int card_nemesis_of_reason(int player, int card, event_t event)
 }
 
 int card_nulltread_gargantuan(int player, int card, event_t event){
-/*
-Nulltread Gargantuan |1|U|G
-Creature — Beast 5/6
-When Nulltread Gargantuan enters the battlefield, put a creature you control on top of its owner's library.
-*/
+  /* Nulltread Gargantuan |1|U|G
+   * Creature — Beast 5/6
+   * When Nulltread Gargantuan enters the battlefield, put a creature you control on top of its owner's library. */
+
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -2054,6 +2294,10 @@ int card_putrid_leech(int player, int card, event_t event){
 }
 
 int card_qasali_pridemage(int player, int card, event_t event){
+  /* Qasali Pridemage	|G|W
+   * Creature - Cat Wizard 2/2
+   * Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)
+   * |1, Sacrifice this creature: Destroy target artifact or enchantment. */
 
 	exalted(player, card, event, 0, 0);
 
@@ -2100,12 +2344,10 @@ int card_reborn_hope(int player, int card, event_t event){
 }
 
 int card_retaliator_griffin(int player, int card, event_t event){
-	/*
-	  Retaliator Griffin |1|W|R|G
-	  Creature — Griffin 2/2
-	  Flying
-	  Whenever a source an opponent controls deals damage to you, you may put that many +1/+1 counters on Retaliator Griffin.
-	*/
+  /* Retaliator Griffin |1|W|R|G
+   * 	  Creature — Griffin 2/2
+   * 	  Flying
+   * 	  Whenever a source an opponent controls deals damage to you, you may put that many +1/+1 counters on Retaliator Griffin. */
 
 	check_damage(1-player, -1, event, DDBM_MUST_DAMAGE_TRIGGERING_PLAYER | DDBM_REPORT_DAMAGE_DEALT, player, card);
 
@@ -2168,6 +2410,98 @@ int card_sanctum_plowbeast(int player, int card, event_t event)
   return landcycling(player, card, event, 2, SUBTYPE_PLAINS, SUBTYPE_ISLAND);
 }
 
+/* ManalinkEh 2022: 0x22fa060; original cards/alara_reborn.c:2383. */
+static int sen_triplets_effect(int player, int card, event_t event)
+{
+  int opponent_card;
+  int play_check_or_csv_id;
+  card_instance_t *instance;
+  int mana_available;
+  int opponent;
+  int best_play_available;
+  test_definition_t this_test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    player_bits[(1 - player)] = player_bits[(1 - player)] | 0x200;
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_DESTROY);
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+
+    opponent = 1 - player;
+    if (0 < active_cards_count[opponent])
+    {
+      best_play_available = 0;
+      opponent_card = 0;
+      do
+      {
+        instance = in_hand(opponent, opponent_card);
+        if (instance != NULL)
+        {
+
+          play_check_or_csv_id = can_legally_play_csvid_now(player, get_id(opponent, opponent_card),
+                                                            EVENT_CAN_ACTIVATE);
+          if (play_check_or_csv_id != 0)
+          {
+            mana_available = has_mana_to_cast_iid(
+                player, EVENT_CAN_ACTIVATE, get_original_internal_card_id(opponent, opponent_card));
+            if (((mana_available != 0) &&
+                 (best_play_available = play_check_or_csv_id, play_check_or_csv_id == 99)) &&
+                ((play_check_or_csv_id = is_what(opponent, opponent_card, 0x20),
+                  play_check_or_csv_id != 0 ||
+                      (play_check_or_csv_id = is_what(opponent, opponent_card, 0x22),
+                       play_check_or_csv_id != 0))))
+            {
+              return 99;
+            }
+          }
+        }
+        opponent_card = opponent_card + 1;
+        if (active_cards_count[opponent] <= opponent_card)
+        {
+          return best_play_available;
+        }
+      } while (true);
+    }
+  }
+  else if ((event == EVENT_ACTIVATE) && (opponent = 1 - player, hand_count[opponent] != 0))
+  {
+
+    new_default_test_definition(&this_test, 0xff, "Select a card to play.");
+    opponent_card = new_select_a_card(player, opponent, 4, 0, 1, -1, &this_test);
+    if (((-1 < opponent_card) &&
+         ((play_check_or_csv_id = is_what(opponent, opponent_card, 1),
+           play_check_or_csv_id == 0 || (((unsigned char)land_can_be_played & 1) == 0)))) &&
+        ((play_check_or_csv_id = is_what(opponent, opponent_card, 0x30),
+          play_check_or_csv_id != 0 ||
+              (play_check_or_csv_id = can_sorcery_be_played(player, EVENT_ACTIVATE),
+               play_check_or_csv_id != 0))))
+    {
+      play_check_or_csv_id = get_id(opponent, opponent_card);
+      if (has_mana_to_cast_id(player, EVENT_ACTIVATE, play_check_or_csv_id) != 0)
+      {
+        play_check_or_csv_id = get_id(opponent, opponent_card);
+        charge_mana_from_id(player, -1, EVENT_ACTIVATE, play_check_or_csv_id);
+        if ((spell_fizzled == 1) &&
+            (play_check_or_csv_id = is_what(opponent, opponent_card, 1), play_check_or_csv_id == 0))
+        {
+          return 0;
+        }
+        opponent_plays_card_in_your_hand_for_free(opponent, opponent_card);
+        cant_be_responded_to = 1;
+        return 0;
+      }
+    }
+    spell_fizzled = 1;
+    return 0;
+  }
+  return 0;
+}
+
 /*
 Sangrite Backlash	|BG|R	0x0000000
 Enchantment - Aura
@@ -2181,18 +2515,43 @@ Creature - Rat 1/1
 When ~ enters the battlefield, target player discards a card at random.
 */
 
-/*
-Sen Triplets	|2|W|U|B	0x0000000
-Legendary Artifact Creature - Human Wizard 3/3
-At the beginning of your upkeep, choose target opponent. This turn, that player can't cast spells or activate abilities and
-plays with his or her hand revealed. You may play cards from that player's hand this turn.
-*/
+/* ManalinkEh 2022: 0x2300100; original cards/alara_reborn.c:2435. */
+int card_sen_triplets(int player, int card, event_t event)
+{
+  /* Sen Triplets	|2|W|U|B	0x0000000
+   * Legendary Artifact Creature - Human Wizard 3/3
+   * At the beginning of your upkeep, choose target opponent. This turn, that player can't cast spells or activate abilities and
+   * plays with his or her hand revealed. You may play cards from that player's hand this turn. */
 
-/*
-Sewn-Eye Drake	|2|UR|B	0x0000000
-Creature - Zombie Drake 3/1
-Flying, haste
-*/
+  int result;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    result = opponent_is_valid_target(player, card);
+    if (result != 0)
+    {
+      default_test_definition(&test, 0x47);
+      new_manipulate_all(player, card, 1 - player, &test, ACT_DISABLE_ALL_ACTIVATED_ABILITIES);
+      target_player_cant_cast_type(player, card, 1 - player, 0x7f);
+      create_legacy_activate(player, card, sen_triplets_effect);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23001d0; original cards/alara_reborn.c:2456. */
+int card_sewn_eye_drake(int player, int card, event_t event)
+{
+  /* Sewn-Eye Drake	|2|UR|B	0x0000000
+   * Creature - Zombie Drake 3/1
+   * Flying, haste */
+
+  haste(player, card, event);
+  return arb_new_hybrid(player, card, event, COLOR_BLACK);
+}
 
 /*
 Shield of the Righteous	|W|U	0x0000000
@@ -2204,6 +2563,10 @@ Equip |2
 
 int card_sigil_captain(int player, int card, event_t event)
 {
+  /* Sigil Captain	|1|G|W|W
+   * Creature - Rhino Soldier 3/3
+   * Whenever a creature you control enters, if that creature is 1/1, put two +1/+1 counters on it. */
+
   test_definition_t this_test;
   if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
@@ -2363,6 +2726,9 @@ int card_soul_manipulation(int player, int card, event_t event)
 }
 
 int card_soulquake(int player, int card, event_t event){
+  /* Soulquake	|3|U|U|B|B
+   * Sorcery
+   * Return all creatures on the battlefield and all creature cards in graveyards to their owners' hands. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
@@ -2423,6 +2789,11 @@ int card_sovereigns_of_lost_alara(int player, int card, event_t event)
 
 int card_spellbound_dragon(int player, int card, event_t event)
 {
+  /* Spellbound Dragon	|3|U|R
+   * Creature - Dragon 3/5
+   * Flying
+   * Whenever this creature attacks, draw a card, then discard a card. This creature gets +X/+0 until end of turn, where X is the discarded card's mana value. */
+
   /* Whenever ~ attacks, draw a card, then discard a card. ~ gets +X/+0 until end of turn, where X is the discarded card's converted mana cost. */
 	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
 	if (event == EVENT_DAT_ABILITY)
@@ -2445,12 +2816,11 @@ int card_spellbound_dragon(int player, int card, event_t event)
 }
 
 int card_spellbreaker_behemoth(int player, int card, event_t event){
-/*
-Spellbreaker Behemoth |1|R|G|G
-Creature — Beast 5/5
-Spellbreaker Behemoth can't be countered.
-Creature spells you control with power 5 or greater can't be countered.
-*/
+  /* Spellbreaker Behemoth |1|R|G|G
+   * Creature — Beast 5/5
+   * Spellbreaker Behemoth can't be countered.
+   * Creature spells you control with power 5 or greater can't be countered. */
+
 	cannot_be_countered(player, card, event);
 
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
@@ -2466,6 +2836,9 @@ Creature spells you control with power 5 or greater can't be countered.
 }
 
 int card_sphinx_steel_wind(int player, int card, event_t event){
+  /* Sphinx of the Steel Wind	|5|W|U|B
+   * Artifact Creature - Sphinx 6/6
+   * Flying, first strike, vigilance, lifelink, protection from red and from green */
 
 	lifelink(player, card, event);
 
@@ -2506,6 +2879,9 @@ int card_stun_sniper(int player, int card, event_t event){
 }
 
 int card_tainted_sigil(int player, int card, event_t event){
+  /* Tainted Sigil	|1|W|B
+   * Artifact
+   * |T, Sacrifice this artifact: You gain life equal to the total life lost by all players this turn. (Damage causes loss of life.) */
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		gain_life(player, get_trap_condition(player, TRAP_LIFE_LOST)+get_trap_condition(1-player, TRAP_LIFE_LOST));
@@ -2637,11 +3013,10 @@ int card_thraximundar(int player, int card, event_t event){
 }
 
 int card_time_sieve(int player, int card, event_t event){
-/*
-Time Sieve |U|B
-Artifact
-{T}, Sacrifice five artifacts: Take an extra turn after this one.
-*/
+  /* Time Sieve |U|B
+   * Artifact
+   * {T}, Sacrifice five artifacts: Take an extra turn after this one. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2707,11 +3082,10 @@ Whenever enchanted land is tapped for mana, its controller adds one mana of any 
 */
 
 int card_unbender_tine(int player, int card, event_t event){
-/*
-Unbender Tine |2|W|U
-Artifact
-{T}: Untap another target permanent.
-*/
+  /* Unbender Tine |2|W|U
+   * Artifact
+   * {T}: Untap another target permanent. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2839,6 +3213,10 @@ int card_unscythe_killer_of_kings(int player, int card, event_t event){
 }
 
 int card_uril_the_miststalker(int player, int card, event_t event ){
+  /* Uril, the Miststalker	|2|R|G|W
+   * Legendary Creature - Beast 5/5
+   * Hexproof (This creature can't be the target of spells or abilities your opponents control.)
+   * Uril gets +2/+2 for each Aura attached to it. */
 
 	hexproof(player, card, event);
 
@@ -2867,18 +3245,39 @@ Artifact Creature - Human Wizard 0/2
 |T: Tap target creature unless its controller pays 2 life.
 */
 
-/*
-Vedalken Ghoul	|U|B	0x0000000
-Creature - Vedalken Zombie 1/1
-Whenever ~ becomes blocked, defending player loses 4 life.
-*/
+/* ManalinkEh 2022: 0x2302190; original cards/alara_reborn.c:3187. */
+int card_vedalken_ghoul(int player, int card, event_t event)
+{
+  /* Vedalken Ghoul	|U|B	0x0000000
+   * Creature - Vedalken Zombie 1/1
+   * Whenever ~ becomes blocked, defending player loses 4 life. */
+
+  int result;
+
+  if (event == EVENT_DECLARE_BLOCKERS)
+  {
+    result = is_attacking(player, card);
+    if (result != 0)
+    {
+      result = is_unblocked(player, card);
+      if (result == 0)
+      {
+        result = is_humiliated(player, card, AL_TRIG);
+        if (result == 0)
+        {
+          lose_life(1 - current_turn, 4);
+        }
+      }
+    }
+  }
+  return 0;
+}
 
 int card_vedalken_heretic(int player, int card, event_t event){
-/*
-Vedalken Heretic |U|G
-Creature — Vedalken Rogue 1/1
-Whenever Vedalken Heretic deals damage to an opponent, you may draw a card.
-*/
+  /* Vedalken Heretic |U|G
+   * Creature — Vedalken Rogue 1/1
+   * Whenever Vedalken Heretic deals damage to an opponent, you may draw a card. */
+
 	if( damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_OPPONENT | DDBM_TRIGGER_OPTIONAL) ){
 		draw_cards(player, 1);
 	}
@@ -2939,6 +3338,10 @@ int card_vengeful_rebirth(int player, int card, event_t event){
 }
 
 int card_violent_outburst(int player, int card, event_t event){
+  /* Violent Outburst	|1|R|G
+   * Instant
+   * Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)
+   * Creatures you control get +1/+0 until end of turn. */
 
 	cascade(player, card, event);
 
@@ -2953,6 +3356,9 @@ int card_violent_outburst(int player, int card, event_t event){
 // vithian renegades --> uktabi orangutan
 
 int card_wargate(int player, int card, event_t event){
+  /* Wargate	|X|G|W|U
+   * Sorcery
+   * Search your library for a permanent card with mana value X or less, put it onto the battlefield, then shuffle. */
 
 	if(event == EVENT_RESOLVE_SPELL ){
 		card_instance_t *instance = get_card_instance( player, card );
@@ -2971,12 +3377,22 @@ int card_wargate(int player, int card, event_t event){
 }
 
 int card_winged_coatl(int player, int card, event_t event){
+  /* Winged Coatl	|1|G|U
+   * Creature - Snake 1/1
+   * Flash (You may cast this spell any time you could cast an instant.)
+   * Flying
+   * Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.) */
+
 	deathtouch(player, card, event);
 	return flash(player, card, event);
 }
 
 int card_zealous_persecution(int player, int card, event_t event)
 {
+  /* Zealous Persecution	|W|B
+   * Instant
+   * Until end of turn, creatures you control get +1/+1 and creatures your opponents control get -1/-1. */
+
   if (event == EVENT_RESOLVE_SPELL)
   {
     for (int pass = 0; pass < 2; ++pass)
@@ -2990,332 +3406,4 @@ int card_zealous_persecution(int player, int card, event_t event)
     kill_card(player, card, KILL_DESTROY);
   }
   return basic_spell(player, card, event);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x22fcc40; original cards/alara_reborn.c:1026. */
-int card_etherium_abomination(int player, int card, event_t event)
-{
-  int result;
-  result = unearth(player, event, 1, 1, 1, 0, 0, 0);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x22fe8f0; original cards/alara_reborn.c:1708. */
-int card_magefire_wings(int player, int card, event_t event)
-{
-  int result;
-  result = generic_aura(player, card, event, player, 2, 0, 0x20, 0, 0, 0, 0);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x22fece0; original cards/alara_reborn.c:1803. */
-int card_marrow_chomper(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  devour(player, card, event, 2);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event != EVENT_ETB)
-  {
-    return 0;
-  }
-  instance = get_card_instance(player, card);
-  gain_life(player, instance->targets[1].card * 2);
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x22fecc0; original cards/alara_reborn.c:1794. */
-int card_marisis_twinclaws(int player, int card, event_t event)
-{
-  return arb_new_hybrid(player, card, event, COLOR_GREEN);
-}
-
-/* ManalinkEh 2022: 0x23001d0; original cards/alara_reborn.c:2456. */
-int card_sewn_eye_drake(int player, int card, event_t event)
-{
-  haste(player, card, event);
-  return arb_new_hybrid(player, card, event, COLOR_BLACK);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int sen_triplets_effect(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x22fa060; original cards/alara_reborn.c:2383. */
-static int sen_triplets_effect(int player, int card, event_t event)
-{
-  int opponent_card;
-  int play_check_or_csv_id;
-  card_instance_t *instance;
-  int mana_available;
-  int opponent;
-  int best_play_available;
-  test_definition_t this_test;
-
-  if (event == EVENT_STATIC_EFFECTS)
-  {
-    player_bits[(1 - player)] = player_bits[(1 - player)] | 0x200;
-  }
-  else if (event == EVENT_CLEANUP)
-  {
-    kill_card(player, card, KILL_DESTROY);
-  }
-  else if (event == EVENT_CAN_ACTIVATE)
-  {
-
-    opponent = 1 - player;
-    if (0 < active_cards_count[opponent])
-    {
-      best_play_available = 0;
-      opponent_card = 0;
-      do
-      {
-        instance = in_hand(opponent, opponent_card);
-        if (instance != NULL)
-        {
-
-          play_check_or_csv_id = can_legally_play_csvid_now(player, get_id(opponent, opponent_card),
-                                                            EVENT_CAN_ACTIVATE);
-          if (play_check_or_csv_id != 0)
-          {
-            mana_available = has_mana_to_cast_iid(
-                player, EVENT_CAN_ACTIVATE, get_original_internal_card_id(opponent, opponent_card));
-            if (((mana_available != 0) &&
-                 (best_play_available = play_check_or_csv_id, play_check_or_csv_id == 99)) &&
-                ((play_check_or_csv_id = is_what(opponent, opponent_card, 0x20),
-                  play_check_or_csv_id != 0 ||
-                      (play_check_or_csv_id = is_what(opponent, opponent_card, 0x22),
-                       play_check_or_csv_id != 0))))
-            {
-              return 99;
-            }
-          }
-        }
-        opponent_card = opponent_card + 1;
-        if (active_cards_count[opponent] <= opponent_card)
-        {
-          return best_play_available;
-        }
-      } while (true);
-    }
-  }
-  else if ((event == EVENT_ACTIVATE) && (opponent = 1 - player, hand_count[opponent] != 0))
-  {
-
-    new_default_test_definition(&this_test, 0xff, "Select a card to play.");
-    opponent_card = new_select_a_card(player, opponent, 4, 0, 1, -1, &this_test);
-    if (((-1 < opponent_card) &&
-         ((play_check_or_csv_id = is_what(opponent, opponent_card, 1),
-           play_check_or_csv_id == 0 || (((unsigned char)land_can_be_played & 1) == 0)))) &&
-        ((play_check_or_csv_id = is_what(opponent, opponent_card, 0x30),
-          play_check_or_csv_id != 0 ||
-              (play_check_or_csv_id = can_sorcery_be_played(player, EVENT_ACTIVATE),
-               play_check_or_csv_id != 0))))
-    {
-      play_check_or_csv_id = get_id(opponent, opponent_card);
-      if (has_mana_to_cast_id(player, EVENT_ACTIVATE, play_check_or_csv_id) != 0)
-      {
-        play_check_or_csv_id = get_id(opponent, opponent_card);
-        charge_mana_from_id(player, -1, EVENT_ACTIVATE, play_check_or_csv_id);
-        if ((spell_fizzled == 1) &&
-            (play_check_or_csv_id = is_what(opponent, opponent_card, 1), play_check_or_csv_id == 0))
-        {
-          return 0;
-        }
-        opponent_plays_card_in_your_hand_for_free(opponent, opponent_card);
-        cant_be_responded_to = 1;
-        return 0;
-      }
-    }
-    spell_fizzled = 1;
-    return 0;
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x2300100; original cards/alara_reborn.c:2435. */
-int card_sen_triplets(int player, int card, event_t event)
-{
-  int result;
-  test_definition_t test;
-
-  check_legend_rule(player, card, event);
-  upkeep_trigger_ability(player, card, event, player);
-  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
-  {
-    result = opponent_is_valid_target(player, card);
-    if (result != 0)
-    {
-      default_test_definition(&test, 0x47);
-      new_manipulate_all(player, card, 1 - player, &test, ACT_DISABLE_ALL_ACTIVATED_ABILITIES);
-      target_player_cant_cast_type(player, card, 1 - player, 0x7f);
-      create_legacy_activate(player, card, sen_triplets_effect);
-    }
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x2302190; original cards/alara_reborn.c:3187. */
-int card_vedalken_ghoul(int player, int card, event_t event)
-{
-  int result;
-
-  if (event == EVENT_DECLARE_BLOCKERS)
-  {
-    result = is_attacking(player, card);
-    if (result != 0)
-    {
-      result = is_unblocked(player, card);
-      if (result == 0)
-      {
-        result = is_humiliated(player, card, AL_TRIG);
-        if (result == 0)
-        {
-          lose_life(1 - current_turn, 4);
-        }
-      }
-    }
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void do_multicascade(int player, int card, int override, int amount);
-void multicascade(int player, int card, event_t event, int amount);
-
-/* ManalinkEh 2022: 0x22fa680; original cards/alara_reborn.c:4. */
-void do_multicascade(int player, int card, int override, int amount)
-{
-  int exiled[500];
-  int my_cmc = get_cmc(player, card);
-  if (override >= 0)
-    my_cmc = override;
-  int *deck = deck_ptr[player];
-  for (int i = 0; i < amount; ++i)
-  {
-    int averna_check = 0;
-    for (int c = 0; c < active_cards_count[player]; ++c)
-      if (in_play(player, c) != NULL && get_id(player, c) == CARD_ID_AVERNA_THE_CHAOS_BLOOM &&
-          is_humiliated(player, c, AL_STATIC) == 0)
-        ++averna_check;
-
-    int lands_exiled = 0;
-    int exiled_index = 0;
-    int iid;
-    bool stopped = false;
-    do
-    {
-      iid = deck[exiled_index];
-      if (iid == -1)
-      {
-        stopped = true;
-        break;
-      }
-      iid = deck[0];
-      exiled[exiled_index] = iid;
-      rfg_top_card_of_deck(player);
-      int is_land = is_what(-1, iid, TYPE_LAND);
-      ++exiled_index;
-      lands_exiled = (lands_exiled + 1) - (unsigned int)(is_land == 0);
-      if (is_what(-1, iid, TYPE_LAND) == 0 && get_cmc_by_internal_id(iid) < my_cmc)
-      {
-        stopped = true;
-        break;
-      }
-    } while (exiled_index != 500);
-    if (exiled_index == 0)
-      continue;
-
-    if (!stopped && averna_check != 0)
-      iid = -1;
-    if (averna_check != 0 && lands_exiled != 0)
-    {
-      while (true)
-      {
-        test_definition_t test;
-        new_default_test_definition(&test, TYPE_LAND, "Select a Land card to put into play tapped.");
-        int selected = select_card_from_zone(player, player, exiled, exiled_index,
-                                             0, 1, -1, &test);
-        if (selected < 0)
-          break;
-        int added = add_card_to_hand(player, exiled[selected]);
-        add_state(player, added, STATE_TAPPED);
-        put_into_play(player, added);
-        for (int z = selected; z < exiled_index; ++z)
-          exiled[z] = exiled[z + 1];
-        --exiled_index;
-        --averna_check;
-        --lands_exiled;
-        if (averna_check == 0 || lands_exiled == 0)
-          break;
-      }
-    }
-    if (stopped && iid >= 0 && can_legally_play_iid(player, iid) != 0)
-    {
-      char buffer[1000];
-      unsigned short csvid = cards_data[iid].id;
-      scnprintf(buffer, 1000, " Play %s\n Do not play", cards_ptr[csvid]->name);
-      if (do_dialog(player, player, card, -1, -1, buffer, 0) == 0)
-      {
-        --exiled_index;
-        play_card_in_exile_for_free(player, player, (unsigned int)csvid);
-        exiled[exiled_index] = -1;
-      }
-    }
-    int total = count_deck(player) + exiled_index;
-    while (exiled_index > 0)
-    {
-      int destination = total - exiled_index;
-      if (exiled_index < 2)
-        deck_ptr[player][destination] = exiled[0];
-      else
-      {
-        int rnd = internal_rand(exiled_index);
-        deck_ptr[player][destination] = exiled[rnd];
-        for (int z = rnd; z < exiled_index; ++z)
-          exiled[z] = exiled[z + 1];
-      }
-      --exiled_index;
-    }
-  }
-  int *grave = graveyard_ptr_mutable[player];
-  int count = count_graveyard(player);
-  for (int k = count - 1; k >= 0; --k)
-    if (cards_data[grave[k]].id == CARD_ID_AURORA_PHOENIX)
-    {
-      add_card_to_hand(player, grave[k]);
-      remove_card_from_grave(player, k);
-    }
-}
-
-/* ManalinkEh 2022: 0x22fab70; original cards/alara_reborn.c:111. */
-void multicascade(int player, int card, event_t event, int amount)
-{
-  int result;
-
-  if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    result = is_token(player, card);
-    if (result == 0)
-    {
-      result = check_special_flags(player, card, 0x40000);
-      if (result == 0)
-      {
-        result = get_cmc(player, card);
-        do_multicascade(player, card, result, amount);
-        return;
-      }
-    }
-  }
-  return;
-}
-
-/* ManalinkEh 2022: 0x22fabf0; original cards/alara_reborn.c:117. */
-void cascade(int player, int card, event_t event)
-{
-  multicascade(player, card, event, 1);
-  return;
 }

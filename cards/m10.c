@@ -3,6 +3,7 @@
 // Functions
 
 // Cards
+
 int card_acolythe_of_xathrid(int player, int card, event_t event){
 /* CARD_ID_ACOLYTE_OF_XATHRID	10380
 Acolyte of Xathrid	|B
@@ -75,6 +76,27 @@ int effect_must_attack(int player, int card, event_t event)
     kill_card(player, card, KILL_EXILE);
   }
 
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x24feed0; original cards/m10.c:78. */
+int effect_must_attack_on_next_combat(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_card)
+  {
+    instance = get_card_instance(player, card);
+    attack_if_able((int)instance->damage_target_player, instance->damage_target_card, event);
+  }
+  if ((event == EVENT_PHASE_CHANGED) && (0x1d < current_phase))
+  {
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player == current_turn)
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
   return 0;
 }
 
@@ -199,13 +221,10 @@ You gain 1 life for each land you control. */
 	return basic_spell(player, card, event);
 }
 
-
 int card_burning_inquiry(int player, int card, event_t event){
-	/*
-	  Burning Inquiry |R
-	  Sorcery
-	  Each player draws three cards, then discards three cards at random.
-	*/
+  /* Burning Inquiry |R
+   * 	  Sorcery
+   * 	  Each player draws three cards, then discards three cards at random. */
 
 	if(event == EVENT_RESOLVE_SPELL ){
 		APNAP(p, {
@@ -243,12 +262,11 @@ int card_bramble_creeper(int player, int card, event_t event)
 }
 
 int card_capricious_efreet(int player, int card, event_t event){
-/*
-Capricious Efreet |4|R|R
-Creature — Efreet 6/4
-At the beginning of your upkeep, choose target nonland permanent you control and up to two target nonland permanents you don't control.
-Destroy one of them at random.
-*/
+  /* Capricious Efreet |4|R|R
+   * Creature — Efreet 6/4
+   * At the beginning of your upkeep, choose target nonland permanent you control and up to two target nonland permanents you don't control.
+   * Destroy one of them at random. */
+
 	upkeep_trigger_ability(player, card, event, player);
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
@@ -734,13 +752,12 @@ Otherwise, you may put that card on the bottom of your library. */
 }
 
 int card_magebane_armor(int player, int card, event_t event){
-/*
-Magebane Armor |3
-Artifact — Equipment
-Equipped creature gets +2/+4 and loses flying.
-Prevent all noncombat damage that would be dealt to equipped creature.
-Equip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)
-*/
+  /* Magebane Armor |3
+   * Artifact — Equipment
+   * Equipped creature gets +2/+4 and loses flying.
+   * Prevent all noncombat damage that would be dealt to equipped creature.
+   * Equip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.) */
+
 	card_instance_t* instance;
 	if( (instance = in_play(player, card)) && is_equipping(player, card) ){
 		int p = instance->damage_target_player;
@@ -829,12 +846,11 @@ int card_master_of_the_wild_hunt(int player, int card, event_t event){
 }
 
 int card_mirror_of_fate(int player, int card, event_t event){
-/*
-Mirror of Fate |5
-Artifact
-{T}, Sacrifice Mirror of Fate: Choose up to seven face-up exiled cards you own.
-	Exile all the cards from your library, then put the chosen cards on top of your library.
-*/
+  /* Mirror of Fate |5
+   * Artifact
+   * {T}, Sacrifice Mirror of Fate: Choose up to seven face-up exiled cards you own.
+   * 	Exile all the cards from your library, then put the chosen cards on top of your library. */
+
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		char msg[100] = "Select a card to put into your deck.";
 		test_definition_t this_test;
@@ -930,6 +946,35 @@ Other Soldier creatures you control have first strike. */
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x2500fb0; original cards/m10.c:937. */
+int card_sanguine_bond(int player, int card, event_t event)
+{
+  /* Sanguine Bond	|3|B|B
+   * Enchantment
+   * Whenever you gain life, target opponent loses that much life. */
+
+  int gained_life;
+  card_instance_t *instance;
+
+  gained_life = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (gained_life != 0)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      if (check_battlefield_for_id(player, CARD_ID_EXQUISITE_BLOOD) == 0)
+      {
+        lose_life(1 - player, gained_life);
+      }
+      else
+      {
+        lose_the_game(1 - player);
+      }
+    }
+  }
+  return global_enchantment(player, card, event);
+}
+
 static void sphinx_ambassador_ability(int player, int card, int t_player)
 {
   /* Search that [t_player] library for a card, then that player names a card. If you searched for a
@@ -966,14 +1011,13 @@ static void sphinx_ambassador_ability(int player, int card, int t_player)
 }
 
 int card_sphinx_ambassador(int player, int card, event_t event){
-/*
-Sphinx Ambassador |5|U|U
-Creature — Sphinx
-Flying
-Whenever Sphinx Ambassador deals combat damage to a player, search that player's library for a card,
-	then that player names a card. If you searched for a creature card that isn't the named card, you may put it onto the battlefield
-	under your control. Then that player shuffles his or her library.
-*/
+  /* Sphinx Ambassador |5|U|U
+   * Creature — Sphinx
+   * Flying
+   * Whenever Sphinx Ambassador deals combat damage to a player, search that player's library for a card,
+   * 	then that player names a card. If you searched for a creature card that isn't the named card, you may put it onto the battlefield
+   * 	under your control. Then that player shuffles his or her library. */
+
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE);
 	if( result ){
 		int times_damaged[2] = {BYTE0(result), BYTE1(result)};
@@ -994,6 +1038,7 @@ static const char* target_is_skeleton_vampire_or_zombie(int who_chooses, int pla
   return (has_subtype(player, card, SUBTYPE_SKELETON) || has_subtype(player, card, SUBTYPE_VAMPIRE) || has_subtype(player, card, SUBTYPE_ZOMBIE)
 		  ? NULL : EXE_STR(0x73964C));	//",subtype"
 }
+
 int card_undead_slayer(int player, int card, event_t event)
 {
   /* Undead Slayer	|2|W
@@ -1058,13 +1103,12 @@ Other Soldier creatures you control get +1/+0. */
 }
 
 int card_xathrid_demon(int player, int card, event_t event){
-/*
-Xathrid Demon |3|B|B|B
-Creature — Demon 7/7
-Flying, trample
-At the beginning of your upkeep, sacrifice a creature other than Xathrid Demon, then each opponent loses life equal
-	to the sacrificed creature's power. If you can't sacrifice a creature, tap Xathrid Demon and you lose 7 life.
-*/
+  /* Xathrid Demon |3|B|B|B
+   * Creature — Demon 7/7
+   * Flying, trample
+   * At the beginning of your upkeep, sacrifice a creature other than Xathrid Demon, then each opponent loses life equal
+   * 	to the sacrificed creature's power. If you can't sacrifice a creature, tap Xathrid Demon and you lose 7 life. */
+
 	upkeep_trigger_ability(player, card, event, player);
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
@@ -1090,54 +1134,4 @@ At the beginning of your upkeep, sacrifice a creature other than Xathrid Demon, 
 	}
 
 	return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x24feed0; original cards/m10.c:78. */
-int effect_must_attack_on_next_combat(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  instance = get_card_instance(player, card);
-  if (-1 < instance->damage_target_card)
-  {
-    instance = get_card_instance(player, card);
-    attack_if_able((int)instance->damage_target_player, instance->damage_target_card, event);
-  }
-  if ((event == EVENT_PHASE_CHANGED) && (0x1d < current_phase))
-  {
-    instance = get_card_instance(player, card);
-    if (instance->damage_target_player == current_turn)
-    {
-      kill_card(player, card, KILL_EXILE);
-    }
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2500fb0; original cards/m10.c:937. */
-int card_sanguine_bond(int player, int card, event_t event)
-{
-  int gained_life;
-  card_instance_t *instance;
-
-  gained_life = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
-  if (gained_life != 0)
-  {
-    instance = in_play(player, card);
-    if (instance != NULL)
-    {
-      if (check_battlefield_for_id(player, CARD_ID_EXQUISITE_BLOOD) == 0)
-      {
-        lose_life(1 - player, gained_life);
-      }
-      else
-      {
-        lose_the_game(1 - player);
-      }
-    }
-  }
-  return global_enchantment(player, card, event);
 }

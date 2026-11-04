@@ -416,6 +416,7 @@ int card_epharas_radiance(int player, int card, event_t event)
    * Enchantment - Aura
    * Enchant creature
    * Enchanted creature has "|1|W, |T: You gain 3 life." */
+
   card_instance_t* instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_ACTIVATION)
 	gain_life(get_card_instance(player, card)->targets[9].player, 3);
@@ -791,6 +792,11 @@ int card_aerie_worshippers(int player, int card, event_t event)
 
 int card_arbiter_of_the_ideal(int player, int card, event_t event)
 {
+  /* Arbiter of the Ideal	|4|U|U
+   * Creature - Sphinx 4/5
+   * Flying
+   * Inspired - Whenever this creature becomes untapped, reveal the top card of your library. If it's an artifact, creature, or land card, you may put it onto the battlefield with a manifestation counter on it. That permanent is an enchantment in addition to its other types. */
+
   if (event != EVENT_UNTAP_CARD || card != affected_card || player != affected_card_controller)
     return 0;
   if (!inspired(player, card, event) || deck_ptr[player][0] == -1)
@@ -834,6 +840,11 @@ int card_archetype_of_imagination(int player, int card, event_t event)
 
 int card_chorus_of_the_tides(int player, int card, event_t event)
 {
+  /* Chorus of the Tides	|3|U
+   * Creature - Siren 3/2
+   * Flying
+   * Heroic - Whenever you cast a spell that targets this creature, scry 1. (To scry 1, look at the top card of your library, then you may put that card on the bottom.) */
+
   /* Chorus of the Tides |3|U
    * Flying
    * Heroic - Whenever you cast a spell that targets ~, scry 1. */
@@ -843,10 +854,6 @@ int card_chorus_of_the_tides(int player, int card, event_t event)
 
   return 0;
 }
-
-/* Crypsis |1|U
- * Instant
- * Target creature you control gains protection from creatures your opponents control until end of turn. Untap it. */
 
 int card_deepwater_hypnotist(int player, int card, event_t event)
 {
@@ -913,6 +920,7 @@ int card_fated_infatuation(int player, int card, event_t event)
   /* Fated Infatuation |U|U|U
    * Instant
    * Put a token onto the battlefield that's a copy of target creature you control. If it's your turn, scry 2. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1166,6 +1174,7 @@ int card_retraction_helix(int player, int card, event_t event)
   /* Retraction Helix |U  - also code for Banishing Knack.
    * Instant
    * Until end of turn, target creature gains "|T: Return target nonland permanent to its owner's hand." */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1260,6 +1269,7 @@ int card_sudden_storm(int player, int card, event_t event)
   /* Sudden Storm |3|U
    * Instant
    * Tap up to two target creatures. Those creatures don't untap during their controllers' next untap steps. Scry 1. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1572,6 +1582,7 @@ int card_asphyxiate(int player, int card, event_t event)
   /* Asphyxiate |1|B|B
    * Sorcery
    * Destroy target untapped creature. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1743,7 +1754,7 @@ int card_claim_of_erebos(int player, int card, event_t event)
    * Enchantment - Aura
    * Enchant creature
    * Enchanted creature has "|1|B, |T: Target player loses 2 life." */
- 
+
 	if( ! IS_GAA_EVENT(event) && ! IS_AURA_EVENT(player, card, event) && event != EVENT_STATIC_EFFECTS ){
 		return 0;
 	}
@@ -1886,10 +1897,6 @@ int card_fate_unraveler(int player, int card, event_t event)
    * Enchantment Creature - Hag (3/4)
    * Whenever an opponent draws a card, ~ deals 1 damage to that player. */
 
-  /* Underworld Dreams	|B|B|B
-   * Enchantment
-   * Whenever an opponent draws a card, ~ deals 1 damage to him or her. */
-
   if (card_drawn_trigger(player, card, event, 1-player, RESOLVE_TRIGGER_MANDATORY))
 	damage_player(1-player, 1, player, card);
 
@@ -1997,6 +2004,7 @@ int card_gild(int player, int card, event_t event)
    * Sorcery
    * Exile target creature. Put a colorless artifact token named Gold onto the battlefield. It has "Sacrifice this artifact: Add one mana of any color to your
    * mana pool." */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -2443,6 +2451,7 @@ int card_fated_conflagration(int player, int card, event_t event)
   /* Fated Conflagration |1|R|R|R
    * Instant
    * ~ deals 5 damage to target creature or planewalker. If it's your turn, scry 2. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -2474,7 +2483,7 @@ int card_fearsome_temper(int player, int card, event_t event)
    * Enchantment - Aura
    * Enchant creature
    * Enchanted creature gets +2/+2 and has "|2|R: Target creature can't block this creature this turn." */
- 
+
    if (event == EVENT_POWER || event == EVENT_TOUGHNESS)
 	{
 	  card_instance_t* instance = in_play(player, card);
@@ -2559,8 +2568,6 @@ int card_flame_wreathed_phoenix(int player, int card, event_t event)
    * Tribute 2
    * When ~ enters the battlefield, if tribute wasn't paid, it gains haste and "When this creature dies, return it to its owner's hand." */
 
-
-
 	tribute(player, card, event, 2);
 
 	etb_ability(player, card, event, tribute_wasnt_paid(player, card) ? RESOLVE_TRIGGER_MANDATORY : 0);
@@ -2591,6 +2598,7 @@ int card_forgestoker_dragon(int player, int card, event_t event)
    * Creature - Dragon (5/4)
    * Flying
    * |1|R: ~ deals 1 damage to target creature. That creature can't block this combat. Activate this ability only if ~ is attacking. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2671,7 +2679,6 @@ int card_oracle_of_bones(int player, int card, event_t event)
    * Haste
    * Tribute 2
    * When ~ enters the battlefield, if tribute wasn't paid, you may cast an instant or sorcery card from your hand without paying its mana cost. */
-
 
 	tribute(player, card, event, 2);
 
@@ -3196,6 +3203,7 @@ int card_aspect_of_hydra(int player, int card, event_t event)
   /* Aspect of Hydra |G
    * Instant
    * Target creature gets +X/+X until end of turn, where X is your devotion to green. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -3381,6 +3389,7 @@ int card_hunters_prowess(int player, int card, event_t event)
   /* Hunter's Prowess |4|G
    * Sorcery
    * Until end of turn, target creature gets +3/+3 and gains trample and "Whenever this creature deals combat damage to a player, draw that many cards." */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -3458,6 +3467,7 @@ int card_mischief_and_mayhem(int player, int card, event_t event)
   /* Mischief and Mayhem |4|G
    * Sorcery
    * Up to two target creatures each get +4/+4 until end of turn. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -3605,6 +3615,10 @@ int card_pheres_band_raiders(int player, int card, event_t event)
 
 int card_pheres_band_tromper(int player, int card, event_t event)
 {
+  /* Pheres-Band Tromper	|3|G
+   * Creature - Centaur Warrior 3/3
+   * Inspired - Whenever this creature becomes untapped, put a +1/+1 counter on it. */
+
   int result;
 
   if (((event == EVENT_UNTAP_CARD) && (card == affected_card)) &&
@@ -3665,6 +3679,87 @@ int card_satyr_wayfinder(int player, int card, event_t event)
 }
 
 extern int hack_what_was_sacced_for_gaa;
+/* ManalinkEh 2022: 0x2035860; original cards/born_of_the_gods.c:855. */
+static int crypsis_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
+
+  if ((((event == EVENT_PROT_MISC) && (instance = get_card_instance(player, card),
+                                       instance->damage_target_card == affected_card)) &&
+       (instance->damage_target_player == affected_card_controller)) &&
+      ((((unsigned int)event_result >> 24 & 0xff) == '\x06' ||
+        ((result = is_what(attacking_card_controller, attacking_card, 2),
+          result != 0 && (attacking_card_controller != player))))))
+  {
+
+    event_result = event_result | 1;
+  }
+  return 0;
+}
+
+/* Setessan Oathsworn |1|G|G => theros.c:card_staunch_hearted_warrior
+ * Creature - Satyr Warrior (1/1)
+ * Heroic - Whenever you cast a spell that targets ~, put two +1/+1 counters on ~. */
+
+/* ManalinkEh 2022: 0x20378f0; original cards/born_of_the_gods.c:866. */
+int card_crypsis(int player, int card, event_t event)
+{
+  /* Crypsis	|1|U
+   * Instant
+   * Target creature you control gains protection from creatures your opponents control until end of turn. Untap it. */
+
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.preferred_controller = player;
+        td.allowed_controller = player;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          if (valid_target(&td))
+          {
+
+            instance = get_card_instance(player, card);
+            create_targetted_legacy_effect(player, card, crypsis_legacy,
+                                           instance->targets[0].player, instance->targets[0].card);
+            untap_card(instance->targets[0].player, instance->targets[0].card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        return generic_spell(player, card, event, 1, &td, "ASHNODS_BATTLEGEAR", 1, NULL);
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  return generic_spell(player, card, event, 1, &td, "ASHNODS_BATTLEGEAR", 1, NULL);
+}
+
 int card_scourge_of_skola_vale(int player, int card, event_t event)
 {
   /* Scourge of Skola Vale |2|G
@@ -3688,10 +3783,6 @@ int card_scourge_of_skola_vale(int player, int card, event_t event)
   return rval;
 }
 
-/* Setessan Oathsworn |1|G|G => theros.c:card_staunch_hearted_warrior
- * Creature - Satyr Warrior (1/1)
- * Heroic - Whenever you cast a spell that targets ~, put two +1/+1 counters on ~. */
-
 int card_setessan_starbreaker(int player, int card, event_t event)
 {
   /* Setessan Starbreaker |3|G
@@ -3714,6 +3805,13 @@ int card_setessan_starbreaker(int player, int card, event_t event)
 
   return 0;
 }
+
+/* Swordwise Centaur |G|G => vanilla
+ * Creature - Centaur Warrior (3/2) */
+
+/* Unravel the AEther |1|G => morningtide.c:card_deglamer
+ * Instant
+ * Choose target artifact or enchantment. Its owner shuffles it into his or her library. */
 
 int card_skyreaping(int player, int card, event_t event)
 {
@@ -3752,13 +3850,6 @@ int card_snake_of_the_golden_grove(int player, int card, event_t event)
 
 	return 0;
 }
-
-/* Swordwise Centaur |G|G => vanilla
- * Creature - Centaur Warrior (3/2) */
-
-/* Unravel the AEther |1|G => morningtide.c:card_deglamer
- * Instant
- * Choose target artifact or enchantment. Its owner shuffles it into his or her library. */
 
 /*************
 * Multicolor *
@@ -4028,6 +4119,10 @@ int card_kiora_the_crashing_wave(int player, int card, event_t event)
 
 int card_kioras_emblem(int player, int card, event_t event)
 {
+  /* Kiora, the Crashing Wave Emblem	""
+   * Emblem - Kiora
+   * At the beginning of your end step, create a 9/9 blue Kraken creature token. */
+
 	// At the beginning of your end step, put a 9/9 blue Kraken creature token onto the battlefield.
 	if (current_turn == player && eot_trigger(player, card, event)){
 		token_generation_t token;
@@ -4046,6 +4141,7 @@ int card_kioras_follower(int player, int card, event_t event)
   /* Kiora's Follower |G|U
    * Creature - Merfolk (2/2)
    * |T: Untap another target permanent. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -4207,6 +4303,10 @@ int card_ragemonger(int player, int card, event_t event)
 
 int card_reap_what_is_sown(int player, int card, event_t event)
 {
+  /* Reap What Is Sown	|1|G|W
+   * Instant
+   * Put a +1/+1 counter on each of up to three target creatures. */
+
   target_t *chosen_player_record;
   target_t *chosen_card_record;
   int i;
@@ -4384,6 +4484,10 @@ int card_heroes_podium(int player, int card, event_t event)
   return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(-1), 0, NULL, NULL);
 }
 
+/* Springleaf Drum |1 => lorwyn.c
+ * Artifact
+ * |T, Tap an untapped creature you control: Add one mana of any color to your mana pool. */
+
 int card_pillar_of_war(int player, int card, event_t event)
 {
   /* Pillar of War |3
@@ -4403,6 +4507,7 @@ int card_siren_song_lyre(int player, int card, event_t event)
    * Artifact - Equipment
    * Equipped creature has "|2, |T: Tap target creature."
    * Equip |2 */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -4424,10 +4529,6 @@ int card_siren_song_lyre(int player, int card, event_t event)
 
 	return rval;
 }
-
-/* Springleaf Drum |1 => lorwyn.c
- * Artifact
- * |T, Tap an untapped creature you control: Add one mana of any color to your mana pool. */
 
 /*******
 * Land *
@@ -4530,6 +4631,11 @@ int card_battle_the_horde(int player, int card, event_t event){
 }
 
 int card_vitality_salve(int player, int card, event_t event){
+  /* Vitality Salve	""
+   * Artifact
+   * At the beginning of the Horde's first main phase, reveal an additional card from the top of the Horde's library. The Horde casts that card.
+   * Hero's Reward - When ~ is put into a graveyard from anywhere, each player returns a creature card from their graveyard to the battlefield. */
+
 	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		if( count_graveyard_by_type(1-player, TYPE_CREATURE) ){
 		  test_definition_t test;
@@ -4541,6 +4647,11 @@ int card_vitality_salve(int player, int card, event_t event){
 }
 
 int card_refreshing_elixir(int player, int card, event_t event){
+  /* Refreshing Elixir	""
+   * Artifact
+   * At the beginning of the Horde's first main phase, reveal an additional card from the top of the Horde's library. The Horde casts that card.
+   * Hero's Reward - When ~ is put into a graveyard from anywhere, each player gains 5 life. */
+
 	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		gain_life(1-player, 5);
 	}
@@ -4548,6 +4659,11 @@ int card_refreshing_elixir(int player, int card, event_t event){
 }
 
 int card_plundered_statue(int player, int card, event_t event){
+  /* Plundered Statue	""
+   * Artifact
+   * At the beginning of the Horde's first main phase, reveal an additional card from the top of the Horde's library. The Horde casts that card.
+   * Hero's Reward - When ~ is put into a graveyard from anywhere, each player draws a card. */
+
 	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		draw_cards(1-player, 1);
 	}
@@ -4555,6 +4671,11 @@ int card_plundered_statue(int player, int card, event_t event){
 }
 
 int card_massacre_totem(int player, int card, event_t event){
+  /* Massacre Totem	""
+   * Artifact
+   * At the beginning of the Horde's first main phase, reveal an additional card from the top of the Horde's library. The Horde casts that card.
+   * Hero's Reward - When ~ is put into a graveyard from anywhere, put the top seven cards of the Horde's library into its graveyard. */
+
 	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		mill(player, 7);
 	}
@@ -4562,6 +4683,11 @@ int card_massacre_totem(int player, int card, event_t event){
 }
 
 int card_altar_of_mogis(int player, int card, event_t event){
+  /* Altar of Mogis	""
+   * Artifact
+   * At the beginning of the Horde's first main phase, reveal an additional card from the top of the Horde's library. The Horde casts that card.
+   * Hero's Reward - When ~ is put into a graveyard from anywhere, the Horde sacrifices two Minotaurs. */
+
 	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		impose_sacrifice(player, card, player, 2, TYPE_PERMANENT, 0, SUBTYPE_MINOTAUR, 0, 0, 0, 0, 0, -1, 0);
 	}
@@ -4586,6 +4712,10 @@ int unquenchable_fury_legacy(int player, int card, event_t event)
 }
 
 int card_unquenchable_fury(int player, int card, event_t event){
+  /* Unquenchable Fury	""
+   * Sorcery
+   * Each Minotaur can't be blocked this turn except by two or more creatures. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		create_legacy_effect(player, card, &unquenchable_fury_legacy);
 		kill_card(player, card, KILL_DESTROY);
@@ -4620,6 +4750,10 @@ int touch_of_the_horned_god_legacy(int player, int card, event_t event)
 }
 
 int card_touch_of_the_horned_god(int player, int card, event_t event){
+  /* Touch of the Horned God	""
+   * Sorcery
+   * Whenever a Minotaur attacks this turn, it gains deathtouch until end of turn. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		create_legacy_effect(player, card, &touch_of_the_horned_god_legacy);
 		kill_card(player, card, KILL_DESTROY);
@@ -4642,6 +4776,10 @@ int intervention_of_keranos_legacy(int player, int card, event_t event){
 }
 
 int card_intervention_of_keranos(int player, int card, event_t event){
+  /* Intervention of Keranos	""
+   * Sorcery
+   * At the beginning of combat this turn, ~ deals 3 damage to each creature. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		create_legacy_effect(player, card, &intervention_of_keranos_legacy);
 		kill_card(player, card, KILL_DESTROY);
@@ -4676,6 +4814,10 @@ int descend_of_the_prey_legacy(int player, int card, event_t event)
 }
 
 int card_descend_of_the_prey(int player, int card, event_t event){
+  /* Descend on the Prey	""
+   * Sorcery
+   * Whenever a Minotaur attacks this turn, it gains first strike until end of turn and must be blocked this turn if able. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		create_legacy_effect(player, card, &descend_of_the_prey_legacy);
 		kill_card(player, card, KILL_DESTROY);
@@ -4713,6 +4855,10 @@ int consuming_rage_legacy(int player, int card, event_t event)
 }
 
 int card_consuming_rage(int player, int card, event_t event){
+  /* Consuming Rage	""
+   * Sorcery
+   * Whenever a Minotaur attacks this turn, it gets +2/+0 until end of turn. Destroy that creature at end of combat. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		create_legacy_effect(player, card, &consuming_rage_legacy);
 		kill_card(player, card, KILL_DESTROY);
@@ -4722,6 +4868,12 @@ int card_consuming_rage(int player, int card, event_t event){
 
 int card_reckless_minotaur(int player, int card, event_t event)
 {
+  /* Reckless Minotaur	""
+   * Creature - Minotaur 4/1
+   * Haste
+   * ~ attacks each turn if able.
+   * At the beginning of the end step, destroy ~. */
+
   haste(player, card, event);
   if (!is_humiliated(player, card, AL_KEY))
     attack_if_able(player, card, event);
@@ -4730,7 +4882,17 @@ int card_reckless_minotaur(int player, int card, event_t event)
   return 0;
 }
 
+// Minotaur Younghorn / Minotaur Goreseeker --> Phoberos Reaver
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int crypsis_legacy(int player, int card, event_t event);
+
 int card_phoberos_reaver(int player, int card, event_t event){
+  /* Phoberos Reaver	""
+   * Creature - Minotaur 2/3
+   * Haste
+   * ~ attacks each turn if able. */
+
 	haste(player, card, event);
 	if( ! is_humiliated(player, card, AL_KEY) ){
 		attack_if_able(player, card, event);
@@ -4739,87 +4901,14 @@ int card_phoberos_reaver(int player, int card, event_t event){
 }
 
 int card_mogis_chosen(int player, int card, event_t event){
+  /* Mogis's Chosen	""
+   * Creature - Minotaur 5/4
+   * ~ enters the battlefield tapped.
+   * ~ attacks each turn if able. */
+
 	haste(player, card, event);
 	if( ! is_humiliated(player, card, AL_TRIG) ){
 		comes_into_play_tapped(player, card, event);
 	}
 	return 0;
-}
-
-// Minotaur Younghorn / Minotaur Goreseeker --> Phoberos Reaver
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int crypsis_legacy(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x2035860; original cards/born_of_the_gods.c:855. */
-static int crypsis_legacy(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-
-  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
-
-  if ((((event == EVENT_PROT_MISC) && (instance = get_card_instance(player, card),
-                                       instance->damage_target_card == affected_card)) &&
-       (instance->damage_target_player == affected_card_controller)) &&
-      ((((unsigned int)event_result >> 24 & 0xff) == '\x06' ||
-        ((result = is_what(attacking_card_controller, attacking_card, 2),
-          result != 0 && (attacking_card_controller != player))))))
-  {
-
-    event_result = event_result | 1;
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x20378f0; original cards/born_of_the_gods.c:866. */
-int card_crypsis(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  target_definition_t td;
-
-  if (event != EVENT_CAN_CAST)
-  {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else
-    {
-      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-      {
-        default_target_definition(player, card, &td, 2);
-        td.preferred_controller = player;
-        td.allowed_controller = player;
-        if (event == EVENT_RESOLVE_SPELL)
-        {
-          if (valid_target(&td))
-          {
-
-            instance = get_card_instance(player, card);
-            create_targetted_legacy_effect(player, card, crypsis_legacy,
-                                           instance->targets[0].player, instance->targets[0].card);
-            untap_card(instance->targets[0].player, instance->targets[0].card);
-          }
-          kill_card(player, card, KILL_DESTROY);
-        }
-        return generic_spell(player, card, event, 1, &td, "ASHNODS_BATTLEGEAR", 1, NULL);
-      }
-      if (event != EVENT_CHANGE_TARGET)
-      {
-        return 0;
-      }
-    }
-  }
-  default_target_definition(player, card, &td, 2);
-  td.allowed_controller = player;
-  td.preferred_controller = player;
-  return generic_spell(player, card, event, 1, &td, "ASHNODS_BATTLEGEAR", 1, NULL);
 }

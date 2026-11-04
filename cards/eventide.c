@@ -664,12 +664,10 @@ As ~ enters the battlefield, choose an opponent. ~ enters the battlefield with a
 }
 
 int card_cankerous_thirst(int player, int card, event_t event){
-/*
-Cankerous Thirst |3|{B/G}
-Instant
-If {B} was spent to cast Cankerous Thirst, you may have target creature get -3/-3 until end of turn.
-If {G} was spent to cast Cankerous Thirst, you may have target creature get +3/+3 until end of turn. (Do both if {B}{G} was spent.)
-*/
+  /* Cankerous Thirst |3|{B/G}
+   * Instant
+   * If {B} was spent to cast Cankerous Thirst, you may have target creature get -3/-3 until end of turn.
+   * If {G} was spent to cast Cankerous Thirst, you may have target creature get +3/+3 until end of turn. (Do both if {B}{G} was spent.) */
 
 	if( event == EVENT_MODIFY_COST ){
 		card_instance_t *instance = get_card_instance( player, card );
@@ -790,12 +788,11 @@ Land
 }
 
 int card_cauldron_haze(int player, int card, event_t event){
-/*
-Cauldron Haze |1|{W/B}
-Instant
-Choose any number of target creatures. Each of those creatures gains persist until end of turn.
-	(When it dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)
-*/
+  /* Cauldron Haze |1|{W/B}
+   * Instant
+   * Choose any number of target creatures. Each of those creatures gains persist until end of turn.
+   * 	(When it dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.) */
+
 	modify_cost_for_hybrid_spells(player, card, event, 0);
 
 	if( ! IS_GS_EVENT(player, card, event) ){
@@ -1710,6 +1707,13 @@ int card_fiery_bombardment(int player, int card, event_t event){
 
 int card_figure_of_destiny(int player, int card, event_t event)
 {
+  /* CARD_ID_FIGURE_OF_DESTINY	9785
+   * Figure of Destiny	|RW
+   * Creature - Kithkin 1/1
+   * |RW: ~ becomes a Kithkin Spirit with base power and toughness 2/2.
+   * |RW|RW|RW: If ~ is a Spirit, it becomes a Kithkin Spirit Warrior with base power and toughness 4/4.
+   * |RW|RW|RW|RW|RW|RW: If ~ is a Warrior, it becomes a Kithkin Spirit Warrior Avatar with base power and toughness 8/8, flying, and first strike. */
+
   uint8_t ability_mode;
   card_instance_t *instance;
   int ability_choice_or_result;
@@ -1972,7 +1976,6 @@ When ~ enters the battlefield, exile another target permanent. Return that card 
 	return 0;
 }
 
-
 int card_flooded_grove(int player, int card, event_t event){
 /* CARD_ID_FLOODED_GROVE	9789
 Flooded Grove	""
@@ -1999,6 +2002,11 @@ As long as enchanted creature is |Sgreen, it gets +1/+1 and all creatures able t
 
 int card_gilder_bairn(int player, int card, event_t event)
 {
+  /* CARD_ID_GILDER_BAIRN	9791
+   * Gilder Bairn	|1|GU|GU
+   * Creature - Ouphe 1/3
+   * |2|GU, |Q: Double the number of each kind of counter on target permanent. (|Q is the untap symbol.) */
+
   int t_player;
   card_instance_t *instance;
   int result;
@@ -2209,6 +2217,12 @@ Double strike*/
 
 int card_helix_pinnacle(int player, int card, event_t event)
 {
+  /* Helix Pinnacle	|G
+   * Enchantment
+   * Shroud
+   * |X: Put X tower counters on ~.
+   * At the beginning of your upkeep, if there are 100 or more tower counters on ~, you win the game. */
+
   int result;
   card_instance_t *instance;
   unsigned int cless;
@@ -2390,7 +2404,6 @@ Draw a card. */
 
 	return 0;
 }
-
 
 int card_invert_the_skies(int player, int card, event_t event){
 /* CARD_ID_INVERT_THE_SKIES	9813
@@ -2625,6 +2638,108 @@ int card_mindwrack_liege(int player, int card, event_t event){
 }
 
 static int mirror_sheen_player = 0;
+/* ManalinkEh 2022: 0x2362ea0; original cards/eventide.c:1682. */
+static int fod_1(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  if ((event - EVENT_POWER < 2) || (event == EVENT_CHANGE_TYPE))
+  {
+
+    instance = get_card_instance(player, card);
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+
+      instance =
+          get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
+      if (event - EVENT_POWER < 2)
+      {
+        set_base_pt(2);
+      }
+      else
+      {
+        update_alter_remove_creature_subtypes(instance);
+        update_alter_add_subtype(SUBTYPE_KITHKIN, instance);
+        update_alter_add_subtype(SUBTYPE_SPIRIT, instance);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2363030; original cards/eventide.c:1699. */
+static int fod_2(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  if ((event - EVENT_POWER < 2) || (event == EVENT_CHANGE_TYPE))
+  {
+
+    instance = get_card_instance(player, card);
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+
+      instance =
+          get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
+      if (event - EVENT_POWER < 2)
+      {
+        set_base_pt(4);
+      }
+      else
+      {
+        update_alter_remove_creature_subtypes(instance);
+        update_alter_add_subtype(SUBTYPE_KITHKIN, instance);
+        update_alter_add_subtype(SUBTYPE_SPIRIT, instance);
+        update_alter_add_subtype(SUBTYPE_WARRIOR, instance);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2362f40; original cards/eventide.c:1717. */
+static int fod_3(int player, int card, event_t event)
+{
+  if (event - EVENT_POWER < 2 || event == EVENT_CHANGE_TYPE || event == EVENT_ABILITIES)
+  {
+    card_instance_t *inst = get_card_instance(player, card);
+    int p = inst->damage_target_player;
+    int c = inst->damage_target_card;
+    if (affect_me(p, c))
+    {
+      card_instance_t *att = get_card_instance(p, c);
+      if (event - EVENT_POWER < 2)
+        set_base_pt(8);
+      else if (event == EVENT_ABILITIES)
+        event_result |= 0x120;
+      else
+      {
+        update_alter_remove_creature_subtypes(att);
+        update_alter_add_subtype(SUBTYPE_KITHKIN, att);
+        update_alter_add_subtype(SUBTYPE_SPIRIT, att);
+        update_alter_add_subtype(SUBTYPE_WARRIOR, att);
+        update_alter_add_subtype(SUBTYPE_AVATAR, att);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x236ad60; original cards/eventide.c:2459. */
+int card_lingering_tormentor(int player, int card, event_t event)
+{
+  /* Lingering Tormentor	|3|B
+   * Creature - Spirit 2/2
+   * Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)
+   * Persist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.) */
+
+  fear(player, card, event);
+  persist(player, card, event);
+  return 0;
+}
+
 static const char* target_is_targeting_mirror_sheen_player(int who_chooses, int player, int card)
 {
   if (target_me(mirror_sheen_player, -1, player, card))
@@ -2785,13 +2900,12 @@ static int necroskitter_effect(int player, int card, event_t event)
 
 int card_necroskitter(int player, int card, event_t event)
 {
-  /*
-  Necroskitter |1|B|B
-  Creature — Elemental 1/4, 1BB (3)
-  Wither (This deals damage to creatures in the form of -1/-1 counters.)
-  Whenever a creature an opponent controls with a -1/-1 counter on it dies, you may return that card
-  to the battlefield under your control.
-  */
+  /* Necroskitter |1|B|B
+   *   Creature — Elemental 1/4, 1BB (3)
+   *   Wither (This deals damage to creatures in the form of -1/-1 counters.)
+   *   Whenever a creature an opponent controls with a -1/-1 counter on it dies, you may return that card
+   *   to the battlefield under your control. */
+
   if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
   {
     int found = 0;
@@ -2855,13 +2969,11 @@ int card_necroskitter(int player, int card, event_t event)
 }
 
 int card_needle_specter(int player, int card, event_t event){
-/*
-Needle Specter |1|B|B
-Creature — Specter 1/1
-Flying
-Wither (This deals damage to creatures in the form of -1/-1 counters.)
-Whenever Needle Specter deals combat damage to a player, that player discards that many cards.
-*/
+  /* Needle Specter |1|B|B
+   * Creature — Specter 1/1
+   * Flying
+   * Wither (This deals damage to creatures in the form of -1/-1 counters.)
+   * Whenever Needle Specter deals combat damage to a player, that player discards that many cards. */
 
 	wither(player, card, event);
 	if (damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_REPORT_DAMAGE_DEALT)){
@@ -3098,6 +3210,11 @@ int card_oonas_grace(int player, int card, event_t event){
 
 int card_overbeing_of_myth(int player, int card, event_t event)
 {
+  /* Overbeing of Myth	|GU|GU|GU|GU|GU
+   * Creature - Spirit Avatar 100/100
+   * ~'s power and toughness are each equal to the number of cards in your hand.
+   * At the beginning of your draw step, draw an additional card. */
+
   if (event - EVENT_POWER < 2)
   {
     if (affect_me(player, card) && player != -1)
@@ -3123,6 +3240,11 @@ int card_patrol_signaler(int player, int card, event_t event){
 
 int card_primalcrux(int player, int card, event_t event)
 {
+  /* Primalcrux	|G|G|G|G|G|G
+   * Creature - Elemental 100/100
+   * Trample
+   * Chroma - ~'s power and toughness are each equal to the number of |Sgreen mana symbols in the mana costs of permanents you control. */
+
   int newval;
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
@@ -3244,6 +3366,8 @@ int card_quillspike(int player, int card, event_t event){
 	return 0;
 }
 
+// goblin soldier token --> rhino token.
+
 int card_ravens_crime(int player, int card, event_t event){
 	/* Raven's Crime	|B
 	 * Sorcery
@@ -3335,6 +3459,19 @@ int card_rekindle_the_flame(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_ANY", 1, NULL);
 }
 
+/* ManalinkEh 2022: 0x236d3e0; original cards/eventide.c:3281. */
+int card_rendclaw_trow(int player, int card, event_t event)
+{
+  /* Rendclaw Trow	|2|BG
+   * Creature - Troll 2/2
+   * Wither (This deals damage to creatures in the form of -1/-1 counters.)
+   * Persist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.) */
+
+  wither(player, card, event);
+  persist(player, card, event);
+  return hybrid(player, card, event);
+}
+
 int card_restless_apparition(int player, int card, event_t event){
 /* CARD_ID_RESTLESS_APPARITION	9857
 Restless Apparition	|WB|WB|WB
@@ -3379,8 +3516,6 @@ Persist (When this creature dies, if it had no -1/-1 counters on it, return it t
 
 	return hybrid(player, card, event);
 }
-
-// goblin soldier token --> rhino token.
 
 int card_rise_of_the_hobgoblins(int player, int card, event_t event){
 	/* Rise of the Hobgoblins	|RW|RW
@@ -3537,12 +3672,11 @@ int card_savage_conception(int player, int card, event_t event){
 }
 
 int card_scarecrone(int player, int card, event_t event){
-	/*
-	  Scarecrone |3
-	  Artifact Creature - Scarecrow 1/2
-	  {1}, Sacrifice a Scarecrow: Draw a card.
-	  {4}, {T}: Return target artifact creature card from your graveyard to the battlefield.
-	*/
+  /* Scarecrone |3
+   * 	  Artifact Creature - Scarecrow 1/2
+   * 	  {1}, Sacrifice a Scarecrow: Draw a card.
+   * 	  {4}, {T}: Return target artifact creature card from your graveyard to the battlefield. */
+
 	if (!IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -3625,13 +3759,12 @@ int card_scarecrone(int player, int card, event_t event){
 }
 
 int card_scourge_of_the_nobilis(int player, int card, event_t event){
-/*
-Scourge of the Nobilis |2|{R/W}
-Enchantment — Aura
-Enchant creature
-As long as enchanted creature is red, it gets +1/+1 and has "{R/W}: This creature gets +1/+0 until end of turn."
-As long as enchanted creature is white, it gets +1/+1 and has lifelink. (Damage dealt by the creature also causes its controller to gain that much life.)
-*/
+  /* Scourge of the Nobilis |2|{R/W}
+   * Enchantment — Aura
+   * Enchant creature
+   * As long as enchanted creature is red, it gets +1/+1 and has "{R/W}: This creature gets +1/+0 until end of turn."
+   * As long as enchanted creature is white, it gets +1/+1 and has lifelink. (Damage dealt by the creature also causes its controller to gain that much life.) */
+
 	hybrid(player, card, event);
 
 	if( in_play(player, card) && get_card_instance( player, card )->damage_target_player != - 1 && ! is_humiliated(player, card, AL_STATIC) ){
@@ -3780,10 +3913,10 @@ Hexproof (This creature can't be the target of spells or abilities your opponent
 }
 
 int card_snakeform(int player, int card, event_t event){
-/* Snakeform |2|{G/U}
-   Instant
-   Target creature loses all abilities and becomes a 1/1 green Snake until end of turn.
-   Draw a card. */
+  /* Snakeform |2|{G/U}
+   *    Instant
+   *    Target creature loses all abilities and becomes a 1/1 green Snake until end of turn.
+   *    Draw a card. */
 
 	modify_cost_for_hybrid_spells(player, card, event, 0);
 
@@ -4122,6 +4255,25 @@ int card_springjack_pasture(int player, int card, event_t event)
   return 0;
 }
 
+/* ManalinkEh 2022: 0x23700f0; original cards/eventide.c:4086. */
+int card_springjack_shepherd(int player, int card, event_t event)
+{
+  /* Springjack Shepherd	|3|W
+   * Creature - Kithkin Wizard 1/2
+   * Chroma - When this creature enters, create a 0/1 white Goat creature token for each white mana symbol in the mana costs of permanents you control. */
+
+  int result;
+  result = player;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  result = chroma(player, -1, COLOR_WHITE, 0);
+  generate_tokens_by_id(player, card, CARD_ID_GOAT, result);
+  return 0;
+}
+
 static int stigma_lasher_legacy(int player, int card, event_t event){
 
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) )
@@ -4136,12 +4288,11 @@ static int stigma_lasher_legacy(int player, int card, event_t event){
 }
 
 int card_stigma_lasher(int player, int card, event_t event){
-/*
-Stigma Lasher |R|R
-Creature — Elemental Shaman 2/2
-Wither (This deals damage to creatures in the form of -1/-1 counters.)
-Whenever Stigma Lasher deals damage to a player, that player can't gain life for the rest of the game.
-*/
+  /* Stigma Lasher |R|R
+   * Creature — Elemental Shaman 2/2
+   * Wither (This deals damage to creatures in the form of -1/-1 counters.)
+   * Whenever Stigma Lasher deals damage to a player, that player can't gain life for the rest of the game. */
+
 	wither(player, card, event);
 
 	if (damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS) )
@@ -4172,6 +4323,13 @@ Whenever Stigma Lasher deals damage to a player, that player can't gain life for
 }
 
 int card_stillmoon_cavalier(int player, int card, event_t event){
+  /* Stillmoon Cavalier	|1|WB|WB
+   * Creature - Zombie Knight 2/1
+   * Protection from white and from black
+   * |WB: This creature gains flying until end of turn.
+   * |WB: This creature gains first strike until end of turn.
+   * |WB|WB: This creature gets +1/+0 until end of turn. */
+
 /*
 Stillmoon Cavalier 1{W/B}{W/B}
 Creature - Zombie Knight 2/1
@@ -4423,6 +4581,11 @@ Wither (This deals damage to creatures in the form of -1/-1 counters.)
 
 int card_umbra_stalker(int player, int card, event_t event)
 {
+  /* CARD_ID_UMBRA_STALKER	9896
+   * Umbra Stalker	|4|B|B|B
+   * Creature - Elemental 100/100
+   * Chroma - ~'s power and toughness are each equal to the number of |Sblack mana symbols in the mana costs of cards in your graveyard. */
+
   int count;
   int card_00;
   int *grave_cursor;
@@ -4634,12 +4797,13 @@ Whenever a permanent you control becomes untapped, ~ gets +1/+1 until end of tur
   return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 int card_ward_of_bones(int player, int card, event_t event){
-/*
-Ward of Bones |6
-Artifact
-Each opponent who controls more creatures than you can't play creature cards. The same is true for artifacts, enchantments, and lands.
-*/
+  /* Ward of Bones |6
+   * Artifact
+   * Each opponent who controls more creatures than you can't play creature cards. The same is true for artifacts, enchantments, and lands. */
+
 	if( event == EVENT_MODIFY_COST_GLOBAL && affected_card_controller == 1-player && ! is_humiliated(player, card, AL_STATIC) ){
 		if( is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
 			if( count_subtype(player, TYPE_CREATURE, -1) < count_subtype(1-player, TYPE_CREATURE, -1) ){
@@ -4705,6 +4869,8 @@ When ~ enters the battlefield, draw a card. */
 	return hybrid(player, card, event);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 int card_woodlurker_mimic(int player, int card, event_t event){
 /* CARD_ID_WOODLURKER_MIMIC	9906
 Woodlurker Mimic	|1|BG
@@ -4766,7 +4932,6 @@ int card_worm_harvest(int player, int card, event_t event){
 	return hybrid(player, card, event);
 }
 
-
 int card_waves_of_aggression(int player, int card, event_t event){
 	/* Waves of Aggression	|3|RW|RW
 	 * Sorcery
@@ -4816,135 +4981,9 @@ int card_waves_of_aggression(int player, int card, event_t event){
 	return hybrid(player, card, event);
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x236ad60; original cards/eventide.c:2459. */
-int card_lingering_tormentor(int player, int card, event_t event)
-{
-  fear(player, card, event);
-  persist(player, card, event);
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x236d3e0; original cards/eventide.c:3281. */
-int card_rendclaw_trow(int player, int card, event_t event)
-{
-  wither(player, card, event);
-  persist(player, card, event);
-  return hybrid(player, card, event);
-}
-
-/* ManalinkEh 2022: 0x23700f0; original cards/eventide.c:4086. */
-int card_springjack_shepherd(int player, int card, event_t event)
-{
-  int result;
-  result = player;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event != EVENT_ETB)
-  {
-    return 0;
-  }
-  result = chroma(player, -1, COLOR_WHITE, 0);
-  generate_tokens_by_id(player, card, CARD_ID_GOAT, result);
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2362ea0; original cards/eventide.c:1682. */
-static int fod_1(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-
-  if ((event - EVENT_POWER < 2) || (event == EVENT_CHANGE_TYPE))
-  {
-
-    instance = get_card_instance(player, card);
-    if ((instance->damage_target_card == affected_card) &&
-        (instance->damage_target_player == affected_card_controller))
-    {
-
-      instance =
-          get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
-      if (event - EVENT_POWER < 2)
-      {
-        set_base_pt(2);
-      }
-      else
-      {
-        update_alter_remove_creature_subtypes(instance);
-        update_alter_add_subtype(SUBTYPE_KITHKIN, instance);
-        update_alter_add_subtype(SUBTYPE_SPIRIT, instance);
-      }
-    }
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x2363030; original cards/eventide.c:1699. */
-static int fod_2(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-
-  if ((event - EVENT_POWER < 2) || (event == EVENT_CHANGE_TYPE))
-  {
-
-    instance = get_card_instance(player, card);
-    if ((instance->damage_target_card == affected_card) &&
-        (instance->damage_target_player == affected_card_controller))
-    {
-
-      instance =
-          get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
-      if (event - EVENT_POWER < 2)
-      {
-        set_base_pt(4);
-      }
-      else
-      {
-        update_alter_remove_creature_subtypes(instance);
-        update_alter_add_subtype(SUBTYPE_KITHKIN, instance);
-        update_alter_add_subtype(SUBTYPE_SPIRIT, instance);
-        update_alter_add_subtype(SUBTYPE_WARRIOR, instance);
-      }
-    }
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x2362f40; original cards/eventide.c:1717. */
-static int fod_3(int player, int card, event_t event)
-{
-  if (event - EVENT_POWER < 2 || event == EVENT_CHANGE_TYPE || event == EVENT_ABILITIES)
-  {
-    card_instance_t *inst = get_card_instance(player, card);
-    int p = inst->damage_target_player;
-    int c = inst->damage_target_card;
-    if (affect_me(p, c))
-    {
-      card_instance_t *att = get_card_instance(p, c);
-      if (event - EVENT_POWER < 2)
-        set_base_pt(8);
-      else if (event == EVENT_ABILITIES)
-        event_result |= 0x120;
-      else
-      {
-        update_alter_remove_creature_subtypes(att);
-        update_alter_add_subtype(SUBTYPE_KITHKIN, att);
-        update_alter_add_subtype(SUBTYPE_SPIRIT, att);
-        update_alter_add_subtype(SUBTYPE_WARRIOR, att);
-        update_alter_add_subtype(SUBTYPE_AVATAR, att);
-      }
-    }
-  }
-  return 0;
-}
-
-
 #ifndef SHANDALAR
 /* Recovered October 2022 attacker/keyword helpers. */
 
 /* ManalinkEh 2022: 0x23636c0; original cards/eventide.c:71. */
-
 
 #endif

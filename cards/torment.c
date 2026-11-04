@@ -3,6 +3,7 @@
 static int prevent_all_damage_of_a_source_until_eot_legacy(int player, int card, event_t event);
 
 // Functions
+
 static int do_flashback_with_life(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white, int lif){
 	if( event == EVENT_GRAVEYARD_ABILITY && can_pay_life(player, lif) ){
 		return do_flashback(player, card, event, colorless, black, blue, green, red, white);
@@ -492,6 +493,93 @@ int card_centaur_chieftain(int player, int card, event_t event){
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x23102a0; original cards/torment.c:493. */
+static int effect_prevent_combat_damage_to_or_from(int player, int card, event_t event)
+{
+  card_instance_t *damage;
+  card_instance_t *prevention;
+
+  damage = combat_damage_being_prevented(event);
+  if (((damage != NULL) && (prevention = get_card_instance(player, card), prevention != NULL)) &&
+      (((damage->damage_source_card == prevention->damage_target_card &&
+         (damage->damage_source_player == prevention->damage_target_player)) ||
+        ((prevention->damage_target_card == damage->damage_target_card &&
+          (damage->damage_target_player == prevention->damage_target_player))))))
+  {
+    prevent_damage(affected_card_controller, affected_card, damage->info_slot);
+  }
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2312470; original cards/torment.c:511. */
+int card_cephalid_illusionist(int player, int card, event_t event)
+{
+  /* Cephalid Illusionist	|1|U
+   * Creature - Octopus Wizard 1/1
+   * Whenever this creature becomes the target of a spell or ability, mill three cards.
+   * |2|U, |T: Prevent all combat damage that would be dealt to and dealt by target creature you control this turn. */
+
+  card_instance_t *instance;
+  int result;
+  const target_t *targeting_spell_or_effect;
+  target_definition_t td;
+
+  instance = in_play(player, card);
+  if (((instance != NULL) && (result = is_humiliated(player, card, AL_TRIG), result == 0)) &&
+      (targeting_spell_or_effect =
+           becomes_target_of_spell_or_effect(player, card, event, player, card, 2),
+       targeting_spell_or_effect != NULL))
+  {
+    mill(player, 3);
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 2, 0, 1, 0, 0, 0, 0,
+                                       &td, NULL);
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 5, 2, 0, 1, 0, 0, 0, 0, &td,
+                                "TARGET_CREATURE_YOU_CONTROL");
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    instance = get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+  {
+    result = create_targetted_legacy_effect(player, card, effect_prevent_combat_damage_to_or_from,
+                                            instance->targets[0].player, instance->targets[0].card);
+    alternate_legacy_text(1, instance->parent_controller, result);
+    if (((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+        (result = is_what(instance->targets[0].player, instance->targets[0].card, 2), result != 0))
+    {
+      result = get_power(instance->targets[0].player, instance->targets[0].card);
+      ai_modifier = ai_modifier + result * 0xc;
+      return 0;
+    }
+  }
+  return 0;
+}
+
 int card_cephalid_sage(int player, int card, event_t event){
 /* CARD_ID_CEPHALID_SAGE	5786
 Cephalid Sage	|3|U
@@ -571,14 +659,13 @@ static void turn_into_black_nightmare(int source_p, int source_c, int zombo_p, i
 }
 
 int card_chainer_dementia_master(int player, int card, event_t event){
-/*
-Chainer, Dementia Master |3|B|B
-Legendary Creature — Human Minion 3/3
-Nightmare creatures get +1/+1.
-{B}{B}{B}, Pay 3 life: Put target creature card from a graveyard onto the battlefield under your control.
-						That creature is black and is a Nightmare in addition to its other creature types.
-When Chainer, Dementia Master leaves the battlefield, exile all Nightmares.
-*/
+  /* Chainer, Dementia Master |3|B|B
+   * Legendary Creature — Human Minion 3/3
+   * Nightmare creatures get +1/+1.
+   * {B}{B}{B}, Pay 3 life: Put target creature card from a graveyard onto the battlefield under your control.
+   * 						That creature is black and is a Nightmare in addition to its other creature types.
+   * When Chainer, Dementia Master leaves the battlefield, exile all Nightmares. */
+
     check_legend_rule(player, card, event);
 
 	boost_creature_type(player, card, event, SUBTYPE_NIGHTMARE, 1, 1, 0, BCT_INCLUDE_SELF);
@@ -856,11 +943,10 @@ Each player sacrifices X lands. ~ deals X damage to each creature. */
 }
 
 int card_dwell_on_the_past(int player, int card, event_t event){
-/*
-Dwell on the Past |G
-Sorcery
-Target player shuffles up to four target cards from his or her graveyard into his or her library.
-*/
+  /* Dwell on the Past |G
+   * Sorcery
+   * Target player shuffles up to four target cards from his or her graveyard into his or her library. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1199,6 +1285,13 @@ Discard a card at random: ~ gains protection from |Swhite until end of turn. */
 
 int card_hypnox(int player, int card, event_t event)
 {
+  /* CARD_ID_HYPNOX	5822
+   * Hypnox	|8|B|B|B
+   * Creature - Nightmare Horror 8/8
+   * Flying
+   * When ~ enters the battlefield, if you cast it from your hand, exile all cards from target opponent's hand.
+   * When ~ leaves the battlefield, return the exiled cards to their owner's hand. */
+
   card_instance_t *instance;
   int result;
   int iid;
@@ -1521,6 +1614,13 @@ Threshold - |T: Untap up to three target lands. Activate this ability only if se
 
 int card_laquatus_champion(int player, int card, event_t event)
 {
+  /* CARD_ID_LAQUATUSS_CHAMPION	5831
+   * Laquatus's Champion	|4|B|B
+   * Creature - Nightmare Horror 6/3
+   * When ~ enters the battlefield, target player loses 6 life.
+   * When ~ leaves the battlefield, that player gains 6 life.
+   * |B: Regenerate ~. */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -1621,13 +1721,12 @@ static int last_laugh_effect(int player, int card, event_t event)
 }
 
 int card_last_laugh(int player, int card, event_t event){
-/*
-Last Laugh |2|B|B
-Enchantment
-Whenever a permanent other than Last Laugh is put into a graveyard from the battlefield, Last Laugh deals 1 damage to each creature and
-	each player.
-When no creatures are on the battlefield, sacrifice Last Laugh.
-*/
+  /* Last Laugh |2|B|B
+   * Enchantment
+   * Whenever a permanent other than Last Laugh is put into a graveyard from the battlefield, Last Laugh deals 1 damage to each creature and
+   * 	each player.
+   * When no creatures are on the battlefield, sacrifice Last Laugh. */
+
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		int found = 0;
 		int c;
@@ -1707,6 +1806,12 @@ Counter target spell with converted mana cost 3 or less. If that spell is counte
 
 int card_mesmeric_fiend(int player, int card, event_t event)
 {
+  /* CARD_ID_MESMERIC_FIEND	5837
+   * Mesmeric Fiend	|1|B
+   * Creature - Nightmare Horror 1/1
+   * When ~ enters the battlefield, target opponent reveals his or her hand and you choose a nonland card from it. Exile that card.
+   * When ~ leaves the battlefield, return the exiled card to its owner's hand. */
+
   card_instance_t *instance;
   int result;
   int id;
@@ -1819,12 +1924,11 @@ At the beginning of your upkeep, if twenty or more creature cards are in your gr
 }
 
 int card_mortiphobia(int player, int card, event_t event){
-	/*
-	  Mortiphobia |1|B|B
-	  Enchantment
-	  {1}{B}, Discard a card: Exile target card from a graveyard.
-	  {1}{B}, Sacrifice Mortiphobia: Exile target card from a graveyard.
-	*/
+  /* Mortiphobia |1|B|B
+   * 	  Enchantment
+   * 	  {1}{B}, Discard a card: Exile target card from a graveyard.
+   * 	  {1}{B}, Sacrifice Mortiphobia: Exile target card from a graveyard. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return global_enchantment(player, card, event);
 	}
@@ -1920,6 +2024,11 @@ Threshold - As long as seven or more cards are in your graveyard, ~ gets +1/+1 a
 
 int card_nantuko_cultivator(int player, int card, event_t event)
 {
+  /* CARD_ID_NANTUKO_CULTIVATOR	5846
+   * Nantuko Cultivator	|3|G
+   * Creature - Insect Druid 2/2
+   * When ~ enters the battlefield, you may discard any number of land cards. Put that many +1/+1 counters on ~ and draw that many cards. */
+
   int result;
   int selected;
   int num;
@@ -2233,6 +2342,58 @@ int card_pardic_arsonist(int player, int card, event_t event){
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x2310350; original cards/torment.c:2258. */
+static int prevent_all_damage_of_a_source_until_eot_legacy(int player, int card, event_t event)
+{
+  int prevented_source_player;
+  int prevented_source_card;
+  card_instance_t *instance;
+
+  if (event == EVENT_PREVENT_DAMAGE)
+  {
+    instance = in_play(player, card);
+    if ((instance != NULL) &&
+        (prevented_source_player = instance->targets[0].player, prevented_source_player != -1))
+    {
+
+      prevented_source_card = instance->targets[0].card;
+      instance = get_card_instance(affected_card_controller, affected_card);
+      if ((instance->internal_card_id == damage_card) &&
+          (((0 < instance->info_slot &&
+             (prevented_source_player == instance->damage_source_player)) &&
+            (instance->damage_source_card == prevented_source_card))))
+      {
+        prevent_damage(affected_card_controller, affected_card, -1);
+      }
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+#ifndef SHANDALAR
+static int prevent_all_damage_of_a_source_until_eot(int player, int card, int t_player, int t_card)
+{
+  int legacy = in_play(t_player, t_card)
+      ? create_targetted_legacy_effect(player, card, prevent_all_damage_of_a_source_until_eot_legacy,
+                                        t_player, t_card)
+      : create_legacy_effect(player, card, prevent_all_damage_of_a_source_until_eot_legacy);
+  if (legacy != -1)
+  {
+    card_instance_t *instance = get_card_instance(player, legacy);
+    instance->targets[0].player = t_player;
+    instance->targets[0].card = t_card;
+    if (instance->damage_target_player == -1)
+      create_card_name_legacy(player, legacy, get_id(t_player, t_card));
+  }
+  return legacy;
+}
+#endif
+
 // pardic collaborator --> frozen shade
 
 int card_pay_no_heed(int player, int card, event_t event){
@@ -2265,6 +2426,13 @@ Prevent all damage a source of your choice would deal this turn. */
 
 int card_petradon(int player, int card, event_t event)
 {
+  /* CARD_ID_PETRADON	5857
+   * Petradon	|6|R|R
+   * Creature - Nightmare Beast 5/6
+   * When ~ enters the battlefield, exile two target lands.
+   * When ~ leaves the battlefield, return the exiled cards to the battlefield under their owners' control.
+   * |R: ~ gets +1/+0 until end of turn. */
+
   target_t *chosen_player_record;
   target_t *chosen_card_record;
   int i;
@@ -2628,6 +2796,11 @@ static int remove_counters_at_eot(int player, int card, event_t event)
 
 int card_shambling_swarm(int player, int card, event_t event)
 {
+  /* Shambling Swarm	|1|B|B|B
+   * Creature - Horror 3/3
+   * When ~ dies, distribute three -1/-1 counters among one, two, or three target creatures. For each -1/-1 counter you put on a creature this way, remove a
+   * -1/-1 counter from that creature at the beginning of the next end step. */
+
   uint32_t num;
   int chosen_card;
   int target_or_card_index;
@@ -3072,145 +3245,3 @@ int card_violent_eruption(int player, int card, event_t event){
 
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_ONE_OR_MULTIPLE_TARGETS, &td, "TARGET_ANY", 4, NULL);
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x23102a0; original cards/torment.c:493. */
-static int effect_prevent_combat_damage_to_or_from(int player, int card, event_t event)
-{
-  card_instance_t *damage;
-  card_instance_t *prevention;
-
-  damage = combat_damage_being_prevented(event);
-  if (((damage != NULL) && (prevention = get_card_instance(player, card), prevention != NULL)) &&
-      (((damage->damage_source_card == prevention->damage_target_card &&
-         (damage->damage_source_player == prevention->damage_target_player)) ||
-        ((prevention->damage_target_card == damage->damage_target_card &&
-          (damage->damage_target_player == prevention->damage_target_player))))))
-  {
-    prevent_damage(affected_card_controller, affected_card, damage->info_slot);
-  }
-  if (event == EVENT_CLEANUP)
-  {
-    kill_card(player, card, KILL_EXILE);
-    return 0;
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2310350; original cards/torment.c:2258. */
-static int prevent_all_damage_of_a_source_until_eot_legacy(int player, int card, event_t event)
-{
-  int prevented_source_player;
-  int prevented_source_card;
-  card_instance_t *instance;
-
-  if (event == EVENT_PREVENT_DAMAGE)
-  {
-    instance = in_play(player, card);
-    if ((instance != NULL) &&
-        (prevented_source_player = instance->targets[0].player, prevented_source_player != -1))
-    {
-
-      prevented_source_card = instance->targets[0].card;
-      instance = get_card_instance(affected_card_controller, affected_card);
-      if ((instance->internal_card_id == damage_card) &&
-          (((0 < instance->info_slot &&
-             (prevented_source_player == instance->damage_source_player)) &&
-            (instance->damage_source_card == prevented_source_card))))
-      {
-        prevent_damage(affected_card_controller, affected_card, -1);
-      }
-    }
-  }
-  else if (event == EVENT_CLEANUP)
-  {
-    kill_card(player, card, KILL_EXILE);
-    return 0;
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2312470; original cards/torment.c:511. */
-int card_cephalid_illusionist(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-  const target_t *targeting_spell_or_effect;
-  target_definition_t td;
-
-  instance = in_play(player, card);
-  if (((instance != NULL) && (result = is_humiliated(player, card, AL_TRIG), result == 0)) &&
-      (targeting_spell_or_effect =
-           becomes_target_of_spell_or_effect(player, card, event, player, card, 2),
-       targeting_spell_or_effect != NULL))
-  {
-    mill(player, 3);
-  }
-  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
-  {
-    default_target_definition(player, card, &td, 2);
-    td.allowed_controller = player;
-    instance = get_card_instance(player, card);
-    if (event == EVENT_CAN_ACTIVATE)
-    {
-      return generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 2, 0, 1, 0, 0, 0, 0,
-                                       &td, NULL);
-    }
-    if (event == EVENT_ACTIVATE)
-    {
-      generic_activated_ability(player, card, EVENT_ACTIVATE, 5, 2, 0, 1, 0, 0, 0, 0, &td,
-                                "TARGET_CREATURE_YOU_CONTROL");
-      return 0;
-    }
-  }
-  else
-  {
-    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 2);
-    td.allowed_controller = player;
-    instance = get_card_instance(player, card);
-  }
-  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-  {
-    result = create_targetted_legacy_effect(player, card, effect_prevent_combat_damage_to_or_from,
-                                            instance->targets[0].player, instance->targets[0].card);
-    alternate_legacy_text(1, instance->parent_controller, result);
-    if (((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
-        (result = is_what(instance->targets[0].player, instance->targets[0].card, 2), result != 0))
-    {
-      result = get_power(instance->targets[0].player, instance->targets[0].card);
-      ai_modifier = ai_modifier + result * 0xc;
-      return 0;
-    }
-  }
-  return 0;
-}
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
-static int prevent_all_damage_of_a_source_until_eot(int player, int card, int t_player, int t_card)
-{
-  int legacy = in_play(t_player, t_card)
-      ? create_targetted_legacy_effect(player, card, prevent_all_damage_of_a_source_until_eot_legacy,
-                                        t_player, t_card)
-      : create_legacy_effect(player, card, prevent_all_damage_of_a_source_until_eot_legacy);
-  if (legacy != -1)
-  {
-    card_instance_t *instance = get_card_instance(player, legacy);
-    instance->targets[0].player = t_player;
-    instance->targets[0].card = t_card;
-    if (instance->damage_target_player == -1)
-      create_card_name_legacy(player, legacy, get_id(t_player, t_card));
-  }
-  return legacy;
-}
-#endif

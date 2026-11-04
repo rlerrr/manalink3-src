@@ -31,7 +31,6 @@
 28) Scroll Thief -> Thieving Magpie
 */
 
-
 /* WHITE CARDS */
 
 int card_ajanis_mantra(int player, int card, event_t event){
@@ -62,13 +61,12 @@ Whenever you gain life, put a +1/+1 counter on ~. */
 }
 
 int card_angelic_arbiter(int player, int card, event_t event){
-/*
-Angelic Arbiter |5|W|W
-Creature — Angel 5/6
-Flying
-Each opponent who cast a spell this turn can't attack with creatures.
-Each opponent who attacked with a creature this turn can't cast spells.
-*/
+  /* Angelic Arbiter |5|W|W
+   * Creature — Angel 5/6
+   * Flying
+   * Each opponent who cast a spell this turn can't attack with creatures.
+   * Each opponent who attacked with a creature this turn can't cast spells. */
+
 	if( current_turn != player && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t *instance = get_card_instance(player, card);
 
@@ -234,7 +232,6 @@ Creature - Human Soldier 1/1
 									&td, "Select target attacking creature.");
 }
 
-
 int card_inspired_charge(int player, int card, event_t event){
 /* CARD_ID_INSPIRED_CHARGE	11135
 Inspired Charge	|2|W|W
@@ -293,7 +290,6 @@ int card_roc_egg(int player, int card, event_t event){
 
 	return 0;
 }
-
 
 //Safe Passage
 static int effect_safe_passage(int player, int card, event_t event){
@@ -387,11 +383,10 @@ As long as you have 30 or more life, ~ gets +5/+5 and has flying. */
 }
 
 int card_silence(int player, int card, event_t event ){
-/*
-Silence |W
-Instant
-Your opponents can't cast spells this turn. (Spells cast before this resolves are unaffected.)
-*/
+  /* Silence |W
+   * Instant
+   * Your opponents can't cast spells this turn. (Spells cast before this resolves are unaffected.) */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		target_player_cant_cast_type(player, card, 1-player, TYPE_CREATURE|TYPE_ENCHANTMENT|TYPE_ARTIFACT|TARGET_TYPE_PLANESWALKER|TYPE_SPELL|TYPE_EFFECT);
 		kill_card(player, card, KILL_DESTROY );
@@ -819,12 +814,11 @@ When ~ enters the battlefield, each player loses 3 life. */
 }
 
 int card_lilianas_specter(int player, int card, event_t event){
-	/*
-	  Liliana's Specter |1|B|B
-	  Creature - Specter 2/1
-	  Flying
-	  When Liliana's Specter enters the battlefield, each opponent discards a card.
-	*/
+  /* Liliana's Specter |1|B|B
+   * 	  Creature - Specter 2/1
+   * 	  Flying
+   * 	  When Liliana's Specter enters the battlefield, each opponent discards a card. */
+
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -860,6 +854,12 @@ static int necrotic_plague_legacy(int player, int card, event_t event){
 
 int card_necrotic_plague(int player, int card, event_t event)
 {
+  /* Necrotic Plague	|2|B|B
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature has "At the beginning of your upkeep, sacrifice this creature."
+   * When enchanted creature dies, its controller chooses target creature one of their opponents controls. Return this card from its owner's graveyard to the battlefield attached to that creature. */
+
   card_instance_t *instance;
   int t_player;
   int t_card;
@@ -1043,12 +1043,11 @@ int card_reassembling_skeleton(int player, int card, event_t event){
 }
 
 int card_relentless_rats(int player, int card, event_t event){
-/*
-Relentless Rats |1|B|B
-Creature — Rat 2/2
-Relentless Rats gets +1/+1 for each other creature on the battlefield named Relentless Rats.
-A deck can have any number of cards named Relentless Rats.
-*/
+  /* Relentless Rats |1|B|B
+   * Creature — Rat 2/2
+   * Relentless Rats gets +1/+1 for each other creature on the battlefield named Relentless Rats.
+   * A deck can have any number of cards named Relentless Rats. */
+
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
 			int pump = 0;
@@ -1100,7 +1099,6 @@ Creature - Zombie 4/5
 	comes_into_play_tapped(player, card, event);
 	return event == EVENT_CAN_CAST;
 }
-
 
 int card_sign_in_blood(int player, int card, event_t event){
 /* CARD_ID_SIGN_IN_BLOOD	10465
@@ -1190,7 +1188,6 @@ int m10_lands(int player, int card, event_t event, int sub1, int sub2){
 
 	return plain_mana_producer(player, card, event);
 }
-
 
 int card_dragonskull_summit(int player, int card, event_t event){
 /*CARD_ID_DRAGONSKULL_SUMMIT	10409
@@ -1299,16 +1296,18 @@ Land
 }
 
 int card_terramorphic_expanse(int player, int card, event_t event){
+  /* CARD_ID_TERRAMORPHIC_EXPANSE	1468
+   * Terramorphic Expanse	""
+   * Land
+   * |T, Sacrifice ~: Search your library for a basic land card and put it onto the battlefield tapped. Then shuffle your library. */
+
   enum
   {
     CHOICE_MANA = 1,
     CHOICE_ABILITY = 2
   };
 
-/* CARD_ID_TERRAMORPHIC_EXPANSE	1468
-Terramorphic Expanse	""
-Land
-|T, Sacrifice ~: Search your library for a basic land card and put it onto the battlefield tapped. Then shuffle your library. */
+
 
 	// Also code for Evolving Wilds
 
@@ -1517,11 +1516,10 @@ If you do, that creature deals damage equal to its power to ~. */
 }
 
 int card_destructive_force(int player, int card, event_t event){
-/*
-Destructive Force |5|R|R
-Sorcery
-Each player sacrifices five lands. Destructive Force deals 5 damage to each creature.
-*/
+  /* Destructive Force |5|R|R
+   * Sorcery
+   * Each player sacrifices five lands. Destructive Force deals 5 damage to each creature. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int marked[2][151] = {{0}};
@@ -1805,7 +1803,6 @@ int card_incite(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-
 int card_inferno_titan(int player, int card, event_t event){
 	/* Inferno Titan	|4|R|R	0x20026a4
 	 * Creature - Giant 6/6
@@ -2081,12 +2078,14 @@ Sacrifice a creature: Target opponent gains control of ~. */
 }
 
 int card_platinum_angel(int player, int card, event_t event){
+  /* CARD_ID_PLATINUM_ANGEL	1308
+   * Platinum Angel	|7
+   * Artifact Creature - Angel 4/4
+   * Flying
+   * You can't lose the game and your opponents can't win the game. */
+
 	// 004C48A0
-/* CARD_ID_PLATINUM_ANGEL	1308
-Platinum Angel	|7
-Artifact Creature - Angel 4/4
-Flying
-You can't lose the game and your opponents can't win the game. */
+
 
 	if( (event == EVENT_ATTACK_RATING || event == EVENT_BLOCK_RATING) && affect_me(player, card)){
 		if (event == EVENT_ATTACK_RATING){
@@ -2127,6 +2126,11 @@ Artifact
 
 int card_steel_overseer(int player, int card, event_t event)
 {
+  /* CARD_ID_STEEL_OVERSEER	11176
+   * Steel Overseer	|2
+   * Artifact Creature - Construct 1/1
+   * |T: Put a +1/+1 counter on each artifact creature you control. */
+
   int artifact_creature;
   card_instance_t *instance;
   int type_match;
@@ -2455,6 +2459,13 @@ int card_hunters_feast(int player, int card, event_t event)
 
 int card_leyline_of_vitality(int player, int card, event_t event)
 {
+  /* CARD_ID_LEYLINE_OF_VITALITY	11142
+   * Leyline of Vitality	|2|G|G
+   * Enchantment
+   * If ~ is in your opening hand, you may begin the game with it on the battlefield.
+   * Creatures you control get +0/+1.
+   * Whenever a creature enters the battlefield under your control, you may gain 1 life. */
+
   if (!is_humiliated(player, card, AL_TRIG))
   {
     if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card))
@@ -2893,12 +2904,11 @@ int card_jaces_erasure(int player, int card, event_t event){
 }
 
 int card_mass_polymorph(int player, int card, event_t event){
-/*
-Mass Polymorph |5|U
-Sorcery
-Exile all creatures you control, then reveal cards from the top of your library until you reveal that many creature cards.
-Put all creature cards revealed this way onto the battlefield, then shuffle the rest of the revealed cards into your library.
-*/
+  /* Mass Polymorph |5|U
+   * Sorcery
+   * Exile all creatures you control, then reveal cards from the top of your library until you reveal that many creature cards.
+   * Put all creature cards revealed this way onto the battlefield, then shuffle the rest of the revealed cards into your library. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
@@ -2973,12 +2983,11 @@ static void merfolk_spy_ability(int player, int card, int t_player){
 }
 
 int card_merfolk_spy(int player, int card, event_t event){
-/*
-Merfolk Spy |U
-Creature — Merfolk Rogue 1/1
-Islandwalk (This creature can't be blocked as long as defending player controls an Island.)
-Whenever Merfolk Spy deals combat damage to a player, that player reveals a card at random from his or her hand.
-*/
+  /* Merfolk Spy |U
+   * Creature — Merfolk Rogue 1/1
+   * Islandwalk (This creature can't be blocked as long as defending player controls an Island.)
+   * Whenever Merfolk Spy deals combat damage to a player, that player reveals a card at random from his or her hand. */
+
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE);
 	if( result ){
 		int times_damaged[2] = {BYTE0(result), BYTE1(result)};
@@ -3195,5 +3204,4 @@ At the beginning of your upkeep, reveal the top card of your library and put tha
 
 	return global_enchantment(player, card, event);
 }
-
 

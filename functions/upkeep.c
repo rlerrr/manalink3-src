@@ -38,7 +38,6 @@ int count_upkeeps(int player){
 	return result;
 }
 
-
 void echo(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white){
 
 	if( event == EVENT_RESOLVE_SPELL ){

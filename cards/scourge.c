@@ -2,6 +2,7 @@
 static int ageless_sentinels_subtypes_abils(int,int,event_t);
 
 // Functions
+
 int landcycling(int player, int card, event_t event, int colorless, int land_subtype1, int land_subtype2){
 
 	if( event == EVENT_CAN_ACTIVATE_FROM_HAND || event == EVENT_ACTIVATE_FROM_HAND ){
@@ -25,10 +26,99 @@ int landcycling(int player, int card, event_t event, int colorless, int land_sub
 	return 0;
 }
 
+#ifndef SHANDALAR
+static int counterspell_cycling(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white)
+{
+  target_definition_t td;
+  counterspell_target_definition(player, card, &td, 0);
+  card_instance_t* instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    int cost = MAX(0, colorless - 2*count_cards_by_id(player, CARD_ID_FLUCTUATOR) +
+                         2*count_cards_by_id(player, CARD_ID_SUPPRESSION_FIELD));
+    if (has_mana_multi(player, cost, black, blue, green, red, white))
+    {
+      if (counterspell(player, card, EVENT_CAN_CAST, &td, -1))
+      {
+        instance->info_slot = 1;
+        return 99;
+      }
+      instance->info_slot = 0;
+      return 1;
+    }
+  }
+  else if (event == EVENT_ACTIVATE_FROM_HAND)
+  {
+    int cost = MAX(0, colorless - 2*count_cards_by_id(player, CARD_ID_FLUCTUATOR) +
+                         2*count_cards_by_id(player, CARD_ID_SUPPRESSION_FIELD));
+    if (get_card_instance(player, card)->info_slot == 1)
+    {
+      char buffer[100];
+      scnprintf(buffer, 100, " Counter %s\n Pass", get_card_name_by_id(get_id(card_on_stack_controller, card_on_stack)));
+      if (do_dialog(player, player, card, -1, -1, buffer, 0) == 0)
+        counterspell(player, card, EVENT_CAST_SPELL, NULL, 0);
+      else
+        instance->info_slot = 0;
+    }
+    charge_mana_multi(player, cost, black, blue, green, red, white);
+    if (spell_fizzled != 1)
+    {
+      card_is_being_cycled = 1;
+      discard_card(player, card);
+      card_is_being_cycled = 0;
+      return 2;
+    }
+  }
+  else if (spell_fizzled != 1)
+  {
+    if (!(player_bits[player] & PB_GY_ABILITIES_DISABLED) && instance->info_slot == 1 &&
+        counterspell_validate(player, card, &td, 0))
+      real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+    instance->number_of_targets = 0;
+    draw_a_card(player);
+  }
+  return 0;
+}
+#endif
+
+/* ManalinkEh 2022: 0x24f6980; original cards/scourge.c:88. */
+static int ageless_sentinels_subtypes_abils(int player, int card, event_t event)
+{
+  int target_card;
+  card_instance_t *instance;
+  int target_player;
+
+  if ((event & 0xfffffff7) == EVENT_ABILITIES)
+  {
+
+    instance = get_card_instance(player, card);
+    target_card = instance->damage_target_card;
+    target_player = (int)instance->damage_target_player;
+    if (((target_card == affected_card) && (affected_card_controller == target_player)) &&
+        (event == EVENT_ABILITIES))
+    {
+      event_result = event_result & 0xff7fffff;
+    }
+    else if (event == EVENT_CHANGE_TYPE)
+    {
+      remove_a_subtype(target_player, target_card, SUBTYPE_WALL);
+      add_a_subtype(target_player, target_card, SUBTYPE_BIRD);
+      add_a_subtype(target_player, target_card, SUBTYPE_GIANT);
+    }
+  }
+  return 0;
+}
 
 // Cards
+
 int card_ageless_sentinels(int player, int card, event_t event)
 {
+  /* Ageless Sentinels	|3|W
+   * Creature - Wall 4/4
+   * Defender (This creature can't attack.)
+   * Flying
+   * When this creature blocks, it becomes a Bird Giant, and it loses defender. (It's no longer a Wall. This effect lasts indefinitely.) */
+
   int result;
   if ((((1 - player == current_turn) && (result = blocking(player, card, event), result != 0)) &&
        (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
@@ -43,6 +133,10 @@ int card_ageless_sentinels(int player, int card, event_t event)
 }
 
 int card_alpha_status(int player, int card, event_t event){
+  /* Alpha Status	|2|G
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +2/+2 for each other creature on the battlefield that shares a creature type with it. */
 
 	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -61,12 +155,10 @@ int card_alpha_status(int player, int card, event_t event){
 }
 
 int card_ambush_commander(int player, int card, event_t event){
-/*
-Ambush Commander |3|G|G
-Creature — Elf 2/2
-Forests you control are 1/1 green Elf creatures that are still lands.
-{1}{G}, Sacrifice an Elf: Target creature gets +3/+3 until end of turn.
-*/
+  /* Ambush Commander |3|G|G
+   * Creature — Elf 2/2
+   * Forests you control are 1/1 green Elf creatures that are still lands.
+   * {1}{G}, Sacrifice an Elf: Target creature gets +3/+3 until end of turn. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		test_definition_t this_test;
@@ -100,6 +192,10 @@ Forests you control are 1/1 green Elf creatures that are still lands.
 
 int card_ancient_ooze(int player, int card, event_t event)
 {
+  /* Ancient Ooze	|5|G|G
+   * Creature - Ooze * / *
+   * ~'s power and toughness are each equal to the total mana value of other creatures you control. */
+
   card_instance_t *instance;
   int result;
   int card_00;
@@ -135,6 +231,9 @@ int card_ancient_ooze(int player, int card, event_t event)
 // aphetto runecaster --> vanilla
 
 int card_ark_of_blight(int player, int card, event_t event){
+  /* Ark of Blight	|2
+   * Artifact
+   * |3, |T, Sacrifice this artifact: Destroy target land. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -208,6 +307,10 @@ int card_bladewing_the_risen(int player, int card, event_t event){
 }
 
 int card_bladewings_thrall(int player, int card, event_t event){
+  /* Bladewing's Thrall	|2|B|B
+   * Creature - Zombie 3/3
+   * This creature has flying as long as you control a Dragon.
+   * When a Dragon enters, you may return this card from your graveyard to the battlefield. */
 
 	if( event == EVENT_ABILITIES && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_DRAGON) ){
@@ -238,6 +341,10 @@ int card_brain_freeze(int player, int card, event_t event){
 }
 
 int card_break_asunder(int player, int card, event_t event){
+  /* Break Asunder	|2|G|G
+   * Sorcery
+   * Destroy target artifact or enchantment.
+   * Cycling |2 (|2, Discard this card: Draw a card.) */
 
 	if( IS_ACTIVATING_FROM_HAND(event) ){
 		return cycling(player, card, event, MANACOST_X(2));
@@ -321,6 +428,9 @@ int card_cabal_conditioning(int player, int card, event_t event)
 }
 
 int card_cabal_interrogator(int player, int card, event_t event){
+  /* Cabal Interrogator	|1|B
+   * Creature - Zombie Wizard 1/1
+   * |X|B, |T: Target player reveals X cards from their hand and you choose one of them. That player discards that card. Activate only as a sorcery. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -348,6 +458,10 @@ int card_cabal_interrogator(int player, int card, event_t event){
 }
 
 int card_call_to_the_grave(int player, int card, event_t event){
+  /* Call to the Grave	|4|B
+   * Enchantment
+   * At the beginning of each player's upkeep, that player sacrifices a non-Zombie creature of their choice.
+   * At the beginning of the end step, if no creatures are on the battlefield, sacrifice this enchantment. */
 
 	upkeep_trigger_ability(player, card, event, ANYBODY);
 
@@ -429,6 +543,10 @@ int card_chartooth_cougar(int player, int card, event_t event)
 
 int card_consumptive_goo(int player, int card, event_t event)
 {
+  /* Consumptive Goo	|B|B
+   * Creature - Ooze 1/1
+   * |2|B|B: Target creature gets -1/-1 until end of turn. Put a +1/+1 counter on this creature. */
+
   card_instance_t *instance;
   int ability_result;
   int target_available;
@@ -472,6 +590,10 @@ int card_consumptive_goo(int player, int card, event_t event)
 
 int card_daru_spiritualist(int player, int card, event_t event)
 {
+  /* Daru Spiritualist	|1|W
+   * Creature - Human Cleric 1/1
+   * Whenever a Cleric creature you control becomes the target of a spell or ability, it gets +0/+2 until end of turn. */
+
 	const target_t* targets = any_becomes_target(player, card, event, player, 0, TYPE_CREATURE, SUBTYPE_CLERIC, TYPE_EFFECT|TYPE_NONEFFECT,
 												ANYBODY, RESOLVE_TRIGGER_MANDATORY);
 	if (targets)
@@ -482,6 +604,10 @@ int card_daru_spiritualist(int player, int card, event_t event)
 }
 
 int card_daru_warchief(int player, int card, event_t event){
+  /* Daru Warchief	|2|W|W
+   * Creature - Human Soldier 1/1
+   * Soldier spells you cast cost |1 less to cast.
+   * Soldier creatures you control get +1/+2. */
 
 	if( event == EVENT_MODIFY_COST_GLOBAL && affected_card_controller == player && ! is_humiliated(player, card, AL_STATIC) ){
 		if( has_subtype(affected_card_controller, affected_card, SUBTYPE_SOLDIER) ){
@@ -495,6 +621,10 @@ int card_daru_warchief(int player, int card, event_t event){
 }
 
 int card_dawn_elemental(int player, int card, event_t event){
+  /* Dawn Elemental	|W|W|W|W
+   * Creature - Elemental 3/3
+   * Flying
+   * Prevent all damage that would be dealt to this creature. */
 
 	if (event == EVENT_CHECK_ABILITIES && affect_me(player, card)){
 		check_abilities_toughness += 0x3fff;
@@ -516,6 +646,12 @@ int card_dawn_elemental(int player, int card, event_t event){
 
 int card_day_of_the_dragons(int player, int card, event_t event)
 {
+  /* Day of the Dragons	|4|U|U|U
+   * Enchantment
+   * When ~ enters the battlefield, exile all creatures you control. Then put that many 5/5 |Sred Dragon creature tokens with flying onto
+   * 		the battlefield.
+   * When ~ leaves the battlefield, sacrifice all Dragons you control. Then return the exiled cards to the battlefield under your control. */
+
   unsigned int encoded_exile_entry;
   unsigned char creatures_exiled;
   int creature_card;
@@ -609,6 +745,12 @@ int card_day_of_the_dragons(int player, int card, event_t event)
 
 int card_decree_of_annihilation(int player, int card, event_t event)
 {
+  /* Decree of Annihilation	|8|R|R
+   * Sorcery
+   * Exile all artifacts, creatures, and lands from the battlefield, all cards from all graveyards, and all cards from all hands.
+   * Cycling |5|R|R (|5|R|R, Discard this card: Draw a card.)
+   * When you cycle this card, destroy all lands. */
+
   int c;
   int permanent_check;
   card_instance_t *instance;
@@ -768,6 +910,11 @@ int card_decree_of_justice(int player, int card, event_t event){
 }
 
 int card_decree_of_pain(int player, int card, event_t event){
+  /* Decree of Pain	|6|B|B
+   * Sorcery
+   * Destroy all creatures. They can't be regenerated. Draw a card for each creature destroyed this way.
+   * Cycling |3|B|B (|3|B|B, Discard this card: Draw a card.)
+   * When you cycle this card, all creatures get -2/-2 until end of turn. */
 
 	if( event == EVENT_CAN_ACTIVATE_FROM_HAND || event == EVENT_ACTIVATE_FROM_HAND ){
 		return cycling(player, card, event, MANACOST_XB(3, 2));
@@ -958,6 +1105,9 @@ static int dimensional_breach_effect_legacy(int player, int card, event_t event)
 }
 
 int card_dimensional_breach(int player, int card, event_t event){
+  /* Dimensional Breach	|5|W|W
+   * Sorcery
+   * Exile all permanents. For as long as any of those cards remain exiled, at the beginning of each player's upkeep, that player returns one of the exiled cards they own to the battlefield. */
 
 	if (event == EVENT_RESOLVE_SPELL){
 	    int legacy = -1, pos = 0, found = 0;
@@ -1144,12 +1294,10 @@ Dragon spells you cast cost |2 less to cast. */
 }
 
 int card_dragonstorm(int player, int card, event_t event){
-	/*
-	  Dragonstorm |8|R
-	  Sorcery
-	  Search your library for a Dragon permanent card and put it onto the battlefield. Then shuffle your library.
-	  Storm (When you cast this spell, copy it for each spell cast before it this turn.)
-	*/
+  /* Dragonstorm |8|R
+   * 	  Sorcery
+   * 	  Search your library for a Dragon permanent card and put it onto the battlefield. Then shuffle your library.
+   * 	  Storm (When you cast this spell, copy it for each spell cast before it this turn.) */
 
 	if (event == EVENT_QUERY && attacking_card == 4){
 		return 1;
@@ -1273,6 +1421,11 @@ Target player loses life equal to the damage already dealt to him or her this tu
 
 int card_forgotten_ancient(int player, int card, event_t event)
 {
+  /* Forgotten Ancient	|3|G
+   * Creature - Elemental 0/3
+   * Whenever a player casts a spell, you may put a +1/+1 counter on ~.
+   * At the beginning of your upkeep, you may move any number of +1/+1 counters from ~ onto other creatures. */
+
   int result;
   card_instance_t *instance;
   resolve_trigger_t trigger_mode;
@@ -1444,11 +1597,13 @@ int card_goblin_war_strike(int player, int card, event_t event){
 
 int card_goblin_warchief(int player, int card, event_t event)
 {
+  /* Goblin Warchief	|1|R|R	0x2001173
+   * Creature - Goblin Warrior 2/2
+   * Goblin spells you cast cost |1 less to cast.
+   * Goblins you control have haste. */
+
 	// !!!DOM: goblin creatures you control => goblins you control
-	/* Goblin Warchief	|1|R|R	0x2001173
-	 * Creature - Goblin Warrior 2/2
-	 * Goblin spells you cast cost |1 less to cast.
-	 * Goblins you control have haste. */
+
 	if( event == EVENT_MODIFY_COST_GLOBAL && ! is_humiliated(player, card, AL_STATIC) &&
 		affected_card_controller == player && has_subtype(player, affected_card, SUBTYPE_GOBLIN))
 		--COST_COLORLESS;
@@ -1459,6 +1614,10 @@ int card_goblin_warchief(int player, int card, event_t event)
 }
 
 int card_guilty_conscience(int player, int card, event_t event){
+  /* Guilty Conscience	|W
+   * Enchantment - Aura
+   * Enchant creature
+   * Whenever enchanted creature deals damage, this Aura deals that much damage to that creature. */
 
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_TRIG) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -1578,6 +1737,11 @@ int card_hunting_pack(int player, int card, event_t event){
 }
 
 int card_karona_false_god(int player, int card, event_t event){
+  /* Karona, False God	|1|W|U|B|R|G
+   * Legendary Creature - Avatar 5/5
+   * Haste
+   * At the beginning of each player's upkeep, that player untaps Karona and gains control of it.
+   * Whenever Karona attacks, creatures of the creature type of your choice get +3/+3 until end of turn. */
 
 	check_legend_rule(player, card, event);
 
@@ -1599,6 +1763,10 @@ int card_karona_false_god(int player, int card, event_t event){
 }
 
 int card_krosan_drover(int player, int card, event_t event){
+  /* Krosan Drover	|3|G
+   * Creature - Elf 2/2
+   * Creature spells you cast with mana value 6 or greater cost |2 less to cast. */
+
 	if( event == EVENT_MODIFY_COST_GLOBAL && affected_card_controller == player && ! is_humiliated(player, card, AL_STATIC) ){
 		if( is_what(affected_card_controller, affected_card, TYPE_CREATURE) && get_cmc(affected_card_controller, affected_card) > 5){
 			COST_COLORLESS-=2;
@@ -1608,6 +1776,10 @@ int card_krosan_drover(int player, int card, event_t event){
 }
 
 int card_krosan_warchief(int player, int card, event_t event){
+  /* Krosan Warchief	|2|G
+   * Creature - Beast 2/2
+   * Beast spells you cast cost |1 less to cast.
+   * |1|G: Regenerate target Beast. */
 
 	if( event == EVENT_MODIFY_COST_GLOBAL && affected_card_controller == player && ! is_humiliated(player, card, AL_STATIC) ){
 		if( has_subtype(affected_card_controller, affected_card, SUBTYPE_BEAST) ){
@@ -1727,6 +1899,10 @@ static int effect_lethal_vapors(int player, int card, event_t event)
 
 int card_lethal_vapors(int player, int card, event_t event)
 {
+  /* Lethal Vapors	|2|B|B
+   * Enchantment
+   * Whenever a creature enters, destroy it.
+   * |0: Destroy this enchantment. You skip your next turn. Any player may activate this ability. */
 
   if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card))
   {
@@ -1873,9 +2049,13 @@ static int create_minds_desire_legacy(int player, int card){
 	return legacy;
 }
 
-
 int card_minds_desire(int player, int card, event_t event)
 {
+  /* Mind's Desire	|4|U|U
+   * Sorcery
+   * Shuffle your library. Then exile the top card of your library. Until end of turn, you may play that card without paying its mana cost.
+   * Storm (When you cast this spell, copy it for each spell cast before it this turn.) */
+
   if (!is_unlocked(player, card, event, 28))
   {
     return 0;
@@ -1899,6 +2079,12 @@ int card_minds_desire(int player, int card, event_t event)
 
 int card_mischievous_quanar(int player, int card, event_t event)
 {
+  /* Mischievous Quanar	|4|U
+   * Creature - Beast 3/3
+   * |3|U|U: Turn this creature face down.
+   * Morph |1|U|U (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.)
+   * When this creature is turned face up, copy target instant or sorcery spell. You may choose new targets for that copy. */
+
   card_instance_t* instance = get_card_instance(player, card);
 
   // |3|U|U: Turn ~ face down.
@@ -1951,6 +2137,9 @@ int card_mischievous_quanar(int player, int card, event_t event)
 }
 
 int card_misguided_rage(int player, int card, event_t event){
+  /* Misguided Rage	|2|R
+   * Sorcery
+   * Target player sacrifices a permanent of their choice. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -1976,6 +2165,10 @@ int card_misguided_rage(int player, int card, event_t event){
 
 int card_nefashu(int player, int card, event_t event)
 {
+  /* Nefashu	|4|B|B
+   * Creature - Zombie Mutant 5/3
+   * Whenever this creature attacks, up to five target creatures each get -1/-1 until end of turn. */
+
 	// Whenever ~ attacks, up to five target creatures each get -1/-1 until end of turn.
 	dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
 	if (event == EVENT_DAT_ABILITY){
@@ -2005,12 +2198,22 @@ int card_nefashu(int player, int card, event_t event)
 }
 
 int card_noble_templar(int player, int card, event_t event){
+  /* Noble Templar	|5|W
+   * Creature - Human Cleric Soldier 3/6
+   * Vigilance
+   * Plainscycling |2 (|2, Discard this card: Search your library for a Plains card, reveal it, put it into your hand, then shuffle.) */
+
 	vigilance(player, card, event);
 	return landcycling(player, card, event, 2, SUBTYPE_PLAINS, 0);
 }
 
 int card_proteus_machine(int player, int card, event_t event)
 {
+  /* Proteus Machine	|3
+   * Artifact Creature - Shapeshifter 2/2
+   * Morph |0 (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.)
+   * When this creature is turned face up, it becomes the creature type of your choice. (This effect lasts indefinitely.) */
+
   if (event == EVENT_TURNED_FACE_UP)
     add_a_subtype_permanently(player, card, player, card, select_a_subtype(player, card));
   return morph(player, card, event, MANACOST0);
@@ -2018,6 +2221,10 @@ int card_proteus_machine(int player, int card, event_t event)
 
 int card_putrid_raptor(int player, int card, event_t event)
 {
+  /* Putrid Raptor	|4|B|B
+   * Creature - Zombie Dinosaur Beast 4/4
+   * Morph-Discard a Zombie card. (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
+
   // Morph - Discard a Zombie card.
 #define DECL_TEST(test)												\
   test_definition_t test;											\
@@ -2048,6 +2255,9 @@ int card_putrid_raptor(int player, int card, event_t event)
 }
 
 int card_pyrostatic_pillar(int player, int card, event_t event){
+  /* Pyrostatic Pillar	|1|R
+   * Enchantment
+   * Whenever a player casts a spell with mana value 3 or less, this enchantment deals 2 damage to that player. */
 
 	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
 		test_definition_t test;
@@ -2062,7 +2272,48 @@ int card_pyrostatic_pillar(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
+/* ManalinkEh 2022: 0x24fc7b0; original cards/scourge.c:2100. */
+int card_raven_guild_initiate(int player, int card, event_t event)
+{
+  /* Raven Guild Initiate	|2|U
+   * Creature - Human Wizard 1/4
+   * Morph-Return a Bird you control to its owner's hand. (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
+
+  int result;
+  target_t tgt;
+  target_definition_t td;
+  if (event - EVENT_CAN_UNMORPH < 2)
+  {
+    base_target_definition(player, card, &td, 0x47);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    td.required_subtype = 0x16;
+    if (event == EVENT_CAN_UNMORPH)
+    {
+      result = can_target(&td);
+      return result;
+    }
+    result = select_target(player, card + -1000, &td, "Select a Bird you control.", &tgt);
+    if (result == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    bounce_permanent(tgt.player, tgt.card);
+    result = 0;
+  }
+  else
+  {
+    result = morph(player, card, event, 0, 0, 0, 0, 0, 0);
+  }
+  return result;
+}
+
 int card_raven_guild_master(int player, int card, event_t event){
+  /* Raven Guild Master	|1|U|U
+   * Creature - Human Wizard Mutant 1/1
+   * Whenever this creature deals combat damage to a player, that player exiles the top ten cards of their library.
+   * Morph |2|U|U (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
 
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE);
 	if( result ){
@@ -2103,6 +2354,10 @@ int card_reaping_the_graves(int player, int card, event_t event){
 }
 
 int card_riptide_survivor(int player, int card, event_t event){
+  /* Riptide Survivor	|2|U
+   * Creature - Human Wizard 2/1
+   * Morph |1|U|U (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.)
+   * When this creature is turned face up, discard two cards, then draw three cards. */
 
 	if(event == EVENT_TURNED_FACE_UP ){
 		multidiscard(player, 2, 0);
@@ -2113,6 +2368,10 @@ int card_riptide_survivor(int player, int card, event_t event){
 }
 
 int card_root_elemental(int player, int card, event_t event){
+  /* Root Elemental	|4|G|G
+   * Creature - Elemental 6/5
+   * Morph |5|G|G (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.)
+   * When this creature is turned face up, you may put a creature card from your hand onto the battlefield. */
 
 	if(event == EVENT_TURNED_FACE_UP ){
 		if( hand_count[player] ){
@@ -2126,6 +2385,9 @@ int card_root_elemental(int player, int card, event_t event){
 }
 
 int card_rush_of_knowledge(int player, int card, event_t event){
+  /* Rush of Knowledge	|4|U
+   * Sorcery
+   * Draw cards equal to the greatest mana value among permanents you control. */
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		ai_modifier += (get_highest_cmc_nonland(player) * 12);
@@ -2140,6 +2402,11 @@ int card_rush_of_knowledge(int player, int card, event_t event){
 }
 
 int card_shoreline_ranger(int player, int card, event_t event){
+  /* Shoreline Ranger	|5|U
+   * Creature - Bird Soldier Ranger 3/4
+   * Flying
+   * Islandcycling |2 (|2, Discard this card: Search your library for an Island card, reveal it, put it into your hand, then shuffle.) */
+
 	return landcycling(player, card, event, 2, SUBTYPE_ISLAND, 0);
 }
 
@@ -2177,6 +2444,10 @@ int card_siege_gang_commander(int player, int card, event_t event){
 }
 
 int card_skulltap(int player, int card, event_t event){
+  /* Skulltap	|1|B
+   * Sorcery
+   * As an additional cost to cast this spell, sacrifice a creature.
+   * Draw two cards. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		draw_cards(player, 2);
@@ -2259,13 +2530,12 @@ int card_sliver_overlord(int player, int card, event_t event)
 }
 
 int card_soul_collector(int player, int card, event_t event){
-/*
-Soul Collector |3|B|B
-Creature — Vampire 3/4
-Flying
-Whenever a creature dealt damage by Soul Collector this turn dies, return that card to the battlefield under your control.
-Morph {B}{B}{B} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)
-*/
+  /* Soul Collector |3|B|B
+   * Creature — Vampire 3/4
+   * Flying
+   * Whenever a creature dealt damage by Soul Collector this turn dies, return that card to the battlefield under your control.
+   * Morph {B}{B}{B} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.) */
+
 	if( event == EVENT_DEAL_DAMAGE ){
 		card_instance_t *instance = get_card_instance(player, card);
 		card_instance_t *damage = get_card_instance( affected_card_controller, affected_card);
@@ -2329,6 +2599,10 @@ Morph {B}{B}{B} (You may cast this card face down as a 2/2 creature for {3}. Tur
 }
 
 int card_sprouting_vines(int player, int card, event_t event){
+  /* Sprouting Vines	|2|G
+   * Instant
+   * Search your library for a basic land card, reveal that card, put it into your hand, then shuffle.
+   * Storm (When you cast this spell, copy it for each spell cast before it this turn.) */
 
 	if (event == EVENT_QUERY && attacking_card == 4){
 		return 1;
@@ -2347,6 +2621,9 @@ int card_sprouting_vines(int player, int card, event_t event){
 
 int card_stifle(int player, int card, event_t event)
 {
+  /* Stifle	|U
+   * Instant
+   * Counter target activated or triggered ability. (Mana abilities can't be targeted.) */
 
 	card_instance_t* instance = get_card_instance(player, card);
 	if (event == EVENT_CAN_CAST){
@@ -2367,6 +2644,12 @@ int card_stifle(int player, int card, event_t event)
 
 int card_sulfuric_vortex(int player, int card, event_t event)
 {
+  /* CARD_ID_SULFURIC_VORTEX	6586
+   * Sulfuric Vortex	|1|R|R
+   * Enchantment
+   * At the beginning of each player's upkeep, ~ deals 2 damage to that player.
+   * If a player would gain life, that player gains no life instead. */
+
   card_instance_t *instance;
   int result;
   upkeep_trigger_ability(player, card, event, 2);
@@ -2440,6 +2723,38 @@ Land
   return 0;
 }
 
+/* ManalinkEh 2022: 0x24fdb10; original cards/scourge.c:2563. */
+int card_temporal_fissure(int player, int card, event_t event)
+{
+  /* Temporal Fissure	|4|U
+   * Sorcery
+   * Return target permanent to its owner's hand.
+   * Storm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.) */
+
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event == EVENT_QUERY)
+  {
+    return (unsigned int)(attacking_card == 4);
+  }
+  if (!IS_GS_EVENT(player, card, event))
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 0x47);
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target(&td))
+    {
+      bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_PERMANENT", 1, NULL);
+}
+
 int card_tendrils_of_agony(int player, int card, event_t event)
 {
 	/* Tendrils of Agony	|2|B|B
@@ -2461,6 +2776,19 @@ int card_tendrils_of_agony(int player, int card, event_t event)
 		kill_card(player, card, KILL_DESTROY);
 	}
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
+}
+
+/* ManalinkEh 2022: 0x24fde00; original cards/scourge.c:2623. */
+int card_titanic_bulvox(int player, int card, event_t event)
+{
+  /* Titanic Bulvox	|6|G|G
+   * Creature - Beast 7/4
+   * Trample
+   * Morph |4|G|G|G (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
+
+  int result;
+  result = morph(player, card, event, 4, 0, 0, 3, 0, 0);
+  return result;
 }
 
 int card_twisted_abomination(int player, int card, event_t event)
@@ -2690,12 +3018,10 @@ int card_vengeful_dead(int player, int card, event_t event)
 }
 
 int card_wing_shards(int player, int card, event_t event){
-/*
-Wing Shards |1|W|W
-Instant
-Target player sacrifices an attacking creature.
-Storm (When you cast this spell, copy it for each spell cast before it this turn.)
-*/
+  /* Wing Shards |1|W|W
+   * Instant
+   * Target player sacrifices an attacking creature.
+   * Storm (When you cast this spell, copy it for each spell cast before it this turn.) */
 
 	if (event == EVENT_QUERY){ return attacking_card == QUERY_STORM; }
 	if (!IS_GS_EVENT(player, card, event)){ return 0; }
@@ -2779,162 +3105,3 @@ Morph-Pay 5 life. (You may cast this card face down as a 2/2 creature for |3. Tu
 
   return morph(player, card, event, MANACOST_X(0));
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x24fc7b0; original cards/scourge.c:2100. */
-int card_raven_guild_initiate(int player, int card, event_t event)
-{
-  int result;
-  target_t tgt;
-  target_definition_t td;
-  if (event - EVENT_CAN_UNMORPH < 2)
-  {
-    base_target_definition(player, card, &td, 0x47);
-    td.preferred_controller = player;
-    td.allowed_controller = player;
-    td.required_subtype = 0x16;
-    if (event == EVENT_CAN_UNMORPH)
-    {
-      result = can_target(&td);
-      return result;
-    }
-    result = select_target(player, card + -1000, &td, "Select a Bird you control.", &tgt);
-    if (result == 0)
-    {
-      spell_fizzled = 1;
-      return 0;
-    }
-    bounce_permanent(tgt.player, tgt.card);
-    result = 0;
-  }
-  else
-  {
-    result = morph(player, card, event, 0, 0, 0, 0, 0, 0);
-  }
-  return result;
-}
-
-/* ManalinkEh 2022: 0x24fde00; original cards/scourge.c:2623. */
-int card_titanic_bulvox(int player, int card, event_t event)
-{
-  int result;
-  result = morph(player, card, event, 4, 0, 0, 3, 0, 0);
-  return result;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x24fdb10; original cards/scourge.c:2563. */
-int card_temporal_fissure(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  target_definition_t td;
-
-  if (event == EVENT_QUERY)
-  {
-    return (unsigned int)(attacking_card == 4);
-  }
-  if (!IS_GS_EVENT(player, card, event))
-  {
-    return 0;
-  }
-  default_target_definition(player, card, &td, 0x47);
-  instance = get_card_instance(player, card);
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    if (valid_target(&td))
-    {
-      bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return generic_spell(player, card, event, 1, &td, "TARGET_PERMANENT", 1, NULL);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x24f6980; original cards/scourge.c:88. */
-static int ageless_sentinels_subtypes_abils(int player, int card, event_t event)
-{
-  int target_card;
-  card_instance_t *instance;
-  int target_player;
-
-  if ((event & 0xfffffff7) == EVENT_ABILITIES)
-  {
-
-    instance = get_card_instance(player, card);
-    target_card = instance->damage_target_card;
-    target_player = (int)instance->damage_target_player;
-    if (((target_card == affected_card) && (affected_card_controller == target_player)) &&
-        (event == EVENT_ABILITIES))
-    {
-      event_result = event_result & 0xff7fffff;
-    }
-    else if (event == EVENT_CHANGE_TYPE)
-    {
-      remove_a_subtype(target_player, target_card, SUBTYPE_WALL);
-      add_a_subtype(target_player, target_card, SUBTYPE_BIRD);
-      add_a_subtype(target_player, target_card, SUBTYPE_GIANT);
-    }
-  }
-  return 0;
-}
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
-static int counterspell_cycling(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white)
-{
-  target_definition_t td;
-  counterspell_target_definition(player, card, &td, 0);
-  card_instance_t* instance = get_card_instance(player, card);
-  if (event == EVENT_CAN_ACTIVATE_FROM_HAND)
-  {
-    int cost = MAX(0, colorless - 2*count_cards_by_id(player, CARD_ID_FLUCTUATOR) +
-                         2*count_cards_by_id(player, CARD_ID_SUPPRESSION_FIELD));
-    if (has_mana_multi(player, cost, black, blue, green, red, white))
-    {
-      if (counterspell(player, card, EVENT_CAN_CAST, &td, -1))
-      {
-        instance->info_slot = 1;
-        return 99;
-      }
-      instance->info_slot = 0;
-      return 1;
-    }
-  }
-  else if (event == EVENT_ACTIVATE_FROM_HAND)
-  {
-    int cost = MAX(0, colorless - 2*count_cards_by_id(player, CARD_ID_FLUCTUATOR) +
-                         2*count_cards_by_id(player, CARD_ID_SUPPRESSION_FIELD));
-    if (get_card_instance(player, card)->info_slot == 1)
-    {
-      char buffer[100];
-      scnprintf(buffer, 100, " Counter %s\n Pass", get_card_name_by_id(get_id(card_on_stack_controller, card_on_stack)));
-      if (do_dialog(player, player, card, -1, -1, buffer, 0) == 0)
-        counterspell(player, card, EVENT_CAST_SPELL, NULL, 0);
-      else
-        instance->info_slot = 0;
-    }
-    charge_mana_multi(player, cost, black, blue, green, red, white);
-    if (spell_fizzled != 1)
-    {
-      card_is_being_cycled = 1;
-      discard_card(player, card);
-      card_is_being_cycled = 0;
-      return 2;
-    }
-  }
-  else if (spell_fizzled != 1)
-  {
-    if (!(player_bits[player] & PB_GY_ABILITIES_DISABLED) && instance->info_slot == 1 &&
-        counterspell_validate(player, card, &td, 0))
-      real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
-    instance->number_of_targets = 0;
-    draw_a_card(player);
-  }
-  return 0;
-}
-#endif

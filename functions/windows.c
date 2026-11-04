@@ -1086,42 +1086,6 @@ LRESULT __stdcall wndproc_CardClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPA
                         LPARAM)(hwnd, msg, wparam, lparam); // wndproc_CardClass()
 }
 
-LRESULT __stdcall wndproc_MainClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-  if (msg == WM_COMMAND && LOWORD(wparam) >= 0x26b && LOWORD(wparam) <= 0x26e)
-  {
-    if (!debug_mode)
-      return 0;
-    int cmd = LOWORD(wparam);
-    int player = cmd == 0x26b || cmd == 0x26d ? HUMAN : AI;
-    int onto_bf = cmd == 0x26b || cmd == 0x26c;
-    char *prompt = onto_bf ? (player == HUMAN ? "Pick a card to put on battlefield"
-                                              : "Pick a card to put on opponent's battlefield")
-                           : (player == HUMAN ? "Pick a card to put in your hand"
-                                              : "Pick a card to put in opponent's hand");
-    type_t allowable_types = (onto_bf ? TYPE_PERMANENT : TYPE_NONEFFECT) | TARGET_TYPE_PLANESWALKER;
-    int csvid = choose_a_card_allow_cancel_with_defaults(
-        prompt, COLOR_TEST_ANY, allowable_types, debug_addcard_last_color, debug_addcard_last_type);
-    choose_a_card_get_last_options(&debug_addcard_last_color, &debug_addcard_last_type);
-    if (csvid < 0)
-      return 0;
-    int iid = get_internal_card_id_from_csv_id(csvid);
-    int old_phasestopper = option_PhaseStoppers[current_turn][current_phase];
-    option_PhaseStoppers[current_turn][current_phase] &= ~1;
-    int added = add_card_to_hand(player, iid);
-    if (added != -1)
-    {
-      update_rules_engine(check_card_for_rules_engine(iid));
-      if (onto_bf)
-        put_into_play(player, added);
-    }
-    option_PhaseStoppers[current_turn][current_phase] = old_phasestopper;
-    EXE_FN(int, 0x437ec0, int, int)(0, 0xff);
-    return 0;
-  }
-  return EXE_STDCALL_FN(LRESULT, 0x4933c0, HWND, UINT, WPARAM, LPARAM)(hwnd, msg, wparam, lparam);
-}
-
 /* October 2022 deck-dialog hook: disjoint DWARF body, 0x2657b00/0x2710000. */
 INT_PTR __stdcall dlgproc_show_deck_hook(HWND hdlg, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -1173,6 +1137,42 @@ INT_PTR __stdcall dlgproc_show_deck_hook(HWND hdlg, UINT msg, WPARAM wparam, LPA
     return TRUE;
   }
   return original(hdlg, msg, wparam, lparam);
+}
+
+LRESULT __stdcall wndproc_MainClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+  if (msg == WM_COMMAND && LOWORD(wparam) >= 0x26b && LOWORD(wparam) <= 0x26e)
+  {
+    if (!debug_mode)
+      return 0;
+    int cmd = LOWORD(wparam);
+    int player = cmd == 0x26b || cmd == 0x26d ? HUMAN : AI;
+    int onto_bf = cmd == 0x26b || cmd == 0x26c;
+    char *prompt = onto_bf ? (player == HUMAN ? "Pick a card to put on battlefield"
+                                              : "Pick a card to put on opponent's battlefield")
+                           : (player == HUMAN ? "Pick a card to put in your hand"
+                                              : "Pick a card to put in opponent's hand");
+    type_t allowable_types = (onto_bf ? TYPE_PERMANENT : TYPE_NONEFFECT) | TARGET_TYPE_PLANESWALKER;
+    int csvid = choose_a_card_allow_cancel_with_defaults(
+        prompt, COLOR_TEST_ANY, allowable_types, debug_addcard_last_color, debug_addcard_last_type);
+    choose_a_card_get_last_options(&debug_addcard_last_color, &debug_addcard_last_type);
+    if (csvid < 0)
+      return 0;
+    int iid = get_internal_card_id_from_csv_id(csvid);
+    int old_phasestopper = option_PhaseStoppers[current_turn][current_phase];
+    option_PhaseStoppers[current_turn][current_phase] &= ~1;
+    int added = add_card_to_hand(player, iid);
+    if (added != -1)
+    {
+      update_rules_engine(check_card_for_rules_engine(iid));
+      if (onto_bf)
+        put_into_play(player, added);
+    }
+    option_PhaseStoppers[current_turn][current_phase] = old_phasestopper;
+    EXE_FN(int, 0x437ec0, int, int)(0, 0xff);
+    return 0;
+  }
+  return EXE_STDCALL_FN(LRESULT, 0x4933c0, HWND, UINT, WPARAM, LPARAM)(hwnd, msg, wparam, lparam);
 }
 
 //[[[ display experience counters
@@ -2001,6 +2001,29 @@ int launch_mcu(void)
 #undef path_base
 #undef hwnd_shell
 
+/* ManalinkEh 2022: 0x2658e40; original functions/windows.c:2172. */
+void copy_to_display_start(void)
+{
+  for (int player = 0; player < 2; ++player)
+    for (int card = 0; card < 150; ++card)
+      get_displayed_card_instance(player, card)->ext = &card_ext[player][card];
+}
+
+/* ManalinkEh 2022: 0x2658eb0; original functions/windows.c:2189. */
+int copy_to_display_end(int any_changes)
+{
+  if (memcmp(disp_card_ext, card_ext, sizeof(card_ext)) != 0)
+  {
+    memcpy(disp_card_ext, card_ext, sizeof(card_ext));
+    any_changes = 1;
+  }
+  for (int player = 0; player < 2; ++player)
+    for (int card = 0; card < 150; ++card)
+      get_displayed_card_instance(player, card)->ext = &disp_card_ext[player][card];
+  LeaveCriticalSection(critical_section_for_display);
+  return any_changes;
+}
+
 void make_smallcard_visible(int player, int card)
 {
   if (ai_is_speculating == 1 || !in_play(player, card))
@@ -2307,32 +2330,6 @@ void draw_smallcard_normal(HDC hdc, RECT *card_rect, int player, int card, int u
                                                             EXE_TYP(HDC, 0x739b54), card_rect);
 }
 
-
-/* ManalinkEh 2022: 0x2658e40; original functions/windows.c:2172. */
-void copy_to_display_start(void)
-{
-  for (int player = 0; player < 2; ++player)
-    for (int card = 0; card < 150; ++card)
-      get_displayed_card_instance(player, card)->ext = &card_ext[player][card];
-}
-
-
-/* ManalinkEh 2022: 0x2658eb0; original functions/windows.c:2189. */
-int copy_to_display_end(int any_changes)
-{
-  if (memcmp(disp_card_ext, card_ext, sizeof(card_ext)) != 0)
-  {
-    memcpy(disp_card_ext, card_ext, sizeof(card_ext));
-    any_changes = 1;
-  }
-  for (int player = 0; player < 2; ++player)
-    for (int card = 0; card < 150; ++card)
-      get_displayed_card_instance(player, card)->ext = &disp_card_ext[player][card];
-  LeaveCriticalSection(critical_section_for_display);
-  return any_changes;
-}
-
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x265cf80; original functions/windows.c:3224. */
 char *localtime_date(void)
@@ -2352,7 +2349,6 @@ char *localtime_date(void)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x265cfd0; original functions/windows.c:3235. */
 int localtime_hour_minute(void)
@@ -2369,7 +2365,6 @@ int localtime_hour_minute(void)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x265d000; original functions/windows.c:3244. */
 int localtime_hour(void)
@@ -2385,7 +2380,6 @@ int localtime_hour(void)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x265d020; original functions/windows.c:3249. */
@@ -2404,7 +2398,6 @@ int time_in_ms(void)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x265d090; original functions/windows.c:3266. */
 void sleepms(int ms)
@@ -2415,11 +2408,9 @@ void sleepms(int ms)
 
 #endif
 
-
 #ifndef SHANDALAR
 #include <ctype.h>
 static const char *kws_strs[32], *spkws_strs[32];
-
 
 #define display_last_hover_hwnd EXE_TYP(HWND, 0x56bec8)
 
@@ -2442,7 +2433,6 @@ LRESULT CALLBACK wndproc_FullCardClass_hook(HWND hwnd, UINT msg, WPARAM wparam, 
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2657690; original functions/windows.c:672. */
 int memcpy_displayed_inst_and_ext(inst_and_ext_t *dest, int player, int card)
@@ -2460,8 +2450,67 @@ int memcpy_displayed_inst_and_ext(inst_and_ext_t *dest, int player, int card)
 
 #endif
 
-
 #ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26577b0; original functions/windows.c:1148. */
+LRESULT CALLBACK wndproc_ShowListCard_hook(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+  if (msg == WM_PAINT)
+  {
+    int csvid = GetWindowLongA(hwnd, EXE_DWORD(0x4d74b4));
+    int show_numeral = GetWindowLongA(hwnd, EXE_DWORD(0x4d74bc));
+    int numeral = GetWindowLongA(hwnd, EXE_DWORD(0x4d74b8));
+    EnterCriticalSection(display_critical_section_for_painting);
+    RECT rect;
+    GetClientRect(hwnd, &rect);
+    FillRect(display_dblbfr_hdc, &rect, GetStockObject(4));
+    if (csvid == 904)
+      DrawCardBack(display_dblbfr_hdc, &rect, 0);
+    else
+      DrawSmallCardEx(display_dblbfr_hdc, &rect, cards_ptr[csvid], 0, 0, -1, -1,
+                      hack_show_deck_force_expansion);
+    if (show_numeral)
+      display_draw_numeral(display_dblbfr_hdc, &rect, numeral);
+    PAINTSTRUCT paint;
+    HDC hdc = BeginPaint(hwnd, &paint);
+    if (hdc)
+    {
+      set_palette_and_stretch_mode(hdc);
+      BitBlt(hdc, 0, 0, rect.right, rect.bottom, display_dblbfr_hdc, 0, 0, SRCCOPY);
+      EndPaint(hwnd, &paint);
+    }
+    LeaveCriticalSection(display_critical_section_for_painting);
+    return 0;
+  }
+  if (msg == 0x437)
+  {
+    if (option_Layout != 2)
+    {
+      int expansion = hack_show_deck_force_expansion;
+      int forced = (unsigned)(expansion - 1) < 197;
+      int csvid = GetWindowLongA(hwnd, EXE_DWORD(0x4d74b4));
+      SendMessageA(hwnd_FullCardClass, 0x401, forced ? csvid | 0x40000000 : csvid,
+                   forced ? expansion : 0);
+    }
+    return 0;
+  }
+  if (msg == WM_MOUSEMOVE || msg == WM_RBUTTONDOWN)
+  {
+    if ((option_Layout == 2) != (msg == WM_MOUSEMOVE) && display_last_hover_hwnd != hwnd)
+    {
+      int expansion = hack_show_deck_force_expansion;
+      int forced = (unsigned)(expansion - 1) < 197;
+      int csvid = GetWindowLongA(hwnd, EXE_DWORD(0x4d74b4));
+      SendMessageA(hwnd_FullCardClass, 0x401, forced ? csvid | 0x40000000 : csvid,
+                   forced ? expansion : 0);
+      display_last_hover_hwnd = hwnd;
+      if (msg == WM_RBUTTONDOWN)
+        SetActiveWindow(GetParent(hwnd));
+    }
+    return 0;
+  }
+  return ((WNDPROC)0x46d9a0)(hwnd, msg, wparam, lparam);
+}
+
 /* ManalinkEh 2022: 0x26590a0; original functions/windows.c:2239. */
 void legacy_name_or_text(char *str, int player, int card, event_t event)
 {
@@ -2505,6 +2554,9 @@ void legacy_name(char *name, int player, int card)
   legacy_name_or_text(name, player, card, EVENT_SET_LEGACY_EFFECT_NAME);
 }
 
+#endif
+
+#ifndef SHANDALAR
 /* Native October 2022: 0x2659740. */
 void effect_card_text_replace_pipe_n(char *buf, int pow, int tgh)
 {
@@ -2592,7 +2644,6 @@ void effect_card_text_replace_pipe_n(char *buf, int pow, int tgh)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x265b7c0; original functions/windows.c:2666. */
@@ -2687,7 +2738,6 @@ void keywords_to_str(char *dest, keyword_t keywords, sp_keyword_t spkeywords)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x265bca0; original functions/windows.c:2792. */
@@ -2886,7 +2936,6 @@ static void draw_fullcard_special_effect_card_impl(HDC hdc, RECT *rect, int csvi
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x265c8b0; original functions/windows.c:2792. */
 void draw_fullcard_special_effect_card(HDC hdc, RECT *rect, int csvid, int player, int card)
@@ -2896,71 +2945,6 @@ void draw_fullcard_special_effect_card(HDC hdc, RECT *rect, int csvid, int playe
 }
 
 #endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26577b0; original functions/windows.c:1148. */
-LRESULT CALLBACK wndproc_ShowListCard_hook(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-  if (msg == WM_PAINT)
-  {
-    int csvid = GetWindowLongA(hwnd, EXE_DWORD(0x4d74b4));
-    int show_numeral = GetWindowLongA(hwnd, EXE_DWORD(0x4d74bc));
-    int numeral = GetWindowLongA(hwnd, EXE_DWORD(0x4d74b8));
-    EnterCriticalSection(display_critical_section_for_painting);
-    RECT rect;
-    GetClientRect(hwnd, &rect);
-    FillRect(display_dblbfr_hdc, &rect, GetStockObject(4));
-    if (csvid == 904)
-      DrawCardBack(display_dblbfr_hdc, &rect, 0);
-    else
-      DrawSmallCardEx(display_dblbfr_hdc, &rect, cards_ptr[csvid], 0, 0, -1, -1,
-                      hack_show_deck_force_expansion);
-    if (show_numeral)
-      display_draw_numeral(display_dblbfr_hdc, &rect, numeral);
-    PAINTSTRUCT paint;
-    HDC hdc = BeginPaint(hwnd, &paint);
-    if (hdc)
-    {
-      set_palette_and_stretch_mode(hdc);
-      BitBlt(hdc, 0, 0, rect.right, rect.bottom, display_dblbfr_hdc, 0, 0, SRCCOPY);
-      EndPaint(hwnd, &paint);
-    }
-    LeaveCriticalSection(display_critical_section_for_painting);
-    return 0;
-  }
-  if (msg == 0x437)
-  {
-    if (option_Layout != 2)
-    {
-      int expansion = hack_show_deck_force_expansion;
-      int forced = (unsigned)(expansion - 1) < 197;
-      int csvid = GetWindowLongA(hwnd, EXE_DWORD(0x4d74b4));
-      SendMessageA(hwnd_FullCardClass, 0x401, forced ? csvid | 0x40000000 : csvid,
-                   forced ? expansion : 0);
-    }
-    return 0;
-  }
-  if (msg == WM_MOUSEMOVE || msg == WM_RBUTTONDOWN)
-  {
-    if ((option_Layout == 2) != (msg == WM_MOUSEMOVE) && display_last_hover_hwnd != hwnd)
-    {
-      int expansion = hack_show_deck_force_expansion;
-      int forced = (unsigned)(expansion - 1) < 197;
-      int csvid = GetWindowLongA(hwnd, EXE_DWORD(0x4d74b4));
-      SendMessageA(hwnd_FullCardClass, 0x401, forced ? csvid | 0x40000000 : csvid,
-                   forced ? expansion : 0);
-      display_last_hover_hwnd = hwnd;
-      if (msg == WM_RBUTTONDOWN)
-        SetActiveWindow(GetParent(hwnd));
-    }
-    return 0;
-  }
-  return ((WNDPROC)0x46d9a0)(hwnd, msg, wparam, lparam);
-}
-
-#endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x265c8f0; original functions/windows.c:3095. */

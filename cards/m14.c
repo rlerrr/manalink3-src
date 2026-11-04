@@ -1,6 +1,7 @@
 #include "manalink.h"
 
 // General functions
+
 static void make_angel(int player, int card, int qty){
 	generate_tokens_by_id(player, card, CARD_ID_ANGEL, qty);
 }
@@ -29,6 +30,7 @@ static int m14_staff(int player, int card, event_t event, int clr, int land_type
 // Cards
 
 // white
+
 static const char* token_generated_by_ajanis_chosen(int who_chooses, int player, int card, int targeting_player, int targeting_card)
 {
 	if( is_token(player, card) ){
@@ -98,6 +100,34 @@ int card_angelic_accord(int player, int card, event_t event){
 	}
 
 	return global_enchantment(player, card, event);
+}
+
+/* ManalinkEh 2022: 0x206af10; original cards/m14.c:106. */
+int card_archangel_of_thune(int player, int card, event_t event)
+{
+  /* Archangel of Thune	|3|W|W
+   * Creature - Angel 3/4
+   * Flying
+   * Lifelink (Damage dealt by this creature also causes you to gain that much life.)
+   * Whenever you gain life, put a +1/+1 counter on each creature you control. */
+
+  int result;
+  card_instance_t *instance;
+  test_definition_t this_test;
+
+  lifelink(player, card, event);
+  result = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      default_test_definition(&this_test, 2);
+      new_manipulate_all(player, card, player, &this_test, ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
+      return 0;
+    }
+  }
+  return 0;
 }
 
 // archangel of thune --> child of night
@@ -490,12 +520,10 @@ int card_colossal_whale(int player, int card, event_t event)
 
 int card_dismiss_into_dream(int player, int card, event_t event)
 {
-/*
-Dismiss into Dream |6|U
-Enchantment
-Each creature your opponents control is an Illusion in addition to its other types and has
-"When this creature becomes the target of a spell or ability, sacrifice it."
-*/
+  /* Dismiss into Dream |6|U
+   * Enchantment
+   * Each creature your opponents control is an Illusion in addition to its other types and has
+   * "When this creature becomes the target of a spell or ability, sacrifice it." */
 
 // Add the native continuous subtype alongside the targeting trigger.
 
@@ -900,6 +928,11 @@ int card_blood_bairn(int player, int card, event_t event){
 }
 
 int card_bogbrew_witch(int player, int card, event_t event){
+  /* Bogbrew Witch	|3|B
+   * Creature - Human Wizard 1/3
+   * |2, |T: Search your library for a card named Festering Newt or Bubbling Cauldron, put it onto the battlefield tapped,
+   * 			then shuffle your library. */
+
   if (event == EVENT_ACTIVATE)
   {
     int mod = check_battlefield_for_id(player, CARD_ID_FESTERING_NEWT) ? 0 : 24;
@@ -1689,13 +1722,15 @@ int card_burning_earth(int player, int card, event_t event){
 }
 
 int card_chandra_pyromaster(int player, int card, event_t event){
+  /* Chandra, Pyromaster	|2|R|R	0x200ab83
+   * Legendary Planeswalker - Chandra (4)
+   * +1: ~ deals 1 damage to target player or planeswalker and 1 damage to up to one target creature that player or that planeswalker's controller controls. That creature can't block this turn.
+   * 0: Exile the top card of your library. You may play it this turn.
+   * -7: Exile the top ten cards of your library. Choose an instant or sorcery card exiled this way and copy it three times. You may cast the copies without paying their mana costs. */
+
 	check_legend_rule(player, card, event);
 
-	/* Chandra, Pyromaster	|2|R|R	0x200ab83
-	 * Legendary Planeswalker - Chandra (4)
-	 * +1: ~ deals 1 damage to target player or planeswalker and 1 damage to up to one target creature that player or that planeswalker's controller controls. That creature can't block this turn.
-	 * 0: Exile the top card of your library. You may play it this turn.
-	 * -7: Exile the top ten cards of your library. Choose an instant or sorcery card exiled this way and copy it three times. You may cast the copies without paying their mana costs. */
+
 	if (IS_ACTIVATING(event)){
 
 		card_instance_t* instance = get_card_instance(player, card);
@@ -2062,8 +2097,13 @@ int card_young_pyromancer(int player, int card, event_t event){
 }
 
 // green
+
 int card_advocate_of_the_beast(int player, int card, event_t event)
 {
+  /* Advocate of the Beast	|2|G
+   * Creature - Elf Shaman 2/3
+   * At the beginning of your end step, put a +1/+1 counter on target Beast creature you control. */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -2142,6 +2182,9 @@ int card_enlarge(int player, int card, event_t event){
 }
 
 int card_garruk_caller_emblem(int player, int card, event_t event){
+  /* Garruk, Caller of Beasts Emblem	""
+   * Emblem - Garruk
+   * Whenever you cast a creature spell, you may search your library for a creature card, put it onto the battlefield, then shuffle your library. */
 
 	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) ){
 		test_definition_t test;
@@ -2271,7 +2314,6 @@ int card_hunt_the_weak(int player, int card, event_t event){
 
 	return 0;
 }
-
 
 int card_into_the_wilds(int player, int card, event_t event){
 	/* Into the Wilds	|3|G
@@ -2881,28 +2923,4 @@ int card_encroaching_wastes(int player, int card, event_t event){
 	}
 
 	return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x206af10; original cards/m14.c:106. */
-int card_archangel_of_thune(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  test_definition_t this_test;
-
-  lifelink(player, card, event);
-  result = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
-  if (result != 0)
-  {
-    instance = in_play(player, card);
-    if (instance != NULL)
-    {
-      default_test_definition(&this_test, 2);
-      new_manipulate_all(player, card, player, &this_test, ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
-      return 0;
-    }
-  }
-  return 0;
 }

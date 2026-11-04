@@ -289,6 +289,60 @@ int dispatch_trigger_to_one_card(int player, int card, event_t event)
 xtrigger_t xtrigger_impl_value_dont_use_directly = 0;
 enable_xtrigger_flags_t enable_xtrigger_flags = 0;
 
+/* ManalinkEh 2022: 0x26cbdb0; original functions/events.c:155. */
+int dispatch_event_with_attacker_and_initial_event_result(int new_affected_card_controller,
+                                                          int new_affected_card, event_t event,
+                                                          int new_attacking_card_controller,
+                                                          int new_attacking_card,
+                                                          int initial_event_result)
+{
+  int result;
+  uint32_t saved_trigger_condition;
+
+  push_affected_card_stack();
+  saved_trigger_condition = trigger_condition;
+  event_result = initial_event_result;
+  affected_card_controller = new_affected_card_controller;
+  affected_card = new_affected_card;
+  attacking_card_controller = new_attacking_card_controller;
+  attacking_card = new_attacking_card;
+  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))
+  {
+    trigger_condition = 0xffffffff;
+  }
+  dispatch_event_raw(event);
+  result = event_result;
+  trigger_condition = saved_trigger_condition;
+  pop_affected_card_stack();
+  return result;
+}
+
+/* ManalinkEh 2022: 0x26cb5b0; original functions/events.c:223. */
+int dispatch_event_arbitrary_to_one_card_with_initial_event_result(
+    int player, int card, event_t event, int new_affected_card_controller, int new_affected_card,
+    int new_attacking_card_controller, int new_attacking_card, int initial_event_result)
+{
+  int result;
+  uint32_t saved_trigger_condition;
+
+  push_affected_card_stack();
+  saved_trigger_condition = trigger_condition;
+  event_result = initial_event_result;
+  affected_card_controller = new_affected_card_controller;
+  affected_card = new_affected_card;
+  attacking_card_controller = new_attacking_card_controller;
+  attacking_card = new_attacking_card;
+  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))
+  {
+    trigger_condition = 0xffffffff;
+  }
+  event_rval = call_card_function(player, card, event);
+  result = event_result;
+  trigger_condition = saved_trigger_condition;
+  pop_affected_card_stack();
+  return result;
+}
+
 static void dispatch_trigger_impl(int player, trigger_t trig, xtrigger_t xtrig, const char *prompt,
                                   int TENTATIVE_allow_response)
 {
@@ -494,6 +548,7 @@ int dispatch_xtrigger2(int player, xtrigger_t xtrig, const char *prompt, int TEN
   return 0;
 }
 
+// Fixes a bug in the exe.  Do not call directly.
 void resolve_trigger(int player, int card, int TENTATIVE_reason_for_trigger_controller)
 {
   if ((uint8_t)trace_mode & 2)
@@ -1036,7 +1091,34 @@ int get_abilities(int player, int card, event_t event, int new_attacking_card)
   return result;
 }
 
-// Fixes a bug in the exe.  Do not call directly.
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void set_base_pt(int newval);
+void set_characteristic_pt(int newval);
+
+/* ManalinkEh 2022: 0x26cd650; original functions/events.c:1190. */
+void set_base_pt(int newval)
+{
+  int old_base_pt;
+
+  old_base_pt = raw_base_pt;
+  raw_base_pt = newval;
+  raw_characteristic_pt = raw_characteristic_pt & 0xffffbfff;
+  event_result = (int32_t)((uint32_t)event_result +
+                          ((uint32_t)newval - (uint32_t)old_base_pt));
+  return;
+}
+
+/* ManalinkEh 2022: 0x26cd690; original functions/events.c:1200. */
+void set_characteristic_pt(int newval)
+{
+  if ((((unsigned int)raw_characteristic_pt >> 8 & 0xff) & 0x40) != 0)
+  {
+    event_result = event_result + (newval - raw_base_pt);
+    raw_base_pt = newval;
+  }
+  return;
+}
+
 void event_activate_then_duplicate_into_stack(int player, int card, int event, int new_attacking_card_controller, int new_attacking_card)
 {
   /* Normally, when a card is activated, 12 steps happen in activate() (at 0x434040) and two more happen elsewhere:
@@ -1226,91 +1308,6 @@ int current_trigger_or_event_is_forced(void)
   return 0;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void set_base_pt(int newval);
-void set_characteristic_pt(int newval);
-
-/* ManalinkEh 2022: 0x26cd650; original functions/events.c:1190. */
-void set_base_pt(int newval)
-{
-  int old_base_pt;
-
-  old_base_pt = raw_base_pt;
-  raw_base_pt = newval;
-  raw_characteristic_pt = raw_characteristic_pt & 0xffffbfff;
-  event_result = (int32_t)((uint32_t)event_result +
-                          ((uint32_t)newval - (uint32_t)old_base_pt));
-  return;
-}
-
-/* ManalinkEh 2022: 0x26cd690; original functions/events.c:1200. */
-void set_characteristic_pt(int newval)
-{
-  if ((((unsigned int)raw_characteristic_pt >> 8 & 0xff) & 0x40) != 0)
-  {
-    event_result = event_result + (newval - raw_base_pt);
-    raw_base_pt = newval;
-  }
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26cb5b0; original functions/events.c:223. */
-int dispatch_event_arbitrary_to_one_card_with_initial_event_result(
-    int player, int card, event_t event, int new_affected_card_controller, int new_affected_card,
-    int new_attacking_card_controller, int new_attacking_card, int initial_event_result)
-{
-  int result;
-  uint32_t saved_trigger_condition;
-
-  push_affected_card_stack();
-  saved_trigger_condition = trigger_condition;
-  event_result = initial_event_result;
-  affected_card_controller = new_affected_card_controller;
-  affected_card = new_affected_card;
-  attacking_card_controller = new_attacking_card_controller;
-  attacking_card = new_attacking_card;
-  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))
-  {
-    trigger_condition = 0xffffffff;
-  }
-  event_rval = call_card_function(player, card, event);
-  result = event_result;
-  trigger_condition = saved_trigger_condition;
-  pop_affected_card_stack();
-  return result;
-}
-
-
-/* ManalinkEh 2022: 0x26cbdb0; original functions/events.c:155. */
-int dispatch_event_with_attacker_and_initial_event_result(int new_affected_card_controller,
-                                                          int new_affected_card, event_t event,
-                                                          int new_attacking_card_controller,
-                                                          int new_attacking_card,
-                                                          int initial_event_result)
-{
-  int result;
-  uint32_t saved_trigger_condition;
-
-  push_affected_card_stack();
-  saved_trigger_condition = trigger_condition;
-  event_result = initial_event_result;
-  affected_card_controller = new_affected_card_controller;
-  affected_card = new_affected_card;
-  attacking_card_controller = new_attacking_card_controller;
-  attacking_card = new_attacking_card;
-  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))
-  {
-    trigger_condition = 0xffffffff;
-  }
-  dispatch_event_raw(event);
-  result = event_result;
-  trigger_condition = saved_trigger_condition;
-  pop_affected_card_stack();
-  return result;
-}
-
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26cbf50; original functions/events.c:553. */
 void allow_response_to_trigger(int player, int card)
@@ -1323,7 +1320,6 @@ void allow_response_to_trigger(int player, int card)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* Recovered October 2022 inline-only helpers; native code remains in their callers. */

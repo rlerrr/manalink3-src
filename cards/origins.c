@@ -7,7 +7,6 @@ static int shadows_of_the_past_effect(int player, int card, event_t event);
 void renown(int player, int card, event_t event, int n);
 
 /***** Functions *****/
-
 static int is_renowned(int player, int card)
 {
   return check_special_flags3(player, card, SF3_RENOWNED);
@@ -69,7 +68,6 @@ static int spell_mastery(int player)
 /***** Cards *****/
 
 /*** White ***/
-
 int card_akroan_jailer(int player, int card, event_t event)
 {
   /* Akroan Jailer	|W	0x200dc16
@@ -510,6 +508,7 @@ int card_kytheon_hero_of_akros(int player, int card, event_t event)
 
   return generic_shade(player, card, event, 0, MANACOST_XW(2,1), 0,0, 0,SP_KEYWORD_INDESTRUCTIBLE);
 }
+
 int fx_attack_gideon_battle_forged(int player, int card, event_t event)
 {
   // This effect's address is referenced in planeswalker.c to autochoose the attacked planewalker
@@ -536,6 +535,7 @@ int fx_attack_gideon_battle_forged(int player, int card, event_t event)
 
   return 0;
 }
+
 static int fx_indestructible_until_your_next_turn(int player, int card, event_t event)
 {
   if (event == EVENT_ABILITIES)
@@ -550,15 +550,18 @@ static int fx_indestructible_until_your_next_turn(int player, int card, event_t 
 
   return 0;
 }
+
 int card_gideon_battle_forged(int player, int card, event_t event)
 {
-  check_legend_rule(player, card, event);
   /* Gideon, Battle-Forged	""	0x200e1e3
    * Planeswalker - Gideon (3)
    * +2: Up to one target creature an opponent controls attacks ~ during its controller's next turn
    * if able. +1: Until your next turn, target creature gains indestructible. Untap that creature.
    * 0: Until end of turn, ~ becomes a 4/4 Human Soldier creature with indestructible that's still a
    * planeswalker. Prevent all damage that would be dealt to him this turn. */
+
+  check_legend_rule(player, card, event);
+
 
   if (IS_ACTIVATING(event))
   {
@@ -827,6 +830,11 @@ int card_starfield_of_nyx(int player, int card, event_t event){
 
 int card_suppression_bonds(int player, int card, event_t event)
 {
+  /* Suppression Bonds	|3|W	0x200dc66
+   * Enchantment - Aura
+   * Enchant nonland permanent
+   * Enchanted permanent can't attack or block, and its activated abilities can't be activated. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -897,14 +905,11 @@ int card_topan_freeblade(int player, int card, event_t event)
   return 0;
 }
 
-/* Totem-Guide Hartebeest	|4|W	=>rise_of_the_eldrazi.c:card_totem_guide_hartebeest
- * Creature - Antelope 2/5
- * When ~ enters the battlefield, you may search your library for an Aura card, reveal it, put it into your hand, then shuffle your library. */
-
 static const char* target_is_unmarked_nonland(int who_chooses, int player, int card, int targeting_player, int targeting_card)
 {
   return !((get_card_instance(player, card)->state & STATE_TARGETTED) || is_what(player, card, TYPE_LAND)) ? NULL : "AI prefers to pick nonredundant nonland";
 }
+
 static const char* target_is_marked_or_land(int who_chooses, int player, int card, int targeting_player, int targeting_card)
 {
   return ((get_card_instance(player, card)->state & STATE_TARGETTED) || is_what(player, card, TYPE_LAND)) ? NULL : "AI prefers to pick redundant or land";
@@ -994,6 +999,10 @@ void tragic_arrogance_effect(int player, int card, int who_chooses){
 	}
 }
 
+/* Totem-Guide Hartebeest	|4|W	=>rise_of_the_eldrazi.c:card_totem_guide_hartebeest
+ * Creature - Antelope 2/5
+ * When ~ enters the battlefield, you may search your library for an Aura card, reveal it, put it into your hand, then shuffle your library. */
+
 int card_tragic_arrogance(int player, int card, event_t event)
 {
   /* Tragic Arrogance	|3|W|W	0x200e1f2
@@ -1041,7 +1050,6 @@ int card_war_oracle(int player, int card, event_t event)
  * Creature - Ox 0/4 */
 
 /*** Blue ***/
-
 int card_alhammarret_high_arbiter(int player, int card, event_t event)
 {
   /* Alhammarret, High Arbiter	|5|U|U	0x200e224
@@ -1194,9 +1202,43 @@ int card_clash_of_wills(int player, int card, event_t event)
  * When ~ enters the battlefield, tap enchanted creature.
  * Enchanted creature doesn't untap during its controller's untap step. */
 
-/* Day's Undoing	|2|U	0x000000
- * Sorcery
- * Each player shuffles his or her hand and graveyard into his or her library, then draws seven cards. If it's your turn, end the turn. */
+/* ManalinkEh 2022: 0x20dcd80; original cards/origins.c:1194. */
+int card_days_undoing(int player, int card, event_t event)
+{
+  /* Day's Undoing	|2|U	0x000000
+   * Sorcery
+   * Each player shuffles his or her hand and graveyard into his or her library, then draws seven cards. If it's your turn, end the turn. */
+
+  int result;
+  unsigned int player_00;
+
+  result = current_turn;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      ai_modifier = ai_modifier + (hand_count[1 - player] - hand_count[player]) * 0xc + 0x18;
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    reshuffle_hand_into_deck(current_turn, 1);
+    reshuffle_grave_into_deck(result, 0);
+    draw_cards(result, 7);
+    player_00 = current_turn ^ 1;
+    reshuffle_hand_into_deck(player_00, 1);
+    reshuffle_grave_into_deck(player_00, 0);
+    draw_cards(player_00, 7);
+    if (current_turn == player)
+    {
+      end_the_turn(player, card, EVENT_RESOLVE_SPELL);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
 
 int card_deep_sea_terror(int player, int card, event_t event)
 {
@@ -1577,6 +1619,10 @@ int card_jace_telepath_unbound(int player, int card, event_t event)
 
 int card_jace_telepath_unbound_emblem(int player, int card, event_t event)
 {
+  /* Jace, Telepath Unbound Emblem	""
+   * Emblem - Jace
+   * Whenever you cast a spell, target opponent puts the top five cards of their library into their graveyard. */
+
 	// Whenever you cast a spell, target opponent mills five cards.
 
 	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, NULL, player, card);
@@ -1677,6 +1723,7 @@ static const char* target_targets_you(int who_chooses, int player, int card, int
 	  return NULL;
   return "targets you";
 }
+
 int card_psychic_rebuttal(int player, int card, event_t event)
 {
   /* Psychic Rebuttal	|1|U	0x200e229
@@ -2028,8 +2075,6 @@ int card_willbreaker(int player, int card, event_t event)
 	return 0;
 }
 
-/*** Black ***/
-
 /* Blightcaster	|3|B	=>m14.c:card_blightcaster
  * Creature - Human Wizard 2/3
  * Whenever you cast an enchantment spell, you may have target creature get -2/-2 until end of turn. */
@@ -2045,6 +2090,8 @@ int card_willbreaker(int player, int card, event_t event)
 /* Cruel Revival	|4|B	=>onslaught.c:card_cruel_revival
  * Instant
  * Destroy target non-Zombie creature. It can't be regenerated. Return up to one target Zombie card from your graveyard to your hand. */
+
+/*** Black ***/
 
 int card_dark_dabbling(int player, int card, event_t event)
 {
@@ -2308,6 +2355,7 @@ static const char* target_power_toughness_arent_equal(int who_chooses, int playe
   int tgh = get_toughness(player, card);
   return pow != tgh ? NULL : "power,toughness";
 }
+
 int card_gilt_leaf_winnower(int player, int card, event_t event)
 {
   /* Gilt-Leaf Winnower	|3|B|B	0x200dcd9
@@ -2511,6 +2559,7 @@ int card_liliana_heretical_healer(int player, int card, event_t event)
 
   return 0;
 }
+
 int card_liliana_defiant_necromancer(int player, int card, event_t event)
 {
   /* Liliana, Defiant Necromancer	""	0x200e25b
@@ -2597,6 +2646,7 @@ int card_liliana_defiant_necromancer(int player, int card, event_t event)
 
   return planeswalker(player, card, event, 3);
 }
+
 static int fx_liliana_defiant_necromancer_emblem(int player, int card, event_t event)
 {
   if (event == EVENT_SET_LEGACY_EFFECT_NAME)
@@ -2614,6 +2664,7 @@ static int fx_liliana_defiant_necromancer_emblem(int player, int card, event_t e
 
   return 0;
 }
+
 int card_liliana_defiant_necromancer_emblem(int player, int card, event_t event)
 {
   /* Liliana, Defiant Necromancer Emblem	""	0x200e260
@@ -2677,6 +2728,7 @@ static void etb_with_2_1_1_counters(int unused1, int unused2, int player, int ca
   hack_silent_counters = hack_silent_counters + -1;
   return;
 }
+
 int card_necromantic_summons(int player, int card, event_t event)
 {
   /* Necromantic Summons	|4|B	0x200dcf2
@@ -2810,6 +2862,82 @@ int card_reave_soul(int player, int card, event_t event)
  * Creature - Zombie Centaur 2/4
  * When ~ enters the battlefield, target player puts the top four cards of his or her library into his or her graveyard. */
 
+/* ManalinkEh 2022: 0x20d9630; original cards/origins.c:2861. */
+static int shadows_of_the_past_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int death_count;
+  card_instance_t *dying_permanent;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x3b6f))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (effect_follows_control_of_attachment(player, card, event) != 0))
+  {
+    return 0;
+  }
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    instance = get_card_instance(player, card);
+    dying_permanent = in_play(affected_card_controller, affected_card);
+    if ((dying_permanent != NULL) &&
+        (is_this_dying(affected_card_controller, affected_card) != 0))
+    {
+
+      if ((instance->damage_target_card == affected_card) &&
+          (instance->damage_target_player == affected_card_controller))
+      {
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (instance->targets[0xb].player < 0)
+        {
+          instance->targets[0xb].player = 0;
+        }
+        SET_BYTE2(instance->targets[0xb].player) = 1;
+      }
+      count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
+    }
+  }
+  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (death_count == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+    return 0;
+  if (death_count != 0)
+  {
+    if (!check_status(player, card, 0x10000))
+    {
+
+      death_count = death_count & 0xff;
+      if (death_count != 0)
+      {
+        do
+        {
+          death_count = death_count - 1;
+          scry(player, 1);
+        } while (0 < (int)death_count);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
 /* Revenant	|4|B	=>stronghold.c:card_revenant
  * Creature - Spirit 100/100
  * Flying
@@ -2897,11 +3025,6 @@ int card_thornbow_archer(int player, int card, event_t event)
     lose_life(1-player, 1);
   return 0;
 }
-
-/* Tormented Thoughts	|2|B	=>journey_into_nyx.c:card_tormented_thoughts
- * Sorcery
- * As an additional cost to cast ~, sacrifice a creature.
- * Target player discards a number of cards equal to the sacrificed creature's power. */
 
 static int touch_of_moonglove_legacy(int player, int card, event_t event)
 {
@@ -2994,6 +3117,11 @@ static int touch_of_moonglove_effect(int player, int card, event_t event){
 	return 0;
 }
 
+/* Tormented Thoughts	|2|B	=>journey_into_nyx.c:card_tormented_thoughts
+ * Sorcery
+ * As an additional cost to cast ~, sacrifice a creature.
+ * Target player discards a number of cards equal to the sacrificed creature's power. */
+
 int card_touch_of_moonglove(int player, int card, event_t event){
 /* Touch of Moonglove	|B	0x200eec2
  * Instant
@@ -3074,7 +3202,6 @@ int card_unholy_hunger(int player, int card, event_t event)
  * Enchanted creature gets -3/-2. */
 
 /*** Red ***/
-
 int card_abbot_of_keral_keep(int player, int card, event_t event)
 {
   /* Abbot of Keral Keep	|1|R	0x200e283
@@ -3204,6 +3331,7 @@ int card_chandra_fire_of_kaladesh(int player, int card, event_t event)
 
   return generic_activated_ability(player, card, event, GAA_CAN_TARGET|GAA_UNTAPPED, MANACOST0, 0, &td, "TARGET_PLAYER_OR_PLANESWALKER");
 }
+
 int card_chandra_roaring_flame(int player, int card, event_t event)
 {
   /* Chandra, Roaring Flame	""	0x200e26f
@@ -3263,6 +3391,7 @@ int card_chandra_roaring_flame(int player, int card, event_t event)
 	}
 	return planeswalker(player, card, event, 4);
 }
+
 int card_chandra_roaring_flame_emblem(int player, int card, event_t event)
 {
   /* Chandra, Roaring Flame Emblem	""	0x200e274
@@ -3802,7 +3931,6 @@ int card_thopter_engineer(int player, int card, event_t event)
  * |2|R: ~ deals 1 damage to target player or planeswalker. */
 
 /*** Green ***/
-
 int card_aerial_volley(int player, int card, event_t event)
 {
   /* Aerial Volley	|G	0x200dd8d
@@ -4215,6 +4343,7 @@ int card_nissa_vastwood_seer(int player, int card, event_t event)
 
   return 0;
 }
+
 int card_nissa_sage_animist(int player, int card, event_t event)
 {
   /* Nissa, Sage Animist	""	0x200e2b0
@@ -4484,6 +4613,7 @@ static int fx_fog_by_power_le_4(int player, int card, event_t event)
 
   return 0;
 }
+
 int card_vine_snare(int player, int card, event_t event)
 {
   /* Vine Snare	|2|G	0x200dde2
@@ -4591,7 +4721,6 @@ int card_zendikars_roil(int player, int card, event_t event)
 }
 
 /*** Multi ***/
-
 int card_blazing_hellhound(int player, int card, event_t event)
 {
   /* Blazing Hellhound	|2|B|R	0x200ddf6
@@ -4779,6 +4908,10 @@ int card_thunderclap_wyvern(int player, int card, event_t event)
 
 int card_zendikar_incarnate(int player, int card, event_t event)
 {
+  /* Zendikar Incarnate	|2|R|G	0x200de1e
+   * Creature - Elemental 100/4
+   * ~'s power is equal to the number of lands you control. */
+
   int newval;
   if ((((event == EVENT_POWER) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
@@ -4791,7 +4924,6 @@ int card_zendikar_incarnate(int player, int card, event_t event)
 }
 
 /*** Artifact ***/
-
 int card_alchemists_vial(int player, int card, event_t event)
 {
   /* Alchemist's Vial	|2	0x200de23
@@ -4822,6 +4954,11 @@ int card_alchemists_vial(int player, int card, event_t event)
 
 int card_alhammarrets_archive(int player, int card, event_t event)
 {
+  /* Alhammarret's Archive	|5	0x200eec7
+   * Legendary Artifact
+   * If you would gain life, you gain twice that much life instead.
+   * If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead. */
+
   unsigned short draw_count;
   xtrigger_t current_trigger;
   card_instance_t *instance;
@@ -5064,9 +5201,107 @@ int card_prism_ring(int player, int card, event_t event)
 	return 0;
 }
 
-/* Pyromancer's Goggles	|5	0x000000
- * Legendary Artifact
- * |T: Add |R to your mana pool. When that mana is spent to cast a |Sred instant or sorcery spell, copy that spell and you may choose new targets for the copy. */
+/*** Bonus ***/
+
+/* ManalinkEh 2022: 0x20d9b40; original cards/origins.c:5171. */
+static int pyromancers_goggles_legacy(int player, int card, event_t event)
+{
+  int result;
+  unsigned int spell_color;
+  card_instance_t *instance;
+  unsigned int paid_color;
+  if (event == EVENT_CAST_SPELL)
+  {
+    result = played_for_free(affected_card_controller, affected_card);
+    if (result != 0)
+    {
+      return 0;
+    }
+    result = is_token(affected_card_controller, affected_card);
+    if (result != 0)
+    {
+      return 0;
+    }
+    result = check_special_flags(affected_card_controller, affected_card, 0x40000);
+    if (result != 0)
+    {
+      return 0;
+    }
+    if (affected_card_controller != player)
+    {
+      return 0;
+    }
+    result = is_what(player, affected_card, 0x38);
+    if (result == 0)
+    {
+      return 0;
+    }
+    spell_color = get_color(affected_card_controller, affected_card);
+    instance = get_card_instance(player, card);
+    result = instance->targets[6].card;
+    instance = get_card_instance(player, card);
+    paid_color = get_sleighted_color_test(instance->targets[6].player, result, 0x10);
+    if ((spell_color & paid_color) == 0)
+    {
+      return 0;
+    }
+    if (mana_paid[4] < 1)
+    {
+      return 0;
+    }
+    result = get_id(affected_card_controller, affected_card);
+    copy_spell(player, result);
+  }
+  else
+  {
+    if (event != EVENT_STATIC_EFFECTS)
+    {
+      return 0;
+    }
+    if (stack_size != 0)
+    {
+      return 0;
+    }
+    if (0 < mana_pool[player][4])
+    {
+      return 0;
+    }
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20e7210; original cards/origins.c:5191. */
+int card_pyromancers_goggles(int player, int card, event_t event)
+{
+  /* Pyromancer's Goggles	|5	0x000000
+   * Legendary Artifact
+   * |T: Add |R to your mana pool. When that mana is spent to cast a |Sred instant or sorcery spell, copy that spell and you may choose new targets for the copy. */
+
+  int result;
+  card_instance_t *instance;
+
+  check_legend_rule(player, card, event);
+  if (event != EVENT_ACTIVATE)
+  {
+    result = mana_producer(player, card, event);
+    return result;
+  }
+  spell_fizzled = 0;
+  mana_producer(player, card, EVENT_ACTIVATE);
+  if (spell_fizzled == 1)
+  {
+    return 0;
+  }
+
+  result = create_legacy_effect(player, card, pyromancers_goggles_legacy);
+  instance = get_card_instance(player, result);
+  instance->targets[6].player = player;
+  instance = get_card_instance(player, result);
+  instance->targets[6].card = card;
+  add_status(player, result, 0x10000);
+  return 0;
+}
 
 int card_ramroller(int player, int card, event_t event)
 {
@@ -5173,8 +5408,6 @@ int card_throwing_knife(int player, int card, event_t event)
  * Artifact
  * Attacking creatures you control get +1/+0. */
 
-/*** Land ***/
-
 /* Battlefield Forge	""	=>functions.c:generic_painland
  * Land
  * |T: Add |1 to your mana pool.
@@ -5188,6 +5421,8 @@ int card_throwing_knife(int player, int card, event_t event)
 /* Evolving Wilds	""	=>m11.c:card_terramorphic_expanse
  * Land
  * |T, Sacrifice ~: Search your library for a basic land card and put it onto the battlefield tapped. Then shuffle your library. */
+
+/*** Land ***/
 
 int card_foundry_of_the_consuls(int player, int card, event_t event)
 {
@@ -5246,6 +5481,12 @@ int card_foundry_of_the_consuls(int player, int card, event_t event)
 
 int card_mage_ring_network(int player, int card, event_t event)
 {
+  /* Mage-Ring Network	""	0x200eecc
+   * Land
+   * |T: Add |1 to your mana pool.
+   * |1, |T: Put a storage counter on ~.
+   * |T, Remove X storage counters from ~: Add |X to your mana pool. */
+
   enum
   {
     CHOICE_MANA = 1,
@@ -5365,7 +5606,6 @@ int card_mage_ring_network(int player, int card, event_t event)
   return 0;
 }
 
-
 /* Rogue's Passage	""	=>return_to_ravnica.c:card_rogues_passage
  * Land
  * |T: Add |1 to your mana pool.
@@ -5395,8 +5635,6 @@ int card_mage_ring_network(int player, int card, event_t event)
 
 /* Forest	""	=>magic.exe:card_forest
  * Basic Land - |H2Forest */
-
-/*** Bonus ***/
 
 /* Aegis Angel	|4|W|W	=>m12.c:card_aegis_angel
  * Creature - Angel 5/5
@@ -5467,226 +5705,3 @@ int card_mage_ring_network(int player, int card, event_t event)
  * Creature - Beast 8/8
  * ~ can't be countered.
  * Trample */
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x20d9b40; original cards/origins.c:5171. */
-static int pyromancers_goggles_legacy(int player, int card, event_t event)
-{
-  int result;
-  unsigned int spell_color;
-  card_instance_t *instance;
-  unsigned int paid_color;
-  if (event == EVENT_CAST_SPELL)
-  {
-    result = played_for_free(affected_card_controller, affected_card);
-    if (result != 0)
-    {
-      return 0;
-    }
-    result = is_token(affected_card_controller, affected_card);
-    if (result != 0)
-    {
-      return 0;
-    }
-    result = check_special_flags(affected_card_controller, affected_card, 0x40000);
-    if (result != 0)
-    {
-      return 0;
-    }
-    if (affected_card_controller != player)
-    {
-      return 0;
-    }
-    result = is_what(player, affected_card, 0x38);
-    if (result == 0)
-    {
-      return 0;
-    }
-    spell_color = get_color(affected_card_controller, affected_card);
-    instance = get_card_instance(player, card);
-    result = instance->targets[6].card;
-    instance = get_card_instance(player, card);
-    paid_color = get_sleighted_color_test(instance->targets[6].player, result, 0x10);
-    if ((spell_color & paid_color) == 0)
-    {
-      return 0;
-    }
-    if (mana_paid[4] < 1)
-    {
-      return 0;
-    }
-    result = get_id(affected_card_controller, affected_card);
-    copy_spell(player, result);
-  }
-  else
-  {
-    if (event != EVENT_STATIC_EFFECTS)
-    {
-      return 0;
-    }
-    if (stack_size != 0)
-    {
-      return 0;
-    }
-    if (0 < mana_pool[player][4])
-    {
-      return 0;
-    }
-  }
-  kill_card(player, card, KILL_EXILE);
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x20e7210; original cards/origins.c:5191. */
-int card_pyromancers_goggles(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-
-  check_legend_rule(player, card, event);
-  if (event != EVENT_ACTIVATE)
-  {
-    result = mana_producer(player, card, event);
-    return result;
-  }
-  spell_fizzled = 0;
-  mana_producer(player, card, EVENT_ACTIVATE);
-  if (spell_fizzled == 1)
-  {
-    return 0;
-  }
-
-  result = create_legacy_effect(player, card, pyromancers_goggles_legacy);
-  instance = get_card_instance(player, result);
-  instance->targets[6].player = player;
-  instance = get_card_instance(player, result);
-  instance->targets[6].card = card;
-  add_status(player, result, 0x10000);
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x20d9630; original cards/origins.c:2861. */
-static int shadows_of_the_past_effect(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  unsigned int death_count;
-  card_instance_t *dying_permanent;
-
-  if (event == EVENT_STATIC_EFFECTS)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-
-      instance = get_card_instance(player, card);
-      if ((-1 < instance->damage_target_player) &&
-          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x3b6f))
-      {
-        kill_card(player, card, KILL_EXILE);
-      }
-    }
-  }
-  instance = get_card_instance(player, card);
-  if ((-1 < instance->damage_target_player) &&
-      (effect_follows_control_of_attachment(player, card, event) != 0))
-  {
-    return 0;
-  }
-  if (event == EVENT_GRAVEYARD_FROM_PLAY)
-  {
-    instance = get_card_instance(player, card);
-    dying_permanent = in_play(affected_card_controller, affected_card);
-    if ((dying_permanent != NULL) &&
-        (is_this_dying(affected_card_controller, affected_card) != 0))
-    {
-
-      if ((instance->damage_target_card == affected_card) &&
-          (instance->damage_target_player == affected_card_controller))
-      {
-        instance->damage_target_card = -1;
-        instance->damage_target_player = -1;
-        remove_status(player, card, 0x10000);
-        if (instance->targets[0xb].player < 0)
-        {
-          instance->targets[0xb].player = 0;
-        }
-        SET_BYTE2(instance->targets[0xb].player) = 1;
-      }
-      count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
-    }
-  }
-  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (death_count == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
-    return 0;
-  if (death_count != 0)
-  {
-    if (!check_status(player, card, 0x10000))
-    {
-
-      death_count = death_count & 0xff;
-      if (death_count != 0)
-      {
-        do
-        {
-          death_count = death_count - 1;
-          scry(player, 1);
-        } while (0 < (int)death_count);
-      }
-      kill_card(player, card, KILL_EXILE);
-    }
-  }
-  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
-  {
-    kill_card(player, card, KILL_EXILE);
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x20dcd80; original cards/origins.c:1194. */
-int card_days_undoing(int player, int card, event_t event)
-{
-  int result;
-  unsigned int player_00;
-
-  result = current_turn;
-  if (event == EVENT_CAST_SPELL)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-      ai_modifier = ai_modifier + (hand_count[1 - player] - hand_count[player]) * 0xc + 0x18;
-    }
-  }
-  else if (event == EVENT_RESOLVE_SPELL)
-  {
-
-    reshuffle_hand_into_deck(current_turn, 1);
-    reshuffle_grave_into_deck(result, 0);
-    draw_cards(result, 7);
-    player_00 = current_turn ^ 1;
-    reshuffle_hand_into_deck(player_00, 1);
-    reshuffle_grave_into_deck(player_00, 0);
-    draw_cards(player_00, 7);
-    if (current_turn == player)
-    {
-      end_the_turn(player, card, EVENT_RESOLVE_SPELL);
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  result = basic_spell(player, card, event);
-  return result;
-}
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 attacker/keyword helpers. */
-
-/* ManalinkEh 2022: 0x20d9ef0; original cards/origins.c:11. */
-
-
-#endif

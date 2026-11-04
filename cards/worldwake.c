@@ -1,4 +1,8 @@
 #include "manalink.h"
+
+int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t cols,
+             subtype_t styp, keyword_t kws, sp_keyword_t spkws);
+
 int do_multikicker(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white){
 	int result = 0;
 	int diff = 0;
@@ -52,6 +56,96 @@ static int multikicked(int player, int card){
 	return instance->info_slot;
 }
 
+/* ManalinkEh 2022: 0x2583370; original cards/worldwake.c:55. */
+static int zendikon_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance = in_play(player, card);
+  if (instance && instance->targets[0].player != -1 &&
+      resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
+  {
+    int i = count_graveyard(instance->targets[0].player) - 1;
+    if (i >= 0)
+    {
+      int target_player = instance->targets[0].player;
+      uint16_t land_csv_id = cards_data[instance->targets[0].card].id;
+      for (; i >= 0; --i)
+        if (cards_data[graveyard_ptr_mutable[target_player][i]].id == land_csv_id)
+        {
+          from_grave_to_hand(target_player, i, 0);
+          break;
+        }
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2583ed0; original cards/worldwake.c:72. */
+int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t cols,
+             subtype_t styp, keyword_t kws, sp_keyword_t spkws)
+{
+  enum
+  {
+    SP_KEYWORD_NOT_SIMPLE_BITS = 357809216
+  };
+
+  int land_card_or_iid;
+  card_instance_t *instance;
+  int death_check_or_owner;
+  int target_player;
+  target_definition_t td;
+
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    instance = in_play(player, card);
+    if ((instance != NULL) &&
+        (instance = get_card_instance(player, card), instance->damage_target_player != -1))
+    {
+
+      instance = get_card_instance(player, card);
+      target_player = (int)instance->damage_target_player;
+      land_card_or_iid = instance->damage_target_card;
+      instance = get_card_instance(target_player, land_card_or_iid);
+      if (((land_card_or_iid == affected_card) &&
+           (((target_player == affected_card_controller &&
+              ((unsigned char)(instance->kill_code - 2) < 2)) &&
+             (death_check_or_owner = check_special_flags2(target_player, land_card_or_iid, 0x10000000),
+              death_check_or_owner == 0)))) &&
+          (death_check_or_owner = check_for_death_trigger_removal(target_player, land_card_or_iid),
+           death_check_or_owner == 0))
+      {
+
+        instance = get_card_instance(player, create_legacy_effect(player, card, zendikon_legacy));
+        death_check_or_owner = get_owner(target_player, land_card_or_iid);
+        instance->targets[0].player = death_check_or_owner;
+        land_card_or_iid = get_original_internal_card_id(target_player, land_card_or_iid);
+        instance->targets[0xb].player = 1;
+        instance->targets[0].card = land_card_or_iid;
+      }
+    }
+  }
+  if (event != EVENT_CAN_CAST &&
+      !(event == EVENT_CAST_SPELL && card == affected_card && player == affected_card_controller) &&
+      event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET &&
+      event != EVENT_CHANGE_TARGET &&
+      (event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA && event - EVENT_POWER > 2 &&
+      event != EVENT_RESOLVE_MOVING_AURA && event != EVENT_CHANGE_TYPE &&
+      event != EVENT_SET_COLOR && event != EVENT_GET_SELECTED_CARD && event != EVENT_STATIC_EFFECTS)
+    return 0;
+  default_target_definition(player, card, &td, 1);
+  td.preferred_controller = player;
+  attached_is_additional_subtype(player, card, event, styp);
+  if (cols != COLOR_TEST_0)
+  {
+    attached_is_additional_color(player, card, event, cols);
+  }
+  if ((spkws & SP_KEYWORD_NOT_SIMPLE_BITS) != SP_KEYWORD_0)
+  {
+    backtrace_and_abort("cards/worldwake.c:109\n!(spkws & SP_KEYWORD_NOT_SIMPLE_BITS)");
+  }
+  return generic_animating_aura(player, card, event, &td, "TARGET_LAND", pow, tgh, kws, spkws);
+}
+
 int card_abyssal_persecutor(int player, int card, event_t event){
 /* CARD_ID_ABYSSAL_PERSECUTOR	10716
 Abyssal Persecutor	|2|B|B
@@ -65,6 +159,12 @@ You can't win the game and your opponents can't lose the game. */
 
 int card_admonition_angel(int player, int card, event_t event)
 {
+  /* Admonition Angel	|3|W|W|W
+   * Creature - Angel 6/6
+   * Flying
+   * Landfall - Whenever a land enters the battlefield under your control, you may exile target nonland permanent other than ~.
+   * When ~ leaves the battlefield, return all cards exiled with it to the battlefield under their owners' control. */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -145,14 +245,12 @@ Return target permanent you control and target permanent you don't control to th
 	return 0;
 }
 
-
 int card_agadeem_occultist(int player, int card, event_t event){
-/*
-Agadeem Occultist |2|B
-Creature — Human Shaman Ally 0/2
-{T}: Put target creature card from an opponent's graveyard onto the battlefield under your control if its converted mana cost is less
-	than or equal to the number of Allies you control.
-*/
+  /* Agadeem Occultist |2|B
+   * Creature — Human Shaman Ally 0/2
+   * {T}: Put target creature card from an opponent's graveyard onto the battlefield under your control if its converted mana cost is less
+   * 	than or equal to the number of Allies you control. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -222,11 +320,10 @@ Whenever a permanent enters the battlefield tapped and under your control, untap
 }
 
 int card_anowon_the_ruin_sage(int player, int card, event_t event){
-/*
-Anowon, the Ruin Sage |3|B|B
-Legendary Creature — Vampire Shaman 4/3, 3BB (5)
-At the beginning of your upkeep, each player sacrifices a non-Vampire creature.
-*/
+  /* Anowon, the Ruin Sage |3|B|B
+   * Legendary Creature — Vampire Shaman 4/3, 3BB (5)
+   * At the beginning of your upkeep, each player sacrifices a non-Vampire creature. */
+
 	check_legend_rule(player, card, event);
 
 	upkeep_trigger_ability(player, card, event, player);
@@ -304,6 +401,11 @@ int card_archon_of_redemption(int player, int card, event_t event){
 
 int card_avenger_of_zendikar(int player, int card, event_t event)
 {
+  /* Avenger of Zendikar	|5|G|G
+   * Creature - Elemental 5/5
+   * When ~ enters the battlefield, put a 0/1 |Sgreen Plant creature token onto the battlefield for each land you control.
+   * Landfall - Whenever a land enters the battlefield under your control, you may put a +1/+1 counter on each Plant creature you control. */
+
   int count;
   card_instance_t *instance;
   int plant_card_or_duh;
@@ -629,6 +731,62 @@ Landfall - Whenever a land enters the battlefield under your control, you may sw
 	return 0;
 }
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25858a0; original cards/worldwake.c:658. */
+int card_canopy_cover(int player, int card, event_t event)
+{
+  /* Canopy Cover	|1|G
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature can't be blocked except by creatures with flying or reach.
+   * Enchanted creature can't be the target of spells or abilities your opponents control. */
+
+  card_instance_t *instance;
+  unsigned int blocker_abilities;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    if (!is_humiliated(player, card, AL_STATIC))
+    {
+      instance = get_card_instance(player, card);
+      if (-1 < instance->damage_target_player)
+      {
+
+        instance = get_card_instance(player, card);
+        if (event == EVENT_BLOCK_LEGALITY)
+        {
+          if ((instance->damage_target_player == attacking_card_controller) &&
+              (instance->damage_target_card == attacking_card))
+          {
+
+            blocker_abilities =
+                get_abilities(affected_card_controller, affected_card, EVENT_ABILITIES, -1);
+            if ((blocker_abilities & 0x420) == 0)
+            {
+              event_result = 1;
+            }
+          }
+          attached_gets_sp_kw2(player, card, EVENT_BLOCK_LEGALITY, SP_KEYWORD2_GRANTED_PROT_MISC);
+          get_card_instance(player, card);
+          return aura(player, card, event, NULL, NULL);
+        }
+      }
+    }
+  }
+  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
+  instance = get_card_instance(player, card);
+  if ((((event == EVENT_PROT_MISC) && (instance->damage_target_card == affected_card)) &&
+       (instance->damage_target_player == affected_card_controller)) &&
+      ((1 - player == attacking_card_controller &&
+        (((unsigned int)event_result >> 24 & 0xff) == '\x05'))))
+  {
+    event_result = event_result | 1;
+  }
+  return aura(player, card, event, NULL, NULL);
+}
+#endif
+
 int card_celestial_colonnade(int player, int card, event_t event){
 /* CARD_ID_CELESTIAL_COLONNADE	10740
 Celestial Colonnade	""
@@ -801,6 +959,22 @@ int card_comet_storm(int player, int card, event_t event){
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x2586250; original cards/worldwake.c:858. */
+int card_corrupted_zendikon(int player, int card, event_t event)
+{
+  /* Corrupted Zendikon	|1|B
+   * Enchantment - Aura
+   * Enchant land
+   * Enchanted land is a 3/3 black Ooze creature. It's still a land.
+   * When enchanted land dies, return that card to its owner's hand. */
+
+  int result;
+
+  result =
+      zendikon(player, card, event, 3, 3, COLOR_TEST_BLACK, SUBTYPE_OOZE, KEYWORD_0, SP_KEYWORD_0);
+  return result;
+}
+
 int card_creeping_tar_pit(int player, int card, event_t event){
 /* CARD_ID_CREEPING_TAR_PIT	10747
 Creeping Tar Pit	""
@@ -817,6 +991,22 @@ Land
 int card_creeping_tar_pit_animated(int player, int card, event_t event){
 	unblockable(player, card, event);
 	return manland_animated(player, card, event, MANACOST_XUB(1, 1, 1));
+}
+
+/* ManalinkEh 2022: 0x25863b0; original cards/worldwake.c:887. */
+int card_crusher_zendikon(int player, int card, event_t event)
+{
+  /* Crusher Zendikon	|2|R
+   * Enchantment - Aura
+   * Enchant land
+   * Enchanted land is a 4/2 red Beast creature with trample. It's still a land.
+   * When enchanted land dies, return that card to its owner's hand. */
+
+  int result;
+
+  result = zendikon(player, card, event, 4, 2, COLOR_TEST_RED, SUBTYPE_BEAST, KEYWORD_TRAMPLE,
+                    SP_KEYWORD_0);
+  return result;
 }
 
 int card_cunning_sparkmage(int player, int card, event_t event){
@@ -1006,6 +1196,21 @@ Colorless Eldrazi spells you cast cost |2 less to cast.
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(7), 0, NULL, NULL);
 }
 
+/* October 2022 native Worldwake handler, 0x2586db0. */
+int card_guardian_zendikon(int player, int card, event_t event)
+{
+  /* Guardian Zendikon	|2|W
+   * Enchantment - Aura
+   * Enchant land
+   * Enchanted land is a 2/6 white Wall creature with defender. It's still a land.
+   * When enchanted land dies, return that card to its owner's hand. */
+
+  int result;
+  result = zendikon(player, card, event, 2, 6, COLOR_TEST_WHITE, SUBTYPE_WALL, KEYWORD_DEFENDER,
+                    SP_KEYWORD_0);
+  return result;
+}
+
 int card_hada_freeblade(int player, int card, event_t event){
 /* CARD_ID_HADA_FREEBLADE	10772
 Hada Freeblade	|W
@@ -1108,14 +1313,16 @@ Creature - Human Druid Ally 0/1
 
 int card_jace_the_mind_sculptor(int player, int card, event_t event)
 {
-  check_legend_rule(player, card, event);
-
   /* Jace, the Mind Sculptor	|2|U|U
    * Planeswalker - Jace (3)
    * +2: Look at the top card of target player's library. You may put that card on the bottom of
    * that player's library. 0: Draw three cards, then put two cards from your hand on top of your
    * library in any order. -1: Return target creature to its owner's hand. -12: Exile all cards from
    * target player's library, then that player shuffles his or her hand into his or her library. */
+
+  check_legend_rule(player, card, event);
+
+
 
   if (IS_ACTIVATING(event))
   {
@@ -1384,11 +1591,10 @@ static int kalastria_highborn_effect(int player, int card, event_t event)
 }
 
 int card_kalastria_highborn(int player, int card, event_t event){
-/*
-Kalastria Highborn |B|B
-Creature - Vampire Shaman 2/2
-Whenever Kalastria Highborn or another Vampire you control dies, you may pay {B}. If you do, target player loses 2 life and you gain 2 life.
-*/
+  /* Kalastria Highborn |B|B
+   * Creature - Vampire Shaman 2/2
+   * Whenever Kalastria Highborn or another Vampire you control dies, you may pay {B}. If you do, target player loses 2 life and you gain 2 life. */
+
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		int found = 0;
 		int c;
@@ -1707,13 +1913,12 @@ When ~ enters the battlefield, return up to X target creature cards from your gr
 }
 
 int card_mordant_dragon(int player, int card, event_t event){
-/*
-Mordant Dragon |3|R|R|R
-Creature — Dragon 5/5
-Flying
-{1}{R}: Mordant Dragon gets +1/+0 until end of turn.
-Whenever Mordant Dragon deals combat damage to a player, you may have it deal that much damage to target creature that player controls.
-*/
+  /* Mordant Dragon |3|R|R|R
+   * Creature — Dragon 5/5
+   * Flying
+   * {1}{R}: Mordant Dragon gets +1/+0 until end of turn.
+   * Whenever Mordant Dragon deals combat damage to a player, you may have it deal that much damage to target creature that player controls. */
+
 	if (event == EVENT_POW_BOOST){ return generic_shade(player, card, event, 0, MANACOST_XR(1, 1), 1, 0, 0, 0); }
 
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_REPORT_DAMAGE_DEALT);
@@ -1988,6 +2193,11 @@ int card_pulse_tracker(int player, int card, event_t event)
 
 int card_quest_for_renewal(int player, int card, event_t event)
 {
+  /* Quest for Renewal	|1|G
+   * Enchantment
+   * Whenever a creature you control becomes tapped, you may put a quest counter on ~.
+   * As long as there are four or more quest counters on ~, untap all creatures you control during each other player's untap step. */
+
   int result;
   card_instance_t *instance;
   if ((event == EVENT_TAP_CARD) && (affected_card_controller == player))
@@ -2022,6 +2232,11 @@ int card_quest_for_renewal(int player, int card, event_t event)
 
 int card_quest_for_the_goblin_lord(int player, int card, event_t event)
 {
+  /* Quest for the Goblin Lord	|R
+   * Enchantment
+   * Whenever a Goblin enters the battlefield under your control, you may put a quest counter on ~.
+   * As long as ~ has five or more quest counters on it, creatures you control get +2/+0. */
+
   int result;
   test_definition_t test;
   if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
@@ -2057,6 +2272,12 @@ int card_quest_for_the_goblin_lord(int player, int card, event_t event)
 
 int card_quest_for_the_nihil_stone(int player, int card, event_t event)
 {
+  /* Quest for the Nihil Stone	|B
+   * Enchantment
+   * Whenever an opponent discards a card, you may put a quest counter on ~.
+   * At the beginning of each opponent's upkeep, if that player has no cards in hand and ~ has two or more quest counters on it, you may have that player lose 5
+   * life. */
+
   int result;
   int t_player;
   t_player = 1 - player;
@@ -2189,6 +2410,38 @@ Landfall - If you had a land enter the battlefield under your control this turn,
 	}
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
+}
+
+/* ManalinkEh 2022: 0x2589fc0; original cards/worldwake.c:2238. */
+int card_roiling_terrain(int player, int card, event_t event)
+{
+  /* Roiling Terrain	|2|R|R
+   * Sorcery
+   * Destroy target land, then ~ deals damage to that land's controller equal to the number of land cards in that player's graveyard. */
+
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (!IS_GS_EVENT(player, card, event))
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 1);
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      result = count_graveyard_by_type(instance->targets[0].player, 1);
+      damage_player(instance->targets[0].player, result + 1, player, card);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_LAND", 1, NULL);
 }
 
 int card_ruin_ghost(int player, int card, event_t event){
@@ -2473,6 +2726,12 @@ When ~ enters the battlefield, you may search your library for an Equipment card
 
 int card_strength_of_the_tajuru(int player, int card, event_t event)
 {
+  /* CARD_ID_STRENGTH_OF_THE_TAJURU	10842
+   * Strength of the Tajuru	|X|G|G
+   * Instant
+   * Multikicker |1 (You may pay an additional |1 any number of times as you cast this spell.)
+   * Choose target creature, then choose another target creature for each time ~ was kicked. Put X +1/+1 counters on each of them. */
+
   target_t *chosen_player_record;
   target_t *chosen_card_record;
   card_instance_t *instance;
@@ -2605,6 +2864,11 @@ and you may put a +1/+1 counter on ~. */
 }
 
 int card_tectonic_edge(int player, int card, event_t event){
+  /* Tectonic Edge	""
+   * Land
+   * |T: Add |C.
+   * |1, |T, Sacrifice this land: Destroy target nonbasic land. Activate only if an opponent controls four or more lands. */
+
 	/*
 	  Tectonic Edge
 	  Land
@@ -2670,6 +2934,7 @@ static int effect_terastodon(int player, int card, event_t event)
 	}
   return 0;
 }
+
 int card_terastodon(int player, int card, event_t event)
 {
   /* Terastodon	|6|G|G
@@ -2887,6 +3152,38 @@ If you do, put a +1/+1 counter on each of those Vampires. */
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
+/* ManalinkEh 2022: 0x258c250; original cards/worldwake.c:2926. */
+int card_vastwood_zendikon(int player, int card, event_t event)
+{
+  /* Vastwood Zendikon	|4|G
+   * Enchantment - Aura
+   * Enchant land
+   * Enchanted land is a 6/4 green Elemental creature. It's still a land.
+   * When enchanted land dies, return that card to its owner's hand. */
+
+  int result;
+
+  result = zendikon(player, card, event, 6, 4, COLOR_TEST_GREEN, SUBTYPE_ELEMENTAL, KEYWORD_0,
+                    SP_KEYWORD_0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x258c2b0; original cards/worldwake.c:2939. */
+int card_wind_zendikon(int player, int card, event_t event)
+{
+  /* Wind Zendikon	|U
+   * Enchantment - Aura
+   * Enchant land
+   * Enchanted land is a 2/2 blue Elemental creature with flying. It's still a land.
+   * When enchanted land dies, return that card to its owner's hand. */
+
+  int result;
+
+  result = zendikon(player, card, event, 2, 2, COLOR_TEST_BLUE, SUBTYPE_ELEMENTAL, KEYWORD_FLYING,
+                    SP_KEYWORD_0);
+  return result;
+}
+
 // walking atlas --> Sakura-Tribe Scout
 
 int card_wolfbriar_elemental(int player, int card, event_t event){
@@ -2907,13 +3204,12 @@ int card_wolfbriar_elemental(int player, int card, event_t event){
 }
 
 int card_wrexial_the_risen_deep(int player, int card, event_t event){
-/*
-Wrexial, the Risen Deep |3|U|U|B
-Legendary Creature — Kraken 5/8
-Islandwalk, swampwalk (This creature can't be blocked as long as defending player controls an Island or a Swamp.)
-Whenever Wrexial, the Risen Deep deals combat damage to a player, you may cast target instant or sorcery card from that player's graveyard
-	without paying its mana cost. If that card would be put into a graveyard this turn, exile it instead.
-*/
+  /* Wrexial, the Risen Deep |3|U|U|B
+   * Legendary Creature — Kraken 5/8
+   * Islandwalk, swampwalk (This creature can't be blocked as long as defending player controls an Island or a Swamp.)
+   * Whenever Wrexial, the Risen Deep deals combat damage to a player, you may cast target instant or sorcery card from that player's graveyard
+   * 	without paying its mana cost. If that card would be put into a graveyard this turn, exile it instead. */
+
 	check_legend_rule(player, card, event);
 
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE );
@@ -2937,231 +3233,4 @@ Whenever Wrexial, the Risen Deep deals combat damage to a player, you may cast t
 	}
 
 	return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2583370; original cards/worldwake.c:55. */
-static int zendikon_legacy(int player, int card, event_t event)
-{
-  card_instance_t *instance = in_play(player, card);
-  if (instance && instance->targets[0].player != -1 &&
-      resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-  {
-    int i = count_graveyard(instance->targets[0].player) - 1;
-    if (i >= 0)
-    {
-      int target_player = instance->targets[0].player;
-      uint16_t land_csv_id = cards_data[instance->targets[0].card].id;
-      for (; i >= 0; --i)
-        if (cards_data[graveyard_ptr_mutable[target_player][i]].id == land_csv_id)
-        {
-          from_grave_to_hand(target_player, i, 0);
-          break;
-        }
-    }
-    kill_card(player, card, KILL_EXILE);
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2589fc0; original cards/worldwake.c:2238. */
-int card_roiling_terrain(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-  target_definition_t td;
-
-  if (!IS_GS_EVENT(player, card, event))
-  {
-    return 0;
-  }
-  default_target_definition(player, card, &td, 1);
-  instance = get_card_instance(player, card);
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    result = valid_target(&td);
-    if (result != 0)
-    {
-
-      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-      result = count_graveyard_by_type(instance->targets[0].player, 1);
-      damage_player(instance->targets[0].player, result + 1, player, card);
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return generic_spell(player, card, event, 1, &td, "TARGET_LAND", 1, NULL);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t cols,
-             subtype_t styp, keyword_t kws, sp_keyword_t spkws);
-
-/* ManalinkEh 2022: 0x2583ed0; original cards/worldwake.c:72. */
-int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t cols,
-             subtype_t styp, keyword_t kws, sp_keyword_t spkws)
-{
-  enum
-  {
-    SP_KEYWORD_NOT_SIMPLE_BITS = 357809216
-  };
-
-  int land_card_or_iid;
-  card_instance_t *instance;
-  int death_check_or_owner;
-  int target_player;
-  target_definition_t td;
-
-  if (event == EVENT_GRAVEYARD_FROM_PLAY)
-  {
-    instance = in_play(player, card);
-    if ((instance != NULL) &&
-        (instance = get_card_instance(player, card), instance->damage_target_player != -1))
-    {
-
-      instance = get_card_instance(player, card);
-      target_player = (int)instance->damage_target_player;
-      land_card_or_iid = instance->damage_target_card;
-      instance = get_card_instance(target_player, land_card_or_iid);
-      if (((land_card_or_iid == affected_card) &&
-           (((target_player == affected_card_controller &&
-              ((unsigned char)(instance->kill_code - 2) < 2)) &&
-             (death_check_or_owner = check_special_flags2(target_player, land_card_or_iid, 0x10000000),
-              death_check_or_owner == 0)))) &&
-          (death_check_or_owner = check_for_death_trigger_removal(target_player, land_card_or_iid),
-           death_check_or_owner == 0))
-      {
-
-        instance = get_card_instance(player, create_legacy_effect(player, card, zendikon_legacy));
-        death_check_or_owner = get_owner(target_player, land_card_or_iid);
-        instance->targets[0].player = death_check_or_owner;
-        land_card_or_iid = get_original_internal_card_id(target_player, land_card_or_iid);
-        instance->targets[0xb].player = 1;
-        instance->targets[0].card = land_card_or_iid;
-      }
-    }
-  }
-  if (event != EVENT_CAN_CAST &&
-      !(event == EVENT_CAST_SPELL && card == affected_card && player == affected_card_controller) &&
-      event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET &&
-      event != EVENT_CHANGE_TARGET &&
-      (event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA && event - EVENT_POWER > 2 &&
-      event != EVENT_RESOLVE_MOVING_AURA && event != EVENT_CHANGE_TYPE &&
-      event != EVENT_SET_COLOR && event != EVENT_GET_SELECTED_CARD && event != EVENT_STATIC_EFFECTS)
-    return 0;
-  default_target_definition(player, card, &td, 1);
-  td.preferred_controller = player;
-  attached_is_additional_subtype(player, card, event, styp);
-  if (cols != COLOR_TEST_0)
-  {
-    attached_is_additional_color(player, card, event, cols);
-  }
-  if ((spkws & SP_KEYWORD_NOT_SIMPLE_BITS) != SP_KEYWORD_0)
-  {
-    backtrace_and_abort("cards/worldwake.c:109\n!(spkws & SP_KEYWORD_NOT_SIMPLE_BITS)");
-  }
-  return generic_animating_aura(player, card, event, &td, "TARGET_LAND", pow, tgh, kws, spkws);
-}
-
-/* ManalinkEh 2022: 0x2586250; original cards/worldwake.c:858. */
-int card_corrupted_zendikon(int player, int card, event_t event)
-{
-  int result;
-
-  result =
-      zendikon(player, card, event, 3, 3, COLOR_TEST_BLACK, SUBTYPE_OOZE, KEYWORD_0, SP_KEYWORD_0);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x25863b0; original cards/worldwake.c:887. */
-int card_crusher_zendikon(int player, int card, event_t event)
-{
-  int result;
-
-  result = zendikon(player, card, event, 4, 2, COLOR_TEST_RED, SUBTYPE_BEAST, KEYWORD_TRAMPLE,
-                    SP_KEYWORD_0);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x258c250; original cards/worldwake.c:2926. */
-int card_vastwood_zendikon(int player, int card, event_t event)
-{
-  int result;
-
-  result = zendikon(player, card, event, 6, 4, COLOR_TEST_GREEN, SUBTYPE_ELEMENTAL, KEYWORD_0,
-                    SP_KEYWORD_0);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x258c2b0; original cards/worldwake.c:2939. */
-int card_wind_zendikon(int player, int card, event_t event)
-{
-  int result;
-
-  result = zendikon(player, card, event, 2, 2, COLOR_TEST_BLUE, SUBTYPE_ELEMENTAL, KEYWORD_FLYING,
-                    SP_KEYWORD_0);
-  return result;
-}
-
-#ifndef SHANDALAR
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25858a0; original cards/worldwake.c:658. */
-int card_canopy_cover(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  unsigned int blocker_abilities;
-
-  instance = in_play(player, card);
-  if (instance != NULL)
-  {
-    if (!is_humiliated(player, card, AL_STATIC))
-    {
-      instance = get_card_instance(player, card);
-      if (-1 < instance->damage_target_player)
-      {
-
-        instance = get_card_instance(player, card);
-        if (event == EVENT_BLOCK_LEGALITY)
-        {
-          if ((instance->damage_target_player == attacking_card_controller) &&
-              (instance->damage_target_card == attacking_card))
-          {
-
-            blocker_abilities =
-                get_abilities(affected_card_controller, affected_card, EVENT_ABILITIES, -1);
-            if ((blocker_abilities & 0x420) == 0)
-            {
-              event_result = 1;
-            }
-          }
-          attached_gets_sp_kw2(player, card, EVENT_BLOCK_LEGALITY, SP_KEYWORD2_GRANTED_PROT_MISC);
-          get_card_instance(player, card);
-          return aura(player, card, event, NULL, NULL);
-        }
-      }
-    }
-  }
-  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
-  instance = get_card_instance(player, card);
-  if ((((event == EVENT_PROT_MISC) && (instance->damage_target_card == affected_card)) &&
-       (instance->damage_target_player == affected_card_controller)) &&
-      ((1 - player == attacking_card_controller &&
-        (((unsigned int)event_result >> 24 & 0xff) == '\x05'))))
-  {
-    event_result = event_result | 1;
-  }
-  return aura(player, card, event, NULL, NULL);
-}
-#endif
-
-/* October 2022 native Worldwake handler, 0x2586db0. */
-int card_guardian_zendikon(int player, int card, event_t event)
-{
-  int result;
-  result = zendikon(player, card, event, 2, 6, COLOR_TEST_WHITE, SUBTYPE_WALL, KEYWORD_DEFENDER,
-                    SP_KEYWORD_0);
-  return result;
 }

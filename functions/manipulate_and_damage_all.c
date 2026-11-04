@@ -14,167 +14,7 @@ int manipulate_all(int player, int card, int t_player, int type, int flag1, int 
 static int action_on_card_impl(int player, int card, int p, int c, actions_t action,
                                     counter_t counter_type, int counter_num);
 
-
-
-
-
-
-
-int action_on_target(int player, int card, unsigned int target_number, actions_t raw_action)
-{
-  card_instance_t* instance = get_card_instance(player, card);
-  ASSERT((instance->targets[target_number].player & ~1) == 0);	// i.e., it's either 0 or 1
-  return action_on_card(player, card, instance->targets[target_number].player, instance->targets[target_number].card, raw_action);
-}
-
-
-
-
-
-int manipulate_type(int player, int card, int t_player, type_t type, actions_t action)
-{
-  test_definition_t this_test;
-  new_default_test_definition(&this_test, type, "");
-  return new_manipulate_all(player, card, t_player, &this_test, action);
-}
-
-int manipulate_auras_enchanting_target(int player, int card, int t_player, int t_card,
-                                      test_definition_t *this_test, actions_t raw_action)
-{
-  int result = 0;
-  for (int p = 0; p < 2; ++p)
-    for (int c = active_cards_count[p] - 1; c >= 0; --c)
-    {
-      counter_t counter_type = COUNTER_invalid;
-      int counter_num = 0;
-      actions_t action = cook_action(p, c, raw_action, &counter_type, &counter_num);
-      if (action == (actions_t)-1)
-        return result;
-      if (action == (actions_t)-2)
-        continue;
-      card_instance_t *aura = in_play(p, c);
-      if (aura && aura->damage_target_player == t_player && aura->damage_target_card == t_card
-          && is_what(p, c, TYPE_ENCHANTMENT) && has_subtype(p, c, SUBTYPE_AURA)
-          && (!this_test || (new_make_test_in_play(p, c, -1, this_test)
-              && (!this_test->not_me || player != p || card != c))))
-        result += action_on_card_impl(player, card, p, c, action, counter_type, counter_num);
-    }
-  return result;
-}
-
-int new_damage_all(int player, int card, int targ_player, int dmg, int mode,
-                   test_definition_t *this_test)
-{
-  int player_00;
-  int i;
-  card_instance_t *instance;
-  int damage_card_or_type_check;
-  int total_damage;
-  int test_score;
-  int turn_order_index;
-
-  if (dmg < 1)
-  {
-    return 0;
-  }
-  test_score = 0;
-  if (this_test != NULL)
-  {
-    test_score = new_get_test_score(this_test);
-  }
-  turn_order_index = 0;
-  total_damage = 0;
-  player_00 = current_turn;
-  do
-  {
-    bool process_player = targ_player == player_00 || targ_player == 2;
-    if (process_player)
-    {
-      i = active_cards_count[player_00] - 1;
-      if (i >= 0)
-      {
-        do
-        {
-          instance = in_play(player_00, i);
-          if (instance != NULL)
-          {
-            bool damage_permanent = false;
-            if (this_test == NULL)
-            {
-              damage_card_or_type_check = is_what(player_00, i, 2);
-              damage_permanent = (damage_card_or_type_check != 0 && (mode & 1U) != 0) ||
-                                 ((damage_card_or_type_check = is_what(player_00, i, 0x100),
-                                   damage_card_or_type_check != 0) &&
-                                  (mode & 0x20U) != 0);
-            }
-            else
-            {
-              if (new_make_test_in_play(player_00, i, test_score, this_test) == 0)
-              {
-                is_what(player_00, i, 2);
-                is_what(player_00, i, 0x100);
-              }
-              else
-                damage_permanent = true;
-            }
-            if (damage_permanent &&
-                (card != i || player != player_00 ||
-                 ((mode & 4U) == 0 && (this_test == NULL || this_test->not_me != 1))))
-            {
-              damage_card_or_type_check = damage_creature(player_00, i, dmg, player, card);
-              if (-1 < damage_card_or_type_check)
-              {
-                instance = get_card_instance(player, damage_card_or_type_check);
-                if ((mode & 0x10U) != 0)
-                {
-                  instance->targets[3].card = instance->targets[3].card | 0x20;
-                }
-                if ((mode & 8U) != 0)
-                {
-                  instance->targets[3].card = instance->targets[3].card | 0x80;
-                }
-              }
-              total_damage = total_damage + dmg;
-            }
-          }
-          i = i - 1;
-        } while (i != -1);
-      }
-      if ((mode & 2U) != 0)
-        damage_player(player_00, dmg, player, card);
-    }
-    if (process_player || turn_order_index != 0)
-    {
-      player_00 = current_turn;
-      current_turn = player_00;
-    }
-    turn_order_index = turn_order_index + 1;
-    if (turn_order_index == 2)
-      return total_damage;
-    player_00 = 1 - player_00;
-  } while (true);
-}
-
-void damage_all(int p, int c, int controller, int amount_damage, int all, int player_too, int keyword, int flag1, int subtype, int flag2, int color, int flag3, int id, int flag4, int cc, int flag5){
-	test_definition_t this_test;
-	default_test_definition(&this_test, TYPE_CREATURE);
-	this_test.subtype = subtype;
-	this_test.subtype_flag = flag2;
-	this_test.color = color;
-	this_test.color_flag = flag3;
-	this_test.id = id;
-	this_test.id_flag = flag4;
-	this_test.cmc = cc;
-	this_test.cmc_flag = flag5;
-	this_test.keyword = keyword;
-	this_test.keyword_flag = flag1;
-	new_damage_all(p, c, controller, amount_damage, (1*all)+(2*player_too), &this_test);
-}
-
-
 #ifndef SHANDALAR
-/* Recovered October 2022 action and copy helpers. */
-
 /* ManalinkEh 2022: 0x2666bc0; original functions/manipulate_and_damage_all.c:3. */
 static int action_on_card_impl(int player, int card, int p, int c, actions_t action,
                                counter_t counter_type, int counter_num)
@@ -283,8 +123,9 @@ static int action_on_card_impl(int player, int card, int p, int c, actions_t act
   }
   return 1;
 }
+#endif
 
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2666f10; original functions/manipulate_and_damage_all.c:127. */
 static actions_t cook_action(int player, int card, actions_t raw_action, counter_t *counter_type,
                              int *counter_num)
@@ -330,8 +171,9 @@ static actions_t cook_action(int player, int card, actions_t raw_action, counter
   }
   return 0xffffffff;
 }
+#endif
 
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2666fe0; original functions/manipulate_and_damage_all.c:160. */
 int action_on_card(int player, int card, int t_player, int t_card, actions_t raw_action)
 {
@@ -351,8 +193,16 @@ int action_on_card(int player, int card, int t_player, int t_card, actions_t raw
   }
   return result;
 }
+#endif
 
+int action_on_target(int player, int card, unsigned int target_number, actions_t raw_action)
+{
+  card_instance_t* instance = get_card_instance(player, card);
+  ASSERT((instance->targets[target_number].player & ~1) == 0);	// i.e., it's either 0 or 1
+  return action_on_card(player, card, instance->targets[target_number].player, instance->targets[target_number].card, raw_action);
+}
 
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26670c0; original functions/manipulate_and_damage_all.c:178. */
 int new_manipulate_all(int player, int card, int t_player, test_definition_t *this_test,
                        actions_t raw_action)
@@ -499,8 +349,9 @@ int new_manipulate_all(int player, int card, int t_player, test_definition_t *th
   }
   return effects_applied;
 }
+#endif
 
-
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26675a0; original functions/manipulate_and_damage_all.c:245. */
 int manipulate_all(int player, int card, int t_player, int type, int flag1, int subtype,
                         int flag2, int color, int flag3, int id, int flag4, int cc, int flag5,
@@ -522,12 +373,144 @@ int manipulate_all(int player, int card, int t_player, int type, int flag1, int 
   result = new_manipulate_all(player, card, t_player, &this_test, action);
   return result;
 }
-
 #endif
 
+int manipulate_type(int player, int card, int t_player, type_t type, actions_t action)
+{
+  test_definition_t this_test;
+  new_default_test_definition(&this_test, type, "");
+  return new_manipulate_all(player, card, t_player, &this_test, action);
+}
 
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26677f0; original functions/manipulate_and_damage_all.c:299. */
+int manipulate_auras_enchanting_target(int player, int card, int t_player, int t_card,
+                                      test_definition_t *this_test, actions_t raw_action)
+{
+  int result = 0;
+  for (int p = 0; p < 2; ++p)
+    for (int c = active_cards_count[p] - 1; c >= 0; --c)
+    {
+      counter_t counter_type = COUNTER_invalid;
+      int counter_num = 0;
+      actions_t action = cook_action(p, c, raw_action, &counter_type, &counter_num);
+      if (action == (actions_t)-1)
+        return result;
+      if (action == (actions_t)-2)
+        continue;
+      card_instance_t *aura = in_play(p, c);
+      if (aura && aura->damage_target_player == t_player && aura->damage_target_card == t_card
+          && is_what(p, c, TYPE_ENCHANTMENT) && has_subtype(p, c, SUBTYPE_AURA)
+          && (!this_test || (new_make_test_in_play(p, c, -1, this_test)
+              && (!this_test->not_me || player != p || card != c))))
+        result += action_on_card_impl(player, card, p, c, action, counter_type, counter_num);
+    }
+  return result;
+}
 
+int new_damage_all(int player, int card, int targ_player, int dmg, int mode,
+                   test_definition_t *this_test)
+{
+  int player_00;
+  int i;
+  card_instance_t *instance;
+  int damage_card_or_type_check;
+  int total_damage;
+  int test_score;
+  int turn_order_index;
 
-#endif
+  if (dmg < 1)
+  {
+    return 0;
+  }
+  test_score = 0;
+  if (this_test != NULL)
+  {
+    test_score = new_get_test_score(this_test);
+  }
+  turn_order_index = 0;
+  total_damage = 0;
+  player_00 = current_turn;
+  do
+  {
+    bool process_player = targ_player == player_00 || targ_player == 2;
+    if (process_player)
+    {
+      i = active_cards_count[player_00] - 1;
+      if (i >= 0)
+      {
+        do
+        {
+          instance = in_play(player_00, i);
+          if (instance != NULL)
+          {
+            bool damage_permanent = false;
+            if (this_test == NULL)
+            {
+              damage_card_or_type_check = is_what(player_00, i, 2);
+              damage_permanent = (damage_card_or_type_check != 0 && (mode & 1U) != 0) ||
+                                 ((damage_card_or_type_check = is_what(player_00, i, 0x100),
+                                   damage_card_or_type_check != 0) &&
+                                  (mode & 0x20U) != 0);
+            }
+            else
+            {
+              if (new_make_test_in_play(player_00, i, test_score, this_test) == 0)
+              {
+                is_what(player_00, i, 2);
+                is_what(player_00, i, 0x100);
+              }
+              else
+                damage_permanent = true;
+            }
+            if (damage_permanent &&
+                (card != i || player != player_00 ||
+                 ((mode & 4U) == 0 && (this_test == NULL || this_test->not_me != 1))))
+            {
+              damage_card_or_type_check = damage_creature(player_00, i, dmg, player, card);
+              if (-1 < damage_card_or_type_check)
+              {
+                instance = get_card_instance(player, damage_card_or_type_check);
+                if ((mode & 0x10U) != 0)
+                {
+                  instance->targets[3].card = instance->targets[3].card | 0x20;
+                }
+                if ((mode & 8U) != 0)
+                {
+                  instance->targets[3].card = instance->targets[3].card | 0x80;
+                }
+              }
+              total_damage = total_damage + dmg;
+            }
+          }
+          i = i - 1;
+        } while (i != -1);
+      }
+      if ((mode & 2U) != 0)
+        damage_player(player_00, dmg, player, card);
+    }
+    if (process_player || turn_order_index != 0)
+    {
+      player_00 = current_turn;
+      current_turn = player_00;
+    }
+    turn_order_index = turn_order_index + 1;
+    if (turn_order_index == 2)
+      return total_damage;
+    player_00 = 1 - player_00;
+  } while (true);
+}
+
+void damage_all(int p, int c, int controller, int amount_damage, int all, int player_too, int keyword, int flag1, int subtype, int flag2, int color, int flag3, int id, int flag4, int cc, int flag5){
+	test_definition_t this_test;
+	default_test_definition(&this_test, TYPE_CREATURE);
+	this_test.subtype = subtype;
+	this_test.subtype_flag = flag2;
+	this_test.color = color;
+	this_test.color_flag = flag3;
+	this_test.id = id;
+	this_test.id_flag = flag4;
+	this_test.cmc = cc;
+	this_test.cmc_flag = flag5;
+	this_test.keyword = keyword;
+	this_test.keyword_flag = flag1;
+	new_damage_all(p, c, controller, amount_damage, (1*all)+(2*player_too), &this_test);
+}

@@ -5,6 +5,7 @@
 /***** Cards *****/
 
 // White
+
 int card_bastion_protector(int player, int card, event_t event){
 	/* Bastion Protector	|2|W	0x200e31e
 	 * Creature - Human Soldier 3/3
@@ -288,15 +289,11 @@ int card_shielded_by_faith(int player, int card, event_t event){
 	return generic_aura(player, card, event, player, 0, 0, 0, SP_KEYWORD_INDESTRUCTIBLE, 0, 0, 0);
 }
 
-// Blue
 /* AEthersnatch	|4|U|U	0x000000 --> Too much trouble. Waitlisted.
  * Instant
  * Gain control of target spell. You may choose new targets for it. */
 
-/* Broodbirth Viper	|4|U	0x200456c --> Neurok Commando. As above, Myriad is worthless in Manalink.
- * Creature - Snake 3/3
- * Myriad
- * Whenever ~ deals combat damage to a player, you may draw a card. */
+// Blue
 
 static int effect_gigantoplasm(int player, int card, event_t event)
 {
@@ -342,6 +339,11 @@ static int effect_gigantoplasm(int player, int card, event_t event)
   return 0;
 }
 
+/* Broodbirth Viper	|4|U	0x200456c --> Neurok Commando. As above, Myriad is worthless in Manalink.
+ * Creature - Snake 3/3
+ * Myriad
+ * Whenever ~ deals combat damage to a player, you may draw a card. */
+
 int card_gigantoplasm(int player, int card, event_t event)
 {
 	/* Gigantoplasm	|3|U	0x200e341
@@ -355,10 +357,29 @@ int card_gigantoplasm(int player, int card, event_t event)
 	return 0;
 }
 
-/* Illusory Ambusher	|4|U	0x401000 --> vanilla, effect is on 'effect_damage'
- * Creature - Cat Illusion 4/1
- * Flash
- * Whenever ~ is dealt damage, draw that many cards. */
+// And a bunch of reprints.
+
+/* ManalinkEh 2022: 0x2353520; original cards/commander_2015.c:345. */
+int card_illusory_ambusher(int player, int card, event_t event)
+{
+  /* Illusory Ambusher	|4|U	0x401000 --> vanilla, effect is on 'effect_damage'
+   * Creature - Cat Illusion 4/1
+   * Flash
+   * Whenever ~ is dealt damage, draw that many cards. */
+
+  int result;
+  card_instance_t *instance;
+
+  result = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
+  if (result != 0)
+  {
+    instance = get_card_instance(player, card);
+    draw_cards(player, instance->targets[7].card);
+    instance->targets[7].card = 0;
+    instance->targets[7].player = 0;
+  }
+  return flash(player, card, event);
+}
 
 static int exile_at_end_of_combat(int player, int card, event_t event){
 
@@ -600,6 +621,7 @@ int card_synthetic_destiny(int player, int card, event_t event)
 }
 
 // Black
+
 int card_banshee_of_the_dread_choir(int player, int card, event_t event)
 {
 	/* Banshee of the Dread Choir	|3|B|B	0x200e355
@@ -744,6 +766,12 @@ int card_scourge_of_nel_toth(int player, int card, event_t event)
 
 int card_thief_of_blood(int player, int card, event_t event)
 {
+  /* Thief of Blood	|4|B|B	0x200e373
+   * Creature - Vampire 1/1
+   * Flying
+   * As ~ enters the battlefield, remove all counters from all permanents. ~ enters the battlefield with a +1/+1 counter on it
+   * 	for each counter removed this way. */
+
   card_instance_t *instance;
   int result;
   int card_00;
@@ -939,6 +967,7 @@ int card_wretched_confluence(int player, int card, event_t event)
 }
 
 // Red
+
 static int awaken_the_sky_tyrant_legacy(int player, int card, event_t event){
 
 	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
@@ -1274,6 +1303,11 @@ int card_mizzix_mastery(int player, int card, event_t event){
 
 int card_lightning_rager(int player, int card, event_t event)
 {
+  /* Lightning Rager |0	0x200e396
+   * Creature - Elemental 5/1
+   * Trample, Haste
+   * At the beginning of the end step, sacrifice Lightning Rager. */
+
   int result;
   haste(player, card, event);
   result = check_state(player, card, STATE_OUBLIETTED);
@@ -1540,6 +1574,13 @@ int card_skullwinder(int player, int card, event_t event){
 
 int card_verdant_confluence(int player, int card, event_t event)
 {
+  /* Verdant Confluence	|4|G|G	0x000000
+   * Sorcery
+   * Choose three. You may choose the same mode more than once.
+   * * Put two +1/+1 counters on target creature.
+   * * Return target permanent card from your graveyard to your hand.
+   * * Search your library for a basic land card, put it onto the battlefield tapped, then shuffle your library. */
+
   enum
   {
     CHOICE_P1_P1_COUNTER = 1,
@@ -1822,6 +1863,12 @@ int card_ezuri_claw_of_progress(int player, int card, event_t event){
 
 int card_kalemne_disciple_of_iroas(int player, int card, event_t event)
 {
+  /* Kalemne, Disciple of Iroas	|2|R|W	0x200e3d7
+   * Legendary Creature - Giant Soldier 3/3
+   * Double strike, vigilance
+   * Whenever you cast a creature spell with converted mana cost 5 or greater, you get an experience counter.
+   * ~ gets +1/+1 for each experience counter you have. */
+
   int result;
   test_definition_t test;
   check_legend_rule(player, card, event);
@@ -1849,9 +1896,13 @@ int card_kalemne_disciple_of_iroas(int player, int card, event_t event)
   return 0;
 }
 
-
 int card_karlov_of_the_ghost_council(int player, int card, event_t event)
 {
+  /* Karlov of the Ghost Council	|W|B	0x200e3dc
+   * Legendary Creature - Spirit Advisor 2/2
+   * Whenever you gain life, put two +1/+1 counters on ~.
+   * |W|B, Remove six +1/+1 counters from ~: Exile target creature. */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -2238,11 +2289,12 @@ int card_mizzix_of_the_izmagus(int player, int card, event_t event){
 	return 0;
 }
 
-// Artifacts
 /* Blade of Selves	|2	0x000000 --> Skipped, Myriad is worthless under Manalink
  * Artifact - Equipment
  * Equipped creature has myriad.
  * Equip |4 */
+
+// Artifacts
 
 int card_sandstone_oracle(int player, int card, event_t event){
 	/* Sandstone Oracle	|7	0x200e3f5
@@ -2339,10 +2391,6 @@ int card_thought_vessel(int player, int card, event_t event){
 
 // Land
 
-
-
-
-
 static int count_energy_card_on_commander_card(int player){
 
 	int edh_card = locate_edh_card(player);
@@ -2352,8 +2400,6 @@ static int count_energy_card_on_commander_card(int player){
 
 	return 0;
 }
-
-
 
 int card_command_beacon(int player, int card, event_t event){
 	/* Command Beacon	""	0x200e404
@@ -2402,25 +2448,4 @@ int card_command_beacon(int player, int card, event_t event){
 	}
 
 	return 0;
-}
-
-// And a bunch of reprints.
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2353520; original cards/commander_2015.c:345. */
-int card_illusory_ambusher(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-
-  result = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
-  if (result != 0)
-  {
-    instance = get_card_instance(player, card);
-    draw_cards(player, instance->targets[7].card);
-    instance->targets[7].card = 0;
-    instance->targets[7].player = 0;
-  }
-  return flash(player, card, event);
 }

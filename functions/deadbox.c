@@ -199,8 +199,6 @@ int card_deadbox(int player, int card, event_t event){
 	return 0;
 }
 
-
-
 void reanimate_all_dead_this_turn(int player, int selected_type){
 	return seek_grave_to_reanimate_this_turn(player, player, selected_type, REANIMATE_DEFAULT);
 }
@@ -285,7 +283,6 @@ int has_type_dead_this_turn_in_grave(int player, test_definition_t *this_test){
 	}
 	return 0;
 }
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2671e30; original functions/deadbox.c:179. */

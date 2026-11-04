@@ -1416,8 +1416,6 @@ int destroy_attached_auras_and_obliterate_card(int player, int card)
   return -1;	// Not directly used by the original exe, but sometimes seen by asm-coded cards (like Allay) via through bounce_permanent() (which also is void in the original exe)
 }
 
-
-
 void real_counter_a_spell(int player, int card, int to_counter_player, int to_counter_card)
 {
   if (pre_counterspell(player, card, to_counter_player, to_counter_card)
@@ -1486,7 +1484,6 @@ int counterspell_resolve_unless_pay_x(int player, int card, target_definition_t 
   }
   return countered;
 }
-
 
 #define CASES_GY_FROM_ANYWHERE_REPLACE_SHUFFLE	\
 	   CARD_ID_BLIGHTSTEEL_COLOSSUS:			\
@@ -2794,6 +2791,345 @@ int select_target_from_grave_source(int player, int card, int t_player, select_g
 }
 
 extern const char* hack_override_show_deck_done_button_label;
+/* ManalinkEh 2022: 0x26b2a10; original functions/deck.c:147. */
+void memcpy_inst_and_ext(card_instance_t *dest, const card_instance_t *src)
+{
+  card_ext_t *ext = dest->ext;
+  memcpy(ext, src->ext, sizeof(*ext));
+  memcpy(dest, src, sizeof(*dest));
+  dest->ext = ext;
+}
+
+/* ManalinkEh 2022: 0x26b2e90; original functions/deck.c:345. */
+int add_card_to_hand_invisible(int player, int iid)
+{
+  unsigned int saved_state;
+  int card;
+  card_instance_t *instance;
+
+  card = add_card_to_hand(player, iid);
+  if (-1 < card)
+  {
+
+    instance = get_card_instance(player, card);
+    saved_state = instance->state;
+    hand_count[player] = hand_count[player] + -1;
+    instance->state = saved_state | 0x20;
+  }
+  return card;
+}
+
+/* ManalinkEh 2022: 0x26b33d0; original functions/deck.c:417. */
+card_instance_t *on_stack(int player, int card)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  if (((instance->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)) == 0x20) &&
+      (-1 < instance->internal_card_id))
+  {
+    return instance;
+  }
+  return NULL;
+}
+
+/* ManalinkEh 2022: 0x26b3680; original functions/deck.c:516. */
+void unmeld(int csvid, int *csvida, int *csvidb)
+{
+  switch (csvid)
+  {
+    case CARD_ID_CHITTERING_HOST:
+      *csvida = CARD_ID_GRAF_RATS;
+      *csvidb = CARD_ID_MIDNIGHT_SCAVENGERS;
+      return;
+    case CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP:
+      *csvida = CARD_ID_HANWEIR_BATTLEMENTS;
+      *csvidb = CARD_ID_HANWEIR_GARRISON;
+      return;
+    case CARD_ID_BRISELA_VOICE_OF_NIGHTMARES:
+      *csvida = CARD_ID_GISELA_THE_BROKEN_BLADE;
+      *csvidb = CARD_ID_BRUNA_THE_FADING_LIGHT;
+      return;
+    default:
+      *csvida = csvid;
+      *csvidb = -1;
+  }
+}
+
+/* ManalinkEh 2022: 0x26b36e0; original functions/deck.c:542. */
+int set_inst_info(card_instance_t *inst, int cid, uint32_t data, uint16_t data2)
+{
+  inst_info_t *entries = inst->ext->inst_info_data;
+  int slot;
+  for (slot = 0; slot < 6; ++slot)
+    if ((uint32_t)entries[slot].id == (uint32_t)cid)
+      break;
+  if (slot == 6)
+  {
+    for (slot = 0; slot < 6; ++slot)
+      if (entries[slot].id == 0)
+        break;
+    if (slot == 6)
+      return 0;
+  }
+  entries[slot].id = (uint16_t)cid;
+  entries[slot].data2 = data2;
+  entries[slot].data = data;
+  return 1;
+}
+
+// Returns all cards matching test in player's graveyard to his hand.  Returns the number of matching cards.
+/* ManalinkEh 2022: 0x26b3740; original functions/deck.c:584. */
+inst_info_t inst_info(card_instance_t *inst, int cid)
+{
+  inst_info_t *entries = inst->ext->inst_info_data;
+  int slot;
+  for (slot = 0; slot < 6; ++slot)
+  {
+    if ((uint32_t)entries[slot].id == (uint32_t)cid)
+      return entries[slot];
+    if (entries[slot].id == 0)
+      break;
+  }
+  if (slot == 6)
+    slot = 5;
+  entries[slot].id = (uint16_t)cid;
+  entries[slot].data2 = 0;
+  entries[slot].data = 0;
+  return entries[slot];
+}
+
+/* ManalinkEh 2022: 0x26b37f0; original functions/deck.c:603. */
+int increment_data(card_instance_t *inst, int cid)
+{
+  inst_info_t initial = inst_info(inst, cid);
+  inst_info_t second = inst_info(inst, cid);
+  return set_inst_info(inst, cid, initial.data + 1u, second.data2);
+}
+
+/* ManalinkEh 2022: 0x26b3870; original functions/deck.c:608. */
+int increment_data2(card_instance_t *inst, int cid)
+{
+  inst_info_t initial = inst_info(inst, cid);
+  inst_info_t second = inst_info(inst, cid);
+  return set_inst_info(inst, cid, initial.data, (uint16_t)(second.data2 + 1));
+}
+
+/* ManalinkEh 2022: 0x26b38f0; original functions/deck.c:615. */
+void clear_info(card_instance_t *inst, int cid)
+{
+  inst_info_t *entries = inst->ext->inst_info_data;
+  for (int slot = 0; slot < 6; ++slot)
+  {
+    if (entries[slot].id == 0)
+      return;
+    while ((uint32_t)entries[slot].id == (uint32_t)cid)
+    {
+      if (slot < 5)
+        memmove(&entries[slot], &entries[slot + 1], (5 - slot) * sizeof(*entries));
+      entries[5].id = 0;
+    }
+  }
+}
+
+/* ManalinkEh 2022: 0x26b3990; original functions/deck.c:625. */
+int store_iid(card_instance_t *inst, int16_t generating_id, int16_t stored_iid)
+{
+  inst_stored_iid_t *entries = inst->ext->inst_stored_iids;
+  for (int slot = 0; slot < 12; ++slot)
+    if (entries[slot].generating_id == -1)
+    {
+      entries[slot].generating_id = generating_id;
+      entries[slot].stored_iid = stored_iid;
+      return slot;
+    }
+  return -1;
+}
+
+/* ManalinkEh 2022: 0x26b39d0; original functions/deck.c:638. */
+int retrieve_stored_iids(card_instance_t *inst, int16_t generating_id, int16_t *iids)
+{
+  int count = 0;
+  inst_stored_iid_t *entries = inst->ext->inst_stored_iids;
+  for (int slot = 0; slot < 12; ++slot)
+    if (entries[slot].generating_id == generating_id)
+      iids[count++] = entries[slot].stored_iid;
+  return count;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void unmeld(int csvid, int *csvida, int *csvidb);
+
+/* ManalinkEh 2022: 0x26b3a10; original functions/deck.c:650. */
+void clear_stored_iids(card_instance_t *inst, int16_t generating_id)
+{
+  inst_stored_iid_t *entries = inst->ext->inst_stored_iids;
+  for (int slot = 0; slot < 12; ++slot)
+    if (entries[slot].generating_id == generating_id)
+    {
+      entries[slot].generating_id = -1;
+      entries[slot].stored_iid = -1;
+    }
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void kill_target0(int player, int card, kill_t kill_mode);
+
+/* ManalinkEh 2022: 0x26b5a30; original functions/deck.c:1544. */
+void kill_target0(int player, int card, kill_t kill_mode)
+{
+  int target_card;
+  int target_player;
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  target_card = instance->targets[0].card;
+  target_player = instance->targets[0].player;
+
+  if ((-1 < target_player) && (-1 < target_card))
+  {
+    kill_card_impl(target_player, target_card, kill_mode, 0);
+    return;
+  }
+  return;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int count_iid_in_rfg(int player, int iid);
+
+/* ManalinkEh 2022: 0x26b5e90; original functions/deck.c:1615. */
+int pre_counterspell(int player, int card, int to_counter_player, int to_counter_card)
+{
+  int owner;
+  unsigned char uncounterable_colors;
+  card_instance_t *spell;
+  card_instance_t *live_spell_or_commander;
+  int spell_iid_or_creature;
+  unsigned int counterspell_color;
+  int card_00;
+  int choice_or_result;
+
+  spell = get_card_instance(to_counter_player, to_counter_card);
+  spell_iid_or_creature = spell->internal_card_id;
+  if ((((spell_iid_or_creature == -1) ||
+        (live_spell_or_commander = get_card_instance(to_counter_player, to_counter_card),
+         (live_spell_or_commander->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)) !=
+             0x20)) ||
+       (live_spell_or_commander->internal_card_id < 0)) ||
+      ((spell->token_status & 0x200) != 0))
+  {
+    return 0;
+  }
+  uncounterable_colors = your_spells_cant_be_countered_by_color[to_counter_player];
+  if (uncounterable_colors != 0)
+  {
+    counterspell_color = get_color(player, card);
+    if (counterspell_color == 0)
+    {
+      counterspell_color = 1;
+    }
+    if (((counterspell_color & uncounterable_colors) != 0) &&
+        (choice_or_result = is_being_cast(to_counter_player, to_counter_card),
+         choice_or_result != 0))
+    {
+      return 0;
+    }
+  }
+  if (((((uint8_t)other_game_mode & OGM_EDH) != OGM_NONE) &&
+       (choice_or_result = check_special_flags2(to_counter_player, to_counter_card, 0x1000000),
+        choice_or_result != 0)) &&
+      (choice_or_result = do_dialog(to_counter_player, to_counter_player, to_counter_card, -1, -1,
+                                    " Return Commander to commander\'s zone\n Decline", 0),
+       choice_or_result == 0))
+  {
+    owner = get_owner(to_counter_player, to_counter_card);
+    card_00 = locate_edh_card(owner);
+    if (-1 < card_00)
+    {
+      live_spell_or_commander = get_card_instance(owner, card_00);
+      if (live_spell_or_commander->targets[2].player == spell->original_internal_card_id)
+      {
+        *(uint8_t *)&live_spell_or_commander->targets[3].player = 1;
+      }
+      else if (live_spell_or_commander->targets[2].card == spell->original_internal_card_id)
+      {
+        SET_BYTE1(live_spell_or_commander->targets[3].player) = 1;
+      }
+      if ((-1 < to_counter_player) && (-1 < to_counter_card))
+        kill_card_impl(to_counter_player, to_counter_card, KILL_EXILE, 0);
+      return -1;
+    }
+  }
+  if (((card_flags[player] & CFLAGS_GUILE) != 0) && ((cards_data[spell_iid_or_creature].type & 1) == 0))
+  {
+    if ((-1 < to_counter_player) && (-1 < to_counter_card))
+    {
+      kill_card_impl(to_counter_player, to_counter_card, KILL_EXILE, 0);
+    }
+    if (can_legally_play_iid(player, spell_iid_or_creature) == 0)
+    {
+      return -1;
+    }
+    choice_or_result =
+        dialog_impl(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_RANDOM, DLG_NO_CANCEL, DLG_FULLCARD_ID(
+                    spell_iid_or_creature), "Play this card", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
+    if (choice_or_result != 1)
+    {
+      return -1;
+    }
+    play_card_in_exile_for_free(player, to_counter_player,
+                                (unsigned int)cards_data[spell_iid_or_creature].id);
+    return -1;
+  }
+  dispatch_event_with_attacker(to_counter_player, to_counter_card, EVENT_COUNTERSPELL, player,
+                               card);
+  if (is_what(player, card, 0x20) == 0)
+  {
+    play_sound_effect(WAV_INTERUPT);
+  }
+  spell_iid_or_creature = is_what(to_counter_player, to_counter_card, 2);
+  if ((to_counter_player != player) && (spell_iid_or_creature != 0))
+  {
+    increase_trap_condition(to_counter_player, 0x608, 1);
+  }
+  if (check_special_flags(to_counter_player, to_counter_card, 0x100000) == 0)
+  {
+    return 1;
+  }
+  if ((-1 < to_counter_player) && (-1 < to_counter_card))
+  {
+    kill_card_impl(to_counter_player, to_counter_card, KILL_EXILE, 0);
+  }
+  return -1;
+}
+
+/* ManalinkEh 2022: 0x26b7650; original functions/deck.c:2108. */
+int count_iid_in_rfg(int player, int iid)
+{
+  int *exile;
+  int exile_index;
+  int matches;
+
+  exile = rfg_ptr[player];
+  exile_index = count_rfg(player);
+  matches = 0;
+  if (-1 < exile_index)
+  {
+    do
+    {
+      if (exile[exile_index] == iid)
+      {
+        matches = matches + 1;
+      }
+      exile_index = exile_index + -1;
+    } while (exile_index != -1);
+  }
+  return matches;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+card_instance_t *on_stack(int player, int card);
+
 /* Prompts for a graveyard (if both have a targetable card), then prompts for a card.  Returns -1 and sets cancel if cancelled or there's no targets.
  * Otherwise identical to select_target_from_grave_source(). */
 int select_target_from_either_grave(int player, int card, select_grave_t mode,
@@ -2955,7 +3291,6 @@ void from_grave_to_hand(int player, int grave_position, int unused)
 	}
 }
 
-// Returns all cards matching test in player's graveyard to his hand.  Returns the number of matching cards.
 int from_grave_to_hand_multiple(int player, test_definition_t* test)
 {
   /* First, remove all matching cards from graveyard, then put them in hand one by one and return them to hand, in order to avoid any horrid chains of triggers
@@ -3128,6 +3463,9 @@ void whenever_a_card_is_put_into_a_graveyard_from_anywhere_exile_that_card(int p
 	}
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int pre_counterspell(int player, int card, int to_counter_player, int to_counter_card);
+
 int count_types_in_grave(int player)
 {
   int *next_grave_card;
@@ -3177,390 +3515,28 @@ int count_types_in_grave(int player)
   } while (true);
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void unmeld(int csvid, int *csvida, int *csvidb);
-
-/* ManalinkEh 2022: 0x26b3680; original functions/deck.c:516. */
-void unmeld(int csvid, int *csvida, int *csvidb)
-{
-  switch (csvid)
-  {
-    case CARD_ID_CHITTERING_HOST:
-      *csvida = CARD_ID_GRAF_RATS;
-      *csvidb = CARD_ID_MIDNIGHT_SCAVENGERS;
-      return;
-    case CARD_ID_HANWEIR_THE_WRITHING_TOWNSHIP:
-      *csvida = CARD_ID_HANWEIR_BATTLEMENTS;
-      *csvidb = CARD_ID_HANWEIR_GARRISON;
-      return;
-    case CARD_ID_BRISELA_VOICE_OF_NIGHTMARES:
-      *csvida = CARD_ID_GISELA_THE_BROKEN_BLADE;
-      *csvidb = CARD_ID_BRUNA_THE_FADING_LIGHT;
-      return;
-    default:
-      *csvida = csvid;
-      *csvidb = -1;
-  }
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void kill_target0(int player, int card, kill_t kill_mode);
-
-/* ManalinkEh 2022: 0x26b5a30; original functions/deck.c:1544. */
-void kill_target0(int player, int card, kill_t kill_mode)
-{
-  int target_card;
-  int target_player;
-  card_instance_t *instance;
-
-  instance = get_card_instance(player, card);
-  target_card = instance->targets[0].card;
-  target_player = instance->targets[0].player;
-
-  if ((-1 < target_player) && (-1 < target_card))
-  {
-    kill_card_impl(target_player, target_card, kill_mode, 0);
-    return;
-  }
-  return;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int count_iid_in_rfg(int player, int iid);
-
-/* ManalinkEh 2022: 0x26b2e90; original functions/deck.c:345. */
-int add_card_to_hand_invisible(int player, int iid)
-{
-  unsigned int saved_state;
-  int card;
-  card_instance_t *instance;
-
-  card = add_card_to_hand(player, iid);
-  if (-1 < card)
-  {
-
-    instance = get_card_instance(player, card);
-    saved_state = instance->state;
-    hand_count[player] = hand_count[player] + -1;
-    instance->state = saved_state | 0x20;
-  }
-  return card;
-}
-
-/* ManalinkEh 2022: 0x26b7650; original functions/deck.c:2108. */
-int count_iid_in_rfg(int player, int iid)
-{
-  int *exile;
-  int exile_index;
-  int matches;
-
-  exile = rfg_ptr[player];
-  exile_index = count_rfg(player);
-  matches = 0;
-  if (-1 < exile_index)
-  {
-    do
-    {
-      if (exile[exile_index] == iid)
-      {
-        matches = matches + 1;
-      }
-      exile_index = exile_index + -1;
-    } while (exile_index != -1);
-  }
-  return matches;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-card_instance_t *on_stack(int player, int card);
-
-/* ManalinkEh 2022: 0x26b33d0; original functions/deck.c:417. */
-card_instance_t *on_stack(int player, int card)
-{
-  card_instance_t *instance;
-
-  instance = get_card_instance(player, card);
-  if (((instance->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)) == 0x20) &&
-      (-1 < instance->internal_card_id))
-  {
-    return instance;
-  }
-  return NULL;
-}
-
-
-/* ManalinkEh 2022: 0x26b2a10; original functions/deck.c:147. */
-void memcpy_inst_and_ext(card_instance_t *dest, const card_instance_t *src)
-{
-  card_ext_t *ext = dest->ext;
-  memcpy(ext, src->ext, sizeof(*ext));
-  memcpy(dest, src, sizeof(*dest));
-  dest->ext = ext;
-}
-
-
-/* ManalinkEh 2022: 0x26b36e0; original functions/deck.c:542. */
-int set_inst_info(card_instance_t *inst, int cid, uint32_t data, uint16_t data2)
-{
-  inst_info_t *entries = inst->ext->inst_info_data;
-  int slot;
-  for (slot = 0; slot < 6; ++slot)
-    if ((uint32_t)entries[slot].id == (uint32_t)cid)
-      break;
-  if (slot == 6)
-  {
-    for (slot = 0; slot < 6; ++slot)
-      if (entries[slot].id == 0)
-        break;
-    if (slot == 6)
-      return 0;
-  }
-  entries[slot].id = (uint16_t)cid;
-  entries[slot].data2 = data2;
-  entries[slot].data = data;
-  return 1;
-}
-
-
-/* ManalinkEh 2022: 0x26b3740; original functions/deck.c:584. */
-inst_info_t inst_info(card_instance_t *inst, int cid)
-{
-  inst_info_t *entries = inst->ext->inst_info_data;
-  int slot;
-  for (slot = 0; slot < 6; ++slot)
-  {
-    if ((uint32_t)entries[slot].id == (uint32_t)cid)
-      return entries[slot];
-    if (entries[slot].id == 0)
-      break;
-  }
-  if (slot == 6)
-    slot = 5;
-  entries[slot].id = (uint16_t)cid;
-  entries[slot].data2 = 0;
-  entries[slot].data = 0;
-  return entries[slot];
-}
-
-
-/* ManalinkEh 2022: 0x26b3870; original functions/deck.c:608. */
-int increment_data2(card_instance_t *inst, int cid)
-{
-  inst_info_t initial = inst_info(inst, cid);
-  inst_info_t second = inst_info(inst, cid);
-  return set_inst_info(inst, cid, initial.data, (uint16_t)(second.data2 + 1));
-}
-
-
-/* ManalinkEh 2022: 0x26b38f0; original functions/deck.c:615. */
-void clear_info(card_instance_t *inst, int cid)
-{
-  inst_info_t *entries = inst->ext->inst_info_data;
-  for (int slot = 0; slot < 6; ++slot)
-  {
-    if (entries[slot].id == 0)
-      return;
-    while ((uint32_t)entries[slot].id == (uint32_t)cid)
-    {
-      if (slot < 5)
-        memmove(&entries[slot], &entries[slot + 1], (5 - slot) * sizeof(*entries));
-      entries[5].id = 0;
-    }
-  }
-}
-
-
-/* ManalinkEh 2022: 0x26b3990; original functions/deck.c:625. */
-int store_iid(card_instance_t *inst, int16_t generating_id, int16_t stored_iid)
-{
-  inst_stored_iid_t *entries = inst->ext->inst_stored_iids;
-  for (int slot = 0; slot < 12; ++slot)
-    if (entries[slot].generating_id == -1)
-    {
-      entries[slot].generating_id = generating_id;
-      entries[slot].stored_iid = stored_iid;
-      return slot;
-    }
-  return -1;
-}
-
-
-/* ManalinkEh 2022: 0x26b39d0; original functions/deck.c:638. */
-int retrieve_stored_iids(card_instance_t *inst, int16_t generating_id, int16_t *iids)
-{
-  int count = 0;
-  inst_stored_iid_t *entries = inst->ext->inst_stored_iids;
-  for (int slot = 0; slot < 12; ++slot)
-    if (entries[slot].generating_id == generating_id)
-      iids[count++] = entries[slot].stored_iid;
-  return count;
-}
-
-
-/* ManalinkEh 2022: 0x26b3a10; original functions/deck.c:650. */
-void clear_stored_iids(card_instance_t *inst, int16_t generating_id)
-{
-  inst_stored_iid_t *entries = inst->ext->inst_stored_iids;
-  for (int slot = 0; slot < 12; ++slot)
-    if (entries[slot].generating_id == generating_id)
-    {
-      entries[slot].generating_id = -1;
-      entries[slot].stored_iid = -1;
-    }
-}
-
-/* ManalinkEh 2022: 0x26b37f0; original functions/deck.c:603. */
-int increment_data(card_instance_t *inst, int cid)
-{
-  inst_info_t initial = inst_info(inst, cid);
-  inst_info_t second = inst_info(inst, cid);
-  return set_inst_info(inst, cid, initial.data + 1u, second.data2);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int pre_counterspell(int player, int card, int to_counter_player, int to_counter_card);
-
-/* ManalinkEh 2022: 0x26b5e90; original functions/deck.c:1615. */
-int pre_counterspell(int player, int card, int to_counter_player, int to_counter_card)
-{
-  int owner;
-  unsigned char uncounterable_colors;
-  card_instance_t *spell;
-  card_instance_t *live_spell_or_commander;
-  int spell_iid_or_creature;
-  unsigned int counterspell_color;
-  int card_00;
-  int choice_or_result;
-
-  spell = get_card_instance(to_counter_player, to_counter_card);
-  spell_iid_or_creature = spell->internal_card_id;
-  if ((((spell_iid_or_creature == -1) ||
-        (live_spell_or_commander = get_card_instance(to_counter_player, to_counter_card),
-         (live_spell_or_commander->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)) !=
-             0x20)) ||
-       (live_spell_or_commander->internal_card_id < 0)) ||
-      ((spell->token_status & 0x200) != 0))
-  {
-    return 0;
-  }
-  uncounterable_colors = your_spells_cant_be_countered_by_color[to_counter_player];
-  if (uncounterable_colors != 0)
-  {
-    counterspell_color = get_color(player, card);
-    if (counterspell_color == 0)
-    {
-      counterspell_color = 1;
-    }
-    if (((counterspell_color & uncounterable_colors) != 0) &&
-        (choice_or_result = is_being_cast(to_counter_player, to_counter_card),
-         choice_or_result != 0))
-    {
-      return 0;
-    }
-  }
-  if (((((uint8_t)other_game_mode & OGM_EDH) != OGM_NONE) &&
-       (choice_or_result = check_special_flags2(to_counter_player, to_counter_card, 0x1000000),
-        choice_or_result != 0)) &&
-      (choice_or_result = do_dialog(to_counter_player, to_counter_player, to_counter_card, -1, -1,
-                                    " Return Commander to commander\'s zone\n Decline", 0),
-       choice_or_result == 0))
-  {
-    owner = get_owner(to_counter_player, to_counter_card);
-    card_00 = locate_edh_card(owner);
-    if (-1 < card_00)
-    {
-      live_spell_or_commander = get_card_instance(owner, card_00);
-      if (live_spell_or_commander->targets[2].player == spell->original_internal_card_id)
-      {
-        *(uint8_t *)&live_spell_or_commander->targets[3].player = 1;
-      }
-      else if (live_spell_or_commander->targets[2].card == spell->original_internal_card_id)
-      {
-        SET_BYTE1(live_spell_or_commander->targets[3].player) = 1;
-      }
-      if ((-1 < to_counter_player) && (-1 < to_counter_card))
-        kill_card_impl(to_counter_player, to_counter_card, KILL_EXILE, 0);
-      return -1;
-    }
-  }
-  if (((card_flags[player] & CFLAGS_GUILE) != 0) && ((cards_data[spell_iid_or_creature].type & 1) == 0))
-  {
-    if ((-1 < to_counter_player) && (-1 < to_counter_card))
-    {
-      kill_card_impl(to_counter_player, to_counter_card, KILL_EXILE, 0);
-    }
-    if (can_legally_play_iid(player, spell_iid_or_creature) == 0)
-    {
-      return -1;
-    }
-    choice_or_result =
-        dialog_impl(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_RANDOM, DLG_NO_CANCEL, DLG_FULLCARD_ID(
-                    spell_iid_or_creature), "Play this card", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
-    if (choice_or_result != 1)
-    {
-      return -1;
-    }
-    play_card_in_exile_for_free(player, to_counter_player,
-                                (unsigned int)cards_data[spell_iid_or_creature].id);
-    return -1;
-  }
-  dispatch_event_with_attacker(to_counter_player, to_counter_card, EVENT_COUNTERSPELL, player,
-                               card);
-  if (is_what(player, card, 0x20) == 0)
-  {
-    play_sound_effect(WAV_INTERUPT);
-  }
-  spell_iid_or_creature = is_what(to_counter_player, to_counter_card, 2);
-  if ((to_counter_player != player) && (spell_iid_or_creature != 0))
-  {
-    increase_trap_condition(to_counter_player, 0x608, 1);
-  }
-  if (check_special_flags(to_counter_player, to_counter_card, 0x100000) == 0)
-  {
-    return 1;
-  }
-  if ((-1 < to_counter_player) && (-1 < to_counter_card))
-  {
-    kill_card_impl(to_counter_player, to_counter_card, KILL_EXILE, 0);
-  }
-  return -1;
-}
-
-
 #ifndef SHANDALAR
 /* Recovered October 2022 typed consumers and compiler parts. */
 
 /* ManalinkEh 2022: 0x26b9850; original functions/deck.c:2949. */
 
-
-
 /* ManalinkEh 2022: 0x26b98e0; original functions/deck.c:2966. */
-
-
 
 /* ManalinkEh 2022: 0x26b99a0; original functions/deck.c:2991. */
 
-
-
 /* ManalinkEh 2022: 0x26b6500; original functions/deck.c:1688. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b9770; original functions/deck.c:2918. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b3560; original functions/deck.c:479. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* Recovered October 2022 inline mechanics; native callers retain their expansions. */

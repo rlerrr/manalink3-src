@@ -6,6 +6,27 @@ changes to that checkout are needed. The wrapper imports that checkout
 explicitly, so an installed upstream `reccmp-reccmp` cannot silently take its
 place. The current local Python environment already has its dependencies.
 
+The [C750 source-layout receipt](recovery-evidence/source-layout-restoration.json.gz)
+covers function placement, card-description restoration and excess blank-line
+cleanup. Function bodies, literals and conditional branches match `1864623`;
+file-scope tokens match except eight forward declarations. The GCC 9.3 build
+and all 15,169 fixed veneer slots pass. The one comment-bearing tail forwarder
+retains its historical definition hash plus a separately pinned comment
+projection; both definitions must match the same strict forwarding syntax.
+
+The C751 follow-up repositions loose section and skipped-card comments only.
+Whole-file code tokens, definition order and conditional guards match C750;
+no rebuild or comparison rerun was needed. Debug line numbers in the existing
+C750 artifacts still describe the source layout at that build.
+
+Moving definitions changes generated addresses and debug line mappings. Reports
+from C736/C735 are historical snapshots, not scores for this layout build; no
+full comparison rerun was needed for this cleanup. Use the normal comparison
+wrapper when the next behavioral recovery batch needs fresh scores. C750 is the
+latest build receipt; C751 is the latest source-layout receipt. Older review
+sections retain their batch-local
+build and comparison references.
+
 The [C742 constant/event review](recovery-evidence/reccmp-constant-and-shared-event-review.json.gz)
 checks 50 small handlers/helpers selected from unmatched instruction constants,
 skipping earlier queue hints. Native/current event sets and inspected arguments

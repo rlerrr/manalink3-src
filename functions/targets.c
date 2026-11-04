@@ -1,5 +1,7 @@
 #include "manalink.h"
 
+static int get_protections_from_part(int player, int card);
+
 /* Canonical recovered helper declarations. */
 void base_target_definition(int player, int card, target_definition_t *td, int type);
 void default_target_definition(int player, int card, target_definition_t *td, int type);
@@ -120,30 +122,9 @@ int sub_499050(void);
 static int hack_gpf_player = -1;
 static int hack_gpf_card = -1;
 
-
-
 is_protected_from_mode_t protection_mode = IPF_TARGET;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 const char* hack_prepend_prompt = NULL;
-
-
-
-
-
-
 
 int auto_targets[500];
 int auto_targets_target[500];
@@ -151,79 +132,152 @@ int read_auto_target_file = 0;
 
 // Like default_target_definition, but doesn't set illegal_abilities.
 
-
-
-
 // Like default_target_definition_t, but sets TARGET_TYPE_PLANESWALKER, TARGET_ZONE_CREATURE_OR_PLAYER, and TARGET_SPECIAL_OPPONENT.
 
-
-
-
-
-
-
-
-
-
-
-
 // Selects a target into (td->player, td->card)->targets[0].  Loads prompt from Tetx.res.  Sets spell_fizzled if cancelled.
-
 
 /* Selects a target into (td->player, td->card)->targets[ret_location], or into the next unused slot (counting by instance->number_of_targets) if
 	ret_location is -1. */
 
-
 /* Selects a target into next (td->player, td->card)'s unused target slot (counting by instance->number_of_targets).  prompt is used literally, not loaded from Text.res.  Sets
  * spell_fizzled if cancelled. */
 
-
 // Just like pick_up_to_n_targets(), but uses prompt literally instead of loading from Text.res.
-
 
 /* Selects up to num targets starting from (td->player, td->card)->targets[0].  Returns actual number chosen (also in number_of_targets).  Set allow_cancel to 3
  * to show both Done and Cancel buttons.  Sets spell_fizzled only if the Cancel button is clicked, not if the Done button is. */
-
 
 /* Just like pick_up_to_n_targets_noload(), but doesn't change (td->player,td->card)'s number_of_targets or targets array, instead marking targets in
  * marked[][].  If the Cancel button is pushed, returns 0 and sets cancel to 1, but leaves previously-chosen targets set in marked.  marked should be a char
  * array[2][151] initialized to 0.  Set num to -1 to allow any number of targets.  This should only be used for non-targetted things resolving immediately after
  * chosen, since they won't track change of control or be seen by when-this-becomes-targeted triggers. */
 
-
 /* Selects a target into next (player, card)'s unused target slot (counting by instance->number_of_targets), while using (td->player, td->card) as the
  * targeting source.  Sets spell_fizzled if cancelled. */
-
 
 /* Selects a target into next (player, card)'s unused target slot (counting by instance->number_of_targets), while using (td->player, td->card) as the targeting
  * source.  prompt is used literally, not loaded from Text.res.  Sets spell_fizzled if cancelled. */
 
-
 /* Selects a target into ret_location, or (player, card)->targets[0] if NULL.  Targeting source is player/card instead of td->player/td->card.  prompt is used
  * literally, not loaded from Text.res.  Never sets spell_fizzled. */
-
 
 /* If duh mode is on, pick preferred_controller (which is opponent by default) if he's a valid target, or else cancel if that's allowed.
  * Otherwise, forwards to pick_target(td, "TARGET_PLAYER"). */
 
-
 // (player/card) targets 1-player in its targets[0] and returns nonzero, else returns 0.
 
+/* ManalinkEh 2022: 0x265d540; original functions/targets.c:16. */
+keyword_t color_to_protection(color_t color) { return (color & 0x3e) << 10; }
+
+/* ManalinkEh 2022: 0x265d580; original functions/targets.c:107. */
+int has_protection_from_impl(int protected_player, int protected_card, int from_player,
+    int from_card, is_protected_from_mode_t new_protection_mode, keyword_t keywords)
+{
+  keyword_t protection_types = KEYWORD_PROT_CREATURES | KEYWORD_PROT_SORCERIES |
+      KEYWORD_PROT_INSTANTS | KEYWORD_PRISTINE;
+  if ((keywords & protection_types) && from_card != -1 && from_player != -1 &&
+      (keywords & protection_types & get_protections_from_part(from_player, from_card)))
+    return 1;
+  uint32_t initial_event_result = (uint32_t)new_protection_mode << 24;
+  if (protected_card < 0)
+  {
+    if (!(player_bits[protected_player] & PB_PROTECTION))
+      return 0;
+  }
+  else
+  {
+    card_instance_t *instance = get_card_instance(protected_player, protected_card);
+    sp_keyword2_t abilities = instance->ext->sp_keywords2;
+    if (!(abilities & (SP_KEYWORD2_PROT_MISC | SP_KEYWORD2_GRANTED_PROT_MISC)) &&
+        (!(abilities & SP_KEYWORD2_HEXPROOF_MISC) || new_protection_mode != IPF_TARGET ||
+         from_player == protected_player))
+      return 0;
+    if (!(abilities & SP_KEYWORD2_GRANTED_PROT_MISC))
+    {
+      if (is_humiliated(protected_player, protected_card, AL_STATIC))
+        return 0;
+      return (uint32_t)dispatch_event_arbitrary_to_one_card_with_initial_event_result(
+          protected_player, protected_card, EVENT_PROT_MISC, protected_player, protected_card,
+          from_player, from_card, initial_event_result) & 0xffffffU;
+    }
+  }
+  return (uint32_t)dispatch_event_with_attacker_and_initial_event_result(protected_player,
+      protected_card, EVENT_PROT_MISC, from_player, from_card, initial_event_result) & 0xffffffU;
+}
+
+/* ManalinkEh 2022: 0x265d6c0; original functions/targets.c:116. */
+int is_protected_from(int protected_player, int protected_card, int from_player, int from_card,
+                           is_protected_from_mode_t new_protection_mode)
+{
+  keyword_t keywords;
+  int result;
+
+  keywords = KEYWORD_0;
+  if (-1 < protected_card)
+  {
+    keywords = get_abilities(protected_player, protected_card, EVENT_ABILITIES, -1);
+  }
+  result = has_protection_from_impl(protected_player, protected_card, from_player, from_card,
+                                    new_protection_mode, keywords);
+  return result;
+}
+
+void give_shroud_to_player(int player, int card, event_t event){
+	player_bits[player] |= PB_PLAYER_HAS_SHROUD;
+}
+
+void give_hexproof_to_player(int player, int card, event_t event){
+	player_bits[player] |= PB_PLAYER_HAS_HEXPROOF;
+}
+
+/* Legacy 80-byte compatibility wrapper retained; the 84-byte 2022 implementation is below. */
+
+/* ManalinkEh 2022: 0x2661490; original functions/targets.c:1795. */
+int choose_player(int player, int card, int preferred_controller, int allow_cancel)
+{
+  card_instance_t *instance;
+  int result;
+  target_t chosen_player;
+  target_definition_t td;
+
+  instance = get_card_instance(player, card);
+  default_target_definition(player, card, &td, 0);
+  td.preferred_controller = preferred_controller;
+  td.zone = TARGET_ZONE_PLAYERS;
+  td.allow_cancel = allow_cancel;
+  td.illegal_abilities = 0;
+  result = duh_mode(player);
+  if (result != 0)
+  {
+    instance->number_of_targets = '\x01';
+    instance->targets[0].player = preferred_controller;
+    instance->targets[0].card = -1;
+    result = would_validate_target(td.player, td.card, &td, 0);
+    if (result != 0)
+    {
+      return 1;
+    }
+    if ((allow_cancel & 1U) != 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+  }
+  instance->number_of_targets = '\0';
+  result = can_target(&td);
+  if (result != 0)
+  {
+    select_target(player, card, &td, "Choose a player.", &chosen_player);
+  }
+  if (chosen_player.card != -1)
+  {
+    backtrace_and_abort("functions/targets.c:1824\nchosen_player.card == -1");
+  }
+  return chosen_player.player;
+}
 
 /* Returns nonzero if (player/card) can target 1-player, else 0.
  * The difference from target_opponent() is that it doesn't assign the target, increase number_of_targets, or set cancel. */
-
-
-
-
-
-
-
-
-
-
-
-
 
 int is_protected_from_me(int player, int card, int t_player, int t_card){
 
@@ -267,12 +321,22 @@ int is_protected_from_me(int player, int card, int t_player, int t_card){
 	return 0;
 }
 
-void give_shroud_to_player(int player, int card, event_t event){
-	player_bits[player] |= PB_PLAYER_HAS_SHROUD;
-}
-
-void give_hexproof_to_player(int player, int card, event_t event){
-	player_bits[player] |= PB_PLAYER_HAS_HEXPROOF;
+// Populates arr with array of unique creatures controlled by controller_of_target targeted by (player,card), then returns it.
+/* ManalinkEh 2022: 0x2661860; original functions/targets.c:2034. */
+int can_legally_target(int targeting_player, int targeting_card, target_t *targeted)
+{
+  card_instance_t *instance = get_card_instance(targeting_player, targeting_card);
+  if (!instance->number_of_targets)
+    return 0;
+  int selected_card = targeted->card;
+  instance->targets[9].player = targeted->player;
+  instance->targets[9].card = selected_card;
+  set_special_flags2(targeting_player, targeting_card, SF2_SPELLSKITE);
+  int result = call_card_function(targeting_player, targeting_card, EVENT_CAN_CAST);
+  instance->targets[9].player = -1;
+  instance->targets[9].card = -1;
+  remove_special_flags2(targeting_player, targeting_card, SF2_SPELLSKITE);
+  return result;
 }
 
 int target_me(int t_player, int t_card, int player, int card)
@@ -319,6 +383,7 @@ const target_t* becomes_target_of_spell(int player, int card, event_t event, int
   return NULL;
 }
 
+// "(Creature this effect is attached to) gains 'When this creature becomes the target of a spell or ability, sacrifice it.'"
 /* When {t_player,t_card} becomes targeted by a spell or ability controlled by controlled_by, returns the spell or effect.
  * {player,card} is solely the card that highlights for the trigger.  Doesn't check is_humiliated() or in_play(). */
 const target_t* becomes_target_of_spell_or_effect(int player, int card, event_t event, int t_player, int t_card, int controlled_by)
@@ -342,6 +407,7 @@ const target_t* becomes_target_of_spell_or_effect(int player, int card, event_t 
   return NULL;
 }
 
+// "When enchanted creature becomes the target of a spell or ability, sacrifice/destroy/bury/exile (this aura)."
 static int is_targeting_type(int player, int card, int controller_of_target, int or_player, type_t targeted_type, int subtype)
 {
   card_instance_t* instance = get_card_instance(player, card);
@@ -358,7 +424,7 @@ static int is_targeting_type(int player, int card, int controller_of_target, int
   return 0;
 }
 
-// Populates arr with array of unique creatures controlled by controller_of_target targeted by (player,card), then returns it.
+// "When enchanted creature becomes the target of a spell, sacrifice/destroy/bury/exile (this aura)."
 static target_t* fill_arr(int player, int card, int controller_of_target, int or_player, type_t targeted_type, int subtype, target_t* arr)
 {
   card_instance_t* instance = get_card_instance(player, card);
@@ -387,6 +453,8 @@ static target_t* fill_arr(int player, int card, int controller_of_target, int or
 
   return arr;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
 /* The general case.  Returns array of unique targeted_types (and players, if or_player is nonzero) controlled by controller_of_target currently being targeted
  * by a targeting_type (TYPE_EFFECT: an effect; other types: a spell of that type being cast) controlled by controller_of_trigger, ending in a {-1,-1} entry; or
@@ -439,7 +507,6 @@ const target_t* any_creature_becomes_target_of_spell_or_effect(int player, int c
   return any_becomes_target(player, card, event, controller_of_target, 0, TYPE_CREATURE, -1, TYPE_EFFECT|TYPE_NONEFFECT, ANYBODY, RESOLVE_TRIGGER_MANDATORY);
 }
 
-// "(Creature this effect is attached to) gains 'When this creature becomes the target of a spell or ability, sacrifice it.'"
 int attached_creature_gains_sacrifice_when_becomes_target(int player, int card, event_t event)
 {
   card_instance_t* instance;
@@ -455,7 +522,10 @@ int attached_creature_gains_sacrifice_when_becomes_target(int player, int card, 
   return 0;
 }
 
-// "When enchanted creature becomes the target of a spell or ability, sacrifice/destroy/bury/exile (this aura)."
+#ifndef SHANDALAR
+static int get_protections_from_part(int player, int card);
+#endif
+
 int kill_attachment_when_creature_is_targeted(int player, int card, event_t event, kill_t kill_code)
 {
   card_instance_t* instance = get_card_instance(player, card);
@@ -471,7 +541,6 @@ int kill_attachment_when_creature_is_targeted(int player, int card, event_t even
   return 0;
 }
 
-// "When enchanted creature becomes the target of a spell, sacrifice/destroy/bury/exile (this aura)."
 int kill_attachment_when_creature_is_targeted_by_spell(int player, int card, event_t event, kill_t kill_code)
 {
   card_instance_t* instance = get_card_instance(player, card);
@@ -486,135 +555,6 @@ int kill_attachment_when_creature_is_targeted_by_spell(int player, int card, eve
 	}
   return 0;
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x265d540; original functions/targets.c:16. */
-keyword_t color_to_protection(color_t color) { return (color & 0x3e) << 10; }
-
-/* Legacy 80-byte compatibility wrapper retained; the 84-byte 2022 implementation is below. */
-
-
-/* ManalinkEh 2022: 0x2661490; original functions/targets.c:1795. */
-int choose_player(int player, int card, int preferred_controller, int allow_cancel)
-{
-  card_instance_t *instance;
-  int result;
-  target_t chosen_player;
-  target_definition_t td;
-
-  instance = get_card_instance(player, card);
-  default_target_definition(player, card, &td, 0);
-  td.preferred_controller = preferred_controller;
-  td.zone = TARGET_ZONE_PLAYERS;
-  td.allow_cancel = allow_cancel;
-  td.illegal_abilities = 0;
-  result = duh_mode(player);
-  if (result != 0)
-  {
-    instance->number_of_targets = '\x01';
-    instance->targets[0].player = preferred_controller;
-    instance->targets[0].card = -1;
-    result = would_validate_target(td.player, td.card, &td, 0);
-    if (result != 0)
-    {
-      return 1;
-    }
-    if ((allow_cancel & 1U) != 0)
-    {
-      spell_fizzled = 1;
-      return 0;
-    }
-  }
-  instance->number_of_targets = '\0';
-  result = can_target(&td);
-  if (result != 0)
-  {
-    select_target(player, card, &td, "Choose a player.", &chosen_player);
-  }
-  if (chosen_player.card != -1)
-  {
-    backtrace_and_abort("functions/targets.c:1824\nchosen_player.card == -1");
-  }
-  return chosen_player.player;
-}
-
-/* ManalinkEh 2022: 0x2661860; original functions/targets.c:2034. */
-int can_legally_target(int targeting_player, int targeting_card, target_t *targeted)
-{
-  card_instance_t *instance = get_card_instance(targeting_player, targeting_card);
-  if (!instance->number_of_targets)
-    return 0;
-  int selected_card = targeted->card;
-  instance->targets[9].player = targeted->player;
-  instance->targets[9].card = selected_card;
-  set_special_flags2(targeting_player, targeting_card, SF2_SPELLSKITE);
-  int result = call_card_function(targeting_player, targeting_card, EVENT_CAN_CAST);
-  instance->targets[9].player = -1;
-  instance->targets[9].card = -1;
-  remove_special_flags2(targeting_player, targeting_card, SF2_SPELLSKITE);
-  return result;
-}
-
-
-#ifndef SHANDALAR
-static int get_protections_from_part(int player, int card);
-#endif
-
-/* ManalinkEh 2022: 0x265d580; original functions/targets.c:107. */
-int has_protection_from_impl(int protected_player, int protected_card, int from_player,
-    int from_card, is_protected_from_mode_t new_protection_mode, keyword_t keywords)
-{
-  keyword_t protection_types = KEYWORD_PROT_CREATURES | KEYWORD_PROT_SORCERIES |
-      KEYWORD_PROT_INSTANTS | KEYWORD_PRISTINE;
-  if ((keywords & protection_types) && from_card != -1 && from_player != -1 &&
-      (keywords & protection_types & get_protections_from_part(from_player, from_card)))
-    return 1;
-  uint32_t initial_event_result = (uint32_t)new_protection_mode << 24;
-  if (protected_card < 0)
-  {
-    if (!(player_bits[protected_player] & PB_PROTECTION))
-      return 0;
-  }
-  else
-  {
-    card_instance_t *instance = get_card_instance(protected_player, protected_card);
-    sp_keyword2_t abilities = instance->ext->sp_keywords2;
-    if (!(abilities & (SP_KEYWORD2_PROT_MISC | SP_KEYWORD2_GRANTED_PROT_MISC)) &&
-        (!(abilities & SP_KEYWORD2_HEXPROOF_MISC) || new_protection_mode != IPF_TARGET ||
-         from_player == protected_player))
-      return 0;
-    if (!(abilities & SP_KEYWORD2_GRANTED_PROT_MISC))
-    {
-      if (is_humiliated(protected_player, protected_card, AL_STATIC))
-        return 0;
-      return (uint32_t)dispatch_event_arbitrary_to_one_card_with_initial_event_result(
-          protected_player, protected_card, EVENT_PROT_MISC, protected_player, protected_card,
-          from_player, from_card, initial_event_result) & 0xffffffU;
-    }
-  }
-  return (uint32_t)dispatch_event_with_attacker_and_initial_event_result(protected_player,
-      protected_card, EVENT_PROT_MISC, from_player, from_card, initial_event_result) & 0xffffffU;
-}
-
-
-/* ManalinkEh 2022: 0x265d6c0; original functions/targets.c:116. */
-int is_protected_from(int protected_player, int protected_card, int from_player, int from_card,
-                           is_protected_from_mode_t new_protection_mode)
-{
-  keyword_t keywords;
-  int result;
-
-  keywords = KEYWORD_0;
-  if (-1 < protected_card)
-  {
-    keywords = get_abilities(protected_player, protected_card, EVENT_ABILITIES, -1);
-  }
-  result = has_protection_from_impl(protected_player, protected_card, from_player, from_card,
-                                    new_protection_mode, keywords);
-  return result;
-}
-
 
 #ifndef SHANDALAR
 
@@ -649,7 +589,6 @@ static int get_protections_from_part(int player, int card)
   return ((colors & COLOR_TEST_ANY_COLORED) << 10) | protections;
 }
 
-
 /* ManalinkEh 2022: 0x265d550; original functions/targets.c:21. */
 int get_protections_from(int player, int card)
 {
@@ -663,153 +602,35 @@ int get_protections_from(int player, int card)
   return 0;
 }
 
-
-/* ManalinkEh 2022: 0x26601a0; original functions/targets.c:1332. */
-void base_target_definition(int player, int card, target_definition_t *td, int type)
+static int has_misc_protection_from(int protected_player, int protected_card, int from_player,
+                                    int from_card, is_protected_from_mode_t new_protection_mode,
+                                    int allow_granted_protection)
 {
-  td->who_chooses = player;
-  td->preferred_controller = 1 - player;
-  td->player = player;
-  td->allowed_controller = 2;
-  td->zone = 0x200;
-  td->required_type = type;
-  td->illegal_type = 0;
-  td->required_abilities = 0;
-  td->illegal_abilities = 0;
-  td->required_color = 0;
-  td->illegal_color = 0;
-  td->extra = -1;
-  td->required_subtype = -1;
-  td->power_requirement = -1;
-  td->toughness_requirement = -1;
-  td->special = 0;
-  td->required_state = 0;
-  td->illegal_state = 0;
-  td->allow_cancel = 1;
-  td->card = card;
-  td->flags = 0;
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x2660240; original functions/targets.c:1357. */
-void default_target_definition(int player, int card, target_definition_t *td, int type)
-{
-  int result;
-  td->preferred_controller = 1 - player;
-  td->who_chooses = player;
-  td->allowed_controller = 2;
-  td->zone = 0x200;
-  td->required_type = type;
-  td->illegal_type = 0;
-  td->required_abilities = 0;
-  td->illegal_abilities = 0;
-  td->required_color = 0;
-  td->illegal_color = 0;
-  td->extra = -1;
-  td->required_subtype = -1;
-  td->power_requirement = -1;
-  td->toughness_requirement = -1;
-  td->special = 0;
-  td->required_state = 0;
-  td->illegal_state = 0;
-  td->allow_cancel = 1;
-  td->player = player;
-  td->card = card;
-  td->flags = 0;
-  if ((player != -1) && (card != -1))
+  uint32_t initial = (uint32_t)new_protection_mode << 24;
+  if (protected_card < 0)
   {
-    result = get_protections_from_part(player, card);
-    td->illegal_abilities = result;
-    return;
+    if (!(player_bits[protected_player] & PB_PROTECTION))
+      return 0;
   }
-  td->illegal_abilities = 0;
-  return;
+  else
+  {
+    uint32_t flags = get_card_instance(protected_player, protected_card)->ext->sp_keywords2;
+    int granted = allow_granted_protection && (flags & SP_KEYWORD2_GRANTED_PROT_MISC);
+    if (!(flags & SP_KEYWORD2_PROT_MISC) &&
+        (!(flags & 4) || new_protection_mode != IPF_TARGET || from_player == protected_player) && !granted)
+      return 0;
+    if (!granted)
+    {
+      if (is_humiliated(protected_player, protected_card, AL_STATIC))
+        return 0;
+      return dispatch_event_arbitrary_to_one_card_with_initial_event_result(
+          protected_player, protected_card, EVENT_PROT_MISC, protected_player, protected_card,
+          from_player, from_card, (int)initial) & 0xffffff;
+    }
+  }
+  return dispatch_event_with_attacker_and_initial_event_result(
+      protected_player, protected_card, EVENT_PROT_MISC, from_player, from_card, (int)initial) & 0xffffff;
 }
-
-
-/* ManalinkEh 2022: 0x2660300; original functions/targets.c:1364. */
-void opponent_or_pw_target_definition(int player, int card, target_definition_t *td)
-{
-  default_target_definition(player, card, td, 0x100);
-  td->zone = 0x1200;
-  td->special = 0x2000000;
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x2660340; original functions/targets.c:1371. */
-void counterspell_target_definition(int player, int card, target_definition_t *td,
-                                         int type)
-{
-  td->who_chooses = player;
-  td->preferred_controller = 1 - player;
-  td->player = player;
-  td->allowed_controller = 2;
-  td->required_type = type;
-  td->illegal_type = 0;
-  td->required_abilities = 0;
-  td->illegal_abilities = 0;
-  td->required_color = 0;
-  td->illegal_color = 0;
-  td->extra = -1;
-  td->required_subtype = -1;
-  td->power_requirement = -1;
-  td->toughness_requirement = -1;
-  td->required_state = 0;
-  td->illegal_state = 0;
-  td->allow_cancel = 1;
-  td->card = card;
-  td->flags = 0;
-  td->zone = 0;
-  td->special = 2;
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26603e0; original functions/targets.c:1378. */
-void counter_activated_target_definition(int player, int card, target_definition_t *td,
-                                              int type)
-{
-  td->who_chooses = player;
-  td->preferred_controller = 1 - player;
-  td->player = player;
-  td->allowed_controller = 2;
-  td->required_type = type;
-  td->illegal_type = 0;
-  td->required_abilities = 0;
-  td->illegal_abilities = 0;
-  td->required_color = 0;
-  td->illegal_color = 0;
-  td->extra = -1;
-  td->required_subtype = -1;
-  td->power_requirement = -1;
-  td->toughness_requirement = -1;
-  td->required_state = 0;
-  td->illegal_state = 0;
-  td->allow_cancel = 1;
-  td->card = card;
-  td->flags = 0;
-  td->zone = 0;
-  td->special = 0x20000;
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x2660480; original functions/targets.c:1385. */
-void counter_triggered_target_definition(int player, int card, target_definition_t *td,
-                                              int type)
-{
-  default_target_definition(player, card, td, type);
-  td->zone = 0;
-  td->special = 0x8000000;
-  return;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
 
 /* ManalinkEh 2022: 0x265d1a0; original functions/targets.c:217. */
 static int target_match_type(card_instance_t *tgt_instance, int tgt_player, int tgt_card,
@@ -840,7 +661,6 @@ static int target_match_type(card_instance_t *tgt_instance, int tgt_player, int 
     return 1;
   return (type & TARGET_TYPE_DRAW_CARD_LEGACY) && cards_data[iid].id == 0x388;
 }
-
 
 /* ManalinkEh 2022: 0x265d720; original functions/targets.c:260. */
 static int validate_target_impl(int player, int card, int tgt_player, int tgt_card,
@@ -1421,6 +1241,32 @@ epilog:
 #undef FAILURE
 }
 
+/* ManalinkEh 2022: 0x265fcf0; original functions/targets.c:840. */
+int real_validate_target(int tgt_player, int tgt_card, char *return_error_str, int who_chooses,
+                         int allowed_controller, int preferred_controller, int zone,
+                         int required_type, int illegal_type, int required_abilities,
+                         int illegal_abilities, int required_color, int illegal_color, int extra,
+                         int required_subtype, int power_requirement, int toughness_requirement,
+                         int special, int required_state, int illegal_state)
+{
+  int source_player = hack_gpf_player;
+  int source_card = hack_gpf_card;
+  unsigned int flags = 0;
+  if (!(illegal_abilities & KEYWORD_SHROUD))
+    source_player = source_card = -1;
+  else if (source_player >= 0 && source_card >= 0)
+  {
+    if (has_subtype(source_player, source_card, SUBTYPE_AURA))
+      flags = 2;
+    if (has_subtype(source_player, source_card, SUBTYPE_EQUIPMENT))
+      flags |= 4;
+  }
+  return validate_target_impl(
+      source_player, source_card, tgt_player, tgt_card, return_error_str, who_chooses,
+      allowed_controller, preferred_controller, zone, required_type, illegal_type,
+      required_abilities, illegal_abilities, required_color, illegal_color, extra, required_subtype,
+      power_requirement, toughness_requirement, special, required_state, illegal_state, flags);
+}
 
 /* ManalinkEh 2022: 0x265ef60; original functions/targets.c:875. */
 static int target_available_impl(int player, int card, int *return_count,
@@ -1490,6 +1336,41 @@ static int target_available_impl(int player, int card, int *return_count,
   return count > 0;
 }
 
+/* ManalinkEh 2022: 0x265fe80; original functions/targets.c:970. */
+int real_target_available(int *return_count, int test_damage_target_or_source, int who_chooses,
+                          int allowed_controller, int preferred_controller, int zone,
+                          int required_type, int illegal_type, int required_abilities,
+                          int illegal_abilities, int required_color, int illegal_color, int extra,
+                          int required_subtype, int power_requirement, int toughness_requirement,
+                          int special, int required_state, int illegal_state)
+{
+  int source_player = hack_gpf_player;
+  int source_card = hack_gpf_card;
+  unsigned int flags = 0;
+  if (!(illegal_abilities & KEYWORD_SHROUD))
+    source_player = source_card = -1;
+  else if (source_player >= 0 && source_card >= 0)
+  {
+    if (has_subtype(source_player, source_card, SUBTYPE_AURA))
+      flags = 2;
+    if (has_subtype(source_player, source_card, SUBTYPE_EQUIPMENT))
+      flags |= 4;
+  }
+  if ((unsigned int)test_damage_target_or_source < 3)
+  {
+    return target_available_impl(
+        source_player, source_card, return_count, test_damage_target_or_source, who_chooses,
+        allowed_controller, preferred_controller, zone, required_type, illegal_type,
+        required_abilities, illegal_abilities, required_color, illegal_color, extra,
+        required_subtype, power_requirement, toughness_requirement, special, required_state,
+        illegal_state, flags);
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
 
 /* ManalinkEh 2022: 0x265f1f0; original functions/targets.c:1003. */
 static int target_available_maybe_force(
@@ -1529,189 +1410,6 @@ static int target_available_maybe_force(
   return result;
 }
 
-
-/* ManalinkEh 2022: 0x265fcf0; original functions/targets.c:840. */
-int real_validate_target(int tgt_player, int tgt_card, char *return_error_str, int who_chooses,
-                         int allowed_controller, int preferred_controller, int zone,
-                         int required_type, int illegal_type, int required_abilities,
-                         int illegal_abilities, int required_color, int illegal_color, int extra,
-                         int required_subtype, int power_requirement, int toughness_requirement,
-                         int special, int required_state, int illegal_state)
-{
-  int source_player = hack_gpf_player;
-  int source_card = hack_gpf_card;
-  unsigned int flags = 0;
-  if (!(illegal_abilities & KEYWORD_SHROUD))
-    source_player = source_card = -1;
-  else if (source_player >= 0 && source_card >= 0)
-  {
-    if (has_subtype(source_player, source_card, SUBTYPE_AURA))
-      flags = 2;
-    if (has_subtype(source_player, source_card, SUBTYPE_EQUIPMENT))
-      flags |= 4;
-  }
-  return validate_target_impl(
-      source_player, source_card, tgt_player, tgt_card, return_error_str, who_chooses,
-      allowed_controller, preferred_controller, zone, required_type, illegal_type,
-      required_abilities, illegal_abilities, required_color, illegal_color, extra, required_subtype,
-      power_requirement, toughness_requirement, special, required_state, illegal_state, flags);
-}
-
-
-/* ManalinkEh 2022: 0x265fe80; original functions/targets.c:970. */
-int real_target_available(int *return_count, int test_damage_target_or_source, int who_chooses,
-                          int allowed_controller, int preferred_controller, int zone,
-                          int required_type, int illegal_type, int required_abilities,
-                          int illegal_abilities, int required_color, int illegal_color, int extra,
-                          int required_subtype, int power_requirement, int toughness_requirement,
-                          int special, int required_state, int illegal_state)
-{
-  int source_player = hack_gpf_player;
-  int source_card = hack_gpf_card;
-  unsigned int flags = 0;
-  if (!(illegal_abilities & KEYWORD_SHROUD))
-    source_player = source_card = -1;
-  else if (source_player >= 0 && source_card >= 0)
-  {
-    if (has_subtype(source_player, source_card, SUBTYPE_AURA))
-      flags = 2;
-    if (has_subtype(source_player, source_card, SUBTYPE_EQUIPMENT))
-      flags |= 4;
-  }
-  if ((unsigned int)test_damage_target_or_source < 3)
-  {
-    return target_available_impl(
-        source_player, source_card, return_count, test_damage_target_or_source, who_chooses,
-        allowed_controller, preferred_controller, zone, required_type, illegal_type,
-        required_abilities, illegal_abilities, required_color, illegal_color, extra,
-        required_subtype, power_requirement, toughness_requirement, special, required_state,
-        illegal_state, flags);
-  }
-  return 0;
-}
-
-
-/* ManalinkEh 2022: 0x26604c0; original functions/targets.c:1393. */
-int can_target(target_definition_t *td)
-{
-  int result;
-  result = target_available_maybe_force(td->player, td->card, NULL, 0, td->who_chooses, td->allowed_controller,
-      td->preferred_controller, td->zone, td->required_type, td->illegal_type,
-      td->required_abilities, td->illegal_abilities, td->required_color, td->illegal_color,
-      td->extra, td->required_subtype, td->power_requirement, td->toughness_requirement, td->special,
-      td->required_state, td->illegal_state, td->flags, td->allow_cancel);
-  return result;
-}
-
-
-/* ManalinkEh 2022: 0x2660570; original functions/targets.c:1419. */
-int target_available(int player, int card, target_definition_t *td)
-{
-  int count;
-  count = 0;
-  target_available_maybe_force(player, card, &count, 0, td->who_chooses, td->allowed_controller,
-      td->preferred_controller, td->zone, td->required_type, td->illegal_type,
-      td->required_abilities, td->illegal_abilities, td->required_color, td->illegal_color,
-      td->extra, td->required_subtype, td->power_requirement, td->toughness_requirement, td->special,
-      td->required_state, td->illegal_state, td->flags, td->allow_cancel);
-  return count;
-}
-
-
-/* ManalinkEh 2022: 0x2660750; original functions/targets.c:1895. */
-int would_validate_arbitrary_target(target_definition_t *td, int tgt_player, int tgt_card)
-{
-  int result;
-  target_card = tgt_card;
-  target_controller = tgt_player;
-  result = validate_target_impl(
-      td->player, td->card, tgt_player, tgt_card, NULL, td->who_chooses, td->allowed_controller,
-      td->preferred_controller, td->zone, td->required_type, td->illegal_type,
-      td->required_abilities, td->illegal_abilities, td->required_color, td->illegal_color,
-      td->extra, td->required_subtype, td->power_requirement, td->toughness_requirement,
-      td->special, td->required_state, td->illegal_state, td->flags);
-  return result;
-}
-
-
-/* ManalinkEh 2022: 0x2660810; original functions/targets.c:1888. */
-int validate_arbitrary_target(target_definition_t *td, int tgt_player, int tgt_card)
-{
-  int32_t saved_preferred;
-  int result;
-
-  saved_preferred = td->preferred_controller;
-  td->preferred_controller = td->allowed_controller;
-  result = would_validate_arbitrary_target(td, tgt_player, tgt_card);
-  td->preferred_controller = saved_preferred;
-  return result;
-}
-
-
-/* ManalinkEh 2022: 0x2660850; original functions/targets.c:1915. */
-int would_validate_target(int player, int card, target_definition_t *td,
-                               int target_number)
-{
-  card_instance_t *instance;
-  int result;
-
-  instance = get_card_instance(player, card);
-  if ((int)(unsigned int)instance->number_of_targets <= target_number)
-  {
-    target_number = 0;
-  }
-  target_controller = instance->targets[target_number].player;
-  target_card = instance->targets[target_number].card;
-  result = validate_target_impl(
-      player, card, target_controller, target_card, NULL, td->who_chooses, td->allowed_controller,
-      td->preferred_controller, td->zone, td->required_type, td->illegal_type,
-      td->required_abilities, td->illegal_abilities, td->required_color, td->illegal_color,
-      td->extra, td->required_subtype, td->power_requirement, td->toughness_requirement,
-      td->special, td->required_state, td->illegal_state, td->flags);
-  return result;
-}
-
-
-/* ManalinkEh 2022: 0x2661360; original functions/targets.c:1884. */
-int would_valid_target(target_definition_t *td)
-{
-  int result;
-  result = would_validate_target(td->player, td->card, td, 0);
-  return result;
-}
-
-
-/* ManalinkEh 2022: 0x2661710; original functions/targets.c:1908. */
-int validate_target(int player, int card, target_definition_t *td, int target_number)
-{
-  int32_t saved_preferred;
-  int result;
-
-  saved_preferred = td->preferred_controller;
-  td->preferred_controller = td->allowed_controller;
-  result = would_validate_target(player, card, td, target_number);
-  td->preferred_controller = saved_preferred;
-  return result;
-}
-
-
-/* ManalinkEh 2022: 0x2661750; original functions/targets.c:1881. */
-int valid_target(target_definition_t *td)
-{
-  int32_t saved_preferred;
-  int result;
-
-  saved_preferred = td->preferred_controller;
-  td->preferred_controller = td->allowed_controller;
-  result = would_validate_target(td->player, td->card, td, 0);
-  td->preferred_controller = saved_preferred;
-  return result;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x265f3d0; original functions/targets.c:1042. */
 static int select_target_impl(int player, int card, int who_chooses, int allowed_controller,
                               int preferred_controller, int zone, int required_type,
@@ -1920,7 +1618,6 @@ static int select_target_impl(int player, int card, int who_chooses, int allowed
   }
 }
 
-
 /* ManalinkEh 2022: 0x265fb20; original functions/targets.c:1258. */
 static int select_target_maybe_force(
     int player, int card, int who_chooses, int allowed_controller, int preferred_controller,
@@ -1955,7 +1652,6 @@ static int select_target_maybe_force(
   return result;
 }
 
-
 /* ManalinkEh 2022: 0x2660010; original functions/targets.c:1295. */
 int real_select_target(int who_chooses, int allowed_controller, int preferred_controller, int zone,
                        int required_type, int illegal_type, int required_abilities,
@@ -1983,6 +1679,167 @@ int real_select_target(int who_chooses, int allowed_controller, int preferred_co
       required_state, illegal_state, flags, prompt, allow_cancel, ret_tgt);
 }
 
+/* ManalinkEh 2022: 0x26601a0; original functions/targets.c:1332. */
+void base_target_definition(int player, int card, target_definition_t *td, int type)
+{
+  td->who_chooses = player;
+  td->preferred_controller = 1 - player;
+  td->player = player;
+  td->allowed_controller = 2;
+  td->zone = 0x200;
+  td->required_type = type;
+  td->illegal_type = 0;
+  td->required_abilities = 0;
+  td->illegal_abilities = 0;
+  td->required_color = 0;
+  td->illegal_color = 0;
+  td->extra = -1;
+  td->required_subtype = -1;
+  td->power_requirement = -1;
+  td->toughness_requirement = -1;
+  td->special = 0;
+  td->required_state = 0;
+  td->illegal_state = 0;
+  td->allow_cancel = 1;
+  td->card = card;
+  td->flags = 0;
+  return;
+}
+
+/* ManalinkEh 2022: 0x2660240; original functions/targets.c:1357. */
+void default_target_definition(int player, int card, target_definition_t *td, int type)
+{
+  int result;
+  td->preferred_controller = 1 - player;
+  td->who_chooses = player;
+  td->allowed_controller = 2;
+  td->zone = 0x200;
+  td->required_type = type;
+  td->illegal_type = 0;
+  td->required_abilities = 0;
+  td->illegal_abilities = 0;
+  td->required_color = 0;
+  td->illegal_color = 0;
+  td->extra = -1;
+  td->required_subtype = -1;
+  td->power_requirement = -1;
+  td->toughness_requirement = -1;
+  td->special = 0;
+  td->required_state = 0;
+  td->illegal_state = 0;
+  td->allow_cancel = 1;
+  td->player = player;
+  td->card = card;
+  td->flags = 0;
+  if ((player != -1) && (card != -1))
+  {
+    result = get_protections_from_part(player, card);
+    td->illegal_abilities = result;
+    return;
+  }
+  td->illegal_abilities = 0;
+  return;
+}
+
+/* ManalinkEh 2022: 0x2660300; original functions/targets.c:1364. */
+void opponent_or_pw_target_definition(int player, int card, target_definition_t *td)
+{
+  default_target_definition(player, card, td, 0x100);
+  td->zone = 0x1200;
+  td->special = 0x2000000;
+  return;
+}
+
+/* ManalinkEh 2022: 0x2660340; original functions/targets.c:1371. */
+void counterspell_target_definition(int player, int card, target_definition_t *td,
+                                         int type)
+{
+  td->who_chooses = player;
+  td->preferred_controller = 1 - player;
+  td->player = player;
+  td->allowed_controller = 2;
+  td->required_type = type;
+  td->illegal_type = 0;
+  td->required_abilities = 0;
+  td->illegal_abilities = 0;
+  td->required_color = 0;
+  td->illegal_color = 0;
+  td->extra = -1;
+  td->required_subtype = -1;
+  td->power_requirement = -1;
+  td->toughness_requirement = -1;
+  td->required_state = 0;
+  td->illegal_state = 0;
+  td->allow_cancel = 1;
+  td->card = card;
+  td->flags = 0;
+  td->zone = 0;
+  td->special = 2;
+  return;
+}
+
+/* ManalinkEh 2022: 0x26603e0; original functions/targets.c:1378. */
+void counter_activated_target_definition(int player, int card, target_definition_t *td,
+                                              int type)
+{
+  td->who_chooses = player;
+  td->preferred_controller = 1 - player;
+  td->player = player;
+  td->allowed_controller = 2;
+  td->required_type = type;
+  td->illegal_type = 0;
+  td->required_abilities = 0;
+  td->illegal_abilities = 0;
+  td->required_color = 0;
+  td->illegal_color = 0;
+  td->extra = -1;
+  td->required_subtype = -1;
+  td->power_requirement = -1;
+  td->toughness_requirement = -1;
+  td->required_state = 0;
+  td->illegal_state = 0;
+  td->allow_cancel = 1;
+  td->card = card;
+  td->flags = 0;
+  td->zone = 0;
+  td->special = 0x20000;
+  return;
+}
+
+/* ManalinkEh 2022: 0x2660480; original functions/targets.c:1385. */
+void counter_triggered_target_definition(int player, int card, target_definition_t *td,
+                                              int type)
+{
+  default_target_definition(player, card, td, type);
+  td->zone = 0;
+  td->special = 0x8000000;
+  return;
+}
+
+/* ManalinkEh 2022: 0x26604c0; original functions/targets.c:1393. */
+int can_target(target_definition_t *td)
+{
+  int result;
+  result = target_available_maybe_force(td->player, td->card, NULL, 0, td->who_chooses, td->allowed_controller,
+      td->preferred_controller, td->zone, td->required_type, td->illegal_type,
+      td->required_abilities, td->illegal_abilities, td->required_color, td->illegal_color,
+      td->extra, td->required_subtype, td->power_requirement, td->toughness_requirement, td->special,
+      td->required_state, td->illegal_state, td->flags, td->allow_cancel);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2660570; original functions/targets.c:1419. */
+int target_available(int player, int card, target_definition_t *td)
+{
+  int count;
+  count = 0;
+  target_available_maybe_force(player, card, &count, 0, td->who_chooses, td->allowed_controller,
+      td->preferred_controller, td->zone, td->required_type, td->illegal_type,
+      td->required_abilities, td->illegal_abilities, td->required_color, td->illegal_color,
+      td->extra, td->required_subtype, td->power_requirement, td->toughness_requirement, td->special,
+      td->required_state, td->illegal_state, td->flags, td->allow_cancel);
+  return count;
+}
 
 /* ManalinkEh 2022: 0x2660620; original functions/targets.c:1700. */
 int pick_next_target_noload_arbitrary(target_definition_t *td, const char *prompt,
@@ -2007,7 +1864,6 @@ int pick_next_target_noload_arbitrary(target_definition_t *td, const char *promp
   return 0;
 }
 
-
 /* ManalinkEh 2022: 0x2660710; original functions/targets.c:1692. */
 int pick_next_target_arbitrary(target_definition_t *td, const char *prompt, int player,
                                     int card)
@@ -2018,6 +1874,59 @@ int pick_next_target_arbitrary(target_definition_t *td, const char *prompt, int 
   return result;
 }
 
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2660750; original functions/targets.c:1895. */
+int would_validate_arbitrary_target(target_definition_t *td, int tgt_player, int tgt_card)
+{
+  int result;
+  target_card = tgt_card;
+  target_controller = tgt_player;
+  result = validate_target_impl(
+      td->player, td->card, tgt_player, tgt_card, NULL, td->who_chooses, td->allowed_controller,
+      td->preferred_controller, td->zone, td->required_type, td->illegal_type,
+      td->required_abilities, td->illegal_abilities, td->required_color, td->illegal_color,
+      td->extra, td->required_subtype, td->power_requirement, td->toughness_requirement,
+      td->special, td->required_state, td->illegal_state, td->flags);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2660810; original functions/targets.c:1888. */
+int validate_arbitrary_target(target_definition_t *td, int tgt_player, int tgt_card)
+{
+  int32_t saved_preferred;
+  int result;
+
+  saved_preferred = td->preferred_controller;
+  td->preferred_controller = td->allowed_controller;
+  result = would_validate_arbitrary_target(td, tgt_player, tgt_card);
+  td->preferred_controller = saved_preferred;
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2660850; original functions/targets.c:1915. */
+int would_validate_target(int player, int card, target_definition_t *td,
+                               int target_number)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if ((int)(unsigned int)instance->number_of_targets <= target_number)
+  {
+    target_number = 0;
+  }
+  target_controller = instance->targets[target_number].player;
+  target_card = instance->targets[target_number].card;
+  result = validate_target_impl(
+      player, card, target_controller, target_card, NULL, td->who_chooses, td->allowed_controller,
+      td->preferred_controller, td->zone, td->required_type, td->illegal_type,
+      td->required_abilities, td->illegal_abilities, td->required_color, td->illegal_color,
+      td->extra, td->required_subtype, td->power_requirement, td->toughness_requirement,
+      td->special, td->required_state, td->illegal_state, td->flags);
+  return result;
+}
 
 /* ManalinkEh 2022: 0x2660930; original functions/targets.c:1447. */
 int choose_default_target(int player, int card, target_definition_t *td)
@@ -2104,7 +2013,6 @@ int choose_default_target(int player, int card, target_definition_t *td)
   return 0;
 }
 
-
 /* ManalinkEh 2022: 0x2660bb0; original functions/targets.c:1722. */
 int select_target(int player, int card, target_definition_t *td, const char *prompt,
                        target_t *ret_location)
@@ -2160,7 +2068,6 @@ int select_target(int player, int card, target_definition_t *td, const char *pro
   return 1;
 }
 
-
 /* ManalinkEh 2022: 0x2660d50; original functions/targets.c:1520. */
 int pick_target(target_definition_t *td, const char *prompt)
 {
@@ -2174,7 +2081,6 @@ int pick_target(target_definition_t *td, const char *prompt)
   }
   return result;
 }
-
 
 /* ManalinkEh 2022: 0x2660db0; original functions/targets.c:1531. */
 int new_pick_target(target_definition_t *td, const char *prompt, int ret_location,
@@ -2201,7 +2107,6 @@ int new_pick_target(target_definition_t *td, const char *prompt, int ret_locatio
   return result;
 }
 
-
 /* ManalinkEh 2022: 0x2660e50; original functions/targets.c:1552. */
 int pick_next_target_noload(target_definition_t *td, const char *prompt)
 {
@@ -2217,7 +2122,6 @@ int pick_next_target_noload(target_definition_t *td, const char *prompt)
   }
   return result;
 }
-
 
 /* ManalinkEh 2022: 0x2660eb0; original functions/targets.c:1562. */
 int pick_up_to_n_targets_noload(target_definition_t *td, const char *prompt, int num)
@@ -2291,7 +2195,6 @@ int pick_up_to_n_targets_noload(target_definition_t *td, const char *prompt, int
   return instance->number_of_targets;
 }
 
-
 /* ManalinkEh 2022: 0x2661180; original functions/targets.c:1636. */
 int pick_up_to_n_targets(target_definition_t *td, const char *prompt, int num)
 {
@@ -2309,7 +2212,6 @@ int pick_up_to_n_targets(target_definition_t *td, const char *prompt, int num)
   result = pick_up_to_n_targets_noload(td, loaded, num);
   return result;
 }
-
 
 /* ManalinkEh 2022: 0x2661200; original functions/targets.c:1653. */
 int mark_up_to_n_targets_noload(target_definition_t *td, const char *prompt, int num,
@@ -2350,7 +2252,6 @@ int mark_up_to_n_targets_noload(target_definition_t *td, const char *prompt, int
   return num_tgts;
 }
 
-
 /* ManalinkEh 2022: 0x2661390; original functions/targets.c:1766. */
 int pick_player_duh(int player, int card, int preferred_controller, int allow_cancel)
 {
@@ -2390,7 +2291,6 @@ int pick_player_duh(int player, int card, int preferred_controller, int allow_ca
   return (unsigned int)(result != 0);
 }
 
-
 /* ManalinkEh 2022: 0x26615c0; original functions/targets.c:1829. */
 int target_opponent(int player, int card)
 {
@@ -2417,7 +2317,6 @@ int target_opponent(int player, int card)
   return 1;
 }
 
-
 /* ManalinkEh 2022: 0x2661670; original functions/targets.c:1856. */
 int opponent_is_valid_target(int player, int card)
 {
@@ -2438,7 +2337,43 @@ int opponent_is_valid_target(int player, int card)
   return result;
 }
 
+/* ManalinkEh 2022: 0x2661750; original functions/targets.c:1881. */
+int valid_target(target_definition_t *td)
+{
+  int32_t saved_preferred;
+  int result;
 
+  saved_preferred = td->preferred_controller;
+  td->preferred_controller = td->allowed_controller;
+  result = would_validate_target(td->player, td->card, td, 0);
+  td->preferred_controller = saved_preferred;
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2661360; original functions/targets.c:1884. */
+int would_valid_target(target_definition_t *td)
+{
+  int result;
+  result = would_validate_target(td->player, td->card, td, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2661710; original functions/targets.c:1908. */
+int validate_target(int player, int card, target_definition_t *td, int target_number)
+{
+  int32_t saved_preferred;
+  int result;
+
+  saved_preferred = td->preferred_controller;
+  td->preferred_controller = td->allowed_controller;
+  result = would_validate_target(player, card, td, target_number);
+  td->preferred_controller = saved_preferred;
+  return result;
+}
+
+#endif
+
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2661790; original functions/targets.c:1953. */
 int autoselect_target(int player, int card, int i, int j, int k, int who_chooses,
                            int allowed_controller, int preferred_controller, int zone,
@@ -2478,10 +2413,8 @@ int autoselect_target(int player, int card, int i, int j, int k, int who_chooses
 
 #endif
 
-
-
-
 #ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
 /* ManalinkEh 2022: 0x2661a70; original functions/targets.c:2092. */
 target_t *becomes_target_of_subtype_spell(int player, int card, event_t event, int t_player,
                                                int t_card, int controlled_by,
@@ -2519,40 +2452,5 @@ target_t *becomes_target_of_subtype_spell(int player, int card, event_t event, i
     event_result = event_result | trigger_mode;
   }
   return NULL;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
-static int has_misc_protection_from(int protected_player, int protected_card, int from_player,
-                                    int from_card, is_protected_from_mode_t new_protection_mode,
-                                    int allow_granted_protection)
-{
-  uint32_t initial = (uint32_t)new_protection_mode << 24;
-  if (protected_card < 0)
-  {
-    if (!(player_bits[protected_player] & PB_PROTECTION))
-      return 0;
-  }
-  else
-  {
-    uint32_t flags = get_card_instance(protected_player, protected_card)->ext->sp_keywords2;
-    int granted = allow_granted_protection && (flags & SP_KEYWORD2_GRANTED_PROT_MISC);
-    if (!(flags & SP_KEYWORD2_PROT_MISC) &&
-        (!(flags & 4) || new_protection_mode != IPF_TARGET || from_player == protected_player) && !granted)
-      return 0;
-    if (!granted)
-    {
-      if (is_humiliated(protected_player, protected_card, AL_STATIC))
-        return 0;
-      return dispatch_event_arbitrary_to_one_card_with_initial_event_result(
-          protected_player, protected_card, EVENT_PROT_MISC, protected_player, protected_card,
-          from_player, from_card, (int)initial) & 0xffffff;
-    }
-  }
-  return dispatch_event_with_attacker_and_initial_event_result(
-      protected_player, protected_card, EVENT_PROT_MISC, from_player, from_card, (int)initial) & 0xffffff;
 }
 #endif

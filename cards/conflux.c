@@ -1,6 +1,7 @@
 #include "manalink.h"
 
 // Functions
+
 static int conflux_basic_landcycling(int player, int card, event_t event, int colorless, int black,
                                      int blue, int green, int red, int white)
 {
@@ -18,9 +19,6 @@ static int conflux_basic_landcycling(int player, int card, event_t event, int co
   }
   return 0;
 }
-
-
-
 
 // Cards
 
@@ -180,6 +178,13 @@ Creature - Beast 5/3
 
 int card_blood_tyrant(int player, int card, event_t event)
 {
+  /* CARD_ID_BLOOD_TYRANT	10115
+   * Blood Tyrant	|4|U|B|R
+   * Creature - Vampire 5/5
+   * Flying, trample
+   * At the beginning of your upkeep, each player loses 1 life. Put a +1/+1 counter on ~ for each 1 life lost this way.
+   * Whenever a player loses the game, put five +1/+1 counters on ~. */
+
   int result;
   upkeep_trigger_ability(player, card, event, player);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
@@ -296,12 +301,10 @@ Creature - Rhino Beast 5/3
 }
 
 int card_conflux(int player, int card, event_t event){
-/*
-Conflux |3|W|U|R|B|G
-Sorcery
-Search your library for a white card, a blue card, a black card, a red card, and a green card.
-Reveal those cards and put them into your hand. Then shuffle your library.
-*/
+  /* Conflux |3|W|U|R|B|G
+   * Sorcery
+   * Search your library for a white card, a blue card, a black card, a red card, and a green card.
+   * Reveal those cards and put them into your hand. Then shuffle your library. */
 
 	if(event == EVENT_RESOLVE_SPELL ){
 		load_text(0, "COLORWORDS");
@@ -415,6 +418,11 @@ int card_drag_down(int player, int card, event_t event){
 
 int card_dragonsoul_knight(int player, int card, event_t event)
 {
+  /* Dragonsoul Knight	|2|R
+   * Creature - Human Knight 2/2
+   * First strike
+   * |W|U|B|R|G: Until end of turn, this creature becomes a Dragon, gets +5/+3, and gains flying and trample. */
+
   int result;
   card_instance_t *instance;
   if (event == EVENT_RESOLVE_ACTIVATION)
@@ -438,6 +446,37 @@ Creature - Zombie 1/1
 |1|U|R: ~ gets +3/+0 and gains flying until end of turn. */
 
 	return generic_shade(player, card, event, 0, MANACOST_XUR(1, 1, 1), 3, 0, KEYWORD_FLYING, 0);
+}
+
+// zombie outlander --> vanilla
+
+/* ManalinkEh 2022: 0x21e3e60; original cards/conflux.c:442. */
+int card_elder_mastery(int player, int card, event_t event)
+{
+  /* Elder Mastery	|3|U|B|R
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +3/+3 and has flying.
+   * Whenever enchanted creature deals damage to a player, that player discards two cards. */
+
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->damage_target_player >= 0 &&
+      attached_creature_deals_damage(player, card, event,
+                                     DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER))
+  {
+    instance = get_card_instance(player, card);
+    unsigned int packed_damage = instance->targets[1].player;
+    instance->targets[1].player = 0;
+    int times_damaged[2] = {packed_damage & 0xff, packed_damage >> 8 & 0xff};
+    APNAP(p, {
+      while (times_damaged[p])
+      {
+        new_multidiscard(p, 2, 0, player);
+        --times_damaged[p];
+      }
+    });
+  }
+  return generic_aura(player, card, event, player, 3, 3, 0x20, 0, 0, 0, 0);
 }
 
 int card_esperzoa(int player, int card, event_t event){
@@ -527,12 +566,15 @@ int card_ethersworn_adjudicator(int player, int card, event_t event){
 	return 0;
 }
 
-int card_exploding_borders(int player, int card, event_t event){//UNUSEDCARD
-/* CARD_ID_EXPLODING_BORDERS	10140
-Exploding Borders	|2|R|G
-Sorcery
-Domain - Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle your library.
-~ deals X damage to target player, where X is the number of basic land types among lands you control. */
+int card_exploding_borders(int player, int card, event_t event){
+  /* CARD_ID_EXPLODING_BORDERS	10140
+   * Exploding Borders	|2|R|G
+   * Sorcery
+   * Domain - Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle your library.
+   * ~ deals X damage to target player, where X is the number of basic land types among lands you control. */
+
+//UNUSEDCARD
+
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -751,7 +793,6 @@ Basic landcycling |1|W (|1|W, Discard this card: Search your library for a basic
 	return conflux_basic_landcycling(player, card, event, MANACOST_XW(1, 1));
 }
 
-
 int card_gluttonous_slime(int player, int card, event_t event){
 /* CARD_ID_GLUTTONOUS_SLIME	10149
 Gluttonous Slime	|2|G
@@ -767,6 +808,11 @@ Devour 1 (As this enters the battlefield, you may sacrifice any number of creatu
 
 int card_goblin_razerunners(int player, int card, event_t event)
 {
+  /* Goblin Razerunners	|2|R|R	0x2008306
+   * Creature - Goblin Warrior 3/4
+   * |1|R, Sacrifice a land: Put a +1/+1 counter on ~.
+   * At the beginning of your end step, you may have ~ deal damage equal to the number of +1/+1 counters on it to target player or planeswalker. */
+
   int c;
   card_instance_t *instance;
   int trigger_or_mana_result;
@@ -897,6 +943,10 @@ int card_grixis_slavedriver(int player, int card, event_t event)
 }
 
 int card_hellkite_hatchling(int player, int card, event_t event){
+  /* Hellkite Hatchling	|2|R|G
+   * Creature - Dragon 2/2
+   * Devour 1 (As this creature enters, you may sacrifice any number of creatures. It enters with that many +1/+1 counters on it.)
+   * This creature has flying and trample if it devoured a creature. */
 
 	devour(player, card, event, 1);
 
@@ -921,12 +971,11 @@ Exile it at the beginning of the next end step or if it would leave the battlefi
 }
 
 int card_kaleidostone(int player, int card, event_t event){
-/*
-Kaleidostone |2
-Artifact
-When Kaleidostone enters the battlefield, draw a card.
-{5}, {T}, Sacrifice Kaleidostone: Add {W}{U}{B}{R}{G} to your mana pool.
-*/
+  /* Kaleidostone |2
+   * Artifact
+   * When Kaleidostone enters the battlefield, draw a card.
+   * {5}, {T}, Sacrifice Kaleidostone: Add {W}{U}{B}{R}{G} to your mana pool. */
+
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -1014,11 +1063,10 @@ int card_knight_of_the_reliquary(int player, int card, event_t event){
 }
 
 int card_knotvine_mystic(int player, int card, event_t event){
-/*
-Knotvine Mystic |W|R|G
-Creature — Elf Druid 2/2
-{1}, {T}: Add {R}{G}{W} to your mana pool.
-*/
+  /* Knotvine Mystic |W|R|G
+   * Creature — Elf Druid 2/2
+   * {1}, {T}: Add {R}{G}{W} to your mana pool. */
+
 	if( event == EVENT_CAN_ACTIVATE ){
 		return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(1), 0, NULL, NULL);
 	}
@@ -1165,11 +1213,10 @@ int card_martial_coup(int player, int card, event_t event){
 }
 
 int card_master_transmuter(int player, int card, event_t event){
-/*
-Master Transmuter |3|U
-Artifact Creature — Human Artificer 1/2
-{U}, {T}, Return an artifact you control to its owner's hand: You may put an artifact card from your hand onto the battlefield.
-*/
+  /* Master Transmuter |3|U
+   * Artifact Creature — Human Artificer 1/2
+   * {U}, {T}, Return an artifact you control to its owner's hand: You may put an artifact card from your hand onto the battlefield. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1205,11 +1252,10 @@ Artifact Creature — Human Artificer 1/2
 }
 
 int card_matca_rioters(int player, int card, event_t event){
-	/*
-	  Matca Rioters |2|G
-	  Creature - Human Warrior x/x
-	  Domain - Matca Rioters's power and toughness are each equal to the number of basic land types among lands you control.
-	*/
+  /* Matca Rioters |2|G
+   * 	  Creature - Human Warrior x/x
+   * 	  Domain - Matca Rioters's power and toughness are each equal to the number of basic land types among lands you control. */
+
 	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card, AL_STATIC) && player != -1){
 		set_characteristic_pt(count_domain(player, card));
 	}
@@ -1236,11 +1282,15 @@ Whenever ~ blocks a creature, ~ deals damage to that creature's controller equal
 	return 0;
 }
 
-
 int card_might_of_alara_unlocked(int player, int card, event_t event){
+  /* Might of Alara	|G
+   * Instant
+   * Domain - Target creature gets +1/+1 until end of turn for each basic land type among lands you control. */
+
 	// Used externally
 	return vanilla_instant_pump(player, card, event, ANYBODY, player, count_domain(player, card), count_domain(player, card), 0, 0);
 }
+
 int card_might_of_alara(int player, int card, event_t event){
 /* CARD_ID_MIGHT_OF_ALARA	10174
 Might of Alara	|G
@@ -1518,12 +1568,11 @@ int card_obelisk_of_alara2(int player, int card, event_t event){
 }
 
 int card_paleoloth(int player, int card, event_t event){
-/*
-Paleoloth |4|G|G
-Creature — Beast 5/5
-Whenever another creature with power 5 or greater enters the battlefield under your control, you may return target creature
-	card from your graveyard to your hand.
-*/
+  /* Paleoloth |4|G|G
+   * Creature — Beast 5/5
+   * Whenever another creature with power 5 or greater enters the battlefield under your control, you may return target creature
+   * 	card from your graveyard to your hand. */
+
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
@@ -1548,6 +1597,11 @@ Whenever another creature with power 5 or greater enters the battlefield under y
 
 int card_paragon_of_the_amesha(int player, int card, event_t event)
 {
+  /* Paragon of the Amesha	|2|W
+   * Creature - Human Knight 2/2
+   * First strike
+   * |W|U|B|R|G: Until end of turn, this creature becomes an Angel, gets +3/+3, and gains flying and lifelink. */
+
   int result;
   card_instance_t *instance;
   if (event == EVENT_RESOLVE_ACTIVATION)
@@ -1855,6 +1909,9 @@ Exile it at the beginning of the next end step or if it would leave the battlefi
 
 int card_shard_convergence(int player, int card, event_t event)
 {
+  /* Shard Convergence	|3|G
+   * Sorcery
+   * Search your library for a Plains card, an Island card, a Swamp card, and a Mountain card. Reveal those cards, put them into your hand, then shuffle. */
 
   /* Search your library for a Plains card, an Island card, a Swamp card, and a Mountain card. Reveal those cards and put them into your hand. Then shuffle your
    * library. */
@@ -1894,15 +1951,11 @@ int card_sigil_of_the_empty_throne(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
-
 int card_sludge_strider(int player, int card, event_t event){
-/*
-Sludge Strider |1|W|U|B
-Artifact Creature — Insect 3/3
-Whenever another artifact enters the battlefield under your control or another artifact you control leaves the battlefield, you may pay {1}.
-	If you do, target player loses 1 life and you gain 1 life.
-*/ 
-
+  /* Sludge Strider |1|W|U|B
+   * Artifact Creature — Insect 3/3
+   * Whenever another artifact enters the battlefield under your control or another artifact you control leaves the battlefield, you may pay {1}.
+   * 	If you do, target player loses 1 life and you gain 1 life. */
 
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
 		test_definition_t this_test;
@@ -1942,11 +1995,10 @@ Whenever another artifact enters the battlefield under your control or another a
 }
 
 int card_souls_majesty(int player, int card, event_t event){
-/*
-Soul's Majesty |4|G
-Sorcery
-Draw cards equal to the power of target creature you control.
-*/
+  /* Soul's Majesty |4|G
+   * Sorcery
+   * Draw cards equal to the power of target creature you control. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -2030,15 +2082,13 @@ Basic landcycling |1|G (|1|G, Discard this card: Search your library for a basic
      return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
 }
 
-
 int card_telemin_performance(int player, int card, event_t event){
-/*
-Telemin Performance |3|U|U
-Sorcery
-Target opponent reveals cards from the top of his or her library until he or she reveals a creature card.
-That player puts all noncreature cards revealed this way into his or her graveyard, then you put the creature card onto
-	the battlefield under your control.
-*/
+  /* Telemin Performance |3|U|U
+   * Sorcery
+   * Target opponent reveals cards from the top of his or her library until he or she reveals a creature card.
+   * That player puts all noncreature cards revealed this way into his or her graveyard, then you put the creature card onto
+   * 	the battlefield under your control. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -2063,15 +2113,14 @@ That player puts all noncreature cards revealed this way into his or her graveya
 }
 
 int card_thornling(int player, int card, event_t event){
-/*
-Thornling |3|G|G
-Creature — Elemental Shapeshifter 4/4
-{G}: Thornling gains haste until end of turn.
-{G}: Thornling gains trample until end of turn.
-{G}: Thornling gains indestructible until end of turn.
-{1}: Thornling gets +1/-1 until end of turn.
-{1}: Thornling gets -1/+1 until end of turn.
-*/
+  /* Thornling |3|G|G
+   * Creature — Elemental Shapeshifter 4/4
+   * {G}: Thornling gains haste until end of turn.
+   * {G}: Thornling gains trample until end of turn.
+   * {G}: Thornling gains indestructible until end of turn.
+   * {1}: Thornling gets +1/-1 until end of turn.
+   * {1}: Thornling gets -1/+1 until end of turn. */
+
 	if( event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST ){
 		if( current_turn == player ){
 			return generic_shade(player, card, event, 0, MANACOST_X(1), 1, -1, 0, 0);
@@ -2199,10 +2248,102 @@ int card_tukatongue_thallid(int player, int card, event_t event){
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x21e90c0; original cards/conflux.c:2214. */
+int card_unstable_frontier(int player, int card, event_t event)
+{
+  /* Unstable Frontier	""
+   * Land
+   * |T: Add |C.
+   * |T: Target land you control becomes the basic land type of your choice until end of turn. */
+
+  enum
+  {
+    CHOICE_MANA = 1,
+    CHOICE_CHANGE_LAND = 2
+  };
+
+  int result;
+  card_instance_t *instance;
+  int legacy_card;
+  bool not_speculating;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_ACTIVATE)
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      default_target_definition(player, card, &td, 1);
+      td.allowed_controller = player;
+      td.preferred_controller = player;
+      instance = get_card_instance(player, card);
+
+      result = paying_mana();
+      if ((result == 0) && (result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5,
+                                                               0, 0, 0, 0, 0, 0, 0, &td, NULL),
+                            result != 0))
+      {
+        not_speculating = ai_is_speculating != 1;
+        instance->info_slot = 2;
+        if ((not_speculating) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+        {
+          result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Get mana", 1, 1,
+                               "Change land type", 1, 5, 0, 0, 0, 0);
+          if (result == 0)
+          {
+            spell_fizzled = 1;
+            return 0;
+          }
+          if (result == CHOICE_MANA)
+            return mana_producer(player, card, EVENT_ACTIVATE);
+          if (result != CHOICE_CHANGE_LAND)
+          {
+            return 0;
+          }
+        }
+        add_state(player, card, 0x10);
+        generic_activated_ability(
+            player, card, EVENT_ACTIVATE, 6, 0, 0, 0, 0, 0, 0, 0, &td,
+            "Select target land you control it becomes your chosen basic land type.");
+        if (spell_fizzled == 1)
+        {
+          remove_state(player, card, 0x10);
+        }
+        return 0;
+      }
+      instance->info_slot = 1;
+      return mana_producer(player, card, EVENT_ACTIVATE);
+    }
+    if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+    {
+      default_target_definition(player, card, &td, 1);
+      td.allowed_controller = player;
+      td.preferred_controller = player;
+      instance = get_card_instance(player, card);
+      if (event != EVENT_RESOLVE_ACTIVATION)
+      {
+        return 0;
+      }
+      if (instance->info_slot != 2)
+      {
+        return 0;
+      }
+
+      instance = get_card_instance(player, card);
+      result = recorded_rand(player, 5);
+      result = choose_a_land(player, result + 1);
+      legacy_card = create_targetted_legacy_effect(
+          player, card, fx_change_landtype, instance->targets[0].player, instance->targets[0].card);
+      instance = get_card_instance(player, legacy_card);
+      instance->targets[1].player = result;
+      return 0;
+    }
+  }
+  return mana_producer(player, card, event);
+}
+
 // valeron outlander --> vanilla
 
 // vedalken outlander --> esper cormorants
-
 
 int card_voices_from_the_void(int player, int card, event_t event){
 /* CARD_ID_VOICES_FROM_THE_VOID	10227
@@ -2312,121 +2453,4 @@ Put one of those cards into your hand and the rest on the bottom of your library
 	}
 
 	return basic_spell(player, card, event);
-}
-
-// zombie outlander --> vanilla
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x21e3e60; original cards/conflux.c:442. */
-int card_elder_mastery(int player, int card, event_t event)
-{
-  card_instance_t *instance = get_card_instance(player, card);
-  if (instance->damage_target_player >= 0 &&
-      attached_creature_deals_damage(player, card, event,
-                                     DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER))
-  {
-    instance = get_card_instance(player, card);
-    unsigned int packed_damage = instance->targets[1].player;
-    instance->targets[1].player = 0;
-    int times_damaged[2] = {packed_damage & 0xff, packed_damage >> 8 & 0xff};
-    APNAP(p, {
-      while (times_damaged[p])
-      {
-        new_multidiscard(p, 2, 0, player);
-        --times_damaged[p];
-      }
-    });
-  }
-  return generic_aura(player, card, event, player, 3, 3, 0x20, 0, 0, 0, 0);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x21e90c0; original cards/conflux.c:2214. */
-int card_unstable_frontier(int player, int card, event_t event)
-{
-  enum
-  {
-    CHOICE_MANA = 1,
-    CHOICE_CHANGE_LAND = 2
-  };
-
-  int result;
-  card_instance_t *instance;
-  int legacy_card;
-  bool not_speculating;
-  target_definition_t td;
-
-  if (event != EVENT_CAN_ACTIVATE)
-  {
-    if (event == EVENT_ACTIVATE)
-    {
-      default_target_definition(player, card, &td, 1);
-      td.allowed_controller = player;
-      td.preferred_controller = player;
-      instance = get_card_instance(player, card);
-
-      result = paying_mana();
-      if ((result == 0) && (result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5,
-                                                               0, 0, 0, 0, 0, 0, 0, &td, NULL),
-                            result != 0))
-      {
-        not_speculating = ai_is_speculating != 1;
-        instance->info_slot = 2;
-        if ((not_speculating) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
-        {
-          result = dialog_impl(player, card, EVENT_ACTIVATE, DLG_RANDOM, "Get mana", 1, 1,
-                               "Change land type", 1, 5, 0, 0, 0, 0);
-          if (result == 0)
-          {
-            spell_fizzled = 1;
-            return 0;
-          }
-          if (result == CHOICE_MANA)
-            return mana_producer(player, card, EVENT_ACTIVATE);
-          if (result != CHOICE_CHANGE_LAND)
-          {
-            return 0;
-          }
-        }
-        add_state(player, card, 0x10);
-        generic_activated_ability(
-            player, card, EVENT_ACTIVATE, 6, 0, 0, 0, 0, 0, 0, 0, &td,
-            "Select target land you control it becomes your chosen basic land type.");
-        if (spell_fizzled == 1)
-        {
-          remove_state(player, card, 0x10);
-        }
-        return 0;
-      }
-      instance->info_slot = 1;
-      return mana_producer(player, card, EVENT_ACTIVATE);
-    }
-    if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
-    {
-      default_target_definition(player, card, &td, 1);
-      td.allowed_controller = player;
-      td.preferred_controller = player;
-      instance = get_card_instance(player, card);
-      if (event != EVENT_RESOLVE_ACTIVATION)
-      {
-        return 0;
-      }
-      if (instance->info_slot != 2)
-      {
-        return 0;
-      }
-
-      instance = get_card_instance(player, card);
-      result = recorded_rand(player, 5);
-      result = choose_a_land(player, result + 1);
-      legacy_card = create_targetted_legacy_effect(
-          player, card, fx_change_landtype, instance->targets[0].player, instance->targets[0].card);
-      instance = get_card_instance(player, legacy_card);
-      instance->targets[1].player = result;
-      return 0;
-    }
-  }
-  return mana_producer(player, card, event);
 }

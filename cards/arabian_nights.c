@@ -2,6 +2,13 @@
 
 #include "manalink.h"
 
+#ifndef SHANDALAR
+
+static int oubliette_legacy(int player, int card, event_t event);
+int phase_out_target_until_source_leaves_play(int s_player, int s_card, int t_player, int t_card);
+
+#endif
+
 static void mark_creatures(int itgt, int iinfo_slot, int t_player, int t_card)
 {
   int16_t** tgt = (int16_t**)itgt;
@@ -222,7 +229,6 @@ Attacking creatures get +2/+0 until end of turn. */
 	return basic_spell(player, card, event);
 }
 
-
 // bird maiden --> vanilla
 
 int card_bottle_of_suleiman(int player, int card, event_t event){
@@ -273,16 +279,18 @@ At the beginning of your upkeep, you may pay |1. If you do, untap ~. */
 // camel --> hardcoded. Does the ability work at all ?
 
 int card_bazaar_of_baghdad(int player, int card, event_t event){
+  /* CARD_ID_BAZAAR_OF_BAGHDAD	398
+   * Bazaar of Baghdad	""
+   * Land
+   * |T: Draw two cards, then discard three cards. */
+
   enum
   {
     CHOICE_MANA = 1,
     CHOICE_ABILITY = 2
   };
 
-/* CARD_ID_BAZAAR_OF_BAGHDAD	398
-Bazaar of Baghdad	""
-Land
-|T: Draw two cards, then discard three cards. */
+
 	// 0x4A8520
 
 	if (event == EVENT_RESOLVE_SPELL){ play_land_sound_effect(player, card); }
@@ -371,6 +379,10 @@ Whenever ~ becomes tapped, it deals 1 damage to you.
 
 int card_cyclone(int player, int card, event_t event)
 {
+  /* Cyclone	|2|G|G
+   * Enchantment
+   * At the beginning of your upkeep, put a wind counter on this enchantment, then sacrifice this enchantment unless you pay |G for each wind counter on it. If you pay, this enchantment deals damage equal to the number of wind counters on it to each creature and each player. */
+
   // 0x4308f0
 
   /* At the beginning of your upkeep, put a wind counter on ~, then sacrifice ~ unless you pay |G for each wind counter on it. If you pay, ~ deals damage equal
@@ -465,6 +477,11 @@ When you control no |H1Islands, sacrifice ~. */
 }
 
 int card_desert2(int player, int card, event_t event){
+  /* Desert	""
+   * Land - Desert
+   * |T: Add |C.
+   * |T: This land deals 1 damage to target attacking creature. Activate only during the end of combat step. */
+
 /*
 Desert
 Land — Desert
@@ -540,12 +557,11 @@ Land — Desert
 }
 
 int card_desert_nomads(int player, int card, event_t event){
-/*
-Desert Nomads |2|R
-Creature — Human Nomad 2/2
-Desertwalk
-Prevent all damage that would be dealt to Desert Nomads by Deserts.
-*/
+  /* Desert Nomads |2|R
+   * Creature — Human Nomad 2/2
+   * Desertwalk
+   * Prevent all damage that would be dealt to Desert Nomads by Deserts. */
+
 	if( event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card, AL_STATIC) ){
 		if( attacking_card_controller == player && attacking_card == card ){
 			if( count_subtype(1-current_turn, TYPE_LAND, SUBTYPE_DESERT) ){
@@ -592,16 +608,18 @@ Destroy target permanent. */
 }
 
 int card_diamond_valley(int player, int card, event_t event){
+  /* CARD_ID_DIAMOND_VALLEY	410
+   * Diamond Valley	""
+   * Land
+   * |T, Sacrifice a creature: You gain life equal to the sacrificed creature's toughness. */
+
   enum
   {
     CHOICE_MANA = 1,
     CHOICE_ABILITY = 2
   };
 
-/* CARD_ID_DIAMOND_VALLEY	410
-Diamond Valley	""
-Land
-|T, Sacrifice a creature: You gain life equal to the sacrificed creature's toughness. */
+
 	// 0x4A8B40
 
 	if (event == EVENT_RESOLVE_SPELL){
@@ -874,6 +892,11 @@ Land
 
 int card_erg_raiders(int player, int card, event_t event)
 {
+  /* CARD_ID_ERG_RAIDERS	415
+   * Erg Raiders	|1|B
+   * Creature - Human Warrior 2/3
+   * At the beginning of your end step, if ~ didn't attack this turn, ~ deals 2 damage to you unless it came under your control this turn. */
+
   if (event == EVENT_RESOLVE_SPELL ||
       (event == EVENT_DECLARE_ATTACKERS && is_attacking(player, card)))
     get_card_instance(player, card)->info_slot = 0x42;
@@ -888,7 +911,6 @@ int card_erg_raiders(int player, int card, event_t event)
   }
   return 0;
 }
-
 
 static int erhnam_djinn_ai_pick_target(int player, int card, target_definition_t* td)
 {
@@ -1097,12 +1119,11 @@ Artifact
 // flying men --> vanilla
 
 int card_ghazban_ogre(int player, int card, event_t event){
-	/*
-	  Ghazban Ogre |G
-	  Creature - Ogre 2/2
-	  At the beginning of your upkeep, if a player has more life than each other player, the player with the most life gains control of
-	  Ghazban Ogre.
-	*/
+  /* Ghazban Ogre |G
+   * 	  Creature - Ogre 2/2
+   * 	  At the beginning of your upkeep, if a player has more life than each other player, the player with the most life gains control of
+   * 	  Ghazban Ogre. */
+
 	// Used externally
 	if( current_turn == player && upkeep_trigger_mode(player, card, event, (life[player] != life[1-player] ? RESOLVE_TRIGGER_MANDATORY : 0)) ){
 		if( life[player] > life[1-player] ){
@@ -1163,6 +1184,11 @@ This effect doesn't remove Auras already attached to those artifacts. */
 
 int card_hasran_ogress(int player, int card, event_t event)
 {
+  /* CARD_ID_HASRAN_OGRESS	424
+   * Hasran Ogress	|B|B
+   * Creature - Ogre 3/2
+   * Whenever ~ attacks, it deals 3 damage to you unless you pay |2. */
+
   int result;
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
   if (event != EVENT_DAT_ABILITY)
@@ -1330,16 +1356,18 @@ When you control no |H1Islands, sacrifice ~. */
 }
 
 int card_island_of_wak_wak(int player, int card, event_t event){
+  /* CARD_ID_ISLAND_OF_WAK_WAK	428
+   * Island of Wak-Wak	""
+   * Land
+   * |T: Target creature with flying has base power 0 until end of turn. */
+
   enum
   {
     CHOICE_MANA = 1,
     CHOICE_ABILITY = 2
   };
 
-/* CARD_ID_ISLAND_OF_WAK_WAK	428
-Island of Wak-Wak	""
-Land
-|T: Target creature with flying has base power 0 until end of turn. */
+
 
 	// 0x4A8F70
 
@@ -1490,12 +1518,14 @@ Artifact
 
 int card_jeweled_bird(int player, int card, event_t event)
 {
-  // 0x44F560
-
   /* Jeweled Bird	|1
    * Artifact
    * Remove ~ from your deck before playing if you're not playing for ante.
    * |T: Put ~ into the ante. If you do, put all other cards you own from the ante into your graveyard, then draw a card. */
+
+  // 0x44F560
+
+
 
   if (event == EVENT_RESOLVE_ACTIVATION)
 	{
@@ -1911,16 +1941,18 @@ Whenever ~ deals damage to a player, that player loses 1 life at the beginning o
 }
 
 int card_oasis(int player, int card, event_t event){
+  /* CARD_ID_OASIS	445
+   * Oasis	""
+   * Land
+   * |T: Prevent the next 1 damage that would be dealt to target creature this turn. */
+
   enum
   {
     CHOICE_MANA = 1,
     CHOICE_ABILITY = 2
   };
 
-/* CARD_ID_OASIS	445
-Oasis	""
-Land
-|T: Prevent the next 1 damage that would be dealt to target creature this turn. */
+
 
 	// 0x47A010
 
@@ -1959,13 +1991,12 @@ Land
 }
 
 int card_old_man_of_the_sea(int player, int card, event_t event){
-/*
-Old Man of the Sea |1|U|U
-Creature — Djinn 2/3
-You may choose not to untap Old Man of the Sea during your untap step.
-{T}: Gain control of target creature with power less than or equal to Old Man of the Sea's power for as long as Old Man of the Sea
-	remains tapped and that creature's power remains less than or equal to Old Man of the Sea's power.
-*/
+  /* Old Man of the Sea |1|U|U
+   * Creature — Djinn 2/3
+   * You may choose not to untap Old Man of the Sea during your untap step.
+   * {T}: Gain control of target creature with power less than or equal to Old Man of the Sea's power for as long as Old Man of the Sea
+   * 	remains tapped and that creature's power remains less than or equal to Old Man of the Sea's power. */
+
 	choose_to_untap(player, card, event);
 
 	if (!IS_GAA_EVENT(event))
@@ -1988,12 +2019,64 @@ You may choose not to untap Old Man of the Sea during your untap step.
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED+GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_CREATURE");
 }
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22bbcd0; original cards/arabian_nights.c:2127. */
+static int oubliette_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int target_player;
+  if (trigger_condition != TRIGGER_LEAVE_PLAY)
+  {
+    return 0;
+  }
+  if (((card == affected_card) && (affected_card_controller == player)) && (event == EVENT_TRIGGER))
+  {
+    instance = get_card_instance(player, card);
+    if (((instance->targets[1].card == trigger_cause) &&
+         (result = instance->targets[1].player, result == trigger_cause_controller)) &&
+        (result == reason_for_trigger_controller))
+    {
+      target_player = (int)instance->damage_target_player;
+      result = instance->damage_target_card;
+      remove_special_flags3(target_player, result, SF3_CANNOT_PHASE_IN);
+      phase_in(target_player, result);
+      if (instance->targets[2].card == 0x1bf)
+      {
+        tap_card(target_player, result);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
+}
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22c1900; original cards/arabian_nights.c:2148. */
+int phase_out_target_until_source_leaves_play(int s_player, int s_card, int t_player, int t_card)
+{
+  int card;
+  card_instance_t *instance;
+  int result;
+
+  set_special_flags3(t_player, t_card, SF3_CANNOT_PHASE_IN);
+  card = create_targetted_legacy_effect(s_player, s_card, oubliette_legacy, t_player, t_card);
+  instance = get_card_instance(s_player, card);
+  instance->targets[1].player = s_player;
+  instance->targets[1].card = s_card;
+  instance->number_of_targets = '\x02';
+  result = get_id(s_player, s_card);
+  instance->targets[2].card = result;
+  phase_out(t_player, t_card);
+  return card;
+}
+#endif
+
 int card_oubliette(int player, int card, event_t event){
-/*
-Oubliette |1|B|B
-Enchantment
-When Oubliette enters the battlefield, target creature phases out until Oubliette leaves the battlefield.
-*/
+  /* Oubliette |1|B|B
+   * Enchantment
+   * When Oubliette enters the battlefield, target creature phases out until Oubliette leaves the battlefield. */
 
 	if( event == EVENT_CAN_CAST ){
 		return 1;
@@ -2047,6 +2130,7 @@ const char* target_is_destroyed(int who_chooses, int player, int card, int targe
   // Normally, we'd just use td.required_state = TARGET_STATE_DESTROYED, but that will fail if the target can't regenerate.
   return (get_card_instance(player, card)->kill_code == KILL_DESTROY || get_card_instance(player, card)->kill_code == KILL_BURY) ? NULL : EXE_STR(0x786770);	//",destroyed"
 }
+
 const char* target_is_attached_to_a_land(int who_chooses, int player, int card, int targeting_player, int targeting_card)
 {
   card_instance_t* instance = get_card_instance(player, card);
@@ -2059,12 +2143,14 @@ const char* target_is_attached_to_a_land(int who_chooses, int player, int card, 
 
 int card_pyramids(int player, int card, event_t event)
 {
-  // 0x44faf0
-
   /* Pyramids	|6
    * Artifact
    * |2: Choose one - Destroy target Aura attached to a land; or the next time target land would be destroyed this turn, remove all damage marked on it
    * instead. */
+
+  // 0x44faf0
+
+
 
   if (!IS_GAA_EVENT(event))
 	return 0;
@@ -2230,12 +2316,11 @@ int sandals_check(int player, int card, event_t event)
 }
 
 int card_sandals_of_abdallah(int player, int card, event_t event){
-/*
-Sandals of Abdallah |4
-Artifact
-{2}, {T}: Target creature gains islandwalk until end of turn. When that creature dies this turn, destroy Sandals of Abdallah.
-	(A creature with islandwalk can't be blocked as long as defending player controls an Island.)
-*/
+  /* Sandals of Abdallah |4
+   * Artifact
+   * {2}, {T}: Target creature gains islandwalk until end of turn. When that creature dies this turn, destroy Sandals of Abdallah.
+   * 	(A creature with islandwalk can't be blocked as long as defending player controls an Island.) */
+
 	if (!IS_GAA_EVENT(event))
 		return 0;
 
@@ -2366,11 +2451,13 @@ Creature - Plant 0/3
 }
 
 int card_sorceress_queen(int player, int card, event_t event){
-  // 0x4c6f60
-
   /* Sorceress Queen	|1|B|B
    * Creature - Human Wizard 1/1
    * |T: Target creature other than ~ becomes 0/2 until end of turn. */
+
+  // 0x4c6f60
+
+
 
 	if (event == EVENT_ATTACK_RATING && affect_me(player, card))
 		ai_defensive_modifier += 12;
@@ -2481,63 +2568,3 @@ Creatures it was blocking that had become blocked by only ~ this combat become u
 
 	return 0;
 }
-
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 native scalar-word handlers. */
-static int oubliette_legacy(int player, int card, event_t event);
-int phase_out_target_until_source_leaves_play(int s_player, int s_card, int t_player, int t_card);
-
-/* ManalinkEh 2022: 0x22bbcd0; original cards/arabian_nights.c:2127. */
-static int oubliette_legacy(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  int target_player;
-  if (trigger_condition != TRIGGER_LEAVE_PLAY)
-  {
-    return 0;
-  }
-  if (((card == affected_card) && (affected_card_controller == player)) && (event == EVENT_TRIGGER))
-  {
-    instance = get_card_instance(player, card);
-    if (((instance->targets[1].card == trigger_cause) &&
-         (result = instance->targets[1].player, result == trigger_cause_controller)) &&
-        (result == reason_for_trigger_controller))
-    {
-      target_player = (int)instance->damage_target_player;
-      result = instance->damage_target_card;
-      remove_special_flags3(target_player, result, SF3_CANNOT_PHASE_IN);
-      phase_in(target_player, result);
-      if (instance->targets[2].card == 0x1bf)
-      {
-        tap_card(target_player, result);
-      }
-      kill_card(player, card, KILL_EXILE);
-    }
-  }
-  return 0;
-}
-
-
-/* ManalinkEh 2022: 0x22c1900; original cards/arabian_nights.c:2148. */
-int phase_out_target_until_source_leaves_play(int s_player, int s_card, int t_player, int t_card)
-{
-  int card;
-  card_instance_t *instance;
-  int result;
-
-  set_special_flags3(t_player, t_card, SF3_CANNOT_PHASE_IN);
-  card = create_targetted_legacy_effect(s_player, s_card, oubliette_legacy, t_player, t_card);
-  instance = get_card_instance(s_player, card);
-  instance->targets[1].player = s_player;
-  instance->targets[1].card = s_card;
-  instance->number_of_targets = '\x02';
-  result = get_id(s_player, s_card);
-  instance->targets[2].card = result;
-  phase_out(t_player, t_card);
-  return card;
-}
-
-#endif

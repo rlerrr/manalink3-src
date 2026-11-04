@@ -3,6 +3,8 @@
 
 #include "manalink.h"
 
+static void set_misc_protection_impl(int player, int card);
+
 /* Canonical recovered helper declarations. */
 void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
                                    ability_loss_t mode);
@@ -37,19 +39,11 @@ int is_humiliated(int player, int card, ability_loss_t mode);
 /* Uses bits 0-11 of all cards' targets[17].card to indicate non-mana activated abilities removed (0-3), all activated abilities removed (4-7), and all
  * abilities removed (8-11).  Just in case one of these types of removal is imposed 16 times. */
 
-
-
-
-
-
-
 int is_humiliated_by_instance(card_instance_t *instance, ability_loss_t mode)
 {
   int flags = instance->targets[17].card;
   return flags > 0 ? flags & mode : 0;
 }
-
-
 
 /* ManalinkEh 2022: 0x26dd430; original functions/abilities.c:47. */
 /* Native public is_humiliated(player, card, mode), with its private worker
@@ -61,10 +55,6 @@ int is_humiliated(int player, int card, ability_loss_t mode)
   int flags = get_card_instance(player, card)->targets[17].card;
   return flags > 0 ? flags & mode : 0;
 }
-
-
-
-
 
 static void real_humiliation(int t_player, int t_card, int mode){
 	card_instance_t* instance = get_card_instance(t_player, t_card);
@@ -142,9 +132,6 @@ static int is_pt_effect(int player, int card){
 	return 0;
 }
 
-
-
-
 int real_set_pt(int player, int card, int t_player, int t_card, int pow, int tou, int mode)
 {
   if (mode & 8)
@@ -218,7 +205,6 @@ int set_pt_and_abilities_until_eot(int player, int card, int t_player, int t_car
   return -1;
 }
 
-
 static void set_humiliation_legacy(int player, int card, int mode, test_definition_t *hc){
 	card_instance_t *instance = get_card_instance(player, card);
 	instance->targets[1].player = hc != NULL ? hc->power : 1;
@@ -229,22 +215,13 @@ static void set_humiliation_legacy(int player, int card, int mode, test_definiti
 	instance->targets[3].card = hc != NULL ? hc->subtype : 0;
 }
 
-
-
-
-
 /****************************
 * Abilities in sp_keyword_t *
 ****************************/
 
 // static int block_if_able(int player, int card, event_t event);
 
-
-
-
 // Single-bit abilities
-
-
 
 void cannot_block(int player, int card, event_t event)
 {
@@ -517,494 +494,9 @@ int cannot_regenerate_until_eot(int player, int card, int t_player, int t_card){
 
 // Other abilities
 
-
-
 static int can_block_target_player, can_block_target_card;
-static const char* can_block_target(int who_chooses, int player, int card)
-{
-  if (can_block_me(player, card, can_block_target_player, can_block_target_card))
-	return NULL;
-  else
-	return EXE_STR(0x5b8580);	// localized "Illegal block." from PROMPT_DEFENDWHOM
-}
-
-int can_block(int player, int card){
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = 1-player;
-	td.allowed_controller = 1-player;
-	td.allow_cancel = 0;
-	td.required_state = TARGET_STATE_ATTACKING;
-	td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-	td.extra = (int32_t)can_block_target;
-	can_block_target_player = player;
-	can_block_target_card = card;
-	return can_target(&td);
-}
-
-void select_blocker(int player, int card, int player_who_chooses_blockers){
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = 1-player;
-	td.allowed_controller = 1-player;
-	td.allow_cancel = 0;
-	td.who_chooses = player_who_chooses_blockers;
-	td.required_state = TARGET_STATE_ATTACKING;
-	td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-	td.extra = (int32_t)can_block_target;
-	can_block_target_player = player;
-	can_block_target_card = card;
-
-	card_instance_t *instance = get_card_instance(player, card);
-	while( instance->blocking >= 255 && can_target(&td) ){
-			instance->number_of_targets = 0;
-			if( pick_target(&td, "PROMPT_DEFENDWHOM") ){
-				block(player, card, 1-player, instance->targets[0].card);
-			}
-	}
-}
-
-
-
-const char* target_must_be_able_to_block_me(int who_chooses, int player, int card, int targeting_player, int targeting_card)
-{
-  return get_card_instance(player, card)->blocking == 255 && is_legal_block(player, card, targeting_player, targeting_card) ? NULL : EXE_STR(0x5b8580);	// localized "Illegal block." from PROMPT_DEFENDWHOM
-}
-
-
-
-int everybody_must_block_me(int player, int card, event_t event)
-{
-  lure_effect(player, card, event, player, card, 1, -1, 0, NULL);
-  return 0;
-}
-
-void subtype_must_block_me(int player, int card, event_t event, subtype_t subtype, const char* prompt)
-{
-  lure_effect(player, card, event, player, card, 1, subtype, 0, prompt);
-}
-
-int must_be_blocked(int player, int card, event_t event)
-{
-  lure_effect(player, card, event, player, card, 0, -1, 0, NULL);
-  return 0;
-}
-
-static int target_must_block_me_legacy(int player, int card, event_t event)
-{
-  if (trigger_condition == TRIGGER_MUST_BLOCK &&
-      (event == EVENT_TRIGGER || event == EVENT_RESOLVE_TRIGGER) && affect_me(player, card))
-  {
-    card_instance_t *instance = get_card_instance(player, card), *luring, *lured;
-
-    int luring_player = instance->damage_source_player;
-    int luring_card = instance->damage_source_card;
-
-    int lured_player = instance->damage_target_player;
-    int lured_card = instance->damage_target_card;
-
-    if (luring_player == current_turn &&
-        reason_for_trigger_controller ==
-            ((event_flags & EF_ATTACKER_CHOOSES_BLOCKERS) ? current_turn : 1 - current_turn) &&
-        (luring = in_play(luring_player, luring_card)) && (luring->state & STATE_ATTACKING)
-
-        && luring_player != lured_player && (lured = in_play(lured_player, lured_card)) &&
-        lured->blocking == 255 &&
-        is_legal_block(lured_player, lured_card, luring_player, luring_card))
-    {
-      if (event == EVENT_TRIGGER)
-        event_result |= RESOLVE_TRIGGER_MANDATORY;
-
-      if (event == EVENT_RESOLVE_TRIGGER)
-        block(lured_player, lured_card, luring_player, luring_card);
-    }
-  }
-
-  if ((event == EVENT_CLEANUP && (get_card_instance(player, card)->targets[2].player & 1)) ||
-      (event == EVENT_PHASE_CHANGED && current_phase == PHASE_AFTER_BLOCKING &&
-       (get_card_instance(player, card)->targets[2].player & 2)))
-    kill_card(player, card, KILL_EXILE);
-
-  return 0;
-}
-
-int target_must_block_me(int player, int card, int t_player, int t_card, int mode){
-	// bitfields_for_mode
-	// 1 --> Effect ends at eot
-	int legacy_card = create_targetted_legacy_effect(player, card, &target_must_block_me_legacy, t_player, t_card);
-	card_instance_t *legacy_instance = get_card_instance(player, legacy_card);
-	legacy_instance->targets[2].player = mode;
-	return legacy_card;
-}
-
-int exalted(int player, int card, event_t event, int ability, int sp_ability)
-{
-  if (declare_attackers_trigger(player, card, event, DAT_ATTACKS_ALONE|DAT_TRACK, player, -1))
-	{
-	  card_instance_t* instance = get_card_instance(player, card);
-	  int attacker = BYTE0(instance->targets[2].player);
-	  if (in_play(player, attacker))
-		pump_ability_until_eot(player, card, player, attacker, 1, 1, ability, sp_ability);
-
-	  return attacker;
-	}
-
-  return -1;
-}
-
-int check_for_flanking_removal(int player, int card)
-{
-  if (!check_state(player, card, 0x44))
-    return 0;
-
-  int opponent = 1 - player;
-  for (int candidate = 0; candidate < active_cards_count[opponent]; ++candidate)
-  {
-    if (in_play(opponent, candidate) && get_id(opponent, candidate) == 0x962)
-    {
-      if (opponent == -1 || candidate == -1 || !is_humiliated(opponent, candidate, AL_KEY))
-        return 1;
-    }
-  }
-  return 0;
-}
-
-
-
-void flanking(int player, int card, event_t event)
-{
-  granted_flanking(player, card, player, card, event);
-}
-
-int flash(int player, int card, event_t event){
-	// Must also be set as type instant
-	if (event == EVENT_CAN_CAST){
-		return 1;
-	} else if (event == EVENT_CAST_SPELL && affect_me(player, card)){
-		ai_modifier -= 16;
-	}
-	return 0;
-}
-
-int freeze_when_damage(int player, int card, event_t event)
-{
-  target_t target;
-  card_instance_t *instance;
-  int result;
-
-  instance = get_card_instance(player, card);
-  instance->ext->sp_keywords = instance->ext->sp_keywords | 0x1000000;
-  if (((player != -1) && (card != -1)) &&
-      (result = is_humiliated(player, card, AL_TRIG), result != 0))
-  {
-    return 0;
-  }
-  damage_effects(player, card, event);
-  if (((2 < instance->targets[1].player) && (trigger_condition == TRIGGER_DEAL_DAMAGE)) &&
-      ((card == affected_card &&
-        ((player == affected_card_controller && (reason_for_trigger_controller == player))))))
-  {
-    result = 2;
-    do
-    {
-      target = instance->targets[result];
-      ++result;
-      effect_frost_titan(player, card, target.player, target.card);
-    } while (result < instance->targets[1].player);
-    instance->targets[1].player = 2;
-  }
-  if (event != EVENT_CLEANUP)
-  {
-    return 0;
-  }
-  instance->targets[1].player = 2;
-  return 0;
-}
-
-void give_haste(int player, int card) // Avoid!
-{
-  card_instance_t *instance = in_play(player, card);
-  if (instance)
-    instance->state &= ~0x30000U;
-}
-
-void haste(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    instance = get_card_instance(player, card);
-    instance->ext->sp_keywords = instance->ext->sp_keywords | 4;
-    return;
-  }
-  return;
-}
-
-void persist(int player, int card, event_t event)
-{
-  if (count_minus1_minus1_counters(player, card) <= 0)
-	{
-	  nice_creature_to_sacrifice(player, card);
-
-	  int owner, position;
-	  if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY)
-		  && find_in_owners_graveyard(player, card, &owner, &position))
-		reanimate_permanent(owner, -1, owner, position, REANIMATE_MINUS1_MINUS1_COUNTER);	// -1 for card doesn't abort since no legacy is added
-	}
-}
-
-
-
-/*************************
-* Detection of abilities *
-*************************/
-
-int check_for_ability(int player, int card, int keyword){
-	if( card != -1 ){
-		if( get_abilities(player, card, EVENT_ABILITIES, -1) & keyword ){
-			return 1;
-		}
-	}
-	else{
-		int count = 0;
-		while( count < active_cards_count[player] ){
-				if( in_play(player, count) && is_what(player, count, TYPE_CREATURE) ){
-					if( get_abilities(player, count, EVENT_ABILITIES, -1) & keyword ){
-						return 1;
-					}
-				}
-				count++;
-		}
-	}
-	return 0;
-}
-
-
-
-
-
-
-
-
-
-void set_special_abilities(int player, int card, int type, int value)
-{
-  if (card != -1)
-  {
-    get_card_instance(player, card)->ext->sp_keywords |= value;
-    return;
-  }
-  for (int p = 0; p < 2; ++p)
-    if (p == player || player == ANYBODY)
-      for (int c = active_cards_count[p] - 1; c >= 0; --c)
-        if (in_play(p, c) && is_what(p, c, type))
-          get_card_instance(p, c)->ext->sp_keywords |= value;
-}
-
-int legacy_negate_ability_and_special_ability(int player, int card, event_t event)
-{
-
-  if (event == EVENT_ABILITIES)
-  {
-    card_instance_t *instance = get_card_instance(player, card);
-    if (instance->damage_target_player > -1)
-    {
-      if (affect_me(instance->damage_target_player, instance->damage_target_card))
-      {
-        if (instance->targets[1].player > -1)
-        {
-          event_result &= ~instance->targets[1].player;
-        }
-        if (instance->targets[1].card > -1)
-        {
-          remove_special_ability(instance->damage_target_player, instance->damage_target_card,
-                                 instance->targets[1].card);
-        }
-      }
-    }
-  }
-
-  if (event == EVENT_CLEANUP)
-  {
-    kill_card(player, card, KILL_EXILE);
-  }
-
-  return 0;
-}
-
-int effect_on_all_negate_ability_and_special_ability_legacy_attached_to_me(int player, int card,
-                                                                           int effect)
-{
-  // effect = 0 --> check only
-  // effect = 1 -> enable the "control legacy" with the highest timestamp (AKA the most recent)
-  // effect = -1 -> disable all "control legacies"
-  int result = 0;
-  int legacies[100][3];
-  int lc = 0;
-  card_instance_t *inst;
-  int p, c;
-  for (p = 0; p <= 1; ++p)
-  {
-    for (c = active_cards_count[p]; c > -1; c--)
-    {
-      if ((inst = in_play(p, c)) && inst->damage_target_player == player &&
-          inst->damage_target_card == card)
-      {
-        if (is_what(p, c, TYPE_EFFECT) &&
-            inst->info_slot == (int)legacy_negate_ability_and_special_ability)
-        {
-          if (effect == 1 && !check_status(p, c, STATUS_CONTROLLED))
-          {
-            legacies[lc][0] = inst->timestamp;
-            legacies[lc][1] = p;
-            legacies[lc][2] = c;
-            lc++;
-            result = 1;
-          }
-          if (effect == -1)
-          {
-            remove_status(p, c, STATUS_CONTROLLED);
-            result = 1;
-          }
-        }
-      }
-    }
-  }
-  if (lc)
-  {
-    int max_timestamp = 0;
-    int id_of_legacy_to_activate = 0;
-    int i;
-    for (i = 0; i < lc; i++)
-    {
-      if (legacies[i][0] > max_timestamp)
-      {
-        max_timestamp = legacies[i][0];
-      }
-      id_of_legacy_to_activate = i;
-    }
-    add_status(legacies[id_of_legacy_to_activate][1], legacies[id_of_legacy_to_activate][2],
-               STATUS_CONTROLLED | STATUS_INVISIBLE_FX);
-  }
-  return result;
-}
-
-static int create_negate_ability_and_special_ability_until_eot(int player, int card, int t_player, int t_card, keyword_t keyword,
-	int sp_ability)
-{
-	effect_on_all_negate_ability_and_special_ability_legacy_attached_to_me(t_player, t_card, -1);
-	int legacy = create_targetted_legacy_effect(player, card, &legacy_negate_ability_and_special_ability, t_player, t_card);
-	card_instance_t *leg = get_card_instance(player, legacy);
-	leg->targets[1].player = keyword;
-	leg->targets[1].card = sp_ability;
-	leg->targets[2].player = 1;
-	return legacy;
-}
-
-/* Affects all of t_player's creatures if t_card == -1, and all creatures if t_player == 2 as well.  t_player == 2, t_card != -1 is undefined behavior.  Returns
- * created legacy if t_player != 2 and t_card != -1 (i.e., a single creature), otherwise -1. */
-static int negate_ability_and_special_ability_until_eot_impl(int player, int card, int t_player, int t_card, keyword_t keyword, int s_keyword){
-	int i;
-	for(i=0; i<2; i++){
-		if( i == t_player || t_player == ANYBODY ){
-			if( t_card != -1 ){
-				return create_negate_ability_and_special_ability_until_eot(player, card, t_player, t_card, keyword, s_keyword);
-			}
-			else{
-				int count = active_cards_count[i]-1;
-				while( count > -1 ){
-						if( in_play(i, count) && is_what(i, count, TYPE_CREATURE) ){
-							create_negate_ability_and_special_ability_until_eot(player, card, i, count, keyword, s_keyword);
-						}
-						count--;
-				}
-			}
-		}
-	}
-	return -1;
-}
-
-int negate_ability_until_eot(int player, int card, int t_player, int t_card, keyword_t keyword){
-	return negate_ability_and_special_ability_until_eot_impl(player, card, t_player, t_card, keyword, 0);
-}
-
-int negate_ability_and_special_ability_until_eot(int player, int card, int t_player, int t_card, keyword_t keyword, int s_keyword){
-	return negate_ability_and_special_ability_until_eot_impl(player, card, t_player, t_card, keyword, s_keyword);
-}
-
-/* Native colored protection contributes protection bits during EVENT_ABILITIES. */
-
-int generic_protection_from(int player, int card, event_t event, color_test_t cols)
-{
-  if (event == EVENT_ABILITIES && affect_me(player, card))
-  {
-    int old_event_result = event_result;
-    cols = get_sleighted_color_test(player, card, cols & COLOR_TEST_ANY_COLORED) |
-           (cols & COLOR_TEST_ARTIFACT);
-    event_result = old_event_result | (cols << 10); // COLOR_TEST_BLACK => KEYWORD_PROT_BLACK, etc.
-  }
-
-  return 0;
-}
-
-int protection_from_black(int player, int card, event_t event){
-	return generic_protection_from(player, card, event, COLOR_TEST_BLACK);
-}
-
-int protection_from_red(int player, int card, event_t event){
-	return generic_protection_from(player, card, event, COLOR_TEST_RED);
-}
-
-int protection_from_blue(int player, int card, event_t event){
-	return generic_protection_from(player, card, event, COLOR_TEST_BLUE);
-}
-
-int protection_from_green(int player, int card, event_t event){
-	return generic_protection_from(player, card, event, COLOR_TEST_GREEN);
-}
-
-int protection_from_white(int player, int card, event_t event){
-	return generic_protection_from(player, card, event, COLOR_TEST_WHITE);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-static void set_misc_protection_impl(int player, int card);
-
-/* ManalinkEh 2022: 0x26de880; original functions/abilities.c:665. */
-void misc_protection(int player, int card, event_t event)
-{
-  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    set_misc_protection_impl(player, card);
-    return;
-  }
-  return;
-}
-
-static void get_protection_source_impl(int8_t can_return_dmg, int *eff_acc, int *eff_ac);
-
-/* ManalinkEh 2022: 0x26e09a0; original functions/abilities.c:2930. */
-void get_protection_source(int8_t can_return_dmg, int *eff_acc, int *eff_ac)
-{
-  if (-1 < attacking_card)
-  {
-    get_protection_source_impl(can_return_dmg, eff_acc, eff_ac);
-    return;
-  }
-  return;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void remove_abilities(int player, int card, event_t event, ability_loss_t mode);
-void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
-                              ability_loss_t mode);
-
 /* Retained 208-byte test-layout compatibility implementation.
  * The native 2022 entry is remove_abilities_by_test_2022 below. */
-
 
 /* ManalinkEh 2022: 0x26ddb20; original functions/abilities.c:355. */
 void remove_abilities(int player, int card, event_t event, ability_loss_t mode)
@@ -1152,209 +644,6 @@ int has_an_activated_ability(iid_t iid)
   return ((unsigned int)check_card_for_rules_engine(iid) >> 12) & 1;
 }
 
-/* ManalinkEh 2022: 0x26e0db0; original functions/abilities.c:3063. */
-void protection_from_everything(int player, int card, event_t event)
-{
-  if (event == EVENT_ABILITIES)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-      set_misc_protection_impl(player, card);
-      return;
-    }
-  }
-  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
-           (player == affected_card_controller))
-  {
-    event_result = event_result | 1;
-    return;
-  }
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26dd200; original functions/abilities.c:2930. */
-static void get_protection_source_impl(int8_t can_return_dmg, int *eff_acc, int *eff_ac)
-{
-  *eff_acc = attacking_card_controller;
-  int c = attacking_card;
-  *eff_ac = attacking_card;
-  card_instance_t *inst = get_card_instance(*eff_acc, c);
-  while (inst)
-  {
-    int iid = inst->internal_card_id;
-    int p;
-    if (iid == damage_card)
-    {
-      if (can_return_dmg)
-        return;
-      p = inst->damage_source_player;
-      c = inst->damage_source_card;
-    }
-    else if (iid == activation_card)
-    {
-      p = inst->parent_controller;
-      c = inst->parent_card;
-    }
-    else
-    {
-      csvid_t csvid = cards_data[iid].id;
-      if (csvid == 0x386 && inst->damage_target_player >= 0)
-      {
-        p = inst->damage_target_player;
-        c = inst->damage_target_card;
-      }
-      else
-      {
-        if ((unsigned int)csvid - 0x386U > 1U)
-          return;
-        if (iid == LEGACY_EFFECT_ALADDIN)
-        {
-          p = inst->targets[0].player;
-          c = inst->targets[0].card;
-        }
-        else
-        {
-          p = inst->damage_source_player;
-          c = inst->damage_source_card;
-        }
-      }
-    }
-    inst = get_card_instance(p, c);
-    if (!inst)
-      return;
-    *eff_acc = p;
-    *eff_ac = c;
-  }
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x26e0e10; original functions/abilities.c:3070. */
-void protection_from_colored_spells(int player, int card, event_t event)
-{
-  int player_00;
-  char protection_query;
-  int attacking_source_card;
-  unsigned int source_color;
-  card_instance_t *instance;
-
-  player_00 = attacking_card_controller;
-  attacking_source_card = attacking_card;
-  if (event == EVENT_ABILITIES)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-      set_misc_protection_impl(player, card);
-      return;
-    }
-  }
-  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
-           (player == affected_card_controller))
-  {
-    protection_query = (char)((unsigned int)event_result >> 0x18);
-    if (protection_query == '\x06')
-    {
-      event_result = event_result | 1;
-    }
-    else
-    {
-      if (protection_query == '\x01')
-      {
-
-        instance = get_card_instance(attacking_card_controller, attacking_card);
-        if (instance->internal_card_id != damage_card)
-        {
-          backtrace_and_abort("functions/abilities.c:3078\nget_card_instance(p, "
-                              "c)->internal_card_id == damage_card");
-        }
-        source_color = get_color(player_00, attacking_source_card);
-        if ((source_color & 0x3e) == 0)
-        {
-          return;
-        }
-        if (is_being_cast(player_00, attacking_source_card) == 0)
-        {
-          return;
-        }
-        instance = get_card_instance(player_00, attacking_source_card);
-        if ((instance->targets[3].player & 0x47) != 0)
-        {
-          return;
-        }
-      }
-      else
-      {
-        if (protection_query != '\x05')
-        {
-          return;
-        }
-        if (is_being_cast(attacking_card_controller, attacking_card) == 0)
-        {
-          return;
-        }
-        source_color = get_color(attacking_card_controller, attacking_card);
-        if ((source_color & 0x3e) == 0)
-        {
-          return;
-        }
-      }
-      event_result = event_result | 1;
-    }
-  }
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26dd130; original functions/abilities.c:665. */
-static void set_misc_protection_impl(int player, int card)
-{
-  card_instance_t *instance;
-
-  instance = get_card_instance(player, card);
-  instance->ext->sp_keywords2 = instance->ext->sp_keywords2 | 1;
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26df800; original functions/abilities.c:1250. */
-int get_special_abilities_by_instance(card_instance_t *instance)
-{
-  unsigned int keyword = instance->ext->sp_keywords;
-  if (instance->state & STATE_VIGILANCE)
-  {
-    keyword |= SP_KEYWORD_VIGILANCE;
-    instance->ext->sp_keywords = keyword;
-  }
-  int mode = instance->targets[17].card;
-  if (mode > 0)
-  {
-    if (mode & AL_KEY)
-      keyword = 0;
-    if (mode & AL_INDESTRUCTIBLE)
-      keyword |= SP_KEYWORD_INDESTRUCTIBLE;
-  }
-  return keyword;
-}
-
-
-/* ManalinkEh 2022: 0x26e05a0; original functions/abilities.c:2793. */
-void remove_special_ability(int player, int card, int sa)
-{
-  card_instance_t *instance;
-  instance = get_card_instance(player, card);
-  instance->ext->sp_keywords = instance->ext->sp_keywords & (sa ^ 0xffffffffU);
-  return;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void squirrellink(int player, int card, event_t event);
-void trample_over_planeswalkers(int player, int card, event_t event);
-void misc_hexproof(int player, int card, event_t event);
-void minblockers_3(int player, int card, event_t event);
-void maxblockers_1(int player, int card, event_t event);
-void special_abilities2(int player, int card, event_t event, sp_keyword2_t sp_keyword2);
-
 /* ManalinkEh 2022: 0x26de3c0; original functions/abilities.c:602. */
 void special_abilities2(int player, int card, event_t event, sp_keyword2_t sp_keyword2)
 {
@@ -1391,6 +680,19 @@ void squirrellink(int player, int card, event_t event)
   return;
 }
 
+void haste(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 4;
+    return;
+  }
+  return;
+}
+
 /* ManalinkEh 2022: 0x26de830; original functions/abilities.c:664. */
 void trample_over_planeswalkers(int player, int card, event_t event)
 {
@@ -1407,6 +709,28 @@ void trample_over_planeswalkers(int player, int card, event_t event)
   return;
 }
 
+/* ManalinkEh 2022: 0x26de880; original functions/abilities.c:665. */
+void misc_protection(int player, int card, event_t event)
+{
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    set_misc_protection_impl(player, card);
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26dd130; original functions/abilities.c:665. */
+static void set_misc_protection_impl(int player, int card)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  instance->ext->sp_keywords2 = instance->ext->sp_keywords2 | 1;
+  return;
+}
+
 /* ManalinkEh 2022: 0x26de8b0; original functions/abilities.c:666. */
 void misc_hexproof(int player, int card, event_t event)
 {
@@ -1418,6 +742,279 @@ void misc_hexproof(int player, int card, event_t event)
 
     instance = get_card_instance(player, card);
     instance->ext->sp_keywords2 = instance->ext->sp_keywords2 | 4;
+    return;
+  }
+  return;
+}
+
+static const char* can_block_target(int who_chooses, int player, int card)
+{
+  if (can_block_me(player, card, can_block_target_player, can_block_target_card))
+	return NULL;
+  else
+	return EXE_STR(0x5b8580);	// localized "Illegal block." from PROMPT_DEFENDWHOM
+}
+
+int can_block(int player, int card){
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.preferred_controller = 1-player;
+	td.allowed_controller = 1-player;
+	td.allow_cancel = 0;
+	td.required_state = TARGET_STATE_ATTACKING;
+	td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+	td.extra = (int32_t)can_block_target;
+	can_block_target_player = player;
+	can_block_target_card = card;
+	return can_target(&td);
+}
+
+void select_blocker(int player, int card, int player_who_chooses_blockers){
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.preferred_controller = 1-player;
+	td.allowed_controller = 1-player;
+	td.allow_cancel = 0;
+	td.who_chooses = player_who_chooses_blockers;
+	td.required_state = TARGET_STATE_ATTACKING;
+	td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+	td.extra = (int32_t)can_block_target;
+	can_block_target_player = player;
+	can_block_target_card = card;
+
+	card_instance_t *instance = get_card_instance(player, card);
+	while( instance->blocking >= 255 && can_target(&td) ){
+			instance->number_of_targets = 0;
+			if( pick_target(&td, "PROMPT_DEFENDWHOM") ){
+				block(player, card, 1-player, instance->targets[0].card);
+			}
+	}
+}
+
+const char* target_must_be_able_to_block_me(int who_chooses, int player, int card, int targeting_player, int targeting_card)
+{
+  return get_card_instance(player, card)->blocking == 255 && is_legal_block(player, card, targeting_player, targeting_card) ? NULL : EXE_STR(0x5b8580);	// localized "Illegal block." from PROMPT_DEFENDWHOM
+}
+
+int everybody_must_block_me(int player, int card, event_t event)
+{
+  lure_effect(player, card, event, player, card, 1, -1, 0, NULL);
+  return 0;
+}
+
+void subtype_must_block_me(int player, int card, event_t event, subtype_t subtype, const char* prompt)
+{
+  lure_effect(player, card, event, player, card, 1, subtype, 0, prompt);
+}
+
+int must_be_blocked(int player, int card, event_t event)
+{
+  lure_effect(player, card, event, player, card, 0, -1, 0, NULL);
+  return 0;
+}
+
+static int target_must_block_me_legacy(int player, int card, event_t event)
+{
+  if (trigger_condition == TRIGGER_MUST_BLOCK &&
+      (event == EVENT_TRIGGER || event == EVENT_RESOLVE_TRIGGER) && affect_me(player, card))
+  {
+    card_instance_t *instance = get_card_instance(player, card), *luring, *lured;
+
+    int luring_player = instance->damage_source_player;
+    int luring_card = instance->damage_source_card;
+
+    int lured_player = instance->damage_target_player;
+    int lured_card = instance->damage_target_card;
+
+    if (luring_player == current_turn &&
+        reason_for_trigger_controller ==
+            ((event_flags & EF_ATTACKER_CHOOSES_BLOCKERS) ? current_turn : 1 - current_turn) &&
+        (luring = in_play(luring_player, luring_card)) && (luring->state & STATE_ATTACKING)
+
+        && luring_player != lured_player && (lured = in_play(lured_player, lured_card)) &&
+        lured->blocking == 255 &&
+        is_legal_block(lured_player, lured_card, luring_player, luring_card))
+    {
+      if (event == EVENT_TRIGGER)
+        event_result |= RESOLVE_TRIGGER_MANDATORY;
+
+      if (event == EVENT_RESOLVE_TRIGGER)
+        block(lured_player, lured_card, luring_player, luring_card);
+    }
+  }
+
+  if ((event == EVENT_CLEANUP && (get_card_instance(player, card)->targets[2].player & 1)) ||
+      (event == EVENT_PHASE_CHANGED && current_phase == PHASE_AFTER_BLOCKING &&
+       (get_card_instance(player, card)->targets[2].player & 2)))
+    kill_card(player, card, KILL_EXILE);
+
+  return 0;
+}
+
+int target_must_block_me(int player, int card, int t_player, int t_card, int mode){
+	// bitfields_for_mode
+	// 1 --> Effect ends at eot
+	int legacy_card = create_targetted_legacy_effect(player, card, &target_must_block_me_legacy, t_player, t_card);
+	card_instance_t *legacy_instance = get_card_instance(player, legacy_card);
+	legacy_instance->targets[2].player = mode;
+	return legacy_card;
+}
+
+int exalted(int player, int card, event_t event, int ability, int sp_ability)
+{
+  if (declare_attackers_trigger(player, card, event, DAT_ATTACKS_ALONE|DAT_TRACK, player, -1))
+	{
+	  card_instance_t* instance = get_card_instance(player, card);
+	  int attacker = BYTE0(instance->targets[2].player);
+	  if (in_play(player, attacker))
+		pump_ability_until_eot(player, card, player, attacker, 1, 1, ability, sp_ability);
+
+	  return attacker;
+	}
+
+  return -1;
+}
+
+int check_for_flanking_removal(int player, int card)
+{
+  if (!check_state(player, card, 0x44))
+    return 0;
+
+  int opponent = 1 - player;
+  for (int candidate = 0; candidate < active_cards_count[opponent]; ++candidate)
+  {
+    if (in_play(opponent, candidate) && get_id(opponent, candidate) == 0x962)
+    {
+      if (opponent == -1 || candidate == -1 || !is_humiliated(opponent, candidate, AL_KEY))
+        return 1;
+    }
+  }
+  return 0;
+}
+
+void flanking(int player, int card, event_t event)
+{
+  granted_flanking(player, card, player, card, event);
+}
+
+int flash(int player, int card, event_t event){
+	// Must also be set as type instant
+	if (event == EVENT_CAN_CAST){
+		return 1;
+	} else if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+		ai_modifier -= 16;
+	}
+	return 0;
+}
+
+int freeze_when_damage(int player, int card, event_t event)
+{
+  target_t target;
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  instance->ext->sp_keywords = instance->ext->sp_keywords | 0x1000000;
+  if (((player != -1) && (card != -1)) &&
+      (result = is_humiliated(player, card, AL_TRIG), result != 0))
+  {
+    return 0;
+  }
+  damage_effects(player, card, event);
+  if (((2 < instance->targets[1].player) && (trigger_condition == TRIGGER_DEAL_DAMAGE)) &&
+      ((card == affected_card &&
+        ((player == affected_card_controller && (reason_for_trigger_controller == player))))))
+  {
+    result = 2;
+    do
+    {
+      target = instance->targets[result];
+      ++result;
+      effect_frost_titan(player, card, target.player, target.card);
+    } while (result < instance->targets[1].player);
+    instance->targets[1].player = 2;
+  }
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  instance->targets[1].player = 2;
+  return 0;
+}
+
+void give_haste(int player, int card) // Avoid!
+{
+  card_instance_t *instance = in_play(player, card);
+  if (instance)
+    instance->state &= ~0x30000U;
+}
+
+void persist(int player, int card, event_t event)
+{
+  if (count_minus1_minus1_counters(player, card) <= 0)
+	{
+	  nice_creature_to_sacrifice(player, card);
+
+	  int owner, position;
+	  if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY)
+		  && find_in_owners_graveyard(player, card, &owner, &position))
+		reanimate_permanent(owner, -1, owner, position, REANIMATE_MINUS1_MINUS1_COUNTER);	// -1 for card doesn't abort since no legacy is added
+	}
+}
+
+void rampage(int player, int card, event_t event, int number)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_DECLARE_BLOCKERS)
+  {
+    if (current_turn == player)
+    {
+      if (((card != -1) && (player != -1)) &&
+          (result = is_humiliated(player, card, AL_KEY), result != 0))
+      {
+        return;
+      }
+      result = count_my_blockers(player, card);
+      if (1 < result)
+      {
+        result = (result + -1) * number;
+        pump_until_eot(player, card, player, card, result, result);
+        return;
+      }
+    }
+  }
+  else if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      instance = get_card_instance(player, card);
+      instance->ext->sp_keywords = instance->ext->sp_keywords | 0x40;
+      return;
+    }
+  }
+  else if (((event == EVENT_QUERY_AFF) && (card == affected_card)) &&
+           ((player == affected_card_controller && (attacking_card == 0x40))))
+  {
+    if (((player != -1) && (card != -1)) &&
+        (result = is_humiliated(player, card, AL_KEY), result != 0))
+    {
+      return;
+    }
+    event_result = event_result + number;
+    return;
+  }
+  return;
+}
+
+void menace(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x10000;
     return;
   }
   return;
@@ -1455,6 +1052,68 @@ void maxblockers_1(int player, int card, event_t event)
   return;
 }
 
+void skulk(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x20000;
+    return;
+  }
+  return;
+}
+
+/*************************
+* Detection of abilities *
+*************************/
+
+int check_for_ability(int player, int card, int keyword){
+	if( card != -1 ){
+		if( get_abilities(player, card, EVENT_ABILITIES, -1) & keyword ){
+			return 1;
+		}
+	}
+	else{
+		int count = 0;
+		while( count < active_cards_count[player] ){
+				if( in_play(player, count) && is_what(player, count, TYPE_CREATURE) ){
+					if( get_abilities(player, count, EVENT_ABILITIES, -1) & keyword ){
+						return 1;
+					}
+				}
+				count++;
+		}
+	}
+	return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+static void set_misc_protection_impl(int player, int card);
+
+/* ManalinkEh 2022: 0x26df800; original functions/abilities.c:1250. */
+int get_special_abilities_by_instance(card_instance_t *instance)
+{
+  unsigned int keyword = instance->ext->sp_keywords;
+  if (instance->state & STATE_VIGILANCE)
+  {
+    keyword |= SP_KEYWORD_VIGILANCE;
+    instance->ext->sp_keywords = keyword;
+  }
+  int mode = instance->targets[17].card;
+  if (mode > 0)
+  {
+    if (mode & AL_KEY)
+      keyword = 0;
+    if (mode & AL_INDESTRUCTIBLE)
+      keyword |= SP_KEYWORD_INDESTRUCTIBLE;
+  }
+  return keyword;
+}
+
+static void get_protection_source_impl(int8_t can_return_dmg, int *eff_acc, int *eff_ac);
 
 /* ManalinkEh 2022: 0x26d7530; original functions/abilities.c:1269. */
 static int has_sp_key_by_csvid_impl(int csvid, int sp_key)
@@ -2826,6 +2485,10 @@ static int has_sp_key_by_csvid_impl(int csvid, int sp_key)
   }
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void remove_abilities(int player, int card, event_t event, ability_loss_t mode);
+void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
+                              ability_loss_t mode);
 
 /* ManalinkEh 2022: 0x26df840; original functions/abilities.c:2780. */
 int get_special_abilities(int player, int card)
@@ -2835,7 +2498,6 @@ int get_special_abilities(int player, int card)
   card_instance_t *instance = get_card_instance(player, card);
   return get_special_abilities_by_instance(instance);
 }
-
 
 /* ManalinkEh 2022: 0x26df890; original functions/abilities.c:2786. */
 int check_for_special_ability(int player, int card, int keyword)
@@ -2851,6 +2513,408 @@ int check_for_special_ability(int player, int card, int keyword)
   return special_keywords & keyword;
 }
 
+/* ManalinkEh 2022: 0x26e05a0; original functions/abilities.c:2793. */
+void remove_special_ability(int player, int card, int sa)
+{
+  card_instance_t *instance;
+  instance = get_card_instance(player, card);
+  instance->ext->sp_keywords = instance->ext->sp_keywords & (sa ^ 0xffffffffU);
+  return;
+}
+
+int fx_menace(int player, int card, event_t event)
+{
+  if (get_card_instance(player, card)->damage_target_player > -1)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+
+    special_abilities(instance->damage_target_player, instance->damage_target_card, event,
+                      SP_KEYWORD_MENACE, player, card);
+
+    if (event == EVENT_CLEANUP && is_what(player, card, TYPE_EFFECT))
+    {
+      card_instance_t *inst = get_card_instance(player, card);
+      remove_special_ability(inst->damage_target_player, inst->damage_target_card,
+                             SP_KEYWORD_MENACE);
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+void set_special_abilities(int player, int card, int type, int value)
+{
+  if (card != -1)
+  {
+    get_card_instance(player, card)->ext->sp_keywords |= value;
+    return;
+  }
+  for (int p = 0; p < 2; ++p)
+    if (p == player || player == ANYBODY)
+      for (int c = active_cards_count[p] - 1; c >= 0; --c)
+        if (in_play(p, c) && is_what(p, c, type))
+          get_card_instance(p, c)->ext->sp_keywords |= value;
+}
+
+int legacy_negate_ability_and_special_ability(int player, int card, event_t event)
+{
+
+  if (event == EVENT_ABILITIES)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player > -1)
+    {
+      if (affect_me(instance->damage_target_player, instance->damage_target_card))
+      {
+        if (instance->targets[1].player > -1)
+        {
+          event_result &= ~instance->targets[1].player;
+        }
+        if (instance->targets[1].card > -1)
+        {
+          remove_special_ability(instance->damage_target_player, instance->damage_target_card,
+                                 instance->targets[1].card);
+        }
+      }
+    }
+  }
+
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+
+  return 0;
+}
+
+int effect_on_all_negate_ability_and_special_ability_legacy_attached_to_me(int player, int card,
+                                                                           int effect)
+{
+  // effect = 0 --> check only
+  // effect = 1 -> enable the "control legacy" with the highest timestamp (AKA the most recent)
+  // effect = -1 -> disable all "control legacies"
+  int result = 0;
+  int legacies[100][3];
+  int lc = 0;
+  card_instance_t *inst;
+  int p, c;
+  for (p = 0; p <= 1; ++p)
+  {
+    for (c = active_cards_count[p]; c > -1; c--)
+    {
+      if ((inst = in_play(p, c)) && inst->damage_target_player == player &&
+          inst->damage_target_card == card)
+      {
+        if (is_what(p, c, TYPE_EFFECT) &&
+            inst->info_slot == (int)legacy_negate_ability_and_special_ability)
+        {
+          if (effect == 1 && !check_status(p, c, STATUS_CONTROLLED))
+          {
+            legacies[lc][0] = inst->timestamp;
+            legacies[lc][1] = p;
+            legacies[lc][2] = c;
+            lc++;
+            result = 1;
+          }
+          if (effect == -1)
+          {
+            remove_status(p, c, STATUS_CONTROLLED);
+            result = 1;
+          }
+        }
+      }
+    }
+  }
+  if (lc)
+  {
+    int max_timestamp = 0;
+    int id_of_legacy_to_activate = 0;
+    int i;
+    for (i = 0; i < lc; i++)
+    {
+      if (legacies[i][0] > max_timestamp)
+      {
+        max_timestamp = legacies[i][0];
+      }
+      id_of_legacy_to_activate = i;
+    }
+    add_status(legacies[id_of_legacy_to_activate][1], legacies[id_of_legacy_to_activate][2],
+               STATUS_CONTROLLED | STATUS_INVISIBLE_FX);
+  }
+  return result;
+}
+
+static int create_negate_ability_and_special_ability_until_eot(int player, int card, int t_player, int t_card, keyword_t keyword,
+	int sp_ability)
+{
+	effect_on_all_negate_ability_and_special_ability_legacy_attached_to_me(t_player, t_card, -1);
+	int legacy = create_targetted_legacy_effect(player, card, &legacy_negate_ability_and_special_ability, t_player, t_card);
+	card_instance_t *leg = get_card_instance(player, legacy);
+	leg->targets[1].player = keyword;
+	leg->targets[1].card = sp_ability;
+	leg->targets[2].player = 1;
+	return legacy;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void squirrellink(int player, int card, event_t event);
+void trample_over_planeswalkers(int player, int card, event_t event);
+void misc_hexproof(int player, int card, event_t event);
+void minblockers_3(int player, int card, event_t event);
+void maxblockers_1(int player, int card, event_t event);
+void special_abilities2(int player, int card, event_t event, sp_keyword2_t sp_keyword2);
+
+/* Affects all of t_player's creatures if t_card == -1, and all creatures if t_player == 2 as well.  t_player == 2, t_card != -1 is undefined behavior.  Returns
+ * created legacy if t_player != 2 and t_card != -1 (i.e., a single creature), otherwise -1. */
+static int negate_ability_and_special_ability_until_eot_impl(int player, int card, int t_player, int t_card, keyword_t keyword, int s_keyword){
+	int i;
+	for(i=0; i<2; i++){
+		if( i == t_player || t_player == ANYBODY ){
+			if( t_card != -1 ){
+				return create_negate_ability_and_special_ability_until_eot(player, card, t_player, t_card, keyword, s_keyword);
+			}
+			else{
+				int count = active_cards_count[i]-1;
+				while( count > -1 ){
+						if( in_play(i, count) && is_what(i, count, TYPE_CREATURE) ){
+							create_negate_ability_and_special_ability_until_eot(player, card, i, count, keyword, s_keyword);
+						}
+						count--;
+				}
+			}
+		}
+	}
+	return -1;
+}
+
+int negate_ability_until_eot(int player, int card, int t_player, int t_card, keyword_t keyword){
+	return negate_ability_and_special_ability_until_eot_impl(player, card, t_player, t_card, keyword, 0);
+}
+
+int negate_ability_and_special_ability_until_eot(int player, int card, int t_player, int t_card, keyword_t keyword, int s_keyword){
+	return negate_ability_and_special_ability_until_eot_impl(player, card, t_player, t_card, keyword, s_keyword);
+}
+
+/* ManalinkEh 2022: 0x26e09a0; original functions/abilities.c:2930. */
+void get_protection_source(int8_t can_return_dmg, int *eff_acc, int *eff_ac)
+{
+  if (-1 < attacking_card)
+  {
+    get_protection_source_impl(can_return_dmg, eff_acc, eff_ac);
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26dd200; original functions/abilities.c:2930. */
+static void get_protection_source_impl(int8_t can_return_dmg, int *eff_acc, int *eff_ac)
+{
+  *eff_acc = attacking_card_controller;
+  int c = attacking_card;
+  *eff_ac = attacking_card;
+  card_instance_t *inst = get_card_instance(*eff_acc, c);
+  while (inst)
+  {
+    int iid = inst->internal_card_id;
+    int p;
+    if (iid == damage_card)
+    {
+      if (can_return_dmg)
+        return;
+      p = inst->damage_source_player;
+      c = inst->damage_source_card;
+    }
+    else if (iid == activation_card)
+    {
+      p = inst->parent_controller;
+      c = inst->parent_card;
+    }
+    else
+    {
+      csvid_t csvid = cards_data[iid].id;
+      if (csvid == 0x386 && inst->damage_target_player >= 0)
+      {
+        p = inst->damage_target_player;
+        c = inst->damage_target_card;
+      }
+      else
+      {
+        if ((unsigned int)csvid - 0x386U > 1U)
+          return;
+        if (iid == LEGACY_EFFECT_ALADDIN)
+        {
+          p = inst->targets[0].player;
+          c = inst->targets[0].card;
+        }
+        else
+        {
+          p = inst->damage_source_player;
+          c = inst->damage_source_card;
+        }
+      }
+    }
+    inst = get_card_instance(p, c);
+    if (!inst)
+      return;
+    *eff_acc = p;
+    *eff_ac = c;
+  }
+}
+
+void protection_from_subtype(int player, int card, event_t event, subtype_t subt)
+{
+  int p, c;
+  if (event == EVENT_ABILITIES)
+  {
+    if (affect_me(player, card))
+      set_misc_protection_impl(player, card);
+  }
+  else if (event == EVENT_PROT_MISC && affect_me(player, card))
+  {
+    if (((unsigned int)event_result >> 24 & 0xff) == 6)
+    {
+      event_result |= 1;
+      return;
+    }
+    // Native non-query events require a valid attacking-card source.
+    if (attacking_card >= 0)
+      get_protection_source_impl(1, &p, &c);
+    if (has_subtype(p, c, subt))
+      event_result |= 1;
+  }
+}
+
+void protection_from_multicolored(int player, int card, event_t event)
+{
+  if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      set_misc_protection_impl(player, card);
+      return;
+    }
+  }
+  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    if (((unsigned int)event_result >> 24 & 0xff) == '\x06')
+    {
+      event_result = event_result | 1;
+      return;
+    }
+    int p, c;
+    /* Native non-query protection events require a nonnegative source card.
+     * The original also leaves p/c unwritten when this precondition fails. */
+    if (-1 < attacking_card)
+    {
+      get_protection_source_impl('\x01', &p, &c);
+    }
+    if (count_colors(p, c) > 1)
+    {
+      event_result = event_result | 1;
+      return;
+    }
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26e0db0; original functions/abilities.c:3063. */
+void protection_from_everything(int player, int card, event_t event)
+{
+  if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      set_misc_protection_impl(player, card);
+      return;
+    }
+  }
+  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    event_result = event_result | 1;
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26e0e10; original functions/abilities.c:3070. */
+void protection_from_colored_spells(int player, int card, event_t event)
+{
+  int player_00;
+  char protection_query;
+  int attacking_source_card;
+  unsigned int source_color;
+  card_instance_t *instance;
+
+  player_00 = attacking_card_controller;
+  attacking_source_card = attacking_card;
+  if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      set_misc_protection_impl(player, card);
+      return;
+    }
+  }
+  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    protection_query = (char)((unsigned int)event_result >> 0x18);
+    if (protection_query == '\x06')
+    {
+      event_result = event_result | 1;
+    }
+    else
+    {
+      if (protection_query == '\x01')
+      {
+
+        instance = get_card_instance(attacking_card_controller, attacking_card);
+        if (instance->internal_card_id != damage_card)
+        {
+          backtrace_and_abort("functions/abilities.c:3078\nget_card_instance(p, "
+                              "c)->internal_card_id == damage_card");
+        }
+        source_color = get_color(player_00, attacking_source_card);
+        if ((source_color & 0x3e) == 0)
+        {
+          return;
+        }
+        if (is_being_cast(player_00, attacking_source_card) == 0)
+        {
+          return;
+        }
+        instance = get_card_instance(player_00, attacking_source_card);
+        if ((instance->targets[3].player & 0x47) != 0)
+        {
+          return;
+        }
+      }
+      else
+      {
+        if (protection_query != '\x05')
+        {
+          return;
+        }
+        if (is_being_cast(attacking_card_controller, attacking_card) == 0)
+        {
+          return;
+        }
+        source_color = get_color(attacking_card_controller, attacking_card);
+        if ((source_color & 0x3e) == 0)
+        {
+          return;
+        }
+      }
+      event_result = event_result | 1;
+    }
+  }
+  return;
+}
 
 #ifndef SHANDALAR
 /* Recovered October 2022 ability writers and Aura pump consumers. */
@@ -2865,6 +2929,294 @@ static void hexproof_part(int player, int card, event_t event);
 static int attack_if_able_part(int player, int card, event_t event);
 static void vigilance_part(int player, int card, event_t event);
 static void granted_flanking_part(int s_player, int s_card, int t_player, int t_card, event_t event);
+
+/* ManalinkEh 2022: 0x26dd340; original functions/abilities.c:13. */
+int can_use_activated_abilities(int player, int card)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  int mode = instance->targets[17].card;
+  return mode <= 0 || !(mode & AL_NM_ACT);
+}
+
+/* ManalinkEh 2022: 0x26dd380; original functions/abilities.c:19. */
+int can_use_activated_abilities_by_instance(card_instance_t *instance)
+{
+  int mode = instance->targets[17].card;
+  return mode <= 0 || !(mode & AL_NM_ACT);
+}
+
+/* ManalinkEh 2022: 0x26dd3a0; original functions/abilities.c:24. */
+int can_produce_mana(int player, int card)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  int mode = instance->targets[17].card;
+  int result = mode <= 0 || !(mode & AL_MANA);
+  if (player == AI && result)
+  {
+    result = !(instance->ext->special_flags & SF_MANA_PRODUCER_DISABLED_FOR_AI);
+  }
+  return result;
+}
+
+/* ManalinkEh 2022: 0x26dd460; original functions/abilities.c:55. */
+void disable_nonmana_activated_abilities(int player, int card, int mode)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  if (instance->targets[0x11].card < 0)
+  {
+    instance->targets[0x11].card = 0;
+  }
+  if (mode != 1)
+  {
+    if (mode == 0)
+    {
+      instance->targets[0x11].card = instance->targets[0x11].card & 0xffffffd7;
+    }
+    return;
+  }
+  instance->targets[0x11].card = instance->targets[0x11].card | 0x28;
+  return;
+}
+
+/* ManalinkEh 2022: 0x26dd4d0; original functions/abilities.c:74. */
+void disable_all_activated_abilities(int player, int card, int mode)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  if (instance->targets[0x11].card < 0)
+  {
+    instance->targets[0x11].card = 0;
+  }
+  if (mode != 1)
+  {
+    if (mode == 0)
+    {
+      instance->targets[0x11].card = instance->targets[0x11].card & 0xffffffc7;
+    }
+    return;
+  }
+  instance->targets[0x11].card = instance->targets[0x11].card | 0x38;
+  return;
+}
+
+static void disable_all_but_sp_keywords(int player, int card, int mode)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->targets[17].card < 0)
+    instance->targets[17].card = 0;
+  if (mode == 1)
+    instance->targets[17].card |= 0x3e;
+  else if (mode == 0)
+    instance->targets[17].card &= ~0x3e;
+}
+
+/* ManalinkEh 2022: 0x26dd890; original functions/abilities.c:302. */
+int humiliate_and_set_pt_abilities(int player, int card, int t_player, int t_card, int mode,
+                                   test_definition_t *hc)
+{
+  int legacy_card;
+  card_instance_t *instance;
+  unsigned int replacement_subtype;
+
+  if ((mode & 6U) == 0)
+  {
+    instance = get_card_instance(t_player, t_card);
+    if (instance->targets[0x11].card < 0)
+    {
+      instance->targets[0x11].card = 0;
+    }
+    if (mode == 1)
+    {
+      instance->targets[0x11].card = instance->targets[0x11].card | 0x7e;
+      return 1;
+    }
+    if (mode == 0)
+    {
+      instance->targets[0x11].card = instance->targets[0x11].card & 0xffffff81;
+      return 0;
+    }
+  }
+  else
+  {
+    legacy_card = create_targetted_legacy_effect(player, card, humility_legacy, t_player, t_card);
+    instance = get_card_instance(player, legacy_card);
+    instance->targets[0].player = t_player;
+    instance->targets[0].card = t_card;
+    instance = get_card_instance(player, legacy_card);
+    if (hc == NULL)
+    {
+      instance->targets[1].player = -1;
+      instance->targets[1].card = -1;
+      instance->targets[2].player = 0;
+      instance->targets[2].card = 0;
+      instance->targets[3].player = mode;
+      replacement_subtype = 0;
+    }
+    else
+    {
+      replacement_subtype = hc->subtype;
+      instance->targets[1].player = hc->power;
+      instance->targets[1].card = hc->toughness;
+      instance->targets[2].player = hc->keyword;
+      instance->targets[2].card = hc->color;
+      instance->targets[3].player = mode;
+    }
+    instance->targets[3].card = replacement_subtype;
+    mode = legacy_card;
+  }
+  return mode;
+}
+
+/* ManalinkEh 2022: 0x26dda00; original functions/abilities.c:325. */
+int humiliate(int src_player, int src_card, int t_player, int t_card, int mode)
+{
+  int result;
+  test_definition_t test;
+  default_test_definition(&test, 0xff);
+  test.toughness = 1;
+  test.power = 1;
+  result = humiliate_and_set_pt_abilities(src_player, src_card, t_player, t_card, mode, &test);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x26dda70; original functions/abilities.c:332. */
+void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
+                              ability_loss_t mode)
+{
+  ability_loss_t existing_ability_loss;
+  card_instance_t *instance;
+
+  if ((((event == EVENT_ABILITIES) || (event == EVENT_CAST_SPELL)) &&
+       (instance = in_play(affected_card_controller, affected_card), instance != NULL)) &&
+      (((player == 2 || (affected_card_controller == player)) &&
+        ((test == NULL ||
+          (new_make_test_in_play(affected_card_controller, affected_card, -1, test) != 0))))))
+  {
+    instance = get_card_instance(affected_card_controller, affected_card);
+    existing_ability_loss = instance->targets[0x11].card;
+    if (-1 < (int)existing_ability_loss)
+    {
+      mode = mode | existing_ability_loss;
+    }
+    instance->targets[0x11].card = mode;
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26dd080; original functions/abilities.c:651. */
+static void deathtouch_part(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  card_ext_t *extension = instance->ext;
+  if (player_bits[player] & PB_CANT_HAVE_OR_GAIN_DEATHTOUCH)
+    extension->sp_keywords &= ~SP_KEYWORD_DEATHTOUCH;
+  else
+    extension->sp_keywords |= SP_KEYWORD_DEATHTOUCH;
+}
+
+/* ManalinkEh 2022: 0x26de480; original functions/abilities.c:651. */
+void deathtouch(int player, int card, event_t event)
+{
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    deathtouch_part(player, card, EVENT_ABILITIES);
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26dd0c0; original functions/abilities.c:653. */
+static void hexproof_part(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  card_ext_t *extension = instance->ext;
+  if (player_bits[player] & PB_CANT_HAVE_OR_GAIN_HEXPROOF)
+    extension->sp_keywords &= ~SP_KEYWORD_HEXPROOF;
+  else
+    extension->sp_keywords |= SP_KEYWORD_HEXPROOF;
+}
+
+/* ManalinkEh 2022: 0x26de500; original functions/abilities.c:653. */
+void hexproof(int player, int card, event_t event)
+{
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    hexproof_part(player, card, EVENT_ABILITIES);
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26dd110; original functions/abilities.c:655. */
+static void indestructible_part(int player, int card)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  instance->ext->sp_keywords |= SP_KEYWORD_INDESTRUCTIBLE;
+}
+
+/* ManalinkEh 2022: 0x26de580; original functions/abilities.c:655. */
+void indestructible(int player, int card, event_t event)
+{
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    indestructible_part(player, card);
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26dd150; original functions/abilities.c:803. */
+static int attack_if_able_part(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  if (!(instance->state & STATE_UNKNOWN8000))
+  {
+    instance->state |= STATE_UNKNOWN8000;
+    if (can_attack(player, card))
+      must_attack = 1;
+  }
+  return player;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void ability_must_block_me(int player, int card, event_t event, int ability, char *prompt);
+
+/* ManalinkEh 2022: 0x26dedc0; original functions/abilities.c:803. */
+int attack_if_able(int player, int card, event_t event)
+{
+  if (((event == EVENT_BEGIN_COMBAT) && (current_turn == player)) && (forbid_attack == 0))
+  {
+    attack_if_able_part(player, card, EVENT_MUST_ATTACK);
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 pump effects and cleanup helpers. */
+
+/* ManalinkEh 2022: 0x26def40; original functions/abilities.c:861. */
+int block_if_able(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  unsigned int keyword = instance->ext->sp_keywords;
+  if (!(keyword & SP_KEYWORD_MUST_BLOCK))
+    instance->ext->sp_keywords = keyword | SP_KEYWORD_MUST_BLOCK;
+  if (current_turn != player && event == EVENT_DECLARE_BLOCKERS)
+    select_blocker(player, card, player);
+  return 0;
+}
 
 /* ManalinkEh 2022: 0x26dcca0; original functions/abilities.c:881. */
 static void lure_effect_part(int player, int card, event_t event, int luring_player,
@@ -2965,7 +3317,6 @@ static void lure_effect_part(int player, int card, event_t event, int luring_pla
   return;
 }
 
-
 /* ManalinkEh 2022: 0x26dcfb0; original functions/abilities.c:881. */
 static void lure_effect(int player, int card, event_t event, int luring_player,
                              int luring_card, int all_must_block, int subtype, int ability,
@@ -2985,139 +3336,12 @@ static void lure_effect(int player, int card, event_t event, int luring_player,
   return;
 }
 
-
-/* ManalinkEh 2022: 0x26dd080; original functions/abilities.c:651. */
-static void deathtouch_part(int player, int card, event_t event)
+/* ManalinkEh 2022: 0x26df030; original functions/abilities.c:964. */
+void ability_must_block_me(int player, int card, event_t event, int ability, char *prompt)
 {
-  card_instance_t *instance = get_card_instance(player, card);
-  card_ext_t *extension = instance->ext;
-  if (player_bits[player] & PB_CANT_HAVE_OR_GAIN_DEATHTOUCH)
-    extension->sp_keywords &= ~SP_KEYWORD_DEATHTOUCH;
-  else
-    extension->sp_keywords |= SP_KEYWORD_DEATHTOUCH;
-}
-
-
-/* ManalinkEh 2022: 0x26dd0c0; original functions/abilities.c:653. */
-static void hexproof_part(int player, int card, event_t event)
-{
-  card_instance_t *instance = get_card_instance(player, card);
-  card_ext_t *extension = instance->ext;
-  if (player_bits[player] & PB_CANT_HAVE_OR_GAIN_HEXPROOF)
-    extension->sp_keywords &= ~SP_KEYWORD_HEXPROOF;
-  else
-    extension->sp_keywords |= SP_KEYWORD_HEXPROOF;
-}
-
-
-/* ManalinkEh 2022: 0x26dd110; original functions/abilities.c:655. */
-static void indestructible_part(int player, int card)
-{
-  card_instance_t *instance = get_card_instance(player, card);
-  instance->ext->sp_keywords |= SP_KEYWORD_INDESTRUCTIBLE;
-}
-
-
-/* ManalinkEh 2022: 0x26dd150; original functions/abilities.c:803. */
-static int attack_if_able_part(int player, int card, event_t event)
-{
-  card_instance_t *instance = get_card_instance(player, card);
-  if (!(instance->state & STATE_UNKNOWN8000))
-  {
-    instance->state |= STATE_UNKNOWN8000;
-    if (can_attack(player, card))
-      must_attack = 1;
-  }
-  return player;
-}
-
-
-/* ManalinkEh 2022: 0x26dd1a0; original functions/abilities.c:1140. */
-static void vigilance_part(int player, int card, event_t event)
-{
-  card_instance_t *instance = get_card_instance(player, card);
-  instance->ext->sp_keywords |= SP_KEYWORD_VIGILANCE;
-  if (player != -1 && card != -1 && is_humiliated(player, card, AL_KEY))
-    return;
-  instance->state |= STATE_VIGILANCE;
-}
-
-
-/* ManalinkEh 2022: 0x26de480; original functions/abilities.c:651. */
-void deathtouch(int player, int card, event_t event)
-{
-  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    deathtouch_part(player, card, EVENT_ABILITIES);
-    return;
-  }
+  lure_effect(player, card, event, player, card, 1, -1, ability, prompt);
   return;
 }
-
-
-/* ManalinkEh 2022: 0x26de500; original functions/abilities.c:653. */
-void hexproof(int player, int card, event_t event)
-{
-  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    hexproof_part(player, card, EVENT_ABILITIES);
-    return;
-  }
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26de580; original functions/abilities.c:655. */
-void indestructible(int player, int card, event_t event)
-{
-  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    indestructible_part(player, card);
-    return;
-  }
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26dedc0; original functions/abilities.c:803. */
-int attack_if_able(int player, int card, event_t event)
-{
-  if (((event == EVENT_BEGIN_COMBAT) && (current_turn == player)) && (forbid_attack == 0))
-  {
-    attack_if_able_part(player, card, EVENT_MUST_ATTACK);
-  }
-  return 0;
-}
-
-
-/* ManalinkEh 2022: 0x26def40; original functions/abilities.c:861. */
-int block_if_able(int player, int card, event_t event)
-{
-  card_instance_t *instance = get_card_instance(player, card);
-  unsigned int keyword = instance->ext->sp_keywords;
-  if (!(keyword & SP_KEYWORD_MUST_BLOCK))
-    instance->ext->sp_keywords = keyword | SP_KEYWORD_MUST_BLOCK;
-  if (current_turn != player && event == EVENT_DECLARE_BLOCKERS)
-    select_blocker(player, card, player);
-  return 0;
-}
-
-
-/* ManalinkEh 2022: 0x26df490; original functions/abilities.c:1140. */
-void vigilance(int player, int card, event_t event)
-{
-  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    vigilance_part(player, card, EVENT_ABILITIES);
-    return;
-  }
-  return;
-}
-
 
 /* ManalinkEh 2022: 0x26df8e0; original functions/abilities.c:1054. */
 static void granted_flanking_part(int s_player, int s_card, int t_player, int t_card, event_t event)
@@ -3153,6 +3377,10 @@ static void granted_flanking_part(int s_player, int s_card, int t_player, int t_
   return;
 }
 
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 activated-ability core. */
 
 /* ManalinkEh 2022: 0x26dfa50; original functions/abilities.c:1054. */
 void granted_flanking(int s_player, int s_card, int t_player, int t_card, event_t event)
@@ -3183,6 +3411,15 @@ void granted_flanking(int s_player, int s_card, int t_player, int t_card, event_
   return;
 }
 
+/* ManalinkEh 2022: 0x26dd1a0; original functions/abilities.c:1140. */
+static void vigilance_part(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  instance->ext->sp_keywords |= SP_KEYWORD_VIGILANCE;
+  if (player != -1 && card != -1 && is_humiliated(player, card, AL_KEY))
+    return;
+  instance->state |= STATE_VIGILANCE;
+}
 
 /* ManalinkEh 2022: 0x26dfaf0; original functions/abilities.c:519. */
 void special_abilities(int player, int card, event_t event, int sp_abilities,
@@ -3326,140 +3563,6 @@ void special_abilities(int player, int card, event_t event, int sp_abilities,
 #endif
 
 #ifndef SHANDALAR
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void ability_must_block_me(int player, int card, event_t event, int ability, char *prompt);
-
-/* ManalinkEh 2022: 0x26df030; original functions/abilities.c:964. */
-void ability_must_block_me(int player, int card, event_t event, int ability, char *prompt)
-{
-  lure_effect(player, card, event, player, card, 1, -1, ability, prompt);
-  return;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 pump effects and cleanup helpers. */
-
-
-/* ManalinkEh 2022: 0x26dda00; original functions/abilities.c:325. */
-int humiliate(int src_player, int src_card, int t_player, int t_card, int mode)
-{
-  int result;
-  test_definition_t test;
-  default_test_definition(&test, 0xff);
-  test.toughness = 1;
-  test.power = 1;
-  result = humiliate_and_set_pt_abilities(src_player, src_card, t_player, t_card, mode, &test);
-  return result;
-}
-
-
-/* ManalinkEh 2022: 0x26dd4d0; original functions/abilities.c:74. */
-void disable_all_activated_abilities(int player, int card, int mode)
-{
-  card_instance_t *instance;
-
-  instance = get_card_instance(player, card);
-  if (instance->targets[0x11].card < 0)
-  {
-    instance->targets[0x11].card = 0;
-  }
-  if (mode != 1)
-  {
-    if (mode == 0)
-    {
-      instance->targets[0x11].card = instance->targets[0x11].card & 0xffffffc7;
-    }
-    return;
-  }
-  instance->targets[0x11].card = instance->targets[0x11].card | 0x38;
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26dd460; original functions/abilities.c:55. */
-void disable_nonmana_activated_abilities(int player, int card, int mode)
-{
-  card_instance_t *instance;
-
-  instance = get_card_instance(player, card);
-  if (instance->targets[0x11].card < 0)
-  {
-    instance->targets[0x11].card = 0;
-  }
-  if (mode != 1)
-  {
-    if (mode == 0)
-    {
-      instance->targets[0x11].card = instance->targets[0x11].card & 0xffffffd7;
-    }
-    return;
-  }
-  instance->targets[0x11].card = instance->targets[0x11].card | 0x28;
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26dd890; original functions/abilities.c:302. */
-int humiliate_and_set_pt_abilities(int player, int card, int t_player, int t_card, int mode,
-                                   test_definition_t *hc)
-{
-  int legacy_card;
-  card_instance_t *instance;
-  unsigned int replacement_subtype;
-
-  if ((mode & 6U) == 0)
-  {
-    instance = get_card_instance(t_player, t_card);
-    if (instance->targets[0x11].card < 0)
-    {
-      instance->targets[0x11].card = 0;
-    }
-    if (mode == 1)
-    {
-      instance->targets[0x11].card = instance->targets[0x11].card | 0x7e;
-      return 1;
-    }
-    if (mode == 0)
-    {
-      instance->targets[0x11].card = instance->targets[0x11].card & 0xffffff81;
-      return 0;
-    }
-  }
-  else
-  {
-    legacy_card = create_targetted_legacy_effect(player, card, humility_legacy, t_player, t_card);
-    instance = get_card_instance(player, legacy_card);
-    instance->targets[0].player = t_player;
-    instance->targets[0].card = t_card;
-    instance = get_card_instance(player, legacy_card);
-    if (hc == NULL)
-    {
-      instance->targets[1].player = -1;
-      instance->targets[1].card = -1;
-      instance->targets[2].player = 0;
-      instance->targets[2].card = 0;
-      instance->targets[3].player = mode;
-      replacement_subtype = 0;
-    }
-    else
-    {
-      replacement_subtype = hc->subtype;
-      instance->targets[1].player = hc->power;
-      instance->targets[1].card = hc->toughness;
-      instance->targets[2].player = hc->keyword;
-      instance->targets[2].card = hc->color;
-      instance->targets[3].player = mode;
-    }
-    instance->targets[3].card = replacement_subtype;
-    mode = legacy_card;
-  }
-  return mode;
-}
-
-
 /* ManalinkEh 2022: 0x26e0300; original functions/abilities.c:229. */
 int humility_legacy(int player, int card, event_t event)
 {
@@ -3560,64 +3663,14 @@ int humility_legacy(int player, int card, event_t event)
 
 #endif
 
-
 #ifndef SHANDALAR
-/* Recovered October 2022 activated-ability core. */
-
-/* ManalinkEh 2022: 0x26dd340; original functions/abilities.c:13. */
-int can_use_activated_abilities(int player, int card)
+/* ManalinkEh 2022: 0x26df490; original functions/abilities.c:1140. */
+void vigilance(int player, int card, event_t event)
 {
-  card_instance_t *instance = get_card_instance(player, card);
-  int mode = instance->targets[17].card;
-  return mode <= 0 || !(mode & AL_NM_ACT);
-}
-
-
-/* ManalinkEh 2022: 0x26dd380; original functions/abilities.c:19. */
-int can_use_activated_abilities_by_instance(card_instance_t *instance)
-{
-  int mode = instance->targets[17].card;
-  return mode <= 0 || !(mode & AL_NM_ACT);
-}
-
-
-/* ManalinkEh 2022: 0x26dd3a0; original functions/abilities.c:24. */
-int can_produce_mana(int player, int card)
-{
-  card_instance_t *instance = get_card_instance(player, card);
-  int mode = instance->targets[17].card;
-  int result = mode <= 0 || !(mode & AL_MANA);
-  if (player == AI && result)
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
   {
-    result = !(instance->ext->special_flags & SF_MANA_PRODUCER_DISABLED_FOR_AI);
-  }
-  return result;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26dda70; original functions/abilities.c:332. */
-void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
-                              ability_loss_t mode)
-{
-  ability_loss_t existing_ability_loss;
-  card_instance_t *instance;
-
-  if ((((event == EVENT_ABILITIES) || (event == EVENT_CAST_SPELL)) &&
-       (instance = in_play(affected_card_controller, affected_card), instance != NULL)) &&
-      (((player == 2 || (affected_card_controller == player)) &&
-        ((test == NULL ||
-          (new_make_test_in_play(affected_card_controller, affected_card, -1, test) != 0))))))
-  {
-    instance = get_card_instance(affected_card_controller, affected_card);
-    existing_ability_loss = instance->targets[0x11].card;
-    if (-1 < (int)existing_ability_loss)
-    {
-      mode = mode | existing_ability_loss;
-    }
-    instance->targets[0x11].card = mode;
+    vigilance_part(player, card, EVENT_ABILITIES);
     return;
   }
   return;
@@ -3625,6 +3678,13 @@ void remove_abilities_by_test(int player, event_t event, test_definition_t *test
 
 #endif
 
+#ifndef SHANDALAR
+static int has_sp_key_by_iid(int iid, int sp_key)
+{
+  return has_sp_key_by_csvid_impl(cards_data[iid].id, sp_key);
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e09d0; original functions/abilities.c:2981. */
@@ -3677,7 +3737,6 @@ void protection_from_type(int player, int card, event_t event, type_t type)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26e0b90; original functions/abilities.c:3018. */
 void protection_from_colorless(int player, int card, event_t event)
@@ -3714,8 +3773,43 @@ void protection_from_colorless(int player, int card, event_t event)
 
 #endif
 
+/* Native colored protection contributes protection bits during EVENT_ABILITIES. */
+
+int generic_protection_from(int player, int card, event_t event, color_test_t cols)
+{
+  if (event == EVENT_ABILITIES && affect_me(player, card))
+  {
+    int old_event_result = event_result;
+    cols = get_sleighted_color_test(player, card, cols & COLOR_TEST_ANY_COLORED) |
+           (cols & COLOR_TEST_ARTIFACT);
+    event_result = old_event_result | (cols << 10); // COLOR_TEST_BLACK => KEYWORD_PROT_BLACK, etc.
+  }
+
+  return 0;
+}
+
+int protection_from_black(int player, int card, event_t event){
+	return generic_protection_from(player, card, event, COLOR_TEST_BLACK);
+}
+
+int protection_from_red(int player, int card, event_t event){
+	return generic_protection_from(player, card, event, COLOR_TEST_RED);
+}
+
+int protection_from_blue(int player, int card, event_t event){
+	return generic_protection_from(player, card, event, COLOR_TEST_BLUE);
+}
+
+int protection_from_green(int player, int card, event_t event){
+	return generic_protection_from(player, card, event, COLOR_TEST_GREEN);
+}
+
+int protection_from_white(int player, int card, event_t event){
+	return generic_protection_from(player, card, event, COLOR_TEST_WHITE);
+}
 
 #ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
 /* ManalinkEh 2022: 0x26e0d00; original functions/abilities.c:3048. */
 void protection_from_monocolored(int player, int card, event_t event)
 {
@@ -3745,11 +3839,10 @@ void protection_from_monocolored(int player, int card, event_t event)
   }
   return;
 }
-
 #endif
 
-
 #ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
 /* ManalinkEh 2022: 0x26e0f50; original functions/abilities.c:3089. */
 void cannot_be_target_of_abilities(int player, int card, event_t event)
 {
@@ -3774,183 +3867,5 @@ void cannot_be_target_of_abilities(int player, int card, event_t event)
     }
   }
   return;
-}
-
-#endif
-
-
-int fx_menace(int player, int card, event_t event)
-{
-  if (get_card_instance(player, card)->damage_target_player > -1)
-  {
-    card_instance_t *instance = get_card_instance(player, card);
-
-    special_abilities(instance->damage_target_player, instance->damage_target_card, event,
-                      SP_KEYWORD_MENACE, player, card);
-
-    if (event == EVENT_CLEANUP && is_what(player, card, TYPE_EFFECT))
-    {
-      card_instance_t *inst = get_card_instance(player, card);
-      remove_special_ability(inst->damage_target_player, inst->damage_target_card,
-                             SP_KEYWORD_MENACE);
-      kill_card(player, card, KILL_EXILE);
-    }
-  }
-
-  return 0;
-}
-
-void menace(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    instance = get_card_instance(player, card);
-    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x10000;
-    return;
-  }
-  return;
-}
-
-
-void rampage(int player, int card, event_t event, int number)
-{
-  int result;
-  card_instance_t *instance;
-  if (event == EVENT_DECLARE_BLOCKERS)
-  {
-    if (current_turn == player)
-    {
-      if (((card != -1) && (player != -1)) &&
-          (result = is_humiliated(player, card, AL_KEY), result != 0))
-      {
-        return;
-      }
-      result = count_my_blockers(player, card);
-      if (1 < result)
-      {
-        result = (result + -1) * number;
-        pump_until_eot(player, card, player, card, result, result);
-        return;
-      }
-    }
-  }
-  else if (event == EVENT_ABILITIES)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-      instance = get_card_instance(player, card);
-      instance->ext->sp_keywords = instance->ext->sp_keywords | 0x40;
-      return;
-    }
-  }
-  else if (((event == EVENT_QUERY_AFF) && (card == affected_card)) &&
-           ((player == affected_card_controller && (attacking_card == 0x40))))
-  {
-    if (((player != -1) && (card != -1)) &&
-        (result = is_humiliated(player, card, AL_KEY), result != 0))
-    {
-      return;
-    }
-    event_result = event_result + number;
-    return;
-  }
-  return;
-}
-
-
-void skulk(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    instance = get_card_instance(player, card);
-    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x20000;
-    return;
-  }
-  return;
-}
-
-
-void protection_from_subtype(int player, int card, event_t event, subtype_t subt)
-{
-  int p, c;
-  if (event == EVENT_ABILITIES)
-  {
-    if (affect_me(player, card))
-      set_misc_protection_impl(player, card);
-  }
-  else if (event == EVENT_PROT_MISC && affect_me(player, card))
-  {
-    if (((unsigned int)event_result >> 24 & 0xff) == 6)
-    {
-      event_result |= 1;
-      return;
-    }
-    // Native non-query events require a valid attacking-card source.
-    if (attacking_card >= 0)
-      get_protection_source_impl(1, &p, &c);
-    if (has_subtype(p, c, subt))
-      event_result |= 1;
-  }
-}
-
-void protection_from_multicolored(int player, int card, event_t event)
-{
-  if (event == EVENT_ABILITIES)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-      set_misc_protection_impl(player, card);
-      return;
-    }
-  }
-  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
-           (player == affected_card_controller))
-  {
-    if (((unsigned int)event_result >> 24 & 0xff) == '\x06')
-    {
-      event_result = event_result | 1;
-      return;
-    }
-    int p, c;
-    /* Native non-query protection events require a nonnegative source card.
-     * The original also leaves p/c unwritten when this precondition fails. */
-    if (-1 < attacking_card)
-    {
-      get_protection_source_impl('\x01', &p, &c);
-    }
-    if (count_colors(p, c) > 1)
-    {
-      event_result = event_result | 1;
-      return;
-    }
-  }
-  return;
-}
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
-static int has_sp_key_by_iid(int iid, int sp_key)
-{
-  return has_sp_key_by_csvid_impl(cards_data[iid].id, sp_key);
-}
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
-static void disable_all_but_sp_keywords(int player, int card, int mode)
-{
-  card_instance_t *instance = get_card_instance(player, card);
-  if (instance->targets[17].card < 0)
-    instance->targets[17].card = 0;
-  if (mode == 1)
-    instance->targets[17].card |= 0x3e;
-  else if (mode == 0)
-    instance->targets[17].card &= ~0x3e;
 }
 #endif

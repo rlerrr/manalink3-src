@@ -166,10 +166,6 @@ int new_get_test_score(test_definition_t *this_test)
   return score;
 }
 
-
-
-
-
 static int check_multisubtype(int player, int card, int sub1, int sub2, int sub3, int sub4, int sub5){
 	if( sub1 > 0 && has_subtype(player, card, sub1) ){
 		return 1;
@@ -1735,51 +1731,32 @@ int test_not_in_array(int iid, int arrptr, int player, int card)
   return 1;
 }
 
-
 #ifndef SHANDALAR
 
 /* ManalinkEh 2022: 0x26be510; original functions/global_checking.c:3. */
 
-
-
 /* ManalinkEh 2022: 0x26be6e0; original functions/global_checking.c:90. */
-
-
 
 /* ManalinkEh 2022: 0x26bea60; original functions/global_checking.c:374. */
 
-
-
 /* ManalinkEh 2022: 0x26bebb0; original functions/global_checking.c:421. */
-
-
 
 /* ManalinkEh 2022: 0x26bebe0; original functions/global_checking.c:425. */
 
-
-
 /* ManalinkEh 2022: 0x26bf6c0; original functions/global_checking.c:638. */
-
-
 
 /* ManalinkEh 2022: 0x26bf750; original functions/global_checking.c:654. */
 
-
-
 /* ManalinkEh 2022: 0x26c0130; original functions/global_checking.c:848. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* Recovered October 2022 split card helpers. */
 
 /* ManalinkEh 2022: 0x26c0860; original functions/global_checking.c:1033. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */

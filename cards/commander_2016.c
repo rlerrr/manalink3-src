@@ -89,6 +89,11 @@ int orzhov_advokist_legacy(int player, int card, event_t event){
 
 int card_orzhov_advokist(int player, int card, event_t event)
 {
+  /* Orzhov Advokist |2|W	0x200f59d
+   * Creature - Human Advisor 1/4
+   * At the beginning of your upkeep, each player may put two +1/+1 counters on a creature her or she controls.
+   * If a player does, creatures that player controls can't attack you or a planeswalker you control until your next upkeep. */
+
   card_instance_t *instance;
   unsigned int choosing_player;
   int result;
@@ -181,7 +186,6 @@ Destroy all creatures.
 	return basic_spell(player, card, event);
 }
 
-
 // Blue
 
 int card_coastal_breach(int player, int card, event_t event){
@@ -211,6 +215,10 @@ Return all nonland permanents to their owners' hands.
 
 int card_deepglow_skate(int player, int card, event_t event)
 {
+  /* Deepglow Skate |4|U	0x200f5b1
+   * Creature - Fish 3/3
+   * When Deepglow Skate enters the battlefield, double the number of each kind of counter on any number of target permanents. */
+
   target_t target;
   int t_card;
   card_instance_t *instance;
@@ -482,10 +490,15 @@ Destroy target creature. You draw X cards and you lose X life, where X is the nu
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-
 // Red
 int card_charging_cinderhorn(int player, int card, event_t event)
 {
+  /* Charging Cinderhorn |3|R	0x200f5d4
+   * Creature - Elemental Ox 4/2
+   * Haste
+   * At the beginning of each player's end step, if no creatures attacked this turn, put a fury counter on Charging Cinderhorn.
+   * Charging Cinderhorn deals damage to that player equal to the number of fury counters on it to that player. */
+
   haste(player, card, event);
   if (event == EVENT_DECLARE_ATTACKERS)
   {
@@ -672,7 +685,7 @@ int benefactors_draught_legacy(int player, int card, event_t event){
 }
 
 int card_benefactors_draught(int player, int card, event_t event){
-/*
+  /*
 Benefactor's Draught |1|G	0x200f5ed
 instant
 Untap all creatures. Until end of turn, whenever a creature an opponent controls blocks, draw a card.
@@ -782,6 +795,11 @@ Return up to two target cards from your graveyard to your hand. Exile Seeds of R
 
 int card_stonehoof_chieftain(int player, int card, event_t event)
 {
+  /* Stonehoof Chieftain |7|G	0x200f601
+   * Creature - Centaur Warrior 8/8
+   * Trample, indestructible
+   * Whenever another creature you control attacks, it gains trample and indestructible until end of turn. */
+
   card_instance_t *instance;
   card_instance_t *attacking_creature;
   int attacker_index;
@@ -840,6 +858,11 @@ Partner (You can have two commanders if both have partner.)
 
 int card_ancient_excavation(int player, int card, event_t event)
 {
+  /* Ancient Excavation |2|U|B	0x200f60b
+   * Instant
+   * Draw cards equal to the number of cards in your hand, then discard a card for each card drawn this way.
+   * Basic landcycling 2 (2, Discard this card: Search your library for a basic land card, reveal it, and put it into your hand. Then shuffle your library.) */
+
   int result;
   if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
   {
@@ -1035,6 +1058,11 @@ Partner (You can have two commanders if both have partner.)
 
 int card_grave_upheaval(int player, int card, event_t event)
 {
+  /* Grave Upheaval |4|B|R	0x200f61f
+   * Sorcery
+   * Put target creature card from a graveyard onto the battlefield under your control. It gains haste.
+   * Basic landcycling 2 ( 2, Discard this card: Search your library for a basic land card, reveal it, and put it into your hand. Then shuffle your library.) */
+
   int result;
   card_instance_t *instance;
   test_definition_t this_test;
@@ -1201,6 +1229,11 @@ Partner (You can have two commanders if both have partner.)
 
 int card_migratory_route(int player, int card, event_t event)
 {
+  /* Migratory Route |3|W|U	0x200f642
+   * Sorcery
+   * Create four 1/1 white Bird creature tokens with flying.
+   * Basic landcycling 2 (2, Discard this card: Search your library for a basic land card, reveal it, and put it into your hand. Then shuffle your library.) */
+
   int result;
   if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
   {
@@ -1600,7 +1633,6 @@ Whenever a creature you control deals combat damage to a player, it deals that m
 	return 0;
 }
 
-
 int card_sidar_kondo_of_jamuraa(int player, int card, event_t event){
 /*
 Sidar Kondo of Jamuraa |2|G|W	0x200f656
@@ -1652,6 +1684,11 @@ Partner (You can have two commanders if both have partner.)
 
 int card_sylvan_reclamation(int player, int card, event_t event)
 {
+  /* Sylvan Reclamation |3|G|W	0x200f660
+   * Instant
+   * Exile up to two target artifacts and/or enchantments.
+   * Basic landcycling 2 (2, Discard this card: Search your library for a basic land card, reveal it, and put it into your hand. Then shuffle your library.) */
+
   target_t *target_player_entry;
   target_t *target_card_entry;
   card_instance_t *instance;
@@ -1768,6 +1805,11 @@ Partner (You can have two commanders if both have partner.)
 
 int card_treacherous_terrain(int player, int card, event_t event)
 {
+  /* Treacherous Terrain |6|R|G	0x200f674
+   * Sorcery
+   * Treacherous Terrain deals damage to each opponent equal to the number of lands that player controls.
+   * Basic landcycling 2 (2, Discard this card: Search your library for a basic land card, reveal it, and put it into your hand. Then shuffle your library.) */
+
   if (event - EVENT_CAN_ACTIVATE_FROM_HAND < 3)
     return commander_basic_landcycling(player, card, event);
   if (event == EVENT_RESOLVE_SPELL)
@@ -2031,6 +2073,11 @@ Domain — t: Add X mana in any combination of colors to your mana pool, where X i
 
 // Lands
 int card_ash_barrens(int player, int card, event_t event){
+  /* Ash Barrens	""
+   * Land
+   * |T: Add |C.
+   * Basic landcycling |1 (|1, Discard this card: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.) */
+
 /*
 Ash Barrens
 Land

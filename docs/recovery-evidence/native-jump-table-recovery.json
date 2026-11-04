@@ -149131,7 +149131,12 @@
         "source": "cards/strixhaven.c",
         "name": "card_professor_of_symbology",
         "callee": "card_gnarled_professor",
-        "definition_sha256": "5cc7438492ec4cc9abc6e19aceae061685f86af41de1b937b95407179173ecda"
+        "definition_sha256": "5cc7438492ec4cc9abc6e19aceae061685f86af41de1b937b95407179173ecda",
+        "source_layout_projection": {
+          "before_definition": "int card_professor_of_symbology(int player, int card, event_t event)\n{\n  return card_gnarled_professor(player, card, event);\n}",
+          "after_sha256": "a7692d560b5fa3da21860f28bb3d11ca8b26259efed4df9eccfb08af769fc29e",
+          "scope": "Restored card comment only; verifier requires both definitions to be the same strict tail forwarder."
+        }
       }
     },
     {

@@ -4,6 +4,9 @@
 int vow(int player, int card, event_t event, int pow, int tou, int key, int s_key);
 
 // global functions
+
+int count_permanents_you_control_but_you_dont_own(int player, int type);
+
 static int join_forces(int player, int prevent_if_duh){
 	charge_mana(player, COLOR_COLORLESS, -1);
 	int amount = x_value;
@@ -40,6 +43,7 @@ int vow(int player, int card, event_t event, int pow, int tou, int key, int s_ke
 }
 
 // cards
+
 int card_acorn_catapult(int player, int card, event_t event){
 	/* Acorn Catapult	|4	0x2006506
 	 * Artifact
@@ -95,6 +99,13 @@ int card_alliance_of_arms(int player, int card, event_t event){
 
 int card_animar_soul_of_elements(int player, int card, event_t event)
 {
+  /* CARD_ID_ANIMAR_SOUL_OF_ELEMENTS	11751
+   * Animar, Soul of Elements	|U|R|G
+   * Legendary Creature - Elemental 1/1
+   * Protection from |Swhite and from |Sblack
+   * Whenever you cast a creature spell, put a +1/+1 counter on ~.
+   * Creature spells you cast cost |1 less to cast for each +1/+1 counter on ~. */
+
   int result;
   check_legend_rule(player, card, event);
   sp_ability_trigger(player, event, 2, TYPE_CREATURE, NULL, player, card);
@@ -171,13 +182,12 @@ All creatures have double strike and attack each turn if able. */
 }
 
 int card_basandra_battle_seraph(int player, int card, event_t event){
-/*
-Basandra, Battle Seraph |3|R|W
-Legendary Creature — Angel 4/4
-Flying
-Players can't cast spells during combat.
-{R}: Target creature attacks this turn if able.
-*/
+  /* Basandra, Battle Seraph |3|R|W
+   * Legendary Creature — Angel 4/4
+   * Flying
+   * Players can't cast spells during combat.
+   * {R}: Target creature attacks this turn if able. */
+
 	check_legend_rule(player, card, event);
 
 	if( event == EVENT_MODIFY_COST_GLOBAL && current_phase > PHASE_MAIN1 && current_phase < PHASE_MAIN2 ){
@@ -326,6 +336,12 @@ Land
 
 int card_crescendo_of_war(int player, int card, event_t event)
 {
+  /* Crescendo of War	|3|W
+   * Enchantment
+   * At the beginning of each upkeep, put a strife counter on ~.
+   * Attacking creatures get +1/+0 for each strife counter on ~.
+   * Blocking creatures you control get +1/+0 for each strife counter on ~. */
+
   int result;
   card_instance_t *instance;
   upkeep_trigger_ability(player, card, event, 2);
@@ -657,13 +673,12 @@ When ~ enters the battlefield, create four 1/1 |Sgreen Insect creature tokens wi
 
 int card_kaalia_of_the_vast(int player, int card, event_t event)
 {
-/*
-Kaalia of the Vast |1|W|B|R
-Legendary Creature — Human Cleric 2/2
-Flying
-Whenever Kaalia of the Vast attacks an opponent, you may put an Angel, Demon, or Dragon creature card from your hand
-	onto the battlefield tapped and attacking that opponent.
-*/
+  /* Kaalia of the Vast |1|W|B|R
+   * Legendary Creature — Human Cleric 2/2
+   * Flying
+   * Whenever Kaalia of the Vast attacks an opponent, you may put an Angel, Demon, or Dragon creature card from your hand
+   * 	onto the battlefield tapped and attacking that opponent. */
+
 	check_legend_rule(player, card, event);
 
 	dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
@@ -690,12 +705,11 @@ Whenever Kaalia of the Vast attacks an opponent, you may put an Angel, Demon, or
 }
 
 int card_karador_ghost_chieftain(int player, int card, event_t event){
-	/*
-	  Karador, Ghost Chieftain English |5|W|B|G
-	  Legendary Creature - Centaur Spirit 3/4
-	  Karador, Ghost Chieftain costs {1} less to cast for each creature card in your graveyard.
-	  During each of your turns, you may cast one creature card from your graveyard.
-	*/
+  /* Karador, Ghost Chieftain English |5|W|B|G
+   * 	  Legendary Creature - Centaur Spirit 3/4
+   * 	  Karador, Ghost Chieftain costs {1} less to cast for each creature card in your graveyard.
+   * 	  During each of your turns, you may cast one creature card from your graveyard. */
+
 	card_instance_t *instance = get_card_instance(player, card);
 
 	check_legend_rule(player, card, event);
@@ -904,12 +918,10 @@ static int martyrs_bond_effect(int player, int card, event_t event)
 
 int card_martyrs_bond(int player, int card, event_t event)
 {
-  /*
-  Martyr's Bond |4|W|W
-  Enchantment
-  Whenever Martyr's Bond or another nonland permanent you control is put into a graveyard from the
-  battlefield, each opponent sacrifices a permanent that shares a card type with it.
-  */
+  /* Martyr's Bond |4|W|W
+   *   Enchantment
+   *   Whenever Martyr's Bond or another nonland permanent you control is put into a graveyard from the
+   *   battlefield, each opponent sacrifices a permanent that shares a card type with it. */
 
   if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
   {
@@ -1165,14 +1177,13 @@ int card_scavenging_ooze(int player, int card, event_t event)
 }
 
 int card_scythe_specter(int player, int card, event_t event){
-/*
-Scythe Specter |4|B|B
-Creature — Specter 4/4
-Flying
-Whenever Scythe Specter deals combat damage to a player, each opponent discards a card.
-Each player who discarded a card with the highest converted mana cost among cards discarded this way loses life equal to that
-	converted mana cost.
-*/
+  /* Scythe Specter |4|B|B
+   * Creature — Specter 4/4
+   * Flying
+   * Whenever Scythe Specter deals combat damage to a player, each opponent discards a card.
+   * Each player who discarded a card with the highest converted mana cost among cards discarded this way loses life equal to that
+   * 	converted mana cost. */
+
 	if( has_combat_damage_been_inflicted_to_a_player(player, card, event) && hand_count[1-player] > 0 ){
 		test_definition_t test;
 		new_default_test_definition(&test, TYPE_ANY, "Select a card to discard.");
@@ -1190,6 +1201,12 @@ Each player who discarded a card with the highest converted mana cost among card
 
 int card_sewer_nemesis(int player, int card, event_t event)
 {
+  /* Sewer Nemesis	|3|B
+   * Creature - Horror 100/100
+   * As ~ enters the battlefield, choose a player.
+   * ~'s power and toughness are each equal to the number of cards in the chosen player's graveyard.
+   * Whenever the chosen player casts a spell, that player puts the top card of his or her library into his or her graveyard. */
+
   int32_t chosen_target_player;
   card_instance_t *nemesis;
   int chosen_player;
@@ -1263,8 +1280,15 @@ static int effect_skullbriar_the_walking_grave(int player, int card, event_t eve
 {
   return 0;	// just a marker
 }
+
 int card_skullbriar_the_walking_grave(int player, int card, event_t event)
 {
+  /* Skullbriar, the Walking Grave	|B|G
+   * Legendary Creature - Zombie Elemental 1/1
+   * Haste
+   * Whenever ~ deals combat damage to a player, put a +1/+1 counter on it.
+   * Counters remain on Skullbriar as it moves to any zone other than a player's hand or library. */
+
   int p;
   int c;
   int owner;
@@ -1321,13 +1345,11 @@ int card_skullbriar_the_walking_grave(int player, int card, event_t event)
   return card_slith_predator(player, card, event);
 }
 
-
 int card_soul_snare(int player, int card, event_t event){
-/*
-Soul Snare |W
-Enchantment
-{W}, Sacrifice Soul Snare: Exile target creature that's attacking you or a planeswalker you control.
-*/
+  /* Soul Snare |W
+   * Enchantment
+   * {W}, Sacrifice Soul Snare: Exile target creature that's attacking you or a planeswalker you control. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return global_enchantment(player, card, event);
 	}
@@ -1389,12 +1411,11 @@ int card_syphon_flesh(int player, int card, event_t event){
 }
 
 int card_tariel_reckoner_of_souls(int player, int card, event_t event){
-/*
-Tariel, Reckoner of Souls |4|W|B|R
-Legendary Creature — Angel 4/7
-Flying, vigilance
-{T}: Choose a creature card at random from target opponent's graveyard. Put that card onto the battlefield under your control.
-*/
+  /* Tariel, Reckoner of Souls |4|W|B|R
+   * Legendary Creature — Angel 4/7
+   * Flying, vigilance
+   * {T}: Choose a creature card at random from target opponent's graveyard. Put that card onto the battlefield under your control. */
+
 	check_legend_rule(player, card, event);
 
 	vigilance(player, card, event);
@@ -1421,6 +1442,11 @@ Flying, vigilance
 
 int card_the_mimeoplasm(int player, int card, event_t event)
 {
+  /* The Mimeoplasm	|2|G|U|B
+   * Legendary Creature - Ooze 0/0
+   * As ~ enters the battlefield, you may exile two creature cards from graveyards. If you do, it enters the battlefield as a copy of one of those cards with a
+   * number of additional +1/+1 counters on it equal to the power of the other card. */
+
   int second_grave_index;
   card_instance_t *instance;
   int second_selection_or_owner;
@@ -1514,6 +1540,11 @@ int card_the_mimeoplasm(int player, int card, event_t event)
 
 int card_trench_gorger(int player, int card, event_t event)
 {
+  /* Trench Gorger	|6|U|U
+   * Creature - Leviathan 6/6
+   * Trample
+   * When this creature enters, you may search your library for any number of land cards, exile them, then shuffle. If you do, this creature has base power and base toughness each equal to the number of cards exiled this way. */
+
   etb_ability(player, card, event, (duh_mode(player) != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
     return 0;
@@ -1552,15 +1583,13 @@ Each opponent sacrifices an artifact or enchantment. */
 	return basic_spell(player, card, event);
 }
 
-
 int card_vish_kal_blood_arbiter( int player, int card, event_t event){
-/*
-Vish Kal, Blood Arbiter |4|W|B|B
-Legendary Creature — Vampire 5/5,
-Flying, lifelink
-Sacrifice a creature: Put X +1/+1 counters on Vish Kal, Blood Arbiter, where X is the sacrificed creature's power.
-Remove all +1/+1 counters from Vish Kal: Target creature gets -1/-1 until end of turn for each +1/+1 counter removed this way.
-*/
+  /* Vish Kal, Blood Arbiter |4|W|B|B
+   * Legendary Creature — Vampire 5/5,
+   * Flying, lifelink
+   * Sacrifice a creature: Put X +1/+1 counters on Vish Kal, Blood Arbiter, where X is the sacrificed creature's power.
+   * Remove all +1/+1 counters from Vish Kal: Target creature gets -1/-1 until end of turn for each +1/+1 counter removed this way. */
+
 	if( event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST ){
 		// Assuming the AI will sacrifice the creature with least power
 		int pump = 0;
@@ -1723,13 +1752,25 @@ Enchanted creature gets +3/+3, has trample, and can't attack you or a planeswalk
 	return vow(player, card, event, 3, 3, KEYWORD_TRAMPLE, 0);
 }
 
+/* ManalinkEh 2022: 0x23e5c70; original cards/commander.c:1663. */
+int count_permanents_you_control_but_you_dont_own(int player, int type)
+{
+  int amount = 0;
+  for (int p = 0; p < 2; ++p)
+    // The release tests the loop player against ANYBODY here.
+    if (player == p || p == ANYBODY)
+      for (int c = active_cards_count[p] - 1; c >= 0; --c)
+        if (in_play(p, c) && is_what(p, c, type) && is_stolen(p, c))
+          ++amount;
+  return amount;
+}
+
 int card_zedruu_the_greathearted( int player, int card, event_t event){
-/*
-Zedruu the Greathearted |1|W|U|R
-Legendary Creature — Minotaur Monk 2/4
-At the beginning of your upkeep, you gain X life and draw X cards, where X is the number of permanents you own that your opponents control.
-{R}{W}{U}: Target opponent gains control of target permanent you control.
-*/
+  /* Zedruu the Greathearted |1|W|U|R
+   * Legendary Creature — Minotaur Monk 2/4
+   * At the beginning of your upkeep, you gain X life and draw X cards, where X is the number of permanents you own that your opponents control.
+   * {R}{W}{U}: Target opponent gains control of target permanent you control. */
+
 	check_legend_rule(player, card, event);
 
 	upkeep_trigger_ability(player, card, event, player);
@@ -1781,26 +1822,3 @@ At the beginning of your upkeep, you gain X life and draw X cards, where X is th
 
 	return 0;
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int count_permanents_you_control_but_you_dont_own(int player, int type);
-
-/* ManalinkEh 2022: 0x23e5c70; original cards/commander.c:1663. */
-int count_permanents_you_control_but_you_dont_own(int player, int type)
-{
-  int amount = 0;
-  for (int p = 0; p < 2; ++p)
-    // The release tests the loop player against ANYBODY here.
-    if (player == p || p == ANYBODY)
-      for (int c = active_cards_count[p] - 1; c >= 0; --c)
-        if (in_play(p, c) && is_what(p, c, type) && is_stolen(p, c))
-          ++amount;
-  return amount;
-}
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x23e1320; original cards/commander.c:14. */
-
-
-#endif

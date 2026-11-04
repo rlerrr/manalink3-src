@@ -4,6 +4,9 @@ static int dire_undercurrents_blue_trig(int player, int card, event_t event);
 static int dire_undercurrents_black_trig(int player, int card, event_t event);
 
 // Functions
+
+static int effect_cemetery_puca(int player, int card, event_t event);
+
 int get_color_for_monocolored_hybrid(int player, int card){
 	int card_color = player != -1 ? cards_data[ get_card_instance(player, card)->internal_card_id ].color : cards_data[ card ].color;
 	int i;
@@ -292,7 +295,6 @@ int hybrid(int player, int card, event_t event)
   return event == EVENT_CAN_CAST;
 }
 
-
 int conspire(int player, int card, event_t event ){
 
 	card_instance_t *instance = get_card_instance( player, card );
@@ -353,7 +355,6 @@ int liege(int player, int card, event_t event, int color1, int color2){
 	boost_creature_by_color(player, card, event, color2, 1, 1, 0, BCT_CONTROLLER_ONLY);
 	return hybrid(player, card, event);
 }
-
 
 int card_filter_land(int player, int card, event_t event, int color1, int color2, int color_test1, int color_test2, const char * str){
 
@@ -524,6 +525,11 @@ int persist_granted(int player, int card, event_t event)
 // Cards
 
 int card_advice_from_the_fae(int player, int card, event_t event){
+  /* Advice from the Fae	|2U|2U|2U
+   * Sorcery
+   * (|2U can be paid with any two mana or with |U. This card's mana value is 6.)
+   * Look at the top five cards of your library. If you control more creatures than each other player, put two of those cards into your hand. Otherwise, put one of them into your hand. Then put the rest on the bottom of your library in any order. */
+
 	/*
 	  Advice from the Fae {2/U}{2/U}{2/U}
 	  Sorcery
@@ -848,6 +854,10 @@ static int blowfly_infestation_effect(int player, int card, event_t event)
 
 int card_blowfly_infestation(int player, int card, event_t event)
 {
+  /* Blowfly Infestation	|2|B
+   * Enchantment
+   * Whenever a creature dies, if it had a -1/-1 counter on it, put a -1/-1 counter on target creature. */
+
   int c;
   card_instance_t *instance;
   int legacy_card_or_result;
@@ -947,6 +957,45 @@ Wither (This deals damage to creatures in the form of -1/-1 counters.) */
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x254cf30; original cards/shadowmoor.c:888. */
+int card_boon_reflection(int player, int card, event_t event)
+{
+  /* Boon Reflection	|4|W
+   * Enchantment
+   * If you would gain life, you gain twice that much life instead. */
+
+  enum
+  {
+    XTRIGGER_REPLACE_GAIN_LIFE = 16778752
+  };
+
+  xtrigger_t current_trigger;
+
+  current_trigger = trigger_condition;
+  if (trigger_condition == TRIGGER_XTRIGGER)
+  {
+    current_trigger = xtrigger_impl_value_dont_use_directly;
+  }
+  if ((((current_trigger == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
+        (0 < life_gained))))
+  {
+    if (!is_humiliated(player, card, AL_TRIG))
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = event_result | 2;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        life_gained = life_gained << 1;
+      }
+    }
+  }
+  return global_enchantment(player, card, event);
+}
+
 // burn trail --> lighting bolt
 
 int card_cauldron_of_souls(int player, int card, event_t event){
@@ -1009,7 +1058,6 @@ Artifact
 	return 0;
 }
 
-static int effect_cemetery_puca(int player, int card, event_t event);
 static void cemetery_puca_impl(int player, int card, event_t event, int is_effect)
 {
   if (event != EVENT_GRAVEYARD_FROM_PLAY && trigger_condition != TRIGGER_GRAVEYARD_FROM_PLAY)
@@ -1073,6 +1121,7 @@ static void cemetery_puca_impl(int player, int card, event_t event, int is_effec
 		}
 	}
 }
+
 static int effect_cemetery_puca(int player, int card, event_t event)
 {
   if (effect_follows_control_of_attachment(player, card, event))
@@ -1082,6 +1131,7 @@ static int effect_cemetery_puca(int player, int card, event_t event)
 
   return 0;
 }
+
 int card_cemetery_puca(int player, int card, event_t event)
 {
 	/* Cemetery Puca	|1|UB|UB	0x2007c67
@@ -1131,12 +1181,11 @@ int card_chainbreaker(int player, int card, event_t event){
 }
 
 int card_cinderhaze_wretch(int player, int card, event_t event){
-/*
-Cinderhaze Wretch |4|B
-Creature â€” Elemental Shaman 3/2
-{T}: Target player discards a card. Activate this ability only during your turn.
-Put a -1/-1 counter on Cinderhaze Wretch: Untap Cinderhaze Wretch.
-*/
+  /* Cinderhaze Wretch |4|B
+   * Creature â€” Elemental Shaman 3/2
+   * {T}: Target player discards a card. Activate this ability only during your turn.
+   * Put a -1/-1 counter on Cinderhaze Wretch: Untap Cinderhaze Wretch. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1279,6 +1328,12 @@ int card_cragganwick_cremator(int player, int card, event_t event){
 
 int card_crowd_of_cinders(int player, int card, event_t event)
 {
+  /* CARD_ID_CROWD_OF_CINDERS	9504
+   * Crowd of Cinders	|3|B
+   * Creature - Elemental 100/100
+   * Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)
+   * ~'s power and toughness are each equal to the number of |Sblack permanents you control. */
+
   int result;
   fear(player, card, event);
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
@@ -1561,13 +1616,60 @@ int card_din_of_the_fireherd(int player, int card, event_t event){
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x254a6e0; original cards/shadowmoor.c:1528. */
+static int dire_undercurrents_blue_trig(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  etb_ability_global(player, event, 2, TYPE_NONE, NULL, player, card);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  default_target_definition(player, card, &td, 2);
+  td.zone = TARGET_ZONE_PLAYERS;
+  td.preferred_controller = player;
+  result = new_pick_target(&td, "Select target player to draw a card.", 0, 0x80);
+  if (result != 0)
+  {
+    draw_a_card(instance->targets[0].player);
+  }
+  instance->number_of_targets = '\0';
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x254a5f0; original cards/shadowmoor.c:1549. */
+static int dire_undercurrents_black_trig(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  etb_ability_global(player, event, 2, TYPE_NONE, NULL, player, card);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  default_target_definition(player, card, &td, 2);
+  td.zone = TARGET_ZONE_PLAYERS;
+  result = new_pick_target(&td, "Select target player to discard a card.", 0, 0x80);
+  if (result != 0)
+  {
+    discard(instance->targets[0].player, 0, player);
+  }
+  instance->number_of_targets = '\0';
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
 int card_dire_undercurrents(int player, int card, event_t event){
-/*
-Dire Undercurrents |3{U/B}{U/B}
-Enchantment
-Whenever a blue creature enters the battlefield under your control, you may have target player draw a card.
-Whenever a black creature enters the battlefield under your control, you may have target player discard a card.
-*/
+  /* Dire Undercurrents |3{U/B}{U/B}
+   * Enchantment
+   * Whenever a blue creature enters the battlefield under your control, you may have target player draw a card.
+   * Whenever a black creature enters the battlefield under your control, you may have target player discard a card. */
 
 	hybrid(player, card, event);
 	if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) &&
@@ -1691,6 +1793,11 @@ Draw cards equal to the number of cards target opponent discarded this turn. */
 
 int card_drove_of_elves(int player, int card, event_t event)
 {
+  /* Drove of Elves	|3|G
+   * Creature - Elf 100/100
+   * Hexproof
+   * ~'s power and toughness are each equal to the number of |Sgreen permanents you control. */
+
   int result;
   hexproof(player, card, event);
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
@@ -1954,6 +2061,10 @@ int card_farhaven_elf(int player, int card, event_t event){
 
 int card_fate_transfer(int player, int card, event_t event)
 {
+  /* Fate Transfer	|1|UB
+   * Instant
+   * Move all counters from target creature onto another target creature. */
+
   card_instance_t *instance;
   target_definition_t *td_00;
   int result;
@@ -2160,8 +2271,13 @@ int card_flame_javelin(int player, int card, event_t event){
 }
 
 // Flourishing defenses --> Doubling Season
+
 int card_flourishing_defenses(int player, int card, event_t event)
 {
+  /* Flourishing Defenses	|4|G
+   * Enchantment
+   * Whenever a -1/-1 counter is put on a creature, you may create a 1/1 green Elf Warrior creature token. */
+
 enable_xtrigger_flags |= ENABLE_XTRIGGER_M1_M1_COUNTERS;
   if (xtrigger_condition() == XTRIGGER_M1_M1_COUNTERS && affect_me(player, card) &&
       reason_for_trigger_controller == player && trigger_cause != card && !is_humiliated(player, card, AL_TRIG))
@@ -2226,6 +2342,7 @@ Sacrifice ~: Destroy target nonbasic land. */
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_SACRIFICE_ME | GAA_LITERAL_PROMPT, MANACOST0, 0,
 									&td, "Select target non-basic land.");
 }
+
 static int tap_and_damage(int player, int card, event_t event){
 
 	if (!IS_GAA_EVENT(event))
@@ -2368,6 +2485,11 @@ Other |Sblack creatures you control get +1/+1. */
 
 int card_gnarled_effigy(int player, int card, event_t event)
 {
+  /* CARD_ID_GNARLED_EFFIGY	9550
+   * Gnarled Effigy	|4
+   * Artifact
+   * |4, |T: Put a -1/-1 counter on target creature. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -2483,6 +2605,22 @@ Remove a -1/-1 counter from ~: Put a -1/-1 counter on another target creature. *
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST0, GVC_COUNTER(COUNTER_M1_M1), &td, "TARGET_CREATURE");
 }
 
+/* ManalinkEh 2022: 0x25517a0; original cards/shadowmoor.c:2524. */
+int card_guttural_response(int player, int card, event_t event)
+{
+  /* Guttural Response	|RG
+   * Instant
+   * Counter target blue instant spell. */
+
+  target_definition_t td;
+  hybrid(player, card, event);
+  if (!IS_GS_EVENT(player, card, event))
+    return 0;
+  counterspell_target_definition(player, card, &td, 0x30);
+  td.required_color = get_sleighted_color_test(player, card, 4);
+  return counterspell(player, card, event, &td, 0);
+}
+
 int card_heap_doll(int player, int card, event_t event){
 /* CARD_ID_HEAP_DOLL	9559
 Heap Doll	|1
@@ -2528,6 +2666,12 @@ int card_heartmender(int player, int card, event_t event)
 
 int card_helm_of_the_ghastlord(int player, int card, event_t event)
 {
+  /* Helm of the Ghastlord	|3|UB
+   * Enchantment - Aura
+   * Enchant creature
+   * As long as enchanted creature is |Sblue, it gets +1/+1 and has "Whenever this creature deals damage to an opponent, draw a card."
+   * As long as enchanted creature is |Sblack, it gets +1/+1 and has "Whenever this creature deals damage to an opponent, that player discards a card." */
+
   card_instance_t *instance;
   int result;
   unsigned int enchanted_color;
@@ -2595,12 +2739,11 @@ int card_helm_of_the_ghastlord(int player, int card, event_t event)
 }
 
 int card_hollowborn_barghest(int player, int card, event_t event){
-/*
-Hollowborn Barghest |5|B|B
-Creature — Demon Hound 7/6
-At the beginning of your upkeep, if you have no cards in hand, each opponent loses 2 life.
-At the beginning of each opponent's upkeep, if that player has no cards in hand, he or she loses 2 life.
-*/
+  /* Hollowborn Barghest |5|B|B
+   * Creature — Demon Hound 7/6
+   * At the beginning of your upkeep, if you have no cards in hand, each opponent loses 2 life.
+   * At the beginning of each opponent's upkeep, if that player has no cards in hand, he or she loses 2 life. */
+
 	upkeep_trigger_ability(player, card, event, ANYBODY);
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
@@ -2640,6 +2783,11 @@ Whenever ~ becomes untapped, you may have target player discard a card. */
 
 int card_horde_of_boggarts(int player, int card, event_t event)
 {
+  /* Horde of Boggarts	|3|R
+   * Creature - Goblin 100/100
+   * Menace
+   * ~'s power and toughness are each equal to the number of |Sred permanents you control. */
+
   int result;
   menace(player, card, event);
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
@@ -2897,6 +3045,11 @@ Persist (When this creature dies, if it had no -1/-1 counters on it, return it t
 
 int card_kithkin_rabble(int player, int card, event_t event)
 {
+  /* Kithkin Rabble	|3|W
+   * Creature - Kithkin 100/100
+   * Vigilance
+   * ~'s power and toughness are each equal to the number of |Swhite permanents you control. */
+
   int result;
   vigilance(player, card, event);
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
@@ -2937,13 +3090,12 @@ int card_knacksaw_clique(int player, int card, event_t event)
 }
 
 int card_knollspine_dragon(int player, int card, event_t event){
-/*
-Knollspine Dragon |5|R|R
-Creature — Dragon 7/5
-Flying
-When Knollspine Dragon enters the battlefield, you may discard your hand and draw cards equal to the damage dealt to target opponent
-	this turn.
-*/
+  /* Knollspine Dragon |5|R|R
+   * Creature — Dragon 7/5
+   * Flying
+   * When Knollspine Dragon enters the battlefield, you may discard your hand and draw cards equal to the damage dealt to target opponent
+   * 	this turn. */
+
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -3062,6 +3214,11 @@ int card_kulrath_knight(int player, int card, event_t event)
 
 int card_leech_bonder(int player, int card, event_t event)
 {
+  /* Leech Bonder	|2|U
+   * Creature - Merfolk Soldier 3/3
+   * ~ enters the battlefield with two -1/-1 counters on it.
+   * |U, |Q: Move a counter from target creature onto another target creature. */
+
   card_instance_t *instance;
   target_definition_t *td_00;
   int result;
@@ -3230,6 +3387,12 @@ int card_leechridden_swamp(int player, int card, event_t event){
 
 int card_lockjaw_snapper(int player, int card, event_t event)
 {
+  /* CARD_ID_LOCKJAW_SNAPPER	9590
+   * Lockjaw Snapper	|4
+   * Artifact Creature - Scarecrow 2/2
+   * Wither (This deals damage to creatures in the form of -1/-1 counters.)
+   * When ~ dies, put a -1/-1 counter on each creature with a -1/-1 counter on it. */
+
   int i;
   card_instance_t *instance;
   int next_card_or_result;
@@ -3488,6 +3651,7 @@ static const char* target_must_have_counters(int who_chooses, int player, int ca
 {
   return count_counters(player, card, -1) ? NULL : "must have counters";
 }
+
 int card_medicine_runner(int player, int card, event_t event)
 {
   /* Medicine Runner	|1|GW
@@ -3665,11 +3829,11 @@ When you do, copy it and you may choose a new target for the copy.) */
 	return generic_spell(player, card, event, GS_GRAVE_RECYCLER_BOTH_GRAVES, NULL, NULL, 1, &this_test);
 }
 
-
 static int test_exclude_this_creature(int iid, int val, int player, int card)
 {
   return !(card == LOWORD(val) && player == HIWORD(val));
 }
+
 int card_mirrorweave(int player, int card, event_t event)
 {
   /* Mirrorweave	|2|WU|WU
@@ -4050,6 +4214,11 @@ Whenever a player casts a |Sgreen spell, you may pay |1. If you do, target creat
 }
 
 int card_oona_queen_of_the_fae(int player, int card, event_t event){
+  /* Oona, Queen of the Fae	|3|UB|UB|UB
+   * Legendary Creature - Faerie Wizard 5/5
+   * Flying
+   * |X|UB: Choose a color. Target opponent exiles the top X cards of their library. For each card of the chosen color exiled this way, create a 1/1 blue and black Faerie Rogue creature token with flying. */
+
 	/*
 	  Oona, Queen of the Fae 3{U/B}{U/B}{U/B}
 	  Legendary Creature - Faerie Wizard 5/5
@@ -4196,6 +4365,11 @@ Protection from |Sblue, from |Sblack, and from |Sred */
 
 int card_painters_servant(int player, int card, event_t event)
 {
+  /* CARD_ID_PAINTERS_SERVANT	9622
+   * Painter's Servant	|2
+   * Artifact Creature - Scarecrow 1/3
+   * As ~ enters the battlefield, choose a color. */
+
   int result;
   unsigned int current_color;
   card_instance_t *instance;
@@ -4437,6 +4611,13 @@ Lands you control are every basic land type in addition to their other types. */
 
 int card_prison_term(int player, int card, event_t event)
 {
+  /* CARD_ID_PRISON_TERM	9634
+   * Prison Term	|1|W|W
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature can't attack or block, and its activated abilities can't be activated.
+   * Whenever a creature enters the battlefield under an opponent's control, you may attach ~ to that creature. */
+
   card_instance_t *instance;
   int trigger_mode_or_value;
   card_instance_t *aura_in_play;
@@ -4513,7 +4694,6 @@ target nonland permanent an opponent controls with an equal or lesser converted 
 
 	return global_enchantment(player, card, event);
 }
-
 
 int card_puncture_bolt(int player, int card, event_t event){
 /* CARD_ID_PUNCTURE_BOLT	9636
@@ -5004,6 +5184,11 @@ static const char* can_be_activated(int who_chooses, int player, int card)
 
 int card_resplendant_mentor(int player, int card, event_t event)
 {
+  /* CARD_ID_RESPLENDENT_MENTOR	9648
+   * Resplendent Mentor	|4|W
+   * Creature - Kithkin Cleric 2/2
+   * |SWhite creatures you control have "|T: You gain 1 life." */
+
   int result;
   card_instance_t *instance;
   const char *color_prompt;
@@ -5189,13 +5374,12 @@ int card_rite_of_consumption(int player, int card, event_t event){
 }
 
 int card_river_kelpie(int player, int card, event_t event){
-	/*
-	  River Kelpie |3|U|U
-	  Creature - Beast 3/3
-	  Whenever River Kelpie or another permanent enters the battlefield from a graveyard, draw a card.
-	  Whenever a player casts a spell from a graveyard, draw a card.
-	  Persist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)
-	*/
+  /* River Kelpie |3|U|U
+   * 	  Creature - Beast 3/3
+   * 	  Whenever River Kelpie or another permanent enters the battlefield from a graveyard, draw a card.
+   * 	  Whenever a player casts a spell from a graveyard, draw a card.
+   * 	  Persist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.) */
+
 	persist(player, card, event);
 
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
@@ -6452,6 +6636,12 @@ Target player discards his or her hand unless he or she pays 7 life. */
 
 int card_umbral_mantle(int player, int card, event_t event)
 {
+  /* CARD_ID_UMBRAL_MANTLE	9709
+   * Umbral Mantle	|3
+   * Artifact - Equipment
+   * Equipped creature has "|3, |Q: This creature gets +2/+2 until end of turn." (|Q is the untap symbol.)
+   * Equip |0 */
+
   card_instance_t *instance;
   int result;
   card_instance_t *equipped_creature;
@@ -6550,6 +6740,11 @@ int card_umbral_mantle(int player, int card, event_t event)
 }
 
 int card_valleymaker(int player, int card, event_t event){
+  /* Valleymaker	|5|RG
+   * Creature - Giant Shaman 5/5
+   * |T, Sacrifice a Mountain: This creature deals 3 damage to target creature.
+   * |T, Sacrifice a Forest: Choose a player. That player adds |G|G|G. */
+
 	/*
 	  Valleymaker 5{R/G}
 	  Creature - Giant Shaman 5/5
@@ -6752,6 +6947,10 @@ int card_wheel_of_sun_and_moon(int player, int card, event_t event)
 }
 
 int card_wilt_leaf_cavaliers(int player, int card, event_t event){
+  /* Wilt-Leaf Cavaliers	|GW|GW|GW
+   * Creature - Elf Knight 3/4
+   * Vigilance */
+
 	vigilance( player, card, event );
 	return hybrid(player, card, event);
 }
@@ -6786,6 +6985,11 @@ Attacking creatures you control have lifelink. */
 
 int card_witherscale_wurm(int player, int card, event_t event)
 {
+  /* Witherscale Wurm	|4|G|G
+   * Creature - Wurm 9/9
+   * Whenever ~ blocks or becomes blocked by a creature, that creature gains wither until end of turn.
+   * Whenever ~ deals damage to an opponent, remove all -1/-1 counters from it. */
+
   int opponent_or_humiliated;
   card_instance_t *instance;
   int card_00;
@@ -7015,104 +7219,4 @@ At the beginning of each end step, each opponent loses life equal to the life he
 		lose_life(1-player, get_trap_condition(1-player, TRAP_LIFE_LOST));
 	}
 	return global_enchantment(player, card, event);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x254a6e0; original cards/shadowmoor.c:1528. */
-static int dire_undercurrents_blue_trig(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-  target_definition_t td;
-  etb_ability_global(player, event, 2, TYPE_NONE, NULL, player, card);
-  if (event != EVENT_ETB)
-  {
-    return 0;
-  }
-  instance = get_card_instance(player, card);
-  default_target_definition(player, card, &td, 2);
-  td.zone = TARGET_ZONE_PLAYERS;
-  td.preferred_controller = player;
-  result = new_pick_target(&td, "Select target player to draw a card.", 0, 0x80);
-  if (result != 0)
-  {
-    draw_a_card(instance->targets[0].player);
-  }
-  instance->number_of_targets = '\0';
-  kill_card(player, card, KILL_EXILE);
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x254a5f0; original cards/shadowmoor.c:1549. */
-static int dire_undercurrents_black_trig(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-  target_definition_t td;
-  etb_ability_global(player, event, 2, TYPE_NONE, NULL, player, card);
-  if (event != EVENT_ETB)
-  {
-    return 0;
-  }
-  instance = get_card_instance(player, card);
-  default_target_definition(player, card, &td, 2);
-  td.zone = TARGET_ZONE_PLAYERS;
-  result = new_pick_target(&td, "Select target player to discard a card.", 0, 0x80);
-  if (result != 0)
-  {
-    discard(instance->targets[0].player, 0, player);
-  }
-  instance->number_of_targets = '\0';
-  kill_card(player, card, KILL_EXILE);
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x25517a0; original cards/shadowmoor.c:2524. */
-int card_guttural_response(int player, int card, event_t event)
-{
-  target_definition_t td;
-  hybrid(player, card, event);
-  if (!IS_GS_EVENT(player, card, event))
-    return 0;
-  counterspell_target_definition(player, card, &td, 0x30);
-  td.required_color = get_sleighted_color_test(player, card, 4);
-  return counterspell(player, card, event, &td, 0);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x254cf30; original cards/shadowmoor.c:888. */
-int card_boon_reflection(int player, int card, event_t event)
-{
-  enum
-  {
-    XTRIGGER_REPLACE_GAIN_LIFE = 16778752
-  };
-
-  xtrigger_t current_trigger;
-
-  current_trigger = trigger_condition;
-  if (trigger_condition == TRIGGER_XTRIGGER)
-  {
-    current_trigger = xtrigger_impl_value_dont_use_directly;
-  }
-  if ((((current_trigger == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
-       (player == affected_card_controller)) &&
-      (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
-        (0 < life_gained))))
-  {
-    if (!is_humiliated(player, card, AL_TRIG))
-    {
-      if (event == EVENT_TRIGGER)
-      {
-        event_result = event_result | 2;
-      }
-      else if (event == EVENT_RESOLVE_TRIGGER)
-      {
-        life_gained = life_gained << 1;
-      }
-    }
-  }
-  return global_enchantment(player, card, event);
 }

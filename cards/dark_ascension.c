@@ -186,13 +186,12 @@ static int faiths_shield_legacy(int player, int card, event_t event){
 }
 
 int card_faiths_shield(int player, int card, event_t event){
-/*
-Faith's Shield |W
-Instant
-Target permanent you control gains protection from the color of your choice until end of turn.
-Fateful hour — If you have 5 or less life, instead you and each permanent you control gain protection from the color of
-				your choice until end of turn.
-*/
+  /* Faith's Shield |W
+   * Instant
+   * Target permanent you control gains protection from the color of your choice until end of turn.
+   * Fateful hour — If you have 5 or less life, instead you and each permanent you control gain protection from the color of
+   * 				your choice until end of turn. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -287,7 +286,6 @@ When ~ enters the battlefield, remove target attacking or blocking creature from
 
 	return flash(player, card, event);
 }
-
 
 int card_increasing_devotion(int player, int card, event_t event){
 	/* Increasing Devotion	|3|W|W
@@ -731,11 +729,10 @@ Flashback |U (You may cast this card from your graveyard for its flashback cost.
 }
 
 int card_beguiler_of_wills(int player, int card, event_t event){
-/*
-Beguiler of Wills |3|U|U
-Creature — Human Wizard 1/1
-{T}: Gain control of target creature with power less than or equal to the number of creatures you control.
-*/
+  /* Beguiler of Wills |3|U|U
+   * Creature — Human Wizard 1/1
+   * {T}: Gain control of target creature with power less than or equal to the number of creatures you control. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -779,14 +776,13 @@ Draw a card. */
 }
 
 int card_call_to_the_kindred(int player, int card, event_t event){
-/*
-Call to the Kindred |3|U
-Enchantment — Aura
-Enchant creature
-At the beginning of your upkeep, you may look at the top five cards of your library.
-If you do, you may put a creature card that shares a creature type with enchanted creature from among them onto the battlefield,
-	then you put the rest of those cards on the bottom of your library in any order.
-*/
+  /* Call to the Kindred |3|U
+   * Enchantment — Aura
+   * Enchant creature
+   * At the beginning of your upkeep, you may look at the top five cards of your library.
+   * If you do, you may put a creature card that shares a creature type with enchanted creature from among them onto the battlefield,
+   * 	then you put the rest of those cards on the bottom of your library in any order. */
+
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( in_play(player, card) && instance->damage_target_player != -1  ){
@@ -836,7 +832,6 @@ If you do, you may put a creature card that shares a creature type with enchante
 	return vanilla_aura(player, card, event, player);
 }
 
-
 int card_chant_of_skifsang(int player, int card, event_t event){
 /* CARD_ID_CHANT_OF_THE_SKIFSANG	12149
 Chant of the Skifsang	|2|U
@@ -867,11 +862,9 @@ Flashback |7|U (You may cast this card from your graveyard for its flashback cos
 }
 
 int card_counterlash(int player, int card, event_t event){
-/*
-Counterlash |4|U|U
-Instant
-Counter target spell. You may cast a nonland card in your hand that shares a card type with that spell without paying its mana cost.
-*/
+  /* Counterlash |4|U|U
+   * Instant
+   * Counter target spell. You may cast a nonland card in your hand that shares a card type with that spell without paying its mana cost. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -1228,11 +1221,9 @@ When ~ enters the battlefield, put the top two cards of your library into your g
 }
 
 int card_secrets_of_the_dead(int player, int card, event_t event){
-/*
-Secrets of the Dead |2|U
-Enchantment
-Whenever you cast a spell from your graveyard, draw a card.
-*/
+  /* Secrets of the Dead |2|U
+   * Enchantment
+   * Whenever you cast a spell from your graveyard, draw a card. */
 
 	if (in_play(player, card) && !is_humiliated(player, card, AL_TRIG) && trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && reason_for_trigger_controller == player){
 		if (check_special_flags(trigger_cause_controller, trigger_cause, SF_PLAYED_FROM_GRAVE) && get_owner(trigger_cause_controller, trigger_cause) == player){
@@ -1324,7 +1315,6 @@ When ~ enters the battlefield, look at the top two cards of your library. Put on
 
 	return 0;
 }
-
 
 // BLACK
 int card_black_cat(int player, int card, event_t event ){
@@ -1592,6 +1582,11 @@ Destroy target creature. If that creature was a Human, you gain life equal to it
 
 int card_falkenrath_torturer(int player, int card, event_t event)
 {
+  /* CARD_ID_FALKENRATH_TORTURER	12177
+   * Falkenrath Torturer	|2|B
+   * Creature - Vampire 2/1
+   * Sacrifice a creature: ~ gains flying until end of turn. If the sacrificed creature was a Human, put a +1/+1 counter on ~. */
+
   card_instance_t *instance;
   int result;
   unsigned int sacrifice_choice;
@@ -1983,6 +1978,12 @@ static int mikaeus_the_unhallowed_effect(int player, int card, event_t event)
 
 int card_mikaeus_the_unhallowed(int player, int card, event_t event)
 {
+  /* Mikaeus, the Unhallowed	|3|B|B|B
+   * Legendary Creature - Zombie Cleric 5/5
+   * Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)
+   * Whenever a Human deals damage to you, destroy it.
+   * Other non-Human creatures you control get +1/+1 and have undying. (When a creature with undying dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.) */
+
   card_instance_t *instance;
   int card_00;
   card_instance_t *damage_or_candidate;
@@ -2111,11 +2112,9 @@ int card_mikaeus_the_unhallowed(int player, int card, event_t event)
 }
 
 int card_ravenous_demon(int player, int card, event_t event){
-/*
-Ravenous Demon |3|B|B
-Creature — Demon 4/4, 3BB (5)
-Sacrifice a Human: Transform Ravenous Demon. Activate this ability only any time you could cast a sorcery.
-*/
+  /* Ravenous Demon |3|B|B
+   * Creature — Demon 4/4, 3BB (5)
+   * Sacrifice a Human: Transform Ravenous Demon. Activate this ability only any time you could cast a sorcery. */
 
 	double_faced_card(player, card, event);
 
@@ -2137,6 +2136,10 @@ Sacrifice a Human: Transform Ravenous Demon. Activate this ability only any time
 }
 
 int card_archdemon_of_greed(int player, int card, event_t event){
+  /* Archdemon of Greed	""
+   * Creature - Demon 9/9
+   * Flying, trample
+   * At the beginning of your upkeep, sacrifice a Human. If you can't, tap this creature and it deals 9 damage to you. */
 
 	upkeep_trigger_ability(player, card, event, player);
 
@@ -2175,11 +2178,9 @@ int card_reap_the_seagraf(int player, int card, event_t event){
 }
 
 int card_skirsdag_flayer(int player, int card, event_t event){
-/*
-Skirsdag Flayer |1|B
-Creature — Human Cleric 1/1
-{3}{B}, {T}, Sacrifice a Human: Destroy target creature.
-*/
+  /* Skirsdag Flayer |1|B
+   * Creature — Human Cleric 1/1
+   * {3}{B}, {T}, Sacrifice a Human: Destroy target creature. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -2216,12 +2217,10 @@ Undying (When this creature dies, if it had no +1/+1 counters on it, return it t
 }
 
 int card_spiteful_shadows(int player, int card, event_t event){
-/*
-Spiteful Shadows |1|B
-Enchantment — Aura
-Enchant creature
-Whenever enchanted creature is dealt damage, it deals that much damage to its controller.
-*/
+  /* Spiteful Shadows |1|B
+   * Enchantment — Aura
+   * Enchant creature
+   * Whenever enchanted creature is dealt damage, it deals that much damage to its controller. */
 
 	if( in_play(player, card) && get_card_instance(player, card)->damage_target_card != -1 && ! is_humiliated(player, card, AL_TRIG) ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -2431,12 +2430,11 @@ int card_werewolf_ransacker(int player, int card, event_t event)
 }
 
 int card_alpha_brawl(int player, int card, event_t event){
-/*
-Alpha Brawl |6|R|R
-Sorcery
-Target creature an opponent controls deals damage equal to its power to each other creature that player controls,
-then each of those creatures deals damage equal to its power to that creature.
-*/
+  /* Alpha Brawl |6|R|R
+   * Sorcery
+   * Target creature an opponent controls deals damage equal to its power to each other creature that player controls,
+   * then each of those creatures deals damage equal to its power to that creature. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -2865,7 +2863,6 @@ Flashback |5|R (You may cast this card from your graveyard for its flashback cos
 	return do_flashback(player, card, event, MANACOST_XR(5, 1));
 }
 
-
 int card_talons_of_falkenrath(int player, int card, event_t event){
 /* CARD_ID_TALONS_OF_FALKENRATH	12274
 Talons of Falkenrath	|1|R
@@ -3074,6 +3071,10 @@ Creature - Elk 2/2
 
 int card_deranged_outcast(int player, int card, event_t event)
 {
+  /* Deranged Outcast	|1|G
+   * Creature - Human Rogue 2/1
+   * |1|G, Sacrifice a Human: Put two +1/+1 counters on target creature. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -3271,6 +3272,12 @@ At the beginning of each upkeep, if a player cast two or more spells last turn, 
 
 int card_lost_in_the_woods(int player, int card, event_t event)
 {
+  /* CARD_ID_LOST_IN_THE_WOODS	12226
+   * Lost in the Woods	|3|G|G
+   * Enchantment
+   * Whenever a creature attacks you or a planeswalker you control, reveal the top card of your library.
+   * If it's |Ha Forest card, remove that creature from combat. Then put the revealed card on the bottom of your library. */
+
   int result;
   card_instance_t *instance;
   card_instance_t *attacker;
@@ -3439,6 +3446,10 @@ Flashback |2|U (You may cast this card from your graveyard for its flashback cos
 
 int card_ulvenwald_bear(int player, int card, event_t event)
 {
+  /* Ulvenwald Bear	|2|G
+   * Creature - Bear 2/2
+   * Morbid - When ~ enters the battlefield, if a creature died this turn, put two +1/+1 counters on target creature. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -3522,7 +3533,6 @@ Flashback |3|R (You may cast this card from your graveyard for its flashback cos
 	return do_flashback(player, card, event, MANACOST_XR(3, 1));
 }
 
-
 // GOLD
 static int diregraf_captain_effect(int player, int card, event_t event)
 {
@@ -3605,13 +3615,12 @@ static int diregraf_captain_effect(int player, int card, event_t event)
 }
 
 int card_diregraf_captain(int player, int card, event_t event){
-/*
-Diregraf Captain |1|U|B
-Creature — Zombie Soldier 2/2
-Deathtouch
-Other Zombie creatures you control get +1/+1.
-Whenever another Zombie you control dies, target opponent loses 1 life.
-*/
+  /* Diregraf Captain |1|U|B
+   * Creature — Zombie Soldier 2/2
+   * Deathtouch
+   * Other Zombie creatures you control get +1/+1.
+   * Whenever another Zombie you control dies, target opponent loses 1 life. */
+
 	deathtouch(player, card, event);
 
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
@@ -3693,13 +3702,12 @@ Whenever you gain life, draw a card. */
 }
 
 int card_falkenrath_aristocrat(int player, int card, event_t event){
-/*
-Falkenrath Aristocrat |2|B|R
-Creature — Vampire 4/1
-Flying, haste
-Sacrifice a creature: Falkenrath Aristocrat gains indestructible until end of turn.
-	If the sacrificed creature was a Human, put a +1/+1 counter on Falkenrath Aristocrat.
-*/
+  /* Falkenrath Aristocrat |2|B|R
+   * Creature — Vampire 4/1
+   * Flying, haste
+   * Sacrifice a creature: Falkenrath Aristocrat gains indestructible until end of turn.
+   * 	If the sacrificed creature was a Human, put a +1/+1 counter on Falkenrath Aristocrat. */
+
 	haste(player, card, event);
 
 	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
@@ -3737,7 +3745,82 @@ Sacrifice a creature: Falkenrath Aristocrat gains indestructible until end of tu
 
 extern int havengul_lich_hack;
 
+/* ManalinkEh 2022: 0x210a2b0; original cards/dark_ascension.c:1169. */
+static char *you_own(int who_chooses, int player, int card, int targeting_player,
+                     int targeting_card)
+{
+  int result;
+  char *rejection;
+  result = get_owner(player, card);
+  rejection = NULL;
+  if (result != targeting_player)
+  {
+    rejection = "owner";
+  }
+  return rejection;
+}
 
+/* ManalinkEh 2022: 0x2112500; original cards/dark_ascension.c:2641. */
+int card_increasing_vengeance(int player, int card, event_t event)
+{
+  /* Increasing Vengeance	|R|R
+   * Instant
+   * Copy target instant or sorcery spell you control. If this spell was cast from a graveyard, copy that spell twice instead. You may choose new targets for the copies.
+   * Flashback |3|R|R (You may cast this card from your graveyard for its flashback cost. Then exile it.) */
+
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  counterspell_target_definition(player, card, &td, 0x38);
+  td.preferred_controller = player;
+  td.allowed_controller = player;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = counterspell_validate(player, card, &td, 0);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+        result = get_flashback(player, card);
+        if (result != 0)
+        {
+          copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+          kill_card(player, card, KILL_EXILE);
+        }
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+    result = do_flashback(player, card, event, 3, 0, 0, 0, 2, 0);
+    return result;
+  }
+  result = twincast(player, card, 0x74, &td, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x210a600; original cards/dark_ascension.c:3707. */
+static int havengul_lich_legacy(int player, int card, event_t event)
+{
+  if (event == EVENT_STATIC_EFFECTS && card == affected_card && player == affected_card_controller)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player < 0)
+      kill_card(player, card, KILL_EXILE);
+    if (!check_status(player, card, 0x10000))
+      add_status(player, card, 0x10000);
+  }
+  card_instance_t *instance = get_card_instance(player, card);
+  if (instance->damage_target_player < 0)
+  {
+    if (event == EVENT_CLEANUP)
+      kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  if (!effect_follows_control_of_attachment(player, card, event) && event == EVENT_CLEANUP)
+    kill_card(player, card, KILL_EXILE);
+  return 0;
+}
 static int can_cast_creature_in_grave(int player, int card, int t_player){
 	int i;
 	for(i=0; i<2; i++){
@@ -3758,15 +3841,11 @@ static int can_cast_creature_in_grave(int player, int card, int t_player){
 	return 0;
 }
 
-
-
 static int can_cast_this(int iid, int unused, int player, int card)
 {
 	card_instance_t *instance = get_card_instance(player, card);
 	return has_mana_to_cast_iid(instance->targets[0].player, EVENT_CAN_CAST, iid);
 }
-
-
 
 int card_huntmaster_of_the_fells(int player, int card, event_t event){
 /* Huntmaster of the Fells	|2|R|G [Ravager of the Fells]
@@ -3788,6 +3867,7 @@ int card_huntmaster_of_the_fells(int player, int card, event_t event){
 
 	return 0;
 }
+
 int card_ravager_of_the_fells(int player, int card, event_t event)
 {
 	/* Ravager of the Fells	"" [Huntmaster of the Fells]	0x200ba7e
@@ -3852,10 +3932,14 @@ int card_immerwolf(int player, int card, event_t event){
 }
 
 int card_sorins_emblem(int player, int card, event_t event){
+  /* Sorin, Lord of Innistrad Emblem	""
+   * Emblem - Sorin
+   * Creatures you control get +1/+0. */
 
 	return boost_creature_type(player, card, event, -1, 1, 0, 0, BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
 }
 
+// ARTIFACTS
 static int sorin_lord_effect(int player, int card, event_t event){
 
 	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
@@ -4009,7 +4093,6 @@ Other Vampire creatures you control get +1/+1 and have first strike. */
 	return boost_creature_type(player, card, event, SUBTYPE_VAMPIRE, 1, 1, KEYWORD_FIRST_STRIKE, BCT_CONTROLLER_ONLY);
 }
 
-// ARTIFACTS
 int card_avacyns_collar(int player, int card, event_t event){
 	/* Avacyn's Collar	|1
 	 * Artifact - Equipment
@@ -4030,7 +4113,6 @@ int card_avacyns_collar(int player, int card, event_t event){
 	}
 	return vanilla_equipment(player, card, event, 2, 1, 0, 0, SP_KEYWORD_VIGILANCE);
 }
-
 
 int card_chalice_of_life(int player, int card, event_t event){
 /* CARD_ID_CHALICE_OF_LIFE	12147
@@ -4154,13 +4236,12 @@ Equip |2 (|2: Attach to target creature you control. Equip only as a sorcery.) *
 }
 
 int card_helvault(int player, int card, event_t event){
-/*
-Helvault |3
-Legendary Artifact
-{1}, {T}: Exile target creature you control.
-{7}, {T}: Exile target creature you don't control.
-When Helvault is put into a graveyard from the battlefield, return all cards exiled with it to the battlefield under their owners' control.
-*/
+  /* Helvault |3
+   * Legendary Artifact
+   * {1}, {T}: Exile target creature you control.
+   * {7}, {T}: Exile target creature you don't control.
+   * When Helvault is put into a graveyard from the battlefield, return all cards exiled with it to the battlefield under their owners' control. */
+
 	check_legend_rule(player, card, event);
 
 	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
@@ -4288,8 +4369,15 @@ When Helvault is put into a graveyard from the battlefield, return all cards exi
 	return 0;
 }
 
+// LANDS
 int card_jar_of_eyeballs(int player, int card, event_t event)
 {
+  /* Jar of Eyeballs	|3
+   * Artifact
+   * Whenever a creature you control dies, put two eyeball counters on ~.
+   * |3, |T, Remove all eyeball counters from ~: Look at the top X cards of your library, where X is the number of eyeball counters removed
+   * 			 this way. Put one of them into your hand and the rest on the bottom of your library in any order. */
+
   int result;
   card_instance_t *instance;
 
@@ -4474,8 +4562,14 @@ int card_wolfhunters_quiver(int player, int card, event_t event){
 	return 0;
 }
 
-// LANDS
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 int card_grim_backwoods(int player, int card, event_t event){
+  /* Grim Backwoods	""
+   * Land
+   * |T: Add |C.
+   * |2|B|G, |T, Sacrifice a creature: Draw a card. */
+
 /*
 Grim Backwoods
 Land
@@ -4536,6 +4630,11 @@ Land
 }
 
 int card_haunted_fengraf(int player, int card, event_t event){
+  /* Haunted Fengraf	""
+   * Land
+   * |T: Add |C.
+   * |3, |T, Sacrifice this land: Return a creature card at random from your graveyard to your hand. */
+
 /*
 Haunted Fengraf
 Land
@@ -4592,8 +4691,12 @@ Land
 	return 0;
 }
 
-
 int card_vault_of_the_archangel(int player, int card, event_t event){
+  /* Vault of the Archangel	""
+   * Land
+   * |T: Add |C.
+   * |2|W|B, |T: Creatures you control gain deathtouch and lifelink until end of turn. */
+
 /*
 Vault of the Archangel
 Land
@@ -4652,124 +4755,6 @@ Land
 	return 0;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x210a2b0; original cards/dark_ascension.c:1169. */
-static char *you_own(int who_chooses, int player, int card, int targeting_player,
-                     int targeting_card)
-{
-  int result;
-  char *rejection;
-  result = get_owner(player, card);
-  rejection = NULL;
-  if (result != targeting_player)
-  {
-    rejection = "owner";
-  }
-  return rejection;
-}
-
-/* ManalinkEh 2022: 0x2112500; original cards/dark_ascension.c:2641. */
-int card_increasing_vengeance(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  target_definition_t td;
-  counterspell_target_definition(player, card, &td, 0x38);
-  td.preferred_controller = player;
-  td.allowed_controller = player;
-  if (event != EVENT_CAN_CAST)
-  {
-    if (event == EVENT_RESOLVE_SPELL)
-    {
-      result = counterspell_validate(player, card, &td, 0);
-      if (result != 0)
-      {
-        instance = get_card_instance(player, card);
-        copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
-        result = get_flashback(player, card);
-        if (result != 0)
-        {
-          copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
-          kill_card(player, card, KILL_EXILE);
-        }
-      }
-      kill_card(player, card, KILL_DESTROY);
-    }
-    result = do_flashback(player, card, event, 3, 0, 0, 0, 2, 0);
-    return result;
-  }
-  result = twincast(player, card, 0x74, &td, NULL);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x210a600; original cards/dark_ascension.c:3707. */
-static int havengul_lich_legacy(int player, int card, event_t event)
-{
-  if (event == EVENT_STATIC_EFFECTS && card == affected_card && player == affected_card_controller)
-  {
-    card_instance_t *instance = get_card_instance(player, card);
-    if (instance->damage_target_player < 0)
-      kill_card(player, card, KILL_EXILE);
-    if (!check_status(player, card, 0x10000))
-      add_status(player, card, 0x10000);
-  }
-  card_instance_t *instance = get_card_instance(player, card);
-  if (instance->damage_target_player < 0)
-  {
-    if (event == EVENT_CLEANUP)
-      kill_card(player, card, KILL_EXILE);
-    return 0;
-  }
-  if (!effect_follows_control_of_attachment(player, card, event) && event == EVENT_CLEANUP)
-    kill_card(player, card, KILL_EXILE);
-  return 0;
-}
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x210a700; original cards/dark_ascension.c:3873. */
-static int can_cast_this_havengul(int iid, int unused, int player, int card)
-{
-  return has_mana_to_cast_iid(player, EVENT_CAN_CAST, iid);
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x210b160; original cards/dark_ascension.c:3829. */
-/* The release specializes t_player to 2; only that domain is recovered here. */
-static int can_cast_creature_in_grave_with_havengul_lich(int player, int card, int t_player)
-{
-  if (generic_activated_ability_with_target_in_grave(player, card, EVENT_CAN_ACTIVATE,
-                                                          GAA_NONE, 1, 0, 0, 0, 0, 0, 0, NULL, NULL,
-                                                          TYPE_CREATURE, NULL, 0x1000))
-  {
-    for (int p = 0; p != 2; ++p)
-    {
-      int cg = count_graveyard(p);
-      const int *grave = get_grave(p);
-      for (; cg >= 0; --cg)
-      {
-        if (is_what(-1, grave[cg], 2))
-        {
-          ++havengul_lich_hack;
-          int result =
-              has_mana_to_cast_id(player, EVENT_CAN_CAST, (uint16_t)cards_data[grave[cg]].id);
-          --havengul_lich_hack;
-          if (result)
-            return 1;
-        }
-      }
-    }
-  }
-  return 0;
-}
-
-#endif
-
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x210b2a0; original cards/dark_ascension.c:3693. */
 static int find_attached_havengul_legacy(int player, int card,
@@ -4789,7 +4774,6 @@ static int find_attached_havengul_legacy(int player, int card,
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x210b320; original cards/dark_ascension.c:3728. */
@@ -4876,6 +4860,59 @@ static int spell_has_flashback_legacy_for_hl(int player, int card, event_t event
 
 #endif
 
+#ifndef SHANDALAR
+static void create_spell_has_flashback_legacy_for_hl(int player, int card, int graveyard_pos,
+                                                    flashback_legacy_t mode)
+{
+  if (graveyard_pos < 0)
+    return;
+  int legacy = create_legacy_activate(player, card, spell_has_flashback_legacy_for_hl);
+  card_instance_t *instance = get_card_instance(player, legacy);
+  int graveyard_player = get_card_instance(player, card)->targets[0].player;
+  const int *grave = get_grave(graveyard_player);
+  instance->targets[0].card = grave[graveyard_pos];
+  instance->targets[1].player = graveyard_source[graveyard_player][graveyard_pos];
+  instance->targets[1].card = graveyard_pos;
+  instance->targets[2].player = mode;
+  instance->targets[2].card = graveyard_player;
+  instance->targets[3].player = player;
+  instance->targets[3].card = card;
+  create_card_name_legacy(player, legacy, cards_data[grave[graveyard_pos]].id);
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x210b160; original cards/dark_ascension.c:3829. */
+/* The release specializes t_player to 2; only that domain is recovered here. */
+static int can_cast_creature_in_grave_with_havengul_lich(int player, int card, int t_player)
+{
+  if (generic_activated_ability_with_target_in_grave(player, card, EVENT_CAN_ACTIVATE,
+                                                          GAA_NONE, 1, 0, 0, 0, 0, 0, 0, NULL, NULL,
+                                                          TYPE_CREATURE, NULL, 0x1000))
+  {
+    for (int p = 0; p != 2; ++p)
+    {
+      int cg = count_graveyard(p);
+      const int *grave = get_grave(p);
+      for (; cg >= 0; --cg)
+      {
+        if (is_what(-1, grave[cg], 2))
+        {
+          ++havengul_lich_hack;
+          int result =
+              has_mana_to_cast_id(player, EVENT_CAN_CAST, (uint16_t)cards_data[grave[cg]].id);
+          --havengul_lich_hack;
+          if (result)
+            return 1;
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x210b650; original cards/dark_ascension.c:3854. */
@@ -4897,11 +4934,26 @@ static int can_use_stolen_ability_with_havengul_lich(int player, int card)
 
 #endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x210a700; original cards/dark_ascension.c:3873. */
+static int can_cast_this_havengul(int iid, int unused, int player, int card)
+{
+  return has_mana_to_cast_iid(player, EVENT_CAN_CAST, iid);
+}
+
+#endif
 
 #ifndef SHANDALAR
+/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
 /* ManalinkEh 2022: 0x2114ea0; original cards/dark_ascension.c:3876. */
 int card_havengul_lich(int player, int card, event_t event)
 {
+  /* CARD_ID_HAVENGUL_LICH	12200
+   * Havengul Lich	|3|U|B
+   * Creature - Zombie Wizard 4/4
+   * |1: You may cast target creature card in a graveyard this turn.
+   * When you cast that card this turn, ~ gains all activated abilities of that card until end of turn. */
+
   if (event == EVENT_STATIC_EFFECTS)
   {
     if (affect_me(player, card))
@@ -5071,29 +5123,5 @@ int card_havengul_lich(int player, int card, event_t event)
   if (spell_fizzled != 1)
     instance->eot_toughness = (uint32_t)act_array[selected] | 0x80000000;
   return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
-static void create_spell_has_flashback_legacy_for_hl(int player, int card, int graveyard_pos,
-                                                    flashback_legacy_t mode)
-{
-  if (graveyard_pos < 0)
-    return;
-  int legacy = create_legacy_activate(player, card, spell_has_flashback_legacy_for_hl);
-  card_instance_t *instance = get_card_instance(player, legacy);
-  int graveyard_player = get_card_instance(player, card)->targets[0].player;
-  const int *grave = get_grave(graveyard_player);
-  instance->targets[0].card = grave[graveyard_pos];
-  instance->targets[1].player = graveyard_source[graveyard_player][graveyard_pos];
-  instance->targets[1].card = graveyard_pos;
-  instance->targets[2].player = mode;
-  instance->targets[2].card = graveyard_player;
-  instance->targets[3].player = player;
-  instance->targets[3].card = card;
-  create_card_name_legacy(player, legacy, cards_data[grave[graveyard_pos]].id);
 }
 #endif

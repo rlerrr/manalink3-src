@@ -16,11 +16,19 @@ static const char *has_only_1_target_and_could_legally_change_target(int who_cho
 
 int card_deflection(int player, int card, event_t event)
 {
+  /* Deflection	|3|U	0x000000
+   * Instant
+   * Change the target of target spell with a single target. */
+
   return deflect_one_target(player, card, event, NULL);
 }
 
 int card_divert(int player, int card, event_t event)
 {
+  /* Divert	|U
+   * Instant
+   * Change the target of target spell with a single target unless that spell's controller pays |2. */
+
   if (!IS_GS_EVENT(player, card, event))
     return 0;
   target_definition_t td_spell;
@@ -46,6 +54,9 @@ int card_divert(int player, int card, event_t event)
 }
 
 int card_imps_michief(int player, int card, event_t event){
+  /* Imp's Mischief	|1|B
+   * Instant
+   * Change the target of target spell with a single target. You lose life equal to that spell's mana value. */
 
 	target_definition_t td_spell;
 	counterspell_target_definition(player, card, &td_spell, TYPE_SPELL);
@@ -76,6 +87,10 @@ int card_imps_michief(int player, int card, event_t event){
 }
 
 int card_misdirection(int player, int card, event_t event){
+  /* Misdirection	|3|U|U
+   * Instant
+   * You may exile a blue card from your hand rather than pay this spell's mana cost.
+   * Change the target of target spell with a single target. */
 
 	al_pitchspell(player, card, event, COLOR_BLUE, 0);
 	if (!IS_GS_EVENT(player, card, event)){ return 0; }
@@ -96,95 +111,13 @@ int card_misdirection(int player, int card, event_t event){
 }
 
 int quicksilver_dragon_card = -1;
-static const char* has_only_1_target_and_could_legally_change_target_and_targets_me(int who_chooses, int player, int card)
-{
-	card_instance_t* eff = get_card_instance(player, card);
-	if( eff->number_of_targets == 0 || eff->number_of_targets > 1)
-		return "must have only 1 target";
-	if( !(eff->targets[0].player == who_chooses && eff->targets[0].card == quicksilver_dragon_card) )
-		return "must target Quicksilver Dragon";
-	if( ! call_card_function(player, card, EVENT_CAN_CHANGE_TARGET) )
-		return "has only 1 legal target";
-
-	return NULL;
-}
-
-int card_quicksilver_dragon(int player, int card, event_t event){
-
-	if (!IS_GAA_EVENT(event)){
-		return morph(player, card, event, MANACOST_XU(4, 1));
-	}
-	return deflect_away_from_me(player, card, event, 0, MANACOST_U(1), 0, NULL, 1);
-}
-
-static const char* has_only_1_target_and_could_legally_change_target_and_targets_a_player(int who_chooses, int player, int card)
-{
-	card_instance_t* eff = get_card_instance(player, card);
-	if( eff->number_of_targets == 0 || eff->number_of_targets > 1)
-		return "must have only 1 target";
-	if( eff->targets[0].card != -1 )
-		return "must target a player";
-	if( ! call_card_function(player, card, EVENT_CAN_CHANGE_TARGET) )
-		return "has only 1 legal target";
-
-	return NULL;
-}
-
-int card_rebound(int player, int card, event_t event){
-
-	if (!IS_GS_EVENT(player, card, event)){ return 0; }
-	target_definition_t td;
-	counterspell_target_definition(player, card, &td, TYPE_ANY);
-	td.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
-	td.extra = (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_player;
-	if (event == EVENT_CAN_CAST){ return deflect_one_target(player, card, event, &td); }
-	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
-		set_special_flags2(card_on_stack_controller, card_on_stack, SF2_REBOUND);
-		deflect_one_target(player, card, event, &td);
-		remove_special_flags2(card_on_stack_controller, card_on_stack, SF2_REBOUND);
-	}
-	if (event == EVENT_RESOLVE_SPELL){
-		if (counterspell_validate(player, card, &td, 0)){ deflect_one_target(player, card, event, &td); }
-		kill_card(player, card, KILL_DESTROY);
-	}
-	return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x24279f0; original cards/gargaroz.c:234. */
-static char *
-has_only_1_target_and_could_legally_change_target_and_targets_a_creature(int who_chooses,
-                                                                         int player, int card)
-{
-  card_instance_t *instance;
-  int result;
-  char *rejection;
-
-  instance = get_card_instance(player, card);
-  rejection = "must have only 1 target";
-  if (instance->number_of_targets == '\x01')
-  {
-    result = is_what(instance->targets[0].player, instance->targets[0].card, 2);
-    rejection = "must target a creature";
-    if (result != 0)
-    {
-      result = call_card_function(player, card, EVENT_CAN_CHANGE_TARGET);
-      rejection = NULL;
-      if (result == 0)
-      {
-        rejection = "has only 1 legal target";
-      }
-    }
-  }
-  return rejection;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
 /* ManalinkEh 2022: 0x2427d10; original cards/gargaroz.c:57. */
 int card_imps_mischief(int player, int card, event_t event)
 {
+  /* Imp's Mischief	|1|B
+   * Instant
+   * Change the target of target spell with a single target. You lose life equal to that spell's mana value. */
+
   int current_life;
   int spell_cmc;
   card_instance_t *instance;
@@ -245,9 +178,80 @@ int card_imps_mischief(int player, int card, event_t event)
   return deflect_one_target(player, card, event, &td_spell);
 }
 
+static const char* has_only_1_target_and_could_legally_change_target_and_targets_me(int who_chooses, int player, int card)
+{
+	card_instance_t* eff = get_card_instance(player, card);
+	if( eff->number_of_targets == 0 || eff->number_of_targets > 1)
+		return "must have only 1 target";
+	if( !(eff->targets[0].player == who_chooses && eff->targets[0].card == quicksilver_dragon_card) )
+		return "must target Quicksilver Dragon";
+	if( ! call_card_function(player, card, EVENT_CAN_CHANGE_TARGET) )
+		return "has only 1 legal target";
+
+	return NULL;
+}
+
+int card_quicksilver_dragon(int player, int card, event_t event){
+  /* Quicksilver Dragon	|4|U|U
+   * Creature - Dragon 5/5
+   * Flying
+   * |U: If target spell has only one target and that target is this creature, change that spell's target to another creature.
+   * Morph |4|U (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
+
+	if (!IS_GAA_EVENT(event)){
+		return morph(player, card, event, MANACOST_XU(4, 1));
+	}
+	return deflect_away_from_me(player, card, event, 0, MANACOST_U(1), 0, NULL, 1);
+}
+
+static const char* has_only_1_target_and_could_legally_change_target_and_targets_a_player(int who_chooses, int player, int card)
+{
+	card_instance_t* eff = get_card_instance(player, card);
+	if( eff->number_of_targets == 0 || eff->number_of_targets > 1)
+		return "must have only 1 target";
+	if( eff->targets[0].card != -1 )
+		return "must target a player";
+	if( ! call_card_function(player, card, EVENT_CAN_CHANGE_TARGET) )
+		return "has only 1 legal target";
+
+	return NULL;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+int card_rebound(int player, int card, event_t event){
+  /* Rebound	|1|U
+   * Instant
+   * Change the target of target spell that targets only a player. The new target must be a player. */
+
+	if (!IS_GS_EVENT(player, card, event)){ return 0; }
+	target_definition_t td;
+	counterspell_target_definition(player, card, &td, TYPE_ANY);
+	td.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
+	td.extra = (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_player;
+	if (event == EVENT_CAN_CAST){ return deflect_one_target(player, card, event, &td); }
+	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+		set_special_flags2(card_on_stack_controller, card_on_stack, SF2_REBOUND);
+		deflect_one_target(player, card, event, &td);
+		remove_special_flags2(card_on_stack_controller, card_on_stack, SF2_REBOUND);
+	}
+	if (event == EVENT_RESOLVE_SPELL){
+		if (counterspell_validate(player, card, &td, 0)){ deflect_one_target(player, card, event, &td); }
+		kill_card(player, card, KILL_DESTROY);
+	}
+	return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 /* ManalinkEh 2022: 0x2428450; original cards/gargaroz.c:199. */
 int card_ricochet_trap(int player, int card, event_t event)
 {
+  /* Ricochet Trap	|3|R
+   * Instant - Trap
+   * If an opponent cast a blue spell this turn, you may pay |R rather than pay this spell's mana cost.
+   * Change the target of target spell with a single target. */
+
   int result;
   target_definition_t td_spell;
 
@@ -286,9 +290,96 @@ int card_ricochet_trap(int player, int card, event_t event)
   return deflect_one_target(player, card, event, &td_spell);
 }
 
+/* ManalinkEh 2022: 0x24279f0; original cards/gargaroz.c:234. */
+static char *
+has_only_1_target_and_could_legally_change_target_and_targets_a_creature(int who_chooses,
+                                                                         int player, int card)
+{
+  card_instance_t *instance;
+  int result;
+  char *rejection;
+
+  instance = get_card_instance(player, card);
+  rejection = "must have only 1 target";
+  if (instance->number_of_targets == '\x01')
+  {
+    result = is_what(instance->targets[0].player, instance->targets[0].card, 2);
+    rejection = "must target a creature";
+    if (result != 0)
+    {
+      result = call_card_function(player, card, EVENT_CAN_CHANGE_TARGET);
+      rejection = NULL;
+      if (result == 0)
+      {
+        rejection = "has only 1 legal target";
+      }
+    }
+  }
+  return rejection;
+}
+
+/* ManalinkEh 2022: 0x24285e0; original cards/gargaroz.c:247. */
+int card_meddle(int player, int card, event_t event)
+{
+  /* Meddle	|1|U
+   * Instant
+   * If target spell has only one target and that target is a creature, change that spell's target to another creature. */
+
+  int result;
+  target_definition_t td_spell;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    counterspell_target_definition(player, card, &td_spell, 0xff);
+    td_spell.special = td_spell.special | 0x8000;
+    td_spell.extra =
+        (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_creature;
+    result = deflect_one_target(player, card, EVENT_CAN_CAST, &td_spell);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      counterspell_target_definition(player, card, &td_spell, 0xff);
+      td_spell.special = td_spell.special | 0x8000;
+      td_spell.extra =
+          (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_creature;
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        set_special_flags2(card_on_stack_controller, card_on_stack, 0x4000);
+        deflect_one_target(player, card, EVENT_CAST_SPELL, &td_spell);
+        remove_special_flags2(card_on_stack_controller, card_on_stack, 0x4000);
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    counterspell_target_definition(player, card, &td_spell, 0xff);
+    td_spell.special = td_spell.special | 0x8000;
+    td_spell.extra =
+        (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_creature;
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      deflect_one_target(player, card, EVENT_RESOLVE_SPELL, &td_spell);
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    counterspell_target_definition(player, card, &td_spell, 0xff);
+  }
+  return 0;
+}
+
 /* ManalinkEh 2022: 0x24287b0; original cards/gargaroz.c:279. */
 int card_redirect(int player, int card, event_t event)
 {
+  /* Redirect	|U|U
+   * Instant
+   * You may choose new targets for target spell. */
+
   int result;
 
   if (event != EVENT_CAN_CAST)
@@ -329,6 +420,10 @@ int card_redirect(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2428890; original cards/gargaroz.c:298. */
 int card_wild_ricochet(int player, int card, event_t event)
 {
+  /* Wild Ricochet	|2|R|R
+   * Instant
+   * You may choose new targets for target instant or sorcery spell. Then copy that spell. You may choose new targets for the copy. */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -373,6 +468,10 @@ int card_wild_ricochet(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2428a20; original cards/gargaroz.c:325. */
 int card_goblin_flectomancer(int player, int card, event_t event)
 {
+  /* Goblin Flectomancer	|U|R|R
+   * Creature - Goblin Wizard 2/2
+   * Sacrifice this creature: You may change the targets of target instant or sorcery spell. */
+
   int result;
   target_definition_t td;
 
@@ -421,6 +520,11 @@ int card_goblin_flectomancer(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2428c10; original cards/gargaroz.c:369. */
 int card_willbender(int player, int card, event_t event)
 {
+  /* Willbender	|1|U
+   * Creature - Human Wizard 1/2
+   * Morph |1|U (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.)
+   * When this creature is turned face up, change the target of target spell or ability with a single target. */
+
   card_instance_t *instance;
   int morph_or_deflect_result;
   int mana_available;
@@ -471,65 +575,6 @@ int card_willbender(int player, int card, event_t event)
   return morph_or_deflect_result;
 }
 
-/* ManalinkEh 2022: 0x24294b0; original cards/gargaroz.c:665. */
-int card_aethersnatch(int player, int card, event_t event)
-{
-  card_instance_t *instance = get_card_instance(player, card);
-  if (event == EVENT_CAN_CAST)
-    return counterspell(player, card, EVENT_CAN_CAST, NULL, -1);
-  if (event == EVENT_CAST_SPELL)
-  {
-    if (card == affected_card && player == affected_card_controller)
-    {
-      card_instance_t *spell = get_card_instance(card_on_stack_controller, card_on_stack);
-      if (spell->number_of_targets == 1)
-      {
-        instance->info_slot = 1;
-        return deflect_one_target(player, card, EVENT_CAST_SPELL, NULL);
-      }
-      spell = get_card_instance(card_on_stack_controller, card_on_stack);
-      if (spell->number_of_targets > 1)
-      {
-        instance->info_slot = 2;
-        return deflect_multi_targets(player, card, EVENT_CAST_SPELL, NULL);
-      }
-      return counterspell(player, card, EVENT_CAST_SPELL, NULL, 0);
-    }
-  }
-  else if (event == EVENT_RESOLVE_SPELL && counterspell_validate(player, card, NULL, 0))
-  {
-    int mode = instance->info_slot;
-    if (mode == 1)
-    {
-      deflect_one_target(player, card, EVENT_RESOLVE_SPELL, NULL);
-      mode = instance->info_slot;
-    }
-    if (mode == 2)
-      deflect_multi_targets(player, card, EVENT_RESOLVE_SPELL, NULL);
-    if (is_what(instance->targets[0].player, instance->targets[0].card, TYPE_PERMANENT))
-    {
-      card_instance_t *spell = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-      int iid = spell->internal_card_id;
-      if (iid >= 0)
-      {
-        obliterate_card(instance->targets[0].player, instance->targets[0].card);
-        int card_added = add_card_to_hand(player, iid);
-        put_into_play(player, card_added);
-        int controller = instance->targets[0].player;
-        if (controller != player)
-        {
-          if (controller == AI)
-            add_state(player, card_added, 0x1000);
-          else
-            remove_state(player, card_added, 0x1000);
-        }
-      }
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return 0;
-}
-
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 static char *has_only_1_target_and_targets_a_creature_and_can_legally_change_target_to_me(
     int who_chooses, int player, int card, int targeting_player, int targeting_card);
@@ -574,6 +619,12 @@ static char *has_only_1_target_and_targets_a_creature_and_can_legally_change_tar
 /* ManalinkEh 2022: 0x2428fe0; original cards/gargaroz.c:504. */
 int card_muck_drubb(int player, int card, event_t event)
 {
+  /* Muck Drubb	|3|B|B
+   * Creature - Beast 3/3
+   * Flash
+   * When this creature enters, change the target of target spell that targets only a single creature to this creature.
+   * Madness |2|B (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.) */
+
   target_definition_t td;
   counterspell_target_definition(player, card, &td, TYPE_ANY);
   td.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
@@ -636,6 +687,12 @@ static char *has_only_1_target_and_can_legally_change_target_to_attached(
 /* ManalinkEh 2022: 0x24291c0; original cards/gargaroz.c:571. */
 int card_captured_by_the_consulate(int player, int card, event_t event)
 {
+  /* Captured by the Consulate	|3|W
+   * Enchantment - Aura
+   * Enchant creature you don't control
+   * Enchanted creature can't attack.
+   * Whenever an opponent casts a spell, if it has a single target, change the target to enchanted creature if able. */
+
   int32_t enchanted_card;
   card_instance_t *instance;
   int trigger_card_or_result;
@@ -712,53 +769,65 @@ int card_captured_by_the_consulate(int player, int card, event_t event)
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
-/* ManalinkEh 2022: 0x24285e0; original cards/gargaroz.c:247. */
-int card_meddle(int player, int card, event_t event)
+/* ManalinkEh 2022: 0x24294b0; original cards/gargaroz.c:665. */
+int card_aethersnatch(int player, int card, event_t event)
 {
-  int result;
-  target_definition_t td_spell;
+  /* AEthersnatch	|4|U|U	0x000000 --> Too much trouble. Waitlisted.
+   * Instant
+   * Gain control of target spell. You may choose new targets for it. */
 
+  card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_CAN_CAST)
-  {
-    counterspell_target_definition(player, card, &td_spell, 0xff);
-    td_spell.special = td_spell.special | 0x8000;
-    td_spell.extra =
-        (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_creature;
-    result = deflect_one_target(player, card, EVENT_CAN_CAST, &td_spell);
-    return result;
-  }
+    return counterspell(player, card, EVENT_CAN_CAST, NULL, -1);
   if (event == EVENT_CAST_SPELL)
   {
-    if ((card == affected_card) && (player == affected_card_controller))
+    if (card == affected_card && player == affected_card_controller)
     {
-      counterspell_target_definition(player, card, &td_spell, 0xff);
-      td_spell.special = td_spell.special | 0x8000;
-      td_spell.extra =
-          (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_creature;
-      if ((card == affected_card) && (player == affected_card_controller))
+      card_instance_t *spell = get_card_instance(card_on_stack_controller, card_on_stack);
+      if (spell->number_of_targets == 1)
       {
-        set_special_flags2(card_on_stack_controller, card_on_stack, 0x4000);
-        deflect_one_target(player, card, EVENT_CAST_SPELL, &td_spell);
-        remove_special_flags2(card_on_stack_controller, card_on_stack, 0x4000);
+        instance->info_slot = 1;
+        return deflect_one_target(player, card, EVENT_CAST_SPELL, NULL);
+      }
+      spell = get_card_instance(card_on_stack_controller, card_on_stack);
+      if (spell->number_of_targets > 1)
+      {
+        instance->info_slot = 2;
+        return deflect_multi_targets(player, card, EVENT_CAST_SPELL, NULL);
+      }
+      return counterspell(player, card, EVENT_CAST_SPELL, NULL, 0);
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL && counterspell_validate(player, card, NULL, 0))
+  {
+    int mode = instance->info_slot;
+    if (mode == 1)
+    {
+      deflect_one_target(player, card, EVENT_RESOLVE_SPELL, NULL);
+      mode = instance->info_slot;
+    }
+    if (mode == 2)
+      deflect_multi_targets(player, card, EVENT_RESOLVE_SPELL, NULL);
+    if (is_what(instance->targets[0].player, instance->targets[0].card, TYPE_PERMANENT))
+    {
+      card_instance_t *spell = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      int iid = spell->internal_card_id;
+      if (iid >= 0)
+      {
+        obliterate_card(instance->targets[0].player, instance->targets[0].card);
+        int card_added = add_card_to_hand(player, iid);
+        put_into_play(player, card_added);
+        int controller = instance->targets[0].player;
+        if (controller != player)
+        {
+          if (controller == AI)
+            add_state(player, card_added, 0x1000);
+          else
+            remove_state(player, card_added, 0x1000);
+        }
       }
     }
-  }
-  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-  {
-    counterspell_target_definition(player, card, &td_spell, 0xff);
-    td_spell.special = td_spell.special | 0x8000;
-    td_spell.extra =
-        (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_creature;
-    if (event == EVENT_RESOLVE_SPELL)
-    {
-      deflect_one_target(player, card, EVENT_RESOLVE_SPELL, &td_spell);
-      kill_card(player, card, KILL_DESTROY);
-      return 0;
-    }
-  }
-  else if (event == EVENT_CHANGE_TARGET)
-  {
-    counterspell_target_definition(player, card, &td_spell, 0xff);
+    kill_card(player, card, KILL_DESTROY);
   }
   return 0;
 }
@@ -768,6 +837,10 @@ int card_meddle(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2429740; original cards/gargaroz.c:722. */
 int card_spelljack(int player, int card, event_t event)
 {
+  /* Spelljack	|3|U|U|U
+   * Instant
+   * Counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may play it without paying its mana cost for as long as it remains exiled. (If it has X in its mana cost, X is 0.) */
+
   int exiled_csv_id;
   card_instance_t *instance;
 
@@ -808,6 +881,10 @@ static char *can_legally_change_target_to_me(int who_chooses, int player, int ca
 /* ManalinkEh 2022: 0x24281d0; original cards/gargaroz.c:142. */
 int card_silver_wyvern(int player, int card, event_t event)
 {
+  /* Silver Wyvern	|3|U|U
+   * Creature - Drake 4/3
+   * Flying
+   * |U: Change the target of target spell or ability that targets only this creature. The new target must be a creature. */
 
   if (((event != EVENT_ACTIVATE) && (1 < event - EVENT_RESOLVE_ACTIVATION)) &&
       (event != EVENT_CLEANUP))
@@ -815,6 +892,11 @@ int card_silver_wyvern(int player, int card, event_t event)
     return 0;
   }
   return deflect_away_from_me(player, card, event, 0, 0, 0, 1, 0, 0, 0, 0, NULL, 1);
+}
+
+static int activate_deflect(int player, int card, int event, target_definition_t *td)
+{
+  return deflect_one_target(player, card, event, td);
 }
 
 /* ManalinkEh 2022: 0x24276f0; original cards/gargaroz.c:415. */
@@ -837,9 +919,18 @@ static char *can_legally_change_target_to_me(int who_chooses, int player, int ca
   return rvalue ? NULL : "cannot target this creature";
 }
 
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
 /* ManalinkEh 2022: 0x2428df0; original cards/gargaroz.c:430. */
 int card_mizzium_meddler(int player, int card, event_t event)
 {
+  /* Mizzium Meddler	|2|U	0x000000
+   * Creature - Vedalken Wizard 1/4
+   * Flash
+   * When ~ enters the battlefield, you may change a target of target spell or ability to ~. */
+
   target_definition_t td;
   counterspell_target_definition(player, card, &td, TYPE_ANY);
   td.special |= TARGET_SPECIAL_EXTRA_FUNCTION;
@@ -888,15 +979,5 @@ int card_mizzium_meddler(int player, int card, event_t event)
     }
   }
   return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
-static int activate_deflect(int player, int card, int event, target_definition_t *td)
-{
-  return deflect_one_target(player, card, event, td);
 }
 #endif

@@ -37,8 +37,6 @@ int player_has_generic_and_colorless_available(int player, int generic_needed, i
   return encoded_mana_source_or_result;
 }
 
-
-
 static int has_colorless_only_mana(int player, int amount){
     int colorless = mana_pool[player][COLOR_COLORLESS];
 
@@ -52,7 +50,22 @@ static int has_colorless_only_mana(int player, int amount){
     return colorless >= amount ? 1 : 0;
 }
 
-
+#ifndef SHANDALAR
+static void modify_casting_cost_for_colorless_only_mana(int player, int card, event_t event,
+                                                        int generic, int number_of_colorless_only_mana)
+{
+  if (event == EVENT_MODIFY_COST)
+  {
+    int cost = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL,
+                                       generic + number_of_colorless_only_mana);
+    if (player_has_generic_and_colorless_available(player, cost - number_of_colorless_only_mana,
+                                                   number_of_colorless_only_mana))
+      null_casting_cost(player, card);
+    else
+      infinite_casting_cost();
+  }
+}
+#endif
 
 static int charge_colorless_mana_only(int player, int amount_of_colorless_only)
 {
@@ -246,7 +259,6 @@ static const char* is_land_creature_target(int who_chooses, int player, int card
 /***** Cards *****/
 
 /*** Colorless ***/
-
 int card_deceiver_of_form(int player, int card, event_t event){
 	/* Deceiver of Form	|6|C	0x200e427
 	 * Creature - Eldrazi 8/8
@@ -656,6 +668,11 @@ int card_spatial_contortion(int player, int card, event_t event){
 
 int card_thought_knot_seer(int player, int card, event_t event)
 {
+  /* Thought-Knot Seer	|3|C	0x200e44a
+   * Creature - Eldrazi 4/4
+   * When ~ enters the battlefield, target opponent reveals his or her hand. You choose a nonland card from it and exile that card.
+   * When ~ leaves the battlefield, target opponent draws a card. */
+
   int result;
   int tgt_player;
   target_definition_t td;
@@ -818,9 +835,7 @@ int card_warping_wail(int player, int card, event_t event){
 	return 0;
 }
 
-
 /*** White - Devoid ***/
-
 static void tap_before_putting_card_in_play(int player, int card){
 	add_state(player, card, STATE_TAPPED);
 }
@@ -874,12 +889,11 @@ int card_eldrazi_displacer(int player, int card, event_t event){
 	return 0;
 }
 
-
-/*** White ***/
-
 /* Affa Protector	|2|W	--> Serra Angel	0x200c122
  * Creature - Human Soldier Ally 1/4
  * Vigilance */
+
+/*** White ***/
 
 int card_allied_reinforcements(int player, int card, event_t event){
 	/* Allied Reinforcements	|3|W	0x200e463
@@ -935,7 +949,6 @@ static int dazzling_reflection_legacy(int player, int card, event_t event){
 
 	return 0;
 }
-
 
 int card_dazzling_reflection(int player, int card, event_t event){
 	/* Dazzling Reflection	|1|W	0x200e46d
@@ -1444,6 +1457,11 @@ static int stone_haven_outfitter_effect(int player, int card, event_t event)
 
 int card_stone_haven_outfitter(int player, int card, event_t event)
 {
+  /* Stone Haven Outfitter	|1|W	0x200e4c2
+   * Creature - Kor Artificer Ally 2/2
+   * Equipped creatures you control get +1/+1.
+   * Whenever an equipped creature you control dies, draw a card. */
+
   int c;
   card_instance_t *instance;
   int legacy_or_equipment_check;
@@ -1601,7 +1619,6 @@ int card_wall_of_resurgence(int player, int card, event_t event){
 }
 
 /*** Blue - Devoid ***/
-
 int card_abstruse_interference(int player, int card, event_t event){
 	/* Abstruse Interference	|2|U	0x200e4d1
 	 * Instant
@@ -1877,7 +1894,6 @@ int card_prophet_of_distortion(int player, int card, event_t event){
 	return 0;
 }
 
-
 int card_slip_through_space(int player, int card, event_t event){
 	/* Slip Through Space	|U	0x200e4ef
 	 * Sorcery
@@ -1934,10 +1950,10 @@ int card_thought_harvester(int player, int card, event_t event){
  * Devoid
  * Counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. */
 
-/*** Blue ***/
-
 /* Ancient Crab	|1|U|U --> vanilla	0x401000
  * Creature - Crab 1/5 */
+
+/*** Blue ***/
 
 int card_comparative_analysis(int player, int card, event_t event){
 	/* Comparative Analysis	|3|U	0x200e4f9
@@ -2249,7 +2265,6 @@ int card_jwar_isle_avenger(int player, int card, event_t event){
 	return 0;
 }
 
-
 /* Negate	|1|U	--> morningtide.c:card_negate()	reprint
  * Instant
  * Counter target noncreature spell. */
@@ -2437,7 +2452,6 @@ int card_sweep_away(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-
 /* Umara Entangler	|1|U --> Jeskai Windscout	0x200ce74
  * Creature - Merfolk Rogue Ally 2/1
  * Prowess */
@@ -2466,9 +2480,7 @@ int card_unity_of_purpose(int player, int card, event_t event){
 	return basic_spell(player, card, event);
 }
 
-
 /*** Black - Devoid ***/
-
 int card_bearer_of_silence(int player, int card, event_t event){
 	/* Bearer of Silence	|1|B	0x200e544
 	 * Creature - Eldrazi 2/1
@@ -2606,6 +2618,25 @@ int card_essence_depleter(int player, int card, event_t event){
 	}
 
 	return 0;
+}
+
+/* ManalinkEh 2022: 0x2259dc0; original cards/oath_of_the_gatewatch.c:2521. */
+static int effect_flaying_tendrils(int player, int card, event_t event)
+{
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (is_what(affected_card_controller, affected_card, 2))
+    {
+      exile_if_would_be_put_into_graveyard(player, card, affected_card_controller, affected_card,
+                                           1);
+    }
+  }
+  if (!eot_trigger(player, card, event))
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
 }
 
 int card_flaying_tendrils(int player, int card, event_t event){
@@ -3019,10 +3050,10 @@ int card_slaughter_drone(int player, int card, event_t event){
 }
 
 int card_unnatural_endurance(int player, int card, event_t event){
-/* Unnatural Endurance |B
- * Instant
- * Devoid
- * Target creature gets +2/+0 until end of turn. Regenerate it. */
+  /* Unnatural Endurance |B
+   * Instant
+   * Devoid
+   * Target creature gets +2/+0 until end of turn. Regenerate it. */
 
   return vanilla_instant_pump(player, card, event, ANYBODY, player, 2,0, VANILLA_PUMP_REGENERATE,0);
 }
@@ -3087,9 +3118,7 @@ int card_witness_the_end(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, NULL, 1, NULL);
 }
 
-
 /*** Black ***/
-
 int card_corpse_churn(int player, int card, event_t event){
 	/* Corpse Churn	|1|B	0x200e58f
 	 * Instant
@@ -3141,10 +3170,6 @@ int card_dranas_chosen(int player, int card, event_t event){
 
 	return 0;
 }
-
-/* Grasp of Darkness	|B|B	=>scars_of_mirrodin.c:card_grasp_of_darkness()
- * Instant
- * Target creature gets -4/-4 until end of turn. */
 
 static int kalitas_traitor_of_ghet_effect(int player, int card, event_t event)
 {
@@ -3229,6 +3254,10 @@ static int kalitas_traitor_of_ghet_effect(int player, int card, event_t event)
 
   return 0;
 }
+
+/* Grasp of Darkness	|B|B	=>scars_of_mirrodin.c:card_grasp_of_darkness()
+ * Instant
+ * Target creature gets -4/-4 until end of turn. */
 
 int card_kalitas_traitor_of_ghet(int player, int card, event_t event){
 /* Kalitas, Traitor of Ghet	|2|B|B	0x200e599
@@ -3349,7 +3378,6 @@ int card_malakir_soothsayer(int player, int card, event_t event){
 
 	return 0;
 }
-
 
 int card_null_caller(int player, int card, event_t event){
 	/* Null Caller	|3|B	0x200e5a3
@@ -3533,7 +3561,6 @@ int card_zulaport_chainmage(int player, int card, event_t event){
 }
 
 /*** Red - Devoid ***/
-
 int card_consuming_sinkhole(int player, int card, event_t event){
 	/* Consuming Sinkhole	|3|R	0x200e5c1
 	 * Instant
@@ -3800,7 +3827,6 @@ int card_maw_of_kozilek(int player, int card, event_t event){
  * ~ deals 2 damage to target creature or player. */
 
 /*** Red ***/
-
 int card_akoum_flameseeker(int player, int card, event_t event){
 	/* Akoum Flameseeker	|2|R	0x200e5da
 	 * Creature - Human Shaman Ally 3/2
@@ -4505,7 +4531,6 @@ int card_zadas_commando(int player, int card, event_t event){
 }
 
 /*** Green - Devoid ***/
-
 int card_birthing_hulk(int player, int card, event_t event){
 	/* Birthing Hulk	|6|G	0x200e63e
 	 * Creature - Eldrazi Drone 5/4
@@ -4711,9 +4736,7 @@ int card_world_breaker(int player, int card, event_t event){
 	return 0;
 }
 
-
 /*** Green ***/
-
 int card_baloth_pup(int player, int card, event_t event){
 	/* Baloth Pup	|1|G	0x200e65c
 	 * Creature - Beast 3/1
@@ -4944,6 +4967,10 @@ int card_gladehart_cavalry(int player, int card, event_t event){
 
 int card_harvester_troll(int player, int card, event_t event)
 {
+  /* Harvester Troll	|3|G	0x200e675
+   * Creature - Troll 2/3
+   * When ~ enters the battlefield, you may sacrifice a creature or land. If you do, put two +1/+1 counters on ~. */
+
   int result;
 
   test_definition_t test;
@@ -5095,7 +5122,6 @@ int card_nissa_voice_of_zendikar(int player, int card, event_t event){
 	return planeswalker(player, card, event, 3);
 }
 
-
 int card_nissas_judgement(int player, int card, event_t event){
 	/* Nissa's Judgment	|4|G	0x200e68e
 	 * Sorcery
@@ -5144,7 +5170,6 @@ int card_nissas_judgement(int player, int card, event_t event){
 
 	return 0;
 } */
-
 int card_oath_of_nissa(int player, int card, event_t event){
 	/* Oath of Nissa	|G	0x200e693
 	 * Legendary Enchantment
@@ -5331,7 +5356,6 @@ int card_vines_of_the_recluse(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-
 int card_zendikar_resurgent(int player, int card, event_t event){
 	/* Zendikar Resurgent	|5|G|G	0x200e6ac
 	 * Enchantment
@@ -5349,7 +5373,6 @@ int card_zendikar_resurgent(int player, int card, event_t event){
 }
 
 /*** Multi - Devoid ***/
-
 int card_flayer_drone(int player, int card, event_t event){
 	/* Flayer Drone	|1|B|R	0x200e6b1
 	 * Creature - Eldrazi Drone 3/1
@@ -5462,7 +5485,6 @@ int card_void_grafter(int player, int card, event_t event){
 }
 
 /*** Multi ***/
-
 int card_ayli_eternal_pilgrim(int player, int card, event_t event){
 	/* Ayli, Eternal Pilgrim	|W|B	0x200e6c0
 	 * Legendary Creature - Kor Cleric 2/3
@@ -5597,7 +5619,6 @@ int card_cliffhaven_vampire(int player, int card, event_t event){
 	}
 	return 0;
 }
-
 
 int card_jorage_auxiliary(int player, int card, event_t event){
 	/* Joraga Auxiliary	|1|G|W	0x200e6cf
@@ -5762,12 +5783,12 @@ int card_weapons_trainer(int player, int card, event_t event){
 	return 0;
 }
 
-/*** Artifact ***/
-
 /* Bone Saw	|0	=>conflux.c:card_bone_saw()
  * Artifact - Equipment
  * Equipped creature gets +1/+0.
  * Equip |1 */
+
+/*** Artifact ***/
 
 int card_captains_claws(int player, int card, event_t event){
 	/* Captain's Claws	|2	0x200e6ed
@@ -5888,13 +5909,10 @@ int card_stoneforge_masterwork(int player, int card, event_t event){
 	return basic_equipment(player, card, event, 2);
 }
 
-
 /* Strider Harness	|3	=>scars_of_mirrodin.c:card_strider_harness()
  * Artifact - Equipment
  * Equipped creature gets +1/+1 and has haste.
  * Equip |1 */
-
-/*** Land ***/
 
 /* Cinder Barrens --> mana_producer_tapped	0x2002d57
  * Land
@@ -5905,6 +5923,8 @@ int card_stoneforge_masterwork(int player, int card, event_t event){
  * Land
  * |T: Add |C to your mana pool.
  * |T, Pay 1 life: Add one mana of any color to your mana pool. Spend this mana only to cast a spell with devoid. */
+
+/*** Land ***/
 
 int card_crumbling_vestige(int player, int card, event_t event){
 	/* Crumbling Vestige	0x200e701
@@ -6041,7 +6061,6 @@ int card_holdout_settlement(int player, int card, event_t event){
 
 	return 0;
 }
-
 
 /* Meandering River --> mana_producer_tapped	0x2002d57
  * Land
@@ -6195,10 +6214,31 @@ int card_needles_spires(int player, int card, event_t event){
   return mana_producer(player, card, event);
 }
 
-
+#ifndef SHANDALAR
+static void activate_ruins_of_oran_rief(int player, int card, int color)
+{
+  for (int p = 0; p < 2; ++p)
+    for (int c = active_cards_count[p] - 1; c >= 0; --c)
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      if (in_play(p, c) && is_what(p, c, TYPE_CREATURE) && check_special_flags(p, c, 0x1000))
+      {
+        unsigned int target_color = get_color(instance->targets[0].player, instance->targets[0].card);
+        if (color == COLOR_TEST_COLORLESS ? !(target_color & COLOR_TEST_ANY_COLORED) : (target_color & color) != 0)
+          add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 1);
+      }
+    }
+}
+#endif
 
 int card_ruins_of_oran_rief(int player, int card, event_t event)
 {
+  /* Ruins of Oran-Rief	0x200e71a
+   * Land
+   * ~ enters the battlefield tapped.
+   * |T: Add |C to your mana pool.
+   * |T: Put a +1/+1 counter on target colorless creature that entered the battlefield this turn. */
+
   card_instance_t *instance;
   int parent_card_or_activation_result;
   card_instance_t *new_creature;
@@ -6387,11 +6427,6 @@ int card_sea_gate_wreckage(int player, int card, event_t event){
  * ~ enters the battlefield tapped.
  * |T: Add |G or |W to your mana pool. */
 
-/* Unknown Shores	""	=>time_spiral.c:card_prismatic_lens()
- * Land
- * |T: Add |C to your mana pool.
- * |1, |T: Add one mana of any color to your mana pool. */
-
 static int wandering_fumarole_animated_ability(int player, int card, event_t event)
 {
   // |0: Switch this creature's power and toughness until end of turn.
@@ -6423,6 +6458,11 @@ static int wandering_fumarole_animated_ability(int player, int card, event_t eve
 
   return 0;
 }
+
+/* Unknown Shores	""	=>time_spiral.c:card_prismatic_lens()
+ * Land
+ * |T: Add |C to your mana pool.
+ * |1, |T: Add one mana of any color to your mana pool. */
 
 int card_wandering_fumarole(int player, int card, event_t event){
 	/* Wandering Fumarole	0x200e724
@@ -6478,71 +6518,3 @@ int card_wastes(int player, int card, event_t event){
 	 * |T: Add |C to your mana pool. */
 	return mana_producer(player, card, event);
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2259dc0; original cards/oath_of_the_gatewatch.c:2521. */
-static int effect_flaying_tendrils(int player, int card, event_t event)
-{
-  if (event == EVENT_CAST_SPELL)
-  {
-    if (is_what(affected_card_controller, affected_card, 2))
-    {
-      exile_if_would_be_put_into_graveyard(player, card, affected_card_controller, affected_card,
-                                           1);
-    }
-  }
-  if (!eot_trigger(player, card, event))
-  {
-    return 0;
-  }
-  kill_card(player, card, KILL_EXILE);
-  return 0;
-}
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 attacker/keyword helpers. */
-
-/* ManalinkEh 2022: 0x225a8c0; original cards/oath_of_the_gatewatch.c:84. */
-
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline mechanics; native callers retain their expansions. */
-static void modify_casting_cost_for_colorless_only_mana(int player, int card, event_t event,
-                                                        int generic, int number_of_colorless_only_mana)
-{
-  if (event == EVENT_MODIFY_COST)
-  {
-    int cost = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL,
-                                       generic + number_of_colorless_only_mana);
-    if (player_has_generic_and_colorless_available(player, cost - number_of_colorless_only_mana,
-                                                   number_of_colorless_only_mana))
-      null_casting_cost(player, card);
-    else
-      infinite_casting_cost();
-  }
-}
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
-static void activate_ruins_of_oran_rief(int player, int card, int color)
-{
-  for (int p = 0; p < 2; ++p)
-    for (int c = active_cards_count[p] - 1; c >= 0; --c)
-    {
-      card_instance_t *instance = get_card_instance(player, card);
-      if (in_play(p, c) && is_what(p, c, TYPE_CREATURE) && check_special_flags(p, c, 0x1000))
-      {
-        unsigned int target_color = get_color(instance->targets[0].player, instance->targets[0].card);
-        if (color == COLOR_TEST_COLORLESS ? !(target_color & COLOR_TEST_ANY_COLORED) : (target_color & color) != 0)
-          add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 1);
-      }
-    }
-}
-#endif

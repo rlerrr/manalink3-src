@@ -1,0 +1,998 @@
+{
+  "format": 1,
+  "scope": "Manually reviewed card-description identities. These do not rename handlers, change registrations, or change rules implementation.",
+  "functions": [
+    {
+      "source": "cards/aether_revolt.c",
+      "function": "card_illusionists_strategem",
+      "card_name": "Illusionist's Stratagem",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/alara_reborn.c",
+      "function": "card_sphinx_steel_wind",
+      "card_name": "Sphinx of the Steel Wind",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/amonkhet.c",
+      "function": "card_arcfiend_of_ifnir",
+      "card_name": "Archfiend of Ifnir",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/artifacts.c",
+      "function": "card_gologothian_sylex",
+      "card_name": "Golgothian Sylex",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/artifacts.c",
+      "function": "card_ironworks",
+      "card_name": "Krark-Clan Ironworks",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/avacyn_restored.c",
+      "function": "card_nephalia_smugglers",
+      "card_name": "Nephalia Smuggler",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/black_creatures.c",
+      "function": "card_nshadow",
+      "card_name": "Nether Shadow",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "function": "card_descend_of_the_prey",
+      "card_name": "Descend on the Prey",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "function": "card_kioras_emblem",
+      "card_name": "Kiora, the Crashing Wave Emblem",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "function": "card_mogis_chosen",
+      "card_name": "Mogis's Chosen",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "function": "card_unquenchable_fury",
+      "card_name": "Unquenchable Fury",
+      "scryfall_id": "d4d98fc6-da00-4d65-9469-9d2c5b111f2e",
+      "reason": "Disambiguated the original challenge/split card from later cards with a colliding title."
+    },
+    {
+      "source": "cards/champions_of_kamigawa.c",
+      "function": "card_torii_watchguard",
+      "card_name": "Torii Watchward",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/coldsnap.c",
+      "function": "card_martyr_of_the_ashes",
+      "card_name": "Martyr of Ashes",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/coldsnap.c",
+      "function": "card_sek_kuar_death_keeper",
+      "card_name": "Sek'Kuar, Deathkeeper",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "function": "card_breaching_leaviathan",
+      "card_name": "Breaching Leviathan",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "function": "card_daretti_emblem",
+      "card_name": "Daretti, Scrap Savant Emblem",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "function": "card_demone_of_wailing_agonies",
+      "card_name": "Demon of Wailing Agonies",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "function": "card_dulcet_siren",
+      "card_name": "Dulcet Sirens",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "function": "card_ob_nilixis_emblem",
+      "card_name": "Ob Nixilis of the Black Oath Emblem",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "function": "card_ob_nilixis_of_the_black_oath",
+      "card_name": "Ob Nixilis of the Black Oath",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "function": "card_teferis_emblem",
+      "card_name": "Teferi, Temporal Archmage Emblem",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/commander_2014.c",
+      "function": "card_warmonge_hellkite",
+      "card_name": "Warmonger Hellkite",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/conflux.c",
+      "function": "card_might_of_alara_unlocked",
+      "card_name": "Might of Alara",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/conspiracy.c",
+      "function": "card_councils_judgement",
+      "card_name": "Council's Judgment",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/conspiracy.c",
+      "function": "card_dack_faydens_emblem",
+      "card_name": "Dack Fayden Emblem",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/conspiracy.c",
+      "function": "card_enraged_evolutionary",
+      "card_name": "Enraged Revolutionary",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/conspiracy.c",
+      "function": "card_realm_seeker",
+      "card_name": "Realm Seekers",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/conspiracy.c",
+      "function": "card_secret_of_paradise",
+      "card_name": "Secrets of Paradise",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/conspiracy.c",
+      "function": "card_skitter_of_the_lizard",
+      "card_name": "Skitter of Lizards",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/conspiracy.c",
+      "function": "card_travellers_cloak",
+      "card_name": "Traveler's Cloak",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/dark_ascension.c",
+      "function": "card_sorins_emblem",
+      "card_name": "Sorin, Lord of Innistrad Emblem",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/dissension.c",
+      "function": "card_development_research",
+      "card_name": "Research // Development",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/dissension.c",
+      "function": "card_error_trial",
+      "card_name": "Trial // Error",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/dissension.c",
+      "function": "card_momir_vig",
+      "card_name": "Momir Vig, Simic Visionary",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/dragons_maze.c",
+      "function": "card_maw_of_obzedat",
+      "card_name": "Maw of the Obzedat",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "function": "card_alesha_who_smileas_at_death",
+      "card_name": "Alesha, Who Smiles at Death",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "function": "card_bloodfire_enforcer",
+      "card_name": "Bloodfire Enforcers",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "function": "card_enchanted_awareness",
+      "card_name": "Enhanced Awareness",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "function": "card_ghastly_conscripts",
+      "card_name": "Ghastly Conscription",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "function": "card_grave_strenght",
+      "card_name": "Grave Strength",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "function": "card_hewer_stone_retainer",
+      "card_name": "Hewed Stone Retainers",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "function": "card_hooded_assasin",
+      "card_name": "Hooded Assassin",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "function": "card_shun_yun_the_silent_tempest",
+      "card_name": "Shu Yun, the Silent Tempest",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "function": "card_tasigur_cruelty",
+      "card_name": "Tasigur's Cruelty",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "function": "card_temur_sabretooth",
+      "card_name": "Temur Sabertooth",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/fate_reforged.c",
+      "function": "card_ugins_contruct",
+      "card_name": "Ugin's Construct",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/fifth_dawn.c",
+      "function": "card_nights_whispers",
+      "card_name": "Night's Whisper",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/future_sight.c",
+      "function": "card_lynessa_zephyr_mage",
+      "card_name": "Linessa, Zephyr Mage",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/gargaroz.c",
+      "function": "card_imps_michief",
+      "card_name": "Imp's Mischief",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/gatecrash.c",
+      "function": "card_domri_rades_emblem",
+      "card_name": "Domri Rade Emblem",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/gatecrash.c",
+      "function": "card_ozbedat_ghost_council",
+      "card_name": "Obzedat, Ghost Council",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/gatecrash.c",
+      "function": "card_paranoid_delusion",
+      "card_name": "Paranoid Delusions",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/gatecrash.c",
+      "function": "card_truefire_paladine",
+      "card_name": "Truefire Paladin",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/gatecrash.c",
+      "function": "card_wojek_halberdier",
+      "card_name": "Wojek Halberdiers",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/guildpact.c",
+      "function": "card_skarrg_the_rage_pit",
+      "card_name": "Skarrg, the Rage Pits",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/guildpact.c",
+      "function": "card_wreak_havok",
+      "card_name": "Wreak Havoc",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/hour_of_devastation.c",
+      "function": "card_djeru_with_eyes_wide_open",
+      "card_name": "Djeru, With Eyes Open",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/invasion.c",
+      "function": "card_armadillo_cloack",
+      "card_name": "Armadillo Cloak",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/invasion.c",
+      "function": "card_blurred_mangoose",
+      "card_name": "Blurred Mongoose",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/invasion.c",
+      "function": "card_harsh_judgement",
+      "card_name": "Harsh Judgment",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/invasion.c",
+      "function": "card_malice_spite",
+      "card_name": "Spite // Malice",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/invasion.c",
+      "function": "card_sway_of_llusion",
+      "card_name": "Sway of Illusion",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/journey_into_nyx.c",
+      "function": "card_cloak_of_the_philospher",
+      "card_name": "Cloak of the Philosopher",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/journey_into_nyx.c",
+      "function": "card_xenagos_scorn",
+      "card_name": "Xenagos's Scorn",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/journey_into_nyx.c",
+      "function": "card_xenagos_strike",
+      "card_name": "Xenagos's Strike",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "function": "card_ainok_bon_kin",
+      "card_name": "Ainok Bond-Kin",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "function": "card_canyon_lurker",
+      "card_name": "Canyon Lurkers",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "function": "card_heir_of_wilds",
+      "card_name": "Heir of the Wilds",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "function": "card_high_sentinel_of_arashin",
+      "card_name": "High Sentinels of Arashin",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "function": "card_khero_spellsnatcher",
+      "card_name": "Kheru Spellsnatcher",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "function": "card_mocking_instigator",
+      "card_name": "Jeering Instigator",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "function": "card_raiders_spoil",
+      "card_name": "Raiders' Spoils",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "function": "card_savage_knucklebone",
+      "card_name": "Savage Knuckleblade",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/khans_of_tarkir.c",
+      "function": "card_secret_plan",
+      "card_name": "Secret Plans",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/lorwyn.c",
+      "function": "card_wanderwine_prophet",
+      "card_name": "Wanderwine Prophets",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m12.c",
+      "function": "card_gorehorn_minotaur",
+      "card_name": "Gorehorn Minotaurs",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m12.c",
+      "function": "card_tormented",
+      "card_name": "Tormented Soul",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/m12.c",
+      "function": "card_turn_into_frog",
+      "card_name": "Turn to Frog",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m13.c",
+      "function": "card_chadras_fury",
+      "card_name": "Chandra's Fury",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m13.c",
+      "function": "card_lilianas_emblem",
+      "card_name": "Liliana of the Dark Realms Emblem",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/m13.c",
+      "function": "card_yeva_forcemage",
+      "card_name": "Yeva's Forcemage",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m14.c",
+      "function": "card_garruk_caller_emblem",
+      "card_name": "Garruk, Caller of Beasts Emblem",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/m15.c",
+      "function": "card_ephemeral_shield",
+      "card_name": "Ephemeral Shields",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m15.c",
+      "function": "card_garruk_predator_emblem",
+      "card_name": "Garruk, Apex Predator Emblem",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/m15.c",
+      "function": "card_heliod_pilgrim",
+      "card_name": "Heliod's Pilgrim",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m15.c",
+      "function": "card_indulgent_tormenter",
+      "card_name": "Indulgent Tormentor",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m15.c",
+      "function": "card_jalira_master_polymorphogist",
+      "card_name": "Jalira, Master Polymorphist",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m15.c",
+      "function": "card_kapsho_kitefin",
+      "card_name": "Kapsho Kitefins",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m15.c",
+      "function": "card_marked_for_honour",
+      "card_name": "Marked by Honor",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/m15.c",
+      "function": "card_rogues_glove",
+      "card_name": "Rogue's Gloves",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m15.c",
+      "function": "card_spectral_ward",
+      "card_name": "Spectra Ward",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m15.c",
+      "function": "card_spirit_bond",
+      "card_name": "Spirit Bonds",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/m15.c",
+      "function": "card_triplicated_spirit",
+      "card_name": "Triplicate Spirits",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/mercadian_masques.c",
+      "function": "card_monlit_wake",
+      "card_name": "Moonlit Wake",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/mirrodin_besieged.c",
+      "function": "card_quicksilve_geyser",
+      "card_name": "Quicksilver Geyser",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/modern_horizons_2.c",
+      "function": "card_fast_furious",
+      "card_name": "Fast // Furious",
+      "scryfall_id": "5b209759-6215-49e8-a6a0-a6c94040adb2",
+      "reason": "Disambiguated the original challenge/split card from later cards with a colliding title."
+    },
+    {
+      "source": "cards/nemesis.c",
+      "function": "card_sivvis_rouse",
+      "card_name": "Sivvi's Ruse",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "function": "card_card_entomber_exarch",
+      "card_name": "Entomber Exarch",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "function": "card_mycosynth_wellsprin",
+      "card_name": "Mycosynth Wellspring",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "function": "card_slash_panter",
+      "card_name": "Slash Panther",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/new_phyrexia.c",
+      "function": "card_thundering_thanadon",
+      "card_name": "Thundering Tanadon",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/odissey.c",
+      "function": "card_cultural_exchanges",
+      "card_name": "Cultural Exchange",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/planeshift.c",
+      "function": "card_crosis_charm",
+      "card_name": "Crosis's Charm",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/planeshift.c",
+      "function": "card_treva_charm",
+      "card_name": "Treva's Charm",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "function": "card_cao_cao",
+      "card_name": "Cao Cao, Lord of Wei",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "function": "card_emty_city_ruse",
+      "card_name": "Empty City Ruse",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "function": "card_guan_yus_1000_li_march",
+      "card_name": "Guan Yu's 1,000-Li March",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "function": "card_sima_yi_wei_field_general",
+      "card_name": "Sima Yi, Wei Field Marshal",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "function": "card_wei_night_riders",
+      "card_name": "Wei Night Raiders",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/portal_1_2_3k.c",
+      "function": "card_yuan_shao_the_indecicive",
+      "card_name": "Yuan Shao, the Indecisive",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/ravnica.c",
+      "function": "card_stoneseeder_hierophant",
+      "card_name": "Stone-Seeder Hierophant",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/recoded_cards.c",
+      "function": "card_ashnods_trasmogrant",
+      "card_name": "Ashnod's Transmogrant",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/recoded_cards.c",
+      "function": "card_biorythm",
+      "card_name": "Biorhythm",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/recoded_cards.c",
+      "function": "card_clone_fixed",
+      "card_name": "Clone",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/recoded_cards.c",
+      "function": "card_dark_heart_of_the_woods",
+      "card_name": "Dark Heart of the Wood",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/recoded_cards.c",
+      "function": "card_fork_fixed",
+      "card_name": "Fork",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/recoded_cards.c",
+      "function": "card_grey_ogre",
+      "card_name": "Gray Ogre",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/recoded_cards.c",
+      "function": "card_kid_ape2",
+      "card_name": "Kird Ape",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/recoded_cards.c",
+      "function": "card_sol_kanar_the_swamp_king",
+      "card_name": "Sol'kanar the Swamp King",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/recoded_cards.c",
+      "function": "card_spiritual_sanctury",
+      "card_name": "Spiritual Sanctuary",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/recoded_cards.c",
+      "function": "card_tranquillity",
+      "card_name": "Tranquility",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/recoded_cards.c",
+      "function": "card_whirlwind_derwish",
+      "card_name": "Whirling Dervish",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "function": "card_dark_reveler",
+      "card_name": "Dead Reveler",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/return_to_ravnica.c",
+      "function": "card_loxodon_smither",
+      "card_name": "Loxodon Smiter",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/saviors_of_kamigawa.c",
+      "function": "card_choice_of_damnation",
+      "card_name": "Choice of Damnations",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/saviors_of_kamigawa.c",
+      "function": "card_choice_of_damnation_impl",
+      "card_name": "Choice of Damnations",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/saviors_of_kamigawa.c",
+      "function": "card_kaho_minamo_hystorian",
+      "card_name": "Kaho, Minamo Historian",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/saviors_of_kamigawa.c",
+      "function": "card_kuon_essence",
+      "card_name": "Kuon's Essence",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/saviors_of_kamigawa.c",
+      "function": "card_moonbow_llusionist",
+      "card_name": "Moonbow Illusionist",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/saviors_of_kamigawa.c",
+      "function": "card_oni_of_the_wild_places",
+      "card_name": "Oni of Wild Places",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/scars_of_mirrodin.c",
+      "function": "card_venser_emblem",
+      "card_name": "Venser, the Sojourner Emblem",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/stronghold.c",
+      "function": "card_hybernating_sliver",
+      "card_name": "Hibernation Sliver",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/stronghold.c",
+      "function": "card_volrath_stronghold",
+      "card_name": "Volrath's Stronghold",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/tempest.c",
+      "function": "card_armord_sliver",
+      "card_name": "Armor Sliver",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/tempest.c",
+      "function": "card_elite_javelineers",
+      "card_name": "Elite Javelineer",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/tempest.c",
+      "function": "card_emessi_tome",
+      "card_name": "Emmessi Tome",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/tempest.c",
+      "function": "card_feverd_convulsion",
+      "card_name": "Fevered Convulsions",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/tempest.c",
+      "function": "card_skyshroud_elves",
+      "card_name": "Skyshroud Elf",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/tempest.c",
+      "function": "card_vathi_il_dal",
+      "card_name": "Vhati il-Dal",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/the_dark.c",
+      "function": "card_ashes_ot_ashes",
+      "card_name": "Ashes to Ashes",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/the_dark.c",
+      "function": "card_elves_of_the_deep_shadow",
+      "card_name": "Elves of Deep Shadow",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/theros.c",
+      "function": "card_hydra_impenetrable_hide",
+      "card_name": "Hydra's Impenetrable Hide",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/theros.c",
+      "function": "card_torn_between_the_heads",
+      "card_name": "Torn Between Heads",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/time_spiral.c",
+      "function": "card_telekinetik_sliver",
+      "card_name": "Telekinetic Sliver",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/unlimited.c",
+      "function": "card_grey_ogre",
+      "card_name": "Gray Ogre",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/unstable.c",
+      "function": "card_hammer_boomtacular",
+      "card_name": "Hammerfest Boomtacular",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "function": "card_radiants_judgement",
+      "card_name": "Radiant's Judgment",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/urza_legacy.c",
+      "function": "card_viashino_cutthroath",
+      "card_name": "Viashino Cutthroat",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_avatar_akroma",
+      "card_name": "Akroma, Angel of Wrath Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_avatar_elvish_champion",
+      "card_name": "Elvish Champion Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_avatar_goblin_warchief",
+      "card_name": "Goblin Warchief Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_avatar_heartwood_storyteller",
+      "card_name": "Heartwood Storyteller Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_avatar_mirri_the_cursed",
+      "card_name": "Mirri the Cursed Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_avatar_nekrataal",
+      "card_name": "Nekrataal Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_avatar_oni_of_wild_places",
+      "card_name": "Oni of Wild Places Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_avatar_prodigal_sorcerer",
+      "card_name": "Prodigal Sorcerer Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_avatar_reaper_king",
+      "card_name": "Reaper King Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_avatar_royal_assassin",
+      "card_name": "Royal Assassin Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_avatar_serra_angel",
+      "card_name": "Serra Angel Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/vanguard.c",
+      "function": "card_momir",
+      "card_name": "Momir Vig, Simic Visionary Avatar",
+      "reason": "Reviewed emblem, avatar or alternate printed-card callback identity."
+    },
+    {
+      "source": "cards/visions.c",
+      "function": "card_heart_charm",
+      "card_name": "Hearth Charm",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/visions.c",
+      "function": "card_wake_of_voltures",
+      "card_name": "Wake of Vultures",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/weatherlight.c",
+      "function": "card_bethrothed_of_fire",
+      "card_name": "Betrothed of Fire",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    },
+    {
+      "source": "cards/white_enchantments.c",
+      "function": "card_in_the_presence_of_the_master",
+      "card_name": "Presence of the Master",
+      "reason": "Reviewed shortened or legacy handler identity; card-description documentation only."
+    },
+    {
+      "source": "cards/zendikar_rising.c",
+      "function": "card_bela_ged_recovery",
+      "card_name": "Bala Ged Recovery",
+      "reason": "Reviewed legacy misspelling, punctuation, plurality or shortened printed name; comment identity only."
+    }
+  ]
+}

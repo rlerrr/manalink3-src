@@ -18,19 +18,6 @@ static int charge_phyrexian_mana_impl(int player, int cless, int black, int blue
 
 // ---- GLOBAL FUNCTIONS ----
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 static int generic_splicer(int player, int card, event_t event, int pow, int tou, int keyword, int golems ){
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -82,6 +69,13 @@ static int is_poisoned(int player){
 
 int card_batterskull(int player, int card, event_t event)
 {
+  /* Batterskull	|5
+   * Artifact - Equipment
+   * Living weapon
+   * Equipped creature gets +4/+4 and has vigilance and lifelink.
+   * |3: Return ~ to its owner's hand.
+   * Equip |5 */
+
   enum
   {
     CHOICE_EQUIP = 1,
@@ -202,7 +196,6 @@ int card_batterskull(int player, int card, event_t event)
   return 0;
 }
 
-
 int card_blade_splicer(int player, int card, event_t event ){
 	/* Blade Splicer	|2|W
 	 * Creature - Human Artificer 1/1
@@ -240,15 +233,196 @@ int card_beast_within(int player, int card, event_t event ){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PERMANENT", 1, NULL);
 }
 
+/* ManalinkEh 2022: 0x226ce90; original cards/new_phyrexia.c:418. */
+static int bludgeon_brawl_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int target_player;
+  card_instance_t *equipment;
+  card_instance_t *equipped;
+  int mana_value_or_valid;
+  int equipment_card;
+  target_definition_t td;
+
+  instance = get_card_instance(player, card);
+  target_player = (int)instance->damage_target_player;
+  equipment_card = instance->damage_target_card;
+  equipment = in_play(target_player, equipment_card);
+  if ((equipment != NULL) && (equipped = is_equipping(target_player, equipment_card), equipped != NULL))
+  {
+    mana_value_or_valid = get_cmc(target_player, equipment_card);
+    modify_pt_and_abilities((int)equipment->damage_target_player, equipment->damage_target_card,
+                            event, mana_value_or_valid, 0, 0);
+  }
+  equipment = get_card_instance(player, card);
+  if (equipment->targets[1].player >= 0)
+  {
+    other_leaves_play(player, card, instance->targets[1].player, instance->targets[1].card, event,
+                      0, 0);
+    bool detach = event == EVENT_LEAVES_PLAY_ABILITY;
+    if (!detach && event == EVENT_STATIC_EFFECTS)
+    {
+      if (!is_humiliated(instance->targets[1].player, instance->targets[1].card, AL_STATIC))
+        return 0;
+      detach = true;
+    }
+    else if (!detach && event == EVENT_CARDCONTROLLED)
+      detach = instance->targets[1].card == affected_card &&
+               instance->targets[1].player == affected_card_controller;
+    if (detach)
+    {
+      unattach(target_player, equipment_card);
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
+      event != EVENT_CLEANUP)
+    return 0;
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  if ((event == EVENT_RESOLVE_ACTIVATION) &&
+      (mana_value_or_valid = validate_target(player, card, &td, 0), mana_value_or_valid != 0))
+  {
+    equip_target_creature(target_player, equipment_card, instance->targets[0].player,
+                          instance->targets[0].card);
+  }
+  return granted_generic_activated_ability(player, card, target_player, equipment_card, event, 0x102,
+                                           get_cmc(target_player, equipment_card), 0, 0, 0, 0, 0, 0,
+                                           &td, "Select target creature you control.");
+}
+
+// Chancellor of the Tangle code is in "rules_engine.c" in "functions" folder
+
+/* ManalinkEh 2022: 0x226e590; original cards/new_phyrexia.c:458. */
+int card_bludgeon_brawl(int player, int card, event_t event)
+{
+  /* Bludgeon Brawl	|2|R
+   * Enchantment
+   * Each noncreature, non-Equipment artifact is an Equipment with equip |X and "Equipped creature gets +X/+0," where X is that artifact's mana value. */
+
+  int c;
+  bool legacy_found;
+  int eligible;
+  card_instance_t *instance;
+
+  if (((((event == EVENT_CHANGE_TYPE) && (instance = in_play(player, card), instance != NULL)) &&
+        (eligible = is_humiliated(player, card, AL_STATIC), eligible == 0)) &&
+       ((eligible = is_what(affected_card_controller, affected_card, 0x40),
+         eligible != 0 &&
+             (eligible = is_what(affected_card_controller, affected_card, 2), eligible == 0)))) &&
+      (eligible = is_equipment(affected_card_controller, affected_card), eligible == 0))
+  {
+
+    add_a_subtype(affected_card_controller, affected_card, SUBTYPE_EQUIPMENT);
+    if (0 < active_cards_count[player])
+    {
+      c = 0;
+      legacy_found = false;
+      do
+      {
+        instance = in_play(player, c);
+
+        if ((((instance != NULL) && (is_what(player, c, 0x80) != 0)) &&
+             (instance = get_card_instance(player, c),
+              instance->info_slot_fn == bludgeon_brawl_effect)) &&
+            (((instance->damage_target_player == affected_card_controller &&
+               (instance->damage_target_card == affected_card)) ||
+              ((affected_card_controller == instance->targets[6].player &&
+                (instance->targets[6].card == affected_card))))))
+        {
+          legacy_found = true;
+        }
+        c = c + 1;
+      } while (c < active_cards_count[player]);
+      if (legacy_found)
+        return global_enchantment(player, card, event);
+    }
+
+    instance = get_card_instance(
+        player, create_targetted_legacy_activate(player, card, bludgeon_brawl_effect,
+                                                 affected_card_controller, affected_card));
+    instance->targets[6].player = affected_card_controller;
+    instance->targets[6].card = affected_card;
+    instance->targets[1].player = player;
+    instance->targets[1].card = card;
+    instance->number_of_targets = '\x01';
+  }
+  return global_enchantment(player, card, event);
+}
+
+/* ManalinkEh 2022: 0x226d1a0; original cards/new_phyrexia.c:492. */
+static int deal_6_damage_legacy(int player, int card, event_t event)
+{
+  int p;
+  int player_00;
+  int card_00;
+  card_instance_t *instance;
+  int source_card;
+  int dying_or_removed;
+  int remaining_hits;
+
+  instance = get_card_instance(player, card);
+  if ((((event == EVENT_GRAVEYARD_FROM_PLAY) &&
+        (source_card = instance->targets[0].card, source_card == affected_card)) &&
+       (player_00 = instance->targets[0].player, player_00 == affected_card_controller)) &&
+      ((dying_or_removed = graveyard_from_play(player_00, source_card, EVENT_GRAVEYARD_FROM_PLAY),
+        dying_or_removed != 0 &&
+            (dying_or_removed = check_for_death_trigger_removal(player_00, source_card),
+             dying_or_removed == 0))))
+  {
+
+    p = instance->targets[1].player;
+    card_00 = instance->targets[1].card;
+    instance = in_play(p, card_00);
+    if (instance != NULL)
+    {
+
+      if (is_what(player_00, source_card, 2) == 0)
+      {
+        damage_creature(p, card_00, 6, player_00, source_card);
+      }
+      else
+      {
+        remaining_hits = card_counts[player_00][CCOUNTS_TEYSA_KARLOV] + 1;
+        do
+        {
+          damage_creature(p, card_00, 6, player_00, source_card);
+          remaining_hits = remaining_hits + -1;
+        } while (remaining_hits != 0);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  if (end_of_combat_trigger(player, card, event, 2) != 0)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x226d140; original cards/new_phyrexia.c:519. */
+static void cathedral_membrane_legacy(int player, int card, int t_player, int t_card)
+{
+  int leg;
+  card_instance_t *instance;
+
+  leg = create_targetted_legacy_effect(player, card, deal_6_damage_legacy, t_player, t_card);
+  instance = get_card_instance(player, leg);
+  instance->targets[0].player = player;
+  instance->targets[0].card = card;
+  instance->targets[1].player = t_player;
+  instance->targets[1].card = t_card;
+  return;
+}
 
 int card_cathedral_membrane(int player, int card, event_t event ){
-/*
-Cathedral Membrane |1|{WP}
-Artifact Creature — Wall 0/3
-({WP} can be paid with either {W} or 2 life.)
-Defender
-When Cathedral Membrane dies during combat, it deals 6 damage to each creature it blocked this combat.
-*/
+  /* Cathedral Membrane |1|{WP}
+   * Artifact Creature — Wall 0/3
+   * ({WP} can be paid with either {W} or 2 life.)
+   * Defender
+   * When Cathedral Membrane dies during combat, it deals 6 damage to each creature it blocked this combat. */
 
 	phyrexian_casting_costs(player, card, event, MANACOST_XW(1, 1), 1);
 	if (event == EVENT_DECLARE_BLOCKERS && !is_humiliated(player, card, AL_TRIG) && 1-current_turn == player && blocking(player, card, event)){
@@ -257,17 +431,14 @@ When Cathedral Membrane dies during combat, it deals 6 damage to each creature i
 	return 0;
 }
 
-// Chancellor of the Tangle code is in "rules_engine.c" in "functions" folder
-
 int card_deceiver_exarch(int player, int card, event_t event ){
-/*
-Deceiver Exarch |2|U
-Creature — Cleric 1/4
-Flash (You may cast this spell any time you could cast an instant.)
-When Deceiver Exarch enters the battlefield, choose one —
-• Untap target permanent you control.
-• Tap target permanent an opponent controls.
-*/
+  /* Deceiver Exarch |2|U
+   * Creature — Cleric 1/4
+   * Flash (You may cast this spell any time you could cast an instant.)
+   * When Deceiver Exarch enters the battlefield, choose one —
+   * • Untap target permanent you control.
+   * • Tap target permanent an opponent controls. */
+
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -367,6 +538,10 @@ Target creature gets -5/-5 until end of turn. */
 }
 
 int card_dispatch(int player, int card, event_t event ){
+  /* Dispatch	|W
+   * Instant
+   * Tap target creature.
+   * Metalcraft - If you control three or more artifacts, exile that creature. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -394,8 +569,12 @@ int card_dispatch(int player, int card, event_t event ){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
-
 int card_elesh_norn(int player, int card, event_t event ){
+  /* Elesh Norn	|2|W|W
+   * Legendary Creature - Phyrexian Praetor 3/5
+   * Vigilance
+   * Whenever a source an opponent controls deals damage to you or a permanent you control, that source's controller loses 2 life unless they pay |1.
+   * |2|W, Sacrifice three other creatures: Exile ~, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery. */
 
 	check_legend_rule(player, card, event);
 
@@ -417,7 +596,6 @@ int card_elesh_norn(int player, int card, event_t event ){
 
 	return 0;
 }
-
 int card_fresh_meat(int player, int card, event_t event){
 	/* Fresh Meat	|3|G
 	 * Instant
@@ -432,6 +610,9 @@ int card_fresh_meat(int player, int card, event_t event){
 }
 
 int card_geths_verdict(int player, int card, event_t event ){
+  /* Geth's Verdict	|B|B
+   * Instant
+   * Target player sacrifices a creature of their choice and loses 1 life. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -457,6 +638,11 @@ int card_geths_verdict(int player, int card, event_t event ){
 }
 
 int card_gitaxian_probe(int player, int card, event_t event ){
+  /* Gitaxian Probe	|UP
+   * Sorcery
+   * (|UP can be paid with either |U or 2 life.)
+   * Look at target player's hand.
+   * Draw a card. */
 
 	if( event == EVENT_MODIFY_COST ){
 		return phyrexian_casting_costs(player, card, event, MANACOST_U(1), 0);
@@ -507,8 +693,13 @@ static const char* target_must_have_counters(int who_chooses, int player, int ca
 {
   return count_counters(player, card, -1) ? NULL : "must have counters";
 }
+
 int card_hex_parasite(int player, int card, event_t event)
 {
+  /* Hex Parasite	|1
+   * Artifact Creature - Insect 1/1
+   * |X|PB: Remove up to X counters from target permanent. For each counter removed this way, ~ gets +1/+0 until end of turn. */
+
   if (event == EVENT_POW_BOOST)
   {
     int mana = has_mana(player, 7, 1);
@@ -616,6 +807,12 @@ int card_jin_gitaxias_core_augur(int player, int card, event_t event){
 
 int card_karn_liberated(int player, int card, event_t event)
 {
+  /* Karn Liberated	|7
+   * Legendary Planeswalker - Karn (6)
+   * +4: Target player exiles a card from their hand.
+   * -3: Exile target permanent.
+   * -14: Restart the game, leaving in exile all non-Aura permanent cards exiled with Karn. Then put those cards onto the battlefield under your control. */
+
   enum
   {
     CHOICE_EXILE_CARD_IN_HAND = 1,
@@ -1326,7 +1523,6 @@ int card_karn_liberated(int player, int card, event_t event)
   return value;
 }
 
-
 int card_lashwrithe(int player, int card, event_t event){
 
 	/* Lashwrithe	|4
@@ -1381,6 +1577,7 @@ int card_lashwrithe(int player, int card, event_t event){
 	return 0;
 }
 
+int card_immolating_souleater(int player, int card, event_t event);
 int card_master_splicer(int player, int card, event_t event ){
 	/* Master Splicer	|3|W
 	 * Creature - Human Artificer 1/1
@@ -1391,6 +1588,11 @@ int card_master_splicer(int player, int card, event_t event ){
 }
 
 int card_melira_sylvok_outcast(int player, int card, event_t event ){
+  /* Melira, Sylvok Outcast	|1|G
+   * Legendary Creature - Human Scout 2/2
+   * You can't get poison counters.
+   * Creatures you control can't have -1/-1 counters put on them.
+   * Creatures your opponents control lose infect. */
 
 	check_legend_rule(player, card, event);
 
@@ -1430,6 +1632,10 @@ static const char* cmc_is_1(int who_chooses, int player, int card){
 }
 
 int card_mental_misstep(int player, int card, event_t event ){
+  /* Mental Misstep	|UP
+   * Instant
+   * (|UP can be paid with either |U or 2 life.)
+   * Counter target spell with mana value 1. */
 
 	if( event == EVENT_MODIFY_COST ){
 		return phyrexian_casting_costs(player, card, event, MANACOST_U(1), 0);
@@ -1462,7 +1668,6 @@ int card_mental_misstep(int player, int card, event_t event ){
 	return 0;
 }
 
-int card_immolating_souleater(int player, int card, event_t event);
 int card_moltensteel_dragon(int player, int card, event_t event)
 {
   /* Moltensteel Dragon	|4|PR|PR
@@ -1476,6 +1681,10 @@ int card_moltensteel_dragon(int player, int card, event_t event)
 }
 
 int card_norns_annex(int player, int card, event_t event ){
+  /* Norn's Annex	|3|WP|WP
+   * Artifact
+   * (|WP can be paid with either |W or 2 life.)
+   * Creatures can't attack you or planeswalkers you control unless their controller pays |WP for each of those creatures. */
 
 	phyrexian_casting_costs(player, card, event, MANACOST_XW(3, 2), 1);
 
@@ -1543,12 +1752,11 @@ int card_phyrexian_metamorph(int player, int card, event_t event)
 }
 
 int card_phyrexian_obliterator(int player, int card, event_t event ){
-/*
-Phyrexian Obliterator |B|B|B|B
-Creature — Horror 5/5
-Trample
-Whenever a source deals damage to Phyrexian Obliterator, that source's controller sacrifices that many permanents.
-*/
+  /* Phyrexian Obliterator |B|B|B|B
+   * Creature — Horror 5/5
+   * Trample
+   * Whenever a source deals damage to Phyrexian Obliterator, that source's controller sacrifices that many permanents. */
+
 	// An approximation - tells the AI that anything with at least 1 power that blocks this or is blocked by this will be destroyed.
 	if (event == EVENT_CHANGE_TYPE && affect_me(player, card) && !is_humiliated(player, card, AL_TRIG)){
 		get_card_instance(player, card)->destroys_if_blocked |= DIFB_ASK_CARD;
@@ -1604,6 +1812,10 @@ Whenever a source deals damage to Phyrexian Obliterator, that source's controlle
 }
 
 int card_phyrexian_swarmlord(int player, int card, event_t event){
+  /* Phyrexian Swarmlord	|4|G|G
+   * Creature - Phyrexian Insect Horror 4/4
+   * Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)
+   * At the beginning of your upkeep, create a 1/1 green Phyrexian Insect creature token with infect for each poison counter your opponents have. */
 
 	upkeep_trigger_ability(player, card, event, player);
 
@@ -1622,6 +1834,11 @@ int card_phyrexian_swarmlord(int player, int card, event_t event){
 
 int card_phyrexian_unlife(int player, int card, event_t event)
 {
+  /* Phyrexian Unlife	|2|W
+   * Enchantment
+   * You don't lose the game for having 0 or less life.
+   * As long as you have 0 or less life, all damage is dealt to you as though its source had infect. (Damage is dealt to you in the form of poison counters.) */
+
   cannot_lose_the_game_for_having_less_than_0_life(player, card, event, player);
 
   card_instance_t* damage = damage_being_dealt(event), *instance;
@@ -1635,6 +1852,10 @@ int card_phyrexian_unlife(int player, int card, event_t event)
 }
 
 int card_postmortem_lunge(int player, int card, event_t event){
+  /* Postmortem Lunge	|X|BP
+   * Sorcery
+   * (|BP can be paid with either |B or 2 life.)
+   * Return target creature card with mana value X from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step. */
 
 	if( event == EVENT_MODIFY_COST ){
 		return phyrexian_casting_costs(player, card, event, MANACOST_B(1), 0);
@@ -1703,6 +1924,10 @@ int card_postmortem_lunge(int player, int card, event_t event){
 }
 
 int card_puresteel_paladin(int player, int card, event_t event ){
+  /* Puresteel Paladin	|W|W
+   * Creature - Human Knight 2/2
+   * Whenever an Equipment you control enters, you may draw a card.
+   * Metalcraft - Equipment you control have equip |0 as long as you control three or more artifacts. */
 
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
 		test_definition_t test;
@@ -1719,6 +1944,11 @@ int card_puresteel_paladin(int player, int card, event_t event ){
 }
 
 int card_sheoldred_whispering_one(int player, int card, event_t event){
+  /* Sheoldred, Whispering One	|5|B|B
+   * Legendary Creature - Phyrexian Praetor 6/6
+   * Swampwalk (This creature can't be blocked as long as defending player controls a Swamp.)
+   * At the beginning of your upkeep, return target creature card from your graveyard to the battlefield.
+   * At the beginning of each opponent's upkeep, that player sacrifices a creature of their choice. */
 
 	check_legend_rule(player, card, event);
 
@@ -1902,7 +2132,6 @@ int card_shrine_of_limitless_power(int player, int card, event_t event ){
 									&td, "TARGET_PLAYER");
 }
 
-
 int card_shrine_of_loyal_legions(int player, int card, event_t event ){
 	/* Shrine of Loyal Legions	|2
 	 * Artifact
@@ -1964,6 +2193,10 @@ int card_shrine_of_piercing_vision(int player, int card, event_t event ){
 }
 
 int card_spined_thopter(int player, int card, event_t event ){
+  /* Spined Thopter	|2|UP
+   * Artifact Creature - Phyrexian Thopter 2/1
+   * (|UP can be paid with either |U or 2 life.)
+   * Flying */
 
 	phyrexian_casting_costs(player, card, event, 2, 0, 1, 0, 0, 0, 1);
 
@@ -2062,6 +2295,10 @@ int card_surgical_extraction(int player, int card, event_t event){
 }
 
 int card_tezzerets_gambit(int player, int card, event_t event ){
+  /* Tezzeret's Gambit	|3|UP
+   * Sorcery
+   * (|UP can be paid with either |U or 2 life.)
+   * Draw two cards, then proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.) */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		draw_cards(player, 2);
@@ -2071,7 +2308,6 @@ int card_tezzerets_gambit(int player, int card, event_t event ){
 
 	return phyrexian_casting_costs(player, card, event, MANACOST_XU(3, 1), 0);
 }
-
 
 int card_urabrask_the_hidden(int player, int card, event_t event){
 
@@ -2090,6 +2326,11 @@ int card_urabrask_the_hidden(int player, int card, event_t event){
 }
 
 int card_vault_skirge(int player, int card, event_t event ){
+  /* Vault Skirge	|1|BP
+   * Artifact Creature - Phyrexian Imp 1/1
+   * (|BP can be paid with either |B or 2 life.)
+   * Flying
+   * Lifelink (Damage dealt by this creature also causes you to gain that much life.) */
 
 	phyrexian_casting_costs(player, card, event, MANACOST_XB(1, 1), 1);
 
@@ -2206,6 +2447,10 @@ int card_wing_splicer(int player, int card, event_t event ){
 }
 
 int card_act_of_aggression(int player, int card, event_t event){
+  /* Act of Aggression	|3|RP|RP
+   * Instant
+   * (|RP can be paid with either |R or 2 life.)
+   * Gain control of target creature an opponent controls until end of turn. Untap that creature. It gains haste until end of turn. */
 
 	if( event == EVENT_MODIFY_COST ){
 		phyrexian_casting_costs(player, card, event, MANACOST_XR(3, 2), 0);
@@ -2352,12 +2597,11 @@ static int arm_with_aether_legacy(int player, int card, event_t event)
 }
 
 int card_arm_with_aether(int player, int card, event_t event){
-/*
-Arm with Æther |2|U
-Sorcery
-Until end of turn, creatures you control gain "Whenever this creature deals damage to an opponent,
-		you may return target creature that player controls to its owner's hand."
-*/
+  /* Arm with Æther |2|U
+   * Sorcery
+   * Until end of turn, creatures you control gain "Whenever this creature deals damage to an opponent,
+   * 		you may return target creature that player controls to its owner's hand." */
+
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		if( current_phase < PHASE_AFTER_BLOCKING ){
 			ai_modifier += (count_subtype(player, TYPE_CREATURE, -1) * 8);
@@ -2371,7 +2615,6 @@ Until end of turn, creatures you control gain "Whenever this creature deals dama
 
 	return basic_spell(player, card, event);
 }
-
 
 int card_artillerize(int player, int card, event_t event){
 	/* Artillerize	|3|R	0x2004625
@@ -2452,12 +2695,11 @@ int card_auriok_survivors(int player, int card, event_t event){
 }
 
 int card_blind_zealot(int player, int card, event_t event){
-/*
-Blind Zealot |1|B|B
-Creature — Human Cleric 2/2
-Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)
-Whenever Blind Zealot deals combat damage to a player, you may sacrifice it. If you do, destroy target creature that player controls.
-*/
+  /* Blind Zealot |1|B|B
+   * Creature — Human Cleric 2/2
+   * Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)
+   * Whenever Blind Zealot deals combat damage to a player, you may sacrifice it. If you do, destroy target creature that player controls. */
+
 	intimidate(player, card, event);
 
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE | RESOLVE_TRIGGER_AI(player));
@@ -2533,6 +2775,11 @@ int card_blinding_souleater(int player, int card, event_t event){
 }
 
 int card_brutalizer_exarch(int player, int card, event_t event){
+  /* Brutalizer Exarch	|5|G
+   * Creature - Phyrexian Cleric 3/3
+   * When this creature enters, choose one -
+   * * Search your library for a creature card, reveal it, then shuffle and put that card on top.
+   * * Put target noncreature permanent on the bottom of its owner's library. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
@@ -2564,6 +2811,12 @@ int card_brutalizer_exarch(int player, int card, event_t event){
 
 int card_caged_sun(int player, int card, event_t event)
 {
+  /* Caged Sun	|6
+   * Artifact
+   * As this artifact enters, choose a color.
+   * Creatures you control of the chosen color get +1/+1.
+   * Whenever a land's ability causes you to add one or more mana of the chosen color, add an additional one mana of that color. */
+
   card_instance_t *instance;
   card_instance_t *sun;
   int result;
@@ -2634,11 +2887,9 @@ int card_caged_sun(int player, int card, event_t event)
 }
 
 int card_caress_of_phyrexia(int player, int card, event_t event){
-/*
-Caress of Phyrexia |3|B|B
-Sorcery
-Target player draws three cards, loses 3 life, and gets three poison counters.
-*/
+  /* Caress of Phyrexia |3|B|B
+   * Sorcery
+   * Target player draws three cards, loses 3 life, and gets three poison counters. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -2688,6 +2939,11 @@ Target player draws three cards, loses 3 life, and gets three poison counters.
 
 int card_chained_throatseeker(int player, int card, event_t event)
 {
+  /* Chained Throatseeker	|5|U
+   * Creature - Phyrexian Horror 5/5
+   * Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)
+   * This creature can't attack unless defending player is poisoned. */
+
 	if (event == EVENT_ATTACK_LEGALITY && affect_me(player, card) && !is_poisoned(1-player) && ! is_humiliated(player, card, AL_STATIC) )
 		event_result = 1;
 
@@ -2779,6 +3035,11 @@ int card_chancellor_of_the_spires(int player, int card, event_t event){
 }
 
 int card_chancellor_of_the_tangle(int player, int card, event_t event){
+  /* Chancellor of the Tangle	|4|G|G|G
+   * Creature - Phyrexian Beast 6/7
+   * You may reveal this card from your opening hand. If you do, at the beginning of your first main phase of the game, add |G.
+   * Reach, vigilance */
+
 	vigilance(player, card, event);
 	return 0;
 }
@@ -2853,6 +3114,10 @@ int card_conversion_chamber(int player, int card, event_t event)
 }
 
 int card_corrosive_gale(int player, int card, event_t event){
+  /* Corrosive Gale	|X|GP
+   * Sorcery
+   * (|GP can be paid with either |G or 2 life.)
+   * ~ deals X damage to each creature with flying. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -2888,6 +3153,9 @@ int card_corrosive_gale(int player, int card, event_t event){
 }
 
 int card_corrupted_resolve(int player, int card, event_t event){
+  /* Corrupted Resolve	|1|U
+   * Instant
+   * Counter target spell if its controller is poisoned. */
 
 	if( event == EVENT_CAN_CAST ){
 		if( counterspell(player, card, event, NULL, 0) ){
@@ -2902,6 +3170,9 @@ int card_corrupted_resolve(int player, int card, event_t event){
 }
 
 int card_darksteel_relic(int player, int card, event_t event){
+  /* Darksteel Relic	|0
+   * Artifact
+   * Indestructible (Effects that say "destroy" don't destroy this artifact.) */
 
 	indestructible(player, card, event);
 
@@ -2909,6 +3180,10 @@ int card_darksteel_relic(int player, int card, event_t event){
 }
 
 int card_death_hood_cobra(int player, int card, event_t event){
+  /* Death-Hood Cobra	|1|G
+   * Creature - Phyrexian Snake 2/2
+   * |1|G: This creature gains reach until end of turn.
+   * |1|G: This creature gains deathtouch until end of turn. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -2952,10 +3227,19 @@ int card_death_hood_cobra(int player, int card, event_t event){
 }
 
 int card_defensive_stance(int player, int card, event_t event){
+  /* Defensive Stance	|U
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets -1/+1. */
+
 	return generic_aura(player, card, event, player, -1, 1, 0, 0, 0, 0, 0);
 }
 
 int card_dementia_bat(int player, int card, event_t event){
+  /* Dementia Bat	|4|B
+   * Creature - Phyrexian Bat 2/2
+   * Flying
+   * |4|B, Sacrifice this creature: Target player discards two cards. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -2977,6 +3261,9 @@ int card_dementia_bat(int player, int card, event_t event){
 }
 
 int card_despise(int player, int card, event_t event ){
+  /* Despise	|B
+   * Sorcery
+   * Target opponent reveals their hand. You choose a creature or planeswalker card from it. That player discards that card. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -3163,6 +3450,10 @@ int card_etched_monstrosity(int player, int card, event_t event){
 }
 
 int card_exclusion_ritual(int player, int card, event_t event){
+  /* Exclusion Ritual	|4|W|W
+   * Enchantment
+   * Imprint - When this enchantment enters, exile target nonland permanent.
+   * Players can't cast spells with the same name as the exiled card. */
 
 	if( event == EVENT_MODIFY_COST_GLOBAL && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -3198,7 +3489,6 @@ int card_exclusion_ritual(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
-
 int card_fallen_ferromancer(int player, int card, event_t event){
 	/* Fallen Ferromancer	|3|R	0x20046a7
 	 * Creature - Human Shaman 1/1
@@ -3223,6 +3513,11 @@ int card_fallen_ferromancer(int player, int card, event_t event){
 }
 
 int card_forced_worship(int player, int card, event_t event){
+  /* Forced Worship	|1|W
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature can't attack.
+   * |2|W: Return this Aura to its owner's hand. */
 
 	if (IS_GAA_EVENT(event)){
 	    if (event == EVENT_RESOLVE_ACTIVATION){
@@ -3242,6 +3537,9 @@ int card_forced_worship(int player, int card, event_t event){
 }
 
 int card_furnace_scamp(int player, int card, event_t event){
+  /* Furnace Scamp	|R
+   * Creature - Phyrexian Beast 1/1
+   * Whenever this creature deals combat damage to a player, you may sacrifice it. If you do, this creature deals 3 damage to that player. */
 
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE | RESOLVE_TRIGGER_AI(player));
 	if( result && ! check_special_flags2(player, card, SF2_CANNOT_BE_SACRIFICED) ){
@@ -3272,6 +3570,9 @@ int card_furnace_scamp(int player, int card, event_t event){
 }
 
 int card_glissas_scorn(int player, int card, event_t event){
+  /* Glissa's Scorn	|1|G
+   * Instant
+   * Destroy target artifact. Its controller loses 1 life. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -3294,6 +3595,12 @@ int card_glissas_scorn(int player, int card, event_t event){
 }
 
 int card_glistening_oil(int player, int card, event_t event){
+  /* Glistening Oil	|B|B
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature has infect.
+   * At the beginning of your upkeep, put a -1/-1 counter on enchanted creature.
+   * When this Aura is put into a graveyard from the battlefield, return it to its owner's hand. */
 
 	immortal_enchantment(player, card, event);
 
@@ -3314,6 +3621,9 @@ int card_glistening_oil(int player, int card, event_t event){
 }
 
 int card_greenhilt_trainee(int player, int card, event_t event){
+  /* Greenhilt Trainee	|3|G
+   * Creature - Elf Warrior 2/3
+   * |T: Target creature gets +4/+4 until end of turn. Activate only if this creature's power is 4 or greater. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -3336,6 +3646,11 @@ int card_greenhilt_trainee(int player, int card, event_t event){
 
 int card_gremlin_mine(int player, int card, event_t event)
 {
+  /* Gremlin Mine	|1
+   * Artifact
+   * |1, |T, Sacrifice ~: ~ deals 4 damage to target artifact creature.
+   * |1, |T, Sacrifice ~: Remove up to four charge counters from target noncreature artifact. */
+
   enum
   {
     CHOICE_DAMAGE = 1,
@@ -3681,13 +3996,12 @@ int card_insatiable_souleater(int player, int card, event_t event){
 }
 
 int card_invader_parasite(int player, int card, event_t event){
-/*
-Invader Parasite |3|R|R
-Creature — Insect 3/2
-Imprint — When Invader Parasite enters the battlefield, exile target land.
-Whenever a land with the same name as the exiled card enters the battlefield under an opponent's control, Invader Parasite deals 2 damage
-		to that player.
-*/
+  /* Invader Parasite |3|R|R
+   * Creature — Insect 3/2
+   * Imprint — When Invader Parasite enters the battlefield, exile target land.
+   * Whenever a land with the same name as the exiled card enters the battlefield under an opponent's control, Invader Parasite deals 2 damage
+   * 		to that player. */
+
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
@@ -3919,6 +4233,10 @@ When ~ dies, target player loses life equal to its power. */
 }
 
 int card_mutagenic_growth(int player, int card, event_t event){
+  /* Mutagenic Growth	|GP
+   * Instant
+   * (|GP can be paid with either |G or 2 life.)
+   * Target creature gets +2/+2 until end of turn. */
 
 	if( event == EVENT_CHECK_PUMP ){
 		return vanilla_instant_pump(player, card, event, ANYBODY, player, 2, 2, 0, 0);
@@ -3960,6 +4278,9 @@ int card_mutagenic_growth(int player, int card, event_t event){
 }
 
 int card_mycosynth_fiend(int player, int card, event_t event){
+  /* Mycosynth Fiend	|2|G
+   * Creature - Phyrexian Horror 2/2
+   * This creature gets +1/+1 for each poison counter your opponents have. */
 
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
@@ -3971,6 +4292,9 @@ int card_mycosynth_fiend(int player, int card, event_t event){
 }
 
 int card_mycosynth_wellsprin(int player, int card, event_t event){
+  /* Mycosynth Wellspring	|2
+   * Artifact
+   * When this artifact enters or is put into a graveyard from the battlefield, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
 
@@ -3986,6 +4310,11 @@ int card_mycosynth_wellsprin(int player, int card, event_t event){
 }
 
 int card_necropouncer(int player, int card, event_t event){
+  /* Necropouncer	|6
+   * Artifact - Equipment
+   * Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)
+   * Equipped creature gets +3/+1 and has haste.
+   * Equip |2 */
 
 	if( is_equipping(player, card) ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -4001,6 +4330,12 @@ int card_necropouncer(int player, int card, event_t event){
 
 int card_numbing_dose(int player, int card, event_t event)
 {
+  /* Numbing Dose	|3|U|U
+   * Enchantment - Aura
+   * Enchant artifact or creature
+   * Enchanted permanent doesn't untap during its controller's untap step.
+   * At the beginning of the upkeep of enchanted permanent's controller, that player loses 1 life. */
+
   char attached_player;
   card_instance_t *instance;
   int priority;
@@ -4222,6 +4557,10 @@ int card_phyrexias_core(int player, int card, event_t event){
 }
 
 int card_phyrexian_ingester(int player, int card, event_t event){
+  /* Phyrexian Ingester	|6|U
+   * Creature - Phyrexian Beast 3/3
+   * Imprint - When this creature enters, you may exile target nontoken creature.
+   * This creature gets +X/+Y, where X is the exiled creature card's power and Y is its toughness. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
 
@@ -4278,6 +4617,10 @@ int card_phyrexian_ingester(int player, int card, event_t event){
 }
 
 int card_pith_driller(int player, int card, event_t event){
+  /* Pith Driller	|4|BP
+   * Artifact Creature - Phyrexian Horror 2/4
+   * (|BP can be paid with either |B or 2 life.)
+   * When this creature enters, put a -1/-1 counter on target creature. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
@@ -4298,6 +4641,10 @@ int card_pith_driller(int player, int card, event_t event){
 }
 
 int card_porcelain_legionnaire(int player, int card, event_t event){
+  /* Porcelain Legionnaire	|2|WP
+   * Artifact Creature - Phyrexian Soldier 3/1
+   * (|WP can be paid with either |W or 2 life.)
+   * First strike */
 
 	return phyrexian_casting_costs(player, card, event, MANACOST_XW(2, 1), 1);
 }
@@ -4343,6 +4690,9 @@ int card_praetors_grasp(int player, int card, event_t event)
 }
 
 int card_priest_of_urabrask(int player, int card, event_t event){
+  /* Priest of Urabrask	|2|R
+   * Creature - Phyrexian Human Cleric 2/1
+   * When this creature enters, add |R|R|R. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
@@ -4354,6 +4704,9 @@ int card_priest_of_urabrask(int player, int card, event_t event){
 }
 
 int card_pristine_talisman(int player, int card, event_t event){
+  /* Pristine Talisman	|3
+   * Artifact
+   * |T: Add |C. You gain 1 life. */
 
 	if (event == EVENT_QUERY && attacking_card == 3){
 		return 2;
@@ -4366,6 +4719,9 @@ int card_pristine_talisman(int player, int card, event_t event){
 }
 
 int card_psychic_barrier(int player, int card, event_t event){
+  /* Psychic Barrier	|U|U
+   * Instant
+   * Counter target creature spell. Its controller loses 1 life. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -4410,6 +4766,10 @@ int card_rage_extractor(int player, int card, event_t event){
 }
 
 int card_reaper_of_sheoldred(int player, int card, event_t event){
+  /* Reaper of Sheoldred	|4|B
+   * Creature - Phyrexian Horror 2/5
+   * Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)
+   * Whenever a source deals damage to this creature, that source's controller gets a poison counter. */
 
 	if( in_play(player, card) && ! is_humiliated(player, card, AL_TRIG) ){
 		card_instance_t *damage = damage_being_dealt(event);
@@ -4458,6 +4818,10 @@ int card_remember_the_fallen(int player, int card, event_t event)
 }
 
 int card_ruthless_invasion(int player, int card, event_t event){
+  /* Ruthless Invasion	|3|RP
+   * Sorcery
+   * (|RP can be paid with either |R or 2 life.)
+   * Nonartifact creatures can't block this turn. */
 
 	if( event == EVENT_CAN_CAST ){
 		return basic_spell(player, card, event);
@@ -4519,6 +4883,10 @@ int card_sensor_splicer(int player, int card, event_t event ){
 }
 
 int card_shattered_angel(int player, int card, event_t event ){
+  /* Shattered Angel	|3|W|W
+   * Creature - Phyrexian Angel 3/3
+   * Flying
+   * Whenever a land an opponent controls enters, you may gain 3 life. */
 
 	etb_ability_global(1-player, event, RESOLVE_TRIGGER_AI(player), TYPE_LAND, 0, player, card);
 
@@ -4530,6 +4898,11 @@ int card_shattered_angel(int player, int card, event_t event ){
 }
 
 int card_sickleslicer(int player, int card, event_t event){
+  /* Sickleslicer	|3
+   * Artifact - Equipment
+   * Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)
+   * Equipped creature gets +2/+2.
+   * Equip |4 */
 
 	if( is_equipping(player, card) ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -4545,6 +4918,10 @@ int card_sickleslicer(int player, int card, event_t event){
 
 int card_slag_fiend(int player, int card, event_t event)
 {
+  /* Slag Fiend	|R
+   * Creature - Construct 100/100
+   * ~'s power and toughness are each equal to the number of artifact cards in all graveyards. */
+
   int newval;
   if ((((event - EVENT_POWER < 2) && (player != -1)) && (card == affected_card)) &&
       (player == affected_card_controller))
@@ -4556,18 +4933,20 @@ int card_slag_fiend(int player, int card, event_t event)
 }
 
 int card_slash_panter(int player, int card, event_t event){
+  /* Slash Panther	|4|RP
+   * Artifact Creature - Phyrexian Cat 4/2
+   * (|RP can be paid with either |R or 2 life.)
+   * Haste */
 
 	haste(player, card, event);
 
 	return phyrexian_casting_costs(player, card, event, MANACOST_XR(4, 1), 1);
 }
-
 int card_soul_conduit(int player, int card, event_t event){
-/*
-Soul Conduit |6
-Artifact
-{6}, {T}: Two target players exchange life totals.
-*/
+  /* Soul Conduit |6
+   * Artifact
+   * {6}, {T}: Two target players exchange life totals. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -4623,6 +5002,10 @@ static const char *can_legally_change_target_to_me(int who_chooses, int player, 
 
 int card_spellskite(int player, int card, event_t event)
 {
+  /* Spellskite	|2
+   * Artifact Creature - Phyrexian Horror 0/4
+   * |UP: Change a target of target spell or ability to this creature. (|UP can be paid with either |U or 2 life.) */
+
   target_definition_t td_spell;
   counterspell_target_definition(player, card, &td_spell, TYPE_ANY);
   td_spell.extra = (int32_t)can_legally_change_target_to_me;
@@ -4682,6 +5065,7 @@ static int artifact_natively_use_charge_counters(int player, int card)
 {
 	return get_counter_type_by_id(get_id(player, card)) == COUNTER_CHARGE ? 1 : 0;
 }
+
 int card_surge_node(int player, int card, event_t event)
 {
   /* Surge Node	|1
@@ -4727,6 +5111,11 @@ int card_surge_node(int player, int card, event_t event)
 
 int card_suture_priest(int player, int card, event_t event)
 {
+  /* Suture Priest	|1|W
+   * Creature - Phyrexian Cleric 1/1
+   * Whenever another creature you control enters, you may gain 1 life.
+   * Whenever a creature an opponent controls enters, you may have that player lose 1 life. */
+
   if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card))
   {
     test_definition_t test;
@@ -4746,10 +5135,20 @@ int card_suture_priest(int player, int card, event_t event)
 }
 
 int card_thundering_thanadon(int player, int card, event_t event ){
+  /* Thundering Tanadon	|4|GP|GP
+   * Artifact Creature - Phyrexian Beast 5/4
+   * (|GP can be paid with either |G or 2 life.)
+   * Trample */
+
 	return phyrexian_casting_costs(player, card, event, MANACOST_XG(4, 2), 1);
 }
 
 int card_tormentor_exarch(int player, int card, event_t event){
+  /* Tormentor Exarch	|3|R
+   * Creature - Phyrexian Cleric 2/2
+   * When this creature enters, choose one -
+   * * Target creature gets +2/+0 until end of turn.
+   * * Target creature gets -0/-2 until end of turn. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
@@ -4828,11 +5227,9 @@ Until end of turn, creatures you control get +1/+1 and gain trample and infect.
 }
 
 int card_unwinding_clock(int player, int card, event_t event){
-/*
-Unwinding Clock |4
-Artifact
-Untap all artifacts you control during each other player's untap step.
-*/
+  /* Unwinding Clock |4
+   * Artifact
+   * Untap all artifacts you control during each other player's untap step. */
 
 	if( beginning_of_phase(player, card, event, 1-player, -1, PHASE_UNTAP) ){
 		test_definition_t test;
@@ -4944,6 +5341,12 @@ static int viridian_harvest_legacy(int player, int card, event_t event){
 
 int card_viridian_harvest(int player, int card, event_t event)
 {
+  /* CARD_ID_VIRIDIAN_HARVEST	11710
+   * Viridian Harvest	|G
+   * Enchantment - Aura
+   * Enchant artifact
+   * When enchanted artifact is put into a graveyard, you gain 6 life. */
+
   int result;
   target_definition_t td;
   result = attached_creature_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -4964,6 +5367,9 @@ int card_viridian_harvest(int player, int card, event_t event)
   td.preferred_controller = player;
   return targeted_aura(player, card, event, &td, "TARGET_ARTIFACT");
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int deal_6_damage_legacy(int player, int card, event_t event);
 
 int card_war_report(int player, int card, event_t event ){
 /* CARD_ID_WAR_REPORT	11715
@@ -5002,15 +5408,17 @@ Sorcery
 	return basic_spell(player, card, event);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int bludgeon_brawl_effect(int player, int card, event_t event);
+
 int card_whispering_specter(int player, int card, event_t event){
-/*
-Whispering Specter |1|B|B
-Creature — Specter 1/1
-Flying
-Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)
-Whenever Whispering Specter deals combat damage to a player, you may sacrifice it. If you do, that player discards a card for each
-	poison counter he or she has.
-*/
+  /* Whispering Specter |1|B|B
+   * Creature — Specter 1/1
+   * Flying
+   * Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)
+   * Whenever Whispering Specter deals combat damage to a player, you may sacrifice it. If you do, that player discards a card for each
+   * 	poison counter he or she has. */
+
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_TRIGGER_OPTIONAL);
 	if( result && ! check_special_flags2(player, card, SF2_CANNOT_BE_SACRIFICED) ){
 		int times_damaged[2] = {BYTE0(result), BYTE1(result)};
@@ -5045,12 +5453,10 @@ Whenever Whispering Specter deals combat damage to a player, you may sacrifice i
 
 int card_xenograft(int player, int card, event_t event)
 {
-  /*
-Xenograft |4|U
-Enchantment
-As Xenograft enters the battlefield, choose a creature type.
-Each creature you control is the chosen type in addition to its other types.
-*/
+  /* Xenograft |4|U
+   * Enchantment
+   * As Xenograft enters the battlefield, choose a creature type.
+   * Each creature you control is the chosen type in addition to its other types. */
 
   if (event == EVENT_RESOLVE_SPELL)
   {
@@ -5067,194 +5473,85 @@ Each creature you control is the chosen type in addition to its other types.
   return global_enchantment(player, card, event);
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int deal_6_damage_legacy(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x226d1a0; original cards/new_phyrexia.c:492. */
-static int deal_6_damage_legacy(int player, int card, event_t event)
-{
-  int p;
-  int player_00;
-  int card_00;
-  card_instance_t *instance;
-  int source_card;
-  int dying_or_removed;
-  int remaining_hits;
-
-  instance = get_card_instance(player, card);
-  if ((((event == EVENT_GRAVEYARD_FROM_PLAY) &&
-        (source_card = instance->targets[0].card, source_card == affected_card)) &&
-       (player_00 = instance->targets[0].player, player_00 == affected_card_controller)) &&
-      ((dying_or_removed = graveyard_from_play(player_00, source_card, EVENT_GRAVEYARD_FROM_PLAY),
-        dying_or_removed != 0 &&
-            (dying_or_removed = check_for_death_trigger_removal(player_00, source_card),
-             dying_or_removed == 0))))
-  {
-
-    p = instance->targets[1].player;
-    card_00 = instance->targets[1].card;
-    instance = in_play(p, card_00);
-    if (instance != NULL)
-    {
-
-      if (is_what(player_00, source_card, 2) == 0)
-      {
-        damage_creature(p, card_00, 6, player_00, source_card);
-      }
-      else
-      {
-        remaining_hits = card_counts[player_00][CCOUNTS_TEYSA_KARLOV] + 1;
-        do
-        {
-          damage_creature(p, card_00, 6, player_00, source_card);
-          remaining_hits = remaining_hits + -1;
-        } while (remaining_hits != 0);
-      }
-      kill_card(player, card, KILL_EXILE);
-    }
-  }
-  if (end_of_combat_trigger(player, card, event, 2) != 0)
-  {
-    kill_card(player, card, KILL_EXILE);
-    return 0;
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x226d140; original cards/new_phyrexia.c:519. */
-static void cathedral_membrane_legacy(int player, int card, int t_player, int t_card)
-{
-  int leg;
-  card_instance_t *instance;
-
-  leg = create_targetted_legacy_effect(player, card, deal_6_damage_legacy, t_player, t_card);
-  instance = get_card_instance(player, leg);
-  instance->targets[0].player = player;
-  instance->targets[0].card = card;
-  instance->targets[1].player = t_player;
-  instance->targets[1].card = t_card;
-  return;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int bludgeon_brawl_effect(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x226ce90; original cards/new_phyrexia.c:418. */
-static int bludgeon_brawl_effect(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int target_player;
-  card_instance_t *equipment;
-  card_instance_t *equipped;
-  int mana_value_or_valid;
-  int equipment_card;
-  target_definition_t td;
-
-  instance = get_card_instance(player, card);
-  target_player = (int)instance->damage_target_player;
-  equipment_card = instance->damage_target_card;
-  equipment = in_play(target_player, equipment_card);
-  if ((equipment != NULL) && (equipped = is_equipping(target_player, equipment_card), equipped != NULL))
-  {
-    mana_value_or_valid = get_cmc(target_player, equipment_card);
-    modify_pt_and_abilities((int)equipment->damage_target_player, equipment->damage_target_card,
-                            event, mana_value_or_valid, 0, 0);
-  }
-  equipment = get_card_instance(player, card);
-  if (equipment->targets[1].player >= 0)
-  {
-    other_leaves_play(player, card, instance->targets[1].player, instance->targets[1].card, event,
-                      0, 0);
-    bool detach = event == EVENT_LEAVES_PLAY_ABILITY;
-    if (!detach && event == EVENT_STATIC_EFFECTS)
-    {
-      if (!is_humiliated(instance->targets[1].player, instance->targets[1].card, AL_STATIC))
-        return 0;
-      detach = true;
-    }
-    else if (!detach && event == EVENT_CARDCONTROLLED)
-      detach = instance->targets[1].card == affected_card &&
-               instance->targets[1].player == affected_card_controller;
-    if (detach)
-    {
-      unattach(target_player, equipment_card);
-      kill_card(player, card, KILL_EXILE);
-    }
-  }
-  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
-      event != EVENT_CLEANUP)
-    return 0;
-  default_target_definition(player, card, &td, 2);
-  td.allowed_controller = player;
-  td.preferred_controller = player;
-  if ((event == EVENT_RESOLVE_ACTIVATION) &&
-      (mana_value_or_valid = validate_target(player, card, &td, 0), mana_value_or_valid != 0))
-  {
-    equip_target_creature(target_player, equipment_card, instance->targets[0].player,
-                          instance->targets[0].card);
-  }
-  return granted_generic_activated_ability(player, card, target_player, equipment_card, event, 0x102,
-                                           get_cmc(target_player, equipment_card), 0, 0, 0, 0, 0, 0,
-                                           &td, "Select target creature you control.");
-}
-
-/* ManalinkEh 2022: 0x226e590; original cards/new_phyrexia.c:458. */
-int card_bludgeon_brawl(int player, int card, event_t event)
-{
-  int c;
-  bool legacy_found;
-  int eligible;
-  card_instance_t *instance;
-
-  if (((((event == EVENT_CHANGE_TYPE) && (instance = in_play(player, card), instance != NULL)) &&
-        (eligible = is_humiliated(player, card, AL_STATIC), eligible == 0)) &&
-       ((eligible = is_what(affected_card_controller, affected_card, 0x40),
-         eligible != 0 &&
-             (eligible = is_what(affected_card_controller, affected_card, 2), eligible == 0)))) &&
-      (eligible = is_equipment(affected_card_controller, affected_card), eligible == 0))
-  {
-
-    add_a_subtype(affected_card_controller, affected_card, SUBTYPE_EQUIPMENT);
-    if (0 < active_cards_count[player])
-    {
-      c = 0;
-      legacy_found = false;
-      do
-      {
-        instance = in_play(player, c);
-
-        if ((((instance != NULL) && (is_what(player, c, 0x80) != 0)) &&
-             (instance = get_card_instance(player, c),
-              instance->info_slot_fn == bludgeon_brawl_effect)) &&
-            (((instance->damage_target_player == affected_card_controller &&
-               (instance->damage_target_card == affected_card)) ||
-              ((affected_card_controller == instance->targets[6].player &&
-                (instance->targets[6].card == affected_card))))))
-        {
-          legacy_found = true;
-        }
-        c = c + 1;
-      } while (c < active_cards_count[player]);
-      if (legacy_found)
-        return global_enchantment(player, card, event);
-    }
-
-    instance = get_card_instance(
-        player, create_targetted_legacy_activate(player, card, bludgeon_brawl_effect,
-                                                 affected_card_controller, affected_card));
-    instance->targets[6].player = affected_card_controller;
-    instance->targets[6].card = affected_card;
-    instance->targets[1].player = player;
-    instance->targets[1].card = card;
-    instance->number_of_targets = '\x01';
-  }
-  return global_enchantment(player, card, event);
-}
-
-
 #ifndef SHANDALAR
 /* Recovered October 2022 Phyrexian cost helpers. */
 int charge_mana_called_from_pay_phyrexian_mana;
+
+/* ManalinkEh 2022: 0x226d7a0; original cards/new_phyrexia.c:5. */
+int has_phyrexian_mana(int player, int cless, int black, int blue, int green, int red, int white,
+                       int clred_artifact)
+{
+  int life_needed_or_available;
+  unsigned int payable;
+  int i;
+  int argument2;
+  int manacost[5];
+  manacost[1] = blue;
+  manacost[0] = black;
+  manacost[2] = green;
+  manacost[3] = red;
+  manacost[4] = white;
+  if (has_mana_multi(player, cless, black, blue, green, red, white) == 0)
+  {
+    life_needed_or_available =
+        has_mana(player, (unsigned int)(clred_artifact == 0 ? COLOR_COLORLESS : COLOR_ARTIFACT), cless);
+    payable = 0;
+    if ((life_needed_or_available != 0) &&
+        (life_needed_or_available = can_pay_life(player, 1), life_needed_or_available != 0))
+    {
+      life_needed_or_available = 0x32;
+      argument2 = 0;
+      while (true)
+      {
+        argument2 = argument2 + 1;
+        i = 4;
+        if (black < 1)
+        {
+          life_needed_or_available = life_needed_or_available + -10;
+        }
+        else
+        {
+          do
+          {
+            for (; black <= i; i = i + -1)
+            {
+              life_needed_or_available = life_needed_or_available + -2;
+            }
+            if (has_mana(player, argument2, i + 1) != 0)
+            {
+              life_needed_or_available = life_needed_or_available + -2;
+            }
+            i = i + -1;
+          } while (-1 < i);
+        }
+        if (argument2 == 5)
+          break;
+        black = manacost[argument2];
+      }
+      if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+      {
+        payable = (unsigned int)(6 < life[player] - life_needed_or_available);
+      }
+      else
+      {
+        payable = (unsigned int)(life_needed_or_available <= life[player]);
+      }
+    }
+    return payable;
+  }
+  return 1;
+}
+
+/* ManalinkEh 2022: 0x226d900; original cards/new_phyrexia.c:50. */
+int has_phyrexian_mana_for_activated_ability(int player, int card, int cless, int black,
+                                                  int blue, int green, int red, int white)
+{
+  int result;
+
+  result = get_cost_mod_for_activated_abilities(
+      player, card, (int)(cless ^ 0xffffffffU) >> 0x1f & cless, black, blue, green, red, white);
+  return has_phyrexian_mana(player, result, black, blue, green, red, white, 0);
+}
 
 /* ManalinkEh 2022: 0x226caa0; original cards/new_phyrexia.c:60. */
 static int charge_phyrexian_mana_impl(int player, int cless, int black, int blue, int green,
@@ -5365,85 +5662,6 @@ static int charge_phyrexian_mana_impl(int player, int cless, int black, int blue
   return 0;
 }
 
-
-/* ManalinkEh 2022: 0x226d7a0; original cards/new_phyrexia.c:5. */
-int has_phyrexian_mana(int player, int cless, int black, int blue, int green, int red, int white,
-                       int clred_artifact)
-{
-  int life_needed_or_available;
-  unsigned int payable;
-  int i;
-  int argument2;
-  int manacost[5];
-  manacost[1] = blue;
-  manacost[0] = black;
-  manacost[2] = green;
-  manacost[3] = red;
-  manacost[4] = white;
-  if (has_mana_multi(player, cless, black, blue, green, red, white) == 0)
-  {
-    life_needed_or_available =
-        has_mana(player, (unsigned int)(clred_artifact == 0 ? COLOR_COLORLESS : COLOR_ARTIFACT), cless);
-    payable = 0;
-    if ((life_needed_or_available != 0) &&
-        (life_needed_or_available = can_pay_life(player, 1), life_needed_or_available != 0))
-    {
-      life_needed_or_available = 0x32;
-      argument2 = 0;
-      while (true)
-      {
-        argument2 = argument2 + 1;
-        i = 4;
-        if (black < 1)
-        {
-          life_needed_or_available = life_needed_or_available + -10;
-        }
-        else
-        {
-          do
-          {
-            for (; black <= i; i = i + -1)
-            {
-              life_needed_or_available = life_needed_or_available + -2;
-            }
-            if (has_mana(player, argument2, i + 1) != 0)
-            {
-              life_needed_or_available = life_needed_or_available + -2;
-            }
-            i = i + -1;
-          } while (-1 < i);
-        }
-        if (argument2 == 5)
-          break;
-        black = manacost[argument2];
-      }
-      if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
-      {
-        payable = (unsigned int)(6 < life[player] - life_needed_or_available);
-      }
-      else
-      {
-        payable = (unsigned int)(life_needed_or_available <= life[player]);
-      }
-    }
-    return payable;
-  }
-  return 1;
-}
-
-
-/* ManalinkEh 2022: 0x226d900; original cards/new_phyrexia.c:50. */
-int has_phyrexian_mana_for_activated_ability(int player, int card, int cless, int black,
-                                                  int blue, int green, int red, int white)
-{
-  int result;
-
-  result = get_cost_mod_for_activated_abilities(
-      player, card, (int)(cless ^ 0xffffffffU) >> 0x1f & cless, black, blue, green, red, white);
-  return has_phyrexian_mana(player, result, black, blue, green, red, white, 0);
-}
-
-
 /* ManalinkEh 2022: 0x226d990; original cards/new_phyrexia.c:135. */
 int charge_phyrexian_mana(int player, int card, event_t event, int cless, int black, int blue,
                                int green, int red, int white, int clred_artifact)
@@ -5454,7 +5672,6 @@ int charge_phyrexian_mana(int player, int card, event_t event, int cless, int bl
                                            clred_artifact);
   return result;
 }
-
 
 /* ManalinkEh 2022: 0x226da10; original cards/new_phyrexia.c:141. */
 int charge_phyrexian_mana_for_activated_ability(int player, int card, int cless, int black,
@@ -5487,7 +5704,6 @@ int charge_phyrexian_mana_for_activated_ability(int player, int card, int cless,
   }
   return variable_cost_or_result;
 }
-
 
 /* ManalinkEh 2022: 0x226db00; original cards/new_phyrexia.c:156. */
 int phyrexian_casting_costs(int player, int card, event_t event, int cless, int black, int blue,

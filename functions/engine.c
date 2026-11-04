@@ -56,25 +56,11 @@ uint8_t card_counts[2][7];
 #define push_affected_card_stack	EXE_FN(void, 0x435C80, void)
 #define pop_affected_card_stack		EXE_FN(void, 0x435CD0, void)
 
-
-
-
-
-
-
-
 int target_player_skips_untap(int player, int card, event_t event);
-
-
 
 extern int hack_ai_decision_phase_upkeep;
 int ai_decision_phase(int player, int *phase_code_to_go_to, int *becomes_second_arg_of_main_phase_and_discard_phase, int *becomes_third_arg_of_main_phase);
 void mana_burn(void);
-
-
-
-
-
 
 static int check_attack_legality_if_enchanting_affected_card(int player, int card)
 {
@@ -119,20 +105,12 @@ static int check_attack_legality_if_enchanting_affected_card(int player, int car
   return result;
 }
 
-
-
-
-
 // If an effect is created with source hack_force_effect_change_source.from, change it to be hack_force_effect_change_source.to before sending it to the exe.
 HackForceEffectChangeSource hack_force_effect_change_source = {{-1,-1}, {-1,-1}};
 
-
-
 // Creates a sourceless effect card, with name/text/image from iid.
 
-
 int hack_xx = 1;
-
 
 void event_activate_then_duplicate_into_stack(int player, int card, int event, int new_attacking_card_controller, int new_attacking_card);
 void human_autotap_for_mana(int player, int* amt, int* unknown_v46, int unknown_v47);
@@ -164,9 +142,6 @@ extern int pay_mana_xbugrwaU[8];
 
 #define WILDGUESS_whose_phase_to_run_to			EXE_DWORD(0x4ef1b0)
 
-
-
-
 #undef APPLY_MANA_IN_POOL_TO_COSTS
 
 #undef amt_to_apply_to_cost
@@ -190,16 +165,7 @@ extern int pay_mana_xbugrwaU[8];
 
 #undef WILDGUESS_whose_phase_to_run_to
 
-
-
-
-
-
-
 extern target_t totally_bletcherous_hack_dont_reset_x_value;
-
-
-
 
 static void comes_into_play_trigger(int player, int card)
 {
@@ -211,89 +177,16 @@ static void comes_into_play_trigger(int player, int card)
   pop_affected_card_stack();
 }
 
-
 extern int event_rval;	// set only when calling our event dispatching functions directly
-
 
 void event_activate_then_duplicate_into_stack(int player, int card, int event, int new_attacking_card_controller, int new_attacking_card);
 // Interface for exe calls.
 
-
 // Note that this doesn't check EVENT_CAN_ACTIVATE itself, or whether {player,card} has EA_MANA_SOURCE.
-
-
-
-
-
-
-
 
 // Returns the most common color either in Deck[] (if plr == -1), or in initial_library[plr].
 
-
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x26a83e0; original functions/engine.c:2539. */
-static int qsort_compare_attacker_effectiveness(void *lhs, void *rhs)
-{
-  return (unsigned int)(*(int *)((int)lhs + 4) < *(int *)((int)rhs + 4)) -
-         (unsigned int)(*(int *)((int)rhs + 4) < *(int *)((int)lhs + 4));
-}
-
-/* ManalinkEh 2022: 0x26a8410; original functions/engine.c:2547. */
-static int qsort_cardvalue_ascending(void *lhs, void *rhs)
-{
-  return (unsigned int)(*(int *)rhs < *(int *)lhs) - (unsigned int)(*(int *)lhs < *(int *)rhs);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x26abfd0; original functions/engine.c:2502. */
-void undeclare_attacker(int player, int card)
-{
-  card_instance_t *inst = get_card_instance(player, card);
-  inst->state &= ~STATE_ATTACKING;
-  if (inst->blocking == 0xff)
-    return;
-  inst->blocking = 0xff;
-
-  int band_base = -1;
-  int num_banded = 0;
-  for (int c = 0; c < active_cards_count[player]; ++c)
-  {
-    card_instance_t *banded = in_play(player, c);
-    if (banded && (banded->state & STATE_ATTACKING) && card == (unsigned int)banded->blocking)
-    {
-      banded->blocking = (uint8_t)c;
-      if (band_base == -1)
-        band_base = c;
-      ++num_banded;
-    }
-  }
-  if (num_banded == 1)
-    get_card_instance(player, band_base)->blocking = 0xff;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int is_being_cast(int player, int card);
-
-/* ManalinkEh 2022: 0x26adb20; original functions/engine.c:3232. */
-int is_being_cast(int player, int card)
-{
-  card_instance_t *inst = get_card_instance(player, card);
-  if (!inst)
-    return 0;
-  if (inst->internal_card_id == damage_card)
-    return inst->targets[7].player & 2;
-  if (on_stack(player, card))
-    return inst->internal_card_id != activation_card;
-  if (in_hand(player, card))
-    return (land_can_be_played & 0x400000) == 0;
-  if (!in_play(player, card))
-    return 0;
-  return is_what(player, card, 199) == 0;
-}
-
 
 /* ManalinkEh 2022: 0x26a8b30; original functions/engine.c:226. */
 void hook_helper_for_startduel(void)
@@ -306,7 +199,6 @@ void hook_helper_for_startduel(void)
       get_displayed_card_instance(player, card)->ext = &disp_card_ext[player][card];
     }
 }
-
 
 /* ManalinkEh 2022: 0x26a9b30; original functions/engine.c:1401. */
 void count_mana(void)
@@ -368,11 +260,104 @@ void count_mana(void)
       dispatch_event(player, mana_sources[player][source], EVENT_COUNT_MANA);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26abfd0; original functions/engine.c:2502. */
+void undeclare_attacker(int player, int card)
+{
+  card_instance_t *inst = get_card_instance(player, card);
+  inst->state &= ~STATE_ATTACKING;
+  if (inst->blocking == 0xff)
+    return;
+  inst->blocking = 0xff;
+
+  int band_base = -1;
+  int num_banded = 0;
+  for (int c = 0; c < active_cards_count[player]; ++c)
+  {
+    card_instance_t *banded = in_play(player, c);
+    if (banded && (banded->state & STATE_ATTACKING) && card == (unsigned int)banded->blocking)
+    {
+      banded->blocking = (uint8_t)c;
+      if (band_base == -1)
+        band_base = c;
+      ++num_banded;
+    }
+  }
+  if (num_banded == 1)
+    get_card_instance(player, band_base)->blocking = 0xff;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int is_being_cast(int player, int card);
+
+/* ManalinkEh 2022: 0x26a83e0; original functions/engine.c:2539. */
+static int qsort_compare_attacker_effectiveness(void *lhs, void *rhs)
+{
+  return (unsigned int)(*(int *)((int)lhs + 4) < *(int *)((int)rhs + 4)) -
+         (unsigned int)(*(int *)((int)rhs + 4) < *(int *)((int)lhs + 4));
+}
+
+/* ManalinkEh 2022: 0x26a8410; original functions/engine.c:2547. */
+static int qsort_cardvalue_ascending(void *lhs, void *rhs)
+{
+  return (unsigned int)(*(int *)rhs < *(int *)lhs) - (unsigned int)(*(int *)lhs < *(int *)rhs);
+}
+
+/* ManalinkEh 2022: 0x26adb20; original functions/engine.c:3232. */
+int is_being_cast(int player, int card)
+{
+  card_instance_t *inst = get_card_instance(player, card);
+  if (!inst)
+    return 0;
+  if (inst->internal_card_id == damage_card)
+    return inst->targets[7].player & 2;
+  if (on_stack(player, card))
+    return inst->internal_card_id != activation_card;
+  if (in_hand(player, card))
+    return (land_can_be_played & 0x400000) == 0;
+  if (!in_play(player, card))
+    return 0;
+  return is_what(player, card, 199) == 0;
+}
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26af860; original functions/engine.c:1523. */
 STATIC_ASSERT(offsetof(card_data_t, cc) + 1 == 0x2c, spell_cost_x_byte);
 STATIC_ASSERT(offsetof(card_data_t, type) == 0x28, spell_cost_type_byte);
+/* ManalinkEh 2022: 0x26a9420; original functions/engine.c:710. */
+int create_legacy_activate_from_iid(int player, int iid, CardFunction func_ptr, int t_player,
+                                    int t_card)
+{
+  int card = add_card_to_hand(player, LEGACY_EFFECT_ACTIVATED);
+  if (card != -1)
+  {
+    card_instance_t *legacy = get_card_instance(player, card);
+    --hand_count[player];
+    legacy->state = player == 1 ? 0x1002 : 2;
+    uint8_t color = cards_data[iid].color;
+    legacy->damage_source_player = player;
+    legacy->color = color;
+    legacy->initial_color = color;
+    legacy->card_color = color;
+    legacy->mana_color = color;
+    int csvid = (uint16_t)cards_data[iid].id;
+    legacy->damage_source_card = card;
+    legacy->display_pic_csv_id = csvid;
+    int num_pics = cards_ptr[csvid]->num_pics;
+    legacy->display_pic_num = num_pics > 1 ? internal_rand(num_pics) : 0;
+    legacy->damage_target_player = t_player;
+    legacy->damage_target_card = t_card;
+    if (t_player != -1 && t_card != -1)
+      get_card_instance(t_player, t_card)->regen_status |= 0x1f000000;
+    legacy->info_slot_fn = func_ptr;
+  }
+  return card;
+}
+
+#endif
+
+#ifndef SHANDALAR
 /* Native 2022 behavior: snapshot copies seven words but rollback reads eight signed bytes.
  * The rollback call receives the sign-extended first byte cast to a pointer (0x26afb5b).
  * The summary byte address advances by player, independently of the 32-byte mana row. */
@@ -639,40 +624,309 @@ int charge_spell_cost(card_data_t *cd, int player, int card)
 
 #endif
 
-
 #ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26a9420; original functions/engine.c:710. */
-int create_legacy_activate_from_iid(int player, int iid, CardFunction func_ptr, int t_player,
-                                    int t_card)
+/* ManalinkEh 2022: 0x26aa220; original functions/engine.c:1955. */
+int minimum_blockers(int player, int card)
 {
-  int card = add_card_to_hand(player, LEGACY_EFFECT_ACTIVATED);
-  if (card != -1)
-  {
-    card_instance_t *legacy = get_card_instance(player, card);
-    --hand_count[player];
-    legacy->state = player == 1 ? 0x1002 : 2;
-    uint8_t color = cards_data[iid].color;
-    legacy->damage_source_player = player;
-    legacy->color = color;
-    legacy->initial_color = color;
-    legacy->card_color = color;
-    legacy->mana_color = color;
-    int csvid = (uint16_t)cards_data[iid].id;
-    legacy->damage_source_card = card;
-    legacy->display_pic_csv_id = csvid;
-    int num_pics = cards_ptr[csvid]->num_pics;
-    legacy->display_pic_num = num_pics > 1 ? internal_rand(num_pics) : 0;
-    legacy->damage_target_player = t_player;
-    legacy->damage_target_card = t_card;
-    if (t_player != -1 && t_card != -1)
-      get_card_instance(t_player, t_card)->regen_status |= 0x1f000000;
-    legacy->info_slot_fn = func_ptr;
-  }
-  return card;
+  if (check_for_special_ability(player, card, 0x80000))
+    return 3;
+  return check_for_special_ability(player, card, 0x10000) != 0 ? 2 : 1;
 }
 
 #endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26aa280; original functions/engine.c:1965. */
+static int is_legal_block_impl2(int blocking_player, int blocking_card, int blocked_player,
+                         int blocked_card, keyword_t abils, int landwalks)
+{
+  card_instance_t *blocking = get_card_instance(blocking_player, blocking_card);
+  if (blocking->internal_card_id < 0)
+    return 0;
+  uint32_t state = blocking->state;
+  if (!(cards_data[blocking->internal_card_id].type & TYPE_CREATURE) && !(state & 0x2000000))
+    return 0;
+  uint32_t illegal_state = 0x800008 | ((card_flags[blocking_player] & CFLAGS_MASAKO) ? 0 : 0x10);
+  if (state & illegal_state)
+    return 0;
+  if (state & 4)
+  {
+    if (!(get_special_abilities_by_instance(blocking) & 8))
+      return 0;
+    state = blocking->state;
+  }
+  if (!(state & 2))
+    return 0;
+  if ((abils & KEYWORD_FLYING) &&
+      !(get_abilities(blocking_player, blocking_card, EVENT_ABILITIES, -1) & 0x420))
+    return 0;
+  if ((abils & KEYWORD_PROT_COLORED) &&
+      (((uint32_t)get_color(blocking_player, blocking_card) << 10) & abils & KEYWORD_PROT_COLORED))
+    return 0;
+  if (abils & KEYWORD_PROT_CREATURES)
+    return 0;
+  if (is_what(blocking_player, blocking_card, TYPE_ARTIFACT) && (abils & KEYWORD_PROT_ARTIFACTS))
+    return 0;
+  if (has_protection_from_impl(blocked_player, blocked_card, blocking_player, blocking_card,
+                               IPF_BLOCK, abils))
+    return 0;
+  uint32_t walks = abils & landwalks;
+  if (walks & KEYWORD_BASIC_LANDWALK)
+  {
+    if ((walks & KEYWORD_SWAMPWALK) && !(player_bits[blocked_player] & 0x400))
+      return 0;
+    if ((walks & KEYWORD_ISLANDWALK) && !(player_bits[blocked_player] & 0x800))
+      return 0;
+    if ((walks & KEYWORD_FORESTWALK) && !(player_bits[blocked_player] & 0x1000))
+      return 0;
+    if ((walks & KEYWORD_MOUNTAINWALK) && !(player_bits[blocked_player] & 0x2000))
+      return 0;
+    if ((walks & KEYWORD_PLAINSWALK) && !(player_bits[blocked_player] & 0x4000))
+      return 0;
+  }
+  card_instance_t *blocked = get_card_instance(blocked_player, blocked_card);
+  uint32_t blocked_sp = is_humiliated(blocked_player, blocked_card, AL_KEY)
+                            ? 0
+                            : blocked->ext->sp_keywords;
+  uint32_t blocking_sp = is_humiliated(blocking_player, blocking_card, AL_KEY)
+                             ? 0
+                             : blocking->ext->sp_keywords;
+  if (blocking_sp & 0x20)
+    return 0;
+  if (blocked_sp & 0x10)
+    return 0;
+  if (blocked_sp & 0x100)
+  {
+    if (!(blocking_sp & 0x8000100))
+      return 0;
+  }
+  else if (blocking_sp & 0x100)
+    return 0;
+  if ((blocked_sp & 0x40000000) && !(blocking_sp & 0x40000000))
+    return 0;
+  if ((blocked_sp & 1) && !(get_color(blocking_player, blocking_card) & 2) &&
+      !is_what(blocking_player, blocking_card, TYPE_ARTIFACT))
+    return 0;
+  if ((blocked_sp & 0x2000000) &&
+      !has_my_colors(blocking_player, blocking_card, blocked_player, blocked_card) &&
+      !is_what(blocking_player, blocking_card, TYPE_ARTIFACT))
+    return 0;
+  if (blocked_sp & 0x20000)
+  {
+    int blocking_power = get_power(blocking_player, blocking_card);
+    int blocked_power = get_power(blocked_player, blocked_card);
+    if (blocked_power < blocking_power)
+      return 0;
+  }
+  if (blocked_sp & 0x200000)
+  {
+    if (blocked_sp & 0x90000)
+      return 0;
+    if (dispatch_event_with_attacker(blocking_player, blocking_card, EVENT_BLOCK_LEGALITY,
+                                     blocked_player, blocked_card) < 1)
+      return -1;
+    return 0;
+  }
+  if (dispatch_event_with_attacker(blocking_player, blocking_card, EVENT_BLOCK_LEGALITY,
+                                   blocked_player, blocked_card) < 1)
+    return minimum_blockers(blocked_player, blocked_card);
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26ab5a0; original functions/engine.c:2053. */
+int is_legal_block_impl(int blocking_player, int blocking_card, int blocked_player,
+                             int blocked_card, keyword_t abils, int ignored_previously_landwalks)
+{
+  int min_blk = is_legal_block_impl2(blocking_player, blocking_card, blocked_player, blocked_card,
+                                     abils, ignored_previously_landwalks);
+  if ((uint32_t)min_blk > 1)
+  {
+    if (min_blk < 2)
+    {
+      for (int c = 0; c < active_cards_count[blocking_player]; ++c)
+      {
+        if (c == blocking_card)
+          continue;
+        card_instance_t *inst = in_play(blocking_player, c);
+        if (inst && inst->blocking == (uint32_t)blocked_card)
+          return 0;
+      }
+      return 1;
+    }
+    int total_blockers = 1;
+    for (int c = 0; c < active_cards_count[blocking_player]; ++c)
+    {
+      if (c == blocking_card)
+        continue;
+      card_instance_t *inst = in_play(blocking_player, c);
+      if (inst && (inst->blocking == (uint32_t)blocked_card ||
+                   is_legal_block_impl2(blocking_player, c, blocked_player, blocked_card, abils,
+                                        ignored_previously_landwalks)))
+      {
+        if (++total_blockers >= min_blk)
+          return 1;
+      }
+    }
+    return 0;
+  }
+  return min_blk;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26ab6b0; original functions/engine.c:2089. */
+int is_legal_block(int blocking_player, int blocking_card, int blocked_player,
+                        int blocked_card)
+{
+  keyword_t abils = get_abilities(blocked_player, blocked_card, EVENT_ABILITIES, -1);
+  int player1_landwalks, player0_landwalks;
+  EXE_FN(void, 0x499df0, int *, int *)(&player1_landwalks, &player0_landwalks);
+  return is_legal_block_impl(blocking_player, blocking_card, blocked_player, blocked_card,
+                                  abils,
+                                  blocking_player == 1 ? player1_landwalks : player0_landwalks);
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26aa700; original functions/engine.c:2237. */
+static void enforce_minimum_blockers(void)
+{
+  int atk = current_turn, def = 1 - atk;
+  int num_blocking[151] = {0};
+  for (int c = 0; c < active_cards_count[def]; ++c)
+  {
+    card_instance_t *inst = in_play(def, c);
+    if (inst && inst->blocking < 151)
+      ++num_blocking[inst->blocking];
+  }
+  for (unsigned int c = 0; (int)c < active_cards_count[atk]; ++c)
+  {
+    card_instance_t *inst = in_play(atk, c);
+    if (inst && (inst->state & 4) && num_blocking[c] > 0)
+    {
+      int count = num_blocking[c];
+      if (count < minimum_blockers(atk, c) ||
+          (check_for_special_ability(atk, c, 0x200000) && count > 1))
+      {
+        for (int b = 0; b < active_cards_count[def]; ++b)
+        {
+          inst = in_play(def, b);
+          if (inst && inst->blocking == c)
+          {
+            --count;
+            inst->blocking = 255;
+            inst->state &= 0xffff7ff7;
+            num_blocking[c] = count;
+          }
+        }
+        if (count != 0)
+          backtrace_and_abort("functions/engine.c:2266\nnum_blocking[c] == 0");
+      }
+    }
+  }
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26ab990; original functions/engine.c:2291. */
+void human_assign_blockers(int player)
+{
+  if (ai_is_speculating == 1)
+    return;
+  int def = 1 - player, who_chooses = def;
+  if (event_flags & 8)
+  {
+    if (current_turn == 1)
+      return;
+    who_chooses = player;
+  }
+  EXE_FN(void, 0x472260, void)();
+  target_definition_t td_choose_blocker;
+  base_target_definition(def, 0, &td_choose_blocker, 0x2000002);
+  td_choose_blocker.zone = TARGET_ZONE_IN_PLAY | TARGET_ZONE_0x2000;
+  td_choose_blocker.special = TARGET_SPECIAL_ALLOW_MULTIBLOCKER;
+  td_choose_blocker.illegal_state = 0;
+  td_choose_blocker.allow_cancel = 2;
+  td_choose_blocker.who_chooses = who_chooses;
+  td_choose_blocker.allowed_controller = def;
+  td_choose_blocker.preferred_controller = def;
+  target_definition_t td_block_which_attacker;
+  base_target_definition(player, 0, &td_block_which_attacker, TYPE_CREATURE);
+  td_block_which_attacker.allowed_controller = player;
+  td_block_which_attacker.preferred_controller = player;
+  td_block_which_attacker.required_state = TARGET_STATE_ATTACKING;
+  td_block_which_attacker.who_chooses = who_chooses;
+  target_t blocker, blocked;
+  for (;;)
+  {
+    int any = 0;
+    for (int i = 0; i < active_cards_count[player] && !any; ++i)
+    {
+      if (!(get_card_instance(player, i)->state & 4))
+        continue;
+      for (int j = 0; j < active_cards_count[def]; ++j)
+      {
+        card_instance_t *inst = get_card_instance(def, j);
+        uint32_t mask = 10 | ((card_flags[def] & CFLAGS_MASAKO) ? 0 : 0x10);
+        if ((inst->state & mask) == 2 && is_legal_block(def, j, player, i))
+        {
+          any = 1;
+          break;
+        }
+      }
+    }
+    if (!any)
+      break;
+    load_text(NULL, "PROMPT_CHOOSEBLOCKERS");
+    if (!select_target(def, -1000, &td_choose_blocker, text_lines[0], &blocker))
+      break;
+    forbid_attack = 0;
+    if (event_flags & 0x800000)
+    {
+      EXE_FN(void, 0x435c80, void)();
+      trigger_cause_controller = blocker.player;
+      trigger_cause = blocker.card;
+      dispatch_trigger(def, TRIGGER_PAY_TO_BLOCK, EXE_STR(0x790248), 1);
+      EXE_FN(void, 0x435cd0, void)();
+      if (forbid_attack)
+        continue;
+    }
+    if (select_target(player, -1000, &td_block_which_attacker, text_lines[1], &blocked))
+    {
+      if (!EXE_FN(int, 0x4350e0, int, int, int, int)(blocker.player, blocker.card, blocked.player,
+                                                     blocked.card))
+      {
+        load_text(NULL, "PROMPT_CHOOSEBLOCKERS");
+        set_centerwindow_txt(text_lines[2]);
+        EXE_STDCALL_FN(void, 0x4d5d32, int)(2000);
+        set_centerwindow_txt("");
+      }
+      else
+      {
+        card_instance_t *inst = get_card_instance(blocked.player, blocked.card);
+        int band = inst->blocking == 255 ? blocked.card : inst->blocking;
+        inst = get_card_instance(blocker.player, blocker.card);
+        inst->blocking = band;
+        inst->state |= 8;
+        get_card_instance(blocked.player, blocked.card)->state |= 0x4000;
+        play_sound_effect(WAV_BLOCK2);
+        EXE_FN(void, 0x472260, void)();
+        if (event_flags & 0x100000)
+          dispatch_trigger2(current_turn, TRIGGER_BLOCKER_CHOSEN, EXE_STR(0x790074), 0,
+                            blocker.player, blocker.card);
+      }
+    }
+  }
+  enforce_minimum_blockers();
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26adc00; original functions/engine.c:3257. */
@@ -691,7 +945,6 @@ int fx_activation_906(int player, int card, event_t event)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26afd30; original functions/engine.c:3508. */
@@ -860,7 +1113,6 @@ failed:;
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26ae510; original functions/engine.c:3479. */
 int put_card_on_stack2(int player, int card)
@@ -882,317 +1134,6 @@ int put_card_on_stack2(int player, int card)
 
 #endif
 
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26aa220; original functions/engine.c:1955. */
-int minimum_blockers(int player, int card)
-{
-  if (check_for_special_ability(player, card, 0x80000))
-    return 3;
-  return check_for_special_ability(player, card, 0x10000) != 0 ? 2 : 1;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26aa280; original functions/engine.c:1965. */
-static int is_legal_block_impl2(int blocking_player, int blocking_card, int blocked_player,
-                         int blocked_card, keyword_t abils, int landwalks)
-{
-  card_instance_t *blocking = get_card_instance(blocking_player, blocking_card);
-  if (blocking->internal_card_id < 0)
-    return 0;
-  uint32_t state = blocking->state;
-  if (!(cards_data[blocking->internal_card_id].type & TYPE_CREATURE) && !(state & 0x2000000))
-    return 0;
-  uint32_t illegal_state = 0x800008 | ((card_flags[blocking_player] & CFLAGS_MASAKO) ? 0 : 0x10);
-  if (state & illegal_state)
-    return 0;
-  if (state & 4)
-  {
-    if (!(get_special_abilities_by_instance(blocking) & 8))
-      return 0;
-    state = blocking->state;
-  }
-  if (!(state & 2))
-    return 0;
-  if ((abils & KEYWORD_FLYING) &&
-      !(get_abilities(blocking_player, blocking_card, EVENT_ABILITIES, -1) & 0x420))
-    return 0;
-  if ((abils & KEYWORD_PROT_COLORED) &&
-      (((uint32_t)get_color(blocking_player, blocking_card) << 10) & abils & KEYWORD_PROT_COLORED))
-    return 0;
-  if (abils & KEYWORD_PROT_CREATURES)
-    return 0;
-  if (is_what(blocking_player, blocking_card, TYPE_ARTIFACT) && (abils & KEYWORD_PROT_ARTIFACTS))
-    return 0;
-  if (has_protection_from_impl(blocked_player, blocked_card, blocking_player, blocking_card,
-                               IPF_BLOCK, abils))
-    return 0;
-  uint32_t walks = abils & landwalks;
-  if (walks & KEYWORD_BASIC_LANDWALK)
-  {
-    if ((walks & KEYWORD_SWAMPWALK) && !(player_bits[blocked_player] & 0x400))
-      return 0;
-    if ((walks & KEYWORD_ISLANDWALK) && !(player_bits[blocked_player] & 0x800))
-      return 0;
-    if ((walks & KEYWORD_FORESTWALK) && !(player_bits[blocked_player] & 0x1000))
-      return 0;
-    if ((walks & KEYWORD_MOUNTAINWALK) && !(player_bits[blocked_player] & 0x2000))
-      return 0;
-    if ((walks & KEYWORD_PLAINSWALK) && !(player_bits[blocked_player] & 0x4000))
-      return 0;
-  }
-  card_instance_t *blocked = get_card_instance(blocked_player, blocked_card);
-  uint32_t blocked_sp = is_humiliated(blocked_player, blocked_card, AL_KEY)
-                            ? 0
-                            : blocked->ext->sp_keywords;
-  uint32_t blocking_sp = is_humiliated(blocking_player, blocking_card, AL_KEY)
-                             ? 0
-                             : blocking->ext->sp_keywords;
-  if (blocking_sp & 0x20)
-    return 0;
-  if (blocked_sp & 0x10)
-    return 0;
-  if (blocked_sp & 0x100)
-  {
-    if (!(blocking_sp & 0x8000100))
-      return 0;
-  }
-  else if (blocking_sp & 0x100)
-    return 0;
-  if ((blocked_sp & 0x40000000) && !(blocking_sp & 0x40000000))
-    return 0;
-  if ((blocked_sp & 1) && !(get_color(blocking_player, blocking_card) & 2) &&
-      !is_what(blocking_player, blocking_card, TYPE_ARTIFACT))
-    return 0;
-  if ((blocked_sp & 0x2000000) &&
-      !has_my_colors(blocking_player, blocking_card, blocked_player, blocked_card) &&
-      !is_what(blocking_player, blocking_card, TYPE_ARTIFACT))
-    return 0;
-  if (blocked_sp & 0x20000)
-  {
-    int blocking_power = get_power(blocking_player, blocking_card);
-    int blocked_power = get_power(blocked_player, blocked_card);
-    if (blocked_power < blocking_power)
-      return 0;
-  }
-  if (blocked_sp & 0x200000)
-  {
-    if (blocked_sp & 0x90000)
-      return 0;
-    if (dispatch_event_with_attacker(blocking_player, blocking_card, EVENT_BLOCK_LEGALITY,
-                                     blocked_player, blocked_card) < 1)
-      return -1;
-    return 0;
-  }
-  if (dispatch_event_with_attacker(blocking_player, blocking_card, EVENT_BLOCK_LEGALITY,
-                                   blocked_player, blocked_card) < 1)
-    return minimum_blockers(blocked_player, blocked_card);
-  return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26aa700; original functions/engine.c:2237. */
-static void enforce_minimum_blockers(void)
-{
-  int atk = current_turn, def = 1 - atk;
-  int num_blocking[151] = {0};
-  for (int c = 0; c < active_cards_count[def]; ++c)
-  {
-    card_instance_t *inst = in_play(def, c);
-    if (inst && inst->blocking < 151)
-      ++num_blocking[inst->blocking];
-  }
-  for (unsigned int c = 0; (int)c < active_cards_count[atk]; ++c)
-  {
-    card_instance_t *inst = in_play(atk, c);
-    if (inst && (inst->state & 4) && num_blocking[c] > 0)
-    {
-      int count = num_blocking[c];
-      if (count < minimum_blockers(atk, c) ||
-          (check_for_special_ability(atk, c, 0x200000) && count > 1))
-      {
-        for (int b = 0; b < active_cards_count[def]; ++b)
-        {
-          inst = in_play(def, b);
-          if (inst && inst->blocking == c)
-          {
-            --count;
-            inst->blocking = 255;
-            inst->state &= 0xffff7ff7;
-            num_blocking[c] = count;
-          }
-        }
-        if (count != 0)
-          backtrace_and_abort("functions/engine.c:2266\nnum_blocking[c] == 0");
-      }
-    }
-  }
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26ab5a0; original functions/engine.c:2053. */
-int is_legal_block_impl(int blocking_player, int blocking_card, int blocked_player,
-                             int blocked_card, keyword_t abils, int ignored_previously_landwalks)
-{
-  int min_blk = is_legal_block_impl2(blocking_player, blocking_card, blocked_player, blocked_card,
-                                     abils, ignored_previously_landwalks);
-  if ((uint32_t)min_blk > 1)
-  {
-    if (min_blk < 2)
-    {
-      for (int c = 0; c < active_cards_count[blocking_player]; ++c)
-      {
-        if (c == blocking_card)
-          continue;
-        card_instance_t *inst = in_play(blocking_player, c);
-        if (inst && inst->blocking == (uint32_t)blocked_card)
-          return 0;
-      }
-      return 1;
-    }
-    int total_blockers = 1;
-    for (int c = 0; c < active_cards_count[blocking_player]; ++c)
-    {
-      if (c == blocking_card)
-        continue;
-      card_instance_t *inst = in_play(blocking_player, c);
-      if (inst && (inst->blocking == (uint32_t)blocked_card ||
-                   is_legal_block_impl2(blocking_player, c, blocked_player, blocked_card, abils,
-                                        ignored_previously_landwalks)))
-      {
-        if (++total_blockers >= min_blk)
-          return 1;
-      }
-    }
-    return 0;
-  }
-  return min_blk;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26ab6b0; original functions/engine.c:2089. */
-int is_legal_block(int blocking_player, int blocking_card, int blocked_player,
-                        int blocked_card)
-{
-  keyword_t abils = get_abilities(blocked_player, blocked_card, EVENT_ABILITIES, -1);
-  int player1_landwalks, player0_landwalks;
-  EXE_FN(void, 0x499df0, int *, int *)(&player1_landwalks, &player0_landwalks);
-  return is_legal_block_impl(blocking_player, blocking_card, blocked_player, blocked_card,
-                                  abils,
-                                  blocking_player == 1 ? player1_landwalks : player0_landwalks);
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26ab990; original functions/engine.c:2291. */
-void human_assign_blockers(int player)
-{
-  if (ai_is_speculating == 1)
-    return;
-  int def = 1 - player, who_chooses = def;
-  if (event_flags & 8)
-  {
-    if (current_turn == 1)
-      return;
-    who_chooses = player;
-  }
-  EXE_FN(void, 0x472260, void)();
-  target_definition_t td_choose_blocker;
-  base_target_definition(def, 0, &td_choose_blocker, 0x2000002);
-  td_choose_blocker.zone = TARGET_ZONE_IN_PLAY | TARGET_ZONE_0x2000;
-  td_choose_blocker.special = TARGET_SPECIAL_ALLOW_MULTIBLOCKER;
-  td_choose_blocker.illegal_state = 0;
-  td_choose_blocker.allow_cancel = 2;
-  td_choose_blocker.who_chooses = who_chooses;
-  td_choose_blocker.allowed_controller = def;
-  td_choose_blocker.preferred_controller = def;
-  target_definition_t td_block_which_attacker;
-  base_target_definition(player, 0, &td_block_which_attacker, TYPE_CREATURE);
-  td_block_which_attacker.allowed_controller = player;
-  td_block_which_attacker.preferred_controller = player;
-  td_block_which_attacker.required_state = TARGET_STATE_ATTACKING;
-  td_block_which_attacker.who_chooses = who_chooses;
-  target_t blocker, blocked;
-  for (;;)
-  {
-    int any = 0;
-    for (int i = 0; i < active_cards_count[player] && !any; ++i)
-    {
-      if (!(get_card_instance(player, i)->state & 4))
-        continue;
-      for (int j = 0; j < active_cards_count[def]; ++j)
-      {
-        card_instance_t *inst = get_card_instance(def, j);
-        uint32_t mask = 10 | ((card_flags[def] & CFLAGS_MASAKO) ? 0 : 0x10);
-        if ((inst->state & mask) == 2 && is_legal_block(def, j, player, i))
-        {
-          any = 1;
-          break;
-        }
-      }
-    }
-    if (!any)
-      break;
-    load_text(NULL, "PROMPT_CHOOSEBLOCKERS");
-    if (!select_target(def, -1000, &td_choose_blocker, text_lines[0], &blocker))
-      break;
-    forbid_attack = 0;
-    if (event_flags & 0x800000)
-    {
-      EXE_FN(void, 0x435c80, void)();
-      trigger_cause_controller = blocker.player;
-      trigger_cause = blocker.card;
-      dispatch_trigger(def, TRIGGER_PAY_TO_BLOCK, EXE_STR(0x790248), 1);
-      EXE_FN(void, 0x435cd0, void)();
-      if (forbid_attack)
-        continue;
-    }
-    if (select_target(player, -1000, &td_block_which_attacker, text_lines[1], &blocked))
-    {
-      if (!EXE_FN(int, 0x4350e0, int, int, int, int)(blocker.player, blocker.card, blocked.player,
-                                                     blocked.card))
-      {
-        load_text(NULL, "PROMPT_CHOOSEBLOCKERS");
-        set_centerwindow_txt(text_lines[2]);
-        EXE_STDCALL_FN(void, 0x4d5d32, int)(2000);
-        set_centerwindow_txt("");
-      }
-      else
-      {
-        card_instance_t *inst = get_card_instance(blocked.player, blocked.card);
-        int band = inst->blocking == 255 ? blocked.card : inst->blocking;
-        inst = get_card_instance(blocker.player, blocker.card);
-        inst->blocking = band;
-        inst->state |= 8;
-        get_card_instance(blocked.player, blocked.card)->state |= 0x4000;
-        play_sound_effect(WAV_BLOCK2);
-        EXE_FN(void, 0x472260, void)();
-        if (event_flags & 0x100000)
-          dispatch_trigger2(current_turn, TRIGGER_BLOCKER_CHOSEN, EXE_STR(0x790074), 0,
-                            blocker.player, blocker.card);
-      }
-    }
-  }
-  enforce_minimum_blockers();
-}
-
-#endif
-
-
 #ifndef SHANDALAR
 typedef struct
 {
@@ -1207,77 +1148,6 @@ typedef struct
   int opinion_of_game_state_without_this;
 } ai_combat_data_t;
 
-/* ManalinkEh 2022: 0x26ac0a0; original functions/engine.c:2586. */
-void setup_ai_combat_data(int player)
-{
-  ai_combat_data_t(*data)[150] = (ai_combat_data_t(*)[150])0x609164;
-  int old_ai_is_speculating = ai_is_speculating;
-  int old_speculating_during_combat = EXE_DWORD(0x7a5378);
-  ai_is_speculating = 1;
-  EXE_DWORD(0x7a5378) = 1;
-  EXE_DWORD(0x60a424) = 0;
-  memset(data, 0, 4800);
-  int final_check_abilities_cop_colors = 0;
-  int p = player;
-  for (int pass = 0; pass < 2; ++pass)
-  {
-    EXE_DWORD(0x60a428) = 0;
-    for (int c = 0; c < active_cards_count[p]; ++c)
-    {
-      card_instance_t *inst = in_play(p, c);
-      if (!inst)
-        continue;
-      uint32_t old_state = inst->state;
-      if (p == 1 - player)
-        inst->state = old_state | 8;
-      else if (p == 1)
-      {
-        if (check_for_special_ability(1, c, 8))
-          inst->state |= 4;
-        else
-          inst->state |= 0x14;
-      }
-      inst->regen_status |= 0xe000000;
-      check_abilities_power = get_abilities(p, c, EVENT_POWER, -1);
-      check_abilities_toughness = get_abilities(p, c, EVENT_TOUGHNESS, -1);
-      check_abilities_keywords = get_abilities(p, c, EVENT_ABILITIES, -1);
-      int old_activating_player = EXE_DWORD(0x7a3610);
-      EXE_DWORD(0x7a3610) = p;
-      dispatch_event(p, c, EVENT_CHECK_ABILITIES);
-      EXE_DWORD(0x7a3610) = old_activating_player;
-      data[p][c].potential_power += check_abilities_power;
-      data[p][c].potential_toughness += check_abilities_toughness;
-      data[p][c].abils |= check_abilities_keywords;
-      int indestructible = check_for_special_ability(p, c, 0x800);
-      uint32_t abils = data[p][c].abils;
-      if (indestructible)
-      {
-        abils |= 0x200;
-        data[p][c].abils = abils;
-      }
-      if (abils & 0x40000000)
-      {
-        data[p][c].abils = abils | 0x100;
-        if (data[p][c].potential_power > 0)
-          data[p][c].potential_power *= 2;
-      }
-      inst->state = old_state;
-    }
-    if (p == 1 - player)
-      final_check_abilities_cop_colors = EXE_DWORD(0x60a428);
-    p = 1 - p;
-  }
-  EXE_DWORD(0x60a428) = final_check_abilities_cop_colors;
-  EXE_DWORD(0x60a42c) = final_check_abilities_cop_colors ? has_mana(player, 7, 1) : 0;
-  recalculate_all_cards_in_play();
-  ai_is_speculating = old_ai_is_speculating;
-  EXE_DWORD(0x7a5378) = old_speculating_during_combat;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a8440; original functions/engine.c:1707. */
 static int mod_pow_unblocked(int pow_unblocked, int player, int card)
 {
@@ -1303,7 +1173,6 @@ static int mod_pow_unblocked(int pow_unblocked, int player, int card)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26aa890; original functions/engine.c:2195. */
@@ -1562,7 +1431,6 @@ static void ai_assign_one_blocker(int player, int blockernum)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26abd60; original functions/engine.c:2408. */
 void ai_assign_blockers(int player)
@@ -1640,6 +1508,75 @@ void ai_assign_blockers(int player)
 
 #endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26ac0a0; original functions/engine.c:2586. */
+void setup_ai_combat_data(int player)
+{
+  ai_combat_data_t(*data)[150] = (ai_combat_data_t(*)[150])0x609164;
+  int old_ai_is_speculating = ai_is_speculating;
+  int old_speculating_during_combat = EXE_DWORD(0x7a5378);
+  ai_is_speculating = 1;
+  EXE_DWORD(0x7a5378) = 1;
+  EXE_DWORD(0x60a424) = 0;
+  memset(data, 0, 4800);
+  int final_check_abilities_cop_colors = 0;
+  int p = player;
+  for (int pass = 0; pass < 2; ++pass)
+  {
+    EXE_DWORD(0x60a428) = 0;
+    for (int c = 0; c < active_cards_count[p]; ++c)
+    {
+      card_instance_t *inst = in_play(p, c);
+      if (!inst)
+        continue;
+      uint32_t old_state = inst->state;
+      if (p == 1 - player)
+        inst->state = old_state | 8;
+      else if (p == 1)
+      {
+        if (check_for_special_ability(1, c, 8))
+          inst->state |= 4;
+        else
+          inst->state |= 0x14;
+      }
+      inst->regen_status |= 0xe000000;
+      check_abilities_power = get_abilities(p, c, EVENT_POWER, -1);
+      check_abilities_toughness = get_abilities(p, c, EVENT_TOUGHNESS, -1);
+      check_abilities_keywords = get_abilities(p, c, EVENT_ABILITIES, -1);
+      int old_activating_player = EXE_DWORD(0x7a3610);
+      EXE_DWORD(0x7a3610) = p;
+      dispatch_event(p, c, EVENT_CHECK_ABILITIES);
+      EXE_DWORD(0x7a3610) = old_activating_player;
+      data[p][c].potential_power += check_abilities_power;
+      data[p][c].potential_toughness += check_abilities_toughness;
+      data[p][c].abils |= check_abilities_keywords;
+      int indestructible = check_for_special_ability(p, c, 0x800);
+      uint32_t abils = data[p][c].abils;
+      if (indestructible)
+      {
+        abils |= 0x200;
+        data[p][c].abils = abils;
+      }
+      if (abils & 0x40000000)
+      {
+        data[p][c].abils = abils | 0x100;
+        if (data[p][c].potential_power > 0)
+          data[p][c].potential_power *= 2;
+      }
+      inst->state = old_state;
+    }
+    if (p == 1 - player)
+      final_check_abilities_cop_colors = EXE_DWORD(0x60a428);
+    p = 1 - p;
+  }
+  EXE_DWORD(0x60a428) = final_check_abilities_cop_colors;
+  EXE_DWORD(0x60a42c) = final_check_abilities_cop_colors ? has_mana(player, 7, 1) : 0;
+  recalculate_all_cards_in_play();
+  ai_is_speculating = old_ai_is_speculating;
+  EXE_DWORD(0x7a5378) = old_speculating_during_combat;
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26ac340; original functions/engine.c:2674. */
@@ -2109,7 +2046,6 @@ int ai_choose_attackers(int player)
 
 #endif
 
-
 #ifndef SHANDALAR
 #define payment_amt_to_apply_to_cost EXE_FN(int, 0x4300d0, int *, int, int *, int, int, int, int)
 #define payment_apply_mana_in_pool_to_colorless_cost EXE_FN(void, 0x42ef80, int, int *, int *, int, int *, int)
@@ -2129,7 +2065,6 @@ int ai_choose_attackers(int player)
 #define payment_WILDGUESS_whose_phase_to_run_to EXE_DWORD(0x4ef1b0)
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26ae610; original functions/engine.c:865. */
@@ -2593,6 +2528,49 @@ int charge_mana(int player, color_t color, int amount)
 
 #endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26adc90; original functions/engine.c:3282. */
+void allow_response_to_activation(int player, int card)
+{
+
+  const char *name = EXE_FN(const char *, 0x439690, int, int)(player, card);
+  sprintf((char *)(0x60A690), EXE_STR(0x786264), name);
+
+  int a1 = (EXE_DWORD(0x60A54C) && (player == 0 || (trace_mode & 2))) ? -1 : -2;
+  EXE_FN(int, 0x436A20, int, int, const char *, int)(a1, current_phase, EXE_STR(0x60A690),
+                                                     EVENT_ACTIVATE);
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26add20; original functions/engine.c:3293. */
+int finalize_activation(int player, int card)
+{
+
+  if (cancel == 1)
+    return 1;
+
+  card_instance_t *instance = get_card_instance(player, card);
+  int iid = get_card_instance(player, card)->internal_card_id;
+
+  if (iid == -1)
+    iid = instance->backup_internal_card_id;
+
+  int tapping_for_mana =
+      (cards_data[iid].extra_ability & EA_MANA_SOURCE) && tapped_for_mana_color != -1;
+
+  if (!tapping_for_mana && !cant_be_responded_to)
+    allow_response_to_activation(player, card);
+
+  EXE_FN(void, 0x436740, void)();
+
+  dispatch_trigger2(current_turn, TRIGGER_TAP_CARD, EXE_STR(0x78fba8), 0, player, card);
+
+  return 1;
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a8540; original functions/engine.c:3320. */
@@ -2664,7 +2642,6 @@ static void put_card_or_activation_onto_stack_impl(int player, int card, event_t
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26ade00; original functions/engine.c:3320. */
 void put_card_or_activation_onto_stack(int player, int card, event_t event, int a4, int a5)
@@ -2675,7 +2652,6 @@ void put_card_or_activation_onto_stack(int player, int card, event_t event, int 
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26ade40; original functions/engine.c:3390. */
@@ -2735,53 +2711,6 @@ void recopy_card_onto_stack(int a1)
 }
 
 #endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26adc90; original functions/engine.c:3282. */
-void allow_response_to_activation(int player, int card)
-{
-
-  const char *name = EXE_FN(const char *, 0x439690, int, int)(player, card);
-  sprintf((char *)(0x60A690), EXE_STR(0x786264), name);
-
-  int a1 = (EXE_DWORD(0x60A54C) && (player == 0 || (trace_mode & 2))) ? -1 : -2;
-  EXE_FN(int, 0x436A20, int, int, const char *, int)(a1, current_phase, EXE_STR(0x60A690),
-                                                     EVENT_ACTIVATE);
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26add20; original functions/engine.c:3293. */
-int finalize_activation(int player, int card)
-{
-
-  if (cancel == 1)
-    return 1;
-
-  card_instance_t *instance = get_card_instance(player, card);
-  int iid = get_card_instance(player, card)->internal_card_id;
-
-  if (iid == -1)
-    iid = instance->backup_internal_card_id;
-
-  int tapping_for_mana =
-      (cards_data[iid].extra_ability & EA_MANA_SOURCE) && tapped_for_mana_color != -1;
-
-  if (!tapping_for_mana && !cant_be_responded_to)
-    allow_response_to_activation(player, card);
-
-  EXE_FN(void, 0x436740, void)();
-
-  dispatch_trigger2(current_turn, TRIGGER_TAP_CARD, EXE_STR(0x78fba8), 0, player, card);
-
-  return 1;
-}
-
-#endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26adfa0; original functions/engine.c:3761. */
@@ -2917,7 +2846,6 @@ int put_card_on_stack3(int player, int card)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b0480; original functions/engine.c:3905. */
 int is_a_tappable_mana_source(int player, int card)
@@ -2932,7 +2860,6 @@ int is_a_tappable_mana_source(int player, int card)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b0500; original functions/engine.c:3959. */
@@ -2968,7 +2895,6 @@ void force_activation_for_mana(int player, int card, color_test_t colors)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b0650; original functions/engine.c:3937. */
 void tap_card_for_mana(int player, int card)
@@ -2978,12 +2904,10 @@ void tap_card_for_mana(int player, int card)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* October 2022 public X-format override; native .bss @ 0x2775a80. */
 int override_xx;
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a8700; original functions/engine.c:8. */
@@ -3089,6 +3013,105 @@ void count_colors_of_lands_in_play(void)
 
 #endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26a9e40; original functions/engine.c:120. */
+void recalculate_all_cards_in_play(void)
+{
+  memset(card_counts, 0, sizeof(card_counts));
+  player_bits[0] &= 0xf0c0000fu;
+  player_bits[1] &= 0xf0c0000fu;
+  memset(card_flags, 0, sizeof(card_flags));
+  memset(add_to_die_rolls, 0, sizeof(add_to_die_rolls));
+  memset(roll_extra_dice, 0, sizeof(roll_extra_dice));
+
+  for (int i = 0; i < 15; ++i)
+  {
+    added_subtypes_not_in_play[1][i].subtype = SUBTYPE_INVALID;
+    added_subtypes_not_in_play[0][i].subtype = SUBTYPE_INVALID;
+    added_subtypes_not_in_play[1][i].added_forced = 0;
+    added_subtypes_not_in_play[0][i].added_forced = 0;
+  }
+
+  minimize_nondraining_mana();
+
+  int p, c;
+
+  for (p = 0; p < 2; ++p)
+  {
+    card_instance_t *instance = get_card_instance(p, 0);
+    for (c = 0; c < active_cards_count[p]; ++c, ++instance)
+    {
+      if (instance->internal_card_id == -1)
+        continue;
+      if ((instance->state & (STATE_OUBLIETTED | STATE_IN_PLAY)) != STATE_IN_PLAY)
+      {
+        reset_subtypes_from_instance(instance, instance->internal_card_id);
+        continue;
+      }
+      instance->regen_status |= KEYWORD_RECALC_CHANGE_TYPE;
+      get_abilities(p, c, EVENT_CHANGE_TYPE, -1);
+      instance->regen_status |= KEYWORD_RECALC_SET_COLOR | KEYWORD_RECALC_ABILITIES |
+                                KEYWORD_RECALC_POWER | KEYWORD_RECALC_TOUGHNESS;
+      get_abilities(p, c, EVENT_SET_COLOR, -1);
+      get_abilities(p, c, EVENT_ABILITIES, -1);
+    }
+  }
+
+  count_colors_of_lands_in_play();
+
+  count_mana();
+
+  player_bits[0] &= ~PB_HAND_REVEALED;
+  player_bits[1] &= ~PB_HAND_REVEALED;
+
+  card_instance_t *instance;
+  for (p = 0; p < 2; ++p)
+    for (c = 0; c < active_cards_count[p]; ++c)
+      if ((instance = in_play(p, c)))
+      {
+        if (is_what(p, c, TYPE_CREATURE))
+        {
+          get_abilities(p, c, EVENT_TOUGHNESS, -1);
+          if (instance->internal_card_id == -1)
+            continue;
+          get_abilities(p, c, EVENT_POWER, -1);
+        }
+
+        if (instance->counters > 0 && instance->counters_m1m1 > 0 &&
+            is_what(p, c, TYPE_PERMANENT) &&
+            !(instance->toughness <= 0 && is_what(p, c, TYPE_CREATURE)))
+        {
+          int n = MIN(instance->counters, instance->counters_m1m1);
+          instance->counters -= n;
+          instance->counters_m1m1 -= n;
+        }
+
+        dispatch_event_with_attacker_to_one_card(p, c, EVENT_STATIC_EFFECTS, 1 - p, -1);
+      }
+
+  if (ai_is_speculating == 0)
+  {
+    if (!(player_bits[0] & PB_HAND_REVEALED) != !(EXE_DWORD(0x628C24) & (1 << 0)))
+    {
+      if (player_bits[0] & PB_HAND_REVEALED)
+        EXE_DWORD(0x628C24) |= 1 << 0;
+      else
+        EXE_DWORD(0x628C24) &= ~(1 << 0);
+    }
+
+    if (!(player_bits[1] & PB_HAND_REVEALED) != !(EXE_DWORD(0x628C24) & (1 << 1)))
+    {
+      if (player_bits[1] & PB_HAND_REVEALED)
+        EXE_DWORD(0x628C24) |= 1 << 1;
+      else
+        EXE_DWORD(0x628C24) &= ~(1 << 1);
+
+      EXE_FN(void, 0x47D2F0, void *)(EXE_PTR_VOID(0x786DC4));
+    }
+  }
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a8bb0; original functions/engine.c:241. */
@@ -3104,7 +3127,6 @@ void phase_changed(int player, int new_phase)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a8c00; original functions/engine.c:443. */
@@ -3242,7 +3264,6 @@ int effect_asterisk(int player, int card, event_t event)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a9140; original functions/engine.c:621. */
 int create_legacy_effect_exe(int player, int card, int iid, int t_player, int t_card)
@@ -3302,7 +3323,6 @@ int create_legacy_effect_exe(int player, int card, int iid, int t_player, int t_
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a9320; original functions/engine.c:675. */
 int create_legacy_effect_from_iid(int player, int iid, int (*func_ptr)(int, int, event_t),
@@ -3342,7 +3362,6 @@ int create_legacy_effect_from_iid(int player, int iid, int (*func_ptr)(int, int,
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a9520; original functions/engine.c:747. */
@@ -3432,7 +3451,6 @@ void format_manacost_into_global_allpurpose_buffer(int ignored, int *mana_cost_a
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a98c0; original functions/engine.c:1320. */
 int autotap_mana_source(int player, int card)
@@ -3517,493 +3535,7 @@ int autotap_mana_source(int player, int card)
 
 #endif
 
-
 #ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26a9e40; original functions/engine.c:120. */
-void recalculate_all_cards_in_play(void)
-{
-  memset(card_counts, 0, sizeof(card_counts));
-  player_bits[0] &= 0xf0c0000fu;
-  player_bits[1] &= 0xf0c0000fu;
-  memset(card_flags, 0, sizeof(card_flags));
-  memset(add_to_die_rolls, 0, sizeof(add_to_die_rolls));
-  memset(roll_extra_dice, 0, sizeof(roll_extra_dice));
-
-  for (int i = 0; i < 15; ++i)
-  {
-    added_subtypes_not_in_play[1][i].subtype = SUBTYPE_INVALID;
-    added_subtypes_not_in_play[0][i].subtype = SUBTYPE_INVALID;
-    added_subtypes_not_in_play[1][i].added_forced = 0;
-    added_subtypes_not_in_play[0][i].added_forced = 0;
-  }
-
-  minimize_nondraining_mana();
-
-  int p, c;
-
-  for (p = 0; p < 2; ++p)
-  {
-    card_instance_t *instance = get_card_instance(p, 0);
-    for (c = 0; c < active_cards_count[p]; ++c, ++instance)
-    {
-      if (instance->internal_card_id == -1)
-        continue;
-      if ((instance->state & (STATE_OUBLIETTED | STATE_IN_PLAY)) != STATE_IN_PLAY)
-      {
-        reset_subtypes_from_instance(instance, instance->internal_card_id);
-        continue;
-      }
-      instance->regen_status |= KEYWORD_RECALC_CHANGE_TYPE;
-      get_abilities(p, c, EVENT_CHANGE_TYPE, -1);
-      instance->regen_status |= KEYWORD_RECALC_SET_COLOR | KEYWORD_RECALC_ABILITIES |
-                                KEYWORD_RECALC_POWER | KEYWORD_RECALC_TOUGHNESS;
-      get_abilities(p, c, EVENT_SET_COLOR, -1);
-      get_abilities(p, c, EVENT_ABILITIES, -1);
-    }
-  }
-
-  count_colors_of_lands_in_play();
-
-  count_mana();
-
-  player_bits[0] &= ~PB_HAND_REVEALED;
-  player_bits[1] &= ~PB_HAND_REVEALED;
-
-  card_instance_t *instance;
-  for (p = 0; p < 2; ++p)
-    for (c = 0; c < active_cards_count[p]; ++c)
-      if ((instance = in_play(p, c)))
-      {
-        if (is_what(p, c, TYPE_CREATURE))
-        {
-          get_abilities(p, c, EVENT_TOUGHNESS, -1);
-          if (instance->internal_card_id == -1)
-            continue;
-          get_abilities(p, c, EVENT_POWER, -1);
-        }
-
-        if (instance->counters > 0 && instance->counters_m1m1 > 0 &&
-            is_what(p, c, TYPE_PERMANENT) &&
-            !(instance->toughness <= 0 && is_what(p, c, TYPE_CREATURE)))
-        {
-          int n = MIN(instance->counters, instance->counters_m1m1);
-          instance->counters -= n;
-          instance->counters_m1m1 -= n;
-        }
-
-        dispatch_event_with_attacker_to_one_card(p, c, EVENT_STATIC_EFFECTS, 1 - p, -1);
-      }
-
-  if (ai_is_speculating == 0)
-  {
-    if (!(player_bits[0] & PB_HAND_REVEALED) != !(EXE_DWORD(0x628C24) & (1 << 0)))
-    {
-      if (player_bits[0] & PB_HAND_REVEALED)
-        EXE_DWORD(0x628C24) |= 1 << 0;
-      else
-        EXE_DWORD(0x628C24) &= ~(1 << 0);
-    }
-
-    if (!(player_bits[1] & PB_HAND_REVEALED) != !(EXE_DWORD(0x628C24) & (1 << 1)))
-    {
-      if (player_bits[1] & PB_HAND_REVEALED)
-        EXE_DWORD(0x628C24) |= 1 << 1;
-      else
-        EXE_DWORD(0x628C24) &= ~(1 << 1);
-
-      EXE_FN(void, 0x47D2F0, void *)(EXE_PTR_VOID(0x786DC4));
-    }
-  }
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26ab730; original functions/engine.c:2152. */
-int can_attack(int player, int card)
-{
-
-  card_instance_t *instance = get_card_instance(player, card);
-
-  if (instance->internal_card_id >= 0 &&
-      (!(instance->regen_status & KEYWORD_DEFENDER) ||
-       (instance->token_status & STATUS_WALL_CAN_ATTACK)) &&
-      (is_what(player, card, TYPE_CREATURE) || (instance->state & STATE_NONCREATURE_CAN_ATTACK)) &&
-      !(instance->state & (STATE_OUBLIETTED | STATE_SUMMON_SICK | STATE_TAPPED)) &&
-      !(instance->token_status & STATUS_CANT_ATTACK))
-  {
-    int old_cancel = cancel;
-    int old_event_result = event_result;
-    int old_affected_card_controller = affected_card_controller;
-    int old_affected_card = affected_card;
-
-    event_result = 0;
-    affected_card_controller = player;
-    affected_card = card;
-
-    call_card_function_i(instance, player, card, EVENT_ATTACK_LEGALITY);
-    int new_event_result = event_result;
-
-    affected_card = old_affected_card;
-    affected_card_controller = old_affected_card_controller;
-    event_result = old_event_result;
-    cancel = old_cancel;
-
-    if (new_event_result)
-      return 0;
-
-    if (player != AI || (trace_mode & 2) ||
-        !check_attack_legality_if_enchanting_affected_card(player, card))
-      return ((!(player_bits[1 - player] & PB_OPPONENT_CHECKS_ATTACK_LEGALITY) &&
-               !(event_flags & EA_DECLARE_ATTACK)) ||
-              !dispatch_event(player, card, EVENT_ATTACK_LEGALITY));
-  }
-
-  return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b0680; original functions/engine.c:3991. */
-int card_instances_should_be_displayed_identically(card_instance_t *inst1,
-                                                        card_instance_t *inst2)
-{
-
-  return (inst1 == inst2 ||
-          !(inst1->internal_card_id != inst2->internal_card_id ||
-            ((inst1->state ^ inst2->state) &
-             (STATE_SUMMON_SICK | STATE_TAPPED | STATE_OWNED_BY_OPPONENT | STATE_TARGETTED |
-              STATE_CANNOT_TARGET | STATE_OUBLIETTED | STATE_IS_TRIGGERING)) ||
-            inst1->damage_on_card != inst2->damage_on_card || inst1->power != inst2->power ||
-            inst1->toughness != inst2->toughness || inst1->mana_color != inst2->mana_color ||
-            inst1->color != inst2->color || inst1->blocking != inst2->blocking ||
-            inst1->info_slot != inst2->info_slot ||
-            inst1->special_counters != inst2->special_counters ||
-            inst1->counters2 != inst2->counters2 || inst1->counters3 != inst2->counters3 ||
-            inst1->counters4 != inst2->counters4 || inst1->unknown0x11a != inst2->unknown0x11a ||
-            inst1->counters != inst2->counters || inst1->counters5 != inst2->counters5 ||
-            inst1->unknown0x122 != inst2->unknown0x122 ||
-            ((inst1->token_status ^ inst2->token_status) & STATUS_RED_BORDER) ||
-            inst1->display_pic_csv_id != inst2->display_pic_csv_id ||
-            inst1->display_pic_num != inst2->display_pic_num ||
-            inst1->untap_status != inst2->untap_status || inst1->kill_code != inst2->kill_code ||
-            inst1->counters_m1m1 != inst2->counters_m1m1 ||
-            inst1->targets[18].player != inst2->targets[18].player ||
-            inst1->targets[18].card != inst2->targets[18].card));
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b07b0; original functions/engine.c:4026. */
-int determine_start_duel_winner(void)
-{
-
-  int lost0 = life[0] <= 0 || POISON_COUNTERS(0) >= 10;
-  int lost1 = life[1] <= 0 || POISON_COUNTERS(1) >= 10;
-
-  if (!lost0 && lost1)
-    return 1;
-  else if (!lost1 && lost0)
-    return 0;
-  else
-    return -1;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b0830; original functions/engine.c:4041. */
-int is_anyone_dead(void)
-{
-  if (life[0] <= 0 || life[1] <= 0 || POISON_COUNTERS(0) >= 10 || POISON_COUNTERS(1) >= 10)
-  {
-    if (ai_is_speculating != 1)
-    {
-      EXE_FN(void, 0x472260, void)();
-      return 1;
-    }
-    else
-    {
-      if (POISON_COUNTERS(0) >= 10)
-        life[0] = -99;
-
-      if (POISON_COUNTERS(1) >= 10)
-        life[1] = -99;
-    }
-  }
-  return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b08d0; original functions/engine.c:256. */
-int untap_phase(int player)
-{
-
-
-  memset(your_spells_cant_be_countered_by_color, 0, sizeof(your_spells_cant_be_countered_by_color));
-
-  player_bits[0] &= ~PB_SEND_EVENT_UNTAP_CARD_TO_ALL;
-  player_bits[1] &= ~PB_SEND_EVENT_UNTAP_CARD_TO_ALL;
-  event_flags &= ~EF_ATTACKER_CHOOSES_BLOCKERS;
-  dispatch_event(player, 0, EVENT_BEGIN_TURN);
-
-  if (trace_mode & 2)
-  {
-    char buf[200];
-    sprintf(buf, "%d: Entering Untap Phase.\n", ++EXE_DWORD(0x60EC40));
-    EXE_FN(void, 0x4A7D80, const char *)(buf);
-  }
-
-  card_instance_t *instance;
-
-  int shimmering_lands = 0;
-  int curse_flag = 0;
-  int skip = 0;
-  int p, c;
-  for (p = 0; p < 2; ++p)
-    for (c = 0; c < active_cards_count[p]; ++c)
-      if ((instance = in_play(p, c)))
-      {
-        if (p == player)
-          instance->state &= ~STATE_SUMMON_SICK_BACKUP;
-        if (instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
-            instance->info_slot == (int)target_player_skips_untap &&
-            instance->targets[0].player == player && !skip)
-        {
-          kill_card(p, c, KILL_EXILE);
-          skip = 1;
-        }
-        else if (cards_data[instance->internal_card_id].id == CARD_ID_SHIMMER)
-        {
-          shimmering_lands |= instance->info_slot;
-        }
-        else if (p == 1 - player &&
-                 (cards_data[instance->internal_card_id].id == CARD_ID_TEFERIS_CURSE ||
-                  cards_data[instance->internal_card_id].id == CARD_ID_CLOAK_OF_INVISIBILITY) &&
-                 instance->damage_target_player == player)
-          curse_flag = 1;
-      }
-
-  if (skip || check_battlefield_for_id(2, CARD_ID_STASIS) ||
-      check_battlefield_for_id(2, CARD_ID_THE_EON_FOG) ||
-      check_battlefield_for_id(2, CARD_ID_SANDS_OF_TIME))
-    return 0;
-
-  untap_phasing(player, shimmering_lands, curse_flag);
-
-  EXE_FN(int, 0x43A700, int)(player);
-
-  int untapped[151] = {0};
-  for (c = 0; c < active_cards_count[player]; ++c)
-    if ((instance = in_play(player, c)))
-    {
-      if ((instance->untap_status & 3) == 3)
-      {
-
-        untapped[c] = 1;
-
-        instance->state &= ~STATE_TAPPED;
-      }
-
-      SET_BYTE0(instance->untap_status) = 0;
-    }
-
-  count_colors_of_lands_in_play();
-  count_mana();
-
-  for (c = 0; c < active_cards_count[player]; ++c)
-    if (untapped[c])
-    {
-      if (player_bits[player] & PB_SEND_EVENT_UNTAP_CARD_TO_ALL)
-        dispatch_event(player, c, EVENT_UNTAP_CARD);
-      else
-        dispatch_event_with_attacker_to_one_card(player, c, EVENT_UNTAP_CARD, 1 - player, -1);
-    }
-
-  recalculate_all_cards_in_play();
-  EXE_FN(void, 0x472260, void)();
-
-  if (!EXE_DWORD(0x7a34d0))
-    EXE_FN(int, 0x439c90, int)(1);
-
-  dispatch_event(player, 0, EVENT_END_OF_UNTAP_STEP);
-
-  EXE_FN(void, 0x43a060, void)();
-
-  return is_anyone_dead();
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b0ca0; original functions/engine.c:367. */
-int upkeep_phase(int player)
-{
-
-  if (trace_mode & 2)
-  {
-    char str[100];
-    sprintf(str, "%d: Entering UpKeep Phase.\n", EXE_DWORD(0x60EC40)++);
-    EXE_FN(void, 0x4a7d80, const char *)(str);
-  }
-
-  EXE_DWORD(0x7A2FD8) = 0;
-  EXE_DWORD(0x7A34D0) = 0;
-  EXE_DWORD(0x60A43C) = 0;
-
-  if (trace_mode & 2)
-  {
-    if (EXE_DWORD(0x4EF1AC) == -1)
-      EXE_DWORD(0x60A54C) = 0;
-    else
-      EXE_DWORD(0x60A54C) = ((EXE_DWORD(0x4EF1AC) != 4 || EXE_DWORD(0x4EF1B0) != player) &&
-                             (EXE_DWORD(0x60A4AC) != 4 || EXE_DWORD(0x60A55C) != player));
-  }
-  else if (ai_is_speculating != 1)
-    EXE_DWORD(0x60A54C) =
-        (EXE_DWORD(0x4EF1AC) != -1 && (EXE_DWORD(0x4EF1AC) != 4 || EXE_DWORD(0x4EF1B0) != player));
-
-  if (ai_is_speculating != 1 && !(trace_mode & 2))
-  {
-    EXE_FN(void, 0x472260, void)();
-    EXE_FN(void, 0x435140, int, int)(17, 10);
-  }
-speculate_more:
-  if (EXE_DWORD(0x60EC3C) == 17)
-  {
-
-    EXE_FN(void, 0x498ED0, void)();
-    EXE_DWORD(0x72835C) = 0;
-    ai_modifier = 0;
-  }
-
-  current_phase = PHASE_BEGIN_UPKEEP;
-  phase_changed(player, PHASE_BEGIN_UPKEEP);
-  dispatch_trigger2(player, TRIGGER_UPKEEP, EXE_STR(0x739C20), 0, 0, 0);
-
-  EXE_DWORD(0x60A43C) = 1;
-  current_phase = PHASE_UPKEEP;
-  EXE_FN(int, 0x436A20, int, int, const char *, int)(-1, current_phase, EXE_STR(0x60EEAC),
-                                                     EVENT_UPKEEP_PHASE);
-  EXE_DWORD(0x60A43C) = 0;
-
-  dispatch_trigger2(player, TRIGGER_END_UPKEEP, EXE_STR(0x78FA70), 0, 0, 0);
-
-  EXE_DWORD(0x60A54C) = 0;
-  EXE_DWORD(0x620860) = 1;
-  EXE_FN(void, 0x477070, void)();
-
-  EXE_DWORD(0x620860) = 0;
-  EXE_DWORD(0x7A2FD8) = 0;
-  mana_burn();
-
-  int phase_code_to_go_to, becomes_second_arg_of_main_phase_and_discard_phase,
-      becomes_third_arg_of_main_phase;
-  hack_ai_decision_phase_upkeep = 1;
-  ai_decision_phase(player, &phase_code_to_go_to,
-                    &becomes_second_arg_of_main_phase_and_discard_phase,
-                    &becomes_third_arg_of_main_phase);
-  if (phase_code_to_go_to == 4)
-    goto speculate_more;
-
-  return is_anyone_dead();
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b0f60; original functions/engine.c:4064. */
-int sub_495BE0(int plr)
-{
-  int num_per_col[COLOR_WHITE + 1] = {0};
-  int i;
-
-  if (plr == -1)
-  {
-    for (i = 0; i < 500; ++i)
-      if (Deck[i] != -1 && !(Deck[i] & 0x88000))
-      {
-        color_test_t cols = cards_data[Deck[i] & 0x7FFF].color;
-        if (cols & COLOR_TEST_BLACK)
-          ++num_per_col[COLOR_BLACK];
-        if (cols & COLOR_TEST_WHITE)
-          ++num_per_col[COLOR_WHITE];
-        if (cols & COLOR_TEST_GREEN)
-          ++num_per_col[COLOR_GREEN];
-        if (cols & COLOR_TEST_RED)
-          ++num_per_col[COLOR_RED];
-        if (cols & COLOR_TEST_BLUE)
-          ++num_per_col[COLOR_BLUE];
-      }
-  }
-  else
-  {
-    for (i = 0; i < 200; ++i)
-    {
-      csvid_t csvid = initial_library[plr][i].csvid;
-      int num = initial_library[plr][i].numcards;
-      if (csvid != -1 && num > 0)
-      {
-        color_test_t cols = cards_data[get_internal_card_id_from_csv_id(csvid)].color;
-        if (cols & COLOR_TEST_BLACK)
-          num_per_col[COLOR_BLACK] += num;
-        if (cols & COLOR_TEST_WHITE)
-          num_per_col[COLOR_WHITE] += num;
-        if (cols & COLOR_TEST_GREEN)
-          num_per_col[COLOR_GREEN] += num;
-        if (cols & COLOR_TEST_RED)
-          num_per_col[COLOR_RED] += num;
-        if (cols & COLOR_TEST_BLUE)
-          num_per_col[COLOR_BLUE] += num;
-      }
-    }
-  }
-
-  int highest_idx = 0, highest_num = -1;
-  for (i = COLOR_BLACK; i <= COLOR_WHITE; ++i)
-    if (num_per_col[i] > highest_num)
-    {
-      highest_idx = i;
-      highest_num = num_per_col[i];
-    }
-
-  return highest_idx;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
-static int any_can_block(int player)
-{
-  int defender = 1 - player;
-  for (int attacker = 0; attacker < active_cards_count[player]; ++attacker)
-  {
-    if (!(get_card_instance(player, attacker)->state & STATE_ATTACKING))
-      continue;
-    for (int blocker = 0; blocker < active_cards_count[defender]; ++blocker)
-    {
-      card_instance_t *inst = get_card_instance(defender, blocker);
-      uint32_t mask = 10 | ((card_flags[defender] & CFLAGS_MASAKO) ? 0 : 0x10);
-      if ((inst->state & mask) == 2 && is_legal_block(defender, blocker, player, attacker))
-        return 1;
-    }
-  }
-  return 0;
-}
-
 static int ai_blockers_guts(void)
 {
   int *assignment = EXE_DWORD_PTR(0x607ae4);
@@ -4223,6 +3755,76 @@ static int ai_blockers_guts(void)
   return rating - penalty;
 }
 
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26ab730; original functions/engine.c:2152. */
+int can_attack(int player, int card)
+{
+
+  card_instance_t *instance = get_card_instance(player, card);
+
+  if (instance->internal_card_id >= 0 &&
+      (!(instance->regen_status & KEYWORD_DEFENDER) ||
+       (instance->token_status & STATUS_WALL_CAN_ATTACK)) &&
+      (is_what(player, card, TYPE_CREATURE) || (instance->state & STATE_NONCREATURE_CAN_ATTACK)) &&
+      !(instance->state & (STATE_OUBLIETTED | STATE_SUMMON_SICK | STATE_TAPPED)) &&
+      !(instance->token_status & STATUS_CANT_ATTACK))
+  {
+    int old_cancel = cancel;
+    int old_event_result = event_result;
+    int old_affected_card_controller = affected_card_controller;
+    int old_affected_card = affected_card;
+
+    event_result = 0;
+    affected_card_controller = player;
+    affected_card = card;
+
+    call_card_function_i(instance, player, card, EVENT_ATTACK_LEGALITY);
+    int new_event_result = event_result;
+
+    affected_card = old_affected_card;
+    affected_card_controller = old_affected_card_controller;
+    event_result = old_event_result;
+    cancel = old_cancel;
+
+    if (new_event_result)
+      return 0;
+
+    if (player != AI || (trace_mode & 2) ||
+        !check_attack_legality_if_enchanting_affected_card(player, card))
+      return ((!(player_bits[1 - player] & PB_OPPONENT_CHECKS_ATTACK_LEGALITY) &&
+               !(event_flags & EA_DECLARE_ATTACK)) ||
+              !dispatch_event(player, card, EVENT_ATTACK_LEGALITY));
+  }
+
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+static int any_can_block(int player)
+{
+  int defender = 1 - player;
+  for (int attacker = 0; attacker < active_cards_count[player]; ++attacker)
+  {
+    if (!(get_card_instance(player, attacker)->state & STATE_ATTACKING))
+      continue;
+    for (int blocker = 0; blocker < active_cards_count[defender]; ++blocker)
+    {
+      card_instance_t *inst = get_card_instance(defender, blocker);
+      uint32_t mask = 10 | ((card_flags[defender] & CFLAGS_MASAKO) ? 0 : 0x10);
+      if ((inst->state & mask) == 2 && is_legal_block(defender, blocker, player, attacker))
+        return 1;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
 static void check_pow_tgh_boost(iid_t iid, int player, int card, int *pow_loc, int *tgh_loc)
 {
   uint32_t ea = cards_data[iid].extra_ability;
@@ -4250,5 +3852,312 @@ static void check_pow_tgh_boost(iid_t iid, int player, int card, int *pow_loc, i
     }
     EXE_DWORD(0x7a3610) = old_activating_player;
   }
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b0680; original functions/engine.c:3991. */
+int card_instances_should_be_displayed_identically(card_instance_t *inst1,
+                                                        card_instance_t *inst2)
+{
+
+  return (inst1 == inst2 ||
+          !(inst1->internal_card_id != inst2->internal_card_id ||
+            ((inst1->state ^ inst2->state) &
+             (STATE_SUMMON_SICK | STATE_TAPPED | STATE_OWNED_BY_OPPONENT | STATE_TARGETTED |
+              STATE_CANNOT_TARGET | STATE_OUBLIETTED | STATE_IS_TRIGGERING)) ||
+            inst1->damage_on_card != inst2->damage_on_card || inst1->power != inst2->power ||
+            inst1->toughness != inst2->toughness || inst1->mana_color != inst2->mana_color ||
+            inst1->color != inst2->color || inst1->blocking != inst2->blocking ||
+            inst1->info_slot != inst2->info_slot ||
+            inst1->special_counters != inst2->special_counters ||
+            inst1->counters2 != inst2->counters2 || inst1->counters3 != inst2->counters3 ||
+            inst1->counters4 != inst2->counters4 || inst1->unknown0x11a != inst2->unknown0x11a ||
+            inst1->counters != inst2->counters || inst1->counters5 != inst2->counters5 ||
+            inst1->unknown0x122 != inst2->unknown0x122 ||
+            ((inst1->token_status ^ inst2->token_status) & STATUS_RED_BORDER) ||
+            inst1->display_pic_csv_id != inst2->display_pic_csv_id ||
+            inst1->display_pic_num != inst2->display_pic_num ||
+            inst1->untap_status != inst2->untap_status || inst1->kill_code != inst2->kill_code ||
+            inst1->counters_m1m1 != inst2->counters_m1m1 ||
+            inst1->targets[18].player != inst2->targets[18].player ||
+            inst1->targets[18].card != inst2->targets[18].card));
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b07b0; original functions/engine.c:4026. */
+int determine_start_duel_winner(void)
+{
+
+  int lost0 = life[0] <= 0 || POISON_COUNTERS(0) >= 10;
+  int lost1 = life[1] <= 0 || POISON_COUNTERS(1) >= 10;
+
+  if (!lost0 && lost1)
+    return 1;
+  else if (!lost1 && lost0)
+    return 0;
+  else
+    return -1;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b0830; original functions/engine.c:4041. */
+int is_anyone_dead(void)
+{
+  if (life[0] <= 0 || life[1] <= 0 || POISON_COUNTERS(0) >= 10 || POISON_COUNTERS(1) >= 10)
+  {
+    if (ai_is_speculating != 1)
+    {
+      EXE_FN(void, 0x472260, void)();
+      return 1;
+    }
+    else
+    {
+      if (POISON_COUNTERS(0) >= 10)
+        life[0] = -99;
+
+      if (POISON_COUNTERS(1) >= 10)
+        life[1] = -99;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 private inline definitions. See per-helper limits in the recovery evidence. */
+/* ManalinkEh 2022: 0x26b08d0; original functions/engine.c:256. */
+int untap_phase(int player)
+{
+
+
+  memset(your_spells_cant_be_countered_by_color, 0, sizeof(your_spells_cant_be_countered_by_color));
+
+  player_bits[0] &= ~PB_SEND_EVENT_UNTAP_CARD_TO_ALL;
+  player_bits[1] &= ~PB_SEND_EVENT_UNTAP_CARD_TO_ALL;
+  event_flags &= ~EF_ATTACKER_CHOOSES_BLOCKERS;
+  dispatch_event(player, 0, EVENT_BEGIN_TURN);
+
+  if (trace_mode & 2)
+  {
+    char buf[200];
+    sprintf(buf, "%d: Entering Untap Phase.\n", ++EXE_DWORD(0x60EC40));
+    EXE_FN(void, 0x4A7D80, const char *)(buf);
+  }
+
+  card_instance_t *instance;
+
+  int shimmering_lands = 0;
+  int curse_flag = 0;
+  int skip = 0;
+  int p, c;
+  for (p = 0; p < 2; ++p)
+    for (c = 0; c < active_cards_count[p]; ++c)
+      if ((instance = in_play(p, c)))
+      {
+        if (p == player)
+          instance->state &= ~STATE_SUMMON_SICK_BACKUP;
+        if (instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
+            instance->info_slot == (int)target_player_skips_untap &&
+            instance->targets[0].player == player && !skip)
+        {
+          kill_card(p, c, KILL_EXILE);
+          skip = 1;
+        }
+        else if (cards_data[instance->internal_card_id].id == CARD_ID_SHIMMER)
+        {
+          shimmering_lands |= instance->info_slot;
+        }
+        else if (p == 1 - player &&
+                 (cards_data[instance->internal_card_id].id == CARD_ID_TEFERIS_CURSE ||
+                  cards_data[instance->internal_card_id].id == CARD_ID_CLOAK_OF_INVISIBILITY) &&
+                 instance->damage_target_player == player)
+          curse_flag = 1;
+      }
+
+  if (skip || check_battlefield_for_id(2, CARD_ID_STASIS) ||
+      check_battlefield_for_id(2, CARD_ID_THE_EON_FOG) ||
+      check_battlefield_for_id(2, CARD_ID_SANDS_OF_TIME))
+    return 0;
+
+  untap_phasing(player, shimmering_lands, curse_flag);
+
+  EXE_FN(int, 0x43A700, int)(player);
+
+  int untapped[151] = {0};
+  for (c = 0; c < active_cards_count[player]; ++c)
+    if ((instance = in_play(player, c)))
+    {
+      if ((instance->untap_status & 3) == 3)
+      {
+
+        untapped[c] = 1;
+
+        instance->state &= ~STATE_TAPPED;
+      }
+
+      SET_BYTE0(instance->untap_status) = 0;
+    }
+
+  count_colors_of_lands_in_play();
+  count_mana();
+
+  for (c = 0; c < active_cards_count[player]; ++c)
+    if (untapped[c])
+    {
+      if (player_bits[player] & PB_SEND_EVENT_UNTAP_CARD_TO_ALL)
+        dispatch_event(player, c, EVENT_UNTAP_CARD);
+      else
+        dispatch_event_with_attacker_to_one_card(player, c, EVENT_UNTAP_CARD, 1 - player, -1);
+    }
+
+  recalculate_all_cards_in_play();
+  EXE_FN(void, 0x472260, void)();
+
+  if (!EXE_DWORD(0x7a34d0))
+    EXE_FN(int, 0x439c90, int)(1);
+
+  dispatch_event(player, 0, EVENT_END_OF_UNTAP_STEP);
+
+  EXE_FN(void, 0x43a060, void)();
+
+  return is_anyone_dead();
+}
+
+/* ManalinkEh 2022: 0x26b0ca0; original functions/engine.c:367. */
+int upkeep_phase(int player)
+{
+
+  if (trace_mode & 2)
+  {
+    char str[100];
+    sprintf(str, "%d: Entering UpKeep Phase.\n", EXE_DWORD(0x60EC40)++);
+    EXE_FN(void, 0x4a7d80, const char *)(str);
+  }
+
+  EXE_DWORD(0x7A2FD8) = 0;
+  EXE_DWORD(0x7A34D0) = 0;
+  EXE_DWORD(0x60A43C) = 0;
+
+  if (trace_mode & 2)
+  {
+    if (EXE_DWORD(0x4EF1AC) == -1)
+      EXE_DWORD(0x60A54C) = 0;
+    else
+      EXE_DWORD(0x60A54C) = ((EXE_DWORD(0x4EF1AC) != 4 || EXE_DWORD(0x4EF1B0) != player) &&
+                             (EXE_DWORD(0x60A4AC) != 4 || EXE_DWORD(0x60A55C) != player));
+  }
+  else if (ai_is_speculating != 1)
+    EXE_DWORD(0x60A54C) =
+        (EXE_DWORD(0x4EF1AC) != -1 && (EXE_DWORD(0x4EF1AC) != 4 || EXE_DWORD(0x4EF1B0) != player));
+
+  if (ai_is_speculating != 1 && !(trace_mode & 2))
+  {
+    EXE_FN(void, 0x472260, void)();
+    EXE_FN(void, 0x435140, int, int)(17, 10);
+  }
+speculate_more:
+  if (EXE_DWORD(0x60EC3C) == 17)
+  {
+
+    EXE_FN(void, 0x498ED0, void)();
+    EXE_DWORD(0x72835C) = 0;
+    ai_modifier = 0;
+  }
+
+  current_phase = PHASE_BEGIN_UPKEEP;
+  phase_changed(player, PHASE_BEGIN_UPKEEP);
+  dispatch_trigger2(player, TRIGGER_UPKEEP, EXE_STR(0x739C20), 0, 0, 0);
+
+  EXE_DWORD(0x60A43C) = 1;
+  current_phase = PHASE_UPKEEP;
+  EXE_FN(int, 0x436A20, int, int, const char *, int)(-1, current_phase, EXE_STR(0x60EEAC),
+                                                     EVENT_UPKEEP_PHASE);
+  EXE_DWORD(0x60A43C) = 0;
+
+  dispatch_trigger2(player, TRIGGER_END_UPKEEP, EXE_STR(0x78FA70), 0, 0, 0);
+
+  EXE_DWORD(0x60A54C) = 0;
+  EXE_DWORD(0x620860) = 1;
+  EXE_FN(void, 0x477070, void)();
+
+  EXE_DWORD(0x620860) = 0;
+  EXE_DWORD(0x7A2FD8) = 0;
+  mana_burn();
+
+  int phase_code_to_go_to, becomes_second_arg_of_main_phase_and_discard_phase,
+      becomes_third_arg_of_main_phase;
+  hack_ai_decision_phase_upkeep = 1;
+  ai_decision_phase(player, &phase_code_to_go_to,
+                    &becomes_second_arg_of_main_phase_and_discard_phase,
+                    &becomes_third_arg_of_main_phase);
+  if (phase_code_to_go_to == 4)
+    goto speculate_more;
+
+  return is_anyone_dead();
+}
+
+/* ManalinkEh 2022: 0x26b0f60; original functions/engine.c:4064. */
+int sub_495BE0(int plr)
+{
+  int num_per_col[COLOR_WHITE + 1] = {0};
+  int i;
+
+  if (plr == -1)
+  {
+    for (i = 0; i < 500; ++i)
+      if (Deck[i] != -1 && !(Deck[i] & 0x88000))
+      {
+        color_test_t cols = cards_data[Deck[i] & 0x7FFF].color;
+        if (cols & COLOR_TEST_BLACK)
+          ++num_per_col[COLOR_BLACK];
+        if (cols & COLOR_TEST_WHITE)
+          ++num_per_col[COLOR_WHITE];
+        if (cols & COLOR_TEST_GREEN)
+          ++num_per_col[COLOR_GREEN];
+        if (cols & COLOR_TEST_RED)
+          ++num_per_col[COLOR_RED];
+        if (cols & COLOR_TEST_BLUE)
+          ++num_per_col[COLOR_BLUE];
+      }
+  }
+  else
+  {
+    for (i = 0; i < 200; ++i)
+    {
+      csvid_t csvid = initial_library[plr][i].csvid;
+      int num = initial_library[plr][i].numcards;
+      if (csvid != -1 && num > 0)
+      {
+        color_test_t cols = cards_data[get_internal_card_id_from_csv_id(csvid)].color;
+        if (cols & COLOR_TEST_BLACK)
+          num_per_col[COLOR_BLACK] += num;
+        if (cols & COLOR_TEST_WHITE)
+          num_per_col[COLOR_WHITE] += num;
+        if (cols & COLOR_TEST_GREEN)
+          num_per_col[COLOR_GREEN] += num;
+        if (cols & COLOR_TEST_RED)
+          num_per_col[COLOR_RED] += num;
+        if (cols & COLOR_TEST_BLUE)
+          num_per_col[COLOR_BLUE] += num;
+      }
+    }
+  }
+
+  int highest_idx = 0, highest_num = -1;
+  for (i = COLOR_BLACK; i <= COLOR_WHITE; ++i)
+    if (num_per_col[i] > highest_num)
+    {
+      highest_idx = i;
+      highest_num = num_per_col[i];
+    }
+
+  return highest_idx;
 }
 #endif

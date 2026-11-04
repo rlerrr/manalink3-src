@@ -6,6 +6,47 @@ void generic_wish_effect(int player, int card, test_definition_t *test, int ai_c
 
 // Functions
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20590c0; original cards/judgement.c:4.
+ * Built-in chooser UI is stubbed; see functions/choose_a_card.cpp. */
+void generic_wish_effect(int player, int card, test_definition_t *test, int ai_card)
+{
+  int result;
+  int revealed_card;
+
+  result = get_id(player, card);
+  if (result == 0x1729)
+  {
+    lose_life(player, (life[player] + 1) / 2);
+  }
+  if (player == 0)
+  {
+    result = new_card_from_list(0, 5, test);
+    add_card_to_hand(0, result);
+  }
+  else
+  {
+    result = new_select_a_card(player, player, 1, 0, 1, -1, test);
+    if (result < 0)
+    {
+      result = get_internal_card_id_from_csv_id(ai_card);
+    }
+    else
+    {
+      result = deck_ptr[player][result];
+    }
+    revealed_card = add_card_to_hand(player, result);
+    reveal_card(player, card, player, revealed_card);
+  }
+  if (result == -1)
+  {
+    return;
+  }
+  result = check_card_for_rules_engine(result);
+  update_rules_engine(result);
+  return;
+}
+#endif
 
 int generic_wish(int player, int card, event_t event, int type, int ai_card){
 /* You may choose a ... card you own from outside the game, reveal that card, and put it into your hand. Exile this. */
@@ -214,12 +255,10 @@ int card_battle_screech(int player, int card, event_t event){
 }
 
 int card_battlefield_scrounger(int player, int card, event_t event){
-/*
-Battlefield Scrounger |3|G|G|
-Creature — Centaur 3/3
-Threshold — Put three cards from your graveyard on the bottom of your library: Battlefield Scrounger gets +3/+3 until end of turn.
-	Activate this ability only once each turn, and only if seven or more cards are in your graveyard.
-*/
+  /* Battlefield Scrounger |3|G|G|
+   * Creature — Centaur 3/3
+   * Threshold — Put three cards from your graveyard on the bottom of your library: Battlefield Scrounger gets +3/+3 until end of turn.
+   * 	Activate this ability only once each turn, and only if seven or more cards are in your graveyard. */
 
 	if( (event == EVENT_CAN_ACTIVATE && has_threshold(player)) || event == EVENT_CLEANUP ){
 		return generic_activated_ability(player, card, event, GAA_ONCE_PER_TURN, MANACOST0, 0, NULL, NULL);
@@ -618,11 +657,10 @@ You may choose a card you own from outside the game and put it into your hand. Y
 }
 
 int card_dwarven_bloodboiler(int player, int card, event_t event){
-/*
-Dwarven Bloodboiler |R|R|R
-Creature — Dwarf 2/2
-Tap an untapped Dwarf you control: Target creature gets +2/+0 until end of turn.
-*/
+  /* Dwarven Bloodboiler |R|R|R
+   * Creature — Dwarf 2/2
+   * Tap an untapped Dwarf you control: Target creature gets +2/+0 until end of turn. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -944,6 +982,10 @@ Threshold - As long as seven or more cards are in your graveyard, ~ gets +3/+3 a
 
 int card_forcemage_advocate(int player, int card, event_t event)
 {
+  /* Forcemage Advocate	|1|G
+   * Creature - Centaur Shaman 2/1
+   * |T: Return target card from an opponent's graveyard to their hand. Put a +1/+1 counter on target creature. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -1165,6 +1207,12 @@ Sacrifice ~: Draw a card, then discard a card. */
 
 int card_hunting_grounds(int player, int card, event_t event)
 {
+  /* CARD_ID_HUNTING_GROUNDS	5959
+   * Hunting Grounds	|G|W
+   * Enchantment
+   * Threshold - As long as seven or more cards are in your graveyard, ~ has "Whenever an opponent casts a spell,
+   * you may put a creature card from your hand onto the battlefield." */
+
   int result;
   test_definition_t this_test;
   result = has_threshold(player);
@@ -1502,11 +1550,10 @@ int card_nantuko_monastery_animated(int player, int card, event_t event){
 }
 
 int card_nomad_mythmaker(int player, int card, event_t event){
-/*
-Nomad Mythmaker |2|W
-Creature — Human Nomad Cleric 2/2
-{W}, {T}: Put target Aura card from a graveyard onto the battlefield under your control attached to a creature you control.
-*/
+  /* Nomad Mythmaker |2|W
+   * Creature — Human Nomad Cleric 2/2
+   * {W}, {T}: Put target Aura card from a graveyard onto the battlefield under your control attached to a creature you control. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1579,11 +1626,10 @@ int card_phantom_nishoba(int player, int card, event_t event){
 }
 
 int card_nullmage_advocate(int player, int card, event_t event){
-/*
-Nullmage Advocate |2|G
-Creature � Insect Druid 2/3
-{T}: Return two target cards from an opponent's graveyard to his or her hand. Destroy target artifact or enchantment.
-*/
+  /* Nullmage Advocate |2|G
+   * Creature � Insect Druid 2/3
+   * {T}: Return two target cards from an opponent's graveyard to his or her hand. Destroy target artifact or enchantment. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1751,12 +1797,11 @@ int card_prismatic_strands(int player, int card, event_t event){
 }
 
 int card_pulsemage_advocate(int player, int card, event_t event){
-/*
-Pulsemage Advocate |2|W
-Creature � Human Cleric 1/3
-{T}: Return three target cards from an opponent's graveyard to his or her hand. Return target creature card from your graveyard to
-	the battlefield.
-*/
+  /* Pulsemage Advocate |2|W
+   * Creature � Human Cleric 1/3
+   * {T}: Return three target cards from an opponent's graveyard to his or her hand. Return target creature card from your graveyard to
+   * 	the battlefield. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1845,11 +1890,14 @@ Search target player's library for up to three cards with flashback and put them
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
 }
 
-int card_ray_of_revelation(int player, int card, event_t event){// not enabled
-	/* Ray of Revelation	|1|W
-	 * Instant
-	 * Destroy target enchantment.
-	 * Flashback |G */
+int card_ray_of_revelation(int player, int card, event_t event){
+  /* Ray of Revelation	|1|W
+   * Instant
+   * Destroy target enchantment.
+   * Flashback |G */
+
+// not enabled
+
 
 	if (event == EVENT_GRAVEYARD_ABILITY || event == EVENT_PAY_FLASHBACK_COSTS){ return do_flashback(player, card, event, MANACOST_G(1)); }
 	if( ! IS_GS_EVENT(player, card, event) ){
@@ -1927,6 +1975,11 @@ static void scalpelexis_effect(int player, int t_player){
 }
 
 int card_scalpelexis(int player, int card, event_t event){
+  /* Scalpelexis	|4|U
+   * Creature - Beast 1/5
+   * Flying (This creature can't be blocked except by creatures with flying or reach.)
+   * Whenever this creature deals combat damage to a player, that player exiles the top four cards of their library. If two or more of those cards have the same name, repeat this process. */
+
 /*
 Scalpelexis English
 Creature — Beast 1/5, 4U (5)
@@ -1963,6 +2016,14 @@ Threshold - Other creatures you control get +2/+2 as long as seven or more cards
 
 int card_solitary_confinement(int player, int card, event_t event)
 {
+  /* CARD_ID_SOLITARY_CONFINEMENT	6004
+   * Solitary Confinement	|2|W
+   * Enchantment
+   * At the beginning of your upkeep, sacrifice ~ unless you discard a card.
+   * Skip your draw step.
+   * You have shroud. (You can't be the target of spells or abilities.)
+   * Prevent all damage that would be dealt to you. */
+
   card_instance_t *instance;
   int result;
   char msg[100];
@@ -2020,8 +2081,87 @@ int card_solitary_confinement(int player, int card, event_t event)
   return global_enchantment(player, card, event);
 }
 
+/* ManalinkEh 2022: 0x2058d30; original cards/judgement.c:2054. */
+static int soulcatchers_aerie_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int death_count;
+  card_instance_t *dying_permanent;
+  test_definition_t this_test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      instance = get_card_instance(player, card);
+      if ((-1 < instance->damage_target_player) &&
+          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x1775))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (effect_follows_control_of_attachment(player, card, event) != 0))
+  {
+    return 0;
+  }
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    instance = get_card_instance(player, card);
+    dying_permanent = in_play(affected_card_controller, affected_card);
+    if ((dying_permanent != NULL) &&
+        (is_this_dying(affected_card_controller, affected_card) != 0))
+    {
+
+      if ((instance->damage_target_card == affected_card) &&
+          (instance->damage_target_player == affected_card_controller))
+      {
+        instance->damage_target_card = -1;
+        instance->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (instance->targets[0xb].player < 0)
+        {
+          instance->targets[0xb].player = 0;
+        }
+        SET_BYTE2(instance->targets[0xb].player) = 1;
+      }
+      default_test_definition(&this_test, 0x47);
+      this_test.subtype = 0x16;
+      count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0, &this_test, 0x20, 0);
+    }
+  }
+  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (death_count == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
+    return 0;
+  if (death_count != 0)
+  {
+    if (!check_status(player, card, 0x10000))
+    {
+
+      for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
+      {
+        add_counters(player, card, player, card, COUNTER_FEATHER, 1);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
 int card_soulcatchers_aerie(int player, int card, event_t event)
 {
+  /* Soulcatchers' Aerie	|1|W
+   * Enchantment
+   * Whenever a Bird is put into your graveyard from the battlefield, put a feather counter on ~.
+   * Bird creatures get +1/+1 for each feather counter on ~. */
+
   int c;
   int count;
   int legacy_or_humiliation;
@@ -2124,11 +2264,10 @@ int card_spirit_cairn(int player, int card, event_t event)
 }
 
 int card_spurnmage_advocate(int player, int card, event_t event){
-/*
-Spurnmage Advocate |W
-Creature — Human Nomad 1/1
-{T}: Return two target cards from an opponent's graveyard to his or her hand. Destroy target attacking creature.
-*/
+  /* Spurnmage Advocate |W
+   * Creature — Human Nomad 1/1
+   * {T}: Return two target cards from an opponent's graveyard to his or her hand. Destroy target attacking creature. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2211,6 +2350,12 @@ int card_stitch_together(int player, int card, event_t event){
 
 int card_sutured_ghoul(int player, int card, event_t event)
 {
+  /* Sutured Ghoul	|4|B|B|B
+   * Creature - Zombie 100/100
+   * Trample
+   * As ~ enters the battlefield, exile any number of creature cards from your graveyard.
+   * ~'s power is equal to the total power of the exiled cards and its toughness is equal to their total toughness. */
+
   int *graveyard;
   card_instance_t *instance;
   int remaining_creatures_or_stat;
@@ -2389,123 +2534,3 @@ Threshold - As long as seven or more cards are in your graveyard, ~ gets +1/+1 a
 	}
 	return 0;
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2058d30; original cards/judgement.c:2054. */
-static int soulcatchers_aerie_effect(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  unsigned int death_count;
-  card_instance_t *dying_permanent;
-  test_definition_t this_test;
-
-  if (event == EVENT_STATIC_EFFECTS)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-
-      instance = get_card_instance(player, card);
-      if ((-1 < instance->damage_target_player) &&
-          (get_id((int)instance->damage_target_player, instance->damage_target_card) != 0x1775))
-      {
-        kill_card(player, card, KILL_EXILE);
-      }
-    }
-  }
-  instance = get_card_instance(player, card);
-  if ((-1 < instance->damage_target_player) &&
-      (effect_follows_control_of_attachment(player, card, event) != 0))
-  {
-    return 0;
-  }
-  if (event == EVENT_GRAVEYARD_FROM_PLAY)
-  {
-    instance = get_card_instance(player, card);
-    dying_permanent = in_play(affected_card_controller, affected_card);
-    if ((dying_permanent != NULL) &&
-        (is_this_dying(affected_card_controller, affected_card) != 0))
-    {
-
-      if ((instance->damage_target_card == affected_card) &&
-          (instance->damage_target_player == affected_card_controller))
-      {
-        instance->damage_target_card = -1;
-        instance->damage_target_player = -1;
-        remove_status(player, card, 0x10000);
-        if (instance->targets[0xb].player < 0)
-        {
-          instance->targets[0xb].player = 0;
-        }
-        SET_BYTE2(instance->targets[0xb].player) = 1;
-      }
-      default_test_definition(&this_test, 0x47);
-      this_test.subtype = 0x16;
-      count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0, &this_test, 0x20, 0);
-    }
-  }
-  death_count = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (death_count == 0 && event == EVENT_GRAVEYARD_FROM_PLAY)
-    return 0;
-  if (death_count != 0)
-  {
-    if (!check_status(player, card, 0x10000))
-    {
-
-      for (death_count = death_count & 0xff; death_count != 0; death_count = death_count - 1)
-      {
-        add_counters(player, card, player, card, COUNTER_FEATHER, 1);
-      }
-      kill_card(player, card, KILL_EXILE);
-    }
-  }
-  if ((event == EVENT_CLEANUP) && (check_status(player, card, 0x10000) == 0))
-  {
-    kill_card(player, card, KILL_EXILE);
-  }
-  return 0;
-}
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x20590c0; original cards/judgement.c:4.
- * Built-in chooser UI is stubbed; see functions/choose_a_card.cpp. */
-void generic_wish_effect(int player, int card, test_definition_t *test, int ai_card)
-{
-  int result;
-  int revealed_card;
-
-  result = get_id(player, card);
-  if (result == 0x1729)
-  {
-    lose_life(player, (life[player] + 1) / 2);
-  }
-  if (player == 0)
-  {
-    result = new_card_from_list(0, 5, test);
-    add_card_to_hand(0, result);
-  }
-  else
-  {
-    result = new_select_a_card(player, player, 1, 0, 1, -1, test);
-    if (result < 0)
-    {
-      result = get_internal_card_id_from_csv_id(ai_card);
-    }
-    else
-    {
-      result = deck_ptr[player][result];
-    }
-    revealed_card = add_card_to_hand(player, result);
-    reveal_card(player, card, player, revealed_card);
-  }
-  if (result == -1)
-  {
-    return;
-  }
-  result = check_card_for_rules_engine(result);
-  update_rules_engine(result);
-  return;
-}
-
-#endif

@@ -68,7 +68,6 @@ int get_setting(int thing){
 	return settings[thing];
 }
 
-
 // exe interface - no longer used
 void set_draft(void){
 }
@@ -92,8 +91,6 @@ void set_challenge(int m){
 	set_challenge_round_to_0();
 	ante = 0;
 }
-
-
 
 static int check_deck_legality(void)
 {
@@ -1399,8 +1396,6 @@ static int get_rules_engine_card(int player){
 	return rules_engine_card[player];
 }
 
-
-
 static void reset_storm_count(int player, int card)
 {
   target_definition_t td;
@@ -1510,14 +1505,6 @@ static void keep_storm_count(int player, int card, event_t event)
     reset_storm_count(player, card);
 }
 
-
-
-
-
-
-
-
-
 #if 0	// unused
 int get_turn_count(void)
 {
@@ -1595,6 +1582,81 @@ static int prized_amalgam_legacy(int player, int card, event_t event){
  GC_DEATHLESS_KNIGHT = 1<<30,
  GC_PUNISHING_FIRE = (int)(1U<<31),
 	};
+
+/* ManalinkEh 2022: 0x26c5ff0; original functions/rules_engine.c:439. */
+int companion_effect(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
+    if (result != 0)
+    {
+      result = has_mana(player, 0, 3);
+      return (unsigned int)(result != 0);
+    }
+  }
+  else if (((event == EVENT_ACTIVATE) &&
+            (result = charge_mana(player, COLOR_COLORLESS, 3), result != 0)) &&
+           (spell_fizzled != 1))
+  {
+    instance = get_card_instance(player, card);
+    result = get_internal_card_id_from_csv_id((unsigned int)instance->display_pic_csv_id);
+    add_card_to_hand(player, result);
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+static void resolve_graveyard_eot_triggers(int player, int card, event_t event)
+{
+  card_instance_t* instance = get_card_instance(player, card);
+  if (player == current_turn && eot_trigger(player, card, event))
+  {
+    int count = count_graveyard(player);
+    const int* grave = get_grave(player);
+    for (int i = 0; i < count; ++i)
+      if (cards_data[grave[i]].cc[2] == 0x1c)
+      {
+        if (event == EVENT_TRIGGER)
+          event_result |= RESOLVE_TRIGGER_MANDATORY;
+        else if (event == EVENT_RESOLVE_TRIGGER)
+          for (int pos = count-1; pos >= 0; --pos)
+            if (cards_data[grave[pos]].cc[2] == 0x1c)
+            {
+              int iid = grave[pos];
+              int temporary = add_card_to_hand(player, iid);
+              instance->number_of_targets = 1;
+              card_instance_t* temporary_instance = get_card_instance(player, temporary);
+              temporary_instance->state |= STATE_INVISIBLE;
+              --hand_count[player];
+              int result = cards_data[iid].code_pointer(player, temporary, EVENT_GRAVEYARD_ABILITY_EOT);
+              if (result == -1)
+                remove_card_from_grave(player, pos);
+              else if (result == -2)
+                obliterate_card_and_recycle(player, temporary);
+              else
+              {
+                obliterate_card_and_recycle(player, temporary);
+                remove_card_from_grave(player, result);
+              }
+            }
+        break;
+      }
+  }
+}
+
+/* ManalinkEh 2022: 0x26c7f10; original functions/rules_engine.c:1534. */
+int get_aftermath(int player, int card)
+{
+  int result;
+  result = check_special_flags(player, card, 0x200000);
+  return (unsigned int)(result != 0);
+}
+
+int card_coa_special_effect(int player, int card, event_t event);
 
 static int get_graveyard_counts(int player)
 {
@@ -2481,8 +2543,6 @@ static void keep_turn_count(int player, int card, event_t event)
 	increase_trap_condition(player, TRAP_TURN_COUNT, 1);
 }
 
-int card_coa_special_effect(int player, int card, event_t event);
-
 static int initial_upkeep_triggers(int player, int card, event_t event)
 {
 
@@ -3145,6 +3205,9 @@ static void shape_rules_engine(int infos){
 		}
 }
 
+static void clear_temporary_traps(card_instance_t* instance);
+static void check_trap_conditions(int player, int card, event_t event);
+
 static int check_decks_for_rules_engine(void){
 
 	int i;
@@ -3232,9 +3295,6 @@ void update_rules_engine(int infos){
 	}
 }
 
-static void clear_temporary_traps(card_instance_t* instance);
-static void check_trap_conditions(int player, int card, event_t event);
-
 int get_rules_engine_infos(int player){
 	int re = get_rules_engine_card(player);
 	if( re > -1 ){
@@ -3290,6 +3350,7 @@ void set_starting_life_total(int player, int amount)
   starting_life_total[player] = amount;
 }
 
+// Clear the per-turn trap conditions out at start of turn
 int get_starting_life_total(int player){
 	return starting_life_total[player];
 }
@@ -3474,7 +3535,6 @@ int get_trap_condition(int player, int trap)
   return 0;
 }
 
-// Clear the per-turn trap conditions out at start of turn
 static void clear_temporary_traps(card_instance_t* instance)
 {
   // Strictly speaking, this is undefined behavior, but should work on everything Manalink can.
@@ -3603,6 +3663,8 @@ void set_trap_condition(int player, int trap, int value)
   increase_trap_condition_impl(player, trap, value, 0);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 static void beginning_of_combat_effects(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -3630,43 +3692,7 @@ static void beginning_of_combat_effects(int player, int card, event_t event){
 	}
 }
 
-static void resolve_graveyard_eot_triggers(int player, int card, event_t event)
-{
-  card_instance_t* instance = get_card_instance(player, card);
-  if (player == current_turn && eot_trigger(player, card, event))
-  {
-    int count = count_graveyard(player);
-    const int* grave = get_grave(player);
-    for (int i = 0; i < count; ++i)
-      if (cards_data[grave[i]].cc[2] == 0x1c)
-      {
-        if (event == EVENT_TRIGGER)
-          event_result |= RESOLVE_TRIGGER_MANDATORY;
-        else if (event == EVENT_RESOLVE_TRIGGER)
-          for (int pos = count-1; pos >= 0; --pos)
-            if (cards_data[grave[pos]].cc[2] == 0x1c)
-            {
-              int iid = grave[pos];
-              int temporary = add_card_to_hand(player, iid);
-              instance->number_of_targets = 1;
-              card_instance_t* temporary_instance = get_card_instance(player, temporary);
-              temporary_instance->state |= STATE_INVISIBLE;
-              --hand_count[player];
-              int result = cards_data[iid].code_pointer(player, temporary, EVENT_GRAVEYARD_ABILITY_EOT);
-              if (result == -1)
-                remove_card_from_grave(player, pos);
-              else if (result == -2)
-                obliterate_card_and_recycle(player, temporary);
-              else
-              {
-                obliterate_card_and_recycle(player, temporary);
-                remove_card_from_grave(player, result);
-              }
-            }
-        break;
-      }
-  }
-}
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
 int card_rules_engine(int player, int card, event_t event ){
 	card_instance_t *instance = get_card_instance(player,card);
@@ -3763,46 +3789,6 @@ int card_rules_engine(int player, int card, event_t event ){
 	return 0;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x26c7f10; original functions/rules_engine.c:1534. */
-int get_aftermath(int player, int card)
-{
-  int result;
-  result = check_special_flags(player, card, 0x200000);
-  return (unsigned int)(result != 0);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x26c5ff0; original functions/rules_engine.c:439. */
-int companion_effect(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-
-  if (event == EVENT_CAN_ACTIVATE)
-  {
-    result = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
-    if (result != 0)
-    {
-      result = has_mana(player, 0, 3);
-      return (unsigned int)(result != 0);
-    }
-  }
-  else if (((event == EVENT_ACTIVATE) &&
-            (result = charge_mana(player, COLOR_COLORLESS, 3), result != 0)) &&
-           (spell_fizzled != 1))
-  {
-    instance = get_card_instance(player, card);
-    result = get_internal_card_id_from_csv_id((unsigned int)instance->display_pic_csv_id);
-    add_card_to_hand(player, result);
-    kill_card(player, card, KILL_EXILE);
-  }
-  return 0;
-}
-
-
 /* October 2022 storm backing-state layout checks. */
 #ifndef SHANDALAR
 STATIC_ASSERT(sizeof(rules_engine_card) == 8, storm_native_card_slots);
@@ -3831,6 +3817,53 @@ STATIC_ASSERT(sizeof(storm_mode_t) == 4, storm_native_mode_bytes);
 STATIC_ASSERT(STORM_CREATURE == 64, storm_canonical_creature_mode);
 #endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26c7890; original functions/rules_engine.c:84. */
+int limit_allowed_in_deck(int csvid)
+{
+  static int unlimited_list[17] = {91,   126,   164,   188,   239,   2100,  2101, 2102, 2103,
+                                         2104, 20819, 15719, 22636, 19685, 18489, 7107, 13335};
+  for (unsigned int i = 0; i < 17; ++i)
+    if (csvid == unlimited_list[i])
+      return 5000;
+  return csvid == CARD_ID_SEVEN_DWARVES ? 7 : 4;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26c78f0; original functions/rules_engine.c:365. */
+int random_rogue(void)
+{
+  typedef struct
+  {
+    char name[200];
+    char quote[300];
+    char imgname[268];
+    int difficulty;
+    char padding[4004];
+  } rogue_t;
+  rogue_t *rogues = (rogue_t *)0x62c3c0;
+  int num_rogues = EXE_DWORD(0x7370b8);
+  int ok_rogues[num_rogues];
+  read_and_adjust_settings();
+  int num_ok_rogues = 0;
+  for (int i = 0; i < num_rogues; ++i)
+    if (rogues[i].name[0] && rogues[i].imgname[0] && rogues[i].difficulty == opponent_skill)
+      ok_rogues[num_ok_rogues++] = i;
+  if (!num_ok_rogues)
+  {
+    for (int i = 0; i < num_rogues; ++i)
+      if (rogues[i].name[0] && rogues[i].imgname[0])
+        ok_rogues[num_ok_rogues++] = i;
+  }
+  if (num_ok_rogues)
+    return ok_rogues[internal_rand(num_ok_rogues)];
+  popup("Fatal error", "No valid opponents defined in Rogues.csv.");
+  abort();
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c7f70; original functions/rules_engine.c:1599. */
@@ -3884,7 +3917,6 @@ void increment_storm_count(int player, int mode)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c81a0; original functions/rules_engine.c:1735. */
 int get_specific_storm_count(int player)
@@ -3901,7 +3933,6 @@ int get_specific_storm_count(int player)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c81e0; original functions/rules_engine.c:1744. */
 int get_storm_count(void)
@@ -3915,7 +3946,6 @@ int get_storm_count(void)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c8240; original functions/rules_engine.c:1749. */
@@ -3933,7 +3963,6 @@ int get_stormcreature_count(int k)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c8280; original functions/rules_engine.c:1757. */
 int get_storminstantsorcery_count(int k)
@@ -3950,6 +3979,17 @@ int get_storminstantsorcery_count(int k)
 
 #endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022 inline reset_storm_count: owner 0x26c9140; DIE 0x68be08e. */
+
+/* End ManalinkEh 2022 inline reset_storm_count. */
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022 inline keep_storm_count: owner 0x26c9140; DIE 0x68be050. */
+
+/* End ManalinkEh 2022 inline keep_storm_count. */
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c82c0; original functions/rules_engine.c:1765. */
@@ -3967,7 +4007,6 @@ int get_stormenchantment_count(int k)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c90c0; original functions/rules_engine.c:1773. */
 int get_stormcolor_count(int player, color_t clr)
@@ -3979,70 +4018,6 @@ int get_stormcolor_count(int player, color_t clr)
   }
   result = get_trap_condition(player, clr + 0x402);
   return result;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022 inline reset_storm_count: owner 0x26c9140; DIE 0x68be08e. */
-
-/* End ManalinkEh 2022 inline reset_storm_count. */
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022 inline keep_storm_count: owner 0x26c9140; DIE 0x68be050. */
-
-/* End ManalinkEh 2022 inline keep_storm_count. */
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26c7890; original functions/rules_engine.c:84. */
-int limit_allowed_in_deck(int csvid)
-{
-  static int unlimited_list[17] = {91,   126,   164,   188,   239,   2100,  2101, 2102, 2103,
-                                         2104, 20819, 15719, 22636, 19685, 18489, 7107, 13335};
-  for (unsigned int i = 0; i < 17; ++i)
-    if (csvid == unlimited_list[i])
-      return 5000;
-  return csvid == CARD_ID_SEVEN_DWARVES ? 7 : 4;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26c78f0; original functions/rules_engine.c:365. */
-int random_rogue(void)
-{
-  typedef struct
-  {
-    char name[200];
-    char quote[300];
-    char imgname[268];
-    int difficulty;
-    char padding[4004];
-  } rogue_t;
-  rogue_t *rogues = (rogue_t *)0x62c3c0;
-  int num_rogues = EXE_DWORD(0x7370b8);
-  int ok_rogues[num_rogues];
-  read_and_adjust_settings();
-  int num_ok_rogues = 0;
-  for (int i = 0; i < num_rogues; ++i)
-    if (rogues[i].name[0] && rogues[i].imgname[0] && rogues[i].difficulty == opponent_skill)
-      ok_rogues[num_ok_rogues++] = i;
-  if (!num_ok_rogues)
-  {
-    for (int i = 0; i < num_rogues; ++i)
-      if (rogues[i].name[0] && rogues[i].imgname[0])
-        ok_rogues[num_ok_rogues++] = i;
-  }
-  if (num_ok_rogues)
-    return ok_rogues[internal_rand(num_ok_rogues)];
-  popup("Fatal error", "No valid opponents defined in Rogues.csv.");
-  abort();
 }
 
 #endif

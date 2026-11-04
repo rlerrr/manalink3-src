@@ -344,4 +344,3 @@ int planeswalker(int player, int card, event_t event, int loyalty)
   return 0;
 }
 
-

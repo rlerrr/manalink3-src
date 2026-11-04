@@ -1,10 +1,15 @@
 #include "manalink.h"
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int verdant_succession_effect(int player, int card, event_t event);
 
 /* ManalinkEh 2022: 0x250a4a0; original cards/odyssey.c:2626. */
 int card_fervent_denial(int player, int card, event_t event)
 {
+  /* Fervent Denial	|3|U|U
+   * Instant
+   * Counter target spell.
+   * Flashback |5|U|U (You may cast this card from your graveyard for its flashback cost. Then exile it.) */
+
   int result;
   card_instance_t *instance;
   if ((event == EVENT_GRAVEYARD_ABILITY) || (event == EVENT_PAY_FLASHBACK_COSTS))
@@ -59,6 +64,10 @@ int card_fervent_denial(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x250a820; original cards/odyssey.c:2687. */
 int card_flame_burst(int player, int card, event_t event)
 {
+  /* Flame Burst	|1|R	0x200349b
+   * Instant
+   * ~ deals X damage to any target, where X is 2 plus the number of cards named ~ in all graveyards. */
+
   int result_or_flame_burst_count;
   int firecat_count;
   target_definition_t td;
@@ -88,6 +97,10 @@ int card_flame_burst(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2510090; original cards/odyssey.c:4402. */
 int card_predict(int player, int card, event_t event)
 {
+  /* Predict	|1|U
+   * Instant
+   * Choose a card name, then target player mills a card. If a card with the chosen name was milled this way, you draw two cards. Otherwise, you draw a card. */
+
   int t_player;
   int top_iid;
   int name_or_result;
@@ -137,11 +150,13 @@ int card_predict(int player, int card, event_t event)
   return name_or_result;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
 /* ManalinkEh 2022: 0x2510270; original cards/odyssey.c:4444. */
 int card_price_of_glory(int player, int card, event_t event)
 {
+  /* Price of Glory	|2|R
+   * Enchantment
+   * Whenever a player taps a land for mana, if it's not that player's turn, destroy that land. */
+
   card_instance_t *instance;
   int result;
 
@@ -166,6 +181,11 @@ int card_price_of_glory(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2511ec0; original cards/odyssey.c:4960. */
 int card_seize_the_day(int player, int card, event_t event)
 {
+  /* Seize the Day	|3|R
+   * Sorcery
+   * Untap target creature. After this main phase, there is an additional combat phase followed by an additional main phase.
+   * Flashback |2|R (You may cast this card from your graveyard for its flashback cost. Then exile it.) */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -201,7 +221,161 @@ int card_seize_the_day(int player, int card, event_t event)
   return result;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+/* ManalinkEh 2022: 0x2512e50; original cards/odyssey.c:5362. */
+int card_spellbane_centaur(int player, int card, event_t event)
+{
+  /* Spellbane Centaur	|2|G
+   * Creature - Centaur 3/2
+   * Creatures you control can't be the targets of blue spells or abilities from blue sources. */
+
+  card_instance_t *instance;
+  int result;
+  unsigned int attacker_colors;
+  unsigned int protected_color;
+
+  if (event == EVENT_ABILITIES)
+  {
+    result = is_what(affected_card_controller, affected_card, 2);
+    if ((result != 0) && (affected_card_controller == player))
+    {
+      special_abilities2(player, affected_card, EVENT_ABILITIES, SP_KEYWORD2_GRANTED_PROT_MISC);
+    }
+  }
+  else if (event == EVENT_PROT_MISC)
+  {
+    instance = get_card_instance(affected_card_controller, affected_card);
+    if (instance != NULL)
+    {
+      result = is_what(affected_card_controller, affected_card, 2);
+      if (((result != 0) && (affected_card_controller == player)) &&
+          (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
+      {
+        attacker_colors = get_color(attacking_card_controller, attacking_card);
+        protected_color = get_sleighted_color_test(player, card, 4);
+        if ((attacker_colors & protected_color) != 0)
+        {
+          event_result = event_result | 1;
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+int card_verdant_succession(int player, int card, event_t event)
+{
+  /* CARD_ID_VERDANT_SUCCESSION	5747
+   * Verdant Succession	|4|G
+   * Enchantment
+   * Whenever a |Sgreen nontoken creature dies, that creature's controller may search his or her library for a card with the same name as that creature
+   * and put it onto the battlefield. If that player does, he or she shuffles his or her library. */
+
+  int stored_count_or_result;
+  card_instance_t *instance;
+  int stored_name;
+  target_t *stored_target;
+  int (*stored_entry)[2];
+  int tutor_count;
+  int added[10][2];
+  char msg[100];
+  test_definition_t this_test;
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      bool legacy_found = false;
+      stored_count_or_result = 0;
+      if (0 < active_cards_count[player])
+      {
+        do
+        {
+          instance = in_play(player, stored_count_or_result);
+          if ((((instance != NULL) &&
+                (stored_name = is_what(player, stored_count_or_result, 0x80), stored_name != 0)) &&
+               (instance = get_card_instance(player, stored_count_or_result),
+                instance->info_slot_fn == verdant_succession_effect)) &&
+              (((instance->damage_target_player == player &&
+                 (instance->damage_target_card == card)) ||
+                ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
+          {
+            legacy_found = true;
+            break;
+          }
+          stored_count_or_result = stored_count_or_result + 1;
+        } while (stored_count_or_result < active_cards_count[player]);
+      }
+      if (!legacy_found)
+      {
+        stored_count_or_result =
+            create_targetted_legacy_effect(player, card, verdant_succession_effect, player, card);
+        instance = get_card_instance(player, stored_count_or_result);
+        instance->targets[0].player = player;
+        instance->targets[0].card = card;
+        instance->number_of_targets = '\x01';
+        add_status(player, stored_count_or_result, 0x10000);
+      }
+    }
+  }
+  stored_count_or_result = is_humiliated(player, card, AL_TRIG);
+  if (stored_count_or_result == 0)
+  {
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    {
+      default_test_definition(&this_test, 2);
+      this_test.color = get_sleighted_color_test(player, card, 8);
+      count_for_gfp_ability_and_store_values(player, card, 0x77, 2, 0, &this_test, 0x10, 0);
+    }
+    stored_count_or_result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (stored_count_or_result != 0)
+    {
+      stored_count_or_result = 0;
+      instance = get_card_instance(player, card);
+      stored_target = instance->targets;
+      do
+      {
+        if (stored_target->player != -1)
+        {
+          added[stored_count_or_result][0] = stored_target->player;
+          stored_name = get_card_name(-1, stored_target->card);
+          stored_target->card = -1;
+          added[stored_count_or_result][1] = stored_name;
+          stored_target->player = -1;
+          stored_count_or_result = stored_count_or_result + 1;
+        }
+        stored_target = stored_target + 1;
+      } while (stored_target != instance->targets + 10);
+      if (0 < stored_count_or_result)
+      {
+        stored_entry = added;
+        do
+        {
+          stored_name = (*stored_entry)[1];
+          tutor_count = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
+          do
+          {
+            if (stored_name == -1)
+            {
+              scnprintf(msg, 100,
+                        "You won\'t be able to tutor any card as you\'re searching for a card with "
+                        "no name.");
+            }
+            else
+            {
+              scnprintf(msg, 100, "Select a card named %s", cards_ptr[stored_name]->name);
+            }
+            new_default_test_definition(&this_test, 0xff, msg);
+            this_test.id = stored_name;
+            new_global_tutor((*stored_entry)[0], (*stored_entry)[0], 1, 4, 0, 5, &this_test);
+            tutor_count = tutor_count + -1;
+          } while (tutor_count != 0);
+          stored_entry = stored_entry + 1;
+        } while (stored_entry != added + stored_count_or_result);
+      }
+    }
+  }
+  stored_count_or_result = global_enchantment(player, card, event);
+  return stored_count_or_result;
+}
 
 /* ManalinkEh 2022: 0x2501eb0; original cards/odyssey.c:5852. */
 static int verdant_succession_effect(int player, int card, event_t event)
@@ -329,153 +503,4 @@ static int verdant_succession_effect(int player, int card, event_t event)
     kill_card(player, card, KILL_EXILE);
   }
   return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2512e50; original cards/odyssey.c:5362. */
-int card_spellbane_centaur(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-  unsigned int attacker_colors;
-  unsigned int protected_color;
-
-  if (event == EVENT_ABILITIES)
-  {
-    result = is_what(affected_card_controller, affected_card, 2);
-    if ((result != 0) && (affected_card_controller == player))
-    {
-      special_abilities2(player, affected_card, EVENT_ABILITIES, SP_KEYWORD2_GRANTED_PROT_MISC);
-    }
-  }
-  else if (event == EVENT_PROT_MISC)
-  {
-    instance = get_card_instance(affected_card_controller, affected_card);
-    if (instance != NULL)
-    {
-      result = is_what(affected_card_controller, affected_card, 2);
-      if (((result != 0) && (affected_card_controller == player)) &&
-          (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
-      {
-        attacker_colors = get_color(attacking_card_controller, attacking_card);
-        protected_color = get_sleighted_color_test(player, card, 4);
-        if ((attacker_colors & protected_color) != 0)
-        {
-          event_result = event_result | 1;
-        }
-      }
-    }
-  }
-  return 0;
-}
-
-
-int card_verdant_succession(int player, int card, event_t event)
-{
-  int stored_count_or_result;
-  card_instance_t *instance;
-  int stored_name;
-  target_t *stored_target;
-  int (*stored_entry)[2];
-  int tutor_count;
-  int added[10][2];
-  char msg[100];
-  test_definition_t this_test;
-  if (event == EVENT_STATIC_EFFECTS)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-      bool legacy_found = false;
-      stored_count_or_result = 0;
-      if (0 < active_cards_count[player])
-      {
-        do
-        {
-          instance = in_play(player, stored_count_or_result);
-          if ((((instance != NULL) &&
-                (stored_name = is_what(player, stored_count_or_result, 0x80), stored_name != 0)) &&
-               (instance = get_card_instance(player, stored_count_or_result),
-                instance->info_slot_fn == verdant_succession_effect)) &&
-              (((instance->damage_target_player == player &&
-                 (instance->damage_target_card == card)) ||
-                ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
-          {
-            legacy_found = true;
-            break;
-          }
-          stored_count_or_result = stored_count_or_result + 1;
-        } while (stored_count_or_result < active_cards_count[player]);
-      }
-      if (!legacy_found)
-      {
-        stored_count_or_result =
-            create_targetted_legacy_effect(player, card, verdant_succession_effect, player, card);
-        instance = get_card_instance(player, stored_count_or_result);
-        instance->targets[0].player = player;
-        instance->targets[0].card = card;
-        instance->number_of_targets = '\x01';
-        add_status(player, stored_count_or_result, 0x10000);
-      }
-    }
-  }
-  stored_count_or_result = is_humiliated(player, card, AL_TRIG);
-  if (stored_count_or_result == 0)
-  {
-    if (event == EVENT_GRAVEYARD_FROM_PLAY)
-    {
-      default_test_definition(&this_test, 2);
-      this_test.color = get_sleighted_color_test(player, card, 8);
-      count_for_gfp_ability_and_store_values(player, card, 0x77, 2, 0, &this_test, 0x10, 0);
-    }
-    stored_count_or_result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if (stored_count_or_result != 0)
-    {
-      stored_count_or_result = 0;
-      instance = get_card_instance(player, card);
-      stored_target = instance->targets;
-      do
-      {
-        if (stored_target->player != -1)
-        {
-          added[stored_count_or_result][0] = stored_target->player;
-          stored_name = get_card_name(-1, stored_target->card);
-          stored_target->card = -1;
-          added[stored_count_or_result][1] = stored_name;
-          stored_target->player = -1;
-          stored_count_or_result = stored_count_or_result + 1;
-        }
-        stored_target = stored_target + 1;
-      } while (stored_target != instance->targets + 10);
-      if (0 < stored_count_or_result)
-      {
-        stored_entry = added;
-        do
-        {
-          stored_name = (*stored_entry)[1];
-          tutor_count = card_counts[player][CCOUNTS_TEYSA_KARLOV] + 1;
-          do
-          {
-            if (stored_name == -1)
-            {
-              scnprintf(msg, 100,
-                        "You won\'t be able to tutor any card as you\'re searching for a card with "
-                        "no name.");
-            }
-            else
-            {
-              scnprintf(msg, 100, "Select a card named %s", cards_ptr[stored_name]->name);
-            }
-            new_default_test_definition(&this_test, 0xff, msg);
-            this_test.id = stored_name;
-            new_global_tutor((*stored_entry)[0], (*stored_entry)[0], 1, 4, 0, 5, &this_test);
-            tutor_count = tutor_count + -1;
-          } while (tutor_count != 0);
-          stored_entry = stored_entry + 1;
-        } while (stored_entry != added + stored_count_or_result);
-      }
-    }
-  }
-  stored_count_or_result = global_enchantment(player, card, event);
-  return stored_count_or_result;
 }

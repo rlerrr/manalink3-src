@@ -5,6 +5,7 @@
 // Functions to remember which cards are exiled by which.
 
 // empty effect, used only for data storage and comparison purposes
+
 static int exiledby_legacy(int player, int card, event_t event)
 {
   /* Targets:
@@ -198,6 +199,7 @@ int exiledby_choose(int player, int card, int csvid, exiledby_choose_mode_t mode
 }
 
 // Find the first card exiled by player/card starting at ret_leg/ret_idx.
+
 int* exiledby_find_any(int player, int card, int* ret_leg, int* ret_idx)
 {
   int leg = ret_leg ? *ret_leg : 0, idx = ret_idx ? *ret_idx : 0, *loc = NULL;
@@ -242,6 +244,7 @@ int* exiledby_find_any(int player, int card, int* ret_leg, int* ret_idx)
 }
 
 // Find the first card exiled by player/card starting at ret_leg/ret_idx with stored value needle.
+
 int* exiledby_find(int player, int card, int needle, int* ret_leg, int* ret_idx)
 {
   int leg = ret_leg ? *ret_leg : 0, idx = ret_idx ? *ret_idx : 0, *loc = NULL;
@@ -286,6 +289,7 @@ int* exiledby_find(int player, int card, int needle, int* ret_leg, int* ret_idx)
 }
 
 // Returns total number of cards exiled by player/card owned by owned_by.
+
 int exiledby_count(int player, int card, int owned_by)
 {
   int leg = 0;
@@ -320,7 +324,86 @@ int exiledby_count(int player, int card, int owned_by)
   return count;
 }
 
+/* ManalinkEh 2022: 0x26d6d50; original functions/exiledby.c:309. */
+int exiledby_count_cmcs(int player, int card, int owned_by)
+{
+  target_t *current_exile_record;
+  int *cmc_cursor_or_exile_entry;
+  card_instance_t *instance;
+  unsigned char owner_bits_or_match;
+  int result;
+  int legacy_player;
+  int leg;
+  int idx;
+  int cmcs[21];
+
+  leg = 0;
+  memset(cmcs, 0, sizeof(cmcs));
+  result = 0;
+  idx = 0;
+  legacy_player = player;
+  if (player < 0)
+  {
+    legacy_player = player + 2;
+  }
+  do
+  {
+    cmc_cursor_or_exile_entry = exiledby_find_any(player, card, &leg, &idx);
+    if (cmc_cursor_or_exile_entry == NULL)
+    {
+      cmc_cursor_or_exile_entry = cmcs;
+      result = 0;
+      do
+      {
+        if (*cmc_cursor_or_exile_entry == 1)
+        {
+          result = result + 1;
+        }
+        cmc_cursor_or_exile_entry = cmc_cursor_or_exile_entry + 1;
+      } while (cmcs + 0x14 != cmc_cursor_or_exile_entry);
+      return result;
+    }
+    instance = get_card_instance(legacy_player, leg);
+    owner_bits_or_match = (unsigned char)((unsigned int)*cmc_cursor_or_exile_entry >> 0x18);
+    bool count_first_entry = true;
+    if (owned_by == 0)
+    {
+      owner_bits_or_match = owner_bits_or_match ^ 0xff;
+      if ((char)owner_bits_or_match >= '\0')
+        count_first_entry = false;
+    }
+    else if (owned_by == 1 && (char)owner_bits_or_match >= '\0')
+      count_first_entry = false;
+    if (count_first_entry)
+    {
+      result = get_cmc_by_id((unsigned int)cards_data[*cmc_cursor_or_exile_entry].id);
+      cmcs[result] = 1;
+    }
+    current_exile_record = instance->targets + idx;
+    if (((target_t *)cmc_cursor_or_exile_entry == current_exile_record) &&
+        (result = instance->targets[idx].card, result != -1))
+    {
+      owner_bits_or_match = (unsigned char)((unsigned int)result >> 0x18);
+      if (owned_by == 0)
+      {
+        owner_bits_or_match = (owner_bits_or_match ^ 0xff) >> 7;
+      }
+      else
+      {
+        owner_bits_or_match = owned_by != 1 | owner_bits_or_match >> 7;
+      }
+      if (owner_bits_or_match != 0)
+      {
+        result = get_cmc_by_id((unsigned int)cards_data[result].id);
+        cmcs[result] = 1;
+      }
+    }
+    idx = idx + 1;
+  } while (true);
+}
+
 // Remembers that a card with iid owned by t_player was exiled.  This doesn't actually exiled the card; if the exiled card is to be face-up, the caller should do so.
+
 void exiledby_remember(int player, int card, int t_player, int iid, int *ret_leg, int *ret_idx)
 {
   if (iid == -1)
@@ -406,6 +489,7 @@ int exiledby_detach(int player, int card)
 }
 
 // Destroys all detached exiledby legacies set to detach_id.
+
 void exiledby_destroy_detached(int player, int detach_id)
 {
   int leg;
@@ -422,6 +506,7 @@ void exile_card_and_remember_it_on_exiledby(int player, int card, int t_player, 
 }
 
 // empty effect, used only for data storage and comparison purposes
+
 static int store_counters_legacy(int player, int card, event_t event)
 {
   /* Targets:
@@ -717,84 +802,4 @@ void get_back_cards_stored_in_exiledby(int player, int exby_player, int exby_car
 				put_into_play(who_gets_the_card, card_added);
 			}
 	}
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x26d6d50; original functions/exiledby.c:309. */
-int exiledby_count_cmcs(int player, int card, int owned_by)
-{
-  target_t *current_exile_record;
-  int *cmc_cursor_or_exile_entry;
-  card_instance_t *instance;
-  unsigned char owner_bits_or_match;
-  int result;
-  int legacy_player;
-  int leg;
-  int idx;
-  int cmcs[21];
-
-  leg = 0;
-  memset(cmcs, 0, sizeof(cmcs));
-  result = 0;
-  idx = 0;
-  legacy_player = player;
-  if (player < 0)
-  {
-    legacy_player = player + 2;
-  }
-  do
-  {
-    cmc_cursor_or_exile_entry = exiledby_find_any(player, card, &leg, &idx);
-    if (cmc_cursor_or_exile_entry == NULL)
-    {
-      cmc_cursor_or_exile_entry = cmcs;
-      result = 0;
-      do
-      {
-        if (*cmc_cursor_or_exile_entry == 1)
-        {
-          result = result + 1;
-        }
-        cmc_cursor_or_exile_entry = cmc_cursor_or_exile_entry + 1;
-      } while (cmcs + 0x14 != cmc_cursor_or_exile_entry);
-      return result;
-    }
-    instance = get_card_instance(legacy_player, leg);
-    owner_bits_or_match = (unsigned char)((unsigned int)*cmc_cursor_or_exile_entry >> 0x18);
-    bool count_first_entry = true;
-    if (owned_by == 0)
-    {
-      owner_bits_or_match = owner_bits_or_match ^ 0xff;
-      if ((char)owner_bits_or_match >= '\0')
-        count_first_entry = false;
-    }
-    else if (owned_by == 1 && (char)owner_bits_or_match >= '\0')
-      count_first_entry = false;
-    if (count_first_entry)
-    {
-      result = get_cmc_by_id((unsigned int)cards_data[*cmc_cursor_or_exile_entry].id);
-      cmcs[result] = 1;
-    }
-    current_exile_record = instance->targets + idx;
-    if (((target_t *)cmc_cursor_or_exile_entry == current_exile_record) &&
-        (result = instance->targets[idx].card, result != -1))
-    {
-      owner_bits_or_match = (unsigned char)((unsigned int)result >> 0x18);
-      if (owned_by == 0)
-      {
-        owner_bits_or_match = (owner_bits_or_match ^ 0xff) >> 7;
-      }
-      else
-      {
-        owner_bits_or_match = owned_by != 1 | owner_bits_or_match >> 7;
-      }
-      if (owner_bits_or_match != 0)
-      {
-        result = get_cmc_by_id((unsigned int)cards_data[result].id);
-        cmcs[result] = 1;
-      }
-    }
-    idx = idx + 1;
-  } while (true);
 }

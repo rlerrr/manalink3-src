@@ -5,8 +5,15 @@
 static int exploit_impl(int player, int card, event_t event, resolve_trigger_t mode);
 int exploit(int player, int card, event_t event);
 
-/***** Functions *****/
+void raise_command_singleton_ai_priorities(event_t event, int* priority);	// in lorwyn.c
 
+int rebound(int player, int card);	// in rise_of_the_eldrazi.c
+
+int bone_harvest_impl(int player, int card, event_t event, int draw_else_slowtrip);
+
+static int display_of_dominance_effect(int player, int card, event_t event);
+
+/***** Functions *****/
 static int exploit_impl(int player, int card, event_t event, resolve_trigger_t mode)
 {
   int result;
@@ -31,6 +38,7 @@ int exploit(int player, int card, event_t event)
 }
 
 // Just like exploit(), but if allow_ai is zero, then the AI will decline
+
 static int exploit_allow_ai(int player, int card, event_t event, int allow_ai)
 {
   return exploit_impl(player, card, event, (allow_ai || !IS_AI(player)) ? RESOLVE_TRIGGER_AI(player) : RESOLVE_TRIGGER_OPTIONAL);
@@ -115,11 +123,8 @@ static void put_1_1_on_each_other_dragon_creature_you_control(int player, int ca
   new_manipulate_all(player, card, player, &test, ACT_ADD_COUNTERS(COUNTER_P1_P1, 1));
 }
 
-void raise_command_singleton_ai_priorities(event_t event, int* priority);	// in lorwyn.c
-
-int rebound(int player, int card);	// in rise_of_the_eldrazi.c
-
 // Must be called at toplevel, since it has its own event clause.
+
 static int revealed_or_controlled_dragon(int player, int card, event_t event)
 {
   if (event == EVENT_CAST_SPELL && affect_me(player, card)
@@ -144,16 +149,15 @@ static int revealed_or_controlled_dragon(int player, int card, event_t event)
   return get_card_instance(player, card)->info_slot == CARD_ID_DRACONIC_ROAR;
 }
 
-/***** Cards *****/
-
-/*** Colorless ***/
-
 /* Scion of Ugin	|6	=>vanilla
  * Creature - Dragon Spirit 4/4
  * Flying */
 
-/*** White ***/
+/***** Cards *****/
 
+/*** Colorless ***/
+
+/*** White ***/
 int card_anafenza_kin_tree_spirit(int player, int card, event_t event)
 {
   /* Anafenza, Kin-Tree Spirit	|W|W	0x200d946
@@ -558,6 +562,7 @@ static void add_state_tapped(int player, int card)
   // not tap_card(), since that would send an EVENT_TAP_CARD event; the intent is to enter the bf tapped, not to enter the bf, then tap.
   get_card_instance(player, card)->state |= STATE_TAPPED;
 }
+
 int card_ojutai_exemplars(int player, int card, event_t event)
 {
   /* Ojutai Exemplars	|2|W|W	0x200d99b
@@ -725,6 +730,10 @@ int card_resupply(int player, int card, event_t event)
 
 int card_scale_blessing(int player, int card, event_t event)
 {
+  /* Scale Blessing	|3|W	0x200d9cd
+   * Instant
+   * Bolster 1, then put a +1/+1 counter on each creature you control with a +1/+1 counter on it. */
+
   int c;
   card_instance_t *instance;
   int live_count_or_result;
@@ -906,10 +915,10 @@ int card_surge_of_righteousness(int player, int card, event_t event)
  * Creature - Bird 1/3
  * Flying */
 
-/*** Blue ***/
-
 /* Ancient Carp	|4|U	=>vanilla
  * Creature - Fish 2/5 */
+
+/*** Blue ***/
 
 int card_anticipate(int player, int card, event_t event)
 {
@@ -1230,6 +1239,7 @@ static int fx_exile_at_end_of_combat(int player, int card, event_t event)
 
   return 0;
 }
+
 int card_mirror_mockery(int player, int card, event_t event)
 {
   /* Mirror Mockery	|1|U	0x200da3b
@@ -1774,7 +1784,6 @@ int card_zephyr_scribe(int player, int card, event_t event)
 }
 
 /*** Black ***/
-
 int card_acid_spewer_dragon(int player, int card, event_t event)
 {
   /* Acid-Spewer Dragon	|5|B	0x200d9e1
@@ -2172,7 +2181,6 @@ int card_foul_tongue_shriek(int player, int card, event_t event)
   return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, "TARGET_OPPONENT", 1, NULL);
 }
 
-int bone_harvest_impl(int player, int card, event_t event, int draw_else_slowtrip);
 int card_gravepurge(int player, int card, event_t event)
 {
   /* Gravepurge	|2|B
@@ -2502,7 +2510,6 @@ int card_vulturous_aven(int player, int card, event_t event)
  * Creature - Zombie Turtle 1/6 */
 
 /*** Red ***/
-
 int card_atarka_efreet(int player, int card, event_t event)
 {
   /* Atarka Efreet	|3|R	0x200dafe
@@ -2905,6 +2912,12 @@ int card_ire_shaman(int player, int card, event_t event)
 
 int card_kolaghan_forerunners(int player, int card, event_t event)
 {
+  /* Kolaghan Forerunners	|2|R	0x200d8fb
+   * Creature - Human Berserker 100/3
+   * Trample
+   * ~'s power is equal to the number of creatures you control.
+   * Dash |2|R */
+
   if ((((event == EVENT_POWER) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
       (player != -1))
@@ -2964,6 +2977,7 @@ static int fx_haste_and_menace(int player, int card, event_t event)
 	}
   return fx_menace(player, card, event);
 }
+
 int card_lose_calm(int player, int card, event_t event)
 {
   /* Lose Calm	|3|R	0x200db21
@@ -3218,10 +3232,26 @@ int card_tail_slash(int player, int card, event_t event)
   return 0;
 }
 
-/* Thunderbreak Regent	|2|R|R	0x000000
- * Creature - Dragon 4/4
- * Flying
- * Whenever a Dragon you control becomes the target of a spell or ability an opponent controls, ~ deals 3 damage to that player. */
+/*** Land ***/
+
+/* ManalinkEh 2022: 0x23232b0; original cards/dragons_of_tarkir.c:3221. */
+int card_thunderbreak_regent(int player, int card, event_t event)
+{
+  /* Thunderbreak Regent	|2|R|R	0x000000
+   * Creature - Dragon 4/4
+   * Flying
+   * Whenever a Dragon you control becomes the target of a spell or ability an opponent controls, ~ deals 3 damage to that player. */
+
+  const target_t *targeting_spell;
+
+  targeting_spell = any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, 0x30,
+                                       TYPE_ANY, 1 - player, RESOLVE_TRIGGER_MANDATORY);
+  if (targeting_spell != NULL)
+  {
+    damage_player(1 - player, 3, player, card);
+  }
+  return 0;
+}
 
 /* Tormenting Voice	|1|R	=>khans_of_tarkir.c:card_tormenting_voice
  * Sorcery
@@ -3372,7 +3402,6 @@ int card_zurgo_bellstriker(int player, int card, event_t event)
 }
 
 /*** Green ***/
-
 int card_aerie_bowmasters(int player, int card, event_t event)
 {
   /* Aerie Bowmasters	|2|G|G	0x200d8e7
@@ -3488,6 +3517,11 @@ int card_atarka_beastbreaker(int player, int card, event_t event)
 
 int card_avatar_of_the_resolute(int player, int card, event_t event)
 {
+  /* Avatar of the Resolute	|G|G	0x2001015
+   * Creature - Avatar 3/2
+   * Reach, trample
+   * ~ enters the battlefield with a +1/+1 counter on it for each other creature you control with a +1/+1 counter on it. */
+
   card_instance_t *instance;
   int result;
   int card_00;
@@ -3630,6 +3664,12 @@ int card_deathmist_raptor(int player, int card, event_t event)
 
 int card_den_protector(int player, int card, event_t event)
 {
+  /* Den Protector	|1|G	0x200101a
+   * Creature - Human Warrior 2/1
+   * Creatures with power less than ~'s power can't block it.
+   * Megamorph |1|G
+   * When ~ is turned face up, return target card from your graveyard to your hand. */
+
   int blocker_power;
   int own_power;
   test_definition_t test;
@@ -3665,11 +3705,168 @@ int card_den_protector(int player, int card, event_t event)
   return megamorph(player, card, event, 1, 0, 0, 1, 0, 0);
 }
 
-/* Display of Dominance	|1|G	0x000000
- * Instant
- * Choose one -
- * * Destroy target |Sblue or |Sblack noncreature permanent.
- * * Permanents you control can't be the targets of |Sblue or |Sblack spells your opponents control this turn. */
+/* ManalinkEh 2022: 0x2319e20; original cards/dragons_of_tarkir.c:3648. */
+static int display_of_dominance_effect(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int attacking_spell_color;
+  unsigned int protected_colors;
+
+  if (event == EVENT_ABILITIES)
+  {
+    result = is_what(affected_card_controller, affected_card, 0x47);
+    if ((result != 0) && (affected_card_controller == player))
+    {
+      special_abilities2(player, affected_card, EVENT_ABILITIES, SP_KEYWORD2_GRANTED_PROT_MISC);
+    }
+  }
+  else if (event == EVENT_PROT_MISC)
+  {
+    instance = get_card_instance(affected_card_controller, affected_card);
+    if (instance != NULL)
+    {
+      result = is_what(affected_card_controller, affected_card, 0x47);
+      if (((result != 0) && (affected_card_controller == player)) &&
+          (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
+      {
+        result = is_being_cast(attacking_card_controller, attacking_card);
+        if ((result != 0) && (1 - player == attacking_card_controller))
+        {
+          attacking_spell_color = get_color(1 - player, attacking_card);
+          protected_colors = get_sleighted_color_test(player, card, 6);
+          if ((attacking_spell_color & protected_colors) != 0)
+          {
+            event_result = event_result | 1;
+          }
+        }
+      }
+    }
+  }
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2324920; original cards/dragons_of_tarkir.c:3670. */
+int card_display_of_dominance(int player, int card, event_t event)
+{
+  /* Display of Dominance	|1|G	0x000000
+   * Instant
+   * Choose one -
+   * * Destroy target |Sblue or |Sblack noncreature permanent.
+   * * Permanents you control can't be the targets of |Sblue or |Sblack spells your opponents control this turn. */
+
+  enum
+  {
+    CHOICE_DESTROY = 1,
+    CHOICE_PERMANENTS = 2
+  };
+
+  int choice;
+  card_instance_t *instance;
+  const char *prompt;
+  int destroy_available;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = TYPE_CREATURE;
+    td.required_color = get_sleighted_color_test(player, card, 6);
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+    return basic_spell(player, card, EVENT_CAN_CAST);
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = TYPE_CREATURE;
+    td.required_color = get_sleighted_color_test(player, card, 6);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = TYPE_CREATURE;
+    td.required_color = get_sleighted_color_test(player, card, 6);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+  }
+  else
+  {
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = TYPE_CREATURE;
+    td.required_color = get_sleighted_color_test(player, card, 6);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+  }
+
+  if (event == EVENT_CAST_SPELL || event == EVENT_CHANGE_TARGET)
+  {
+    instance->number_of_targets = '\0';
+    destroy_available = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    if (check_special_flags2(player, card, -0x80000000) != 0)
+    {
+      return 0;
+    }
+
+    choice = dialog_impl(player, card, event, DLG_RANDOM, "Destroy non-creature", destroy_available,
+                         5, "Permanents untargettable", 1, 10, 0, 0, 0, 0);
+    if (choice == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == CHOICE_DESTROY)
+    {
+      prompt = get_sleighted_color_text2(player, card, "Select target %s or %s creature.", 2, 1);
+      return generic_spell(player, card, event, 0x81, &td, prompt, 1, NULL);
+    }
+  }
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    if (instance->info_slot == CHOICE_DESTROY)
+    {
+      if (valid_target(&td) != 0)
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      }
+    }
+    else if (instance->info_slot == CHOICE_PERMANENTS)
+    {
+      create_legacy_effect(player, card, display_of_dominance_effect);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return 0;
+}
 
 int card_dragon_scarred_bear(int player, int card, event_t event)
 {
@@ -3759,6 +3956,7 @@ static int fx_add_2_p1p1_at_eot(int player, int card, event_t event)
 	}
   return 0;
 }
+
 int card_foe_razer_regent(int player, int card, event_t event)
 {
   /* Foe-Razer Regent	|5|G|G	0x2001029
@@ -3810,6 +4008,11 @@ int card_glade_watcher(int player, int card, event_t event)
 
 int card_guardian_shield_bearer(int player, int card, event_t event)
 {
+  /* Guardian Shield-Bearer	|1|G	0x200102e
+   * Creature - Human Soldier 2/1
+   * Megamorph |3|G
+   * When ~ is turned face up, put a +1/+1 counter on another target creature you control. */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -3979,10 +4182,11 @@ int card_press_the_advantage(int player, int card, event_t event)
   return generic_spell(player, card, event, GS_OPTIONAL_TARGET, &td, "TARGET_CREATURE", 2, NULL);
 }
 
-// Can always look at opponent's face-down creatures - see http://www.slightlymagic.net/forum/viewtopic.php?t=13200
 /* Revealing Wind	|2|G	=>unlimited.c:card_fog
  * Instant
  * Prevent all combat damage that would be dealt this turn. You may look at each face-down creature that's attacking or blocking. */
+
+// Can always look at opponent's face-down creatures - see http://www.slightlymagic.net/forum/viewtopic.php?t=13200
 
 int card_salt_road_ambushers(int player, int card, event_t event)
 {
@@ -3997,6 +4201,11 @@ int card_salt_road_ambushers(int player, int card, event_t event)
 
 int card_salt_road_quartermasters(int player, int card, event_t event)
 {
+  /* Salt Road Quartermasters	|2|G	0x20010d8
+   * Creature - Human Soldier 1/1
+   * ~ enters the battlefield with two +1/+1 counters on it.
+   * |2|G, Remove a +1/+1 counter from ~: Put a +1/+1 counter on target creature. */
+
   card_instance_t *instance;
   target_definition_t td;
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 2);
@@ -4204,7 +4413,6 @@ int card_tread_upon(int player, int card, event_t event)
 }
 
 /*** Multi ***/
-
 int card_arashin_sovereign(int player, int card, event_t event)
 {
   /* Arashin Sovereign	|5|G|W	0x200db71
@@ -4489,6 +4697,14 @@ int card_dragonlord_silumgar(int player, int card, event_t event)
 
 int card_dromokas_command(int player, int card, event_t event)
 {
+  /* Dromoka's Command	|G|W	0x200db9e
+   * Instant
+   * Choose two -
+   * * Prevent all damage target instant or sorcery spell would deal this turn.
+   * * Target player sacrifices an enchantment.
+   * * Put a +1/+1 counter on target creature.
+   * * Target creature you control fights target creature you don't control. */
+
   if (!IS_GS_EVENT(player, card, event))
     return 0;
 
@@ -4604,6 +4820,11 @@ int card_dromokas_command(int player, int card, event_t event)
 
 int card_enduring_scalelord(int player, int card, event_t event)
 {
+  /* Enduring Scalelord	|4|G|W	0x200dbad
+   * Creature - Dragon 4/4
+   * Flying
+   * Whenever one or more +1/+1 counters are placed on another creature you control, you may put a +1/+1 counter on ~. */
+
   xtrigger_t current_trigger;
   int result;
   enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_1_1_COUNTERS;
@@ -5261,7 +5482,6 @@ int card_silumgars_command(int player, int card, event_t event)
  * When ~ enters the battlefield, you may put a creature card with converted mana cost 3 or less from your hand or graveyard onto the battlefield. That creature gains haste. Return it to your hand at the beginning of the next end step. */
 
 /*** Artifact ***/
-
 int card_ancestral_statue(int player, int card, event_t event)
 {
   /* Ancestral Statue	|4	0x200dc02
@@ -5445,8 +5665,6 @@ int card_vial_of_dragonfire(int player, int card, event_t event)
   return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET|GAA_SACRIFICE_ME, MANACOST_X(2), 0, &td, "TARGET_CREATURE");
 }
 
-/*** Land ***/
-
 /* Evolving Wilds	""	=>m11.c:card_terramorphic_expanse
  * Land
  * |T, Sacrifice ~: Search your library for a basic land card and put it onto the battlefield tapped. Then shuffle your library. */
@@ -5471,192 +5689,3 @@ int card_vial_of_dragonfire(int player, int card, event_t event)
 
 /* Forest	""	=>magic.exe:card_forest
  * Basic Land - |H2Forest */
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x23232b0; original cards/dragons_of_tarkir.c:3221. */
-int card_thunderbreak_regent(int player, int card, event_t event)
-{
-  const target_t *targeting_spell;
-
-  targeting_spell = any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, 0x30,
-                                       TYPE_ANY, 1 - player, RESOLVE_TRIGGER_MANDATORY);
-  if (targeting_spell != NULL)
-  {
-    damage_player(1 - player, 3, player, card);
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int display_of_dominance_effect(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x2319e20; original cards/dragons_of_tarkir.c:3648. */
-static int display_of_dominance_effect(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  unsigned int attacking_spell_color;
-  unsigned int protected_colors;
-
-  if (event == EVENT_ABILITIES)
-  {
-    result = is_what(affected_card_controller, affected_card, 0x47);
-    if ((result != 0) && (affected_card_controller == player))
-    {
-      special_abilities2(player, affected_card, EVENT_ABILITIES, SP_KEYWORD2_GRANTED_PROT_MISC);
-    }
-  }
-  else if (event == EVENT_PROT_MISC)
-  {
-    instance = get_card_instance(affected_card_controller, affected_card);
-    if (instance != NULL)
-    {
-      result = is_what(affected_card_controller, affected_card, 0x47);
-      if (((result != 0) && (affected_card_controller == player)) &&
-          (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
-      {
-        result = is_being_cast(attacking_card_controller, attacking_card);
-        if ((result != 0) && (1 - player == attacking_card_controller))
-        {
-          attacking_spell_color = get_color(1 - player, attacking_card);
-          protected_colors = get_sleighted_color_test(player, card, 6);
-          if ((attacking_spell_color & protected_colors) != 0)
-          {
-            event_result = event_result | 1;
-          }
-        }
-      }
-    }
-  }
-  result = eot_trigger(player, card, event);
-  if (result == 0)
-  {
-    return 0;
-  }
-  kill_card(player, card, KILL_EXILE);
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x2324920; original cards/dragons_of_tarkir.c:3670. */
-int card_display_of_dominance(int player, int card, event_t event)
-{
-  enum
-  {
-    CHOICE_DESTROY = 1,
-    CHOICE_PERMANENTS = 2
-  };
-
-  int choice;
-  card_instance_t *instance;
-  const char *prompt;
-  int destroy_available;
-  target_definition_t td;
-
-  if (event == EVENT_CAN_CAST)
-  {
-    default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = TYPE_CREATURE;
-    td.required_color = get_sleighted_color_test(player, card, 6);
-    td.preferred_controller = player;
-    get_card_instance(player, card);
-    return basic_spell(player, card, EVENT_CAN_CAST);
-  }
-  if (event == EVENT_CAST_SPELL)
-  {
-    if (card != affected_card)
-    {
-      return 0;
-    }
-    if (player != affected_card_controller)
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = TYPE_CREATURE;
-    td.required_color = get_sleighted_color_test(player, card, 6);
-    td.preferred_controller = player;
-    instance = get_card_instance(player, card);
-    if (card != affected_card)
-    {
-      return 0;
-    }
-    if (player != affected_card_controller)
-    {
-      return 0;
-    }
-  }
-  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
-  {
-    default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = TYPE_CREATURE;
-    td.required_color = get_sleighted_color_test(player, card, 6);
-    td.preferred_controller = player;
-    instance = get_card_instance(player, card);
-  }
-  else
-  {
-    if (event != EVENT_CHANGE_TARGET)
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = TYPE_CREATURE;
-    td.required_color = get_sleighted_color_test(player, card, 6);
-    td.preferred_controller = player;
-    instance = get_card_instance(player, card);
-  }
-
-  if (event == EVENT_CAST_SPELL || event == EVENT_CHANGE_TARGET)
-  {
-    instance->number_of_targets = '\0';
-    destroy_available = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
-    if (check_special_flags2(player, card, -0x80000000) != 0)
-    {
-      return 0;
-    }
-
-    choice = dialog_impl(player, card, event, DLG_RANDOM, "Destroy non-creature", destroy_available,
-                         5, "Permanents untargettable", 1, 10, 0, 0, 0, 0);
-    if (choice == 0)
-    {
-      spell_fizzled = 1;
-      return 0;
-    }
-    if (choice == CHOICE_DESTROY)
-    {
-      prompt = get_sleighted_color_text2(player, card, "Select target %s or %s creature.", 2, 1);
-      return generic_spell(player, card, event, 0x81, &td, prompt, 1, NULL);
-    }
-  }
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-
-    if (instance->info_slot == CHOICE_DESTROY)
-    {
-      if (valid_target(&td) != 0)
-      {
-        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-      }
-    }
-    else if (instance->info_slot == CHOICE_PERMANENTS)
-    {
-      create_legacy_effect(player, card, display_of_dominance_effect);
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return 0;
-}
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 entry-trigger helpers. */
-
-/* ManalinkEh 2022: 0x2319fb0; original cards/dragons_of_tarkir.c:6. */
-
-
-
-/* ManalinkEh 2022: 0x231a430; original cards/dragons_of_tarkir.c:22. */
-
-
-#endif

@@ -947,18 +947,10 @@ void get_special_counters_name(char *dest, int csvid, int num)
     get_counter_name_by_type(dest, get_counter_type_by_id(csvid), num);
 }
 
-
-
-
-
-
-
 // num must be > 0, or no effect
-
 
 /* num must be > 0, or no effect.  Assumes caller has already called get_updated_counters_number().  This still accounts for putting counters on
  * Melira's Keepers, but not onto effect cards.  Do not call for the latter. */
-
 
 // unaffected by doubling effects; num may be positive or negative
 void add_counters_as_cost(int player, int card, counter_t type, int num)
@@ -971,14 +963,11 @@ void add_counters_as_cost(int player, int card, counter_t type, int num)
 
 // num must be > 0, or no effect
 
-
 /* For each counter on {src_player, src_card}, add one of that type to {t_player, t_card}.  If raw is set, add the exact amount (even for Melira's Keepers or
  * Melira, Sylvok Outcast, or if Doubling Season etc. are present). */
 
-
 /* Moves number of counter_type from {src_player, src_card} to {t_player, t_card}.  Moves all counters of all types if counter_type is -1; moves all of
  * counter_type if number is -1. */
-
 
 static int count_counters_impl(card_instance_t* instance, counter_t type)
 {
@@ -1060,7 +1049,6 @@ int count_counters_no_parent(int player, int card, counter_t type)
 }
 
 // use -1 to remove all of all types
-
 
 // May use ANYBODY for player and/or -1 for counter_type to indicate any player's cards or any kind of counter.  Returns a total count.
 int count_counters_by_counter_and_card_type(int player, counter_t counter_type, type_t type)
@@ -3076,7 +3064,6 @@ int can_have_counters_placed_on_it(int player, int card)
  * native trigger IDs and enable masks. */
 int counters_added_type = -1; /* Target .data 0x02721d68, counters.c:7. */
 
-
 /* ManalinkEh 2022: 0x26d4540; original functions/counters.c:919. */
 static int get_updated_counters_number_as_cost(int player, int card, counter_t type, int number)
 {
@@ -3356,25 +3343,13 @@ void add_counters(int player, int card, int t_player, int t_card, counter_t type
 
 /* Recovered October 2022 source-aware counter removal. */
 
-/* ManalinkEh 2022: 0x26ceef0; original functions/counters.c:1630. */
-static void clear_all_counters(int player, int card, int t_player, int t_card, counter_t type)
+/* ManalinkEh 2022: 0x26d5970; original functions/counters.c:1281. */
+void add_counters_predoubled(int player, int card, int t_player, int t_card, counter_t type, int num)
 {
-  card_instance_t *instance = get_card_instance(t_player, t_card);
-  unsigned int previous_status = instance->regen_status;
-  instance->special_counter_type = COUNTER_invalid;
-  instance->special_counters = 0;
-  instance->counters2 = 0;
-  instance->counters3 = 0;
-  instance->counters4 = 0;
-  instance->counters = 0;
-  instance->counters5 = 0;
-  instance->counters_m1m1 = 0;
-  instance->targets[18].player = -1;
-  /* Two empty hidden slots, each with an invalid counter-type byte. */
-  instance->targets[18].card = (int32_t)0xffff0000U;
-  instance->counter_power = 0;
-  instance->counter_toughness = 0;
-  instance->regen_status = previous_status | KEYWORD_RECALC_POWER | KEYWORD_RECALC_TOUGHNESS;
+  if (is_what(t_player, t_card, TYPE_EFFECT))
+    backtrace_and_abort("functions/counters.c:1283\n!is_what(t_player, t_card, TYPE_EFFECT)");
+  if (can_have_counters_placed_on_it(t_player, t_card) && num != 0)
+    add_or_remove_counters_impl(player, card, t_player, t_card, type, num);
 }
 
 /* ManalinkEh 2022: 0x26d48d0; original functions/counters.c:1304. */
@@ -3459,6 +3434,110 @@ void remove_counters(int player, int card, int t_player, int t_card, counter_t t
     remove_counters_impl(player, card, t_player, t_card, type, num);
 }
 
+/* ManalinkEh 2022: 0x26d4ca0; original functions/counters.c:1385. */
+void copy_counters(int player, int card, int t_player, int t_card, int src_player,
+    int src_card, int raw)
+{
+  card_instance_t *instance = get_card_instance(src_player, src_card);
+  if (instance->internal_card_id == activation_card)
+    instance = get_card_instance(instance->parent_controller, instance->parent_card);
+  card_instance_t *target = get_card_instance(t_player, t_card);
+  if (target->internal_card_id == activation_card)
+  {
+    t_player = target->parent_controller;
+    t_card = target->parent_card;
+  }
+  counter_snapshot_t counters[9];
+  int count = snapshot_counters(instance, counters);
+  for (int i = 0; i < count; ++i)
+    if (raw)
+      add_or_remove_counters_impl(player, card, t_player, t_card, counters[i].type, counters[i].num);
+    else
+      add_counters(player, card, t_player, t_card, counters[i].type, counters[i].num);
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void quarry_hauler_helper(int player, int card, int t_player, int t_card);
+
+/* ManalinkEh 2022: 0x26ceef0; original functions/counters.c:1630. */
+static void clear_all_counters(int player, int card, int t_player, int t_card, counter_t type)
+{
+  card_instance_t *instance = get_card_instance(t_player, t_card);
+  unsigned int previous_status = instance->regen_status;
+  instance->special_counter_type = COUNTER_invalid;
+  instance->special_counters = 0;
+  instance->counters2 = 0;
+  instance->counters3 = 0;
+  instance->counters4 = 0;
+  instance->counters = 0;
+  instance->counters5 = 0;
+  instance->counters_m1m1 = 0;
+  instance->targets[18].player = -1;
+  /* Two empty hidden slots, each with an invalid counter-type byte. */
+  instance->targets[18].card = (int32_t)0xffff0000U;
+  instance->counter_power = 0;
+  instance->counter_toughness = 0;
+  instance->regen_status = previous_status | KEYWORD_RECALC_POWER | KEYWORD_RECALC_TOUGHNESS;
+}
+
+void copy_counters(int player, int card, int t_player, int t_card, int src_player,
+                               int src_card, int raw);
+
+/* ManalinkEh 2022: 0x26d5a00; original functions/counters.c:1437. */
+void move_counters(int player, int card, int t_player, int t_card, int src_player,
+    int src_card, counter_t counter_type, int number)
+{
+  if ((t_player == src_player && t_card == src_card) ||
+      !can_have_counters_placed_on_it(t_player, t_card))
+    return;
+  if ((uint8_t)counter_type == COUNTER_invalid)
+  {
+    if (check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST))
+    {
+      card_instance_t *instance = get_card_instance(src_player, src_card);
+      uint8_t minus_counters = instance->counters_m1m1;
+      instance->counters_m1m1 = 0;
+      ++hack_silent_counters;
+      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
+      clear_all_counters(player, card, src_player, src_card, (counter_t)-1);
+      --hack_silent_counters;
+      instance->counters_m1m1 = minus_counters;
+    }
+    if (!check_battlefield_for_id(1 - t_player, CARD_ID_BLIGHTBEETLE))
+    {
+      ++hack_silent_counters;
+      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
+      clear_all_counters(player, card, src_player, src_card, (counter_t)-1);
+      --hack_silent_counters;
+    }
+    else
+    {
+      int plus_counters = count_counters(src_player, src_card, COUNTER_P1_P1);
+      remove_counters_impl(player, card, src_player, src_card, COUNTER_P1_P1, 255);
+      ++hack_silent_counters;
+      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
+      clear_all_counters(player, card, src_player, src_card, (counter_t)-1);
+      add_counters(player, card, src_player, src_card, COUNTER_P1_P1, plus_counters);
+      --hack_silent_counters;
+    }
+    return;
+  }
+  int melira = check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST);
+  if (counter_type == COUNTER_M1_M1 && melira)
+    return;
+  int blightbeetle = check_battlefield_for_id(1 - t_player, CARD_ID_BLIGHTBEETLE);
+  if (counter_type == COUNTER_P1_P1 && blightbeetle)
+    return;
+  if (number < 0)
+    number = 255;
+  int available = count_counters(src_player, src_card, counter_type);
+  if (available < number)
+    number = available;
+  if (number > 0)
+    remove_counters_impl(player, card, src_player, src_card, counter_type, number);
+  add_counters_predoubled(player, card, t_player, t_card, counter_type, number);
+}
+
 /* ManalinkEh 2022: 0x26d4c50; original functions/counters.c:1630. */
 void remove_all_counters(int player, int card, int t_player, int t_card, counter_t type)
 {
@@ -3467,9 +3546,6 @@ void remove_all_counters(int player, int card, int t_player, int t_card, counter
   else
     remove_counters_impl(player, card, t_player, t_card, type, 255);
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void quarry_hauler_helper(int player, int card, int t_player, int t_card);
 
 /* ManalinkEh 2022: 0x26d51e0; original functions/counters.c:2412. */
 void quarry_hauler_helper(int player, int card, int t_player, int t_card)
@@ -3548,98 +3624,6 @@ void quarry_hauler_helper(int player, int card, int t_player, int t_card)
     else if (choices[i] == CHOICE_REMOVE)
       remove_counters_impl(player, card, t_player, t_card, counter_types[i], 1);
 }
-
-void copy_counters(int player, int card, int t_player, int t_card, int src_player,
-                               int src_card, int raw);
-
-
-/* ManalinkEh 2022: 0x26d4ca0; original functions/counters.c:1385. */
-void copy_counters(int player, int card, int t_player, int t_card, int src_player,
-    int src_card, int raw)
-{
-  card_instance_t *instance = get_card_instance(src_player, src_card);
-  if (instance->internal_card_id == activation_card)
-    instance = get_card_instance(instance->parent_controller, instance->parent_card);
-  card_instance_t *target = get_card_instance(t_player, t_card);
-  if (target->internal_card_id == activation_card)
-  {
-    t_player = target->parent_controller;
-    t_card = target->parent_card;
-  }
-  counter_snapshot_t counters[9];
-  int count = snapshot_counters(instance, counters);
-  for (int i = 0; i < count; ++i)
-    if (raw)
-      add_or_remove_counters_impl(player, card, t_player, t_card, counters[i].type, counters[i].num);
-    else
-      add_counters(player, card, t_player, t_card, counters[i].type, counters[i].num);
-}
-
-/* ManalinkEh 2022: 0x26d5970; original functions/counters.c:1281. */
-void add_counters_predoubled(int player, int card, int t_player, int t_card, counter_t type, int num)
-{
-  if (is_what(t_player, t_card, TYPE_EFFECT))
-    backtrace_and_abort("functions/counters.c:1283\n!is_what(t_player, t_card, TYPE_EFFECT)");
-  if (can_have_counters_placed_on_it(t_player, t_card) && num != 0)
-    add_or_remove_counters_impl(player, card, t_player, t_card, type, num);
-}
-
-
-/* ManalinkEh 2022: 0x26d5a00; original functions/counters.c:1437. */
-void move_counters(int player, int card, int t_player, int t_card, int src_player,
-    int src_card, counter_t counter_type, int number)
-{
-  if ((t_player == src_player && t_card == src_card) ||
-      !can_have_counters_placed_on_it(t_player, t_card))
-    return;
-  if ((uint8_t)counter_type == COUNTER_invalid)
-  {
-    if (check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST))
-    {
-      card_instance_t *instance = get_card_instance(src_player, src_card);
-      uint8_t minus_counters = instance->counters_m1m1;
-      instance->counters_m1m1 = 0;
-      ++hack_silent_counters;
-      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
-      clear_all_counters(player, card, src_player, src_card, (counter_t)-1);
-      --hack_silent_counters;
-      instance->counters_m1m1 = minus_counters;
-    }
-    if (!check_battlefield_for_id(1 - t_player, CARD_ID_BLIGHTBEETLE))
-    {
-      ++hack_silent_counters;
-      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
-      clear_all_counters(player, card, src_player, src_card, (counter_t)-1);
-      --hack_silent_counters;
-    }
-    else
-    {
-      int plus_counters = count_counters(src_player, src_card, COUNTER_P1_P1);
-      remove_counters_impl(player, card, src_player, src_card, COUNTER_P1_P1, 255);
-      ++hack_silent_counters;
-      copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
-      clear_all_counters(player, card, src_player, src_card, (counter_t)-1);
-      add_counters(player, card, src_player, src_card, COUNTER_P1_P1, plus_counters);
-      --hack_silent_counters;
-    }
-    return;
-  }
-  int melira = check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST);
-  if (counter_type == COUNTER_M1_M1 && melira)
-    return;
-  int blightbeetle = check_battlefield_for_id(1 - t_player, CARD_ID_BLIGHTBEETLE);
-  if (counter_type == COUNTER_P1_P1 && blightbeetle)
-    return;
-  if (number < 0)
-    number = 255;
-  int available = count_counters(src_player, src_card, counter_type);
-  if (available < number)
-    number = available;
-  if (number > 0)
-    remove_counters_impl(player, card, src_player, src_card, counter_type, number);
-  add_counters_predoubled(player, card, t_player, t_card, counter_type, number);
-}
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26d4f30; original functions/counters.c:1506. */

@@ -5,6 +5,7 @@ static int xathrid_ability_legacy(int player, int card, event_t event);
 static int has_mbt_by_iid(int iid, int unused1, int unused2, int unused3);
 
 // ------------ General functions
+
 void uthden_creature(int player, int card, event_t event, int land_color){
 	if( ! is_humiliated(player, card, AL_STATIC) && (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) &&
 		basiclandtypes_controlled[player][get_hacked_color(player, card, land_color)] >= 1
@@ -466,7 +467,6 @@ Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1
 	return plain_mana_producer_tapped(player, card, event);
 }
 
-
 int card_chandras_fury(int player, int card, event_t event){
 	/* Chandra's Fury	|4|R	0x2006628
 	 * Instant
@@ -494,7 +494,12 @@ int card_chandras_fury(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td1, "TARGET_PLAYER_OR_PLANESWALKER", 1, NULL);
 }
 
-int card_chadras_fury(int player, int card, event_t event){  //double entry
+int card_chadras_fury(int player, int card, event_t event){
+  /* Chandra's Fury	|4|R
+   * Instant
+   * ~ deals 4 damage to target player or planeswalker and 1 damage to each creature that player or that planeswalker's controller controls. */
+
+  //double entry
 	return 0;
 }
 
@@ -813,6 +818,11 @@ int card_firewing_phoenix(int player, int card, event_t event){
 }
 
 int card_flinthoof_boar(int player, int card, event_t event){
+  /* Flinthoof Boar	|1|G
+   * Creature - Boar 2/2
+   * This creature gets +1/+1 as long as you control a Mountain.
+   * |R: This creature gains haste until end of turn. (It can attack and |T this turn.) */
+
 	return uthden_m13_creature(player, card, event, COLOR_RED, MANACOST_R(1), 0, SP_KEYWORD_HASTE);
 }
 
@@ -889,6 +899,9 @@ int card_gem_of_becoming(int player, int card, event_t event)
 // glorious charge --> warrior's honor
 
 int card_goblin_battle_jester(int player, int card, event_t event){
+  /* Goblin Battle Jester	|3|R
+   * Creature - Goblin 2/2
+   * Whenever you cast a red spell, target creature can't block this turn. */
 
 	if (trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)){
 		test_definition_t test;
@@ -911,6 +924,11 @@ int card_goblin_battle_jester(int player, int card, event_t event){
 
 int card_griffin_protector(int player, int card, event_t event)
 {
+  /* Griffin Protector	|3|W
+   * Creature - Griffin 2/3
+   * Flying
+   * Whenever another creature you control enters, this creature gets +1/+1 until end of turn. */
+
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) )
 	{
 		test_definition_t test;
@@ -928,14 +946,24 @@ int card_griffin_protector(int player, int card, event_t event)
 }
 
 // ground seal --> vanilla
+
 // guardian lions --> serra angel
 
 int card_harbor_bandit(int player, int card, event_t event){
+  /* Harbor Bandit	|2|B
+   * Creature - Human Rogue 2/2
+   * This creature gets +1/+1 as long as you control an Island.
+   * |1|U: This creature can't be blocked this turn. */
+
 	return uthden_m13_creature(player, card, event, COLOR_BLUE, MANACOST_XU(1, 1), 0, SP_KEYWORD_UNBLOCKABLE);
 }
 
 int card_healer_of_the_pride(int player, int card, event_t event)
 {
+  /* Healer of the Pride	|3|W
+   * Creature - Cat Cleric 2/3
+   * Whenever another creature you control enters, you gain 2 life. */
+
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) )
 	{
 		test_definition_t test;
@@ -954,6 +982,12 @@ int card_healer_of_the_pride(int player, int card, event_t event)
 
 int card_hellion_crucible(int player, int card, event_t event)
 {
+  /* Hellion Crucible	""
+   * Land
+   * |T: Add |1 to your mana pool.
+   * |1|R, |T: Put a pressure counter on ~.
+   * |1|R, |T, Remove two pressure counters from ~ and sacrifice it: Put a 4/4 |Sred Hellion creature token with haste onto the battlefield. */
+
   enum
   {
     CHOICE_MANA = 1,
@@ -1064,6 +1098,11 @@ int card_hydrosurge(int player, int card, event_t event){
 }
 
 int card_jaces_phantasm(int player, int card, event_t event){
+  /* Jace's Phantasm	|U
+   * Creature - Illusion 1/1
+   * Flying
+   * This creature gets +4/+4 as long as an opponent has ten or more cards in their graveyard. */
+
 	if( (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( count_graveyard(1-player) >  9 ){
 			event_result+=4;
@@ -1186,6 +1225,10 @@ int card_liliana_of_the_dark_realms(int player, int card, event_t event){
 }
 
 int card_lilianas_emblem(int player, int card, event_t event){
+  /* Liliana of the Dark Realms Emblem	""
+   * Emblem - Liliana
+   * Swamps you control have '|T: Add |B|B|B|B.' */
+
 	/* The obvious and user-friendly implementation of adding BBB whenever a swamp is tapped for mana unfortunately isn't accurate - it breaks for e.g. an
 	 * Underground Sea tapped for U (which should produce U, not UBBB).  So we fall back on the icky "click on this card, then choose a swamp to tap" interface.
 	 * I considered combining this with a Mana Flare-like effect when a swamp is tapped for exactly B; however, this will break if something else has already
@@ -1266,7 +1309,6 @@ Other Merfolk creatures you control get +1/+1 and have |H2islandwalk. (They can'
 	return boost_creature_type(player, card, event, SUBTYPE_MERFOLK, 1, 1, get_hacked_walk(player, card, KEYWORD_ISLANDWALK), BCT_CONTROLLER_ONLY);
 }
 
-
 int card_mind_sculpt(int player, int card, event_t event){
 /* CARD_ID_MIND_SCULPT	12592
 Mind Sculpt	|1|U
@@ -1336,6 +1378,18 @@ Destroy target creature. */
 	}
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td1, "TARGET_CREATURE", 1, NULL);
+}
+
+/* ManalinkEh 2022: 0x22b4140; original cards/m13.c:1313. */
+static int has_mbt_by_iid(int iid, int unused1, int unused2, int unused3)
+{
+  int result;
+  result = check_for_special_ability(-1, iid, (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_HEXPROOF));
+  if (result == 0)
+  {
+    return (unsigned int)((cards_data[iid].static_ability & 0x480) != 0);
+  }
+  return 1;
 }
 
 int card_mwonvuli_beast_tracker(int player, int card, event_t event){
@@ -1551,6 +1605,47 @@ int card_rangers_path(int player, int card, event_t event){
 	return basic_spell(player, card, event);
 }
 
+/* ManalinkEh 2022: 0x22b8670; original cards/m13.c:1539. */
+int card_rhox_faithmender(int player, int card, event_t event)
+{
+  /* Rhox Faithmender	|3|W
+   * Creature - Rhino Monk 1/5
+   * Lifelink (Damage dealt by this creature also causes you to gain that much life.)
+   * If you would gain life, you gain twice that much life instead. */
+
+  enum
+  {
+    XTRIGGER_REPLACE_GAIN_LIFE = 16778752
+  };
+
+  xtrigger_t current_xtrigger;
+
+  lifelink(player, card, event);
+  current_xtrigger = trigger_condition;
+  if (trigger_condition == TRIGGER_XTRIGGER)
+  {
+    current_xtrigger = xtrigger_impl_value_dont_use_directly;
+  }
+  if ((((current_xtrigger == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
+        (0 < life_gained))))
+  {
+    if (!is_humiliated(player, card, AL_TRIG))
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = event_result | 2;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        life_gained = life_gained << 1;
+      }
+    }
+  }
+  return 0;
+}
+
 // Reckless Brute --> Flameborn Hellion
 
 // rhox faithmender --> child of night
@@ -1702,6 +1797,12 @@ int card_show_of_valor(int player, int card, event_t event){
 
 int card_slumbering_dragon(int player, int card, event_t event)
 {
+  /* Slumbering Dragon	|R
+   * Creature - Dragon 3/3
+   * Flying
+   * This creature can't attack or block unless it has five or more +1/+1 counters on it.
+   * Whenever a creature attacks you or a planeswalker you control, put a +1/+1 counter on this creature. */
+
 	// ~ can't attack or block unless it has five or more +1/+1 counters on it.
 	if ((event == EVENT_ATTACK_LEGALITY || event == EVENT_BLOCK_LEGALITY) && affect_me(player, card) && count_1_1_counters(player, card) < 5 &&
 		! is_humiliated(player, card, AL_STATIC)
@@ -1720,12 +1821,10 @@ int card_slumbering_dragon(int player, int card, event_t event)
 // smelt --> shatter
 
 int card_spelltwine(int player, int card, event_t event){
-	/*
-	  Spelltwine |5|U
-	  Sorcery
-	  Exile target instant or sorcery card from your graveyard and target instant or sorcery card from an opponent's graveyard.
-	  Copy those cards. Cast the copies if able without paying their mana costs. Exile Spelltwine.
-	*/
+  /* Spelltwine |5|U
+   * 	  Sorcery
+   * 	  Exile target instant or sorcery card from your graveyard and target instant or sorcery card from an opponent's graveyard.
+   * 	  Copy those cards. Cast the copies if able without paying their mana costs. Exile Spelltwine. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -1804,6 +1903,12 @@ int card_staff_of_nin(int player, int card, event_t event){
 
 int card_sublime_archangel(int player, int card, event_t event)
 {
+  /* Sublime Archangel	|2|W|W
+   * Creature - Angel 4/3
+   * Flying
+   * Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)
+   * Other creatures you control have exalted. (If a creature has multiple instances of exalted, each triggers separately.) */
+
   // Exalted
   // Other creatures you control have exalted.
   store_attackers(player, card, event, DAT_ATTACKS_ALONE | DAT_TRACK, player, -1, NULL);
@@ -1881,7 +1986,6 @@ int card_switcheroo(int player, int card, event_t event){
 	return 0;
 }
 
-
 int card_talrands_invocation(int player, int card, event_t event){
 	/* Talrand's Invocation	|2|U|U
 	 * Sorcery
@@ -1899,7 +2003,6 @@ int card_talrands_invocation(int player, int card, event_t event){
 
 	return basic_spell(player, card, event);
 }
-
 
 int card_talrand_sky_summoner(int player, int card, event_t event){
 	/* Talrand, Sky Summoner	|2|U|U
@@ -1920,6 +2023,11 @@ int card_talrand_sky_summoner(int player, int card, event_t event){
 
 int card_thragtusk(int player, int card, event_t event)
 {
+  /* Thragtusk	|4|G
+   * Creature - Beast 5/3
+   * When ~ enters the battlefield, you gain 5 life.
+   * When ~ leaves the battlefield, put a 3/3 |Sgreen Beast creature token onto the battlefield. */
+
   token_generation_t token;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
@@ -1941,8 +2049,12 @@ int card_thragtusk(int player, int card, event_t event)
   return 0;
 }
 
-
 int card_thundermaw_hellkite(int player, int card, event_t event){
+  /* Thundermaw Hellkite	|3|R|R
+   * Creature - Dragon 5/5
+   * Flying
+   * Haste (This creature can attack and |T as soon as it comes under your control.)
+   * When this creature enters, it deals 1 damage to each creature with flying your opponents control. Tap those creatures. */
 
 	haste(player, card, event);
 
@@ -1966,6 +2078,10 @@ int card_thundermaw_hellkite(int player, int card, event_t event){
 }
 
 int card_timberpack_wolf(int player, int card, event_t event){
+  /* Timberpack Wolf	|1|G	=>m13.c:card_timberpack_wolf
+   * Creature - Wolf 2/2
+   * ~ gets +1/+1 for each other creature you control named ~. */
+
 	if( (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		int amount = 0;
 		CYCLE_ALL_CARDS(p, c, 	{
@@ -1980,6 +2096,10 @@ int card_timberpack_wolf(int player, int card, event_t event){
 }
 
 int card_touch_of_the_eternal(int player, int card, event_t event){
+  /* Touch of the Eternal	|5|W|W
+   * Enchantment
+   * At the beginning of your upkeep, count the number of permanents you control. Your life total becomes that number. */
+
 	upkeep_trigger_ability(player, card, event, player);
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
@@ -1989,14 +2109,13 @@ int card_touch_of_the_eternal(int player, int card, event_t event){
 }
 
 int card_trading_post(int player, int card, event_t event){
-	/*
-	  Trading Post |4
-	  Artifact
-	  {1}, {T}, Discard a card: You gain 4 life.
-	  {1}, {T}, Pay 1 life: Put a 0/1 white Goat creature token onto the battlefield.
-	  {1}, {T}, Sacrifice a creature: Return target artifact card from your graveyard to your hand.
-	  {1}, {T}, Sacrifice an artifact: Draw a card.
-	*/
+  /* Trading Post |4
+   * 	  Artifact
+   * 	  {1}, {T}, Discard a card: You gain 4 life.
+   * 	  {1}, {T}, Pay 1 life: Put a 0/1 white Goat creature token onto the battlefield.
+   * 	  {1}, {T}, Sacrifice a creature: Return target artifact card from your graveyard to your hand.
+   * 	  {1}, {T}, Sacrifice an artifact: Draw a card. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2116,10 +2235,18 @@ int card_trading_post(int player, int card, event_t event){
 }
 
 int card_tricks_of_the_trade(int player, int card, event_t event){
+  /* Tricks of the Trade	|3|U
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +2/+0 and can't be blocked. */
+
 	return generic_aura(player, card, event, player, 2, 0, 0, SP_KEYWORD_UNBLOCKABLE, 0, 0, 0);
 }
 
 int card_vedalken_entrancer(int player, int card, event_t event){
+  /* Vedalken Entrancer	|3|U
+   * Creature - Vedalken Wizard 1/4
+   * |U, |T: Target player mills two cards. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -2140,8 +2267,11 @@ int card_vedalken_entrancer(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST_U(1), 0, &td, "TARGET_PLAYER");
 }
 
-
 int card_veilborn_ghoul(int player, int card, event_t event){
+  /* Veilborn Ghoul	|4|B
+   * Creature - Zombie 4/1
+   * This creature can't block.
+   * Whenever a Swamp you control enters, you may return this card from your graveyard to your hand. */
 
 	cannot_block(player, card, event);
 
@@ -2175,6 +2305,9 @@ int card_vile_rebirth(int player, int card, event_t event){
 }
 
 int card_void_stalker(int player, int card, event_t event){
+  /* Void Stalker	|1|U
+   * Creature - Elemental 2/1
+   * |2|U, |T: Put this creature and target creature on top of their owners' libraries, then those players shuffle their libraries. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -2198,6 +2331,10 @@ int card_void_stalker(int player, int card, event_t event){
 }
 
 int card_war_falcon(int player, int card, event_t event){
+  /* War Falcon	|W
+   * Creature - Bird 2/1
+   * Flying
+   * This creature can't attack unless you control a Knight or a Soldier. */
 
 	if( event == EVENT_ATTACK_LEGALITY && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( ! check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_SOLDIER) &&
@@ -2213,10 +2350,18 @@ int card_war_falcon(int player, int card, event_t event){
 // Warclamp Mastiff --> vanilla
 
 int card_watercourser(int player, int card, event_t event){
+  /* Watercourser	|2|U	=>m13.c:card_watercourser
+   * Creature - Elemental 2/3
+   * |U: ~ gets +1/-1 until end of turn. */
+
 	return generic_shade(player, card, event, 0, MANACOST_U(1), 1, -1, 0, 0);
 }
 
 int card_wild_guess(int player, int card, event_t event){
+  /* Wild Guess	|R|R
+   * Sorcery
+   * As an additional cost to cast this spell, discard a card.
+   * Draw two cards. */
 
 	if( event == EVENT_CAN_CAST && hand_count[player] > 1 ){
 		return basic_spell(player, card, event);
@@ -2234,8 +2379,10 @@ int card_wild_guess(int player, int card, event_t event){
 	return 0;
 }
 
-
 int card_wits_end(int player, int card, event_t event){
+  /* Wit's End	|5|B|B
+   * Sorcery
+   * Target player discards their hand. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -2258,11 +2405,10 @@ int card_wits_end(int player, int card, event_t event){
 }
 
 int card_worldfire(int player, int card, event_t event){
-	/*
-	  Worldfire English |6|R|R|R
-	  Sorcery
-	  Exile all permanents. Exile all cards from all hands and graveyards. Each player's life total becomes 1.
-	*/
+  /* Worldfire English |6|R|R|R
+   * 	  Sorcery
+   * 	  Exile all permanents. Exile all cards from all hands and graveyards. Each player's life total becomes 1. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_PERMANENT);
@@ -2292,6 +2438,9 @@ int card_worldfire(int player, int card, event_t event){
 }
 
 int card_yeva_forcemage(int player, int card, event_t event){
+  /* Yeva's Forcemage	|2|G
+   * Creature - Elf Shaman 2/2
+   * When this creature enters, target creature gets +2/+2 until end of turn. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
@@ -2336,6 +2485,27 @@ int card_yeva_natures_herald(int player, int card, event_t event)
   const char* prompt = (event == EVENT_ACTIVATE ? get_sleighted_color_text(player, card, "Select a %s creature card.", COLOR_GREEN) : NULL);
   return can_play_cards_as_though_they_had_flash(player, card, event, &td, prompt, 1);
 }
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22b48c0; original cards/m13.c:2422. */
+static int xathrid_ability_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  if (event == EVENT_ABILITIES)
+  {
+    instance = in_play(player, card);
+    if (((instance != NULL) && (instance->damage_target_card == affected_card)) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      event_result = event_result | KEYWORD_DEFENDER;
+      disable_all_activated_abilities((int)instance->damage_target_player,
+                                           instance->damage_target_card, 1);
+    }
+  }
+  return 0;
+}
+#endif
 
 int card_xathrid_gorgon(int player, int card, event_t event){
 
@@ -2385,80 +2555,3 @@ int card_xathrid_gorgon(int player, int card, event_t event){
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_XB(2, 1), 0, &td, "TARGET_CREATURE");
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x22b8670; original cards/m13.c:1539. */
-int card_rhox_faithmender(int player, int card, event_t event)
-{
-  enum
-  {
-    XTRIGGER_REPLACE_GAIN_LIFE = 16778752
-  };
-
-  xtrigger_t current_xtrigger;
-
-  lifelink(player, card, event);
-  current_xtrigger = trigger_condition;
-  if (trigger_condition == TRIGGER_XTRIGGER)
-  {
-    current_xtrigger = xtrigger_impl_value_dont_use_directly;
-  }
-  if ((((current_xtrigger == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
-       (player == affected_card_controller)) &&
-      (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
-        (0 < life_gained))))
-  {
-    if (!is_humiliated(player, card, AL_TRIG))
-    {
-      if (event == EVENT_TRIGGER)
-      {
-        event_result = event_result | 2;
-      }
-      else if (event == EVENT_RESOLVE_TRIGGER)
-      {
-        life_gained = life_gained << 1;
-      }
-    }
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x22b4140; original cards/m13.c:1313. */
-static int has_mbt_by_iid(int iid, int unused1, int unused2, int unused3)
-{
-  int result;
-  result = check_for_special_ability(-1, iid, (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_HEXPROOF));
-  if (result == 0)
-  {
-    return (unsigned int)((cards_data[iid].static_ability & 0x480) != 0);
-  }
-  return 1;
-}
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 native scalar-word handlers. */
-
-/* ManalinkEh 2022: 0x22b48c0; original cards/m13.c:2422. */
-static int xathrid_ability_legacy(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-
-  if (event == EVENT_ABILITIES)
-  {
-    instance = in_play(player, card);
-    if (((instance != NULL) && (instance->damage_target_card == affected_card)) &&
-        (instance->damage_target_player == affected_card_controller))
-    {
-      event_result = event_result | KEYWORD_DEFENDER;
-      disable_all_activated_abilities((int)instance->damage_target_player,
-                                           instance->damage_target_card, 1);
-    }
-  }
-  return 0;
-}
-
-#endif

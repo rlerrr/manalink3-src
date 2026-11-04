@@ -1,10 +1,19 @@
 #include "manalink.h"
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+#ifndef SHANDALAR
+
+int card_fierce_guardianship(int player, int card, event_t event);
+
+#endif
 
 /* ManalinkEh 2022: 0x25e6a60; original cards/commander_2020.c:24. */
 int card_bonders_ornament(int player, int card, event_t event)
 {
+  /* Bonder's Ornament	|3
+   * Artifact
+   * |T: Add one mana of any color.
+   * |4, |T: Each player who controls a permanent named ~ draws a card. */
+
   enum
   {
     CHOICE_MANA = 1,
@@ -87,9 +96,62 @@ int card_bonders_ornament(int player, int card, event_t event)
   return mana_producer(player, card, event);
 }
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25e6cd0; original cards/commander_2020.c:201. */
+int card_fierce_guardianship(int player, int card, event_t event)
+{
+  /* Fierce Guardianship	|2|U
+   * Instant
+   * If you control a commander, you may cast this spell without paying its mana cost.
+   * Counter target noncreature spell. */
+
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if (event == EVENT_MODIFY_COST)
+  {
+    if ((player_bits[player] & PB_COMMANDER_IN_PLAY) != 0)
+    {
+      null_casting_cost(player, card);
+      instance->info_slot = 1;
+      return 0;
+    }
+    instance->info_slot = 0;
+  }
+  else
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+      return card_negate(player, card, event);
+    }
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance->number_of_targets = '\0';
+        result = nemesis_freespell(player, card, 0x6c);
+        if (result != 0)
+          return card_negate(player, card, event);
+        spell_fizzled = 1;
+      }
+    }
+    else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+             (event == EVENT_CHANGE_TARGET))
+      return card_negate(player, card, event);
+  }
+  return 0;
+}
+#endif
+
 /* ManalinkEh 2022: 0x25e6dd0; original cards/commander_2020.c:280. */
 int card_jirina_kudro(int player, int card, event_t event)
 {
+  /* Jirina Kudro	|1|R|W|B
+   * Legendary Creature - Human Soldier 3/3
+   * When ~ enters, create a 1/1 white Human Soldier creature token for each time you've cast a commander from the command zone this game.
+   * Other Humans you control get +2/+0. */
+
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   boost_creature_type(player, card, event, SUBTYPE_HUMAN, 2, 0, 0, BCT_CONTROLLER_ONLY);
   if (event == EVENT_ETB)
@@ -109,11 +171,14 @@ int card_jirina_kudro(int player, int card, event_t event)
   return 0;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
 /* ManalinkEh 2022: 0x25e6ee0; original cards/commander_2020.c:374. */
 int card_nesting_grounds(int player, int card, event_t event)
 {
+  /* Nesting Grounds	""
+   * Land
+   * |T: Add |C.
+   * |1, |T: Move a counter from target permanent you control onto a second target permanent. Activate only as a sorcery. */
+
   enum
   {
     CHOICE_MANA = 1,
@@ -246,51 +311,3 @@ int card_nesting_grounds(int player, int card, event_t event)
   }
   return 0;
 }
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 native scalar-word handlers. */
-int card_fierce_guardianship(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x25e6cd0; original cards/commander_2020.c:201. */
-int card_fierce_guardianship(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-
-  instance = get_card_instance(player, card);
-  if (event == EVENT_MODIFY_COST)
-  {
-    if ((player_bits[player] & PB_COMMANDER_IN_PLAY) != 0)
-    {
-      null_casting_cost(player, card);
-      instance->info_slot = 1;
-      return 0;
-    }
-    instance->info_slot = 0;
-  }
-  else
-  {
-    if (event == EVENT_CAN_CAST)
-    {
-      return card_negate(player, card, event);
-    }
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-      {
-        instance->number_of_targets = '\0';
-        result = nemesis_freespell(player, card, 0x6c);
-        if (result != 0)
-          return card_negate(player, card, event);
-        spell_fizzled = 1;
-      }
-    }
-    else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
-             (event == EVENT_CHANGE_TARGET))
-      return card_negate(player, card, event);
-  }
-  return 0;
-}
-
-#endif

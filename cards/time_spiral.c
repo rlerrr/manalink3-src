@@ -1,6 +1,23 @@
 #include "manalink.h"
 
 // Functions
+
+int card_ali_from_cairo(int player, int card, event_t event);
+
+int card_ali_from_cairo(int player, int card, event_t event);
+
+int card_candelabra_of_tawnos(int player, int card, event_t event);
+
+int card_mirror_universe(int player, int card, event_t event);
+
+int glass_asp_legacy(int player, int card, event_t event);
+
+#ifndef SHANDALAR
+
+static int re_enable_abilities_at_eot(int player, int card, event_t event);
+
+#endif
+
 int generic_suspend_legacy(int player, int card, event_t event)
 {
   card_instance_t *instance;
@@ -465,6 +482,7 @@ static void saproling_from_fungus(int player, int card)
 }
 
 // Cards
+
 int card_academy_ruins(int player, int card, event_t event){
 /* CARD_ID_ACADEMY_RUINS	8474
 Academy Ruins	""
@@ -566,7 +584,6 @@ int card_ancestral_vision(int player, int card, event_t event)
   return 0;
 }
 
-int card_ali_from_cairo(int player, int card, event_t event);
 static int angels_grace_legacy(int player, int card, event_t event){
 
 	// Prevents damage from reducing life below 1
@@ -835,7 +852,6 @@ Madness |0 (If you discard this card, discard it into exile. When you do, cast i
 	return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &test);
 }
 
-
 int card_candles_of_leng(int player, int card, event_t event){
 /* CARD_ID_CANDLES_OF_LENG	8494
 Candles of Leng	|2
@@ -907,6 +923,12 @@ Target player draws four cards, then discards three cards. If you cast this spel
 
 int card_cavalry_master(int player, int card, event_t event)
 {
+  /* CARD_ID_CAVALRY_MASTER	8497
+   * Cavalry Master	|2|W|W
+   * Creature - Human Knight 3/3
+   * Flanking (Whenever a creature without flanking blocks this creature, the blocking creature gets -1/-1 until end of turn.)
+   * Other creatures you control with flanking have flanking. (Each instance of flanking triggers separately.) */
+
   int p;
   int humiliated;
   card_instance_t *instance;
@@ -969,11 +991,10 @@ Other |Swhite creatures get +1/+1. */
 }
 
 int card_chameleon_blur(int player, int card, event_t event){
-/*
-Chameleon Blur |3|G
-Instant
-Prevent all damage that creatures would deal to players this turn.
-*/
+  /* Chameleon Blur |3|G
+   * Instant
+   * Prevent all damage that creatures would deal to players this turn. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		fog_special(player, card, ANYBODY, FOG_ONLY_DAMAGE_TO_T_PLAYER);
 		kill_card(player, card, KILL_DESTROY);
@@ -1158,7 +1179,6 @@ int card_chronosavant(int player, int card, event_t event){
 	return 0;
 }
 
-
 static const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,
                                                int targeting_player, int targeting_card)
 {
@@ -1186,8 +1206,14 @@ static const char* target_must_be_permanent_or_suspend_and_have_counters(int who
 	return perm_or_susp;
   return count_counters(player, card, -1) ? NULL : "must have counters";
 }
+
 int card_clockspinning(int player, int card, event_t event)
 {
+  /* Clockspinning	|U
+   * Instant
+   * Buyback |3
+   * Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it. */
+
   int t_player;
   int count_card_or_buyback;
   counter_t type;
@@ -1343,7 +1369,6 @@ When ~ enters the battlefield, destroy target enchantment.
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_W(1), 0, &td_permanent, "TARGET_PERMANENT");
 }
 
-
 int card_coal_stoker(int player, int card, event_t event){
 /* CARD_ID_COAL_STOKER	8507
 Coal Stoker	|3|R
@@ -1492,7 +1517,6 @@ int card_conflagrate(int player, int card, event_t event){
 	return 0;
 }
 
-
 int card_coral_trickster(int player, int card, event_t event){
 /* CARD_ID_CORAL_TRICKSTER	8509
 Coral Trickster	|1|U
@@ -1519,6 +1543,20 @@ When ~ is turned face up, you may tap or untap target permanent. */
 	}
 
 	return morph(player, card, event, MANACOST_U(1));
+}
+
+/* ManalinkEh 2022: 0x20ee6c0; original cards/time_spiral.c:1372. */
+int card_corpulent_corpse(int player, int card, event_t event)
+{
+  /* Corpulent Corpse	|5|B
+   * Creature - Zombie 3/3
+   * Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)
+   * Suspend 5-|B (Rather than cast this card from your hand, you may pay |B and exile it with five time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. It has haste.) */
+
+  int result;
+  fear(player, card, event);
+  result = suspend(player, card, event, 5, 0, 1, 0, 0, 0, 0, NULL, NULL);
+  return result;
 }
 
 int card_crookclaw_transmuter(int player, int card, event_t event){
@@ -2105,6 +2143,70 @@ Gain control of target creature of an opponent's choice he or she controls. */
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x20f0580; original cards/time_spiral.c:1974. */
+int card_fallen_ideal(int player, int card, event_t event)
+{
+  /* Fallen Ideal	|2|B
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature has flying and "Sacrifice a creature: This creature gets +2/+1 until end of turn."
+   * When this Aura is put into a graveyard from the battlefield, return it to its owner's hand. */
+
+  card_instance_t *instance;
+  int available_or_result;
+  int sacrifice_available;
+  int attached_card;
+  unsigned int chosen_sacrifice;
+  unsigned int player_00;
+  int granted_to_player;
+  test_definition_t test;
+
+  immortal_enchantment(player, card, event);
+  instance = get_card_instance(player, card);
+  granted_to_player = (int)instance->damage_target_player;
+  attached_card = instance->damage_target_card;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    sacrifice_available = can_sacrifice_type_as_cost(player, 1, TYPE_CREATURE);
+    available_or_result = 0;
+    if (sacrifice_available != 0)
+    {
+      available_or_result =
+          granted_generic_activated_ability(player, card, granted_to_player, attached_card,
+                                            EVENT_CAN_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+    }
+  }
+  else
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      granted_generic_activated_ability(player, card, granted_to_player, attached_card,
+                                        EVENT_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+      new_default_test_definition(&test, 2, "Select creature to sacrifice.");
+      chosen_sacrifice = new_sacrifice(granted_to_player, attached_card, player,
+                                       SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK, &test);
+      if (chosen_sacrifice == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      player_00 = (int)chosen_sacrifice >> 0x10 & 0xff;
+      state_untargettable(player_00, chosen_sacrifice >> 0x18, 0);
+      if (spell_fizzled != 1)
+      {
+        kill_card(player_00, chosen_sacrifice >> 0x18, KILL_SACRIFICE);
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      return pump_until_eot_merge_previous(granted_to_player, attached_card, granted_to_player,
+                                           attached_card, 2, 1);
+    }
+    available_or_result = generic_aura(player, card, event, player, 0, 0, 0x20, 0, 0, 0, 0);
+  }
+  return available_or_result;
+}
+
 int card_fathom_seer(int player, int card, event_t event)
 {
 /* CARD_ID_FATHOM_SEER	8541
@@ -2206,12 +2308,10 @@ int firewake_sliver_shared_ability(int player, int card, event_t event)
 }
 
 int card_firewake_sliver(int player, int card, event_t event){
-	/*
-	  Firewake Sliver |1|R|G
-	  Creature - Sliver 1/1
-	  All Sliver creatures have haste.
-	  All Slivers have "{1}, Sacrifice this permanent: Target Sliver creature gets +2/+2 until end of turn."
-	*/
+  /* Firewake Sliver |1|R|G
+   * 	  Creature - Sliver 1/1
+   * 	  All Sliver creatures have haste.
+   * 	  All Slivers have "{1}, Sacrifice this permanent: Target Sliver creature gets +2/+2 until end of turn." */
 
 	// All Sliver creatures have haste.
 	boost_subtype(player, card, event, SUBTYPE_SLIVER, 0,0, 0,SP_KEYWORD_HASTE, BCT_INCLUDE_SELF);
@@ -2453,7 +2553,6 @@ Choose one -
 	return basic_spell(player, card, event);
 }
 
-int card_ali_from_cairo(int player, int card, event_t event);
 int card_fortune_thief(int player, int card, event_t event){
 /* CARD_ID_FORTUNE_THIEF	8554
 Fortune Thief	|4|R
@@ -2490,6 +2589,11 @@ static int effect_fungus_sliver(int player, int card, event_t event)
 
 int card_fungus_sliver(int player, int card, event_t event)
 {
+  /* CARD_ID_FUNGUS_SLIVER	8556
+   * Fungus Sliver	|3|G
+   * Creature - Fungus Sliver 2/2
+   * All Sliver creatures have "Whenever this creature is dealt damage, put a +1/+1 counter on it." (The damage is dealt before the counter is put on.) */
+
   int result;
   card_instance_t *damage;
   card_instance_t *instance;
@@ -2555,6 +2659,12 @@ All Sliver creatures have double strike. */
 
 int card_gauntlet_of_power(int player, int card, event_t event)
 {
+  /* Gauntlet of Power	|5
+   * Artifact
+   * As ~ enters the battlefield, choose a color.
+   * Creatures of the chosen color get +1/+1.
+   * Whenever a basic land is tapped for mana of the chosen color, its controller adds one mana of that color to his or her mana pool. */
+
   card_instance_t *instance;
   int result;
   subtype_t subtype;
@@ -2670,6 +2780,62 @@ int card_gemstone_caverns(int player, int card, event_t event){
 	return plain_mana_producer(player, card, event);
 }
 
+/* ManalinkEh 2022: 0x20e9460; original cards/time_spiral.c:2543. */
+int glass_asp_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event != EVENT_PHASE_CHANGED)
+  {
+    return 0;
+  }
+  if (current_phase == 10)
+  {
+    instance = get_card_instance(player, card);
+    if ((instance->targets[1].player != 0x42) &&
+        (instance = get_card_instance(player, card), instance->targets[0].player == current_turn))
+    {
+
+      result = has_mana(current_turn, 0, 2);
+      if ((result == 0) || (charge_mana_while_resolving(player, card, EVENT_DRAW_PHASE,
+                                                        current_turn, COLOR_COLORLESS, 2),
+                            spell_fizzled == 1))
+      {
+        instance = get_card_instance(player, card);
+        damage_player(instance->targets[0].player, 2, player, card);
+      }
+      instance = get_card_instance(player, card);
+      instance->targets[1].player = 0x42;
+      kill_card(player, card, KILL_EXILE);
+    }
+    if (current_phase == 10)
+    {
+      return 0;
+    }
+  }
+  instance = get_card_instance(player, card);
+  instance->targets[1].player = 0;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20f1d10; original cards/time_spiral.c:2569. */
+int card_glass_asp(int player, int card, event_t event)
+{
+  /* Glass Asp	|1|G|G
+   * Creature - Snake 2/1
+   * Whenever this creature deals combat damage to a player, that player loses 2 life at the beginning of their next draw step unless they pay |2 before that step. */
+
+  if (!damage_dealt_by_me(player, card, event,
+                           DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER))
+    return 0;
+  int32_t value = get_card_instance(player, card)->targets[1].player;
+  int legacy = create_legacy_effect(player, card, glass_asp_legacy);
+  card_instance_t *instance = get_card_instance(player, legacy);
+  instance->targets[0].player = (unsigned int)((char)value == 0);
+  return 0;
+}
+
 int card_goblin_skycutter(int player, int card, event_t event){
 /* CARD_ID_GOBLIN_SKYCUTTER	8564
 Goblin Skycutter	|1|R
@@ -2779,6 +2945,11 @@ int card_greater_gargadon_suspended(int player, int card, event_t event){
 
 int card_greater_gargadon(int player, int card, event_t event)
 {
+  /* Greater Gargadon	|9|R
+   * Creature - Beast 9/7
+   * Suspend 10-|R
+   * Sacrifice an artifact, creature, or land: Remove a time counter from ~. Activate this ability only if ~ is suspended. */
+
   card_instance_t *instance;
   int result;
   card_instance_t *spell_instance;
@@ -3036,6 +3207,11 @@ static void sac_and_damage_blockers(int player, int card, int t_player, int t_ca
 
 int card_ib_halfheart_goblin_tactician(int player, int card, event_t event)
 {
+  /* Ib Halfheart, Goblin Tactician	|3|R
+   * Legendary Creature - Goblin Advisor 3/2
+   * Whenever another Goblin you control becomes blocked, sacrifice it. If you do, it deals 4 damage to each creature blocking it.
+   * Sacrifice two Mountains: Create two 1/1 red Goblin creature tokens. */
+
   int goblin_or_result;
   const char *sacrifice_prompt;
   unsigned int chosen_sacrifice;
@@ -3218,6 +3394,11 @@ static int ixidron_legacy(int player, int card, event_t event){
 
 int card_ixidron(int player, int card, event_t event)
 {
+  /* Ixidron	|3|U|U
+   * Creature - Illusion 100/100
+   * As ~ enters the battlefield, turn all other nontoken creatures face down.
+   * ~'s power and toughness are each equal to the number of face-down creatures on the battlefield. */
+
   int count;
   int face_down_iid;
   card_instance_t *instance;
@@ -3372,7 +3553,6 @@ When ~ enters the battlefield, you gain 4 life. */
 	return cip_lifegain(player, card, event, 4);
 }
 
-
 static const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,
                                                                        int card,
                                                                        int targeting_player,
@@ -3387,6 +3567,11 @@ static const char *target_must_be_permanent_or_suspend_and_have_time_counters(in
 
 int card_jhoiras_timebug(int player, int card, event_t event)
 {
+  /* Jhoira's Timebug	|2
+   * Artifact Creature - Insect 1/2
+   * |T: Choose target permanent you control or suspended card you own. If that permanent or card has a time counter on it, you may remove a time counter from
+   * it or put another time counter on it. */
+
   int t_player;
   const char *(*target_requirement)(int, int, int, int, int);
   card_instance_t *instance;
@@ -3466,7 +3651,25 @@ int card_kaervek_the_merciless(int player, int card, event_t event){
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x20f4170; original cards/time_spiral.c:3286. */
+int card_keldon_halberdier(int player, int card, event_t event)
+{
+  /* Keldon Halberdier	|4|R
+   * Creature - Human Warrior 4/1
+   * First strike
+   * Suspend 4-|R (Rather than cast this card from your hand, you may pay |R and exile it with four time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. It has haste.) */
+
+  int result;
+  result = suspend(player, card, event, 4, 0, 0, 0, 0, 1, 0, NULL, NULL);
+  return result;
+}
+
 int card_kher_keep(int player, int card, event_t event){
+  /* Kher Keep	""
+   * Legendary Land
+   * |T: Add |C.
+   * |1|R, |T: Create a 0/1 red Kobold creature token named Kobolds of ~. */
+
 	/*
 	  Kher Keep
 	  Legendary Land
@@ -3513,7 +3716,6 @@ int card_kher_keep(int player, int card, event_t event){
 
 	return 0;
 }
-
 
 int card_knight_of_the_holy_nimbus(int player, int card, event_t event){
 /* CARD_ID_KNIGHT_OF_THE_HOLY_NIMBUS	8591
@@ -3786,13 +3988,11 @@ static int lim_dul_the_necromancer_effect(int player, int card, event_t event)
 }
 
 int card_lim_dul_the_necromancer(int player, int card, event_t event){
-/*
-Lim-Dûl the Necromancer |5|B|B
-Legendary Creature — Human Wizard 4/4
-Whenever a creature an opponent controls dies, you may pay {1}{B}. If you do, return that card to the battlefield under your control.
-	If it's a creature, it's a Zombie in addition to its other creature types.
-{1}{B}: Regenerate target Zombie.
-*/
+  /* Lim-Dûl the Necromancer |5|B|B
+   * Legendary Creature — Human Wizard 4/4
+   * Whenever a creature an opponent controls dies, you may pay {1}{B}. If you do, return that card to the battlefield under your control.
+   * 	If it's a creature, it's a Zombie in addition to its other creature types.
+   * {1}{B}: Regenerate target Zombie. */
 
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		int found = 0;
@@ -3955,7 +4155,6 @@ Whenever ~ deals damage to an opponent, draw a card, then discard a card. */
 	return 0;
 }
 
-
 int card_lotus_bloom(int player, int card, event_t event)
 {
   /* Lotus Bloom	""
@@ -3968,7 +4167,6 @@ int card_lotus_bloom(int player, int card, event_t event)
   return rval ? rval : card_black_lotus(player, card, event);
 }
 
-int card_candelabra_of_tawnos(int player, int card, event_t event);
 int card_magus_of_the_candelabra(int player, int card, event_t event)
 {
 /* CARD_ID_MAGUS_OF_THE_CANDELABRA	1282
@@ -4000,8 +4198,11 @@ At the beginning of the next end step, each player discards his or her hand and 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL);
 }
 
-int card_mirror_universe(int player, int card, event_t event);
 int card_magus_of_the_mirror(int player, int card, event_t event){
+  /* Magus of the Mirror	|4|B|B
+   * Creature - Human Wizard 4/2
+   * |T, Sacrifice this creature: Exchange life totals with target opponent. Activate only during your upkeep. */
+
 	return card_mirror_universe(player, card, event);
 }
 
@@ -4134,11 +4335,9 @@ int mindlash_sliver_shared_ability(int player, int card, event_t event)
 }
 
 int card_mindlash_sliver(int player, int card, event_t event){
-	/*
-	  Mindlash Sliver |B
-	  Creature - Sliver 1/1,
-	  All Slivers have "{1}, Sacrifice this permanent: Each player discards a card."
-	*/
+  /* Mindlash Sliver |B
+   * 	  Creature - Sliver 1/1,
+   * 	  All Slivers have "{1}, Sacrifice this permanent: Each player discards a card." */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int legacy = create_legacy_activate(player, card, &mindlash_sliver_shared_ability);
@@ -4157,7 +4356,6 @@ int card_mindlash_sliver(int player, int card, event_t event){
 
 	return slivercycling(player, card, event);
 }
-
 
 int card_mishra_artificer_prodigy(int player, int card, event_t event){
 /* CARD_ID_MISHRA_ARTIFICER_PRODIGY	8607
@@ -4252,6 +4450,21 @@ Flashback |3|U (You may cast this card from your graveyard for its flashback cos
 
 	return card_cloudshift(player, card, event);
 }
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20f6010; original cards/time_spiral.c:4059. */
+int card_moonlace(int player, int card, event_t event)
+{
+  /* Moonlace	|U
+   * Instant
+   * Target spell or permanent becomes colorless. */
+
+  int result;
+
+  result = lace(player, card, event, 1);
+  return result;
+}
+#endif
 
 int card_mwonvuli_acid_moss(int player, int card, event_t event){
 /* CARD_ID_MWONVULI_ACID_MOSS	8613
@@ -5150,11 +5363,9 @@ int quilled_sliver_shared_ability(int player, int card, event_t event)
 }
 
 int card_quilled_sliver(int player, int card, event_t event){
-	/*
-	  Quilled Sliver |W
-	  Creature - Sliver 1/1
-	  All Slivers have "{T}: This permanent deals 1 damage to target attacking or blocking creature."
-	*/
+  /* Quilled Sliver |W
+   * 	  Creature - Sliver 1/1
+   * 	  All Slivers have "{T}: This permanent deals 1 damage to target attacking or blocking creature." */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int legacy = create_legacy_activate(player, card, &quilled_sliver_shared_ability);
@@ -5330,6 +5541,7 @@ int card_rift_bolt(int player, int card, event_t event)
 }
 
 // By jatill
+
 int card_riftwing_cloudskate(int player, int card, event_t event){
 	/* Riftwing Cloudskate	|3|U|U
 	 * Creature - Illusion 2/2
@@ -5389,14 +5601,12 @@ static int saffi_legacy(int player, int card, event_t event)
   return 0;
 }
 
-
 int card_saffi_eriksdotter(int player, int card, event_t event){
-/*
-Saffi Eriksdotter |W|G
-Legendary Creature — Human Scout 2/2
-Sacrifice Saffi Eriksdotter: When target creature is put into your graveyard from the battlefield this turn, return that card to
-	the battlefield.
-*/
+  /* Saffi Eriksdotter |W|G
+   * Legendary Creature — Human Scout 2/2
+   * Sacrifice Saffi Eriksdotter: When target creature is put into your graveyard from the battlefield this turn, return that card to
+   * 	the battlefield. */
+
 	check_legend_rule(player, card, event);
 
 	if( ! IS_GAA_EVENT(event) ){
@@ -5676,11 +5886,9 @@ int screeching_sliver_shared_ability(int player, int card, event_t event)
 }
 
 int card_screeching_sliver(int player, int card, event_t event){
-	/*
-	  Screeching Sliver |U
-	  Creature - Sliver 1/1
-	  All Slivers have "{T}: Target player puts the top card of his or her library into his or her graveyard."
-	*/
+  /* Screeching Sliver |U
+   * 	  Creature - Sliver 1/1
+   * 	  All Slivers have "{T}: Target player puts the top card of his or her library into his or her graveyard." */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int legacy = create_legacy_activate(player, card, &screeching_sliver_shared_ability);
@@ -5871,12 +6079,10 @@ int sedge_sliver_shared_ability(int player, int card, event_t event)
 }
 
 int card_sedge_sliver(int player, int card, event_t event){
-	/*
-	  Sedge Sliver |2|R
-	  Creature - Sliver 2/2
-	  All Sliver creatures have "This creature gets +1/+1 as long as you control a Swamp."
-	  All Slivers have "{B}: Regenerate this permanent."
-	*/
+  /* Sedge Sliver |2|R
+   * 	  Creature - Sliver 2/2
+   * 	  All Sliver creatures have "This creature gets +1/+1 as long as you control a Swamp."
+   * 	  All Slivers have "{B}: Regenerate this permanent." */
 
 	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( is_what(affected_card_controller, affected_card, TYPE_CREATURE) && has_subtype(affected_card_controller, affected_card, SUBTYPE_SLIVER) ){
@@ -6074,6 +6280,11 @@ Whenever ~ attacks, if defending player controls no |Sblack permanents, it doesn
 }
 
 int card_spell_burst(int player, int card, event_t event){
+  /* Spell Burst	|X|U
+   * Instant
+   * Buyback |3 (You may pay an additional |3 as you cast this spell. If you do, put this card into your hand as it resolves.)
+   * Counter target spell with mana value X. */
+
 /* ARD_ID_SPELL_BURST	1435
 Spell Burst	|X|U
 Instant
@@ -6481,12 +6692,10 @@ int card_sudden_shock(int player, int card, event_t event){
 }
 
 int card_sudden_spoiling(int player, int card, event_t event){
-	/*
-	  Sudden Spoiling |1|B|B
-	  Instant
-	  Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)
-	  Creatures target player controls become 0/2 and lose all abilities until end of turn.
-	*/
+  /* Sudden Spoiling |1|B|B
+   * 	  Instant
+   * 	  Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)
+   * 	  Creatures target player controls become 0/2 and lose all abilities until end of turn. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -6749,11 +6958,9 @@ int telekinetik_sliver_shared_ability(int player, int card, event_t event)
 }
 
 int card_telekinetik_sliver(int player, int card, event_t event){
-	/*
-	  Telekinetic Sliver |2|U|U
-	  Creature - Sliver 2/2
-	  All Slivers have "{T}: Tap target permanent."
-	*/
+  /* Telekinetic Sliver |2|U|U
+   * 	  Creature - Sliver 2/2
+   * 	  All Slivers have "{T}: Tap target permanent." */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int legacy = create_legacy_activate(player, card, &telekinetik_sliver_shared_ability);
@@ -6910,6 +7117,10 @@ int card_thallid_germinator(int player, int card, event_t event){
 }
 
 int card_thelon_of_havenwood(int player, int card, event_t event){
+  /* Thelon of Havenwood	|G|G
+   * Legendary Creature - Elf Druid 2/2
+   * Each Fungus creature gets +1/+1 for each spore counter on it.
+   * |B|G, Exile a Fungus card from a graveyard: Put a spore counter on each Fungus on the battlefield. */
 
 	/* Thelon of Havenwood
 	 * |G|G
@@ -7153,6 +7364,106 @@ Discard a card: ~ gains shadow until end of turn. (It can block or be blocked by
 	return generic_activated_ability(player, card, event, GAA_DISCARD, MANACOST0, 0, NULL, NULL);
 }
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20ea990; original cards/time_spiral.c:6930. */
+static int re_enable_abilities_at_eot(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    disable_all_activated_abilities((int)instance->damage_target_player,
+                                         instance->damage_target_card, 0);
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20fde10; original cards/time_spiral.c:6943. */
+int card_trickbind(int player, int card, event_t event)
+{
+  /* Trickbind	|1|U
+   * Instant
+   * Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)
+   * Counter target activated or triggered ability. If a permanent's ability is countered this way, activated abilities of that permanent can't be activated this turn. (Mana abilities can't be targeted.) */
+
+  card_instance_t *instance;
+  card_instance_t *spell_instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_CAST)
+  {
+    result = can_counter_activated_ability(player, card, EVENT_CAN_CAST, NULL);
+    if (result != 0)
+    {
+      instance->info_slot = 1;
+      return 99;
+    }
+    result = can_counter_triggered_ability(player, card, EVENT_CAN_CAST, NULL);
+    if (result != 0)
+    {
+      instance->info_slot = 2;
+      return 99;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      spell_instance = get_card_instance(player, card);
+      spell_instance->number_of_targets = '\0';
+      state_untargettable(player, card, 1);
+      if (instance->info_slot == 1)
+      {
+        cast_counter_activated_ability(player, card, 0);
+      }
+      else
+      {
+        if (instance->info_slot != 2)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        cast_counter_triggered_ability(player, card, 0);
+      }
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (instance->info_slot == 1)
+    {
+
+      instance =
+          get_card_instance(stack_cards[stack_size + -1].player, stack_cards[stack_size + -1].card);
+      disable_all_activated_abilities(instance->parent_controller, instance->parent_card, 1);
+      create_targetted_legacy_effect(player, card, re_enable_abilities_at_eot,
+                                     instance->parent_controller, instance->parent_card);
+      resolve_counter_activated_ability(player, card, NULL, 0);
+    }
+    else if (instance->info_slot == 2)
+    {
+      disable_all_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
+      create_targetted_legacy_effect(player, card, re_enable_abilities_at_eot,
+                                     instance->targets[0].player, instance->targets[0].card);
+      resolve_counter_triggered_ability(player, card, NULL, 0);
+    }
+    state_untargettable(player, card, 0);
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  return 0;
+}
+#endif
+
 int card_triskelavus(int player, int card, event_t event){
 	/* Triskelavus	|7	0x200299c
 	 * Artifact Creature - Construct 1/1
@@ -7181,6 +7492,26 @@ Domain - Until end of turn, creatures you control gain trample and get +1/+1 for
 
 	return basic_spell(player, card, event);
 }
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20fe1e0; original cards/time_spiral.c:7029. */
+int card_undying_rage(int player, int card, event_t event)
+{
+  /* Undying Rage	|2|R
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +2/+2 and can't block.
+   * When this Aura is put into a graveyard from the battlefield, return it to its owner's hand. */
+
+  int result;
+
+  immortal_enchantment(player, card, event);
+  attached_gets_pt(player, card, event, 2, 2);
+  attached_gets_kw(player, card, event, KEYWORD_0, SP_KEYWORD_CANNOT_BLOCK);
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif
 
 int card_unyaro_bees(int player, int card, event_t event){
 	/* Unyaro Bees	|G|G|G	0x2007145
@@ -7356,7 +7687,6 @@ static int vampiric_sliver_legacy(int player, int card, event_t event)
   return 0;
 }
 
-
 int card_vampiric_sliver(int player, int card, event_t event){
 /* CARD_ID_VAMPIRIC_SLIVER	8718
 Vampiric Sliver	|3|B
@@ -7440,6 +7770,7 @@ static int effect_vesuvan_shapeshifter(int player, int card, event_t event)
 
   return 0;
 }
+
 int card_vesuvan_shapeshifter(int player, int card, event_t event)
 {
 	/* Vesuvan Shapeshifter	|3|U|U	0x2003f77
@@ -7472,6 +7803,62 @@ int card_vesuvan_shapeshifter(int player, int card, event_t event)
 	}
 
   return morph(player, card, event, MANACOST_XU(1,1));
+}
+
+/* ManalinkEh 2022: 0x20fef10; original cards/time_spiral.c:7330. */
+int card_voidmage_husher(int player, int card, event_t event)
+{
+  /* Voidmage Husher	|3|U
+   * Creature - Human Wizard 2/2
+   * Flash (You may cast this spell any time you could cast an instant.)
+   * When this creature enters, counter target activated ability. (Mana abilities can't be targeted.)
+   * Whenever you cast a spell, you may return this creature to its owner's hand. */
+
+  int trigger_controller;
+  int stolen;
+  card_instance_t *instance;
+
+  trigger_controller = 1;
+  if (player == 1)
+  {
+    stolen = is_stolen(1, card);
+    trigger_controller = 0;
+    if (stolen != 0)
+    {
+      trigger_controller = 2;
+    }
+  }
+  sp_ability_trigger(player, event, trigger_controller, TYPE_ANY, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+      return can_counter_activated_ability(player, card, EVENT_CAN_CAST, NULL);
+    }
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance = get_card_instance(player, card);
+        instance->number_of_targets = '\0';
+        return cast_counter_activated_ability(player, card, 0);
+      }
+      etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
+    }
+    else
+    {
+      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      if (event == EVENT_ETB)
+      {
+        resolve_counter_activated_ability(player, card, NULL, 0);
+        return 0;
+      }
+    }
+    return 0;
+  }
+  bounce_permanent(player, card);
+  etb_ability(player, card, EVENT_SPA, RESOLVE_TRIGGER_MANDATORY);
+  return 0;
 }
 
 int card_volcanic_awakening(int player, int card, event_t event){
@@ -7749,7 +8136,6 @@ int card_wipe_away(int player, int card, event_t event){
 	return 0;
 }
 
-
 int card_word_of_seizing(int player, int card, event_t event){
 /* CARD_ID_WORD_OF_SEIZING	8732
 Word of Seizing	|3|R|R
@@ -7875,326 +8261,3 @@ If you do, shuffle your library. */
 
 	return 0;
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x20ee6c0; original cards/time_spiral.c:1372. */
-int card_corpulent_corpse(int player, int card, event_t event)
-{
-  int result;
-  fear(player, card, event);
-  result = suspend(player, card, event, 5, 0, 1, 0, 0, 0, 0, NULL, NULL);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x20f0580; original cards/time_spiral.c:1974. */
-int card_fallen_ideal(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int available_or_result;
-  int sacrifice_available;
-  int attached_card;
-  unsigned int chosen_sacrifice;
-  unsigned int player_00;
-  int granted_to_player;
-  test_definition_t test;
-
-  immortal_enchantment(player, card, event);
-  instance = get_card_instance(player, card);
-  granted_to_player = (int)instance->damage_target_player;
-  attached_card = instance->damage_target_card;
-  if (event == EVENT_CAN_ACTIVATE)
-  {
-    sacrifice_available = can_sacrifice_type_as_cost(player, 1, TYPE_CREATURE);
-    available_or_result = 0;
-    if (sacrifice_available != 0)
-    {
-      available_or_result =
-          granted_generic_activated_ability(player, card, granted_to_player, attached_card,
-                                            EVENT_CAN_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
-    }
-  }
-  else
-  {
-    if (event == EVENT_ACTIVATE)
-    {
-      granted_generic_activated_ability(player, card, granted_to_player, attached_card,
-                                        EVENT_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
-      new_default_test_definition(&test, 2, "Select creature to sacrifice.");
-      chosen_sacrifice = new_sacrifice(granted_to_player, attached_card, player,
-                                       SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK, &test);
-      if (chosen_sacrifice == 0)
-      {
-        spell_fizzled = 1;
-        return 0;
-      }
-      player_00 = (int)chosen_sacrifice >> 0x10 & 0xff;
-      state_untargettable(player_00, chosen_sacrifice >> 0x18, 0);
-      if (spell_fizzled != 1)
-      {
-        kill_card(player_00, chosen_sacrifice >> 0x18, KILL_SACRIFICE);
-      }
-    }
-    else if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      return pump_until_eot_merge_previous(granted_to_player, attached_card, granted_to_player,
-                                           attached_card, 2, 1);
-    }
-    available_or_result = generic_aura(player, card, event, player, 0, 0, 0x20, 0, 0, 0, 0);
-  }
-  return available_or_result;
-}
-
-/* ManalinkEh 2022: 0x20f4170; original cards/time_spiral.c:3286. */
-int card_keldon_halberdier(int player, int card, event_t event)
-{
-  int result;
-  result = suspend(player, card, event, 4, 0, 0, 0, 0, 1, 0, NULL, NULL);
-  return result;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int glass_asp_legacy(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x20e9460; original cards/time_spiral.c:2543. */
-int glass_asp_legacy(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-
-  if (event != EVENT_PHASE_CHANGED)
-  {
-    return 0;
-  }
-  if (current_phase == 10)
-  {
-    instance = get_card_instance(player, card);
-    if ((instance->targets[1].player != 0x42) &&
-        (instance = get_card_instance(player, card), instance->targets[0].player == current_turn))
-    {
-
-      result = has_mana(current_turn, 0, 2);
-      if ((result == 0) || (charge_mana_while_resolving(player, card, EVENT_DRAW_PHASE,
-                                                        current_turn, COLOR_COLORLESS, 2),
-                            spell_fizzled == 1))
-      {
-        instance = get_card_instance(player, card);
-        damage_player(instance->targets[0].player, 2, player, card);
-      }
-      instance = get_card_instance(player, card);
-      instance->targets[1].player = 0x42;
-      kill_card(player, card, KILL_EXILE);
-    }
-    if (current_phase == 10)
-    {
-      return 0;
-    }
-  }
-  instance = get_card_instance(player, card);
-  instance->targets[1].player = 0;
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x20f1d10; original cards/time_spiral.c:2569. */
-int card_glass_asp(int player, int card, event_t event)
-{
-  if (!damage_dealt_by_me(player, card, event,
-                           DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER))
-    return 0;
-  int32_t value = get_card_instance(player, card)->targets[1].player;
-  int legacy = create_legacy_effect(player, card, glass_asp_legacy);
-  card_instance_t *instance = get_card_instance(player, legacy);
-  instance->targets[0].player = (unsigned int)((char)value == 0);
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x20fef10; original cards/time_spiral.c:7330. */
-int card_voidmage_husher(int player, int card, event_t event)
-{
-  int trigger_controller;
-  int stolen;
-  card_instance_t *instance;
-
-  trigger_controller = 1;
-  if (player == 1)
-  {
-    stolen = is_stolen(1, card);
-    trigger_controller = 0;
-    if (stolen != 0)
-    {
-      trigger_controller = 2;
-    }
-  }
-  sp_ability_trigger(player, event, trigger_controller, TYPE_ANY, NULL, player, card);
-  if (event != EVENT_SPA)
-  {
-    if (event == EVENT_CAN_CAST)
-    {
-      return can_counter_activated_ability(player, card, EVENT_CAN_CAST, NULL);
-    }
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-      {
-        instance = get_card_instance(player, card);
-        instance->number_of_targets = '\0';
-        return cast_counter_activated_ability(player, card, 0);
-      }
-      etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
-    }
-    else
-    {
-      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-      if (event == EVENT_ETB)
-      {
-        resolve_counter_activated_ability(player, card, NULL, 0);
-        return 0;
-      }
-    }
-    return 0;
-  }
-  bounce_permanent(player, card);
-  etb_ability(player, card, EVENT_SPA, RESOLVE_TRIGGER_MANDATORY);
-  return 0;
-}
-
-#ifndef SHANDALAR
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x20fe1e0; original cards/time_spiral.c:7029. */
-int card_undying_rage(int player, int card, event_t event)
-{
-  int result;
-
-  immortal_enchantment(player, card, event);
-  attached_gets_pt(player, card, event, 2, 2);
-  attached_gets_kw(player, card, event, KEYWORD_0, SP_KEYWORD_CANNOT_BLOCK);
-  result = aura(player, card, event, NULL, NULL);
-  return result;
-}
-#endif
-
-#ifndef SHANDALAR
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int re_enable_abilities_at_eot(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x20ea990; original cards/time_spiral.c:6930. */
-static int re_enable_abilities_at_eot(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-
-  if (event != EVENT_CLEANUP)
-  {
-    return 0;
-  }
-
-  instance = get_card_instance(player, card);
-  if (-1 < instance->damage_target_player)
-  {
-    disable_all_activated_abilities((int)instance->damage_target_player,
-                                         instance->damage_target_card, 0);
-  }
-  kill_card(player, card, KILL_EXILE);
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x20fde10; original cards/time_spiral.c:6943. */
-int card_trickbind(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  card_instance_t *spell_instance;
-  int result;
-
-  instance = get_card_instance(player, card);
-  if (event == EVENT_CAN_CAST)
-  {
-    result = can_counter_activated_ability(player, card, EVENT_CAN_CAST, NULL);
-    if (result != 0)
-    {
-      instance->info_slot = 1;
-      return 99;
-    }
-    result = can_counter_triggered_ability(player, card, EVENT_CAN_CAST, NULL);
-    if (result != 0)
-    {
-      instance->info_slot = 2;
-      return 99;
-    }
-  }
-  else if (event == EVENT_CAST_SPELL)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-      spell_instance = get_card_instance(player, card);
-      spell_instance->number_of_targets = '\0';
-      state_untargettable(player, card, 1);
-      if (instance->info_slot == 1)
-      {
-        cast_counter_activated_ability(player, card, 0);
-      }
-      else
-      {
-        if (instance->info_slot != 2)
-        {
-          spell_fizzled = 1;
-          return 0;
-        }
-        cast_counter_triggered_ability(player, card, 0);
-      }
-    }
-  }
-  else if (event == EVENT_RESOLVE_SPELL)
-  {
-    if (instance->info_slot == 1)
-    {
-
-      instance =
-          get_card_instance(stack_cards[stack_size + -1].player, stack_cards[stack_size + -1].card);
-      disable_all_activated_abilities(instance->parent_controller, instance->parent_card, 1);
-      create_targetted_legacy_effect(player, card, re_enable_abilities_at_eot,
-                                     instance->parent_controller, instance->parent_card);
-      resolve_counter_activated_ability(player, card, NULL, 0);
-    }
-    else if (instance->info_slot == 2)
-    {
-      disable_all_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
-      create_targetted_legacy_effect(player, card, re_enable_abilities_at_eot,
-                                     instance->targets[0].player, instance->targets[0].card);
-      resolve_counter_triggered_ability(player, card, NULL, 0);
-    }
-    state_untargettable(player, card, 0);
-    kill_card(player, card, KILL_DESTROY);
-    return 0;
-  }
-  return 0;
-}
-
-#endif
-
-#ifndef SHANDALAR
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x20f6010; original cards/time_spiral.c:4059. */
-int card_moonlace(int player, int card, event_t event)
-{
-  int result;
-
-  result = lace(player, card, event, 1);
-  return result;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x20e7ea0; original cards/time_spiral.c:1026. */
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x20ea700; original cards/time_spiral.c:3214. */
-
-#endif

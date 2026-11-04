@@ -1,6 +1,11 @@
 #include "manalink.h"
 
 // Functions
+
+int card_goblin_war_drums(int player, int card, event_t event);
+
+int notion_thief_effect(int player, int card, event_t event);
+
 static void gatekeeper(int player, int card, event_t event, int trig_mode){
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
 		if( count_subtype(player, TYPE_LAND, SUBTYPE_GATE) >= 2 ){
@@ -10,7 +15,9 @@ static void gatekeeper(int player, int card, event_t event, int trig_mode){
 }
 
 // Cards
+
 // White
+
 int card_boros_mastiff(int player, int card, event_t event)
 {
   /* CARD_ID_BOROS_MASTIFF	13129
@@ -280,13 +287,12 @@ Creature - Shapeshifter 4/5
 }
 
 int card_hidden_strings(int player, int card, event_t event){
-/*
-Hidden Strings |1|U
-Sorcery
-You may tap or untap target permanent, then you may tap or untap another target permanent.
-Cipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player,
-		its controller may cast a copy of the encoded card without paying its mana cost.)
-*/
+  /* Hidden Strings |1|U
+   * Sorcery
+   * You may tap or untap target permanent, then you may tap or untap another target permanent.
+   * Cipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player,
+   * 		its controller may cast a copy of the encoded card without paying its mana cost.) */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -335,6 +341,12 @@ Cipher (Then you may exile this spell card encoded on a creature you control. Wh
 
 int card_maze_glider(int player, int card, event_t event)
 {
+  /* CARD_ID_MAZE_GLIDER	13174
+   * Maze Glider	|5|U
+   * Creature - Elemental 3/5
+   * Flying
+   * Multicolored creatures you control have flying. */
+
   card_instance_t *instance;
   int result;
   instance = in_play(player, card);
@@ -578,7 +590,6 @@ Defender
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED+GAA_NONSICK+GAA_CAN_ONLY_TARGET_OPPONENT, 3, 1, 0, 0, 0, 0, 0, &td, "TARGET_PLAYER");
 }
 
-
 int card_maze_abomination(int player, int card, event_t event)
 {
 /* CARD_ID_MAZE_ABOMINATION	13172
@@ -677,6 +688,7 @@ When ~ enters the battlefield, if you control two or more Gates, target creature
 }
 
 // Red
+
 int card_awe_for_the_guilds(int player, int card, event_t event){
 /* CARD_ID_AWE_FOR_THE_GUILDS	13116
 Awe for the Guilds	|2|R
@@ -741,13 +753,11 @@ int card_maze_rusher(int player, int card, event_t event){
 }
 
 int card_possibility_storm(int player, int card, event_t event){
-/*
-  Possibility Storm |3|R|R
-  Enchantment
-  Whenever a player casts a spell from his or her hand, that player exiles it, then exiles cards from the top of his or her library until
-  he or she exiles a card that shares a card type with it. That player may cast that card without paying its mana cost.
-  Then he or she puts all cards exiled with Possibility Storm on the bottom of his or her library in a random order.
-*/
+  /* Possibility Storm |3|R|R
+   *   Enchantment
+   *   Whenever a player casts a spell from his or her hand, that player exiles it, then exiles cards from the top of his or her library until
+   *   he or she exiles a card that shares a card type with it. That player may cast that card without paying its mana cost.
+   *   Then he or she puts all cards exiled with Possibility Storm on the bottom of his or her library in a random order. */
 
 	if (in_play(player, card) && !is_humiliated(player, card, AL_TRIG)
         && trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card)
@@ -1044,6 +1054,12 @@ static int has_1_1_counter(int unused1, int unused2, int player, int card){
 
 int card_renegade_krasis(int player, int card, event_t event)
 {
+  /* CARD_ID_RENEGADE_KRASIS	13205
+   * Renegade Krasis	|1|G|G
+   * Creature - Beast Mutant 3/2
+   * Evolve (Whenever a creature enters the battlefield under your control, if that creature has greater power or toughness than this creature,
+   * put a +1/+1 counter on this creature.) Whenever ~ evolves, put a +1/+1 counter on each other creature you control with a +1/+1 counter on it. */
+
   int entering_stat;
   int own_stat;
   test_definition_t test;
@@ -1119,6 +1135,7 @@ Scavenge |4|G|G (|4|G|G, Exile this card from your graveyard: Put a number of +1
 }
 
 // gold
+
 int card_advent_of_the_wurm(int player, int card, event_t event){
 /* CARD_ID_ADVENT_OF_THE_WURM	13109
 Advent of the Wurm	|1|G|G|W
@@ -1250,11 +1267,10 @@ As long as you have 30 or more life and an opponent has 10 or less life, ~ gets 
 // boros battleshaper --> impossible
 
 int card_bred_for_the_hunt(int player, int card, event_t event){
-/*
-Bred for the Hunt |1|U|G
-Enchantment
-Whenever a creature you control with a +1/+1 counter on it deals combat damage to a player, you may draw a card.
-*/
+  /* Bred for the Hunt |1|U|G
+   * Enchantment
+   * Whenever a creature you control with a +1/+1 counter on it deals combat damage to a player, you may draw a card. */
+
 	if( event == EVENT_DEAL_DAMAGE ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
@@ -1322,13 +1338,11 @@ Whenever a creature blocks, that creature's controller loses 1 life.
 }
 
 int card_council_of_the_absolute(int player, int card, event_t event){
-/*
-Council of the Absolute |2|U|W
-Creature — Human Advisor 2/4
-As Council of the Absolute enters the battlefield, name a card other than a creature or land card.
-Your opponents can't cast cards with the chosen name.
-Spells with the chosen name you cast cost {2} less to cast.
-*/
+  /* Council of the Absolute |2|U|W
+   * Creature — Human Advisor 2/4
+   * As Council of the Absolute enters the battlefield, name a card other than a creature or land card.
+   * Your opponents can't cast cards with the chosen name.
+   * Spells with the chosen name you cast cost {2} less to cast. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int csvid;
@@ -1441,12 +1455,10 @@ When ~ enters the battlefield, you may return another target creature you contro
 }
 
 int card_dragonshift(int player, int card, event_t event){
-	/*
-	  Dragonshift |1|U|R
-	  Instant
-	  Until end of turn, target creature you control becomes a 4/4 blue and red Dragon, loses all abilities, and gains flying.
-	  Overload {3}{U}{U}{R}{R} (You may cast this spell for its overload cost. If you do, change its text by replacing all instances of "target" with "each.")
-	*/
+  /* Dragonshift |1|U|R
+   * 	  Instant
+   * 	  Until end of turn, target creature you control becomes a 4/4 blue and red Dragon, loses all abilities, and gains flying.
+   * 	  Overload {3}{U}{U}{R}{R} (You may cast this spell for its overload cost. If you do, change its text by replacing all instances of "target" with "each.") */
 
 	if( IS_GS_EVENT(player, card, event) ){
 		target_definition_t td;
@@ -1727,7 +1739,6 @@ int card_goblin_test_pilot(int player, int card, event_t event){
 	return 0;
 }
 
-int card_goblin_war_drums(int player, int card, event_t event);
 int card_gruul_war_chant(int player, int card, event_t event)
 {
 /* CARD_ID_GRUUL_WAR_CHANT	13156
@@ -1866,6 +1877,10 @@ int card_krasis_incubation(int player, int card, event_t event)
 }
 
 int card_lavinia_of_the_tenth(int player, int card, event_t event){
+  /* Lavinia of the Tenth	|3|W|U
+   * Legendary Creature - Human Soldier 4/4
+   * Protection from red
+   * When Lavinia enters, detain each nonland permanent your opponents control with mana value 4 or less. (Until your next turn, those permanents can't attack or block and their activated abilities can't be activated.) */
 
 	check_legend_rule(player, card, event);
 
@@ -1912,6 +1927,12 @@ static int legions_initiative_legacy(int player, int card, event_t event)
 
 int card_legions_initiative(int player, int card, event_t event)
 {
+  /* Legion's Initiative	|R|W
+   * Enchantment
+   * Red creatures you control get +1/+0.
+   * White creatures you control get +0/+1.
+   * |R|W, Exile this enchantment: Exile all creatures you control. At the beginning of the next combat, return those cards to the battlefield under their owner's control and those creatures gain haste until end of turn. */
+
   boost_creature_by_color(player, card, event,
                           get_sleighted_color_test(player, card, COLOR_TEST_RED), 1, 0, 0,
                           BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
@@ -1978,6 +1999,12 @@ int card_legions_initiative(int player, int card, event_t event)
 
 int card_master_of_cruelties(int player, int card, event_t event)
 {
+  /* Master of Cruelties	|3|B|R
+   * Creature - Demon 1/4
+   * First strike, deathtouch
+   * This creature can only attack alone.
+   * Whenever this creature attacks a player and isn't blocked, that player's life total becomes 1. This creature assigns no combat damage this combat. */
+
   deathtouch(player, card, event);
 
   if (event == EVENT_ATTACK_LEGALITY && affected_card_controller == player && ! is_humiliated(player, card, AL_TRIG) )
@@ -2019,6 +2046,9 @@ int card_master_of_cruelties(int player, int card, event_t event)
 }
 
 int card_maw_of_obzedat(int player, int card, event_t event){
+  /* Maw of the Obzedat	|3|W|B
+   * Creature - Thrull 3/3
+   * Sacrifice a creature: Creatures you control get +1/+1 until end of turn. */
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -2062,6 +2092,10 @@ int card_melek_izzet_paragon(int player, int card, event_t event)
 }
 
 int card_mirko_vosk_mind_drinker(int player, int card, event_t event){
+  /* Mirko Vosk, Mind Drinker	|3|U|B
+   * Legendary Creature - Vampire 2/4
+   * Flying
+   * Whenever Mirko Vosk deals combat damage to a player, that player reveals cards from the top of their library until they reveal four land cards, then puts those cards into their graveyard. */
 
 	check_legend_rule(player, card, event);
 
@@ -2119,6 +2153,10 @@ int card_morgue_burst(int player, int card, event_t event){
 }
 
 int card_nivix_cyclops(int player, int card, event_t event){
+  /* Nivix Cyclops	|1|U|R
+   * Creature - Cyclops 1/4
+   * Defender
+   * Whenever you cast an instant or sorcery spell, this creature gets +3/+0 until end of turn and can attack this turn as though it didn't have defender. */
 
 	sp_ability_trigger(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_SPELL, NULL, player, card);
 	if (event == EVENT_SPA){
@@ -2131,8 +2169,55 @@ int card_nivix_cyclops(int player, int card, event_t event){
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x2297700; original cards/dragons_maze.c:2176. */
+int notion_thief_effect(int player, int card, event_t event)
+{
+  int32_t draw_count;
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if (((((instance != NULL) &&
+         (result = is_humiliated(player, card, AL_STATIC), trigger_condition == TRIGGER_REPLACE_CARD_DRAW)) &&
+        (card == affected_card)) &&
+       ((player == affected_card_controller && (reason_for_trigger_controller != player)))) &&
+      (result == 0 && suppress_draw == 0))
+  {
+    if (event == EVENT_TRIGGER)
+    {
+      event_result = event_result | 2;
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_TRIGGER)
+    {
+
+      instance = get_card_instance(player, card);
+      if ((current_phase == 10) &&
+          (draw_count = (uint32_t)instance->info_slot + 1u,
+           instance->info_slot = draw_count, draw_count < 2))
+      {
+        return 0;
+      }
+      suppress_draw = 1;
+      return 1;
+    }
+  }
+  if (event == EVENT_CLEANUP)
+  {
+    instance = get_card_instance(player, card);
+    instance->info_slot = 0;
+  }
+  return 0;
+}
+
 int card_notion_thief(int player, int card, event_t event)
 {
+  /* Notion Thief	|2|U|B
+   * Creature - Human Rogue 3/1
+   * Flash
+   * If an opponent would draw a card except the first one he or she draws in each of his or her draw steps,
+   * instead that player skips that draw and you draw a card. */
+
   int result;
   result = notion_thief_effect(player, card, event);
   if (result != 0)
@@ -2144,6 +2229,9 @@ int card_notion_thief(int player, int card, event_t event)
 }
 
 int card_obzedats_aid(int player, int card, event_t event){
+  /* Obzedat's Aid	|3|W|B
+   * Sorcery
+   * Return target permanent card from your graveyard to the battlefield. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -2165,6 +2253,9 @@ int card_obzedats_aid(int player, int card, event_t event){
 }
 
 int card_pilfered_plans(int player, int card, event_t event){
+  /* Pilfered Plans	|1|U|B
+   * Sorcery
+   * Target player mills two cards. Draw two cards. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -2251,6 +2342,7 @@ static int effect_progenitor_mimic(int player, int card, event_t event)
 
   return 0;
 }
+
 int card_progenitor_mimic(int player, int card, event_t event)
 {
 	/* Progenitor Mimic	|4|G|U	0x200a624
@@ -2400,11 +2492,9 @@ int card_reap_intellect(int player, int card, event_t event){
 }
 
 int card_render_silent(int player, int card, event_t event){
-/*
-Render Silent |W|U|U|
-Instant
-Counter target spell. Its controller can't cast spells this turn.
-*/
+  /* Render Silent |W|U|U|
+   * Instant
+   * Counter target spell. Its controller can't cast spells this turn. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( counterspell_validate(player, card, NULL, 0) ){
@@ -2446,6 +2536,11 @@ int card_rot_farm_skeleton(int player, int card, event_t event){
 }
 
 int card_ruric_thar_the_unbowed(int player, int card, event_t event){
+  /* Ruric Thar, the Unbowed	|4|R|G
+   * Legendary Creature - Ogre Warrior 6/6
+   * Reach, vigilance
+   * Ruric Thar attacks each combat if able.
+   * Whenever a player casts a noncreature spell, Ruric Thar deals 6 damage to that player. */
 
 	check_legend_rule(player, card, event);
 	vigilance(player, card, event);
@@ -2463,6 +2558,11 @@ int card_ruric_thar_the_unbowed(int player, int card, event_t event){
 }
 
 int card_savageborn_hydra(int player, int card, event_t event){
+  /* Savageborn Hydra	|X|R|G
+   * Creature - Hydra 0/0
+   * Double strike
+   * This creature enters with X +1/+1 counters on it.
+   * |1|RG: Put a +1/+1 counter on this creature. Activate only as a sorcery. */
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		if( generic_activated_ability(player, card, event, GAA_CAN_SORCERY_BE_PLAYED, MANACOST0, 0, NULL, NULL) ){
@@ -2564,6 +2664,9 @@ static int showstopper_legacy(int player, int card, event_t event){
 }
 
 int card_showstopper(int player, int card, event_t event){
+  /* Showstopper	|1|B|R
+   * Instant
+   * Until end of turn, creatures you control gain "When this creature dies, it deals 2 damage to target creature an opponent controls." */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int legacy = create_legacy_effect(player, card, &showstopper_legacy);
@@ -2576,6 +2679,9 @@ int card_showstopper(int player, int card, event_t event){
 }
 
 int card_sin_collector(int player, int card, event_t event){
+  /* Sin Collector	|1|W|B
+   * Creature - Human Cleric 2/1
+   * When this creature enters, target opponent reveals their hand. You choose an instant or sorcery card from it and exile that card. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
@@ -2605,6 +2711,9 @@ int card_sin_collector(int player, int card, event_t event){
 }
 
 int card_sire_of_insanity(int player, int card, event_t event){
+  /* Sire of Insanity	|4|B|R
+   * Creature - Demon 6/4
+   * At the beginning of each end step, each player discards their hand. */
 
 	if( eot_trigger(player, card, event) ){
 		APNAP(p, {new_discard_all(p, player);};);
@@ -2614,6 +2723,9 @@ int card_sire_of_insanity(int player, int card, event_t event){
 }
 
 int card_species_gorger(int player, int card, event_t event){
+  /* Species Gorger	|3|G|U
+   * Creature - Frog Beast 6/6
+   * At the beginning of your upkeep, return a creature you control to its owner's hand. */
 
 	if( trigger_condition == TRIGGER_UPKEEP ){
 		target_definition_t td;
@@ -2632,6 +2744,10 @@ int card_species_gorger(int player, int card, event_t event){
 
 int card_tajic_blade_of_the_legion(int player, int card, event_t event)
 {
+  /* Tajic, Blade of the Legion	|2|R|W
+   * Legendary Creature - Human Soldier 2/2
+   * Indestructible
+   * Battalion - Whenever Tajic and at least two other creatures attack, Tajic gets +5/+5 until end of turn. */
 
   check_legend_rule(player, card, event);
 
@@ -2689,6 +2805,11 @@ int card_teysa_envoy_of_ghosts(int player, int card, event_t event){
 }
 
 int card_tithe_drinker(int player, int card, event_t event){
+  /* Tithe Drinker	|W|B
+   * Creature - Vampire 2/1
+   * Lifelink (Damage dealt by this creature also causes you to gain that much life.)
+   * Extort (Whenever you cast a spell, you may pay |WB. If you do, each opponent loses 1 life and you gain that much life.) */
+
 	extort(player, card, event);
 	lifelink(player, card, event);
 	return 0;
@@ -2729,6 +2850,11 @@ int card_trostanis_summoner(int player, int card, event_t event){
 }
 
 int card_unflinching_courage(int player, int card, event_t event){
+  /* Unflinching Courage	|1|G|W
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +2/+2 and has trample and lifelink. (Damage dealt by the creature also causes its controller to gain that much life.) */
+
 	return generic_aura(player, card, event, player, 2, 2, KEYWORD_TRAMPLE, SP_KEYWORD_LIFELINK, 0, 0, 0);
 }
 
@@ -2841,6 +2967,11 @@ int card_varolz_the_scar_striped(int player, int card, event_t event){
 }
 
 int card_viashino_firstblade(int player, int card, event_t event){
+  /* Viashino Firstblade	|1|R|W
+   * Creature - Lizard Soldier 2/2
+   * Haste
+   * When this creature enters, it gets +2/+2 until end of turn. */
+
 	haste(player, card, event);
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -2875,6 +3006,10 @@ int card_voice_of_resurgence(int player, int card, event_t event){
 
 int card_vorel_of_the_hull_clade(int player, int card, event_t event)
 {
+  /* Vorel of the Hull Clade	|1|G|U
+   * Legendary Creature - Human Merfolk 1/4
+   * |G|U, |T: Double the number of each kind of counter on target artifact, creature, or land. */
+
   int t_player;
   card_instance_t *instance;
   int result;
@@ -2935,6 +3070,10 @@ int card_warped_physique(int player, int card, event_t event){
 // zhur thaa ancient --> mana flare
 
 int card_zhur_taa_druid(int player, int card, event_t event){
+  /* Zhur-Taa Druid	|R|G
+   * Creature - Human Druid 1/1
+   * |T: Add |G.
+   * Whenever you tap this creature for mana, it deals 1 damage to each opponent. */
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -2948,8 +3087,19 @@ int card_zhur_taa_druid(int player, int card, event_t event){
 }
 
 // Split
+
 int card_alive_well(int player, int card, event_t event)
 {
+  /* Alive // Well	|3|G // |W
+   * Sorcery // Sorcery
+   * Alive:
+   * Create a 3/3 green Centaur creature token.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Well:
+   * You gain 2 life for each creature you control.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   card_instance_t *instance;
   int well_priority_or_creatures;
   int creature_count;
@@ -3026,6 +3176,16 @@ int card_alive_well(int player, int card, event_t event)
 
 int card_armed_dangerous(int player, int card, event_t event)
 {
+  /* Armed // Dangerous	|1|R // |3|G
+   * Sorcery // Sorcery
+   * Armed:
+   * Target creature gets +1/+1 and gains double strike until end of turn.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Dangerous:
+   * All creatures able to block target creature this turn do so.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   card_instance_t *instance;
   int dangerous_available;
   unsigned int half_flags_or_target_count;
@@ -3117,6 +3277,16 @@ static int beck_legacy(int player, int card, event_t event){
 
 int card_beck_call(int player, int card, event_t event)
 {
+  /* Beck // Call	|G|U // |4|W|U
+   * Sorcery // Sorcery
+   * Beck:
+   * Whenever a creature enters this turn, you may draw a card.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Call:
+   * Create four 1/1 white Bird creature tokens with flying.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   card_instance_t *instance;
   unsigned int half_flags;
 
@@ -3162,6 +3332,16 @@ int card_beck_call(int player, int card, event_t event)
 
 int card_breaking_entering(int player, int card, event_t event)
 {
+  /* Breaking // Entering	|U|B // |4|B|R
+   * Sorcery // Sorcery
+   * Breaking:
+   * Target player mills eight cards.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Entering:
+   * Put a creature card from a graveyard onto the battlefield under your control. It gains haste until end of turn.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   card_instance_t *instance;
   unsigned int half_flags;
   int creature_count;
@@ -3258,6 +3438,16 @@ int card_breaking_entering(int player, int card, event_t event)
 
 int card_catch_release(int player, int card, event_t event)
 {
+  /* Catch // Release	|1|U|R // |4|R|W
+   * Sorcery // Sorcery
+   * Catch:
+   * Gain control of target permanent until end of turn. Untap it. It gains haste until end of turn.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Release:
+   * Each player sacrifices an artifact, a creature, an enchantment, a land, and a planeswalker of their choice.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   card_instance_t *instance;
   unsigned int half_flags;
   int result;
@@ -3327,6 +3517,16 @@ int card_catch_release(int player, int card, event_t event)
 
 int card_down_dirty(int player, int card, event_t event)
 {
+  /* Down // Dirty	|3|B // |2|G
+   * Sorcery // Sorcery
+   * Down:
+   * Target player discards two cards.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Dirty:
+   * Return target card from your graveyard to your hand.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   target_definition_t td3;
   uint8_t existing_target_count;
   card_instance_t *instance;
@@ -3424,6 +3624,16 @@ int card_down_dirty(int player, int card, event_t event)
 
 int card_far_away(int player, int card, event_t event)
 {
+  /* Far // Away	|1|U // |2|B
+   * Instant // Instant
+   * Far:
+   * Return target creature to its owner's hand.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Away:
+   * Target player sacrifices a creature of their choice.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   unsigned char away_target_count;
   card_instance_t *instance;
   int away_available;
@@ -3509,6 +3719,13 @@ int card_far_away(int player, int card, event_t event)
 
 int card_flesh_blood(int player, int card, event_t event)
 {
+  /* Flesh // Blood	|3|B|G|/|R|G	0x200a6a6
+   * Sorcery // Sorcery
+   * Exile target creature card from a graveyard. Put X +1/+1 counters on target creature, where X is the power of the card you exiled.
+   * //
+   * Target creature you control deals damage equal to its power to any target.
+   * Fuse */
+
   target_definition_t td5;
   card_instance_t *instance;
   int amt;
@@ -3667,6 +3884,16 @@ int card_flesh_blood(int player, int card, event_t event)
 
 int card_give_take(int player, int card, event_t event)
 {
+  /* Give // Take	|2|G // |2|U
+   * Sorcery // Sorcery
+   * Give:
+   * Put three +1/+1 counters on target creature.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Take:
+   * Remove all +1/+1 counters from target creature you control. Draw that many cards.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   card_instance_t *instance;
   int take_available_or_counters;
   unsigned int half_flags_or_target_count;
@@ -3774,9 +4001,18 @@ int card_give_take(int player, int card, event_t event)
                               0x4b3c, take_available_or_counters, 8);
 }
 
-
 int card_profit_loss(int player, int card, event_t event)
 {
+  /* Profit // Loss	|1|W // |2|B
+   * Instant // Instant
+   * Profit:
+   * Creatures you control get +1/+1 until end of turn.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Loss:
+   * Creatures your opponents control get -1/-1 until end of turn.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   card_instance_t *instance;
   unsigned int half_flags;
 
@@ -3822,6 +4058,16 @@ int card_profit_loss(int player, int card, event_t event)
 
 int card_protect_serve(int player, int card, event_t event)
 {
+  /* Protect // Serve	|2|W // |1|U
+   * Instant // Instant
+   * Protect:
+   * Target creature gets +2/+4 until end of turn.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Serve:
+   * Target creature gets -6/-0 until end of turn.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   card_instance_t *instance;
   int serve_available;
   unsigned int half_flags_or_target_count;
@@ -3905,6 +4151,16 @@ int card_protect_serve(int player, int card, event_t event)
 
 int card_ready_willing(int player, int card, event_t event)
 {
+  /* Ready // Willing	|1|G|W // |1|W|B
+   * Instant // Instant
+   * Ready:
+   * Creatures you control gain indestructible until end of turn. Untap each creature you control.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Willing:
+   * Creatures you control gain deathtouch and lifelink until end of turn.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   card_instance_t *instance;
   unsigned int half_flags;
   test_definition_t this_test;
@@ -3953,6 +4209,16 @@ int card_ready_willing(int player, int card, event_t event)
 
 int card_toil_trouble(int player, int card, event_t event)
 {
+  /* Toil // Trouble	|2|B // |2|R
+   * Sorcery // Sorcery
+   * Toil:
+   * Target player draws two cards and loses 2 life.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Trouble:
+   * Trouble deals damage to target player equal to the number of cards in that player's hand.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   unsigned char trouble_target_count;
   card_instance_t *instance;
   unsigned int half_flags;
@@ -4055,6 +4321,13 @@ int card_toil_trouble(int player, int card, event_t event)
 
 int card_turn_burn(int player, int card, event_t event)
 {
+  /* Turn // Burn	|2|U|/|1|R	0x200a6c4
+   * Instant // Instant
+   * Until end of turn, target creature loses all abilities and becomes a |Sred Weird with base power and toughness 0/1.
+   * //
+   * Burn deals 2 damage to any target.
+   * Fuse */
+
   card_instance_t *instance;
   int burn_available;
   unsigned int half_flags_or_target_count;
@@ -4151,6 +4424,16 @@ int card_turn_burn(int player, int card, event_t event)
 
 int card_wear_tear(int player, int card, event_t event)
 {
+  /* Wear // Tear	|1|R // |W
+   * Instant // Instant
+   * Wear:
+   * Destroy target artifact.
+   * Fuse (You may cast one or both halves of this card from your hand.)
+   *
+   * Tear:
+   * Destroy target enchantment.
+   * Fuse (You may cast one or both halves of this card from your hand.) */
+
   card_instance_t *instance;
   int tear_available;
   unsigned int half_flags_or_target_count;
@@ -4379,6 +4662,7 @@ int card_azorius_cluestone(int player, int card, event_t event){
 }
 
 // Lands
+
 static int get_gate_code(int csvid){
 	int gates[10] = { CARD_ID_AZORIUS_GUILDGATE, CARD_ID_BOROS_GUILDGATE, CARD_ID_DIMIR_GUILDGATE, CARD_ID_GOLGARI_GUILDGATE,
 					CARD_ID_GRUUL_GUILDGATE, CARD_ID_IZZET_GUILDGATE, CARD_ID_ORZHOV_GUILDGATE, CARD_ID_RAKDOS_GUILDGATE,
@@ -4532,49 +4816,5 @@ int card_mazes_end(int player, int card, event_t event)
     }
   }
 
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int notion_thief_effect(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x2297700; original cards/dragons_maze.c:2176. */
-int notion_thief_effect(int player, int card, event_t event)
-{
-  int32_t draw_count;
-  card_instance_t *instance;
-  int result;
-
-  instance = in_play(player, card);
-  if (((((instance != NULL) &&
-         (result = is_humiliated(player, card, AL_STATIC), trigger_condition == TRIGGER_REPLACE_CARD_DRAW)) &&
-        (card == affected_card)) &&
-       ((player == affected_card_controller && (reason_for_trigger_controller != player)))) &&
-      (result == 0 && suppress_draw == 0))
-  {
-    if (event == EVENT_TRIGGER)
-    {
-      event_result = event_result | 2;
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_TRIGGER)
-    {
-
-      instance = get_card_instance(player, card);
-      if ((current_phase == 10) &&
-          (draw_count = (uint32_t)instance->info_slot + 1u,
-           instance->info_slot = draw_count, draw_count < 2))
-      {
-        return 0;
-      }
-      suppress_draw = 1;
-      return 1;
-    }
-  }
-  if (event == EVENT_CLEANUP)
-  {
-    instance = get_card_instance(player, card);
-    instance->info_slot = 0;
-  }
   return 0;
 }

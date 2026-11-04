@@ -3,6 +3,11 @@
 /* Canonical recovered helper declarations. */
 int new_special_count_grave(int player, test_definition_t *this_test);
 
+/* Original source signature; GCC removes the unused player argument. */
+static int count_zone_by_type(int player, int type, const int *zone);
+
+int count_rfg_by_type(int player, int type);
+
 int count_graveyard_by_color(int player, int selected_color)
 {
   unsigned int timestamp = 0;
@@ -60,7 +65,6 @@ int count_graveyard_by_color(int player, int selected_color)
   return result;
 }
 
-
 int count_graveyard_by_id(int player, int id){
 	int i;
 	int result = 0;
@@ -80,6 +84,7 @@ int count_graveyard_by_id(int player, int id){
 }
 
 // Count the number of cards in a zone
+
 int count_zone(int player, const int* zone){
   int i;
 
@@ -114,8 +119,28 @@ void purge_rfg(int player){
 	rfg[count_rfg(player) - 1] = -1;
 }
 
-/* Original source signature; GCC removes the unused player argument. */
-static int count_zone_by_type(int player, int type, const int *zone);
+/* ManalinkEh 2022: 0x26e5c70; original functions/count_graveyard.c:119. */
+/* Native clone removes the original source player parameter. */
+static int count_zone_by_type(int player, int type, const int *zone)
+{
+  const int *zone_end;
+  int type_match;
+  int matches;
+
+  zone_end = zone + 500;
+  matches = 0;
+  do
+  {
+    if (*zone == -1)
+    {
+      return matches;
+    }
+    type_match = is_what(-1, *zone, type);
+    matches = (matches + 1) - (unsigned int)(type_match == 0);
+    zone = zone + 1;
+  } while (zone != zone_end);
+  return matches;
+}
 
 int count_graveyard_by_type(int player, int type){
 	int i;
@@ -128,7 +153,27 @@ int count_graveyard_by_type(int player, int type){
 	return result;
 }
 
+/* ManalinkEh 2022: 0x26e60e0; original functions/count_graveyard.c:143. */
+int count_rfg_by_type(int player, int type)
+{
+  int second_count;
+  int first_count;
+
+  first_count = 0;
+  if ((player & 0xfffffffdU) == 0)
+  {
+    first_count = count_zone_by_type(0, type, rfg_ptr[player]);
+  }
+  if (player - 1U < 2)
+  {
+    second_count = count_zone_by_type(1, type, rfg_ptr[player]);
+    return first_count + second_count;
+  }
+  return first_count;
+}
+
 // Equivalent to count_graveyard_by_type(player, type) > 0, but stops when it finds the first qualifying card.
+
 int any_in_graveyard_by_type(int player, int type)
 {
   int p, i;
@@ -214,25 +259,6 @@ int new_special_count_grave(int player, test_definition_t *this_test)
   return matches;
 }
 
-int special_count_grave(int player, int type, int flag1, int subtype, int flag2, int color, int flag3, int id, int flag4, int cc, int flag5){
-
-	int count = count_graveyard(player)-1;
-	int result = 0;
-	const int *grave = get_grave(player);
-	int test_type = get_test_score(type, flag1, subtype, flag2, color, flag3, id, flag4, cc, flag5);
-	while( count > - 1 ){
-			if( make_test(player, grave[count], test_type, type, flag1, subtype, flag2, color, flag3, id,
-						  flag4, cc, flag5)
-			  ){
-				result++;
-			}
-			count--;
-	}
-	return result;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
 /* ManalinkEh 2022: 0x26e6370; original functions/count_graveyard.c:211. */
 int special_count_zone(int player, int *zone, test_definition_t *this_test)
 {
@@ -257,56 +283,19 @@ int special_count_zone(int player, int *zone, test_definition_t *this_test)
   return matches;
 }
 
-/* ManalinkEh 2022: 0x26e5c70; original functions/count_graveyard.c:119. */
-/* Native clone removes the original source player parameter. */
-static int count_zone_by_type(int player, int type, const int *zone)
-{
-  const int *zone_end;
-  int type_match;
-  int matches;
+int special_count_grave(int player, int type, int flag1, int subtype, int flag2, int color, int flag3, int id, int flag4, int cc, int flag5){
 
-  zone_end = zone + 500;
-  matches = 0;
-  do
-  {
-    if (*zone == -1)
-    {
-      return matches;
-    }
-    type_match = is_what(-1, *zone, type);
-    matches = (matches + 1) - (unsigned int)(type_match == 0);
-    zone = zone + 1;
-  } while (zone != zone_end);
-  return matches;
+	int count = count_graveyard(player)-1;
+	int result = 0;
+	const int *grave = get_grave(player);
+	int test_type = get_test_score(type, flag1, subtype, flag2, color, flag3, id, flag4, cc, flag5);
+	while( count > - 1 ){
+			if( make_test(player, grave[count], test_type, type, flag1, subtype, flag2, color, flag3, id,
+						  flag4, cc, flag5)
+			  ){
+				result++;
+			}
+			count--;
+	}
+	return result;
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int count_rfg_by_type(int player, int type);
-
-/* ManalinkEh 2022: 0x26e60e0; original functions/count_graveyard.c:143. */
-int count_rfg_by_type(int player, int type)
-{
-  int second_count;
-  int first_count;
-
-  first_count = 0;
-  if ((player & 0xfffffffdU) == 0)
-  {
-    first_count = count_zone_by_type(0, type, rfg_ptr[player]);
-  }
-  if (player - 1U < 2)
-  {
-    second_count = count_zone_by_type(1, type, rfg_ptr[player]);
-    return first_count + second_count;
-  }
-  return first_count;
-}
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 typed consumers and compiler parts. */
-
-/* ManalinkEh 2022: 0x26e62e0; original functions/count_graveyard.c:192. */
-
-
-#endif

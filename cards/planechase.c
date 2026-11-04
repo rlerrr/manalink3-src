@@ -191,14 +191,12 @@ static int generic_plane(int player, int card, event_t event)
   return 0;
 }
 
-
 int card_planechase(int player, int card, event_t event){
 
 	vanguard_card(player, card, event, 7, 20, 8);
 
 	return generic_plane(player, card, event);
 }
-
 
 // Planechase 2012
 
@@ -568,6 +566,13 @@ int card_thromok_the_insatiable(int player, int card, event_t event ){
 
 int card_vela_the_night_clad(int player, int card, event_t event)
 {
+  /* CARD_ID_VELA_THE_NIGHT_CLAD	12536
+   * Vela the Night-Clad	|4|U|B
+   * Legendary Creature - Human Wizard 4/4
+   * Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)
+   * Other creatures you control have intimidate.
+   * Whenever ~ or another creature you control leaves the battlefield, each opponent loses 1 life. */
+
   test_definition_t test;
   check_legend_rule(player, card, event);
   if (event == EVENT_ABILITIES)
@@ -816,6 +821,13 @@ static int effect_indestructible_as_long_as_has_divinity_counter(int player, int
 }
 int card_bant(int player, int card, event_t event)
 {
+  /* CARD_ID_BANT	14716
+   * ** Bant	""
+   * Plane - Alara
+   * All creatures have exalted. (Whenever a creature attacks alone, it gets +1/+1 until end of turn for each instance of exalted among permanents its controller controls.)
+   * Whenever you roll |A, put a divinity counter on target |Sgreen, |Swhite, or |Sblue creature.
+   * That creature has indestructible for as long as it has a divinity counter on it. */
+
   int c;
   int chaos_target_available;
   int eligible_or_humiliated;
@@ -978,6 +990,13 @@ Whenever you roll |A, target player can't cast spells until a player planeswalks
 
 int card_feeding_grounds(int player, int card, event_t event)
 {
+  /* CARD_ID_FEEDING_GROUNDS	14719
+   * ** Feeding Grounds	""
+   * Plane - Muraganda
+   * |SRed spells cost |1 less to cast.
+   * |SGreen spells cost |1 less to cast.
+   * Whenever you roll |A, put X +1/+1 counters on target creature, where X is that creature's converted mana cost. */
+
   int result;
   unsigned int spell_color;
   card_instance_t *instance;
@@ -1019,6 +1038,10 @@ int card_feeding_grounds(int player, int card, event_t event)
 }
 
 int card_fields_of_summer(int player, int card, event_t event){
+  /* Fields of Summer	""
+   * Plane - Moag
+   * Whenever a player casts a spell, that player may gain 2 life.
+   * Whenever chaos ensues, you may gain 10 life. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1057,6 +1080,10 @@ int card_goldmeadow2(int player, int card, event_t event){
 }
 
 int card_grixis(int player, int card, event_t event){
+  /* Grixis	""
+   * Plane - Alara
+   * Blue, black, and/or red creature cards in your graveyard have unearth. The unearth cost is equal to the card's mana cost. (Pay the card's mana cost: Return it to the battlefield. The creature gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)
+   * Whenever chaos ensues, put target creature card from a graveyard onto the battlefield under your control. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1226,6 +1253,10 @@ static int izzet_steam_maze_legacy(int player, int card, event_t event){
 }
 
 int card_izzet_steam_maze(int player, int card, event_t event){
+  /* Izzet Steam Maze	""
+   * Plane - Ravnica
+   * Whenever a player casts an instant or sorcery spell, that player copies it. The player may choose new targets for the copy.
+   * Whenever chaos ensues, instant and sorcery spells you cast this turn cost |3 less to cast. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1247,6 +1278,10 @@ int card_izzet_steam_maze(int player, int card, event_t event){
 }
 
 int card_krosa2(int player, int card, event_t event){
+  /* Krosa	""
+   * Plane - Dominaria
+   * All creatures get +2/+2.
+   * Whenever chaos ensues, you may add |W|U|B|R|G. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1260,6 +1295,10 @@ int card_krosa2(int player, int card, event_t event){
 }
 
 int card_lethe_lake(int player, int card, event_t event){
+  /* Lethe Lake	""
+   * Plane - Arkhos
+   * At the beginning of your upkeep, mill ten cards.
+   * Whenever chaos ensues, target player mills ten cards. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1293,6 +1332,10 @@ int card_lethe_lake(int player, int card, event_t event){
 }
 
 int card_llanowar2(int player, int card, event_t event){
+  /* Llanowar	""
+   * Plane - Dominaria
+   * All creatures have "|T: Add |G|G."
+   * Whenever chaos ensues, untap all creatures you control. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1337,6 +1380,10 @@ int card_llanowar2(int player, int card, event_t event){
 }
 
 int card_minamo2(int player, int card, event_t event){
+  /* Minamo	""
+   * Plane - Kamigawa
+   * Whenever a player casts a spell, that player may draw a card.
+   * Whenever chaos ensues, each player may return a blue card from their graveyard to their hand. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1400,6 +1447,10 @@ int card_naar_isle(int player, int card, event_t event){
 }
 
 int card_naya2(int player, int card, event_t event){
+  /* Naya	""
+   * Plane - Alara
+   * You may play any number of lands on each of your turns.
+   * Whenever chaos ensues, target red, green, or white creature you control gets +1/+1 until end of turn for each land you control. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1507,6 +1558,11 @@ int card_otaria(int player, int card, event_t event){
 }
 
 int card_panopticon(int player, int card, event_t event){
+  /* Panopticon	""
+   * Plane - Mirrodin
+   * When you planeswalk to ~, draw a card.
+   * At the beginning of your draw step, draw an additional card.
+   * Whenever chaos ensues, draw a card. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1522,6 +1578,10 @@ int card_panopticon(int player, int card, event_t event){
 }
 
 int card_pools_of_becoming(int player, int card, event_t event){
+  /* Pools of Becoming	""
+   * Plane - Bolas's Meditation Realm
+   * At the beginning of your end step, put the cards in your hand on the bottom of your library in any order, then draw that many cards.
+   * Whenever chaos ensues, reveal the top three cards of your planar deck. Each of the revealed cards' chaos abilities triggers. Then put the revealed cards on the bottom of your planar deck in any order. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1561,6 +1621,11 @@ int card_pools_of_becoming(int player, int card, event_t event){
 
 int card_ravens_run(int player, int card, event_t event)
 {
+  /* Raven's Run	""
+   * Plane - Shadowmoor
+   * All creatures have wither. (They deal damage to creatures in the form of -1/-1 counters.)
+   * Whenever chaos ensues, put a -1/-1 counter on target creature, two -1/-1 counters on another target creature, and three -1/-1 counters on a third target creature. */
+
   target_t *target_player_entry;
   target_t *target_card_entry;
   int target_index_or_result;
@@ -1610,6 +1675,10 @@ int card_ravens_run(int player, int card, event_t event)
 }
 
 int card_sanctum_of_serra(int player, int card, event_t event){
+  /* Sanctum of Serra	""
+   * Plane - Serra's Realm
+   * When you planeswalk away from ~, destroy all nonland permanents.
+   * Whenever chaos ensues, you may have your life total become 20. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1810,6 +1879,11 @@ int card_shiv2(int player, int card, event_t event)
 }
 
 int card_skybreen(int player, int card, event_t event){
+  /* Skybreen	""
+   * Plane - Kaldheim
+   * Players play with the top card of their libraries revealed.
+   * Spells that share a card type with the top card of a library can't be cast.
+   * Whenever chaos ensues, target player loses life equal to the number of cards in their hand. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1842,6 +1916,10 @@ int card_skybreen(int player, int card, event_t event){
 }
 
 int card_sokenzan(int player, int card, event_t event){
+  /* Sokenzan	""
+   * Plane - Kamigawa
+   * All creatures get +1/+1 and have haste.
+   * Whenever chaos ensues, untap all creatures that attacked this turn. If it's a main phase, there is an additional combat phase after this phase, followed by an additional main phase. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1889,6 +1967,10 @@ int card_stronghold_furnace(int player, int card, event_t event){
 }
 
 int card_tazeem(int player, int card, event_t event){
+  /* Tazeem	""
+   * Plane - Zendikar
+   * Creatures can't block.
+   * Whenever chaos ensues, draw a card for each land you control. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1915,6 +1997,11 @@ static int aether_flues_effect(int player, int card){
 }
 
 int card_the_aether_flues(int player, int card, event_t event){
+  /* The Aether Flues	""
+   * Plane - Iquatana
+   * When you planeswalk to ~ and at the beginning of your upkeep, you may sacrifice a creature. If you do, reveal cards from the top of your library until you reveal a creature card, put that card onto the battlefield, then shuffle all other cards revealed this way into your library.
+   * Whenever chaos ensues, you may put a creature card from your hand onto the battlefield. */
+
 //The Aether Flues
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1950,6 +2037,10 @@ int card_the_aether_flues(int player, int card, event_t event){
 // the dark barony --> skipped
 
 int card_the_eon_fog(int player, int card, event_t event){
+  /* The Eon Fog	""
+   * Plane - Equilor
+   * Players skip their untap steps.
+   * Whenever chaos ensues, untap all permanents you control. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -1996,6 +2087,10 @@ int card_the_fourth_sphere(int player, int card, event_t event){
 }
 
 int card_the_great_forest(int player, int card, event_t event){
+  /* The Great Forest	""
+   * Plane - Lorwyn
+   * Each creature assigns combat damage equal to its toughness rather than its power.
+   * Whenever chaos ensues, creatures you control get +0/+2 and gain trample until end of turn. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2017,6 +2112,10 @@ int card_the_great_forest(int player, int card, event_t event){
 }
 
 int card_the_hippodrome(int player, int card, event_t event){
+  /* The Hippodrome	""
+   * Plane - Segovia
+   * All creatures get -5/-0.
+   * Whenever chaos ensues, you may destroy target creature if its power is 0 or less. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2052,8 +2151,11 @@ static void the_maelstrom_effect(int player){
 	}
 }
 
-
 int card_the_maelstrom(int player, int card, event_t event){
+  /* The Maelstrom	""
+   * Plane - Alara
+   * When you planeswalk to ~ and at the beginning of your upkeep, you may reveal the top card of your library. If a permanent card is revealed this way, you may put it onto the battlefield. If you revealed a card but didn't put it onto the battlefield, put it on the bottom of your library.
+   * Whenever chaos ensues, return target permanent card from your graveyard to the battlefield. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2086,6 +2188,10 @@ int card_the_maelstrom(int player, int card, event_t event){
 }
 
 int card_turri_island(int player, int card, event_t event){
+  /* Turri Island	""
+   * Plane - Ir
+   * Creature spells cost |2 less to cast.
+   * Whenever chaos ensues, reveal the top three cards of your library. Put all creature cards revealed this way into your hand and the rest into your graveyard. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2121,6 +2227,10 @@ int card_turri_island(int player, int card, event_t event){
 }
 
 int card_undercity_reaches(int player, int card, event_t event){
+  /* Undercity Reaches	""
+   * Plane - Ravnica
+   * Whenever a creature deals combat damage to a player, its controller may draw a card.
+   * Whenever chaos ensues, you have no maximum hand size for the rest of the game. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2163,6 +2273,10 @@ int card_undercity_reaches(int player, int card, event_t event){
 }
 
 int card_velis_vel(int player, int card, event_t event){
+  /* Velis Vel	""
+   * Plane - Lorwyn
+   * Each creature gets +1/+1 for each other creature on the battlefield that shares at least one creature type with it. (For example, if two Elemental Shamans and an Elemental Spirit are on the battlefield, each gets +2/+2.)
+   * Whenever chaos ensues, target creature gains all creature types until end of turn. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2250,6 +2364,10 @@ int card_aretopolis(int player, int card, event_t event){
 // astral arena --> skipped
 
 int card_bloodhill_bastion(int player, int card, event_t event){
+  /* Bloodhill Bastion	""
+   * Plane - Equilor
+   * Whenever a creature enters, it gains double strike and haste until end of turn.
+   * Whenever chaos ensues, exile target nontoken creature you control, then return it to the battlefield under your control. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2278,6 +2396,10 @@ int card_bloodhill_bastion(int player, int card, event_t event){
 }
 
 int card_edge_of_malacol(int player, int card, event_t event){
+  /* Edge of Malacol	""
+   * Plane - Belenon
+   * If a creature you control would untap during your untap step, put two +1/+1 counters on it instead.
+   * Whenever chaos ensues, untap each creature you control. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2299,6 +2421,10 @@ int card_edge_of_malacol(int player, int card, event_t event){
 }
 
 int card_furnace_layer(int player, int card, event_t event){
+  /* Furnace Layer	""
+   * Plane - New Phyrexia
+   * When you planeswalk to ~ and at the beginning of your upkeep, select target player at random. That player discards a card. If that player discards a land card this way, they lose 3 life.
+   * Whenever chaos ensues, you may destroy target nonland permanent. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2371,6 +2497,13 @@ int card_gavony(int player, int card, event_t event){
 
 int card_grand_ossuary(int player, int card, event_t event)
 {
+  /* ** Grand Ossuary	""
+   * Plane - Ravnica
+   * Whenever a creature dies, its controller distributes a number of +1/+1 counters equal to its power among any number of target creatures
+   * 		he or she controls.
+   * Whenever you roll |C, each player exiles all creatures he or she controls and puts X 1/1 |Sgreen Saproling creature tokens onto
+   * 		the battlefield, where X is the total power of the creatures he or she exiled this way. Then planeswalk. */
+
   int32_t dying_controller;
   int card_00;
   unsigned int death_count_or_turn_offset;
@@ -2488,6 +2621,10 @@ static void gotd_effect(int player){
 }
 
 int card_grove_of_the_dreampods(int player, int card, event_t event){
+  /* Grove of the Dreampods	""
+   * Plane - Fabacin
+   * When you planeswalk to ~ and at the beginning of your upkeep, reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and the rest on the bottom of your library in a random order.
+   * Whenever chaos ensues, return target creature card from your graveyard to the battlefield. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2520,6 +2657,10 @@ int card_grove_of_the_dreampods(int player, int card, event_t event){
 }
 
 int card_hedron_fields_of_agadeem(int player, int card, event_t event){
+  /* Hedron Fields of Agadeem	""
+   * Plane - Zendikar
+   * Creatures with power 7 or greater can't attack or block.
+   * Whenever chaos ensues, create a 7/7 colorless Eldrazi creature token with annihilator 1. (Whenever it attacks, defending player sacrifices a permanent of their choice.) */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2540,6 +2681,11 @@ int card_hedron_fields_of_agadeem(int player, int card, event_t event){
 
 int card_jund2(int player, int card, event_t event)
 {
+  /* ** Jund	""
+   * Plane - Alara
+   * Whenever a player casts a |Sblack, |Sred, or |Sgreen creature spell, it gains devour 5.
+   * Whenever you roll |C, put two 1/1 |Sred Goblin creature tokens onto the battlefield. */
+
   int result;
   test_definition_t test;
   vanguard_card(player, card, event, 7, 0x14, 0);
@@ -2575,6 +2721,10 @@ int card_jund2(int player, int card, event_t event)
 }
 
 int card_kessig2(int player, int card, event_t event){
+  /* Kessig	""
+   * Plane - Innistrad
+   * Prevent all combat damage that would be dealt by non-Werewolf creatures.
+   * Whenever chaos ensues, each creature you control gets +2/+2, gains trample, and becomes a Werewolf in addition to its other types until end of turn. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2611,6 +2761,10 @@ int card_kessig2(int player, int card, event_t event){
 }
 
 int card_kharasha_foothills(int player, int card, event_t event){
+  /* Kharasha Foothills	""
+   * Plane - Mongseng
+   * Whenever a creature you control attacks a player, for each other opponent, you may create a token that's a copy of that creature, tapped and attacking that opponent. Exile those tokens at the beginning of the next end step.
+   * Whenever chaos ensues, you may sacrifice any number of creatures. If you do, ~ deals that much damage to target creature. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2752,6 +2906,13 @@ int card_lair_of_the_ashen_idol(int player, int card, event_t event){
 
 int card_mount_keralia(int player, int card, event_t event)
 {
+  /* Mount Keralia	""
+   * Plane - Regatha
+   * At the beginning of your end step, put a pressure counter on Mount Keralia.
+   * When you planeswalk away from Mount Keralia, it deals damage equal to the number of pressure counters on it to each creature and
+   * 		each planeswalker.
+   * Whenever you roll |C, prevent all damage that planes named Mount Keralia would deal this game to permanents you control. */
+
   int count;
   int scan_card_or_result;
   card_instance_t *instance;
@@ -2794,6 +2955,10 @@ int card_mount_keralia(int player, int card, event_t event)
 }
 
 int card_nephalia2(int player, int card, event_t event){
+  /* Nephalia	""
+   * Plane - Innistrad
+   * At the beginning of your end step, mill seven cards. Then return a card at random from your graveyard to your hand.
+   * Whenever chaos ensues, return target card from your graveyard to your hand. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2826,6 +2991,12 @@ int card_nephalia2(int player, int card, event_t event){
 
 int card_norns_dominion(int player, int card, event_t event)
 {
+  /* Norn's Dominion	""
+   * Plane - New Phyrexia
+   * When you planeswalk away from Norn's Dominion, destroy each nonland permanent without a fate counter on it, then remove all fate counters from all
+   * permanents.
+   * Whenever you roll |C, you may put a fate counter on target permanent. */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -2858,6 +3029,10 @@ int card_norns_dominion(int player, int card, event_t event)
 }
 
 int card_onakke_catacomb(int player, int card, event_t event){
+  /* Onakke Catacomb	""
+   * Plane - Shandalar
+   * All creatures are black and have deathtouch.
+   * Whenever chaos ensues, creatures you control get +1/+0 and gain first strike until end of turn. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2907,6 +3082,10 @@ int card_orochi_colony(int player, int card, event_t event){
 }
 
 int card_orzhova2(int player, int card, event_t event){
+  /* Orzhova	""
+   * Plane - Ravnica
+   * When you planeswalk away from ~, each player returns all creature cards from their graveyard to the battlefield.
+   * Whenever chaos ensues, for each opponent, exile up to one target creature card from that player's graveyard. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2928,6 +3107,11 @@ int card_orzhova2(int player, int card, event_t event){
 }
 
 int card_prahv(int player, int card, event_t event){
+  /* Prahv	""
+   * Plane - Ravnica
+   * If you cast a spell this turn, you can't attack with creatures.
+   * If you attacked with creatures this turn, you can't cast spells.
+   * Whenever chaos ensues, you gain life equal to the number of cards in your hand. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -2967,6 +3151,10 @@ int card_prahv(int player, int card, event_t event){
 }
 
 int card_quicksilver_sea(int player, int card, event_t event){
+  /* Quicksilver Sea	""
+   * Plane - Mirrodin
+   * When you planeswalk to ~ and at the beginning of your upkeep, scry 4. (Look at the top four cards of your library, then put any number of them on the bottom and the rest on top in any order.)
+   * Whenever chaos ensues, reveal the top card of your library. You may play it without paying its mana cost. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -3001,6 +3189,11 @@ int card_quicksilver_sea(int player, int card, event_t event){
 }
 
 int card_selesnya_loft_gardens(int player, int card, event_t event){
+  /* Selesnya Loft Gardens	""
+   * Plane - Ravnica
+   * If an effect would create one or more tokens, it creates twice that many of those tokens instead.
+   * If an effect would put one or more counters on a permanent, it puts twice that many of those counters on that permanent instead.
+   * Whenever chaos ensues, until end of turn, whenever you tap a land for mana, add one mana of any type that land produced. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -3072,6 +3265,11 @@ static int stensia_chaos_legacy(int player, int card, event_t event)
 
 int card_stensia(int player, int card, event_t event)
 {
+  /* ** Stensia	""	0x200a90d
+   * Plane - Innistrad
+   * Whenever a creature deals damage to one or more players for the first time each turn, put a +1/+1 counter on it.
+   * Whenever you roll |A, each creature you control gains "|T: This creature deals 1 damage to target player or planeswalker" until end of turn. */
+
   card_instance_t *instance;
   int source_card_or_result;
   int source_player_or_result;
@@ -3207,6 +3405,10 @@ int card_stensia(int player, int card, event_t event)
 }
 
 int card_takenuma2(int player, int card, event_t event){
+  /* Takenuma	""
+   * Plane - Kamigawa
+   * Whenever a creature leaves the battlefield, its controller draws a card.
+   * Whenever chaos ensues, return target creature you control to its owner's hand. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -3234,6 +3436,12 @@ int card_takenuma2(int player, int card, event_t event){
 
 int card_talon_gates(int player, int card, event_t event)
 {
+  /* Talon Gates	""
+   * Plane - Dominaria
+   * Any time you could cast a sorcery, you may exile a nonland card from your hand with X time counters on it, where X is its converted
+   * 		mana cost. If the exiled card doesn't have suspend, it gains suspend.
+   * Whenever you roll |C, remove two time counters from each suspended card you own. */
+
   enum
   {
     CHOICE_PLANAR_DICE = 1,
@@ -3350,6 +3558,11 @@ int card_talon_gates(int player, int card, event_t event)
 }
 
 int card_the_zephyr_maze(int player, int card, event_t event){
+  /* The Zephyr Maze	""
+   * Plane - Kyneth
+   * Creatures with flying get +2/+0.
+   * Creatures without flying get -2/-0.
+   * Whenever chaos ensues, target creature gains flying until end of turn. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 
@@ -3382,6 +3595,10 @@ int card_the_zephyr_maze(int player, int card, event_t event){
 // trails of the mage-ring --> skipped
 
 int card_truga_jungle(int player, int card, event_t event){
+  /* Truga Jungle	""
+   * Plane - Ergamon
+   * All lands have "|T: Add one mana of any color."
+   * Whenever chaos ensues, reveal the top three cards of your library. Put all land cards revealed this way into your hand and the rest on the bottom of your library in any order. */
 
 	vanguard_card(player, card, event, 7, 20, 0);
 

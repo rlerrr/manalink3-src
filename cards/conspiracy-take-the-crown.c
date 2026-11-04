@@ -15,6 +15,38 @@ int who_is_the_monarch(void){
 	return result;
 }
 
+/* ManalinkEh 2022: 0x220cad0; original cards/conspiracy-take-the-crown.c:16. */
+static int check_for_jared_carthalion_legacy(int player)
+{
+  card_instance_t *instance;
+  int result;
+  int card;
+
+  if (active_cards_count[player] < 1)
+  {
+    return 0;
+  }
+  card = 0;
+  do
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      result = is_what(player, card, 0x80);
+      if (result != 0)
+      {
+
+        instance = get_card_instance(player, card);
+        if (instance->info_slot_fn == jared_carthalion_effect)
+        {
+          return 1;
+        }
+      }
+    }
+    card = card + 1;
+  } while (card < active_cards_count[player]);
+  return 0;
+}
 
 void you_become_the_monarch(int player)
 {
@@ -113,8 +145,14 @@ void you_become_the_monarch(int player)
 }
 
 // EMBLEMS
+
 int card_the_monarch(int player, int card, event_t event)
 {
+  /* The Monarch	0x200f0f7
+   * Emblem
+   * At the beginning of your end step, draw a card.
+   * Whenever a creature deals combat damage to you, its controller becomes the monarch. */
+
   check_damage(1 - player, -1, event,
                DDBM_MUST_DAMAGE_TRIGGERING_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE, player, card);
   if (resolve_damage_trigger(player, card, event, DDBM_0, player, card) &&
@@ -124,7 +162,6 @@ int card_the_monarch(int player, int card, event_t event)
     draw_cards(player, 1);
   return 0;
 }
-
 
 // CONSPIRACY
 
@@ -519,8 +556,6 @@ int card_conspiracy_summoners_bond(int player, int card, event_t event){
  * (Start the game with this conspiracy face up in the command zone.)
  * Each creature you control assigns combat damage equal to its toughness rather than its power. */
 
-// WHITE
-
 /* Ballot Broker	|2|W	0x401000 (vanilla, the real effect is in "will_of_the_council_impl")
  * Creature - Human Advisor 2/3
  * While voting, you may vote an additional time. (The votes can be for different choices or for the same choice.) */
@@ -536,8 +571,15 @@ int card_conspiracy_summoners_bond(int player, int card, event_t event){
  * Whenever ~ attacks, return target creature card with converted mana cost X or less from your graveyard to the battlefield,
  * where X is the number of players you attacked with a creature this combat. */
 
+// WHITE
+
 int card_liutenants_of_the_guard(int player, int card, event_t event)
 {
+  /* Lieutenants of the Guard	|4|W	0x200f057
+   * Creature - Human Soldier 2/2
+   * Council's dilemma - When ~ enters the battlefield, starting with you, each player votes for strength or numbers.
+   * Put a +1/+1 counter on ~ for each strength vote and create a 1/1 |Swhite Soldier creature token for each numbers vote. */
+
   unsigned int vote_counts;
   int result;
 
@@ -720,6 +762,10 @@ int card_spectral_grasp(int player, int card, event_t event){
 
 int card_throne_warden(int player, int card, event_t event)
 {
+  /* Throne Warden	|1|W	0x200f07a
+   * Creature - Human Soldier 2/2
+   * At the beginning of your end step, if you're the monarch, put a +1/+1 counter on ~. */
+
   int monarch;
   if ((((current_turn == player) && (trigger_condition == TRIGGER_EOT)) && (card == affected_card)) &&
       (player == affected_card_controller))
@@ -741,8 +787,6 @@ int card_throne_warden(int player, int card, event_t event)
  * Flying
  * Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked with a creature this combat.) */
 
-// BLUE
-
 /* Arcane Savant	|3|U|U	0x0000000
  * Creature - Human Wizard 3/3
  * Before you shuffle your deck to start the game, you may reveal this card from your deck and exile an instant or sorcery card you drafted that isn't in your deck.
@@ -757,6 +801,8 @@ int card_throne_warden(int player, int card, event_t event)
  * Creature - Bird 3/4
  * Flying
  * Whenever ~ attacks, you may goad target creature defending player controls. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.) */
+
+// BLUE
 
 int card_expropriate(int player, int card, event_t event){
 /* Expropriate	|7|U|U	0x200f07f
@@ -875,6 +921,13 @@ int card_keeper_of_keys(int player, int card, event_t event){
 
 int card_messenger_jays(int player, int card, event_t event)
 {
+  /* Messenger Jays	|4|U	0x200f08e
+   * Creature - Bird 2/1
+   * Flying
+   * Council's dilemma - When ~ enters the battlefield, starting with you, each player votes for feather or quill.
+   * Put a +1/+1 counter on ~ for each feather vote and draw a card for each quill vote.
+   * For each card drawn this way, discard a card. */
+
   unsigned int vote_counts_or_quill_votes;
   int result;
 
@@ -924,13 +977,13 @@ int card_skittering_crustacean(int player, int card, event_t event){
  * Flash
  * You may have ~ enter the battlefield as a copy of any creature on the battlefield. */
 
-// BLACK
-
 /* Archdemon of Paliano	|2|B|B	0x0000000
  * Creature - Demon 5/4
  * Draft ~ face up.
  * As long as ~ is face up during the draft, you can't look at booster packs and must draft cards at random. After you draft three cards this way, turn ~ face down. (You may look at cards as you draft them.)
  * Flying */
+
+// BLACK
 
 int card_capital_punishment(int player, int card, event_t event){
 /* Capital Punishment	|4|B|B	0x200f098
@@ -957,12 +1010,6 @@ int card_capital_punishment(int player, int card, event_t event){
 	return basic_spell(player, card, event);
 }
 
-
-/* Custodi Lich	|3|B|B		0x200f061 (Palace Sentinels, the rest of the effect is in "you_become_the_monarch")
- * Creature - Zombie Cleric 4/2
- * When ~ enters the battlefield, you become the monarch.
- * Whenever you become the monarch, target player sacrifices a creature. */
-
 int deadly_designs_legacy(int player, int card, event_t event)
 {
   card_instance_t *instance = get_card_instance(player, card);
@@ -986,6 +1033,11 @@ int deadly_designs_legacy(int player, int card, event_t event)
   kill_card(player, card, KILL_EXILE);
   return 0;
 }
+
+/* Custodi Lich	|3|B|B		0x200f061 (Palace Sentinels, the rest of the effect is in "you_become_the_monarch")
+ * Creature - Zombie Cleric 4/2
+ * When ~ enters the battlefield, you become the monarch.
+ * Whenever you become the monarch, target player sacrifices a creature. */
 
 int deadly_designs_effect(int player, int card, event_t event)
 {
@@ -1024,6 +1076,11 @@ int deadly_designs_effect(int player, int card, event_t event)
 
 int card_deadly_designs(int player, int card, event_t event)
 {
+  /* Deadly Designs	|1|B	0x200f09d
+   * Enchantment
+   * |2: Put a plot counter on ~. Any player may activate this ability.
+   * When there are five or more plot counters on ~, sacrifice it. If you do, destroy up to two target creatures. */
+
   card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -1094,6 +1151,11 @@ int card_garrulous_sycophant(int player, int card, event_t event){
 
 int card_marchesas_decreee(int player, int card, event_t event)
 {
+  /* Marchesa's Decree	|3|B	0x200f0a7
+   * Enchantment
+   * When ~ enters the battlefield, you become the monarch.
+   * Whenever a creature attacks you or a planeswalker you control, that creature's controller loses 1 life. */
+
   if ((event != EVENT_CAN_CAST) && (event != EVENT_SHOULD_AI_PLAY))
   {
     if (event == EVENT_CAST_SPELL)
@@ -1159,11 +1221,11 @@ int card_thorn_of_the_black_rose(int player, int card, event_t event){
 	return card_palace_sentinels(player, card, event);
 }
 
-// RED
-
 /* Besmirch	|1|R|R	0x0000000
  * Sorcery
  * Until end of turn, gain control of target creature and it gains haste. Untap and goad that creature. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.) */
+
+// RED
 
 int card_crow_hunter_hireling(int player, int card, event_t event){
 /* Crown-Hunter Hireling	|4|R	0x200f0b6
@@ -1291,7 +1353,6 @@ int card_skyline_despot(int player, int card, event_t event){
 	return card_palace_sentinels(player, card, event);
 }
 
-
 int card_subterranean_tremors(int player, int card, event_t event){
 /* Subterranean Tremors	|X|R	0x200f0c5
  * Sorcery
@@ -1327,7 +1388,6 @@ int card_subterranean_tremors(int player, int card, event_t event){
 
 	return generic_spell(player, card, event, GS_X_SPELL, NULL, NULL, 1, NULL);
 }
-
 
 /* Volatile Chimera	|2|R	0x0000000
  * Creature - Elemental Chimera 3/2
@@ -1379,7 +1439,6 @@ int card_borderland_explorer(int player, int card, event_t event){
 	return 0;
 }
 
-
 /* Caller of the Untamed	|3|G	0x0000000
  * Creature - Elf Shaman 2/4
  * Before you shuffle your deck to start the game, you may reveal this card from your deck and exile a creature card you drafted that isn't in your deck.
@@ -1422,6 +1481,12 @@ int card_domesticated_hydra(int player, int card, event_t event){
 
 int card_orchard_elemental(int player, int card, event_t event)
 {
+  /* Orchard Elemental	|5|G	0x200f0d4
+   * Creature - Elemental 2/2
+   * Council's dilemma - When ~ enters the battlefield, starting with you, each player votes for sprout or harvest.
+   * Put two +1/+1 counters on ~ for each sprout vote.
+   * You gain 3 life for each harvest vote. */
+
   unsigned int vote_counts;
   int result;
 
@@ -1632,7 +1697,6 @@ int card_selvalas_stampede(int player, int card, event_t event){
 	return basic_spell(player, card, event);
 }
 
-
 int card_splitting_slime(int player, int card, event_t event){
 /* Splitting Slime	|3|G|G	0x200f0e8
  * Creature - Ooze 3/3
@@ -1648,23 +1712,24 @@ int card_splitting_slime(int player, int card, event_t event){
 	return monstrosity(player, card, event, MANACOST_XG(4, 2), 3);
 }
 
-
-// GOLD
-
 /* Adriana, Captain of the Guard	|3|R|W	0x0000000
  * Legendary Creature - Human Knight 4/4
  * Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked with a creature this combat.)
  * Other creatures you control have melee. (If a creature has multiple instances of melee, each triggers separately.) */
 
+// GOLD
+
 int card_daretti_ingenious_iconoclast(int player, int card, event_t event)
 {
+  /* Daretti, Ingenious Iconoclast	|1|B|R
+   * Planeswalker - Daretti (3)
+   * +1: Create a 1/1 colorless Construct artifact creature token with defender.
+   * -1: You may sacrifice an artifact. If you do, destroy target artifact or creature.
+   * -6: Choose target artifact card in a graveyard or artifact on the battlefield. Create three tokens that are copies of it. */
+
 	check_legend_rule(player, card, event);
 
-/* Daretti, Ingenious Iconoclast	|1|B|R
- * Planeswalker - Daretti (3)
- * +1: Create a 1/1 colorless Construct artifact creature token with defender.
- * -1: You may sacrifice an artifact. If you do, destroy target artifact or creature.
- * -6: Choose target artifact card in a graveyard or artifact on the battlefield. Create three tokens that are copies of it. */
+
 
 	if (IS_ACTIVATING(event))
 	{
@@ -1931,6 +1996,11 @@ int card_kaya_ghost_assassin(int player, int card, event_t event)
 
 int card_leovold_emissary_of_trest(int player, int card, event_t event)
 {
+  /* Leovold, Emissary of Trest	|B|G|U	0x200f0fc
+   * Legendary Creature - Elf Advisor 3/3
+   * Each opponent can't draw more than one card each turn.
+   * Whenever you or a permanent you control becomes the target of a spell or ability an opponent controls, you may draw a card. */
+
   card_instance_t *instance;
   int result;
   const target_t *targeting_spell_or_effect;
@@ -2005,12 +2075,12 @@ int card_queen_marchesa(int player, int card, event_t event){
 	return card_palace_sentinels(player, card, event);
 }
 
-// ARTIFACT
-
 /* Spy Kit	|2	0x0000000
  * Artifact - Equipment
  * Equipped creature gets +1/+1 and has all names of nonlegendary creature cards in addition to its name.
  * Equip |2 */
+
+// ARTIFACT
 
 int card_throne_of_the_high_city(int player, int card, event_t event)
 {
@@ -2078,40 +2148,5 @@ int card_throne_of_the_high_city(int player, int card, event_t event)
     }
   }
 
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x220cad0; original cards/conspiracy-take-the-crown.c:16. */
-static int check_for_jared_carthalion_legacy(int player)
-{
-  card_instance_t *instance;
-  int result;
-  int card;
-
-  if (active_cards_count[player] < 1)
-  {
-    return 0;
-  }
-  card = 0;
-  do
-  {
-    instance = in_play(player, card);
-    if (instance != NULL)
-    {
-      result = is_what(player, card, 0x80);
-      if (result != 0)
-      {
-
-        instance = get_card_instance(player, card);
-        if (instance->info_slot_fn == jared_carthalion_effect)
-        {
-          return 1;
-        }
-      }
-    }
-    card = card + 1;
-  } while (card < active_cards_count[player]);
   return 0;
 }

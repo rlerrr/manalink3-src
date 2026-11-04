@@ -56,97 +56,9 @@ int player_sacrifices_a_hacked_land(int src_player, int src_card, int t_player,
 
 // Returns nonzero if there's a non-humiliated Angel of Jubilation in play.  (check_battlefield_for_special_card returns true for humiliated ones.)
 
-
-
-
-
-
 // Verify that "player" could sacrifice amount permanents matching test for paying a cost.
 
-
-
-
-
-
-
-
-
-
-
-
 // Verify that a spell or an ability from "player" could make "t_player" sacrifice a specific type of permanent
-
-
-
-
-
-
-
-
-static int get_special_permanent_for_sacrifice(int player, int type, int flag1, int subtype, int flag2,
-											   int color, int flag3, int id, int flag4, int cc, int flag5){
-	test_definition_t test;
-	new_default_test_definition(&test, type, "");
-	test.type_flag = flag1;
-	test.subtype = subtype;
-	test.subtype_flag = flag2;
-	test.color = color;
-	test.color_flag = flag3;
-	test.id = id;
-	test.id_flag = flag4;
-	test.cmc = cc;
-	test.cmc_flag = flag5;
-	return new_get_special_permanent_for_sacrifice(player, -1, &test);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// only usable with basic land subtypes; use player_sacrifices_a_permanent if you just want a land
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
 /* ManalinkEh 2022: 0x26e36e0; original functions/sacrifices.c:4. */
 static type_t types_cannot_sac(void)
@@ -167,11 +79,45 @@ static type_t types_cannot_sac(void)
   return rv;
 }
 
+// only usable with basic land subtypes; use player_sacrifices_a_permanent if you just want a land
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+static int get_special_permanent_for_sacrifice(int player, int type, int flag1, int subtype, int flag2,
+											   int color, int flag3, int id, int flag4, int cc, int flag5){
+	test_definition_t test;
+	new_default_test_definition(&test, type, "");
+	test.type_flag = flag1;
+	test.subtype = subtype;
+	test.subtype_flag = flag2;
+	test.color = color;
+	test.color_flag = flag3;
+	test.id = id;
+	test.id_flag = flag4;
+	test.cmc = cc;
+	test.cmc_flag = flag5;
+	return new_get_special_permanent_for_sacrifice(player, -1, &test);
+}
 
 #ifndef SHANDALAR
 /* Recovered October 2022 sacrifice family. */
 
 static test_definition_t *sacrifice_test;
+
+/* ManalinkEh 2022: 0x26e3af0; original functions/sacrifices.c:19. */
+int can_sacrifice_this_as_cost(int player, int card)
+{
+  int result;
+  type_t test_type;
+  result = check_special_flags2(player, card, 0x400000);
+  if (result != 0)
+  {
+    return 0;
+  }
+  test_type = types_cannot_sac();
+  result = is_what(player, card, test_type);
+  return (unsigned int)(result == 0);
+}
 
 /* ManalinkEh 2022: 0x26e37b0; original functions/sacrifices.c:31. */
 static int new_can_sacrifice_as_cost_impl(int player, int card, int amount, test_definition_t *test)
@@ -209,96 +155,6 @@ static int new_can_sacrifice_as_cost_impl(int player, int card, int amount, test
   return sacrificable_count & amount >> 0x1f;
 }
 
-
-/* ManalinkEh 2022: 0x26e38d0; original functions/sacrifices.c:348. */
-static const char *passes_test_definition_and_not_dying(int who_chooses, int player, int card,
-                                                             int targeting_player,
-                                                             int targeting_card)
-{
-  int result;
-  card_instance_t *instance;
-  result = new_make_test_in_play(player, card, -1, sacrifice_test);
-  if (((result != 0) &&
-       (result = check_special_flags2(player, card, 0x400000), result == 0)) &&
-      (instance = get_card_instance(player, card), instance->kill_code == '\0'))
-  {
-    return NULL;
-  }
-  return "Illegal sacrifice";
-}
-
-
-/* ManalinkEh 2022: 0x26e3940; original functions/sacrifices.c:234. */
-static const char *can_sacrifice_this(int who_chooses, int player, int card)
-{
-  int result;
-  card_instance_t *instance;
-  result = check_special_flags2(player, card, 0x400000);
-  if ((result == 0) && (instance = get_card_instance(player, card), instance->kill_code == '\0'))
-  {
-    return NULL;
-  }
-  return "can\'t sacririce this";
-}
-
-
-/* ManalinkEh 2022: 0x26e3990; original functions/sacrifices.c:87. */
-static int can_cause_sacrifice_part(int player, int t_player)
-{
-  for (int c = 0; c < active_cards_count[t_player]; ++c)
-  {
-    if (in_play(t_player, c))
-    {
-      int id = get_id(t_player, c);
-      if ((id == 0x30b1 || id == 0x4e30 || id == 0x2b35) &&
-          !is_humiliated(t_player, c, AL_STATIC))
-        return 0;
-    }
-  }
-  return 1;
-}
-
-
-/* ManalinkEh 2022: 0x26e3a30; original functions/sacrifices.c:219. */
-static void get_sacrifice_prompt_text(char *prompt, int maxlen, int type, int invert)
-{
-  const char *type_description;
-  char typetext[100];
-  if (ai_is_speculating == 1)
-  {
-    *prompt = '\0';
-    return;
-  }
-  if (invert != 0)
-  {
-    type_description = type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT),
-                                 TYPETEXT_INVERT);
-    scnprintf(prompt, maxlen, "Select %s permanent to sacrifice.", type_description);
-    return;
-  }
-  type_description =
-      type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT), TYPETEXT_0);
-  scnprintf(prompt, maxlen, "Select %s to sacrifice.", type_description);
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x26e3af0; original functions/sacrifices.c:19. */
-int can_sacrifice_this_as_cost(int player, int card)
-{
-  int result;
-  type_t test_type;
-  result = check_special_flags2(player, card, 0x400000);
-  if (result != 0)
-  {
-    return 0;
-  }
-  test_type = types_cannot_sac();
-  result = is_what(player, card, test_type);
-  return (unsigned int)(result == 0);
-}
-
-
 /* ManalinkEh 2022: 0x26e3b50; original functions/sacrifices.c:53. */
 int new_can_sacrifice_as_cost(int player, int card, test_definition_t *test)
 {
@@ -307,7 +163,6 @@ int new_can_sacrifice_as_cost(int player, int card, test_definition_t *test)
   return result;
 }
 
-
 /* ManalinkEh 2022: 0x26e3b70; original functions/sacrifices.c:58. */
 int max_can_sacrifice_as_cost(int player, int card, test_definition_t *test)
 {
@@ -315,7 +170,6 @@ int max_can_sacrifice_as_cost(int player, int card, test_definition_t *test)
   result = new_can_sacrifice_as_cost_impl(player, card, -1, test);
   return result;
 }
-
 
 /* ManalinkEh 2022: 0x26e3b90; original functions/sacrifices.c:63. */
 int can_sacrifice_as_cost(int player, int amount, int type, int flag1, int subtype, int flag2,
@@ -338,7 +192,6 @@ int can_sacrifice_as_cost(int player, int amount, int type, int flag1, int subty
   return result;
 }
 
-
 /* ManalinkEh 2022: 0x26e3c20; original functions/sacrifices.c:79. */
 int can_sacrifice_type_as_cost(int player, int amount, type_t type)
 {
@@ -350,6 +203,21 @@ int can_sacrifice_type_as_cost(int player, int amount, type_t type)
   return result;
 }
 
+/* ManalinkEh 2022: 0x26e3990; original functions/sacrifices.c:87. */
+static int can_cause_sacrifice_part(int player, int t_player)
+{
+  for (int c = 0; c < active_cards_count[t_player]; ++c)
+  {
+    if (in_play(t_player, c))
+    {
+      int id = get_id(t_player, c);
+      if ((id == 0x30b1 || id == 0x4e30 || id == 0x2b35) &&
+          !is_humiliated(t_player, c, AL_STATIC))
+        return 0;
+    }
+  }
+  return 1;
+}
 
 /* ManalinkEh 2022: 0x26e3c70; original functions/sacrifices.c:87. */
 int can_cause_sacrifice(int player, int t_player)
@@ -358,7 +226,6 @@ int can_cause_sacrifice(int player, int t_player)
     return 1;
   return can_cause_sacrifice_part(player, t_player);
 }
-
 
 /* ManalinkEh 2022: 0x26e3c90; original functions/sacrifices.c:105. */
 int new_can_sacrifice(int player, int card, int t_player, test_definition_t *test)
@@ -433,7 +300,6 @@ int new_can_sacrifice(int player, int card, int t_player, test_definition_t *tes
   return 0;
 }
 
-
 /* ManalinkEh 2022: 0x26e3de0; original functions/sacrifices.c:128. */
 int can_sacrifice(int player, int t_player, int amount, type_t type, subtype_t subtype)
 {
@@ -445,7 +311,6 @@ int can_sacrifice(int player, int t_player, int amount, type_t type, subtype_t s
   result = new_can_sacrifice(player, -1, t_player, &test);
   return result;
 }
-
 
 /* ManalinkEh 2022: 0x26e3e40; original functions/sacrifices.c:138. */
 int is_nice_creature_to_sacrifice(int player, int card)
@@ -474,7 +339,6 @@ int is_nice_creature_to_sacrifice(int player, int card)
   return 1;
 }
 
-
 /* ManalinkEh 2022: 0x26e3ec0; original functions/sacrifices.c:156. */
 int get_best_permanent_for_sacrifice(int player, int type)
 {
@@ -489,7 +353,6 @@ int get_best_permanent_for_sacrifice(int player, int type)
     }
   return -1;
 }
-
 
 /* ManalinkEh 2022: 0x26e3f70; original functions/sacrifices.c:171. */
 int new_get_special_permanent_for_sacrifice(int player, int card, test_definition_t *test)
@@ -552,6 +415,185 @@ int new_get_special_permanent_for_sacrifice(int player, int card, test_definitio
   return -1;
 }
 
+/* ManalinkEh 2022: 0x26e3a30; original functions/sacrifices.c:219. */
+static void get_sacrifice_prompt_text(char *prompt, int maxlen, int type, int invert)
+{
+  const char *type_description;
+  char typetext[100];
+  if (ai_is_speculating == 1)
+  {
+    *prompt = '\0';
+    return;
+  }
+  if (invert != 0)
+  {
+    type_description = type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT),
+                                 TYPETEXT_INVERT);
+    scnprintf(prompt, maxlen, "Select %s permanent to sacrifice.", type_description);
+    return;
+  }
+  type_description =
+      type_text(typetext, 100, type & (TARGET_TYPE_PLANESWALKER | TYPE_PERMANENT), TYPETEXT_0);
+  scnprintf(prompt, maxlen, "Select %s to sacrifice.", type_description);
+  return;
+}
+
+/* ManalinkEh 2022: 0x26e3940; original functions/sacrifices.c:234. */
+static const char *can_sacrifice_this(int who_chooses, int player, int card)
+{
+  int result;
+  card_instance_t *instance;
+  result = check_special_flags2(player, card, 0x400000);
+  if ((result == 0) && (instance = get_card_instance(player, card), instance->kill_code == '\0'))
+  {
+    return NULL;
+  }
+  return "can\'t sacririce this";
+}
+
+/* ManalinkEh 2022: 0x26e4a50; original functions/sacrifices.c:242. */
+int pick_creature_for_sacrifice(int player, int card, int cannot_cancel)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 2);
+  td.allow_cancel = (unsigned int)(cannot_cancel == 0) * 2;
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  td.illegal_abilities = 0;
+  td.who_chooses = player;
+  td.extra = (int32_t)can_sacrifice_this;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    if ((player == 1) && (result = get_best_permanent_for_sacrifice(1, 2), result != -1))
+    {
+      return result;
+    }
+    result = new_pick_target(&td, "LORD_OF_THE_PIT", 0, 0);
+    if (result != 0)
+    {
+      instance->number_of_targets = '\x01';
+      return instance->targets[0].card;
+    }
+  }
+  return -1;
+}
+
+/* ManalinkEh 2022: 0x26e4b30; original functions/sacrifices.c:279. */
+int pick_permanent_for_sacrifice(int player, int card, int type, int cannot_cancel)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  char prompt[200];
+
+  default_target_definition(player, card, &td, type);
+  td.allow_cancel = 1 - cannot_cancel;
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  td.illegal_abilities = 0;
+  td.who_chooses = player;
+  td.extra = (int32_t)can_sacrifice_this;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    if (player == 1)
+    {
+      result = get_best_permanent_for_sacrifice(1, type);
+      if (result != -1)
+      {
+        return result;
+      }
+    }
+    get_sacrifice_prompt_text(prompt, 200, type, 0);
+    select_target(player, card, &td, prompt, instance->targets);
+    if (spell_fizzled != 1)
+    {
+      instance->number_of_targets = '\x01';
+      return instance->targets[0].card;
+    }
+  }
+  return -1;
+}
+
+/* ManalinkEh 2022: 0x26e4c50; original functions/sacrifices.c:311. */
+int pick_special_permanent_for_sacrifice(int player, int card, int cannot_cancel, int type,
+                                              int flag1, int subtype, int flag2, int color,
+                                              int flag3, int id, int flag4, int cc, int flag5)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, type);
+  td.allow_cancel = 1 - cannot_cancel;
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  td.illegal_abilities = 0;
+  td.who_chooses = player;
+  td.extra = (int32_t)can_sacrifice_this;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    if (player == 1)
+    {
+      test_definition_t test;
+      new_default_test_definition(&test, type, "");
+      test.type_flag = (uint16_t)flag1;
+      test.subtype = subtype;
+      test.subtype_flag = (uint16_t)flag2;
+      test.color = color;
+      test.color_flag = (uint16_t)flag3;
+      test.id = id;
+      test.id_flag = (uint16_t)flag4;
+      test.cmc = cc;
+      test.cmc_flag = (uint16_t)flag5;
+      result = new_get_special_permanent_for_sacrifice(1, -1, &test);
+      return result;
+    }
+    char prompt[200];
+    get_sacrifice_prompt_text(prompt, 200, type, (unsigned int)(flag1 == 1));
+    select_target(player, card, &td, prompt, instance->targets);
+    if (spell_fizzled != 1)
+    {
+      result =
+          make_test_in_play(instance->targets[0].player, instance->targets[0].card, -1, type,
+                                 flag1, subtype, flag2, color, flag3, id, flag4, cc, flag5);
+      if (result != 0)
+      {
+        instance->number_of_targets = '\x01';
+        return instance->targets[0].card;
+      }
+    }
+  }
+  return -1;
+}
+
+/* ManalinkEh 2022: 0x26e38d0; original functions/sacrifices.c:348. */
+static const char *passes_test_definition_and_not_dying(int who_chooses, int player, int card,
+                                                             int targeting_player,
+                                                             int targeting_card)
+{
+  int result;
+  card_instance_t *instance;
+  result = new_make_test_in_play(player, card, -1, sacrifice_test);
+  if (((result != 0) &&
+       (result = check_special_flags2(player, card, 0x400000), result == 0)) &&
+      (instance = get_card_instance(player, card), instance->kill_code == '\0'))
+  {
+    return NULL;
+  }
+  return "Illegal sacrifice";
+}
 
 /* ManalinkEh 2022: 0x26e4110; original functions/sacrifices.c:355. */
 static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t options,
@@ -851,137 +893,6 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t op
   return 0;
 }
 
-
-/* ManalinkEh 2022: 0x26e4a50; original functions/sacrifices.c:242. */
-int pick_creature_for_sacrifice(int player, int card, int cannot_cancel)
-{
-  card_instance_t *instance;
-  int result;
-  target_definition_t td;
-
-  default_target_definition(player, card, &td, 2);
-  td.allow_cancel = (unsigned int)(cannot_cancel == 0) * 2;
-  td.allowed_controller = player;
-  td.preferred_controller = player;
-  td.illegal_abilities = 0;
-  td.who_chooses = player;
-  td.extra = (int32_t)can_sacrifice_this;
-  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-  instance = get_card_instance(player, card);
-  result = can_target(&td);
-  if (result != 0)
-  {
-    if ((player == 1) && (result = get_best_permanent_for_sacrifice(1, 2), result != -1))
-    {
-      return result;
-    }
-    result = new_pick_target(&td, "LORD_OF_THE_PIT", 0, 0);
-    if (result != 0)
-    {
-      instance->number_of_targets = '\x01';
-      return instance->targets[0].card;
-    }
-  }
-  return -1;
-}
-
-
-/* ManalinkEh 2022: 0x26e4b30; original functions/sacrifices.c:279. */
-int pick_permanent_for_sacrifice(int player, int card, int type, int cannot_cancel)
-{
-  card_instance_t *instance;
-  int result;
-  target_definition_t td;
-  char prompt[200];
-
-  default_target_definition(player, card, &td, type);
-  td.allow_cancel = 1 - cannot_cancel;
-  td.allowed_controller = player;
-  td.preferred_controller = player;
-  td.illegal_abilities = 0;
-  td.who_chooses = player;
-  td.extra = (int32_t)can_sacrifice_this;
-  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-  instance = get_card_instance(player, card);
-  result = can_target(&td);
-  if (result != 0)
-  {
-    if (player == 1)
-    {
-      result = get_best_permanent_for_sacrifice(1, type);
-      if (result != -1)
-      {
-        return result;
-      }
-    }
-    get_sacrifice_prompt_text(prompt, 200, type, 0);
-    select_target(player, card, &td, prompt, instance->targets);
-    if (spell_fizzled != 1)
-    {
-      instance->number_of_targets = '\x01';
-      return instance->targets[0].card;
-    }
-  }
-  return -1;
-}
-
-
-/* ManalinkEh 2022: 0x26e4c50; original functions/sacrifices.c:311. */
-int pick_special_permanent_for_sacrifice(int player, int card, int cannot_cancel, int type,
-                                              int flag1, int subtype, int flag2, int color,
-                                              int flag3, int id, int flag4, int cc, int flag5)
-{
-  card_instance_t *instance;
-  int result;
-  target_definition_t td;
-
-  default_target_definition(player, card, &td, type);
-  td.allow_cancel = 1 - cannot_cancel;
-  td.allowed_controller = player;
-  td.preferred_controller = player;
-  td.illegal_abilities = 0;
-  td.who_chooses = player;
-  td.extra = (int32_t)can_sacrifice_this;
-  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-  instance = get_card_instance(player, card);
-  result = can_target(&td);
-  if (result != 0)
-  {
-    if (player == 1)
-    {
-      test_definition_t test;
-      new_default_test_definition(&test, type, "");
-      test.type_flag = (uint16_t)flag1;
-      test.subtype = subtype;
-      test.subtype_flag = (uint16_t)flag2;
-      test.color = color;
-      test.color_flag = (uint16_t)flag3;
-      test.id = id;
-      test.id_flag = (uint16_t)flag4;
-      test.cmc = cc;
-      test.cmc_flag = (uint16_t)flag5;
-      result = new_get_special_permanent_for_sacrifice(1, -1, &test);
-      return result;
-    }
-    char prompt[200];
-    get_sacrifice_prompt_text(prompt, 200, type, (unsigned int)(flag1 == 1));
-    select_target(player, card, &td, prompt, instance->targets);
-    if (spell_fizzled != 1)
-    {
-      result =
-          make_test_in_play(instance->targets[0].player, instance->targets[0].card, -1, type,
-                                 flag1, subtype, flag2, color, flag3, id, flag4, cc, flag5);
-      if (result != 0)
-      {
-        instance->number_of_targets = '\x01';
-        return instance->targets[0].card;
-      }
-    }
-  }
-  return -1;
-}
-
-
 /* ManalinkEh 2022: 0x26e4e30; original functions/sacrifices.c:536. */
 int new_sacrifice(int player, int card, int t_player, sacrifice_t options,
                        test_definition_t *test)
@@ -991,7 +902,6 @@ int new_sacrifice(int player, int card, int t_player, sacrifice_t options,
   return result;
 }
 
-
 /* ManalinkEh 2022: 0x26e4e60; original functions/sacrifices.c:541. */
 int mark_sacrifice(int player, int card, int t_player, sacrifice_t options,
                         test_definition_t *test, char *marked_for_sacrifice)
@@ -1000,7 +910,6 @@ int mark_sacrifice(int player, int card, int t_player, sacrifice_t options,
   result = new_sacrifice_impl(player, card, t_player, options, test, marked_for_sacrifice);
   return result;
 }
-
 
 /* ManalinkEh 2022: 0x26e4e90; original functions/sacrifices.c:546. */
 int sacrifice(int player, int card, int t_player, int cannot_cancel, int type, int flag1,
@@ -1037,7 +946,6 @@ int sacrifice(int player, int card, int t_player, int cannot_cancel, int type, i
   return result;
 }
 
-
 /* ManalinkEh 2022: 0x26e4f40; original functions/sacrifices.c:565. */
 int controller_sacrifices_a_permanent(int player, int card, int req_type,
                                            sacrifice_t options)
@@ -1049,7 +957,6 @@ int controller_sacrifices_a_permanent(int player, int card, int req_type,
   return result;
 }
 
-
 /* ManalinkEh 2022: 0x26e4f90; original functions/sacrifices.c:572. */
 int player_sacrifices_a_permanent(int src_player, int src_card, int t_player, int req_type,
                                        sacrifice_t options)
@@ -1060,7 +967,6 @@ int player_sacrifices_a_permanent(int src_player, int src_card, int t_player, in
   result = new_sacrifice_impl(src_player, src_card, t_player, options, &test, NULL);
   return result;
 }
-
 
 /* ManalinkEh 2022: 0x26e4fe0; original functions/sacrifices.c:580. */
 int player_sacrifices_a_hacked_land(int src_player, int src_card, int t_player,
@@ -1080,7 +986,6 @@ int player_sacrifices_a_hacked_land(int src_player, int src_card, int t_player,
   result = new_sacrifice_impl(src_player, src_card, t_player, options, &test, NULL);
   return result;
 }
-
 
 /* ManalinkEh 2022: 0x26e5080; original functions/sacrifices.c:593. */
 int impose_sacrifice(int player, int card, int t_player, int amount, int type, int flag1,
@@ -1112,7 +1017,6 @@ int impose_sacrifice(int player, int card, int t_player, int amount, int type, i
   return i;
 }
 
-
 /* ManalinkEh 2022: 0x26e5140; original functions/sacrifices.c:618. */
 void controller_sacrifices_a_creature(int player, int card)
 {
@@ -1120,14 +1024,12 @@ void controller_sacrifices_a_creature(int player, int card)
   return;
 }
 
-
 /* ManalinkEh 2022: 0x26e51c0; original functions/sacrifices.c:622. */
 void player_sacrifices_a_creature(int s_player, int s_card, int t_player)
 {
   sacrifice(s_player, s_card, t_player, 1, 2, 0, 0, 0, 0, 0, 0, 0, -1, 0);
   return;
 }
-
 
 /* ManalinkEh 2022: 0x26e5240; original functions/sacrifices.c:626. */
 int prevent_damage_sacrificing_a_creature(int player, int card, event_t event, int mode)
@@ -1173,7 +1075,6 @@ int prevent_damage_sacrificing_a_creature(int player, int card, event_t event, i
   }
   return global_enchantment(player, card, event);
 }
-
 
 /* ManalinkEh 2022: 0x26e5460; original functions/sacrifices.c:684. */
 int check_battlefield_for_sacrifice(int player, int type, int flag1, int subtype, int flag2,
@@ -1227,7 +1128,6 @@ int check_battlefield_for_sacrifice(int player, int type, int flag1, int subtype
   return 0;
 }
 
-
 /* ManalinkEh 2022: 0x26e55d0; original functions/sacrifices.c:717. */
 int can_activate_altar_basic(int player, int card, int act_mode, int type)
 {
@@ -1265,7 +1165,6 @@ int can_activate_altar_basic(int player, int card, int act_mode, int type)
   return can_sacrifice_as_cost(player, 1, type, 0, 0, 0, 0, 0, 0, 0, -1, 0);
 }
 
-
 /* ManalinkEh 2022: 0x26e56f0; original functions/sacrifices.c:741. */
 int altar_basic_activation(int player, int card, int act_mode, int type)
 {
@@ -1299,7 +1198,6 @@ int altar_basic_activation(int player, int card, int act_mode, int type)
   return 0;
 }
 
-
 /* ManalinkEh 2022: 0x26e5810; original functions/sacrifices.c:763. */
 int altar_basic(int player, int card, event_t event, int act_mode, int type)
 {
@@ -1324,7 +1222,6 @@ int altar_basic(int player, int card, event_t event, int act_mode, int type)
   }
   return 0;
 }
-
 
 /* ManalinkEh 2022: 0x26e5900; original functions/sacrifices.c:782. */
 int altar_extended(int player, int card, event_t event, int act_mode, int type, int flag1,
@@ -1397,7 +1294,6 @@ int altar_extended(int player, int card, event_t event, int act_mode, int type, 
   }
   return 0;
 }
-
 
 /* ManalinkEh 2022: 0x26e5b80; original functions/sacrifices.c:830. */
 int sacrifice_and_report_value(int player, int card, int t_player, int flags,

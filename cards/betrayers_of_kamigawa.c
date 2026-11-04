@@ -1,5 +1,7 @@
 #include "manalink.h"
 
+static int card_uproot_impl(int player, int card, event_t event);
+
 /* Canonical recovered helper declarations. */
 int ninjutsu_custom_target(int player, int card, event_t event, int cless, int black, int blue,
                                 int green, int red, int white, target_definition_t *td,
@@ -8,8 +10,6 @@ int ninjutsu(int player, int card, event_t event, int cless, int black, int blue
                   int red, int white, int csvid);
 
 // global functions
-
-
 
 /*
 static int get_card_with_specific_cmc_from_hand(int player, int card, int req_cmc, int mode){
@@ -332,8 +332,6 @@ static int patron(int player, int card, event_t event, int subtype){
 	return flash(player, card, event);
 }
 
-
-
 static void make_colorless_spirit(int player, int card, int amount)
 {
 	token_generation_t token;
@@ -346,6 +344,10 @@ static void make_colorless_spirit(int player, int card, int amount)
 
 // cards
 int card_azamuki_treachery_incarnate(int player, int card, event_t event){
+  /* Azamuki, Treachery Incarnate	""
+   * Legendary Creature - Spirit 5/2
+   * Remove a ki counter from Azamuki: Gain control of target creature until end of turn. */
+
 /* Azamuki, Treachery Incarnate
 Legendary Creature - Spirit
 5/2
@@ -372,6 +374,13 @@ Remove a ki counter from Azamuki, Treachery Incarnate: Gain control of target cr
 
 int card_cunning_bandit(int player, int card, event_t event)
 {
+  /* CARD_ID_CUNNING_BANDIT	7455
+   * Cunning Bandit	|1|R|R
+   * Creature - Human Warrior 2/2
+   * Whenever you cast a Spirit or Arcane spell, you may put a ki counter on ~.
+   * At the beginning of the end step, if there are two or more ki counters on ~, you may flip it.
+   * --FLIP-- */
+
   card_instance_t *instance;
   int result;
 
@@ -452,6 +461,12 @@ Sacrifice ~: Target player loses 1 life. */
 
 int card_blademane_baku(int player, int card, event_t event)
 {
+  /* CARD_ID_BLADEMANE_BAKU	7440
+   * Blademane Baku	|1|R
+   * Creature - Spirit 1/1
+   * Whenever you cast a Spirit or Arcane spell, you may put a ki counter on ~.
+   * |1, Remove X ki counters from ~: For each counter removed, ~ gets +2/+0 until end of turn. */
+
   int ki_count_or_choice;
   card_instance_t *instance;
   int available_ki;
@@ -548,6 +563,10 @@ Target creature gets +X/+0 until end of turn. */
 // budoka pupil --> Cunning bandit
 
 int card_ichiga_who_topples_oaks(int player, int card, event_t event){
+  /* Ichiga, Who Topples Oaks	""
+   * Legendary Creature - Spirit 4/3
+   * Trample
+   * Remove a ki counter from Ichiga: Target creature gets +2/+2 until end of turn. */
 
 	/* Ichiga, Who Topples Oaks
 	 * Legendary Creature - Spirit
@@ -580,6 +599,9 @@ int card_ichiga_who_topples_oaks(int player, int card, event_t event){
 // callow jushi --> Cunning bandit
 
 int card_jaraku_the_interloper(int player, int card, event_t event){
+  /* Jaraku the Interloper	""
+   * Legendary Creature - Spirit 3/4
+   * Remove a ki counter from Jaraku: Counter target spell unless its controller pays |2. */
 
 	/* Jaraku the Interloper
 	 * Legendary Creature - Spirit
@@ -633,6 +655,11 @@ static const char* target_must_have_counters(int who_chooses, int player, int ca
 }
 int card_chisei_heart_of_oceans(int player, int card, event_t event)
 {
+  /* Chisei, Heart of Oceans	|2|U|U
+   * Legendary Creature - Spirit 4/4
+   * Flying
+   * At the beginning of your upkeep, sacrifice ~ unless you remove a counter from a permanent you control. */
+
   int result;
   check_legend_rule(player, card, event);
   result = card_hungry_hungry_heifer(player, card, event);
@@ -759,12 +786,11 @@ Creature - Human Cleric 1/1
 }
 
 int card_enshrined_memories(int player, int card, event_t event){
-/*
-Enshrined Memories |X|G
-Sorcery
-Reveal the top X cards of your library. Put all creature cards revealed this way into your hand and the rest on the bottom of your library
-in any order.
-*/
+  /* Enshrined Memories |X|G
+   * Sorcery
+   * Reveal the top X cards of your library. Put all creature cards revealed this way into your hand and the rest on the bottom of your library
+   * in any order. */
+
 	if(event == EVENT_RESOLVE_SPELL){
 		card_instance_t *instance = get_card_instance( player, card );
 		int max = MIN(count_deck(player), instance->info_slot);
@@ -785,6 +811,10 @@ in any order.
 // faithful squire --> Cunning bandit
 
 int card_kaiso_memory_of_loyalty(int player, int card, event_t event){
+  /* Kaiso, Memory of Loyalty	""
+   * Legendary Creature - Spirit 3/4
+   * Flying
+   * Remove a ki counter from Kaiso: Prevent all damage that would be dealt to target creature this turn. */
 
 	/* Kaiso, Memory of Loyalty
 	 * Legendary Creature - Spirit
@@ -815,11 +845,10 @@ int card_kaiso_memory_of_loyalty(int player, int card, event_t event){
 }
 
 int card_final_judgment(int player, int card, event_t event){
-	/*
-	  Final Judgment |4|W|W
-	  Sorcery
-	  Exile all creatures.
-	*/
+  /* Final Judgment |4|W|W
+   * 	  Sorcery
+   * 	  Exile all creatures. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
@@ -1037,6 +1066,11 @@ int card_gods_eye_gate_to_reikai(int player, int card, event_t event)
 }
 
 ARCANE_WITH_SPLICE(card_goryos_vengeance, MANACOST_XB(2,1)){
+  /* Goryo's Vengeance	|1|B
+   * Instant - Arcane
+   * Return target legendary creature card from your graveyard to the battlefield. That creature gains haste. Exile it at the beginning of the next end step.
+   * Splice onto Arcane |2|B (As you cast an Arcane spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card's effects to that spell.) */
+
 	// Return target legendary creature card from your graveyard to the battlefield. That creature gains haste. Exile it at the beginning of the next end step.
 	// Splice onto Arcane |2|B
 
@@ -1120,6 +1154,9 @@ int card_higure_the_still_wind(int player, int card, event_t event){
 // Hired muscle --> Cunning bandit
 
 int card_scarmaker(int player, int card, event_t event){
+  /* Scarmaker	""
+   * Legendary Creature - Spirit 4/4
+   * Remove a ki counter from ~: Target creature gains fear until end of turn. (It can't be blocked except by artifact creatures and/or black creatures.) */
 
 	/* Scarmaker
 	 * Legendary Creature - Spirit
@@ -1163,6 +1200,11 @@ At the beginning of each player's upkeep, that player untaps a land he or she co
 }
 
 ARCANE_WITH_SPLICE(card_horobis_whisper, MANACOST_X(-10)){
+  /* Horobi's Whisper	|1|B|B
+   * Instant - Arcane
+   * If you control a Swamp, destroy target nonblack creature.
+   * Splice onto Arcane-Exile four cards from your graveyard. (As you cast an Arcane spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card's effects to that spell.) */
+
 	// If you control |Ha Swamp, destroy target non|Sblack creature.
 	// Splice onto Arcane - Exile four cards from your graveyard.
 
@@ -1240,15 +1282,14 @@ Whenever a Samurai you control dies, you may put a +1/+1 counter on ~. */
 }
 
 int card_ink_eyes_servant_of_oni(int player, int card, event_t event){
-/*
-Ink-Eyes, Servant of Oni |4|B|B
-Legendary Creature — Rat Ninja 5/4
-Ninjutsu {3}{B}{B} ({3}{B}{B}, Return an unblocked attacker you control to hand:
-		Put this card onto the battlefield from your hand tapped and attacking.)
-Whenever Ink-Eyes, Servant of Oni deals combat damage to a player, you may put target creature card from that player's
-	graveyard onto the battlefield under your control.
-{1}{B}: Regenerate Ink-Eyes.
-*/
+  /* Ink-Eyes, Servant of Oni |4|B|B
+   * Legendary Creature — Rat Ninja 5/4
+   * Ninjutsu {3}{B}{B} ({3}{B}{B}, Return an unblocked attacker you control to hand:
+   * 		Put this card onto the battlefield from your hand tapped and attacking.)
+   * Whenever Ink-Eyes, Servant of Oni deals combat damage to a player, you may put target creature card from that player's
+   * 	graveyard onto the battlefield under your control.
+   * {1}{B}: Regenerate Ink-Eyes. */
+
 	check_legend_rule(player, card, event);
 
 	if (damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_BE_COMBAT_DAMAGE))
@@ -1405,6 +1446,12 @@ int card_kentaro_the_smiling_cat(int player, int card, event_t event){
 /* This is just an approximation */
 int card_kira_great_glass_spinner(int player, int card, event_t event)
 {
+  /* CARD_ID_KIRA_GREAT_GLASS_SPINNER	7504
+   * Kira, Great Glass-Spinner	|1|U|U
+   * Legendary Creature - Spirit 2/2
+   * Flying
+   * Creatures you control have "Whenever this creature becomes the target of a spell or ability for the first time each turn, counter that spell or ability." */
+
   int i;
   int target_or_stack_index;
   card_instance_t *instance;
@@ -1590,12 +1637,10 @@ Whenever a land enters the battlefield, you may gain 1 life. */
 }
 
 int card_lifespinner(int player, int card, event_t event){
-/*
-Lifespinner |3|G
-Creature — Spirit 3/3
-{T}, Sacrifice three Spirits: Search your library for a legendary Spirit permanent card and put it onto the battlefield.
-	Then shuffle your library.
-*/
+  /* Lifespinner |3|G
+   * Creature — Spirit 3/3
+   * {T}, Sacrifice three Spirits: Search your library for a legendary Spirit permanent card and put it onto the battlefield.
+   * 	Then shuffle your library. */
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		test_definition_t this_test;
@@ -1772,6 +1817,11 @@ Whenever ~ deals damage to a creature, tap that creature and it doesn't untap du
 
 int card_mirror_gallery(int player, int card, event_t event)
 {
+  /* CARD_ID_MIRROR_GALLERY	7519
+   * Mirror Gallery	|5
+   * Artifact
+   * The "legend rule" doesn't apply. */
+
   disable_legend_rule(player, card, event, 2);
   return 0;
 }
@@ -1954,6 +2004,10 @@ You gain X life. */
 }
 
 int card_ogre_marauder(int player, int card, event_t event){
+  /* Ogre Marauder	|1|B|B
+   * Creature - Ogre Warrior 3/1
+   * Whenever this creature attacks, it gains "this creature can't be blocked" until end of turn unless defending player sacrifices a creature of their choice. */
+
 	// Whenever ~ attacks, it gains "~ is unblockable" until end of turn unless defending player sacrifices a creature.
 
 	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
@@ -2004,6 +2058,45 @@ Whenever ~ deals combat damage to a player, that player discards two cards. */
 }
 
 static int opal_eye_card = -1;
+/* ManalinkEh 2022: 0x256a4e0; original cards/betrayers_of_kamigawa.c:721. */
+int card_crawling_filth(int player, int card, event_t event)
+{
+  /* Crawling Filth	|5|B
+   * Creature - Spirit 2/2
+   * Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)
+   * Soulshift 5 (When this creature dies, you may return target Spirit card with mana value 5 or less from your graveyard to your hand.) */
+
+  int result;
+  fear(player, card, event);
+  result = soulshift(player, card, event, 5, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x256b130; original cards/betrayers_of_kamigawa.c:1124. */
+int card_harbinger_of_spring(int player, int card, event_t event)
+{
+  /* Harbinger of Spring	|4|G
+   * Creature - Spirit 2/1
+   * Protection from non-Spirit creatures
+   * Soulshift 4 (When this creature dies, you may return target Spirit card with mana value 4 or less from your graveyard to your hand.) */
+
+  int result;
+
+  misc_protection(player, card, event);
+  if ((((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((((unsigned int)event_result >> 24 & 0xff) == '\x06' ||
+        ((result = is_what(attacking_card_controller, attacking_card, 2),
+          result != 0 &&
+              (result = has_subtype(attacking_card_controller, attacking_card, SUBTYPE_SPIRIT),
+               result == 0))))))
+  {
+    event_result = event_result | 1;
+  }
+  result = soulshift(player, card, event, 4, 1);
+  return result;
+}
+
 static const char* is_damaging_opal_eye(int who_chooses, int player, int card){
 	card_instance_t *instance = get_card_instance(player, card);
 	if( is_what(player, card, TYPE_EFFECT) && instance->internal_card_id == damage_card ){
@@ -2138,6 +2231,11 @@ int card_oyobi_who_splits_the_heavens(int player, int card, event_t event)
 
 int card_patron_of_the_akki(int player, int card, event_t event)
 {
+  /* Patron of the Akki	|4|R|R
+   * Legendary Creature - Spirit 5/5
+   * Goblin offering (You may cast this spell any time you could cast an instant by sacrificing a Goblin and paying the difference in mana costs between this and the sacrificed Goblin. Mana cost includes color.)
+   * Whenever ~ attacks, creatures you control get +2/+0 until end of turn. */
+
   check_legend_rule(player, card, event);
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
   if (event == EVENT_DAT_ABILITY)
@@ -2149,6 +2247,11 @@ int card_patron_of_the_akki(int player, int card, event_t event)
 
 int card_patron_of_the_kitsune(int player, int card, event_t event)
 {
+  /* Patron of the Kitsune	|4|W|W
+   * Legendary Creature - Spirit 5/6
+   * Fox offering (You may cast this spell any time you could cast an instant by sacrificing a Fox and paying the difference in mana costs between this and the sacrificed Fox. Mana cost includes color.)
+   * Whenever a creature attacks, you may gain 1 life. */
+
   check_legend_rule(player, card, event);
   store_attackers(player, card, event, DAT_SEPARATE_TRIGGERS, ANYBODY, -1, NULL);
   dat_ability(player, card, event, duh_mode(player) ? DAT_RESOLVE_TRIGGER_MANDATORY : DAT_RESOLVE_TRIGGER_OPTIONAL, 1);
@@ -2351,6 +2454,11 @@ Snake offering (You may cast this card any time you could cast an instant by sac
 
 int card_petalmane_baku(int player, int card, event_t event)
 {
+  /* Petalmane Baku	|1|G
+   * Creature - Spirit 1/2
+   * Whenever you cast a Spirit or Arcane spell, you may put a ki counter on this creature.
+   * |1, Remove X ki counters from this creature: Add X mana of any one color. */
+
   card_instance_t *instance;
   int ki_to_remove_or_result;
   int mana_color_or_result;
@@ -2454,6 +2562,9 @@ int card_petalmane_baku(int player, int card, event_t event)
 }
 
 int card_reduce_to_dreams(int player, int card, event_t event){
+  /* Reduce to Dreams	|3|U|U
+   * Sorcery
+   * Return all artifacts and enchantments to their owners' hands. */
 
 	if (event == EVENT_RESOLVE_SPELL){
 		test_definition_t test;
@@ -2465,6 +2576,11 @@ int card_reduce_to_dreams(int player, int card, event_t event){
 }
 
 int card_ronin_warclub(int player, int card, event_t event){
+  /* Ronin Warclub	|3
+   * Artifact - Equipment
+   * Equipped creature gets +2/+1.
+   * Whenever a creature you control enters, attach this Equipment to that creature.
+   * Equip |5 (|5: Attach to target creature you control. Equip only as a sorcery.) */
 
 	etb_ability_global(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_CREATURE, NULL, player, card);
 
@@ -2476,6 +2592,9 @@ int card_ronin_warclub(int player, int card, event_t event){
 }
 
 int card_sakiko_mother_of_summer(int player, int card, event_t event){
+  /* Sakiko, Mother of Summer	|4|G|G
+   * Legendary Creature - Snake Shaman 3/3
+   * Whenever a creature you control deals combat damage to a player, add that much |G. Until end of turn, you don't lose this mana as steps and phases end. */
 
 	check_legend_rule(player, card, event);
 
@@ -2614,6 +2733,11 @@ ARCANE(card_shining_shoal){
 
 int card_shirei_shizos_caretaker(int player, int card, event_t event)
 {
+  /* Shirei, Shizo's Caretaker |4|B	0x200f516
+   * Legendary Creature — Spirit 2/2
+   * Whenever a creature with power 1 or less is put into your graveyard from the battlefield, you may return that card to the battlefield
+   * 	at the beginning of the next end step if Shirei, Shizo's Caretaker is still on the battlefield. */
+
   check_legend_rule(player, card, event);
   if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
@@ -2828,11 +2952,9 @@ int card_sosukes_summons(int player, int card, event_t event){
 }
 
 int card_stir_the_grave(int player, int card, event_t event){
-/*
-Stir the Grave |X|B
-Sorcery
-Return target creature card with converted mana cost X or less from your graveyard to the battlefield.
-*/
+  /* Stir the Grave |X|B
+   * Sorcery
+   * Return target creature card with converted mana cost X or less from your graveyard to the battlefield. */
 
 	if( event == EVENT_CAN_CAST ){
 		test_definition_t test;
@@ -2971,6 +3093,11 @@ int card_tallowisp(int player, int card, event_t event)
 }
 
 int card_tendo_ice_bridge(int player, int card, event_t event){
+  /* Tendo Ice Bridge	""
+   * Land
+   * This land enters with a charge counter on it.
+   * |T: Add |C.
+   * |T, Remove a charge counter from this land: Add one mana of any color. */
 
 	/* ~ enters the battlefield with a charge counter on it.
 	 * |T: Add |1 to your mana pool.
@@ -3029,6 +3156,11 @@ Destroy target artifact or enchantment. You gain life equal to its converted man
 
 int card_that_which_was_taken(int player, int card, event_t event)
 {
+  /* That Which Was Taken	|5
+   * Legendary Artifact
+   * |4, |T: Put a divinity counter on target permanent other than ~.
+   * Each permanent with a divinity counter on it is indestructible. */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -3140,7 +3272,6 @@ Target player discards three cards. */
 	}
 	return 0;
 }
-
 
 int card_throat_slitter(int player, int card, event_t event){
 /* CARD_ID_THROAT_SLITTER	7580
@@ -3280,10 +3411,15 @@ If you do, add this card's effects to that spell.) */
 #undef DECL_TD
 }
 
-
-
 int card_umezawas_jitte(int player, int card, event_t event)
 {
+  /* Umezawa's Jitte	|2
+   * Legendary Artifact - Equipment
+   * Whenever equipped creature deals combat damage, put two charge counters on ~.
+   * Remove a charge counter from ~: Choose one - Equipped creature gets +2/+2 until end of turn; or target creature gets -1/-1 until end of turn; or you gain 2
+   * life.
+   * Equip |2 */
+
   enum
   {
     CHOICE_EQUIP = 1,
@@ -3504,8 +3640,55 @@ Target creature gets +4/+4 until end of turn. If it's a Spirit, it gains trample
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x2571030; original cards/betrayers_of_kamigawa.c:3584. */
+int card_uproot(int player, int card, event_t event)
+{
+  /* Uproot	|3|G
+   * Sorcery - Arcane
+   * Put target land on top of its owner's library. */
+
+  int result;
+  result = arcane(player, card, event, card_uproot_impl);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2568b50; original cards/betrayers_of_kamigawa.c:3584. */
+static int card_uproot_impl(int player, int card, event_t event)
+{
+  /* Uproot	|3|G
+   * Sorcery - Arcane
+   * Put target land on top of its owner's library. */
+
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 1);
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  result = generic_spell(player, card, event, 0x81, &td,
+                         "Select target land, put it on top of its owner\'s library.", 1, NULL);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int card_uproot_impl(int player, int card, event_t event);
+
 int card_waxmane_baku(int player, int card, event_t event)
 {
+  /* CARD_ID_WAXMANE_BAKU	7594
+   * Waxmane Baku	|2|W
+   * Creature - Spirit 2/2
+   * Whenever you cast a Spirit or Arcane spell, you may put a ki counter on ~.
+   * |1, Remove X ki counters from ~: Tap X target creatures. */
+
   int i;
   target_t *target_card_entry;
   int ki_count_or_duh;
@@ -3750,6 +3933,15 @@ Whenever a legendary permanent other than ~ is put into a graveyard from the bat
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int ninjutsu_custom_target(int player, int card, event_t event, int cless, int black, int blue,
+                           int green, int red, int white, target_definition_t *td, int csvid);
+
+/* Legacy 80-byte target compatibility for custom-target ninjutsu.
+ * Native 2022 wrapper and private implementation are recovered below. */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 int card_yukora_the_prisoner(int player, int card, event_t event){
 /* CARD_ID_YUKORA_THE_PRISONER	7596
 Yukora, the Prisoner	|2|B|B
@@ -3769,81 +3961,29 @@ When ~ leaves the battlefield, sacrifice all non-Ogre creatures you control. */
 	return 0;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int card_uproot_impl(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x256a4e0; original cards/betrayers_of_kamigawa.c:721. */
-int card_crawling_filth(int player, int card, event_t event)
-{
-  int result;
-  fear(player, card, event);
-  result = soulshift(player, card, event, 5, 1);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x2571030; original cards/betrayers_of_kamigawa.c:3584. */
-int card_uproot(int player, int card, event_t event)
-{
-  int result;
-  result = arcane(player, card, event, card_uproot_impl);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x2568b50; original cards/betrayers_of_kamigawa.c:3584. */
-static int card_uproot_impl(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-  target_definition_t td;
-
-  default_target_definition(player, card, &td, 1);
-  instance = get_card_instance(player, card);
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    result = valid_target(&td);
-    if (result != 0)
-    {
-      put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
-    }
-  }
-  result = generic_spell(player, card, event, 0x81, &td,
-                         "Select target land, put it on top of its owner\'s library.", 1, NULL);
-  return result;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int ninjutsu_custom_target(int player, int card, event_t event, int cless, int black, int blue,
-                           int green, int red, int white, target_definition_t *td, int csvid);
-
-/* Legacy 80-byte target compatibility for custom-target ninjutsu.
- * Native 2022 wrapper and private implementation are recovered below. */
-
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x256b130; original cards/betrayers_of_kamigawa.c:1124. */
-int card_harbinger_of_spring(int player, int card, event_t event)
-{
-  int result;
-
-  misc_protection(player, card, event);
-  if ((((event == EVENT_PROT_MISC) && (card == affected_card)) &&
-       (player == affected_card_controller)) &&
-      ((((unsigned int)event_result >> 24 & 0xff) == '\x06' ||
-        ((result = is_what(attacking_card_controller, attacking_card, 2),
-          result != 0 &&
-              (result = has_subtype(attacking_card_controller, attacking_card, SUBTYPE_SPIRIT),
-               result == 0))))))
-  {
-    event_result = event_result | 1;
-  }
-  result = soulshift(player, card, event, 4, 1);
-  return result;
-}
-
-
 #ifndef SHANDALAR
 /* Recovered October 2022 split card helpers. */
+
+static int eot_flipper(int player, int card, event_t event)
+{
+  card_instance_t *instance = get_card_instance(player, card);
+  double_faced_card(player, card, event);
+  arcane_spirit_spell_trigger(player, card, event, duh_mode(player) ? 2 : 1);
+  if (event == EVENT_SPA)
+    add_counters(player, card, player, card, COUNTER_KI, 1);
+  if (count_counters(player, card, COUNTER_KI) > 1 && trigger_condition == TRIGGER_EOT &&
+      card == affected_card && player == affected_card_controller && player == reason_for_trigger_controller)
+  {
+    if (event == EVENT_TRIGGER)
+      event_result |= player + 1;
+    else if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      true_transform(player, card);
+      verify_legend_rule(player, card, instance->targets[13].card);
+    }
+  }
+  return 0;
+}
 
 /* ManalinkEh 2022: 0x2569100; original cards/betrayers_of_kamigawa.c:315. */
 static int ninjutsu_custom_target_part(int player, int card, event_t event, int cless, int black,
@@ -3908,7 +4048,6 @@ static int ninjutsu_custom_target_part(int player, int card, event_t event, int 
   return 0;
 }
 
-
 /* ManalinkEh 2022: 0x25696b0; original cards/betrayers_of_kamigawa.c:315. */
 int ninjutsu_custom_target(int player, int card, event_t event, int cless, int black, int blue,
                                 int green, int red, int white, target_definition_t *td,
@@ -3925,7 +4064,9 @@ int ninjutsu_custom_target(int player, int card, event_t event, int cless, int b
   return result;
 }
 
+#endif
 
+#ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2569740; original cards/betrayers_of_kamigawa.c:432. */
 int ninjutsu(int player, int card, event_t event, int cless, int black, int blue, int green,
                   int red, int white, int csvid)
@@ -3942,7 +4083,6 @@ int ninjutsu(int player, int card, event_t event, int cless, int black, int blue
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x25686b0; original cards/betrayers_of_kamigawa.c:3291. */
@@ -4031,11 +4171,16 @@ static int toshiro_effect(int player, int card, event_t event)
 
 #endif
 
-
 #ifndef SHANDALAR
+/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
 /* ManalinkEh 2022: 0x25705a0; original cards/betrayers_of_kamigawa.c:3372. */
 int card_toshiro_umezawa(int player, int card, event_t event)
 {
+  /* Toshiro Umezawa	|1|B|B
+   * Legendary Creature - Human Samurai 2/2
+   * Bushido 1 (Whenever this creature blocks or becomes blocked, it gets +1/+1 until end of turn.)
+   * Whenever a creature an opponent controls dies, you may cast target instant card from your graveyard. If that spell would be put into a graveyard, exile it instead. */
+
   check_legend_rule(player, card, event);
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -4104,31 +4249,5 @@ int card_toshiro_umezawa(int player, int card, event_t event)
     }
   }
   return bushido(player, card, event, 1);
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline card mechanics; original native callers contain the expansions. */
-static int eot_flipper(int player, int card, event_t event)
-{
-  card_instance_t *instance = get_card_instance(player, card);
-  double_faced_card(player, card, event);
-  arcane_spirit_spell_trigger(player, card, event, duh_mode(player) ? 2 : 1);
-  if (event == EVENT_SPA)
-    add_counters(player, card, player, card, COUNTER_KI, 1);
-  if (count_counters(player, card, COUNTER_KI) > 1 && trigger_condition == TRIGGER_EOT &&
-      card == affected_card && player == affected_card_controller && player == reason_for_trigger_controller)
-  {
-    if (event == EVENT_TRIGGER)
-      event_result |= player + 1;
-    else if (event == EVENT_RESOLVE_TRIGGER)
-    {
-      true_transform(player, card);
-      verify_legend_rule(player, card, instance->targets[13].card);
-    }
-  }
-  return 0;
 }
 #endif

@@ -4,4 +4,8 @@
 
 /* ManalinkEh 2022: 0x227d3a0; original cards/stubs.c:2. */
 /* The shipped implementation is a no-op placeholder. */
-int card_crab(int player, int card, event_t event) { return 0; }
+int card_crab(int player, int card, event_t event) {
+  /* Crab	""
+   * Token Creature - Crab 0/3 */
+
+ return 0; }

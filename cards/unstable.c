@@ -43,11 +43,6 @@
  * Instant
  * You gain 1 life for each person who high-fives you in the next thirty seconds. Each player in a silver-bordered game who high-fives you gains 1 life. (Offer high fives. Don't hit people.) */
 
-/* GO TO JAIL	|W
- * Enchantment
- * When ~ enters the battlefield, exile target creature an opponent controls until ~ leaves the battlefield.
- * At the beginning of the upkeep of the exiled card's owner, that player rolls two six-sided dice. If they roll doubles, sacrifice ~. */
-
 /* Half-Kitten, Half-	""
  * Creature - Cat 1/2
  * Whenever you're dealt damage,
@@ -87,25 +82,10 @@
  * Artifact Creature - Cyborg Knight 2/2
  * First strike, protection from watermarks (Nothing with a watermark can block, target, deal damage to, or attach to this creature.) */
 
-/* Knight of the Widget	|2|W
- * Artifact Creature - Cyborg Knight 100/100
- * Vigilance
- * ~'s power and toughness are each equal to the number of Order of the Widget watermarks among permanents you control. */
-
 /* Midlife Upgrade	|3|W
  * Sorcery
  * As an additional cost to cast this spell, sacrifice X Contraptions.
  * Assemble X plus one Contraptions. (To assemble a Contraption, put the top card of your Contraption deck face up onto one of your sprockets.) */
-
-/* Oddly Uneven	|3|W|W
- * Sorcery
- * Choose one -
- * * Destroy each creature with an odd number of words in its name. (Hyphenated words are one word.)
- * * Destroy each creature with an even number of words in its name. */
-
-/* Old Guard	|1|W
- * Artifact Creature - Cyborg Soldier 2/1
- * |W, |T: Tap target creature without reminder text. (Reminder text is still any italicized text in parentheses that explains rules you already know.) */
 
 /* Ordinary // Pony	|2|W
  * Host Creature - Horse 2/3
@@ -177,11 +157,6 @@
  * When this creature enters the battlefield,
  * //
  * this creature assembles a Contraption. (Put the top card of your Contraption deck face up onto one of your sprockets.) */
-
-/* Crow Storm	|2|U
- * Sorcery
- * Create a 1/2 |Sblue Bird creature token with flying named Storm Crow.
- * Storm (When you cast this spell, copy it for each spell cast before it this turn.) */
 
 /* Defective Detective	|2|U
  * Creature - Human Spy 2/1
@@ -260,10 +235,6 @@
  * Creature - Human Spy Rigger 3/4
  * Whenever ~ deals combat damage to a player, it reassembles target Contraption that player controls. (Gain control of it and move it onto one of your sprockets.) */
 
-/* Time Out	|4|U
- * Instant
- * Roll a six-sided die. Put target nonland permanent into its owner's library just beneath the top X cards of that library, where X is the result. */
-
 /* Very Cryptic Command A	|1|U|U|U
  * Instant
  * Choose two -
@@ -271,14 +242,6 @@
  * * Target creature can't be blocked this turn.
  * * Draw a card. If that card's art is by Wayne England, you may reveal it and draw another card.
  * * Assemble a Contraption. */
-
-/* Very Cryptic Command B	|1|U|U|U
- * Instant
- * Choose two -
- * * Untap two target permanents.
- * * Tap each permanent target player controls with exactly one word in its name.
- * * Discard all the cards in your hand, then draw that many cards.
- * * Return target instant or sorcery card from your graveyard to your hand. */
 
 /* Very Cryptic Command C	|1|U|U|U
  * Instant
@@ -295,14 +258,6 @@
  * * Draw two cards, then discard a card.
  * * Change the target of target spell with a single target.
  * * Turn over target nontoken creature. */
-
-/* Very Cryptic Command E	|1|U|U|U
- * Instant
- * Choose two -
- * * Counter target black-bordered spell.
- * * Return target creature to its owner's hand.
- * * Untap each permanent you control with a watermark.
- * * Roll two six-sided dice. Target player puts the top X cards of their library into their graveyard, where X is the total of those results. */
 
 /* Very Cryptic Command F	|1|U|U|U
  * Instant
@@ -361,10 +316,6 @@
  * Creature - Zombie 2/1
  * ~ has flying as long as it's being held above the battlefield. */
 
-/* Inhumaniac	|1|B
- * Creature - Brainiac 1/1
- * At the beginning of your upkeep, roll a six-sided die. On a 3 or 4, put a +1/+1 counter on ~. On a 5 or higher, put two +1/+1 counters on it. On a 1, remove all +1/+1 counters from ~. */
-
 /* Masterful Ninja	|2|B
  * Creature - Troll Ninja 1/1
  * Haste
@@ -377,11 +328,6 @@
  * Whenever this creature deals combat damage to a player,
  * Augment |2|B (|2|B, Reveal this card from your hand: Combine it with target host. Augment only as-oh, nevermind.) */
 
-/* Old-Fashioned Vampire	|3|B|B
- * Creature - Vampyre 3/3
- * Flying
- * ~ gets +2/+2 and has deathtouch as long as it's dark outdoors. */
-
 /* Over My Dead Bodies	|4|B|B
  * Enchantment
  * Creature cards in graveyards can attack and block as though they were on the battlefield, can block or be blocked only by creature cards in graveyards, are Zombies in addition to their other types, and have undeathtouch. (If they would deal damage to a creature card, exile that creature card instead.)
@@ -392,18 +338,10 @@
  * Menace
  * Whenever ~ deals combat damage to a player, it assembles a Contraption. (Put the top card of your Contraption deck face up onto one of your sprockets.) */
 
-/* "Rumors of My Death . . ."	|2|B
- * Enchantment
- * |3|B, Exile a permanent you control with a League of Dastardly Doom watermark: Return a permanent card with a League of Dastardly Doom watermark from your graveyard to the battlefield. */
-
 /* Skull Saucer	|4|B|B
  * Creature - Zombie Head 4/1
  * Flying
  * When ~ enters the battlefield, destroy target creature and put your head on the table. Sacrifice ~ when your head stops touching the table. */
-
-/* Sly Spy A	|2|B
- * Creature - Human Spy 2/2
- * Whenever Sly Spy deals combat damage to a player, that player reveals their hand. You choose a card from it with the longest name. That player discards that card. */
 
 /* Sly Spy B	|2|B
  * Creature - Human Spy 2/2
@@ -421,22 +359,9 @@
  * Creature - Human Spy 2/2
  * Whenever Sly Spy deals combat damage to a player, that player reveals the top card of their library. Put that card into your hand and you lose life equal to its converted mana cost. */
 
-/* Sly Spy F	|2|B
- * Creature - Human Spy 2/2
- * Whenever Sly Spy deals combat damage to a player, roll a six-sided die. That player loses life equal to the result. */
-
 /* Snickering Squirrel	|B
  * Creature - Squirrel Advisor 1/1
  * You may tap ~ to increase the result of a die any player rolled by 1. */
-
-/* Spike, Tournament Grinder	|2|PB|PB
- * Legendary Creature - Human Gamer 1/1
- * (|PB can be paid with either |B or 2 life.)
- * |PB|PB|PB|PB: Choose a card you own from outside the game that has been banned or restricted in a Constructed format, reveal that card, and put it into your hand. */
-
-/* Squirrel-Powered Scheme	|2|B
- * Enchantment
- * Increase the result of each die you roll by 2. */
 
 /* Steady-Handed Mook	|2|B
  * Creature - Human Rigger 1/1
@@ -472,10 +397,6 @@
  * |2|BR|BR, |T: Roll a six-sided die. Create a number of 1/1 |Sred Brainiac creature tokens equal to the result.
  * Tap three untapped Brainiacs you control: The next time you would roll a six-sided die, instead roll two six-sided dice and use the total of those results. */
 
-/* Box of Free-Range Goblins	|4|R|R
- * Sorcery
- * Roll a six-sided die. Create a number of 1/1 |Sred Goblin creature tokens equal to the result. */
-
 /* Bumbling // Pangolin	|3|R
  * Host Creature - Pangolin Beast 2/2
  * When this creature enters the battlefield,
@@ -508,16 +429,6 @@
  * When Garbage Elemental enters the battlefield, it assembles a Contraption. (Put the top card of your Contraption deck face up onto one of your sprockets.)
  * Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.) */
 
-/* Garbage Elemental C	|4|R
- * Creature - Elemental 3/2
- * Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)
- * When Garbage Elemental enters the battlefield, roll two six-sided dice. Create a number of 1/1 |Sred Goblin creature tokens equal to the difference between those results. */
-
-/* Garbage Elemental D	|4|R
- * Creature - Elemental 3/3
- * Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom of your library in a random order.)
- * When Garbage Elemental enters the battlefield, roll a six-sided die. Garbage Elemental deals damage equal to the result to target opponent or planeswalker. */
-
 /* Garbage Elemental E	|4|R
  * Creature - Elemental 4/3
  * Unleash (You may have this creature enter the battlefield with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)
@@ -539,18 +450,10 @@
  * At the beginning of each end step, if an opponent was dealt damage this turn,
  * Augment |1|R|R (|1|R|R, Reveal this card from your hand: Combine it with target host. Augment only as a sorcery.) */
 
-/* Hammer Helper	|3|R
- * Sorcery
- * Gain control of target creature until end of turn. Untap that creature and roll a six-sided die. Until end of turn, it gains haste and gets +X/+0, where X is the result. */
-
 /* Hammer Jammer	|3|R
  * Creature - Goblin Warrior 0/0
  * As ~ enters the battlefield, roll a six-sided die. ~ enters the battlefield with a number of +1/+1 counters on it equal to the result.
  * Whenever you roll a die, remove all +1/+1 counters from ~, then put a number of +1/+1 counters on it equal to the result. */
-
-/* Hammerfest Boomtacular	|3|R|R
- * Enchantment
- * Whenever you cast a spell with a Goblin Explosioneers watermark, ~ deals 2 damage to any target. */
 
 /* Infinity Elemental	|4|R|R|R
  * Creature - Elemental 100/5
@@ -563,10 +466,6 @@
 /* Just Desserts	|1|R
  * Instant
  * ~ deals pi damage to target creature. (Pi is the ratio of a circle's circumference to its diameter. (It's a smidgen more than 3.)) */
-
-/* Painiac	|2|R
- * Creature - Brainiac 0/3
- * At the beginning of your upkeep, roll a six-sided die. ~ gets +X/+0 until end of turn, where X is the result. */
 
 /* Party Crasher	|4|R
  * Creature - Goblin Berserker 3/3
@@ -627,21 +526,11 @@
  * Sorcery
  * Search your library for a host card or a card with augment, reveal it, put it into your hand, then shuffle your library. */
 
-/* Druid of the Sacred Beaker	|2|G
- * Creature - Deer Bird Ape Druid 2/2
- * |T: Add |G for each Crossbreed Labs watermark among permanents you control. */
-
 /* Eager // Beaver	|2|G
  * Host Creature - Beaver 3/2
  * When this creature enters the battlefield,
  * //
  * you may untap target permanent. */
-
-/* Earl of Squirrel	|4|G|G
- * Creature - Squirrel Advisor 4/4
- * Squirrellink (Damage dealt by this creature also causes you to create that many 1/1 |Sgreen Squirrel creature tokens.)
- * Creature tokens you control are Squirrels in addition to their other creature types.
- * Other Squirrels you control get +1/+1. */
 
 /* First Pick	|3|G
  * Instant
@@ -657,41 +546,15 @@
  * Whenever a nontoken creature enters the battlefield,
  * Augment |G (|G, Reveal this card from your hand: Combine it with target host. Augment only as a sorcery.) */
 
-/* Hydradoodle	|X|X|G|G
- * Creature - Hydra Hound 0/0
- * As ~ enters the battlefield, roll X six-sided dice. ~ enters the battlefield with a number of +1/+1 counters on it equal to the total of those results.
- * Reach, trample */
-
-/* Ineffable Blessing A	|1|G
- * Enchantment
- * As Ineffable Blessing enters the battlefield, choose Flavorful or Bland.
- * * Flavorful - Whenever a creature with flavor text enters the battlefield under your control, draw a card.
- * * Bland - Whenever a creature without flavor text enters the battlefield under your control, draw a card. */
-
 /* Ineffable Blessing B	|1|G
  * Enchantment
  * As Ineffable Blessing enters the battlefield, choose an artist.
  * Whenever a creature with art by the chosen artist enters the battlefield under your control, draw a card. */
 
-/* Ineffable Blessing C	|1|G
- * Enchantment
- * As Ineffable Blessing enters the battlefield, choose white-bordered or silver-bordered.
- * Whenever a creature with the chosen border enters the battlefield under your control, draw a card. */
-
-/* Ineffable Blessing D	|1|G
- * Enchantment
- * As Ineffable Blessing enters the battlefield, choose a rarity.
- * Whenever a creature with the chosen rarity enters the battlefield under your control, draw a card. */
-
 /* Ineffable Blessing E	|1|G
  * Enchantment
  * As Ineffable Blessing enters the battlefield, choose odd or even.
  * Whenever a creature with a collector number of the chosen value enters the battlefield under your control, draw a card. */
-
-/* Ineffable Blessing F	|1|G
- * Enchantment
- * As Ineffable Blessing enters the battlefield, choose a number.
- * Whenever a creature with exactly the chosen number of words in its name enters the battlefield under your control, draw a card. (Hyphenated words are one word.) */
 
 /* Joyride Rigger	|3|G
  * Creature - Goblin Rigger 3/3
@@ -793,10 +656,6 @@
  * Combined, enchanted, and equipped creatures you control have menace.
  * |3|B|R, |T: Put two target creature cards from graveyards onto the battlefield combined into one creature under your control. (Its power is equal to their total power, its toughness is equal to their total toughness, and it has their names, mana costs, types, text boxes, etc.) */
 
-/* Hot Fix	|4|W|U
- * Sorcery
- * You have ten seconds to look at and rearrange the cards in your library. At the end of those ten seconds, if you're touching one or more of those cards, shuffle your library. */
-
 /* Ol' Buzzbark	|X|R|G
  * Legendary Creature - Goblin Warrior 3/3
  * When ~ enters the battlefield, roll X six-sided dice onto the battlefield from a height of at least X inches. For each die, put a number of +1/+1 counters equal to the result on each creature you control that die is touching. For each die, ~ deals damage equal to the result to each creature an opponent controls that die is touching. */
@@ -837,12 +696,6 @@
  * When this creature enters the battlefield,
  * //
  * you may destroy target nonland permanent. */
-
-/* Border Guardian	|4
- * Artifact Creature - Knight 1/1
- * Whenever you cast a silver-bordered spell, put a +1/+1 counter on ~.
- * Whenever you cast a black-bordered spell, ~ can't be blocked this turn.
- * Whenever you cast a white-bordered spell, ~ gains double strike until end of turn. */
 
 /* Buzzing Whack-a-Doodle	|4
  * Artifact
@@ -887,18 +740,6 @@
  * |2, |T: Move a counter from one permanent onto another. If the second permanent refers to any kind of counter, the moved counter becomes one of those counters. Otherwise, it becomes a +1/+1 counter.
  * |3, |T: Put a +1/+1 counter on target creature.
  * |4, |T: Proliferate. (You choose any number of permanents and/or players with counters on them, then give each another counter of a kind already there.) */
-
-/* Everythingamajig B	|5
- * Artifact
- * |2, |T: Draw a card. Activate this ability only if you have no cards in hand.
- * |8, |T: You gain 10 life.
- * |4, |T, Sacrifice Everythingamajig: You may put a silver-bordered permanent card from your hand onto the battlefield. */
-
-/* Everythingamajig C	|5
- * Artifact
- * |1: Flip a coin. If you win the flip, add |C|C. Activate this ability only any time you could cast an instant.
- * |3, |T: Target player discards a card. Activate this ability only during your turn.
- * |X: Everythingamajig becomes an X/X Construct artifact creature until end of turn. */
 
 /* Everythingamajig D	|6
  * Artifact
@@ -970,16 +811,6 @@
  * When ~ enters the battlefield, shuffle your library and deal it into four libraries. If anything refers to your library, choose one of your libraries for it.
  * Play with your libraries' top cards revealed.
  * When ~ leaves the battlefield, shuffle your libraries together. */
-
-/* Staff of the Letter Magus	|3
- * Artifact
- * As ~ enters the battlefield, choose a consonant other than N, R, S, or T.
- * Whenever a player casts a spell, you gain 1 life for each time the chosen letter appears in that spell's name. */
-
-/* Stamp of Approval	|3
- * Artifact
- * As ~ enters the battlefield, choose a watermark.
- * Creatures you control with the chosen watermark get +1/+1. */
 
 /* Steam-Powered	""
  * Artifact Creature - Construct 0/4
@@ -1227,38 +1058,6 @@
 /* ManalinkEh 2022: 0x25c4930; original cards/unstable.c:107. */
 static int fx_0(int player, int card, event_t event) { return 0; }
 
-/* ManalinkEh 2022: 0x25c5700; original cards/unstable.c:442. */
-int card_crow_storm(int player, int card, event_t event)
-{
-  int result;
-
-  if (event == EVENT_CAST_SPELL)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-      result = check_special_flags(player, card, 0x40000);
-      if (result == 0)
-      {
-        result = get_storm_count();
-        if (0 < result)
-        {
-          generate_tokens_by_id(player, card, CARD_ID_STORM_CROW, result);
-        }
-      }
-    }
-  }
-  else if (event == EVENT_RESOLVE_SPELL)
-  {
-    generate_token_by_id(player, card, CARD_ID_STORM_CROW);
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return basic_spell(player, card, event);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int test_ineffable_blessing_a(int iid, int val, int player, int card);
-static int test_words_in_name_mod_val(int iid, int val, int player, int card);
-
 /* ManalinkEh 2022: 0x25c4b50; original cards/unstable.c:155. */
 static int test_words_in_name_val(int iid, int val, int player, int card)
 {
@@ -1267,6 +1066,10 @@ static int test_words_in_name_val(int iid, int val, int player, int card)
   result = words_in_name(player, card);
   return (unsigned int)(result == val);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int test_ineffable_blessing_a(int iid, int val, int player, int card);
+static int test_words_in_name_mod_val(int iid, int val, int player, int card);
 
 /* ManalinkEh 2022: 0x25c4b10; original cards/unstable.c:305. */
 static int test_words_in_name_mod_val(int iid, int val, int player, int card)
@@ -1280,6 +1083,12 @@ static int test_words_in_name_mod_val(int iid, int val, int player, int card)
 /* ManalinkEh 2022: 0x25c53e0; original cards/unstable.c:309. */
 int card_oddly_uneven(int player, int card, event_t event)
 {
+  /* Oddly Uneven	|3|W|W
+   * Sorcery
+   * Choose one -
+   * * Destroy each creature with an odd number of words in its name. (Hyphenated words are one word.)
+   * * Destroy each creature with an even number of words in its name. */
+
   enum
   {
     CHOICE_ODD = 1,
@@ -1328,6 +1137,97 @@ int card_oddly_uneven(int player, int card, event_t event)
   return basic_spell(player, card, event);
 }
 
+/* ManalinkEh 2022: 0x25c4b80; original cards/unstable.c:342. */
+static char *target_hasnt_reminder_text(int who_chooses, int player, int card, int targeting_player,
+                                        int targeting_card)
+{
+  int result;
+  char *requirement_error;
+
+  result = has_reminder_text(player, card);
+  requirement_error = NULL;
+  if (result != 0)
+  {
+    requirement_error = "reminder text";
+  }
+  return requirement_error;
+}
+
+/* ManalinkEh 2022: 0x25c55c0; original cards/unstable.c:347. */
+int card_old_guard(int player, int card, event_t event)
+{
+  /* Old Guard	|1|W
+   * Artifact Creature - Cyborg Soldier 2/1
+   * |W, |T: Tap target creature without reminder text. (Reminder text is still any italicized text in parentheses that explains rules you already know.) */
+
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+    td.extra = (int32_t)target_hasnt_reminder_text;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+    td.extra = (int32_t)target_hasnt_reminder_text;
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+
+      instance = get_card_instance(player, card);
+      tap_card(instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 1, 0, &td,
+                                     "TARGET_CREATURE");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c5700; original cards/unstable.c:442. */
+int card_crow_storm(int player, int card, event_t event)
+{
+  /* Crow Storm	|2|U
+   * Sorcery
+   * Create a 1/2 |Sblue Bird creature token with flying named Storm Crow.
+   * Storm (When you cast this spell, copy it for each spell cast before it this turn.) */
+
+  int result;
+
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      result = check_special_flags(player, card, 0x40000);
+      if (result == 0)
+      {
+        result = get_storm_count();
+        if (0 < result)
+        {
+          generate_tokens_by_id(player, card, CARD_ID_STORM_CROW, result);
+        }
+      }
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    generate_token_by_id(player, card, CARD_ID_STORM_CROW);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return basic_spell(player, card, event);
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *target_hasnt_reminder_text(int who_chooses, int player, int card, int targeting_player,
+                                        int targeting_card);
+
 /* ManalinkEh 2022: 0x25c4970; original cards/unstable.c:1661. */
 static int test_ineffable_blessing_a(int iid, int val, int player, int card)
 {
@@ -1345,6 +1245,12 @@ static int test_ineffable_blessing_a(int iid, int val, int player, int card)
 /* ManalinkEh 2022: 0x25c7c10; original cards/unstable.c:1666. */
 int card_ineffable_blessing_a(int player, int card, event_t event)
 {
+  /* Ineffable Blessing A	|1|G
+   * Enchantment
+   * As Ineffable Blessing enters the battlefield, choose Flavorful or Bland.
+   * * Flavorful - Whenever a creature with flavor text enters the battlefield under your control, draw a card.
+   * * Bland - Whenever a creature without flavor text enters the battlefield under your control, draw a card. */
+
   int result;
   card_instance_t *instance;
   unsigned int selected_condition;
@@ -1383,64 +1289,16 @@ int card_ineffable_blessing_a(int player, int card, event_t event)
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static char *target_hasnt_reminder_text(int who_chooses, int player, int card, int targeting_player,
-                                        int targeting_card);
-
-/* ManalinkEh 2022: 0x25c4b80; original cards/unstable.c:342. */
-static char *target_hasnt_reminder_text(int who_chooses, int player, int card, int targeting_player,
-                                        int targeting_card)
-{
-  int result;
-  char *requirement_error;
-
-  result = has_reminder_text(player, card);
-  requirement_error = NULL;
-  if (result != 0)
-  {
-    requirement_error = "reminder text";
-  }
-  return requirement_error;
-}
-
-/* ManalinkEh 2022: 0x25c55c0; original cards/unstable.c:347. */
-int card_old_guard(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  target_definition_t td;
-
-  if (event == EVENT_ACTIVATE)
-  {
-    default_target_definition(player, card, &td, 2);
-    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-    td.extra = (int32_t)target_hasnt_reminder_text;
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 2);
-    td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-    td.extra = (int32_t)target_hasnt_reminder_text;
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
-    {
-
-      instance = get_card_instance(player, card);
-      tap_card(instance->targets[0].player, instance->targets[0].card);
-    }
-  }
-  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 1, 0, &td,
-                                     "TARGET_CREATURE");
-  return result;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
 /* ManalinkEh 2022: 0x25c88d0; original cards/unstable.c:2183. */
 int card_everythingamajig_c(int player, int card, event_t event)
 {
+  /* Everythingamajig C	|5
+   * Artifact
+   * |1: Flip a coin. If you win the flip, add |C|C. Activate this ability only any time you could cast an instant.
+   * |3, |T: Target player discards a card. Activate this ability only during your turn.
+   * |X: Everythingamajig becomes an X/X Construct artifact creature until end of turn. */
+
   enum
   {
     CHOICE_MANA = 1,
@@ -1509,16 +1367,86 @@ int card_everythingamajig_c(int player, int card, event_t event)
 /* October 2022 private .bss cache @ 0x2774140, original line 17. */
 static const Watermark* watermarks = NULL;
 
-
-/* ManalinkEh 2022: 0x25c49b0; original cards/unstable.c:1761. */
-static int test_has_rarity_val(int iid, int val, int player, int card)
+/* ManalinkEh 2022: 0x25c4d00; original cards/unstable.c:20. */
+static int do_dialog_lots_of_choices(int player, int src_player, int src_card, char **choices,
+                                     int num_choices)
 {
-  const Rarities *rarity;
-
-  rarity = get_rarity((unsigned int)cards_data[iid].id);
-  return (unsigned int)((unsigned int)rarity->default_rarity == val);
+  int i;
+  int choice;
+  int first_length;
+  int next_length;
+  char *buffer;
+  int page_start;
+  char buf[3000];
+  do
+  {
+    page_start = 0;
+    do
+    {
+      strncpy(buf, " (More)", 8);
+      if (page_start < num_choices)
+      {
+        first_length = sprintf(buf + 7, "\n %s", choices[page_start]);
+        buffer = buf + first_length + 7;
+        i = 1;
+        do
+        {
+          if (num_choices - page_start == i)
+            break;
+          next_length = sprintf(buffer, "\n %s", (choices + page_start)[i]);
+          i = i + 1;
+          buffer = buffer + next_length;
+        } while (i != 10);
+      }
+      choice = do_dialog(player, src_player, src_card, -1, -1, buf, 0);
+      if (choice != 0)
+      {
+        return page_start + -1 + choice;
+      }
+      page_start = page_start + 10;
+    } while (page_start < num_choices);
+  } while (true);
 }
 
+/* ManalinkEh 2022: 0x25c4fd0; original cards/unstable.c:72. */
+static watermark_t choose_a_watermark(int player, int src_player, int src_card)
+{
+  if (watermarks == NULL)
+    watermarks = get_watermarks();
+  int idxs[256];
+  int num_idxs = 0;
+  for (int i = 0; i < 255; ++i)
+    if (watermarks[i].name != NULL && watermarks[i].saturation != '\0')
+      idxs[num_idxs++] = i;
+  if (num_idxs > 0)
+  {
+    int choice;
+    if (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0))
+    {
+      choice = recorded_rand(player, num_idxs);
+      if (ai_is_speculating != 1)
+      {
+        char buf[300];
+        sprintf(buf, " %s\n", watermarks[idxs[choice]].disp);
+        do_dialog(player, src_player, src_card, -1, -1, buf, 0);
+      }
+    }
+    else
+    {
+      char *choices[num_idxs];
+      for (int i = 0; i < num_idxs; ++i)
+        choices[i] = watermarks[idxs[i]].disp;
+      choice = do_dialog_lots_of_choices(player, src_player, src_card, choices, num_idxs);
+    }
+    return (watermark_t)idxs[choice];
+  }
+  return WMARK_NONE;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *target_has_league_watermark(int who_chooses, int player, int card,
+                                         int targeting_player, int targeting_card);
+static int test_has_watermark_val(int iid, int val, int player, int card);
 
 /* ManalinkEh 2022: 0x25c49f0; original cards/unstable.c:113. */
 static watermark_t get_watermark_by_iid(int iid)
@@ -1542,11 +1470,6 @@ static watermark_t get_watermark_by_iid(int iid)
   return WMARK_NONE;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static char *target_has_league_watermark(int who_chooses, int player, int card,
-                                         int targeting_player, int targeting_card);
-static int test_has_watermark_val(int iid, int val, int player, int card);
-
 /* ManalinkEh 2022: 0x25c4af0; original cards/unstable.c:150. */
 static int test_has_watermark_val(int iid, int val, int player, int card)
 {
@@ -1556,9 +1479,63 @@ static int test_has_watermark_val(int iid, int val, int player, int card)
   return (unsigned int)(val == watermark);
 }
 
+/* ManalinkEh 2022: 0x25c5150; original cards/unstable.c:199. */
+int card_go_to_jail(int player, int card, event_t event)
+{
+  /* GO TO JAIL	|W
+   * Enchantment
+   * When ~ enters the battlefield, exile target creature an opponent controls until ~ leaves the battlefield.
+   * At the beginning of the upkeep of the exiled card's owner, that player rolls two six-sided dice. If they roll doubles, sacrifice ~. */
+
+  int result;
+  card_instance_t *instance;
+
+  return_from_oblivion(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    target_definition_t td;
+
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = 1 - player;
+    td.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
+      if (result != 0)
+      {
+        obliviation(player, card, instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+    instance->number_of_targets = '\0';
+  }
+  else if ((trigger_condition == TRIGGER_UPKEEP) && (event - EVENT_TRIGGER < 2))
+  {
+    result = owner_of_obliviated_card(player, card);
+    upkeep_trigger_ability(player, card, event, result);
+  }
+  else if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    int r[2];
+    roll_2d6t(current_turn, player, card, -1, -1, &r[0], &r[1]);
+    if (r[0] == r[1])
+    {
+      kill_card(player, card, KILL_SACRIFICE);
+    }
+  }
+  return global_enchantment(player, card, event);
+}
+
 /* ManalinkEh 2022: 0x25c5300; original cards/unstable.c:274. */
 int card_knight_of_the_widget(int player, int card, event_t event)
 {
+  /* Knight of the Widget	|2|W
+   * Artifact Creature - Cyborg Knight 100/100
+   * Vigilance
+   * ~'s power and toughness are each equal to the number of Order of the Widget watermarks among permanents you control. */
+
   vigilance(player, card, event);
   if (event - EVENT_POWER < 2 && affect_me(player, card) && player != -1 &&
       !is_humiliated(player, card, AL_STATIC))
@@ -1580,6 +1557,36 @@ int card_knight_of_the_widget(int player, int card, event_t event)
     set_characteristic_pt(widgets);
   }
   return 0;
+}
+
+/* ManalinkEh 2022: 0x25c57c0; original cards/unstable.c:541. */
+int card_time_out(int player, int card, event_t event)
+{
+  /* Time Out	|4|U
+   * Instant
+   * Roll a six-sided die. Put target nonland permanent into its owner's library just beneath the top X cards of that library, where X is the result. */
+
+  target_definition_t td;
+
+  if (!IS_GS_EVENT(player, card, event))
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 2);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target(&td))
+    {
+
+      card_instance_t *inst = get_card_instance(player, card);
+      int x = roll_d6t(player, player, card, inst->targets[0].player,
+                        inst->targets[0].card);
+      put_permanent_under_the_first_x_card_of_its_owners_library(
+          inst->targets[0].player, inst->targets[0].card, x);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
 }
 
 /* ManalinkEh 2022: 0x25c4bb0; original cards/unstable.c:752. */
@@ -1610,6 +1617,30 @@ static int test_has_any_watermark(int iid, int val, int player, int card)
   return get_watermark_by_iid(current_iid) != WMARK_NONE;
 }
 
+/* ManalinkEh 2022: 0x25c69d0; original cards/unstable.c:1005. */
+int card_inhumaniac(int player, int card, event_t event)
+{
+  /* Inhumaniac	|1|B
+   * Creature - Brainiac 1/1
+   * At the beginning of your upkeep, roll a six-sided die. On a 3 or 4, put a +1/+1 counter on ~. On a 5 or higher, put two +1/+1 counters on it. On a 1, remove all +1/+1 counters from ~. */
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    int r = roll_d6t(player, player, card, -1, -1);
+    if (r - 3U < 2)
+      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
+    else if (r < 5)
+    {
+      if (r == 1)
+        remove_all_counters(player, card, player, card, COUNTER_P1_P1);
+    }
+    else
+      add_counters(player, card, player, card, COUNTER_P1_P1, 2);
+  }
+  return 0;
+}
+
 /* ManalinkEh 2022: 0x25c4aa0; original cards/unstable.c:1067. */
 static char *target_has_league_watermark(int who_chooses, int player, int card,
                                          int targeting_player, int targeting_card)
@@ -1636,6 +1667,10 @@ static char *target_has_league_watermark(int who_chooses, int player, int card,
 /* ManalinkEh 2022: 0x25c6b60; original cards/unstable.c:1072. */
 int card_rumors_of_my_death(int player, int card, event_t event)
 {
+  /* "Rumors of My Death . . ."	|2|B
+   * Enchantment
+   * |3|B, Exile a permanent you control with a League of Dastardly Doom watermark: Return a permanent card with a League of Dastardly Doom watermark from your graveyard to the battlefield. */
+
   int result;
   target_t sel;
   target_definition_t td;
@@ -1723,9 +1758,159 @@ int card_rumors_of_my_death(int player, int card, event_t event)
   return 0;
 }
 
+/* ManalinkEh 2022: 0x25c7090; original cards/unstable.c:1204. */
+int card_sly_spy_f(int player, int card, event_t event)
+{
+  /* Sly Spy F	|2|B
+   * Creature - Human Spy 2/2
+   * Whenever Sly Spy deals combat damage to a player, roll a six-sided die. That player loses life equal to the result. */
+
+  if (!damage_dealt_by_me(player, card, event,
+                           DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
+                               DDBM_MUST_BE_COMBAT_DAMAGE))
+    return 0;
+  card_instance_t *inst = get_card_instance(player, card);
+  unsigned int packed_damage = inst->targets[1].player;
+  inst->targets[1].player = 0;
+  int times_damaged[2] = { packed_damage & 0xff, (packed_damage >> 8) & 0xff };
+  APNAP(p, {
+    int hits = times_damaged[p];
+    for (int i = 0; i < hits; ++i)
+    {
+      int amount = roll_d6t(player, player, card, p, -1);
+      lose_life(p, amount);
+    }
+  });
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int fx_ineffable_blessing_f(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x25c4940; original cards/unstable.c:1229. */
+static int test_has_been_banned_or_restricted(int iid, int val, int player, int card)
+{
+  enum
+  {
+    CPF_EVER_BANNED_OR_RESTRICTED = 1
+  };
+
+  return cards_ptr[cards_data[iid].id]->flags & CPF_EVER_BANNED_OR_RESTRICTED;
+}
+
+/* ManalinkEh 2022: 0x25c73a0; original cards/unstable.c:1263. */
+int card_squirrel_powered_scheme(int player, int card, event_t event)
+{
+  /* Squirrel-Powered Scheme	|2|B
+   * Enchantment
+   * Increase the result of each die you roll by 2. */
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if (!is_humiliated(player, card, AL_STATIC))
+    {
+      add_to_die_rolls[player] = add_to_die_rolls[player] + 2;
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c73f0; original cards/unstable.c:1308. */
+int card_box_of_free_range_goblins(int player, int card, event_t event)
+{
+  /* Box of Free-Range Goblins	|4|R|R
+   * Sorcery
+   * Roll a six-sided die. Create a number of 1/1 |Sred Goblin creature tokens equal to the result. */
+
+  int result;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = roll_d6t(player, player, card, -1, -1);
+    generate_tokens_by_id(player, card, CARD_ID_GOBLIN, result);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c7510; original cards/unstable.c:1370. */
+int card_garbage_elemental_d(int player, int card, event_t event)
+{
+  /* Garbage Elemental D	|4|R
+   * Creature - Elemental 3/3
+   * Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom of your library in a random order.)
+   * When Garbage Elemental enters the battlefield, roll a six-sided die. Garbage Elemental deals damage equal to the result to target opponent or planeswalker. */
+
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  cascade(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+
+  opponent_or_pw_target_definition(player, card, &td);
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = 1 - player;
+  td.allow_cancel = 0;
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
+    if (result != 0)
+    {
+
+      result =
+          roll_d6t(player, player, card, instance->targets[0].player, instance->targets[0].card);
+      damage_creature(instance->targets[0].player, instance->targets[0].card, result, player, card);
+    }
+  }
+  instance->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c7630; original cards/unstable.c:1422. */
+int card_hammer_helper(int player, int card, event_t event)
+{
+  /* Hammer Helper	|3|R
+   * Sorcery
+   * Gain control of target creature until end of turn. Untap that creature and roll a six-sided die. Until end of turn, it gains haste and gets +X/+0, where X is the result. */
+
+  if (!IS_GS_EVENT(player, card, event))
+    return 0;
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target(&td))
+    {
+      card_instance_t *inst = get_card_instance(player, card);
+      int x = roll_d6t(player, player, card, inst->targets[0].player, inst->targets[0].card);
+      effect_act_of_treason_and_modify_pt_or_abilities(
+          player, card, inst->targets[0].player, inst->targets[0].card, x, 0, 0, 0);
+    }
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  return aot_like_spell(player, card, event, &td, "TARGET_CREATURE", 0);
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int fx_stamp_of_approval(int player, int card, event_t event);
+
 /* ManalinkEh 2022: 0x25c77a0; original cards/unstable.c:1456. */
 int card_hammer_boomtacular(int player, int card, event_t event)
 {
+  /* Hammerfest Boomtacular	|3|R|R
+   * Enchantment
+   * Whenever you cast a spell with a Goblin Explosioneers watermark, ~ deals 2 damage to any target. */
+
   int result;
   card_instance_t *instance;
 
@@ -1762,9 +1947,34 @@ int card_hammer_boomtacular(int player, int card, event_t event)
   return result;
 }
 
+/* ManalinkEh 2022: 0x25c7910; original cards/unstable.c:1497. */
+int card_painiac(int player, int card, event_t event)
+{
+  /* Painiac	|2|R
+   * Creature - Brainiac 0/3
+   * At the beginning of your upkeep, roll a six-sided die. ~ gets +X/+0 until end of turn, where X is the result. */
+
+  int power;
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    return 0;
+  }
+  power = roll_d6t(player, player, card, -1, -1);
+  pump_until_eot_merge_previous(player, card, player, card, power, 0);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 /* ManalinkEh 2022: 0x25c79a0; original cards/unstable.c:1573. */
 int card_druid_of_the_sacred_beaker(int player, int card, event_t event)
 {
+  /* Druid of the Sacred Beaker	|2|G
+   * Creature - Deer Bird Ape Druid 2/2
+   * |T: Add |G for each Crossbreed Labs watermark among permanents you control. */
+
   card_instance_t *instance;
   unsigned int iid;
   watermark_t watermark;
@@ -1802,9 +2012,90 @@ int card_druid_of_the_sacred_beaker(int player, int card, event_t event)
   return mana_producing_creature(player, card, event, 0x40, COLOR_GREEN, labs_permanents);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25c7a90; original cards/unstable.c:1599. */
+int card_earl_of_squirrel(int player, int card, event_t event)
+{
+  /* Earl of Squirrel	|4|G|G
+   * Creature - Squirrel Advisor 4/4
+   * Squirrellink (Damage dealt by this creature also causes you to create that many 1/1 |Sgreen Squirrel creature tokens.)
+   * Creature tokens you control are Squirrels in addition to their other creature types.
+   * Other Squirrels you control get +1/+1. */
+
+  int result;
+
+  squirrellink(player, card, event);
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    if (affected_card_controller == player)
+    {
+      result = is_token(player, affected_card);
+      if (result != 0)
+      {
+        result = is_what(affected_card_controller, affected_card, 2);
+        if (result != 0)
+        {
+          result = is_humiliated(player, card, AL_STATIC);
+          if (result == 0)
+          {
+            add_a_subtype(affected_card_controller, affected_card, SUBTYPE_SQUIRREL);
+          }
+        }
+      }
+    }
+  }
+  else if (((event - EVENT_POWER < 2) && (affected_card_controller == player)) &&
+           (card != affected_card))
+  {
+    result = has_subtype(player, affected_card, SUBTYPE_SQUIRREL);
+    if (result != 0)
+    {
+      result = is_humiliated(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        event_result = event_result + 1;
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int roll_xd6_shim(int player, int card);
+
+/* ManalinkEh 2022: 0x25c4be0; original cards/unstable.c:1641. */
+static int roll_xd6_shim(int player, int card)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  result = roll_xd6t(player, instance->info_slot, player, card, -1, -1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c7bb0; original cards/unstable.c:1645. */
+int card_hydradoodle(int player, int card, event_t event)
+{
+  /* Hydradoodle	|X|X|G|G
+   * Creature - Hydra Hound 0/0
+   * As ~ enters the battlefield, roll X six-sided dice. ~ enters the battlefield with a number of +1/+1 counters on it equal to the total of those results.
+   * Reach, trample */
+
+  multi_x_spell(player, card, event, 2);
+  enters_the_battlefield_with_counters_fn(player, card, event, COUNTER_P1_P1, roll_xd6_shim);
+  return 0;
+}
+
 /* ManalinkEh 2022: 0x25c7e00; original cards/unstable.c:1715. */
 int card_ineffable_blessing_c(int player, int card, event_t event)
 {
+  /* Ineffable Blessing C	|1|G
+   * Enchantment
+   * As Ineffable Blessing enters the battlefield, choose white-bordered or silver-bordered.
+   * Whenever a creature with the chosen border enters the battlefield under your control, draw a card. */
+
   int result;
   card_instance_t *instance;
   unsigned int selected_condition;
@@ -1843,9 +2134,23 @@ int card_ineffable_blessing_c(int player, int card, event_t event)
   return global_enchantment(player, card, event);
 }
 
+/* ManalinkEh 2022: 0x25c49b0; original cards/unstable.c:1761. */
+static int test_has_rarity_val(int iid, int val, int player, int card)
+{
+  const Rarities *rarity;
+
+  rarity = get_rarity((unsigned int)cards_data[iid].id);
+  return (unsigned int)((unsigned int)rarity->default_rarity == val);
+}
+
 /* ManalinkEh 2022: 0x25c7ff0; original cards/unstable.c:1767. */
 int card_ineffable_blessing_d(int player, int card, event_t event)
 {
+  /* Ineffable Blessing D	|1|G
+   * Enchantment
+   * As Ineffable Blessing enters the battlefield, choose a rarity.
+   * Whenever a creature with the chosen rarity enters the battlefield under your control, draw a card. */
+
   int result;
   card_instance_t *instance;
   unsigned int selected_condition;
@@ -1884,9 +2189,122 @@ int card_ineffable_blessing_d(int player, int card, event_t event)
   return global_enchantment(player, card, event);
 }
 
+/* ManalinkEh 2022: 0x25c4c30; original cards/unstable.c:1825. */
+static int fx_ineffable_blessing_f(int player, int card, event_t event)
+{
+  int result;
+
+  result = txtfx(player, card, event, CARD_ID_INEFFABLE_BLESSING_F);
+  if (result != txtfx_not_found)
+  {
+    sprintf(set_legacy_effect_name_addr, "%d", result);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c8210; original cards/unstable.c:1832. */
+int card_ineffable_blessing_f(int player, int card, event_t event)
+{
+  /* Ineffable Blessing F	|1|G
+   * Enchantment
+   * As Ineffable Blessing enters the battlefield, choose a number.
+   * Whenever a creature with exactly the chosen number of words in its name enters the battlefield under your control, draw a card. (Hyphenated words are one word.) */
+
+  unsigned int selected_condition;
+  int result;
+  card_instance_t *instance;
+  test_definition_t test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+    {
+      result = recorded_rand(player, 5);
+      result = result + 1;
+    }
+    else
+    {
+      result = choose_a_number(player, "Choose a number.", 0xfff);
+    }
+    make_txtfx(player, card, fx_ineffable_blessing_f, CARD_ID_INEFFABLE_BLESSING_F, result);
+  }
+  else if ((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (event - EVENT_TRIGGER < 2))
+  {
+
+    instance = get_card_instance(player, card);
+    selected_condition = instance->targets[5].player;
+    if ((short)(selected_condition >> 0x10) != 0x465a)
+    {
+      return 0;
+    }
+    default_test_definition(&test, 2);
+    test.value_for_special_selection_function = selected_condition & 0xffff;
+    test.special_selection_function = test_words_in_name_val;
+    etb_ability_global(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  else if (event == EVENT_ETB)
+  {
+    draw_a_card(player);
+  }
+  return global_enchantment(player, card, event);
+}
+
+/* ManalinkEh 2022: 0x25c8500; original cards/unstable.c:2053. */
+int card_border_guardian(int player, int card, event_t event)
+{
+  /* Border Guardian	|4
+   * Artifact Creature - Knight 1/1
+   * Whenever you cast a silver-bordered spell, put a +1/+1 counter on ~.
+   * Whenever you cast a black-bordered spell, ~ can't be blocked this turn.
+   * Whenever you cast a white-bordered spell, ~ gains double strike until end of turn. */
+
+  uint32_t csvid;
+  border_t border;
+  int ability;
+  int sp_ability;
+  int alternate_legacy_text_number;
+
+  sp_ability_trigger(player, event, 2, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    csvid = get_id(trigger_cause_controller, trigger_cause);
+    border = get_border_color(csvid);
+    if (border == BORDER_WHITE)
+    {
+      alternate_legacy_text_number = 2;
+      sp_ability = 0;
+      ability = 0x40000000;
+      pump_ability_until_eot_no_repeat_alt(player, card, player, card, ability, sp_ability,
+                                           alternate_legacy_text_number);
+      return 0;
+    }
+    if (border == BORDER_SILVER)
+    {
+      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
+    }
+    else if (border == BORDER_BLACK)
+    {
+      alternate_legacy_text_number = 1;
+      sp_ability = 0x10;
+      ability = 0;
+      pump_ability_until_eot_no_repeat_alt(player, card, player, card, ability, sp_ability,
+                                           alternate_legacy_text_number);
+      return 0;
+    }
+  }
+  return 0;
+}
+
 /* ManalinkEh 2022: 0x25c8610; original cards/unstable.c:2127. */
 int card_everythingamajig_b(int player, int card, event_t event)
 {
+  /* Everythingamajig B	|5
+   * Artifact
+   * |2, |T: Draw a card. Activate this ability only if you have no cards in hand.
+   * |8, |T: You gain 10 life.
+   * |4, |T, Sacrifice Everythingamajig: You may put a silver-bordered permanent card from your hand onto the battlefield. */
+
   enum
   {
     CHOICE_DRAW = 1,
@@ -1941,65 +2359,6 @@ int card_everythingamajig_b(int player, int card, event_t event)
   return 0;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int fx_ineffable_blessing_f(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x25c4c30; original cards/unstable.c:1825. */
-static int fx_ineffable_blessing_f(int player, int card, event_t event)
-{
-  int result;
-
-  result = txtfx(player, card, event, CARD_ID_INEFFABLE_BLESSING_F);
-  if (result != txtfx_not_found)
-  {
-    sprintf(set_legacy_effect_name_addr, "%d", result);
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x25c8210; original cards/unstable.c:1832. */
-int card_ineffable_blessing_f(int player, int card, event_t event)
-{
-  unsigned int selected_condition;
-  int result;
-  card_instance_t *instance;
-  test_definition_t test;
-
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-
-    if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
-    {
-      result = recorded_rand(player, 5);
-      result = result + 1;
-    }
-    else
-    {
-      result = choose_a_number(player, "Choose a number.", 0xfff);
-    }
-    make_txtfx(player, card, fx_ineffable_blessing_f, CARD_ID_INEFFABLE_BLESSING_F, result);
-  }
-  else if ((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (event - EVENT_TRIGGER < 2))
-  {
-
-    instance = get_card_instance(player, card);
-    selected_condition = instance->targets[5].player;
-    if ((short)(selected_condition >> 0x10) != 0x465a)
-    {
-      return 0;
-    }
-    default_test_definition(&test, 2);
-    test.value_for_special_selection_function = selected_condition & 0xffff;
-    test.special_selection_function = test_words_in_name_val;
-    etb_ability_global(player, event, 2, TYPE_NONE, &test, player, card);
-  }
-  else if (event == EVENT_ETB)
-  {
-    draw_a_card(player);
-  }
-  return global_enchantment(player, card, event);
-}
-
 /* ManalinkEh 2022: 0x25c4c80; original cards/unstable.c:2324. */
 static int fx_staff_of_the_letter_magus(int player, int card, event_t event)
 {
@@ -2018,86 +2377,6 @@ static int fx_staff_of_the_letter_magus(int player, int card, event_t event)
   return 0;
 }
 
-/* ManalinkEh 2022: 0x25c4d00; original cards/unstable.c:20. */
-static int do_dialog_lots_of_choices(int player, int src_player, int src_card, char **choices,
-                                     int num_choices)
-{
-  int i;
-  int choice;
-  int first_length;
-  int next_length;
-  char *buffer;
-  int page_start;
-  char buf[3000];
-  do
-  {
-    page_start = 0;
-    do
-    {
-      strncpy(buf, " (More)", 8);
-      if (page_start < num_choices)
-      {
-        first_length = sprintf(buf + 7, "\n %s", choices[page_start]);
-        buffer = buf + first_length + 7;
-        i = 1;
-        do
-        {
-          if (num_choices - page_start == i)
-            break;
-          next_length = sprintf(buffer, "\n %s", (choices + page_start)[i]);
-          i = i + 1;
-          buffer = buffer + next_length;
-        } while (i != 10);
-      }
-      choice = do_dialog(player, src_player, src_card, -1, -1, buf, 0);
-      if (choice != 0)
-      {
-        return page_start + -1 + choice;
-      }
-      page_start = page_start + 10;
-    } while (page_start < num_choices);
-  } while (true);
-}
-
-
-/* ManalinkEh 2022: 0x25c4fd0; original cards/unstable.c:72. */
-static watermark_t choose_a_watermark(int player, int src_player, int src_card)
-{
-  if (watermarks == NULL)
-    watermarks = get_watermarks();
-  int idxs[256];
-  int num_idxs = 0;
-  for (int i = 0; i < 255; ++i)
-    if (watermarks[i].name != NULL && watermarks[i].saturation != '\0')
-      idxs[num_idxs++] = i;
-  if (num_idxs > 0)
-  {
-    int choice;
-    if (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0))
-    {
-      choice = recorded_rand(player, num_idxs);
-      if (ai_is_speculating != 1)
-      {
-        char buf[300];
-        sprintf(buf, " %s\n", watermarks[idxs[choice]].disp);
-        do_dialog(player, src_player, src_card, -1, -1, buf, 0);
-      }
-    }
-    else
-    {
-      char *choices[num_idxs];
-      for (int i = 0; i < num_idxs; ++i)
-        choices[i] = watermarks[idxs[i]].disp;
-      choice = do_dialog_lots_of_choices(player, src_player, src_card, choices, num_idxs);
-    }
-    return (watermark_t)idxs[choice];
-  }
-  return WMARK_NONE;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int fx_stamp_of_approval(int player, int card, event_t event);
-
 /* ManalinkEh 2022: 0x25c4f50; original cards/unstable.c:2413. */
 static int fx_stamp_of_approval(int player, int card, event_t event)
 {
@@ -2115,9 +2394,16 @@ static int fx_stamp_of_approval(int player, int card, event_t event)
   return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
 /* ManalinkEh 2022: 0x25c8e10; original cards/unstable.c:2423. */
 int card_stamp_of_approval(int player, int card, event_t event)
 {
+  /* Stamp of Approval	|3
+   * Artifact
+   * As ~ enters the battlefield, choose a watermark.
+   * Creatures you control with the chosen watermark get +1/+1. */
+
   card_instance_t *instance;
   unsigned int iid;
   watermark_t encoded_or_actual_watermark;
@@ -2165,357 +2451,28 @@ int card_stamp_of_approval(int player, int card, event_t event)
   return 0;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25c8500; original cards/unstable.c:2053. */
-int card_border_guardian(int player, int card, event_t event)
-{
-  uint32_t csvid;
-  border_t border;
-  int ability;
-  int sp_ability;
-  int alternate_legacy_text_number;
-
-  sp_ability_trigger(player, event, 2, TYPE_ANY, NULL, player, card);
-  if (event == EVENT_SPA)
-  {
-    csvid = get_id(trigger_cause_controller, trigger_cause);
-    border = get_border_color(csvid);
-    if (border == BORDER_WHITE)
-    {
-      alternate_legacy_text_number = 2;
-      sp_ability = 0;
-      ability = 0x40000000;
-      pump_ability_until_eot_no_repeat_alt(player, card, player, card, ability, sp_ability,
-                                           alternate_legacy_text_number);
-      return 0;
-    }
-    if (border == BORDER_SILVER)
-    {
-      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
-    }
-    else if (border == BORDER_BLACK)
-    {
-      alternate_legacy_text_number = 1;
-      sp_ability = 0x10;
-      ability = 0;
-      pump_ability_until_eot_no_repeat_alt(player, card, player, card, ability, sp_ability,
-                                           alternate_legacy_text_number);
-      return 0;
-    }
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25c4940; original cards/unstable.c:1229. */
-static int test_has_been_banned_or_restricted(int iid, int val, int player, int card)
-{
-  enum
-  {
-    CPF_EVER_BANNED_OR_RESTRICTED = 1
-  };
-
-  return cards_ptr[cards_data[iid].id]->flags & CPF_EVER_BANNED_OR_RESTRICTED;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static int roll_xd6_shim(int player, int card);
-
-/* ManalinkEh 2022: 0x25c5150; original cards/unstable.c:199. */
-int card_go_to_jail(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-
-  return_from_oblivion(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event == EVENT_ETB)
-  {
-    target_definition_t td;
-
-    default_target_definition(player, card, &td, 2);
-    td.allowed_controller = 1 - player;
-    td.allow_cancel = 0;
-    instance = get_card_instance(player, card);
-    result = can_target(&td);
-    if (result != 0)
-    {
-      result = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
-      if (result != 0)
-      {
-        obliviation(player, card, instance->targets[0].player, instance->targets[0].card);
-      }
-    }
-    instance->number_of_targets = '\0';
-  }
-  else if ((trigger_condition == TRIGGER_UPKEEP) && (event - EVENT_TRIGGER < 2))
-  {
-    result = owner_of_obliviated_card(player, card);
-    upkeep_trigger_ability(player, card, event, result);
-  }
-  else if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
-  {
-    int r[2];
-    roll_2d6t(current_turn, player, card, -1, -1, &r[0], &r[1]);
-    if (r[0] == r[1])
-    {
-      kill_card(player, card, KILL_SACRIFICE);
-    }
-  }
-  return global_enchantment(player, card, event);
-}
-
-/* ManalinkEh 2022: 0x25c57c0; original cards/unstable.c:541. */
-int card_time_out(int player, int card, event_t event)
-{
-  target_definition_t td;
-
-  if (!IS_GS_EVENT(player, card, event))
-  {
-    return 0;
-  }
-  default_target_definition(player, card, &td, 2);
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    if (valid_target(&td))
-    {
-
-      card_instance_t *inst = get_card_instance(player, card);
-      int x = roll_d6t(player, player, card, inst->targets[0].player,
-                        inst->targets[0].card);
-      put_permanent_under_the_first_x_card_of_its_owners_library(
-          inst->targets[0].player, inst->targets[0].card, x);
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
-}
-
-/* ManalinkEh 2022: 0x25c69d0; original cards/unstable.c:1005. */
-int card_inhumaniac(int player, int card, event_t event)
-{
-  upkeep_trigger_ability(player, card, event, player);
-  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
-  {
-    int r = roll_d6t(player, player, card, -1, -1);
-    if (r - 3U < 2)
-      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
-    else if (r < 5)
-    {
-      if (r == 1)
-        remove_all_counters(player, card, player, card, COUNTER_P1_P1);
-    }
-    else
-      add_counters(player, card, player, card, COUNTER_P1_P1, 2);
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x25c7090; original cards/unstable.c:1204. */
-int card_sly_spy_f(int player, int card, event_t event)
-{
-  if (!damage_dealt_by_me(player, card, event,
-                           DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
-                               DDBM_MUST_BE_COMBAT_DAMAGE))
-    return 0;
-  card_instance_t *inst = get_card_instance(player, card);
-  unsigned int packed_damage = inst->targets[1].player;
-  inst->targets[1].player = 0;
-  int times_damaged[2] = { packed_damage & 0xff, (packed_damage >> 8) & 0xff };
-  APNAP(p, {
-    int hits = times_damaged[p];
-    for (int i = 0; i < hits; ++i)
-    {
-      int amount = roll_d6t(player, player, card, p, -1);
-      lose_life(p, amount);
-    }
-  });
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x25c73a0; original cards/unstable.c:1263. */
-int card_squirrel_powered_scheme(int player, int card, event_t event)
-{
-
-  if (event == EVENT_STATIC_EFFECTS)
-  {
-    if (!is_humiliated(player, card, AL_STATIC))
-    {
-      add_to_die_rolls[player] = add_to_die_rolls[player] + 2;
-      return 0;
-    }
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x25c73f0; original cards/unstable.c:1308. */
-int card_box_of_free_range_goblins(int player, int card, event_t event)
-{
-  int result;
-
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    result = roll_d6t(player, player, card, -1, -1);
-    generate_tokens_by_id(player, card, CARD_ID_GOBLIN, result);
-    kill_card(player, card, KILL_DESTROY);
-  }
-  result = basic_spell(player, card, event);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x25c7510; original cards/unstable.c:1370. */
-int card_garbage_elemental_d(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-  target_definition_t td;
-
-  cascade(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event != EVENT_ETB)
-  {
-    return 0;
-  }
-
-  opponent_or_pw_target_definition(player, card, &td);
-  default_target_definition(player, card, &td, 2);
-  td.allowed_controller = 1 - player;
-  td.allow_cancel = 0;
-  instance = get_card_instance(player, card);
-  result = can_target(&td);
-  if (result != 0)
-  {
-    result = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
-    if (result != 0)
-    {
-
-      result =
-          roll_d6t(player, player, card, instance->targets[0].player, instance->targets[0].card);
-      damage_creature(instance->targets[0].player, instance->targets[0].card, result, player, card);
-    }
-  }
-  instance->number_of_targets = '\0';
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x25c7630; original cards/unstable.c:1422. */
-int card_hammer_helper(int player, int card, event_t event)
-{
-  if (!IS_GS_EVENT(player, card, event))
-    return 0;
-  target_definition_t td;
-  default_target_definition(player, card, &td, TYPE_CREATURE);
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    if (valid_target(&td))
-    {
-      card_instance_t *inst = get_card_instance(player, card);
-      int x = roll_d6t(player, player, card, inst->targets[0].player, inst->targets[0].card);
-      effect_act_of_treason_and_modify_pt_or_abilities(
-          player, card, inst->targets[0].player, inst->targets[0].card, x, 0, 0, 0);
-    }
-    kill_card(player, card, KILL_DESTROY);
-    return 0;
-  }
-  return aot_like_spell(player, card, event, &td, "TARGET_CREATURE", 0);
-}
-
-/* ManalinkEh 2022: 0x25c7910; original cards/unstable.c:1497. */
-int card_painiac(int player, int card, event_t event)
-{
-  int power;
-
-  upkeep_trigger_ability(player, card, event, player);
-  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
-  {
-    return 0;
-  }
-  power = roll_d6t(player, player, card, -1, -1);
-  pump_until_eot_merge_previous(player, card, player, card, power, 0);
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x25c4be0; original cards/unstable.c:1641. */
-static int roll_xd6_shim(int player, int card)
-{
-  card_instance_t *instance;
-  int result;
-
-  instance = get_card_instance(player, card);
-  result = roll_xd6t(player, instance->info_slot, player, card, -1, -1);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x25c7bb0; original cards/unstable.c:1645. */
-int card_hydradoodle(int player, int card, event_t event)
-{
-  multi_x_spell(player, card, event, 2);
-  enters_the_battlefield_with_counters_fn(player, card, event, COUNTER_P1_P1, roll_xd6_shim);
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25c7a90; original cards/unstable.c:1599. */
-int card_earl_of_squirrel(int player, int card, event_t event)
-{
-  int result;
-
-  squirrellink(player, card, event);
-  if (event == EVENT_CHANGE_TYPE)
-  {
-    if (affected_card_controller == player)
-    {
-      result = is_token(player, affected_card);
-      if (result != 0)
-      {
-        result = is_what(affected_card_controller, affected_card, 2);
-        if (result != 0)
-        {
-          result = is_humiliated(player, card, AL_STATIC);
-          if (result == 0)
-          {
-            add_a_subtype(affected_card_controller, affected_card, SUBTYPE_SQUIRREL);
-          }
-        }
-      }
-    }
-  }
-  else if (((event - EVENT_POWER < 2) && (affected_card_controller == player)) &&
-           (card != affected_card))
-  {
-    result = has_subtype(player, affected_card, SUBTYPE_SQUIRREL);
-    if (result != 0)
-    {
-      result = is_humiliated(player, card, AL_STATIC);
-      if (result == 0)
-      {
-        event_result = event_result + 1;
-      }
-    }
-  }
-  return 0;
-}
-
 #ifndef SHANDALAR
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
-/* ManalinkEh 2022: 0x25c7470; original cards/unstable.c:1355. */
-int card_garbage_elemental_c(int player, int card, event_t event)
+/* ManalinkEh 2022: 0x25c4e40; original cards/unstable.c:48. */
+static char choose_a_consonant_not_nrst(int player, int src_player, int src_card)
 {
-  int howmany;
-
-  battle_cry(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event != EVENT_ETB)
+  char *choices[17] = {"B", "C", "D", "F", "G", "H", "J", "K", "L",
+                       "M", "P", "Q", "V", "W", "X", "Y", "Z"};
+  int num_choices = 17;
+  if (ai_is_speculating != 1 && (player != 1 || ((unsigned char)trace_mode & 2)))
   {
-    return 0;
+    int choice = do_dialog_lots_of_choices(player, src_player, src_card, choices, num_choices);
+    return *choices[choice];
   }
-  howmany = roll_2d6t_difference(player, player, card, -1, -1);
-  generate_tokens_by_id(player, card, CARD_ID_GOBLIN, howmany);
-  return 0;
+  int choice = recorded_rand(player, num_choices);
+  if (ai_is_speculating != 1)
+  {
+    char buf[300];
+    sprintf(buf, " %s\n", choices[choice]);
+    do_dialog(player, src_player, src_card, -1, -1, buf, 0);
+  }
+  return *choices[choice];
 }
 
 #endif
@@ -2523,50 +2480,42 @@ int card_garbage_elemental_c(int player, int card, event_t event)
 #ifndef SHANDALAR
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
-/* ManalinkEh 2022: 0x25c7170; original cards/unstable.c:1233. */
-int card_spike_tournament_grinder(int player, int card, event_t event)
+static watermark_t get_watermark(card_instance_t *inst)
 {
-  int result;
-  test_definition_t test;
-
-  phyrexian_casting_costs(player, card, event, 2, 2, 0, 0, 0, 0, 0);
-  if (event == EVENT_CAN_ACTIVATE)
-  {
-    result = has_phyrexian_mana_for_activated_ability(player, card, 0, 4, 0, 0, 0, 0);
-    if (result != 0)
-    {
-      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x800, 0, 0, 0, 0,
-                                              0, 0, 0, NULL, NULL);
-      return result;
-    }
-  }
-  else if (event == EVENT_ACTIVATE)
-  {
-    result = charge_phyrexian_mana_for_activated_ability(player, card, 0, 4, 0, 0, 0, 0);
-    if (result != 0)
-    {
-      result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0x800, 0, 0, 0, 0, 0, 0,
-                                              0, NULL, NULL);
-      return result;
-    }
-  }
-  else if (event == EVENT_RESOLVE_ACTIVATION)
-  {
-    new_default_test_definition(
-        &test, 0xff, "Select a card that has been banned or restricted in a Constructed format.");
-    test.special_selection_function = test_has_been_banned_or_restricted;
-    generic_wish_effect(player, card, &test, 0x2b);
-  }
-  return 0;
+  return get_watermark_by_iid(inst->internal_card_id < 0
+                                  ? inst->original_internal_card_id
+                                  : inst->internal_card_id);
 }
 
 #endif
 
+#ifndef SHANDALAR
+static int is_dark_outdoors(void)
+{
+  unsigned int now = (unsigned int)localtime_hour_minute();
+  unsigned int hour = now >> 16;
+  unsigned int minute = now & 0xffffU;
+  if (hour == 5)
+    return minute <= 29;
+  if (hour == 18)
+    return minute > 29;
+  return hour < 5 || hour > 18;
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x25c5920; original cards/unstable.c:576. */
 int card_very_cryptic_command_b(int player, int card, event_t event)
 {
+  /* Very Cryptic Command B	|1|U|U|U
+   * Instant
+   * Choose two -
+   * * Untap two target permanents.
+   * * Tap each permanent target player controls with exactly one word in its name.
+   * * Discard all the cards in your hand, then draw that many cards.
+   * * Return target instant or sorcery card from your graveyard to your hand. */
+
   typedef enum
   {
     CHOICE_UNTAP = 1,
@@ -2786,11 +2735,18 @@ int card_very_cryptic_command_b(int player, int card, event_t event)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x25c5f90; original cards/unstable.c:760. */
 int card_very_cryptic_command_e(int player, int card, event_t event)
 {
+  /* Very Cryptic Command E	|1|U|U|U
+   * Instant
+   * Choose two -
+   * * Counter target black-bordered spell.
+   * * Return target creature to its owner's hand.
+   * * Untap each permanent you control with a watermark.
+   * * Roll two six-sided dice. Target player puts the top X cards of their library into their graveyard, where X is the total of those results. */
+
   typedef enum
   {
     CHOICE_COUNTER = 1,
@@ -3001,11 +2957,74 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
 
 #endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c6880; original cards/unstable.c:939. */
+int card_capital_offense(int player, int card, event_t event)
+{
+  /* capital offense	|2|B|B
+   * instant
+   * target creature gets -x/-x until end of turn, where x is the number of times a capital letter appears in its rules text. (ignore reminder text and flavor text.) */
+
+  if (event != EVENT_RESOLVE_SPELL)
+    return vanilla_instant_pump(player, card, event, ANYBODY, 1-player, -1, -1, 0, 0);
+
+  target_definition_t td;
+  default_target_definition(player, card, &td, TYPE_CREATURE);
+  if (valid_target(&td))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    char rules[3000];
+    get_rules_text(rules, instance->targets[0].player, instance->targets[0].card, 1);
+    int capitals = 0;
+    for (const char *cursor = rules; *cursor; ++cursor)
+      capitals += (unsigned char)(*cursor - 'A') < 26;
+    if (capitals > 0)
+      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                     -capitals, -capitals);
+  }
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c6aa0; original cards/unstable.c:1038. */
+int card_old_fashioned_vampire(int player, int card, event_t event)
+{
+  /* Old-Fashioned Vampire	|3|B|B
+   * Creature - Vampyre 3/3
+   * Flying
+   * ~ gets +2/+2 and has deathtouch as long as it's dark outdoors. */
+
+  if (event - EVENT_POWER < 3)
+  {
+    unsigned int hm = localtime_hour_minute();
+    unsigned int hour = hm >> 16;
+    unsigned int minute = hm & 0xffff;
+    bool nighttime = hour == 5 ? minute < 30
+        : hour == 18 ? minute > 29 : hour - 5U > 13U;
+    if (nighttime && !is_humiliated(player, card, AL_STATIC))
+    {
+      if (event == EVENT_ABILITIES)
+        deathtouch(player, card, EVENT_ABILITIES);
+      else
+        event_result += 2;
+    }
+  }
+  return 0;
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x25c6ed0; original cards/unstable.c:1141. */
 int card_sly_spy_a(int player, int card, event_t event)
 {
+  /* Sly Spy A	|2|B
+   * Creature - Human Spy 2/2
+   * Whenever Sly Spy deals combat damage to a player, that player reveals their hand. You choose a card from it with the longest name. That player discards that card. */
+
   int hits;
   card_instance_t *instance;
   int word_count;
@@ -3084,36 +3103,140 @@ int card_sly_spy_a(int player, int card, event_t event)
 
 #endif
 
-
 #ifndef SHANDALAR
-/* ManalinkEh 2022: 0x25c4e40; original cards/unstable.c:48. */
-static char choose_a_consonant_not_nrst(int player, int src_player, int src_card)
+/* ManalinkEh 2022: 0x25c7170; original cards/unstable.c:1233. */
+int card_spike_tournament_grinder(int player, int card, event_t event)
 {
-  char *choices[17] = {"B", "C", "D", "F", "G", "H", "J", "K", "L",
-                       "M", "P", "Q", "V", "W", "X", "Y", "Z"};
-  int num_choices = 17;
-  if (ai_is_speculating != 1 && (player != 1 || ((unsigned char)trace_mode & 2)))
+  /* Spike, Tournament Grinder	|2|PB|PB
+   * Legendary Creature - Human Gamer 1/1
+   * (|PB can be paid with either |B or 2 life.)
+   * |PB|PB|PB|PB: Choose a card you own from outside the game that has been banned or restricted in a Constructed format, reveal that card, and put it into your hand. */
+
+  int result;
+  test_definition_t test;
+
+  phyrexian_casting_costs(player, card, event, 2, 2, 0, 0, 0, 0, 0);
+  if (event == EVENT_CAN_ACTIVATE)
   {
-    int choice = do_dialog_lots_of_choices(player, src_player, src_card, choices, num_choices);
-    return *choices[choice];
+    result = has_phyrexian_mana_for_activated_ability(player, card, 0, 4, 0, 0, 0, 0);
+    if (result != 0)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x800, 0, 0, 0, 0,
+                                              0, 0, 0, NULL, NULL);
+      return result;
+    }
   }
-  int choice = recorded_rand(player, num_choices);
-  if (ai_is_speculating != 1)
+  else if (event == EVENT_ACTIVATE)
   {
-    char buf[300];
-    sprintf(buf, " %s\n", choices[choice]);
-    do_dialog(player, src_player, src_card, -1, -1, buf, 0);
+    result = charge_phyrexian_mana_for_activated_ability(player, card, 0, 4, 0, 0, 0, 0);
+    if (result != 0)
+    {
+      result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0x800, 0, 0, 0, 0, 0, 0,
+                                              0, NULL, NULL);
+      return result;
+    }
   }
-  return *choices[choice];
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    new_default_test_definition(
+        &test, 0xff, "Select a card that has been banned or restricted in a Constructed format.");
+    test.special_selection_function = test_has_been_banned_or_restricted;
+    generic_wish_effect(player, card, &test, 0x2b);
+  }
+  return 0;
 }
 
 #endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c7470; original cards/unstable.c:1355. */
+int card_garbage_elemental_c(int player, int card, event_t event)
+{
+  /* Garbage Elemental C	|4|R
+   * Creature - Elemental 3/2
+   * Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)
+   * When Garbage Elemental enters the battlefield, roll two six-sided dice. Create a number of 1/1 |Sred Goblin creature tokens equal to the difference between those results. */
+
+  int howmany;
+
+  battle_cry(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  howmany = roll_2d6t_difference(player, player, card, -1, -1);
+  generate_tokens_by_id(player, card, CARD_ID_GOBLIN, howmany);
+  return 0;
+}
+
+#endif
 
 #ifndef SHANDALAR
+/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
+/* ManalinkEh 2022: 0x25c8380; original cards/unstable.c:1972. */
+int card_hot_fix(int player, int card, event_t event)
+{
+  /* Hot Fix	|4|W|U
+   * Sorcery
+   * You have ten seconds to look at and rearrange the cards in your library. At the end of those ten seconds, if you're touching one or more of those cards, shuffle your library. */
+
+  if (event != EVENT_RESOLVE_SPELL)
+    return basic_spell(player, card, event);
+  int32_t started = 0;
+  bool offline_ai_rearranged = false;
+  if (ai_is_speculating == 1)
+    rearrange_top_x(player, player, 500);
+  else if (player == 1 && (trace_mode & 2) == 0)
+  {
+    rearrange_top_x(1, 1, 500);
+    offline_ai_rearranged = true;
+  }
+  else
+  {
+    started = time_in_ms();
+    rearrange_top_x(player, player, 500);
+  }
+  int speculating_after_rearrange = ai_is_speculating;
+  uint32_t needs_shuffle = 0;
+  if (!offline_ai_rearranged || speculating_after_rearrange != 1)
+  {
+    if (speculating_after_rearrange == 1 || (player == 1 && (trace_mode & 2) == 0))
+      needs_shuffle = started < -10000;
+    else
+    {
+      int32_t ended = time_in_ms();
+      needs_shuffle = (int32_t)((uint32_t)ended - (uint32_t)started) > 10000;
+    }
+  }
+  if ((trace_mode & 2) != 0)
+  {
+    if (player == 1)
+    {
+      EXE_FN(int, 0x4a70c0, int, int)(1, 28);
+      needs_shuffle = EXE_DWORD(0x78fee8);
+    }
+    else
+    {
+      EXE_DWORD(0x78fee8) = needs_shuffle;
+      EXE_BYTE(0x78fee4) = 28;
+      EXE_FN(int, 0x4a6bc0, int, int)(0, 28);
+    }
+  }
+  if (needs_shuffle)
+    shuffle(player);
+  kill_card(player, card, KILL_DESTROY);
+  return basic_spell(player, card, event);
+}
+
 /* ManalinkEh 2022: 0x25c8c00; original cards/unstable.c:2331. */
 int card_staff_of_the_letter_magus(int player, int card, event_t event)
 {
+  /* Staff of the Letter Magus	|3
+   * Artifact
+   * As ~ enters the battlefield, choose a consonant other than N, R, S, or T.
+   * Whenever a player casts a spell, you gain 1 life for each time the chosen letter appears in that spell's name. */
+
   unsigned char folded_letter;
   char chosen_letter;
   card_instance_t *instance;
@@ -3207,137 +3330,5 @@ int card_staff_of_the_letter_magus(int player, int card, event_t event)
     gain_life(player, result);
   }
   return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x25c6880; original cards/unstable.c:939. */
-int card_capital_offense(int player, int card, event_t event)
-{
-  if (event != EVENT_RESOLVE_SPELL)
-    return vanilla_instant_pump(player, card, event, ANYBODY, 1-player, -1, -1, 0, 0);
-
-  target_definition_t td;
-  default_target_definition(player, card, &td, TYPE_CREATURE);
-  if (valid_target(&td))
-  {
-    card_instance_t *instance = get_card_instance(player, card);
-    char rules[3000];
-    get_rules_text(rules, instance->targets[0].player, instance->targets[0].card, 1);
-    int capitals = 0;
-    for (const char *cursor = rules; *cursor; ++cursor)
-      capitals += (unsigned char)(*cursor - 'A') < 26;
-    if (capitals > 0)
-      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
-                     -capitals, -capitals);
-  }
-  kill_card(player, card, KILL_DESTROY);
-  return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x25c6aa0; original cards/unstable.c:1038. */
-int card_old_fashioned_vampire(int player, int card, event_t event)
-{
-  if (event - EVENT_POWER < 3)
-  {
-    unsigned int hm = localtime_hour_minute();
-    unsigned int hour = hm >> 16;
-    unsigned int minute = hm & 0xffff;
-    bool nighttime = hour == 5 ? minute < 30
-        : hour == 18 ? minute > 29 : hour - 5U > 13U;
-    if (nighttime && !is_humiliated(player, card, AL_STATIC))
-    {
-      if (event == EVENT_ABILITIES)
-        deathtouch(player, card, EVENT_ABILITIES);
-      else
-        event_result += 2;
-    }
-  }
-  return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x25c8380; original cards/unstable.c:1972. */
-int card_hot_fix(int player, int card, event_t event)
-{
-  if (event != EVENT_RESOLVE_SPELL)
-    return basic_spell(player, card, event);
-  int32_t started = 0;
-  bool offline_ai_rearranged = false;
-  if (ai_is_speculating == 1)
-    rearrange_top_x(player, player, 500);
-  else if (player == 1 && (trace_mode & 2) == 0)
-  {
-    rearrange_top_x(1, 1, 500);
-    offline_ai_rearranged = true;
-  }
-  else
-  {
-    started = time_in_ms();
-    rearrange_top_x(player, player, 500);
-  }
-  int speculating_after_rearrange = ai_is_speculating;
-  uint32_t needs_shuffle = 0;
-  if (!offline_ai_rearranged || speculating_after_rearrange != 1)
-  {
-    if (speculating_after_rearrange == 1 || (player == 1 && (trace_mode & 2) == 0))
-      needs_shuffle = started < -10000;
-    else
-    {
-      int32_t ended = time_in_ms();
-      needs_shuffle = (int32_t)((uint32_t)ended - (uint32_t)started) > 10000;
-    }
-  }
-  if ((trace_mode & 2) != 0)
-  {
-    if (player == 1)
-    {
-      EXE_FN(int, 0x4a70c0, int, int)(1, 28);
-      needs_shuffle = EXE_DWORD(0x78fee8);
-    }
-    else
-    {
-      EXE_DWORD(0x78fee8) = needs_shuffle;
-      EXE_BYTE(0x78fee4) = 28;
-      EXE_FN(int, 0x4a6bc0, int, int)(0, 28);
-    }
-  }
-  if (needs_shuffle)
-    shuffle(player);
-  kill_card(player, card, KILL_DESTROY);
-  return basic_spell(player, card, event);
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 inline-only helpers; native code remains in their callers. */
-static watermark_t get_watermark(card_instance_t *inst)
-{
-  return get_watermark_by_iid(inst->internal_card_id < 0
-                                  ? inst->original_internal_card_id
-                                  : inst->internal_card_id);
-}
-
-static int is_dark_outdoors(void)
-{
-  unsigned int now = (unsigned int)localtime_hour_minute();
-  unsigned int hour = now >> 16;
-  unsigned int minute = now & 0xffffU;
-  if (hour == 5)
-    return minute <= 29;
-  if (hour == 18)
-    return minute > 29;
-  return hour < 5 || hour > 18;
 }
 #endif

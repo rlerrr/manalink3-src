@@ -4,6 +4,39 @@ The goal remains best-effort recovery of October 2022 card handlers and their
 helpers into their original source units. Native linking, initializer coverage,
 and downstream gameplay verification have separate evidence.
 
+The C751 follow-up in the same receipt restores 535 loose comments across 65
+source files to their original neighboring definitions, including skipped-card
+notes and color/section headings. The reorderer now treats these as placement
+items instead of collecting them in the file header. Original file headers and
+forward-declaration documentation stay put. Complete code token streams,
+function order and conditional guards match C750, and the repair is idempotent;
+C750 remains the last compiled/debug artifact receipt.
+
+The [C750 source-layout cleanup](recovery-evidence/source-layout-restoration.json.gz)
+restores relative function order in 136 source units and adds or repositions
+5,600 card descriptions. Existing body comments, standalone card slots and
+historical source take precedence over the pinned 2026-11-04 Scryfall Oracle
+fallback. Current Oracle wording documents the cards; it does not alter their
+implementation. The local bulk cache is excluded from Git.
+
+Original 2022 line annotations are ordering anchors, not exact line targets.
+File-local data, types, macros and dependencies constrain some placement; 72
+functions use explicitly recorded baseline/neighbor interpolation. The pass
+removes 1,898 excessive top-level blank-line runs, retains spacing inside
+function bodies and removes 16 orphan markers from empty conditional wrappers.
+Generic token, animated-form and engine callbacks receive no guessed printed
+card text; their remaining identities are listed in the receipt.
+
+All changed function tokens, literals and enclosing conditional branches match
+commit `1864623`; file-scope tokens match except eight forward declarations.
+The grouped GCC 9.3 build passes all 15,169 fixed jump slots and the current
+source/name pin check. Historical comment-heading variants are preserved without
+new duplicate descriptions. This is organization/documentation work: no new
+native semantic review, gameplay test or full reccmp score run was needed.
+C751 is the latest source-layout receipt; C750 is the latest build receipt.
+C736/C735 remain the full-score snapshot.
+Older sections below describe their own batch's build and comparison state.
+
 The [C742 constant/event review](recovery-evidence/reccmp-constant-and-shared-event-review.json.gz)
 checks 50 small handlers/helpers selected from unmatched instruction constants,
 skipping earlier queue hints. Native/current event sets and inspected arguments

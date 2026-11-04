@@ -3,6 +3,13 @@
 static int false_cure_legacy(int player, int card, event_t event);
 
 // Functions
+
+#ifndef SHANDALAR
+
+static int effect_target_gains_trample_and_regenerate_for_g(int player, int card, event_t event);
+
+#endif
+
 int fetchland(int player, int card, event_t event, subtype_t subtype1, subtype_t subtype2,
               int lifecost)
 {
@@ -372,6 +379,7 @@ int card_face_down_creature(int player, int card, event_t event){
 }
 
 // Beware, this only works for cards that originally had morph, cards with an ixidron_legacy attached, and cards that call can_exist_while_face_down().
+
 void turn_face_down(int player, int card){
 	if (player >= 0 && card >= 0){
 		card_instance_t* instance = get_card_instance(player, card);
@@ -461,6 +469,7 @@ int casting_permanent_with_morph(int player, int card, event_t event)
 }
 
 // A card without morph that has a turn-self-face-down ability.
+
 int can_exist_while_face_down(int player, int card, event_t event)
 {
 	if (event == EVENT_CHANGE_TYPE && affect_me(player, card)){
@@ -537,6 +546,7 @@ void double_faced_card(int player, int card, event_t event){
 }
 
 // Cards
+
 int card_accursed_centaur(int player, int card, event_t event){
 /* CARD_ID_ACCURSED_CENTAUR	6037
 Accursed Centaur	|B
@@ -651,11 +661,10 @@ Cycling |3 (|3, Discard this card: Draw a card.) */
 }
 
 int card_ancestors_prophet(int player, int card, event_t event){
-/*
-Ancestor's Prophet |4|W
-Creature — Human Cleric 1/5
-Tap five untapped Clerics you control: You gain 10 life.
-*/
+  /* Ancestor's Prophet |4|W
+   * Creature — Human Cleric 1/5
+   * Tap five untapped Clerics you control: You gain 10 life. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -678,6 +687,48 @@ Tap five untapped Clerics you control: You gain 10 life.
 	}
 
 	return generic_activated_ability_with_tapsubtype_as_cost(player, card, event, 0, MANACOST0, 0, NULL, NULL, &td1, 5);
+}
+
+/* ManalinkEh 2022: 0x25e9cb0; original cards/onslaught.c:604. */
+int card_aphetto_alchemist(int player, int card, event_t event)
+{
+  /* Aphetto Alchemist	|1|U
+   * Creature - Human Wizard 1/2
+   * |T: Untap target artifact or creature.
+   * Morph |U (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
+
+  int result;
+  card_instance_t *instance;
+  target_definition_t td1;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td1, 0x42);
+    td1.preferred_controller = player;
+    td1.illegal_abilities = 0;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = morph(player, card, event, 0, 0, 1, 0, 0, 0);
+      return result;
+    }
+    default_target_definition(player, card, &td1, 0x42);
+    td1.preferred_controller = player;
+    td1.illegal_abilities = 0;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td1);
+      if (result != 0)
+      {
+        untap_card(instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+  }
+  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td1, "PUTREFY");
+  return result;
 }
 
 int card_aphetto_dredging(int player, int card, event_t event){
@@ -722,11 +773,10 @@ Return up to three target creature cards of the creature type of your choice fro
 }
 
 int card_aphetto_grifter(int player, int card, event_t event){
-/*
-Aphetto Grifter |2|U
-Creature — Human Wizard 1/1
-Tap two untapped Wizards you control: Tap target permanent.
-*/
+  /* Aphetto Grifter |2|U
+   * Creature — Human Wizard 1/1
+   * Tap two untapped Wizards you control: Tap target permanent. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -831,6 +881,7 @@ If you do, return that card to the battlefield under its owner's control at the 
 }
 
 // activate Astral Slide
+
 void activate_astral_slide(void)
 {
   int opponent;
@@ -979,6 +1030,12 @@ Cycling |2 (|2, Discard this card: Draw a card.) */
 
 int card_aurification(int player, int card, event_t event)
 {
+  /* Aurification	|2|W|W
+   * Enchantment
+   * Whenever a creature deals damage to you, put a gold counter on it.
+   * Each creature with a gold counter on it is a Wall in addition to its other creature types and has defender.
+   * When ~ leaves the battlefield, remove all gold counters from all creatures. */
+
   card_instance_t *instance;
   int i;
   int p;
@@ -1127,6 +1184,18 @@ Other Soldier creatures get +1/+1. */
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x25eb1c0; original cards/onslaught.c:994. */
+int card_barkhide_mauler(int player, int card, event_t event)
+{
+  /* Barkhide Mauler	|4|G
+   * Creature - Beast 4/4
+   * Cycling |2 (|2, Discard this card: Draw a card.) */
+
+  int result;
+  result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
+  return result;
+}
+
 int card_barren_moor(int player, int card, event_t event)
 {
   /* CARD_ID_BARREN_MOOR	6063
@@ -1139,6 +1208,19 @@ Cycling |B (|B, Discard this card: Draw a card.) */
   if (IS_ACTIVATING_FROM_HAND(event))
     return cycling(player, card, event, MANACOST_B(1));
   return plain_mana_producer_tapped(player, card, event);
+}
+
+/* ManalinkEh 2022: 0x25eb290; original cards/onslaught.c:1022. */
+int card_battering_craghorn(int player, int card, event_t event)
+{
+  /* Battering Craghorn	|2|R|R
+   * Creature - Goat Beast 3/1
+   * First strike
+   * Morph |1|R|R (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
+
+  int result;
+  result = morph(player, card, event, 1, 0, 0, 0, 2, 0);
+  return result;
 }
 
 int card_battlefield_medic(int player, int card, event_t event){
@@ -1258,11 +1340,10 @@ Morph |G (You may cast this card face down as a 2/2 creature for |3. Turn it fac
 }
 
 int card_blatant_thievery(int player, int card, event_t event){
-	/*
-	  Blatant Thievery |4|U|U|U
-	  Sorcery
-	  For each opponent, gain control of target permanent that player controls.
-	*/
+  /* Blatant Thievery |4|U|U|U
+   * 	  Sorcery
+   * 	  For each opponent, gain control of target permanent that player controls. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1287,6 +1368,12 @@ int card_blatant_thievery(int player, int card, event_t event){
 
 int card_blistering_firecat(int player, int card, event_t event)
 {
+  /* Blistering Firecat	|1|R|R|R
+   * Creature - Elemental Cat 7/1
+   * Trample, haste
+   * At the beginning of the end step, sacrifice this creature.
+   * Morph |R|R (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
+
   card_instance_t *instance;
   int result;
   if (event == EVENT_TURNED_FACE_UP)
@@ -1314,6 +1401,11 @@ int card_blistering_firecat(int player, int card, event_t event)
 
 int card_bloodline_shaman(int player, int card, event_t event)
 {
+  /* Bloodline Shaman	|1|G
+   * Creature - Elf Wizard Shaman 1/1
+   * |T: Choose a creature type. Reveal the top card of your library. If that card is a creature card of the chosen type, put it into your hand. Otherwise,
+   * put it into your graveyard. */
+
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
     card_instance_t *instance = get_card_instance(player, card);
@@ -1399,7 +1491,6 @@ Add |R to your mana pool for each Goblin on the battlefield. */
 
 	return basic_spell(player, card, event);
 }
-
 
 int card_broodhatch_nantuko(int player, int card, event_t event){
 /* CARD_ID_BROODHATCH_NANTUKO	6074
@@ -1533,6 +1624,71 @@ int card_centaur_glade(int player, int card, event_t event){
 	}
 
 	return generic_activated_ability(player, card, event, 0, MANACOST_XG(2, 2), 0, NULL, NULL);
+}
+
+/* ManalinkEh 2022: 0x25ec730; original cards/onslaught.c:1425. */
+int card_chain_of_vapor(int player, int card, event_t event)
+{
+  /* Chain of Vapor	|U
+   * Instant
+   * Return target nonland permanent to its owner's hand. Then that permanent's controller may sacrifice a land of their choice. If the player does, they may copy this spell and may choose a new target for that copy. */
+
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (!IS_GS_EVENT(player, card, event))
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.illegal_type = TYPE_LAND;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+      result = count_permanents_by_type(instance->targets[0].player, TYPE_LAND);
+      if ((0 < result) && (result = can_legally_play_iid(instance->targets[0].player,
+                                                         instance->internal_card_id),
+                           result != 0))
+      {
+
+        result = count_permanents_by_type(1 - player, TYPE_LAND);
+        result = do_dialog(instance->targets[0].player, player, card, -1, -1,
+                           " Copy Chain of Vapor\n Pass", (unsigned int)(result < 4));
+        if (result == 0)
+        {
+          new_default_test_definition(&test, 1, "Select a land to sacrifice.");
+          result = new_sacrifice(player, card, instance->targets[0].player, 0, &test);
+          if (result != 0)
+          {
+            result = get_id(player, card);
+            copy_spell(instance->targets[0].player, result);
+          }
+        }
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 0x81, &td, "Select target nonland permanent.", 1, NULL);
+}
+
+/* ManalinkEh 2022: 0x25ec9b0; original cards/onslaught.c:1467. */
+int card_charging_slateback(int player, int card, event_t event)
+{
+  /* Charging Slateback	|4|R
+   * Creature - Beast 4/3
+   * This creature can't block.
+   * Morph |4|R (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
+
+  int result;
+  cannot_block(player, card, event);
+  result = morph(player, card, event, 4, 0, 0, 0, 1, 0);
+  return result;
 }
 
 int card_choking_tethers(int player, int card, event_t event){
@@ -1884,6 +2040,19 @@ int card_cryptic_gateway(int player, int card, event_t event){
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x25edd30; original cards/onslaught.c:1828. */
+int card_daru_lancer(int player, int card, event_t event)
+{
+  /* Daru Lancer	|4|W|W
+   * Creature - Human Soldier 3/4
+   * First strike
+   * Morph |2|W|W (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
+
+  int result;
+  result = morph(player, card, event, 2, 0, 0, 0, 0, 2);
+  return result;
+}
+
 int card_death_match(int player, int card, event_t event){
 /* CARD_ID_DEATH_MATCH	6112
 Death Match	|3|B
@@ -1939,11 +2108,9 @@ int card_death_pulse(int player, int card, event_t event){
 }
 
 int card_demystify(int player, int card, event_t event ){
-	/*
-	  Demystify |W
-	  Instant
-	  Destroy target enchantment.
-	*/
+  /* Demystify |W
+   * 	  Instant
+   * 	  Destroy target enchantment. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -2018,11 +2185,10 @@ Counter target spell. Look at the top four cards of your library, then put them 
 }
 
 int card_dispersing_orb(int player, int card, event_t event){
-/*
-Dispersing Orb |3|U|U
-Enchantment
-{3}{U}, Sacrifice a permanent: Return target permanent to its owner's hand.
-*/
+  /* Dispersing Orb |3|U|U
+   * Enchantment
+   * {3}{U}, Sacrifice a permanent: Return target permanent to its owner's hand. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return global_enchantment(player, card, event);
 	}
@@ -2106,6 +2272,12 @@ Creature - Human Cleric Mercenary 2/2
 
 int card_doubtless_one(int player, int card, event_t event)
 {
+  /* CARD_ID_DOUBTLESS_ONE	6123
+   * Doubtless One	|3|W
+   * Creature - Cleric Avatar 100/100
+   * ~'s power and toughness are each equal to the number of Clerics on the battlefield.
+   * Whenever ~ deals damage, you gain that much life. */
+
   int newval;
   spirit_link_effect(player, card, event, player);
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
@@ -2187,6 +2359,11 @@ int card_ebonblade_reaper(int player, int card, event_t event)
 
 int card_elvish_vanguard(int player, int card, event_t event)
 {
+  /* CARD_ID_ELVISH_VANGUARD	6129
+   * Elvish Vanguard	|1|G
+   * Creature - Elf Warrior 1/1
+   * Whenever another Elf enters the battlefield, put a +1/+1 counter on ~. */
+
   test_definition_t this_test;
   if (((trigger_condition == TRIGGER_COMES_INTO_PLAY) && (card == affected_card)) &&
       (player == affected_card_controller))
@@ -2205,11 +2382,10 @@ int card_elvish_vanguard(int player, int card, event_t event)
 }
 
 int card_elvish_pioneer(int player, int card, event_t event){
-	/*
-	  Elvish Pioneer |G
-	  Creature - Elf Druid 1/1
-	  When Elvish Pioneer enters the battlefield, you may put a basic land card from your hand onto the battlefield tapped.
-	*/
+  /* Elvish Pioneer |G
+   * 	  Creature - Elf Druid 1/1
+   * 	  When Elvish Pioneer enters the battlefield, you may put a basic land card from your hand onto the battlefield tapped. */
+
 	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
 
 	if( event == EVENT_ETB_ABILITY ){
@@ -2239,6 +2415,11 @@ Whenever you cast an enchantment spell, draw a card. */
 
 int card_entrails_feaster(int player, int card, event_t event)
 {
+  /* CARD_ID_ENTRAILS_FEASTER	6133
+   * Entrails Feaster	|B
+   * Creature - Zombie Cat 1/1
+   * At the beginning of your upkeep, you may exile a creature card from a graveyard. If you do, put a +1/+1 counter on ~. If you don't, tap ~. */
+
   int result;
   char msg[100] = "Select a creature card to exile.";
   test_definition_t this_test;
@@ -2309,11 +2490,9 @@ Morph |2|W|W (You may cast this card face down as a 2/2 creature for |3. Turn it
 }
 
 int card_explosive_vegetation(int player, int card, event_t event){
-	/*
-	  Explosive Vegetation |3|G
-	  Sorcery
-	  Search your library for up to two basic land cards and put them onto the battlefield tapped. Then shuffle your library.
-	*/
+  /* Explosive Vegetation |3|G
+   * 	  Sorcery
+   * 	  Search your library for up to two basic land cards and put them onto the battlefield tapped. Then shuffle your library. */
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		ai_modifier += (get_total_available_lands(player) < 6 ? 48 : -24);
@@ -2326,6 +2505,50 @@ int card_explosive_vegetation(int player, int card, event_t event){
 
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25e7440; original cards/onslaught.c:2291. */
+static int false_cure_legacy(int player, int card, event_t event)
+{
+  enum
+  {
+    XTRIGGER_REPLACE_GAIN_LIFE = 16778752
+  };
+
+  xtrigger_t current_trigger;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    event_flags = event_flags | 0x200000;
+  }
+  current_trigger = trigger_condition;
+  if (trigger_condition == TRIGGER_XTRIGGER)
+  {
+    current_trigger = xtrigger_impl_value_dont_use_directly;
+  }
+  if ((((current_trigger == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((reason_for_trigger_controller == player && (0 < life_gained))))
+  {
+    if (event == EVENT_TRIGGER)
+    {
+      event_result = event_result | 2;
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      life_to_lose_on_gain_life = life_gained * 2;
+      return 0;
+    }
+  }
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+#endif
 
 int card_false_cure(int player, int card, event_t event){
 /* CARD_ID_FALSE_CURE	6140
@@ -2754,12 +2977,11 @@ Morph |2|B|B (You may cast this card face down as a 2/2 creature for |3. Turn it
 }
 
 int card_haunted_cadaver(int player, int card, event_t event){
-/*
-Haunted Cadaver |3|B
-Creature — Zombie 2/2, 3B (4)
-Whenever Haunted Cadaver deals combat damage to a player, you may sacrifice it. If you do, that player discards three cards.
-Morph {1}{B} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)
-*/
+  /* Haunted Cadaver |3|B
+   * Creature — Zombie 2/2, 3B (4)
+   * Whenever Haunted Cadaver deals combat damage to a player, you may sacrifice it. If you do, that player discards three cards.
+   * Morph {1}{B} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.) */
+
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE);
 	if( result ){
 		int times_damaged[2] = {BYTE0(result), BYTE1(result)};
@@ -2786,12 +3008,11 @@ Morph {1}{B} (You may cast this card face down as a 2/2 creature for {3}. Turn i
 }
 
 int card_head_games(int player, int card, event_t event){
-/*
-Head Games |3|B|B
-Sorcery, 3BB
-Target opponent puts the cards from his or her hand on top of his or her library. Search that player's library for that many cards.
-The player puts those cards into his or her hand, then shuffles his or her library.
-*/
+  /* Head Games |3|B|B
+   * Sorcery, 3BB
+   * Target opponent puts the cards from his or her hand on top of his or her library. Search that player's library for that many cards.
+   * The player puts those cards into his or her hand, then shuffles his or her library. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -2856,6 +3077,11 @@ The player puts those cards into his or her hand, then shuffles his or her libra
 
 int card_heedless_one(int player, int card, event_t event)
 {
+  /* Heedless One	|3|G
+   * Creature - Elf Avatar 100/100
+   * Trample
+   * ~'s power and toughness are each equal to the number of Elves on the battlefield. */
+
   int newval;
   if ((((event - EVENT_POWER < 2) && (-1 < player)) && (card == affected_card)) &&
       (player == affected_card_controller))
@@ -2908,11 +3134,9 @@ Creature - Human Wizard 1/1
 }
 
 int card_infest(int player, int card, event_t event){
-	/*
-	  Infest |1|B|B
-	  Sorcery
-	  All creatures get -2/-2 until end of turn.
-	*/
+  /* Infest |1|B|B
+   * 	  Sorcery
+   * 	  All creatures get -2/-2 until end of turn. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		APNAP(p,{ pump_subtype_until_eot(player, card, p, -1, -2, -2, 0, 0); };);
@@ -3166,12 +3390,10 @@ Cycling |U (|U, Discard this card: Draw a card.) */
 }
 
 int card_mana_echoes(int player, int card, event_t event){
-/*
-Mana Echoes |2|R|R
-Enchantment
-Whenever a creature enters the battlefield, you may add an amount of {C} to your mana pool equal to the number of creatures you control
-	that share a creature type with it.
-*/
+  /* Mana Echoes |2|R|R
+   * Enchantment
+   * Whenever a creature enters the battlefield, you may add an amount of {C} to your mana pool equal to the number of creatures you control
+   * 	that share a creature type with it. */
 
 	etb_ability_global(ANYBODY, event, RESOLVE_TRIGGER_AI(player), TYPE_CREATURE, NULL, player, card);
 
@@ -3227,6 +3449,11 @@ Enchanted creature gets +8/+8 and has trample. */
 
 int card_nameless_one(int player, int card, event_t event)
 {
+  /* Nameless One	|3|U
+   * Creature - Wizard Avatar 100/100
+   * ~'s power and toughness are each equal to the number of Wizards on the battlefield.
+   * Morph |2|U */
+
   int result;
   if ((((event - EVENT_POWER < 2) && (-1 < player)) && (card == affected_card)) &&
       (player == affected_card_controller))
@@ -3239,6 +3466,10 @@ int card_nameless_one(int player, int card, event_t event)
 }
 
 int card_nantuko_husk(int player, int card, event_t event){
+  /* Nantuko Husk	|2|B
+   * Creature - Zombie Insect 2/2
+   * Sacrifice a creature: ~ gets +2/+2 until end of turn. */
+
 	// original code : 012039A8
 	/* Nantuko Husk	|2|B
 	 * Creature - Zombie Insect 2/2
@@ -3355,7 +3586,6 @@ Each player chooses a creature type. Each player returns all creature cards of a
 
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
-
 
 int card_piety_charm(int player, int card, event_t event)
 {
@@ -3513,7 +3743,6 @@ Sacrifice a Beast: You gain 4 life. */
 	return 0;
 }
 
-
 int card_read_the_runes(int player, int card, event_t event){
 /* CARD_ID_READ_THE_RUNES	6231
 Read the Runes	|X|U
@@ -3544,6 +3773,11 @@ Draw X cards. For each card drawn this way, discard a card unless you sacrifice 
 
 int card_reckless_one(int player, int card, event_t event)
 {
+  /* Reckless One	|3|R
+   * Creature - Goblin Avatar 100/100
+   * Haste
+   * ~'s power and toughness are each equal to the number of Goblins on the battlefield. */
+
   int newval;
   haste(player, card, event);
   if ((((event - EVENT_POWER < 2) && (-1 < player)) && (card == affected_card)) &&
@@ -3894,6 +4128,119 @@ int card_rotlung_reanimator(int player, int card, event_t event){
 	return 0;
 }
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25e7820; original cards/onslaught.c:3887. */
+static int effect_target_gains_trample_and_regenerate_for_g(int player, int card, event_t event)
+{
+  int enchanted_card;
+  card_instance_t *instance;
+  int target_player;
+  if (effect_follows_control_of_attachment(player, card, event) != 0)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  if (instance->damage_target_player < '\0')
+  {
+    if (current_phase == 0x22)
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  target_player = (int)instance->damage_target_player;
+  enchanted_card = instance->damage_target_card;
+  if (event == EVENT_ACTIVATE)
+  {
+    if (target_player == -1)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      if (((event == EVENT_ABILITIES) && (enchanted_card == affected_card)) &&
+          (target_player == affected_card_controller))
+      {
+        event_result = event_result | 0x280;
+      }
+      if (current_phase == 0x22)
+        kill_card(player, card, KILL_EXILE);
+      return 0;
+    }
+    if (target_player == -1)
+    {
+      return 0;
+    }
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (can_regenerate(target_player, enchanted_card) != 0))
+    {
+      regenerate_target(target_player, enchanted_card);
+    }
+  }
+  return granted_generic_activated_ability(player, card, target_player, enchanted_card, event,
+                                           GAA_REGENERATION, 0, 0, 0, 1, 0, 0, 0, NULL, NULL);
+}
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25f41b0; original cards/onslaught.c:3921. */
+int card_run_wild(int player, int card, event_t event)
+{
+  /* Run Wild	|G
+   * Instant
+   * Until end of turn, target creature gains trample and "|G: Regenerate this creature." */
+
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (!IS_GS_EVENT(player, card, event))
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target(&td))
+    {
+      create_targetted_legacy_activate(
+          player, card, effect_target_gains_trample_and_regenerate_for_g,
+          instance->targets[0].player, instance->targets[0].card);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+}
+#endif
+
+/* ManalinkEh 2022: 0x25f4310; original cards/onslaught.c:3951. */
+int card_searing_flesh(int player, int card, event_t event)
+{
+  /* Searing Flesh	|6|R
+   * Sorcery
+   * ~ deals 7 damage to target opponent or planeswalker. */
+
+  target_definition_t td;
+  if (!IS_GS_EVENT(player, card, event))
+  {
+    return 0;
+  }
+  opponent_or_pw_target_definition(player, card, &td);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target(&td))
+    {
+      damage_target0(player, card, 7);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 1, &td, "TARGET_OPPONENT_OR_PLANESWALKER", 1, NULL);
+}
+
 //Sandskin => Gaseous Form 0x200c442
 
 int card_seaside_haven(int player, int card, event_t event){
@@ -4146,12 +4493,11 @@ static int sigil_of_the_new_dawn_effect(int player, int card, event_t event)
 
 int card_sigil_of_the_new_dawn(int player, int card, event_t event)
 {
-  /*
-  Sigil of the New Dawn |3|W
-  Enchantment
-  Whenever a creature is put into your graveyard from the battlefield, you may pay {1}{W}. If you
-  do, return that card to your hand.
-  */
+  /* Sigil of the New Dawn |3|W
+   *   Enchantment
+   *   Whenever a creature is put into your graveyard from the battlefield, you may pay {1}{W}. If you
+   *   do, return that card to your hand. */
+
   if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
   {
     int found = 0;
@@ -4387,6 +4733,33 @@ int card_slice_and_dice(int player, int card, event_t event){
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x25f5540; original cards/onslaught.c:4434. */
+int card_slipstream_eel(int player, int card, event_t event)
+{
+  /* Slipstream Eel	|5|U|U
+   * Creature - Fish Beast 6/6
+   * This creature can't attack unless defending player controls an Island.
+   * Cycling |1|U (|1|U, Discard this card: Draw a card.) */
+
+  int result;
+
+  if (((event == EVENT_ATTACK_LEGALITY) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_humiliated(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      result = get_hacked_color(player, card, 2);
+      if (basiclandtypes_controlled[1 - player][result] == 0)
+      {
+        event_result = 1;
+      }
+    }
+  }
+  result = cycling(player, card, event, 1, 0, 1, 0, 0, 0);
+  return result;
+}
+
 int card_smother(int player, int card, event_t event){
 /* CARD_ID_SMOTHER	6270
 Smother	|1|B
@@ -4473,6 +4846,10 @@ int card_solar_blast(int player, int card, event_t event){
 
 int card_soulless_one(int player, int card, event_t event)
 {
+  /* Soulless One	|3|B
+   * Creature - Zombie Avatar 100/100
+   * ~'s power and toughness are each equal to the number of Zombies on the battlefield plus the number of Zombie cards in all graveyards. */
+
   int zombies_in_play;
   int zombies_in_graveyards;
   if ((((event - EVENT_POWER < 2) && (-1 < player)) && (card == affected_card)) &&
@@ -4509,6 +4886,18 @@ Creature - Goblin 1/1
 	}
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_CREATURE");
+}
+
+/* ManalinkEh 2022: 0x25f5c70; original cards/onslaught.c:4575. */
+int card_spined_basher(int player, int card, event_t event)
+{
+  /* Spined Basher	|2|B
+   * Creature - Zombie Beast 3/1
+   * Morph |2|B (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
+
+  int result;
+  result = morph(player, card, event, 2, 1, 0, 0, 0, 0);
+  return result;
 }
 
 int card_starlit_sanctum(int player, int card, event_t event){
@@ -4732,12 +5121,11 @@ int card_tempting_wurm(int player, int card, event_t event){
 }
 
 int card_tephraderm(int player, int card, event_t event){
-/*
-Tephraderm |4|R
-Creature — Beast 4/5
-Whenever a creature deals damage to Tephraderm, Tephraderm deals that much damage to that creature.
-Whenever a spell deals damage to Tephraderm, Tephraderm deals that much damage to that spell's controller.
-*/
+  /* Tephraderm |4|R
+   * Creature — Beast 4/5
+   * Whenever a creature deals damage to Tephraderm, Tephraderm deals that much damage to that creature.
+   * Whenever a spell deals damage to Tephraderm, Tephraderm deals that much damage to that spell's controller. */
+
 	if( is_humiliated(player, card, AL_TRIG) ){
 		return 0;
 	}
@@ -4786,6 +5174,18 @@ Whenever a spell deals damage to Tephraderm, Tephraderm deals that much damage t
 		}
 	}
 	return 0;
+}
+
+/* ManalinkEh 2022: 0x25f6a40; original cards/onslaught.c:4861. */
+int card_towering_baloth(int player, int card, event_t event)
+{
+  /* Towering Baloth	|6|G|G
+   * Creature - Beast 7/6
+   * Morph |6|G (You may cast this card face down as a 2/2 creature for |3. Turn it face up any time for its morph cost.) */
+
+  int result;
+  result = morph(player, card, event, 6, 0, 0, 1, 0, 0);
+  return result;
 }
 
 int card_tranquil_thicket(int player, int card, event_t event){
@@ -5438,324 +5838,3 @@ int card_words_of_worship(int player, int card, event_t event){
 	}
 	return global_enchantment(player, card, event);
 }
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25e9cb0; original cards/onslaught.c:604. */
-int card_aphetto_alchemist(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  target_definition_t td1;
-  if (event == EVENT_ACTIVATE)
-  {
-    default_target_definition(player, card, &td1, 0x42);
-    td1.preferred_controller = player;
-    td1.illegal_abilities = 0;
-    get_card_instance(player, card);
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      result = morph(player, card, event, 0, 0, 1, 0, 0, 0);
-      return result;
-    }
-    default_target_definition(player, card, &td1, 0x42);
-    td1.preferred_controller = player;
-    td1.illegal_abilities = 0;
-    instance = get_card_instance(player, card);
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      result = valid_target(&td1);
-      if (result != 0)
-      {
-        untap_card(instance->targets[0].player, instance->targets[0].card);
-      }
-    }
-  }
-  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td1, "PUTREFY");
-  return result;
-}
-
-/* ManalinkEh 2022: 0x25eb1c0; original cards/onslaught.c:994. */
-int card_barkhide_mauler(int player, int card, event_t event)
-{
-  int result;
-  result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x25eb290; original cards/onslaught.c:1022. */
-int card_battering_craghorn(int player, int card, event_t event)
-{
-  int result;
-  result = morph(player, card, event, 1, 0, 0, 0, 2, 0);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x25ec9b0; original cards/onslaught.c:1467. */
-int card_charging_slateback(int player, int card, event_t event)
-{
-  int result;
-  cannot_block(player, card, event);
-  result = morph(player, card, event, 4, 0, 0, 0, 1, 0);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x25edd30; original cards/onslaught.c:1828. */
-int card_daru_lancer(int player, int card, event_t event)
-{
-  int result;
-  result = morph(player, card, event, 2, 0, 0, 0, 0, 2);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x25f4310; original cards/onslaught.c:3951. */
-int card_searing_flesh(int player, int card, event_t event)
-{
-  target_definition_t td;
-  if (!IS_GS_EVENT(player, card, event))
-  {
-    return 0;
-  }
-  opponent_or_pw_target_definition(player, card, &td);
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    if (valid_target(&td))
-    {
-      damage_target0(player, card, 7);
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return generic_spell(player, card, event, 1, &td, "TARGET_OPPONENT_OR_PLANESWALKER", 1, NULL);
-}
-
-/* ManalinkEh 2022: 0x25f5c70; original cards/onslaught.c:4575. */
-int card_spined_basher(int player, int card, event_t event)
-{
-  int result;
-  result = morph(player, card, event, 2, 1, 0, 0, 0, 0);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x25f6a40; original cards/onslaught.c:4861. */
-int card_towering_baloth(int player, int card, event_t event)
-{
-  int result;
-  result = morph(player, card, event, 6, 0, 0, 1, 0, 0);
-  return result;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25f5540; original cards/onslaught.c:4434. */
-int card_slipstream_eel(int player, int card, event_t event)
-{
-  int result;
-
-  if (((event == EVENT_ATTACK_LEGALITY) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
-    {
-      result = get_hacked_color(player, card, 2);
-      if (basiclandtypes_controlled[1 - player][result] == 0)
-      {
-        event_result = 1;
-      }
-    }
-  }
-  result = cycling(player, card, event, 1, 0, 1, 0, 0, 0);
-  return result;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25ec730; original cards/onslaught.c:1425. */
-int card_chain_of_vapor(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-  target_definition_t td;
-  test_definition_t test;
-
-  if (!IS_GS_EVENT(player, card, event))
-  {
-    return 0;
-  }
-  default_target_definition(player, card, &td, 0x47);
-  td.illegal_type = TYPE_LAND;
-  instance = get_card_instance(player, card);
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    result = valid_target(&td);
-    if (result != 0)
-    {
-      bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-      result = count_permanents_by_type(instance->targets[0].player, TYPE_LAND);
-      if ((0 < result) && (result = can_legally_play_iid(instance->targets[0].player,
-                                                         instance->internal_card_id),
-                           result != 0))
-      {
-
-        result = count_permanents_by_type(1 - player, TYPE_LAND);
-        result = do_dialog(instance->targets[0].player, player, card, -1, -1,
-                           " Copy Chain of Vapor\n Pass", (unsigned int)(result < 4));
-        if (result == 0)
-        {
-          new_default_test_definition(&test, 1, "Select a land to sacrifice.");
-          result = new_sacrifice(player, card, instance->targets[0].player, 0, &test);
-          if (result != 0)
-          {
-            result = get_id(player, card);
-            copy_spell(instance->targets[0].player, result);
-          }
-        }
-      }
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return generic_spell(player, card, event, 0x81, &td, "Select target nonland permanent.", 1, NULL);
-}
-
-#ifndef SHANDALAR
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25e7440; original cards/onslaught.c:2291. */
-static int false_cure_legacy(int player, int card, event_t event)
-{
-  enum
-  {
-    XTRIGGER_REPLACE_GAIN_LIFE = 16778752
-  };
-
-  xtrigger_t current_trigger;
-
-  if (event == EVENT_STATIC_EFFECTS)
-  {
-    event_flags = event_flags | 0x200000;
-  }
-  current_trigger = trigger_condition;
-  if (trigger_condition == TRIGGER_XTRIGGER)
-  {
-    current_trigger = xtrigger_impl_value_dont_use_directly;
-  }
-  if ((((current_trigger == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
-       (player == affected_card_controller)) &&
-      ((reason_for_trigger_controller == player && (0 < life_gained))))
-  {
-    if (event == EVENT_TRIGGER)
-    {
-      event_result = event_result | 2;
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_TRIGGER)
-    {
-      life_to_lose_on_gain_life = life_gained * 2;
-      return 0;
-    }
-  }
-  if (event != EVENT_CLEANUP)
-  {
-    return 0;
-  }
-  kill_card(player, card, KILL_DESTROY);
-  return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 native scalar-word handlers. */
-static int effect_target_gains_trample_and_regenerate_for_g(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x25e7820; original cards/onslaught.c:3887. */
-static int effect_target_gains_trample_and_regenerate_for_g(int player, int card, event_t event)
-{
-  int enchanted_card;
-  card_instance_t *instance;
-  int target_player;
-  if (effect_follows_control_of_attachment(player, card, event) != 0)
-  {
-    return 0;
-  }
-  instance = get_card_instance(player, card);
-  if (instance->damage_target_player < '\0')
-  {
-    if (current_phase == 0x22)
-    {
-      kill_card(player, card, KILL_EXILE);
-    }
-    return 0;
-  }
-  instance = get_card_instance(player, card);
-  target_player = (int)instance->damage_target_player;
-  enchanted_card = instance->damage_target_card;
-  if (event == EVENT_ACTIVATE)
-  {
-    if (target_player == -1)
-    {
-      return 0;
-    }
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      if (((event == EVENT_ABILITIES) && (enchanted_card == affected_card)) &&
-          (target_player == affected_card_controller))
-      {
-        event_result = event_result | 0x280;
-      }
-      if (current_phase == 0x22)
-        kill_card(player, card, KILL_EXILE);
-      return 0;
-    }
-    if (target_player == -1)
-    {
-      return 0;
-    }
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (can_regenerate(target_player, enchanted_card) != 0))
-    {
-      regenerate_target(target_player, enchanted_card);
-    }
-  }
-  return granted_generic_activated_ability(player, card, target_player, enchanted_card, event,
-                                           GAA_REGENERATION, 0, 0, 0, 1, 0, 0, 0, NULL, NULL);
-}
-
-#endif
-
-#ifndef SHANDALAR
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x25f41b0; original cards/onslaught.c:3921. */
-int card_run_wild(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  target_definition_t td;
-
-  if (!IS_GS_EVENT(player, card, event))
-  {
-    return 0;
-  }
-  default_target_definition(player, card, &td, 2);
-  td.preferred_controller = player;
-  instance = get_card_instance(player, card);
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    if (valid_target(&td))
-    {
-      create_targetted_legacy_activate(
-          player, card, effect_target_gains_trample_and_regenerate_for_g,
-          instance->targets[0].player, instance->targets[0].card);
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
-}
-
-#endif

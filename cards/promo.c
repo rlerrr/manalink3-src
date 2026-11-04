@@ -2,6 +2,20 @@
 
 // Cards originally printed as promos; Astral cards
 
+/*
+Nalathni Dragon |2|R|R --> Dragon Whelp
+Creature - Dragon 1/1
+Flying; banding
+{R}: Nalathni Dragon gets +1/+0 until end of turn.
+	If this ability has been activated four or more times this turn, sacrifice Nalathni Dragon at the beginning of the next end step.
+*/
+
+/*
+Windseeker Centaur |1|R|R --> Serra Angel
+Creature - Centaur 2/2
+Vigilance
+*/
+
 static int ai_choice_for_arena(int player, int card, target_t* ret_tgt){
 	card_instance_t* instance;
 	int c, best_rating = -1;
@@ -41,15 +55,17 @@ static int ai_choice_for_arena(int player, int card, target_t* ret_tgt){
 }
 
 int card_arena(int player, int card, event_t event){
+  /* Arena	""
+   * Land
+   * |3, |T: Tap target creature you control and target creature of an opponent's choice he or she controls. Those creatures fight each other. */
+
   enum
   {
     CHOICE_MANA = 1,
     CHOICE_ABILITY = 2
   };
 
-	/* Arena	""
-	 * Land
-	 * |3, |T: Tap target creature you control and target creature of an opponent's choice he or she controls. Those creatures fight each other. */
+
 	// Used externally
 	if (event == EVENT_CAST_SPELL && affect_me(player, card) && player == AI){
 		ai_modifier += 48;
@@ -335,12 +351,14 @@ int card_call_from_the_grave(int player, int card, event_t event){
 
 int card_faerie_dragon(int player, int card, event_t event)
 {
-  // 0x4735C0
-
   /* Faerie Dragon	|2|G|G
    * Creature - Faerie Dragon 1/3
    * Flying
    * |1|G|G: Play a random effect. */
+
+  // 0x4735C0
+
+
 
   target_t tgts[300]; // [sp+Ch] [bp-960h]@14
 
@@ -557,6 +575,11 @@ int card_faerie_dragon(int player, int card, event_t event)
 }
 
 int card_gem_bazaar(int player, int card, event_t event){
+  /* Gem Bazaar	""
+   * Land
+   * When ~ comes into play, choose a random color.
+   * |T: Add to your mana pool one mana of the color last chosen. Then choose a random color. */
+
 	/*
 	  Gem Bazaar
 	  When Gem Bazaar comes into play, choose a random color.
@@ -580,16 +603,9 @@ int card_gem_bazaar(int player, int card, event_t event){
 }
 
 int card_giant_badger(int player, int card, event_t event){
-	/*
-	  Giant Badger |1|G|G
-	  Creature - Badger 2/2
-	  Whenever Giant Badger blocks, it gets +2/+2 until end of turn.
-	*/
-	/*
-	  Royal Trooper	|2|W
-	  Creature - Human Soldier 2/2
-	  Whenever ~ blocks, it gets +2/+2 until end of turn.
-	*/
+  /* Giant Badger |1|G|G
+   * 	  Creature - Badger 2/2
+   * 	  Whenever Giant Badger blocks, it gets +2/+2 until end of turn. */
 
 	if( ! is_humiliated(player, card, AL_TRIG) && blocking(player, card, event) ){
 		int amount = 2*count_creatures_this_is_blocking(player, card);
@@ -600,6 +616,10 @@ int card_giant_badger(int player, int card, event_t event){
 
 int card_goblin_polka_band(int player, int card, event_t event)
 {
+  /* Goblin Polka Band	|R|R
+   * Summon Goblin 1/1
+   * |2, |T, Pay |R for each target: Tap any number of random target creatures. Goblins tapped in this way do not untap during their controllers' next untap phases. */
+
   card_instance_t* instance = get_card_instance(player, card);
 
   target_definition_t td;
@@ -717,6 +737,11 @@ int card_goblin_polka_band(int player, int card, event_t event)
 }
 
 int card_mana_crypt(int player, int card, event_t event){
+  /* Mana Crypt	|0
+   * Artifact
+   * At the beginning of your upkeep, flip a coin. If you lose the flip, this artifact deals 3 damage to you.
+   * |T: Add |C|C. */
+
 	/*
 	  Mana Crypt 0
 	  Artifact
@@ -734,18 +759,16 @@ int card_mana_crypt(int player, int card, event_t event){
 	return card_sol_ring(player, card, event);
 }
 
-/*
-Nalathni Dragon |2|R|R --> Dragon Whelp
-Creature - Dragon 1/1
-Flying; banding
-{R}: Nalathni Dragon gets +1/+0 until end of turn.
-	If this ability has been activated four or more times this turn, sacrifice Nalathni Dragon at the beginning of the next end step.
-*/
-
 // Spawn of Azar token --> rhino token
 
 int card_necropolis_of_azar(int player, int card, event_t event)
 {
+  /* Necropolis of Azar	|2|B|B
+   * Enchantment
+   * Whenever a non|Sblack creature is put into any graveyard from play, put a husk counter on ~.
+   * |5, Remove a husk counter from ~: Put a Spawn of Azar token into play. Treat this token as a |Sblack creature with a random power and toughness, each no
+   * less than 1 and no greater than 3, that has |H2swampwalk. */
+
   int parent_controller;
   unsigned int death_count;
   int activation_or_counter_count;
@@ -808,6 +831,10 @@ int card_necropolis_of_azar(int player, int card, event_t event)
 
 int card_orcish_catapult(int player, int card, event_t event)
 {
+  /* Orcish Catapult	|X|R|R
+   * Instant
+   * Randomly distribute X -0/-1 counters among a random number of random target creatures. */
+
   /*
     Randomly distribute |X -0/-1 counters among a random number of random target creatures.
   */
@@ -912,7 +939,7 @@ int card_orcish_catapult(int player, int card, event_t event)
 }
 
 int card_pandoras_box(int player, int card, event_t event){
-	/*
+  /*
 	  Pandora's Box	|5
 	  |3, |T: Choose a random non-artifact creature card from all players' libraries.
 	  For each player, flip a coin. If the flip ends up heads, put a token creature into play
@@ -955,7 +982,7 @@ int card_pandoras_box(int player, int card, event_t event){
 }
 
 int card_power_struggle(int player, int card, event_t event){
-	/*
+  /*
 	  Power Struggle	|2|U|U|U
 	  At the beginning of each player's upkeep, that player exchanges control of random target artifact, creature or land he or she controls,
 	  for control of random target permanent of the same type that a random opponent controls.
@@ -1029,6 +1056,12 @@ int card_prismatic_dragon(int player, int card, event_t event){
 }
 
 int card_rainbow_knights(int player, int card, event_t event){
+  /* Rainbow Knights	|W|W
+   * Summon Knights 2/1
+   * When ~ comes into play, it gains protection from a random color permanently.
+   * |1: First strike until end of turn.
+   * |W|W: +0/+0, +1/+0 or +2/+0 until end of turn chosen at random. */
+
 	/*
 	  Rainbow Knights	|W|W
 	  When Rainbow Knights comes into play, it gains protection from a random color permanently.
@@ -1092,6 +1125,10 @@ static void sewers_of_estark_prevent_damage_effect(int player, int card, int t_p
 }
 
 int card_sewers_of_estark(int player, int card, event_t event){
+  /* Sewers of Estark	|2|B|B
+   * Instant
+   * Choose target creature. If it's attacking, it can't be blocked this turn. If it's blocking, prevent all combat damage that would be dealt this combat by it and each creature it's blocking. */
+
 	/*
 	  Sewers of Estark
 	  Instant
@@ -1127,18 +1164,12 @@ int card_sewers_of_estark(int player, int card, event_t event){
 }
 
 int card_whimsy(int player, int card, event_t event){
+  /* Whimsy	|X|U|U
+   * Sorcery
+   * Play X random fast effects. */
+
 	return card_whimsy_exe(player, card, event);
 }
-
-/*
-Windseeker Centaur |1|R|R --> Serra Angel
-Creature - Centaur 2/2
-Vigilance
-*/
-
-/**********************************
- * Heroes of the Realm 2016 cards *
- **********************************/
 
 /* Chandra, Gremlin Wrangler	|2|R|R
  * Legendary Planeswalker - Chandra (3)
@@ -1157,32 +1188,21 @@ Vigilance
  * Flying, trample, haste
  * When ~ enters the battlefield, the next time you would lose the game this turn, instead draw three cards and your life total becomes 5. */
 
-/***********************************************************************************
- * Hascon 2017 cards (except Swords of Dungeons & Dragons, which is in unstable.c) *
- ***********************************************************************************/
-
 /* Grimlock, Dinobot Leader	|1|R|G|W
  * Legendary Artifact Creature - Autobot 4/4
  * Dinosaurs, Vehicles, and other Transformers(R) creatures you control get +2/+0.
  * |2, Convert a Transformers toy you own to its other mode: ~ becomes ~, Ferocious King.
  * (~, Ferocious King - 8/8) Trample
  * |2, Convert a Transformers toy you own to its other mode: ~, Ferocious King becomes ~. */
+
 /* Grimlock, Ferocious King	""
  * Legendary Artifact Creature - Dinosaur 8/8
  * Trample
  * |2, Convert a Transformers toy you own to its other mode: ~ becomes ~, Dinobot Leader. */
-/* Rulings from Maro, for what they're worth, amount to:
- * "Transformers creatures" includes creatures that transform, and creatures that are the backs of double-faced-cards
- * whose front could transform, and melded creatures; but not flip-walkers, the fronts of meld cards, or anything else
- * that reads something like "exile this card, then return it to the battlefield transformed". */
 
 /* Nerf War	|3|U|R
  * Sorcery
  * Fire a Nerf(R) blaster until empty at target library from at least two meters away. For each card knocked off that library, put it into its owner's graveyard and ~ deals 1/2 damage to that player. (Foam darts only.) */
-
-/************************************************
- * MTG:Arena "New Player Experience"-only cards *
- ************************************************/
 
 /* Angelic Reward	|3|W|W
  * Enchantment - Aura
@@ -1255,10 +1275,6 @@ Vigilance
  * Creature - Bird 1/1
  * Flying */
 
-/****************************
- * Game Night box set, 2018 *
- ****************************/
-
 /* Militant Angel	|3|W|W
  * Creature - Angel 3/4
  * Flying, lifelink
@@ -1286,37 +1302,15 @@ Vigilance
  * Trample
  * When ~ enters the battlefield, each player searches their library for up to two basic land cards, puts them onto the battlefield, then shuffles their library. */
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x240d300; original cards/promo.c:1398. */
-static int has_globe_counter(int unused, int unused2, int player, int card)
-{
-  int result;
-  result = count_counters(player, card, COUNTER_GLOBE);
-  return (unsigned int)(result != 0);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2411480; original cards/promo.c:1596. */
-int card_bog_humbugs(int player, int card, event_t event)
-{
-  if (!damage_dealt_by_me(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE))
-  {
-    return 0;
-  }
-  play_sound_effect(WAV_POLKAMIX);
-  hack_silent_counters = hack_silent_counters + 1;
-  add_counters(player, card, player, card, COUNTER_P1_P1, 1);
-  hack_silent_counters = hack_silent_counters + -1;
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
 /* ManalinkEh 2022: 0x2410730; original cards/promo.c:1314. */
 int card_fruitcake_elemental(int player, int card, event_t event)
 {
+  /* Fruitcake Elemental	|1|G|G
+   * Creature - Elemental 7/7
+   * ~ is indestructible.
+   * At the end of your turn, ~ deals 7 damage to you.
+   * |3: Target player gains control of ~. */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -1351,11 +1345,13 @@ int card_fruitcake_elemental(int player, int card, event_t event)
   return result;
 }
 
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
 /* ManalinkEh 2022: 0x24108e0; original cards/promo.c:1353. */
 int card_seasons_beatings(int player, int card, event_t event)
 {
+  /* Season's Beatings	|R|R|R|R
+   * Sorcery
+   * Family gathering - Each creature target player controls deals damage equal to its power to another random creature that player controls. */
+
   int c;
   int card_00;
   int p;
@@ -1422,84 +1418,44 @@ int card_seasons_beatings(int player, int card, event_t event)
   return generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
 }
 
-/* ManalinkEh 2022: 0x2410fc0; original cards/promo.c:1482. */
-int card_yule_ooze(int player, int card, event_t event)
+/**********************************
+ * Heroes of the Realm 2016 cards *
+ **********************************/
+
+/***********************************************************************************
+ * Hascon 2017 cards (except Swords of Dungeons & Dragons, which is in unstable.c) *
+ ***********************************************************************************/
+
+/* Rulings from Maro, for what they're worth, amount to:
+ * "Transformers creatures" includes creatures that transform, and creatures that are the backs of double-faced-cards
+ * whose front could transform, and melded creatures; but not flip-walkers, the fronts of meld cards, or anything else
+ * that reads something like "exile this card, then return it to the battlefield transformed". */
+
+/************************************************
+ * MTG:Arena "New Player Experience"-only cards *
+ ************************************************/
+
+/****************************
+ * Game Night box set, 2018 *
+ ****************************/
+
+/* ManalinkEh 2022: 0x240d300; original cards/promo.c:1398. */
+static int has_globe_counter(int unused, int unused2, int player, int card)
 {
-  int p;
-  int c;
-  int scan_player_or_regeneration;
-  card_instance_t *instance;
-  int cmc;
-  int chosen_card_or_index;
-  int nonland_count;
-  target_t nlperms[151];
-
-  upkeep_trigger_ability(player, card, event, player);
-  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
-  {
-    scan_player_or_regeneration = regeneration(player, card, event, 0, 0, 0, 1, 1, 0);
-    if ((event == EVENT_ACTIVATE) && (spell_fizzled != 1))
-    {
-      play_sound_effect(WAV_DEVOUR);
-      return scan_player_or_regeneration;
-    }
-    return scan_player_or_regeneration;
-  }
-
-  nonland_count = 0;
-  scan_player_or_regeneration = 0;
-  do
-  {
-
-    if (0 < active_cards_count[scan_player_or_regeneration])
-    {
-      c = 0;
-      do
-      {
-        if ((card != c) || (player != scan_player_or_regeneration))
-        {
-          instance = in_play(scan_player_or_regeneration, c);
-          if (instance != NULL)
-          {
-            if (is_what(scan_player_or_regeneration, c, 1) == 0)
-            {
-              if (is_what(scan_player_or_regeneration, c, 0x47) != 0)
-              {
-                nlperms[nonland_count].card = c;
-                nlperms[nonland_count].player = scan_player_or_regeneration;
-                c = c + 1;
-                nonland_count = nonland_count + 1;
-                continue;
-              }
-            }
-          }
-        }
-        c = c + 1;
-      } while (c < active_cards_count[scan_player_or_regeneration]);
-    }
-    scan_player_or_regeneration = scan_player_or_regeneration + 1;
-    if (scan_player_or_regeneration == 2)
-    {
-      if (0 < nonland_count)
-      {
-
-        chosen_card_or_index = network_rand(player, nonland_count);
-        p = nlperms[chosen_card_or_index].player;
-        chosen_card_or_index = nlperms[chosen_card_or_index].card;
-        cmc = get_cmc(p, chosen_card_or_index);
-        kill_card(p, chosen_card_or_index, KILL_DESTROY);
-        add_counters(player, card, player, card, COUNTER_P1_P1, cmc);
-      }
-      return regeneration(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, 0, 0, 0, 1, 1, 0);
-    }
-  } while (true);
+  int result;
+  result = count_counters(player, card, COUNTER_GLOBE);
+  return (unsigned int)(result != 0);
 }
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2410b40; original cards/promo.c:1401. */
 int card_snow_mercy(int player, int card, event_t event)
 {
+  /* Snow Mercy	|2|W|W
+   * Snow Enchantment
+   * Whenever a creature deals damage to you, put a globe counter on it.
+   * |T, |Q, |T, |Q, |T: Tap all creatures with globe counters on them. */
+
   unsigned char stored_source_count;
   card_instance_t *damage_or_enchantment;
   int result;
@@ -1612,14 +1568,95 @@ int card_snow_mercy(int player, int card, event_t event)
   new_manipulate_all(player, card, 2, &test, ACT_TAP);
   return result;
 }
-
 #endif
 
+/* ManalinkEh 2022: 0x2410fc0; original cards/promo.c:1482. */
+int card_yule_ooze(int player, int card, event_t event)
+{
+  /* Yule Ooze	|2|R|G
+   * Creature - Ooze 1/1
+   * At the beginning of your upkeep, destroy another nonland permanent chosen at random, then put a number of +1/+1 counters on ~ equal to that permanent's converted mana cost.
+   * |R|G, Eat some food: Regenerate ~. */
+
+  int p;
+  int c;
+  int scan_player_or_regeneration;
+  card_instance_t *instance;
+  int cmc;
+  int chosen_card_or_index;
+  int nonland_count;
+  target_t nlperms[151];
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    scan_player_or_regeneration = regeneration(player, card, event, 0, 0, 0, 1, 1, 0);
+    if ((event == EVENT_ACTIVATE) && (spell_fizzled != 1))
+    {
+      play_sound_effect(WAV_DEVOUR);
+      return scan_player_or_regeneration;
+    }
+    return scan_player_or_regeneration;
+  }
+
+  nonland_count = 0;
+  scan_player_or_regeneration = 0;
+  do
+  {
+
+    if (0 < active_cards_count[scan_player_or_regeneration])
+    {
+      c = 0;
+      do
+      {
+        if ((card != c) || (player != scan_player_or_regeneration))
+        {
+          instance = in_play(scan_player_or_regeneration, c);
+          if (instance != NULL)
+          {
+            if (is_what(scan_player_or_regeneration, c, 1) == 0)
+            {
+              if (is_what(scan_player_or_regeneration, c, 0x47) != 0)
+              {
+                nlperms[nonland_count].card = c;
+                nlperms[nonland_count].player = scan_player_or_regeneration;
+                c = c + 1;
+                nonland_count = nonland_count + 1;
+                continue;
+              }
+            }
+          }
+        }
+        c = c + 1;
+      } while (c < active_cards_count[scan_player_or_regeneration]);
+    }
+    scan_player_or_regeneration = scan_player_or_regeneration + 1;
+    if (scan_player_or_regeneration == 2)
+    {
+      if (0 < nonland_count)
+      {
+
+        chosen_card_or_index = network_rand(player, nonland_count);
+        p = nlperms[chosen_card_or_index].player;
+        chosen_card_or_index = nlperms[chosen_card_or_index].card;
+        cmc = get_cmc(p, chosen_card_or_index);
+        kill_card(p, chosen_card_or_index, KILL_DESTROY);
+        add_counters(player, card, player, card, COUNTER_P1_P1, cmc);
+      }
+      return regeneration(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, 0, 0, 0, 1, 1, 0);
+    }
+  } while (true);
+}
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2411220; original cards/promo.c:1526. */
 int card_stocking_tiger(int player, int card, event_t event)
 {
+  /* Stocking Tiger	|5
+   * Artifact Creature - Cat Construct 3/3
+   * ~ enters with a sealed Magic booster pack under it.
+   * When ~ deals combat damage to a player, unwrap the booster pack and put it into your hand. */
+
   if (event == EVENT_RESOLVE_SPELL && !is_humiliated(player, card, AL_STATIC))
   {
     EXPANSION_t expansion = (EXPANSION_t)-1;
@@ -1668,5 +1705,23 @@ int card_stocking_tiger(int player, int card, event_t event)
   }
   return 0;
 }
-
 #endif
+
+/* ManalinkEh 2022: 0x2411480; original cards/promo.c:1596. */
+int card_bog_humbugs(int player, int card, event_t event)
+{
+  /* Bog Humbugs	|1|B
+   * Creature - Insect 1/1
+   * Flying
+   * Whenever ~ deals combat damage, hum that many notes of a festive song. If you can, put a +1/+1 counter on ~. */
+
+  if (!damage_dealt_by_me(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE))
+  {
+    return 0;
+  }
+  play_sound_effect(WAV_POLKAMIX);
+  hack_silent_counters = hack_silent_counters + 1;
+  add_counters(player, card, player, card, COUNTER_P1_P1, 1);
+  hack_silent_counters = hack_silent_counters + -1;
+  return 0;
+}

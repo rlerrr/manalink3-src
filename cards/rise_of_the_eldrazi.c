@@ -10,6 +10,13 @@ static void level_up_effects(int player, int card, event_t event, int l1power, i
                              int l3, int l3power, int l3toughness, keyword_t l3key, sp_keyword_t l3sp);
 
 // Global functions
+
+#ifndef SHANDALAR
+
+int card_aura_finesse(int player, int card, event_t event);
+
+#endif
+
 int when_you_cast(int player, int card, event_t event){
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		if( ! is_token(player, card) && ! check_special_flags(player, card, SF_NOT_CAST) ){
@@ -28,12 +35,178 @@ int annihilator(int player, int card, event_t event, int number)
   return 0;
 }
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24ac850; original cards/rise_of_the_eldrazi.c:25. */
+static void level_up_effects(int player, int card, event_t event, int l1power, int l1toughness,
+                             int l2, int l2power, int l2toughness, keyword_t l2key, sp_keyword_t l2sp,
+                             int l3, int l3power, int l3toughness, keyword_t l3key, sp_keyword_t l3sp)
+{
+  unsigned int characteristic_event_offset;
+  card_instance_t *instance;
+  int level_count;
+  keyword_t sleighted_protection;
+  int ai_score;
+  int level_two_score;
+  keyword_t level_three_keywords;
+  keyword_t level_two_keywords;
+  characteristic_event_offset = event - EVENT_POWER;
+  level_two_keywords = l2key;
+  level_three_keywords = l3key;
+  if (characteristic_event_offset < 3)
+  {
+    if (((affected_card == card) && (affected_card_controller == player)) &&
+        (instance = in_play(player, card), instance != NULL))
+    {
+      level_count = count_counters(player, card, COUNTER_LEVEL);
+      if (level_count < l3)
+      {
+        if (l2 <= level_count)
+        {
+          if (characteristic_event_offset < 2)
+          {
+            if (event != EVENT_POWER)
+            {
+              l2power = l2toughness;
+            }
+            set_base_pt(l2power);
+            return;
+          }
+          if ((l2key & KEYWORD_BASIC_LANDWALK) != KEYWORD_0)
+          {
+            level_two_keywords = get_hacked_walk(player, card, l2key);
+            level_two_keywords = level_two_keywords | l2key & ~KEYWORD_BASIC_LANDWALK;
+          }
+          if ((level_two_keywords & KEYWORD_PROT_COLORED) != KEYWORD_0)
+          {
+            sleighted_protection = get_sleighted_protection(player, card, level_two_keywords);
+            level_two_keywords = sleighted_protection | level_two_keywords & ~KEYWORD_PROT_COLORED;
+          }
+          if (l2sp != SP_KEYWORD_0)
+          {
+            special_abilities(player, card, EVENT_ABILITIES, l2sp, player, card);
+          }
+          event_result = event_result | level_two_keywords;
+        }
+      }
+      else
+      {
+        if (characteristic_event_offset < 2)
+        {
+          l2power = l3power;
+          if (event != EVENT_POWER)
+          {
+            l2power = l3toughness;
+          }
+          set_base_pt(l2power);
+          return;
+        }
+        if ((l3key & KEYWORD_BASIC_LANDWALK) != KEYWORD_0)
+        {
+          level_three_keywords = get_hacked_walk(player, card, l3key);
+          level_three_keywords = level_three_keywords | l3key & ~KEYWORD_BASIC_LANDWALK;
+        }
+        if ((level_three_keywords & KEYWORD_PROT_COLORED) != KEYWORD_0)
+        {
+          sleighted_protection = get_sleighted_protection(player, card, level_three_keywords);
+          level_three_keywords =
+              sleighted_protection | level_three_keywords & ~KEYWORD_PROT_COLORED;
+        }
+        if ((l2key & KEYWORD_BASIC_LANDWALK) != KEYWORD_0)
+        {
+          level_two_keywords = get_hacked_walk(player, card, l2key);
+          level_two_keywords = level_two_keywords | l2key & ~KEYWORD_BASIC_LANDWALK;
+        }
+        if ((level_two_keywords & KEYWORD_PROT_COLORED) != KEYWORD_0)
+        {
+          sleighted_protection = get_sleighted_protection(player, card, level_two_keywords);
+          level_two_keywords = sleighted_protection | level_two_keywords & ~KEYWORD_PROT_COLORED;
+        }
+        if ((l2sp | l3sp) != SP_KEYWORD_0)
+        {
+          special_abilities(player, card, EVENT_ABILITIES, l2sp | l3sp, player, card);
+        }
+        event_result = level_three_keywords | event_result | level_two_keywords;
+      }
+    }
+  }
+  else
+  {
+    if ((event == EVENT_SHOULD_AI_PLAY) &&
+        (level_count = count_counters(player, card, COUNTER_LEVEL), level_count != 0))
+    {
+      if (level_count < l2)
+      {
+        ai_score = (level_count + 1) * (level_count + 1);
+      }
+      else
+      {
+        level_two_score = (l2 + 1) * (l2 + 1);
+        ai_score = level_two_score + 0x18;
+        if (l2 < level_count)
+        {
+          if (l3 <= level_count)
+          {
+            ai_score = level_two_score + 0x30;
+            level_count = l3;
+          }
+          level_count = (level_count - l2) + 1;
+          ai_score = ai_score + level_count * level_count;
+        }
+      }
+      if (player == 1)
+      {
+        ai_modifier = ai_modifier + ai_score;
+      }
+      else
+      {
+        ai_modifier = ai_modifier - ai_score;
+      }
+    }
+  }
+  return;
+}
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24ace40; original cards/rise_of_the_eldrazi.c:176. */
+int level_up(int player, int card, event_t event, int x, int b, int u, int g, int r, int w,
+                  int l1power, int l1toughness, int l2, int l2power, int l2toughness,
+                  keyword_t l2key, sp_keyword_t l2sp, int l3, int l3power, int l3toughness,
+                  keyword_t l3key, sp_keyword_t l3sp)
+{
+  int result;
+  level_up_effects(player, card, event, l1power, l1toughness, l2, l2power, l2toughness, l2key, l2sp,
+      l3, l3power, l3toughness, l3key, l3sp);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = can_use_activated_abilities(player, card);
+    if ((result != 0) &&
+        (result = has_mana_for_activated_ability(player, card, x, b, u, g, r, w), result != 0))
+    {
+      result = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
+      return (unsigned int)(result != 0);
+    }
+  }
+  else
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      charge_mana_for_activated_ability(player, card, x, b, u, g, r, w);
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      add_counters(player, card, player, card, COUNTER_LEVEL, 1);
+    }
+  }
+  return 0;
+}
+#endif
+
 /* Just the effects of leveling up, not activation.  l2sp/l3sp only work for special abilities that can just be set during EVENT_ABILITIES.  Currently only used
  * for deathtouch, indestructibility, lifelink, and vigilance, all of which are ok. */
 
-
 // Level up, both effects and activation.
-
 
 int totem_armor(int player, int card, event_t event, int pow, int tou, int key, int s_key)
 {
@@ -130,7 +303,6 @@ int rebound(int player, int card){
 /************
 * Colorless *
 ************/
-
 int card_all_is_dust(int player, int card, event_t event){
 /* CARD_ID_ALL_IS_DUST	10866
 All Is Dust	|7
@@ -207,12 +379,10 @@ int card_emrakul_the_aeons_torn(int player, int card, event_t event){
 }
 
 int card_hand_of_emrakul(int player, int card, event_t event){
-/*
-Hand of Emrakul |9
-Creature — Eldrazi 7/7
-You may sacrifice four Eldrazi Spawn rather than pay Hand of Emrakul's mana cost.
-Annihilator 1 (Whenever this creature attacks, defending player sacrifices a permanent.)
-*/
+  /* Hand of Emrakul |9
+   * Creature — Eldrazi 7/7
+   * You may sacrifice four Eldrazi Spawn rather than pay Hand of Emrakul's mana cost.
+   * Annihilator 1 (Whenever this creature attacks, defending player sacrifices a permanent.) */
 
 	annihilator(player, card, event, 1);
 
@@ -457,6 +627,7 @@ static const char* targets_a_permanent_you_control(int who_chooses, int player, 
 
   return "targets permanent you control";
 }
+
 static int targets_a_creature_you_control_with_power_ge_7(int who_chooses, int player, int card)
 {
   int i;
@@ -471,6 +642,11 @@ static int targets_a_creature_you_control_with_power_ge_7(int who_chooses, int p
 }
 
 int card_not_of_this_world(int player, int card, event_t event){
+  /* Not of This World	|7
+   * Kindred Instant - Eldrazi
+   * Counter target spell or ability that targets a permanent you control.
+   * This spell costs |7 less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater. */
+
   /*
 	Not of This World |7
 
@@ -549,6 +725,11 @@ int card_not_of_this_world(int player, int card, event_t event){
 
 int card_pathrazer_of_ulamog(int player, int card, event_t event)
 {
+  /* Pathrazer of Ulamog	|11
+   * Creature - Eldrazi 9/9
+   * Annihilator 3
+   * ~ can't be blocked except by three or more creatures. */
+
   annihilator(player, card, event, 3);
   minblockers_3(player, card, event);
   return 0;
@@ -690,15 +871,41 @@ Annihilator 2 (Whenever this creature attacks, defending player sacrifices two p
 	return attack_if_able(player, card, event);
 }
 
+/* ManalinkEh 2022: 0x24ae4d0; original cards/rise_of_the_eldrazi.c:842. */
+int card_affa_guard_hound(int player, int card, event_t event)
+{
+  /* Affa Guard Hound	|2|W
+   * Creature - Hound 2/2
+   * Flash
+   * When ~ enters the battlefield, target creature gets +0/+3 until end of turn. */
+
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    td.allow_cancel = 0;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 3);
+      }
+    }
+  }
+  result = flash(player, card, event);
+  return result;
+}
+
 /********
 * White *
 ********/
-
-/* Affa Guard Hound	|2|W
- * Creature - Hound 2/2
- * Flash
- * When ~ enters the battlefield, target creature gets +0/+3 until end of turn. */
-
 int card_caravan_escort(int player, int card, event_t event)
 {
   /* Caravan Escort	|W
@@ -830,14 +1037,16 @@ int gideon_jura_force_attack(int player, int card, event_t event){
 
 int card_gideon_jura(int player, int card, event_t event)
 {
-  check_legend_rule(player, card, event);
-
   /* Gideon Jura	|3|W|W
    * Planeswalker - Gideon (6)
    * +2: During target opponent's next turn, creatures that player controls attack ~ if able.
    * -2: Destroy target tapped creature.
    * 0: Until end of turn, ~ becomes a 6/6 Human Soldier creature that's still a planeswalker.
    * Prevent all damage that would be dealt to him this turn. */
+
+  check_legend_rule(player, card, event);
+
+
 
   double_faced_card(player, card, event);
 
@@ -1069,11 +1278,10 @@ int card_kor_spiritdancer(int player, int card, event_t event)
 }
 
 int card_lightmine_field(int player, int card, event_t event){
-/*
-Lightmine Field |2|W|W
-Enchantment
-Whenever one or more creatures attack, Lightmine Field deals damage to each of those creatures equal to the number of attacking creatures.
-*/
+  /* Lightmine Field |2|W|W
+   * Enchantment
+   * Whenever one or more creatures attack, Lightmine Field deals damage to each of those creatures equal to the number of attacking creatures. */
+
 	store_attackers(player, card, event, DAT_TRACK, ANYBODY, -1, NULL);
 	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
 	if (event == EVENT_DAT_ABILITY)
@@ -1095,6 +1303,12 @@ Whenever one or more creatures attack, Lightmine Field deals damage to each of t
 
 int card_linvala_keeper_of_silence(int player, int card, event_t event)
 {
+  /* CARD_ID_LINVALA_KEEPER_OF_SILENCE	10982
+   * Linvala, Keeper of Silence	|2|W|W
+   * Legendary Creature - Angel 3/4
+   * Flying
+   * Activated abilities of creatures your opponents control can't be activated. */
+
   check_legend_rule(player, card, event);
   if (in_play(player, card) && !is_humiliated(player, card, AL_STATIC))
   {
@@ -1363,18 +1577,62 @@ int card_transcendent_master(int player, int card, event_t event)
  * Defender
  * When ~ enters the battlefield, draw a card. */
 
-/*******
-* Blue *
-*******/
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24aff70; original cards/rise_of_the_eldrazi.c:1538. */
+int card_aura_finesse(int player, int card, event_t event)
+{
+  /* Aura Finesse	|U
+   * Instant
+   * Attach target Aura you control to target creature.
+   * Draw a card. */
 
-/* Aura Finesse	|U
- * Instant
- * Attach target Aura you control to target creature.
- * Draw a card. */
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (!IS_GS_EVENT(player, card, event))
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 4);
+  td.required_subtype = 0x4000;
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result == 0)
+    {
+      return 0;
+    }
+    set_special_flags(instance->targets[0].player, instance->targets[0].card,
+                           SF_MOVE_AURA_LEGAL_TARGET);
+    result = call_card_function(instance->targets[0].player, instance->targets[0].card,
+                                EVENT_CAN_MOVE_AURA);
+    if (result != 0)
+    {
+      call_card_function(instance->targets[0].player, instance->targets[0].card,
+                         EVENT_MOVE_AURA);
+      call_card_function(instance->targets[0].player, instance->targets[0].card,
+                         EVENT_RESOLVE_MOVING_AURA);
+    }
+    remove_special_flags(instance->targets[0].player, instance->targets[0].card,
+                              SF_MOVE_AURA_LEGAL_TARGET);
+    draw_a_card(player);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell(player, card, event, 0x81, &td, "Select target Aura you control", 1, NULL);
+}
+#endif
 
 /* Cast Through Time	|4|U|U|U
  * Enchantment
  * Instant and sorcery spells you control have rebound. */
+
+/*******
+* Blue *
+*******/
 
 int card_champions_drake(int player, int card, event_t event)
 {
@@ -1771,6 +2029,12 @@ Creatures without flying get -2/-0. */
 
 int card_guard_gomazoa(int player, int card, event_t event)
 {
+  /* CARD_ID_GUARD_GOMAZOA	10944
+   * Guard Gomazoa	|2|U
+   * Creature - Jellyfish 1/3
+   * Defender, flying
+   * Prevent all combat damage that would be dealt to ~. */
+
   card_instance_t *instance;
 
   if ((((event == EVENT_CHECK_ABILITIES) && (card == affected_card)) &&
@@ -2029,9 +2293,13 @@ int card_see_beyond(int player, int card, event_t event){
 	return basic_spell(player, card, event);
 }
 
-
 int card_shared_discovery(int player, int card, event_t event)
 {
+  /* Shared Discovery	|U	0x200f56b
+   * Sorcery
+   * As an additional cost to cast ~, tap four untapped creatures you control.
+   * Draw three cards. */
+
   int p;
   bool untap_synergy;
   card_instance_t *instance;
@@ -2219,6 +2487,12 @@ int card_skywatcher_adept(int player, int card, event_t event)
 
 int card_sphinx_of_magosi(int player, int card, event_t event)
 {
+  /* CARD_ID_SPHINX_OF_MAGOSI	11048
+   * Sphinx of Magosi	|3|U|U|U
+   * Creature - Sphinx 6/6
+   * Flying
+   * |2|U: Draw a card, then put a +1/+1 counter on ~. */
+
   int result;
   card_instance_t *instance;
   if (1 < event - EVENT_POW_BOOST)
@@ -2266,6 +2540,12 @@ int card_surrakar_spellblade(int player, int card, event_t event){
 
 int card_training_grounds(int player, int card, event_t event)
 {
+  /* CARD_ID_TRAINING_GROUNDS	11065
+   * Training Grounds	|U
+   * Enchantment
+   * Activated abilities of creatures you control cost up to |2 less to activate.
+   * This effect can't reduce the amount of mana an ability costs to activate to less than one mana. */
+
   int result;
   test_definition_t this_test;
   if (event == EVENT_RESOLVE_SPELL)
@@ -2299,11 +2579,10 @@ int card_training_grounds(int player, int card, event_t event)
 }
 
 int card_unified_will(int player, int card, event_t event){
-/*
-Unified Will |1|U
-Instant
-Counter target spell if you control more creatures than that spell's controller.
-*/
+  /* Unified Will |1|U
+   * Instant
+   * Counter target spell if you control more creatures than that spell's controller. */
+
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		if( count_permanents_by_type(player, TYPE_CREATURE) <= count_permanents_by_type(1-player, TYPE_CREATURE) ){
 			ai_modifier -= 96;
@@ -2324,6 +2603,10 @@ Counter target spell if you control more creatures than that spell's controller.
 
 int card_venerated_teacher(int player, int card, event_t event)
 {
+  /* Venerated Teacher	|2|U
+   * Creature - Human Wizard 2/2
+   * When ~ enters the battlefield, put two level counters on each creature you control with level up. */
+
   card_instance_t *instance;
   int c;
   int leveler_priority;
@@ -2384,14 +2667,18 @@ int card_venerated_teacher(int player, int card, event_t event)
 /********
 * Black *
 ********/
-
 static void destroy_self_at_end_of_combat_if_vs_le_1_power(int player, int card, int t_player, int t_card)
 {
   if (get_power(t_player, t_card) <= 1)
 	create_legacy_effect_exe(player, card, LEGACY_EFFECT_STONING, player, card);
 }
+
 int card_arrogant_bloodlord(int player, int card, event_t event)
 {
+  /* Arrogant Bloodlord	|1|B|B
+   * Creature - Vampire Knight 4/4
+   * Whenever this creature blocks or becomes blocked by a creature with power 1 or less, destroy this creature at end of combat. */
+
   card_instance_t* instance = get_card_instance(player, card);
 
   if (event == EVENT_CHANGE_TYPE && affect_me(player, card) && !is_humiliated(player, card, AL_TRIG))
@@ -2566,7 +2853,49 @@ Whenever a player casts a spell of the chosen color, that player loses 1 life. *
  * Enchanted creature gets +3/+3.
  * At the beginning of your upkeep, sacrifice a creature. */
 
+/* ManalinkEh 2022: 0x24b35e0; original cards/rise_of_the_eldrazi.c:2678. */
+int card_drana_kalastria_bloodchief(int player, int card, event_t event)
+{
+  /* Drana, Kalastria Bloodchief	|3|B|B
+   * Legendary Creature - Vampire Shaman 4/4
+   * Flying
+   * |X|B|B: Target creature gets -0/-X until end of turn and Drana gets +X/+0 until end of turn. */
 
+  card_instance_t *instance;
+  int chosen_x;
+  int target_valid;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+    instance->info_slot = x_value;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+    instance->info_slot = x_value;
+
+    if (((event == EVENT_RESOLVE_ACTIVATION) &&
+         (target_valid = valid_target(&td), chosen_x = x_value, target_valid != 0)) &&
+        (0 < x_value))
+    {
+      pump_until_eot_merge_previous_alt(player, card, instance->parent_controller,
+                                        instance->parent_card, x_value, 0, 2);
+      pump_until_eot_merge_previous_alt(player, card, instance->targets[0].player,
+                                        instance->targets[0].card, 0, -chosen_x, 1);
+    }
+  }
+  return generic_activated_ability(player, card, event, 4, -1, 2, 0, 0, 0, 0, 0, &td,
+                                   "TARGET_CREATURE");
+}
 
 /* Dread Drone	|4|B
  * Creature - Eldrazi Drone 4/1
@@ -2673,13 +3002,12 @@ int card_guul_draz_assassin(int player, int card, event_t event){
 }
 
 int card_hellcarver_demon(int player, int card, event_t event){
-/*
-Hellcarver Demon |3|B|B|B
-Creature — Demon 6/6
-Flying
-Whenever Hellcarver Demon deals combat damage to a player, sacrifice all other permanents you control and discard your hand.
-Exile the top six cards of your library. You may cast any number of nonland cards exiled this way without paying their mana costs.
-*/
+  /* Hellcarver Demon |3|B|B|B
+   * Creature — Demon 6/6
+   * Flying
+   * Whenever Hellcarver Demon deals combat damage to a player, sacrifice all other permanents you control and discard your hand.
+   * Exile the top six cards of your library. You may cast any number of nonland cards exiled this way without paying their mana costs. */
+
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE);
 	if( result ){
 		int qty = BYTE0(result) + BYTE1(result);
@@ -2921,6 +3249,10 @@ static int pawn_of_ulamog_effect(int player, int card, event_t event)
 }
 
 int card_pawn_of_ulamog(int player, int card, event_t event){
+  /* Pawn of Ulamog	|1|B|B
+   * Creature - Vampire Shaman 2/2
+   * Whenever this creature or another nontoken creature you control dies, you may create a 0/1 colorless Eldrazi Spawn creature token. It has "Sacrifice this token: Add |C." */
+
 	/*
 	  Pawn of Ulamog English
 	  Creature — Vampire Shaman 2/2, 1BB (3)
@@ -2980,6 +3312,10 @@ int card_pawn_of_ulamog(int player, int card, event_t event){
  * Target opponent reveals his or her hand. You choose a card from it. That player shuffles that card into his or her library. */
 
 int card_pestilence_demon(int player, int card, event_t event){
+  /* Pestilence Demon	|5|B|B|B
+   * Creature - Demon 7/6
+   * Flying
+   * |B: This creature deals 1 damage to each creature and each player. */
 
 	if(event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance( player, card );
@@ -3009,7 +3345,6 @@ int card_repay_in_kind(int player, int card, event_t event){
 	return basic_spell(player, card, event);
 }
 
-
 /* Shrivel	|1|B => 0x40ff70:Nausea
  * Sorcery
  * All creatures get -1/-1 until end of turn. */
@@ -3024,6 +3359,12 @@ int card_repay_in_kind(int player, int card, event_t event){
 
 int card_thought_gorger(int player, int card, event_t event)
 {
+  /* Thought Gorger	|2|B|B
+   * Creature - Horror 2/2
+   * Trample
+   * When this creature enters, put a +1/+1 counter on it for each card in your hand. If you do, discard your hand.
+   * When this creature leaves the battlefield, draw a card for each +1/+1 counter on it. */
+
   int amount;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
@@ -3048,6 +3389,10 @@ int card_thought_gorger(int player, int card, event_t event)
  * Destroy target non|Sblack creature. It can't be regenerated. You lose life equal to that creature's toughness. */
 
 int card_virulent_swipe(int player, int card, event_t event){
+  /* Virulent Swipe	|B
+   * Instant
+   * Target creature gets +2/+0 and gains deathtouch until end of turn.
+   * Rebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.) */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -3118,10 +3463,6 @@ int card_zulaport_enforcer(int player, int card, event_t event)
 				  3, 5,5, 0,0);
 }
 
-/******
-* Red *
-******/
-
 /* Akoum Boulderfoot	|4|R|R (sparkmage apprentice)
  * Creature - Giant Warrior 4/5
  * When ~ enters the battlefield, it deals 1 damage to target creature or player. */
@@ -3135,8 +3476,22 @@ int card_zulaport_enforcer(int player, int card, event_t event)
  * Creature - Goblin Shaman 2/2
  * At the beginning of combat on your turn, you may have target creature get +2/+0 until end of turn. */
 
+/******
+* Red *
+******/
+
 int card_brimstone_mage(int player, int card, event_t event)
 {
+  /* Brimstone Mage	|2|R	0x200bfd8
+   * Creature - Human Shaman 2/2
+   * Level up |3|R
+   * LEVEL 1-2
+   * 2/3
+   * |T: ~ deals 1 damage to any target.
+   * LEVEL 3+
+   * 2/4
+   * |T: ~ deals 3 damage to any target. */
+
   enum
   {
     CHOICE_LEVEL_UP = 1,
@@ -3300,6 +3655,10 @@ int card_brimstone_mage(int player, int card, event_t event)
  * your mana pool." Otherwise, put one of those tokens onto the battlefield. */
 
 int card_conquering_manticore(int player, int card, event_t event){
+  /* Conquering Manticore	|4|R|R
+   * Creature - Manticore 5/5
+   * Flying
+   * When this creature enters, gain control of target creature an opponent controls until end of turn. Untap that creature. It gains haste until end of turn. */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
@@ -3322,12 +3681,11 @@ int card_conquering_manticore(int player, int card, event_t event){
 }
 
 int card_devastating_summons(int player, int card, event_t event){
-/*
-Devastating Summons |R
-Sorcery
-As an additional cost to cast Devastating Summons, sacrifice X lands.
-Put two X/X red Elemental creature tokens onto the battlefield.
-*/
+  /* Devastating Summons |R
+   * Sorcery
+   * As an additional cost to cast Devastating Summons, sacrifice X lands.
+   * Put two X/X red Elemental creature tokens onto the battlefield. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -3378,6 +3736,10 @@ Put two X/X red Elemental creature tokens onto the battlefield.
 }
 
 int card_disaster_radius(int player, int card, event_t event){
+  /* Disaster Radius	|5|R|R
+   * Sorcery
+   * As an additional cost to cast this spell, reveal a creature card from your hand.
+   * ~ deals X damage to each creature your opponents control, where X is the revealed card's mana value. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -3451,6 +3813,9 @@ int card_explosive_revelation(int player, int card, event_t event){
  * Choose one or both - Destroy target artifact; and/or destroy target nonbasic land. */
 
 int card_flame_slash(int player, int card, event_t event){
+  /* Flame Slash	|R
+   * Sorcery
+   * ~ deals 4 damage to target creature. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -3536,6 +3901,9 @@ int card_goblin_arsonist(int player, int card, event_t event){
  * ~ deals X damage to target creature. */
 
 int card_hellion_eruption(int player, int card, event_t event){
+  /* Hellion Eruption	|5|R
+   * Sorcery
+   * Sacrifice all creatures you control, then create that many 4/4 red Hellion creature tokens. */
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		int mod = 0;
@@ -3625,11 +3993,57 @@ int card_lord_of_shatterskull_pass(int player, int card, event_t event)
 				  6, 6,6, 0,0);
 }
 
-/* Lust for War	|2|R
- * Enchantment - Aura
- * Enchant creature
- * Whenever enchanted creature becomes tapped, ~ deals 3 damage to that creature's controller.
- * Enchanted creature attacks each turn if able. */
+/* ManalinkEh 2022: 0x24b6540; original cards/rise_of_the_eldrazi.c:3728. */
+int card_lust_for_war(int player, int card, event_t event)
+{
+  /* Lust for War	|2|R
+   * Enchantment - Aura
+   * Enchant creature
+   * Whenever enchanted creature becomes tapped, ~ deals 3 damage to that creature's controller.
+   * Enchanted creature attacks each turn if able. */
+
+  card_instance_t *instance;
+  int result;
+  int argument1;
+
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (result = is_humiliated(player, card, AL_STATIC), result == 0))
+  {
+
+    instance = get_card_instance(player, card);
+    result = instance->damage_target_card;
+    argument1 = (int)instance->damage_target_player;
+    if ((event == EVENT_TAP_CARD) &&
+        ((result == affected_card && (argument1 == affected_card_controller))))
+    {
+      damage_player(argument1, 3, player, card);
+      argument1 = (int)instance->damage_target_player;
+      result = instance->damage_target_card;
+    }
+    attack_if_able(argument1, result, event);
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        return disabling_aura(player, card, event);
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      return disabling_aura(player, card, event);
+    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+         (((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+           (event != EVENT_CHANGE_TYPE)))) &&
+        (((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)) &&
+          (event != EVENT_STATIC_EFFECTS))))
+    {
+      return 0;
+    }
+  }
+  return disabling_aura(player, card, event);
+}
 
 int card_magmaw(int player, int card, event_t event){
 	/* Magmaw	|3|R|R	0x20085fe
@@ -3692,6 +4106,10 @@ int card_magmaw(int player, int card, event_t event){
  * Defender */
 
 int card_rage_nimbus(int player, int card, event_t event){
+  /* Rage Nimbus	|2|R
+   * Creature - Elemental 5/3
+   * Defender, flying
+   * |1|R: Target creature attacks this turn if able. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -3781,6 +4199,10 @@ int card_rapacious_one(int player, int card, event_t event){
  * to your mana pool." */
 
 int card_splinter_twin(int player, int card, event_t event){
+  /* Splinter Twin	|2|R|R
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature has "|T: Create a token that's a copy of this creature, except it has haste. Exile that token at the beginning of the next end step." */
 
 	if( ! is_humiliated(player, card, AL_STATIC) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -3842,6 +4264,10 @@ int card_staggershock(int player, int card, event_t event){
 }
 
 int card_surreal_memoir(int player, int card, event_t event){
+  /* Surreal Memoir	|3|R
+   * Sorcery
+   * Return an instant card at random from your graveyard to your hand.
+   * Rebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.) */
 
 	if( event == EVENT_CAN_CAST ){
 		test_definition_t this_test;
@@ -3863,6 +4289,9 @@ int card_surreal_memoir(int player, int card, event_t event){
 }
 
 int card_traitorous_instinct(int player, int card, event_t event){
+  /* Traitorous Instinct	|3|R
+   * Sorcery
+   * Gain control of target creature until end of turn. Untap that creature. Until end of turn, it gets +2/+0 and gains haste. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -3904,6 +4333,9 @@ int card_tuktuk_the_explorer(int player, int card, event_t event){
 }
 
 int card_tuktuk_the_returned(int player, int card, event_t event){
+  /* Tuktuk the Returned	""
+   * Token Artifact Creature - Goblin Golem 5/5
+   * ~ is legendary. */
 
 	check_legend_rule(player, card, event);
 
@@ -3912,6 +4344,10 @@ int card_tuktuk_the_returned(int player, int card, event_t event){
 
 int card_valakut_fireboar(int player, int card, event_t event)
 {
+  /* Valakut Fireboar	|4|R
+   * Creature - Elemental Boar 1/7
+   * Whenever this creature attacks, switch its power and toughness until end of turn. */
+
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
   if (event == EVENT_DAT_ABILITY)
     switch_power_and_toughness_until_eot(player, card, player, card);
@@ -3930,7 +4366,12 @@ static int waw_legacy(int player, int card, event_t event){
 	}
 	return 0;
 }
+
 int card_world_at_war(int player, int card, event_t event){
+  /* World at War	|3|R|R
+   * Sorcery
+   * After the second main phase this turn, there's an additional combat phase followed by an additional main phase. At the beginning of that combat, untap all creatures that attacked this turn.
+   * Rebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.) */
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		ai_modifier += (current_turn == player && current_phase < PHASE_DECLARE_ATTACKERS ? 48 : -48);
@@ -3954,8 +4395,10 @@ int card_world_at_war(int player, int card, event_t event){
 /********
 * Green *
 ********/
-
 int card_ancient_stirrings(int player, int card, event_t event){
+  /* Ancient Stirrings	|G
+   * Sorcery
+   * Look at the top five cards of your library. You may reveal a colorless card from among them and put it into your hand. Then put the rest on the bottom of your library in any order. */
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		int total = get_total_available_lands(player);
@@ -4035,6 +4478,12 @@ int card_awakening_zone(int player, int card, event_t event){
 
 int card_bear_umbra(int player, int card, event_t event)
 {
+  /* Bear Umbra	|2|G|G
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +2/+2 and has "Whenever this creature attacks, untap all lands you control."
+   * Umbra armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.) */
+
   card_instance_t *instance;
   int result;
   instance = get_card_instance(player, card);
@@ -4172,6 +4621,9 @@ Create X X/X |Sgreen Ooze creature tokens. */
 }
 
 int card_gigantomancer(int player, int card, event_t event){
+  /* Gigantomancer	|7|G
+   * Creature - Human Shaman 1/1
+   * |1: Target creature you control has base power and toughness 7/7 until end of turn. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -4435,6 +4887,10 @@ int card_kazandu_tuskcaller(int player, int card, event_t event){
 }
 
 int card_khalni_hydra(int player, int card, event_t event){
+  /* Khalni Hydra	|G|G|G|G|G|G|G|G
+   * Creature - Hydra 8/8
+   * This spell costs |G less to cast for each green creature you control.
+   * Trample */
 
 	if( event == EVENT_MODIFY_COST ){
 		target_definition_t td;
@@ -4482,6 +4938,10 @@ int card_might_of_the_masses(int player, int card, event_t event)
 }
 
 int card_momentous_fall(int player, int card, event_t event){
+  /* Momentous Fall	|2|G|G
+   * Instant
+   * As an additional cost to cast this spell, sacrifice a creature.
+   * You draw cards equal to the sacrificed creature's power, then you gain life equal to its toughness. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -4522,6 +4982,11 @@ int card_momentous_fall(int player, int card, event_t event){
 }
 
 int card_mul_daya_channelers(int player, int card, event_t event){
+  /* Mul Daya Channelers	|1|G|G
+   * Creature - Elf Druid Shaman 2/2
+   * Play with the top card of your library revealed.
+   * As long as the top card of your library is a creature card, this creature gets +3/+3.
+   * As long as the top card of your library is a land card, this creature has "|T: Add two mana of any one color." */
 
 	reveal_top_card(player, card, event);
 
@@ -4580,6 +5045,11 @@ int card_nest_invader(int player, int card, event_t event){
  * When ~ enters the battlefield, you may search your library for a basic land card, put it onto the battlefield tapped, then shuffle your library. */
 
 int card_overgrown_battlement(int player, int card, event_t event){
+  /* Overgrown Battlement	|1|G
+   * Creature - Wall 0/4
+   * Defender
+   * |T: Add |G for each creature you control with defender. */
+
 	int count = 0;
 	if (event == EVENT_COUNT_MANA || event == EVENT_ACTIVATE || (event == EVENT_CAN_ACTIVATE && player == AI)){	// Only count if it'll actually be needed
 		count = count_defenders(player);
@@ -4647,6 +5117,11 @@ int card_snake_umbra(int player, int card, event_t event)
 }
 
 int card_spider_umbra(int player, int card, event_t event){
+  /* Spider Umbra	|G
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +1/+1 and has reach. (It can block creatures with flying.)
+   * Umbra armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.) */
 
 	return totem_armor(player, card, event, 1, 1, KEYWORD_REACH, 0);
 }
@@ -4664,20 +5139,59 @@ int card_spider_umbra(int player, int card, event_t event){
  * Spells and abilities your opponents control can't cause you to sacrifice permanents. */
 
 int card_vengevine(int player, int card, event_t event){
+  /* Vengevine	|2|G|G
+   * Creature - Elemental 4/3
+   * Haste
+   * Whenever you cast a spell, if it's the second creature spell you cast this turn, you may return this card from your graveyard to the battlefield. */
+
 	haste(player, card, event);
 	return 0;
 }
 
-/* Wildheart Invoker	|2|G|G
- * Creature - Elf Shaman 4/3
- * |8: Target creature gets +5/+5 and gains trample until end of turn. */
+/* ManalinkEh 2022: 0x24b9a10; original cards/rise_of_the_eldrazi.c:4874. */
+int card_wildheart_invoker(int player, int card, event_t event)
+{
+  /* Wildheart Invoker	|2|G|G
+   * Creature - Elf Shaman 4/3
+   * |8: Target creature gets +5/+5 and gains trample until end of turn. */
+
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&td) != 0))
+    {
+      instance = get_card_instance(player, card);
+      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                             5, 5, 0x80, 0);
+    }
+  }
+  return generic_activated_ability(player, card, event, 4, 8, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_CREATURE");
+}
 
 /*************
 * Multicolor *
 *************/
-
 int card_sarkhan_the_mad(int player, int card, event_t event)
 {
+  /* Sarkhan the Mad	|3|B|R	0x20024fb
+   * Legendary Planeswalker - Sarkhan (7)
+   * 0: Reveal the top card of your library and put it into your hand. ~ deals damage to himself equal to that card's converted mana cost.
+   * -2: Target creature's controller sacrifices it, then that player creates a 5/5 |Sred Dragon creature token with flying.
+   * -4: Each Dragon creature you control deals damage equal to its power to target player or planeswalker. */
+
   enum
   {
     CHOICE_REVEAL = 1,
@@ -4867,22 +5381,20 @@ int card_sarkhan_the_mad(int player, int card, event_t event)
   return planeswalker(player, card, event, 7);
 }
 
-/***********
-* Artifact *
-***********/
-
 /* Angelheart Vial	|5
  * Artifact
  * Whenever you're dealt damage, you may put that many charge counters on ~.
  * |2, |T, Remove four charge counters from ~: You gain 2 life and draw a card. */
 
+/***********
+* Artifact *
+***********/
+
 int card_dreamstone_hedron(int player, int card, event_t event){
-/*
-Dreamstone Hedron |6
-Artifact
-{T}: Add {C}{C}{C} to your mana pool.
-{3}, {T}, Sacrifice Dreamstone Hedron: Draw three cards.
-*/
+  /* Dreamstone Hedron |6
+   * Artifact
+   * {T}: Add {C}{C}{C} to your mana pool.
+   * {3}, {T}, Sacrifice Dreamstone Hedron: Draw three cards. */
 
 	if( event == EVENT_COUNT_MANA && affect_me(player, card) ){
 		if( mana_producer(player, card, EVENT_CAN_ACTIVATE) ){
@@ -5006,6 +5518,11 @@ Artifact
 }
 
 int card_ogres_cleaver(int player, int card, event_t event){
+  /* Ogre's Cleaver	|2
+   * Artifact - Equipment
+   * Equipped creature gets +5/+0.
+   * Equip |5 */
+
 	return vanilla_equipment(player, card, event, 5, 5, 0, 0, 0);
 }
 
@@ -5092,7 +5609,6 @@ Equip |3 (|3: Attach to target creature you control. Equip only as a sorcery.) *
 /*******
 * Land *
 *******/
-
 int card_eldrazi_temple(int player, int card, event_t event){
 /* CARD_ID_ELDRAZI_TEMPLE	10917
 Eldrazi Temple	""
@@ -5116,370 +5632,3 @@ Land
 /* Evolving Wilds	"" => m11.c:Terramorphic Expanse
  * Land
  * |T, Sacrifice ~: Search your library for a basic land card and put it onto the battlefield tapped. Then shuffle your library. */
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x24ae4d0; original cards/rise_of_the_eldrazi.c:842. */
-int card_affa_guard_hound(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  target_definition_t td;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  if (event == EVENT_ETB)
-  {
-    default_target_definition(player, card, &td, 2);
-    td.preferred_controller = player;
-    td.allow_cancel = 0;
-    result = can_target(&td);
-    if (result != 0)
-    {
-      result = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
-      if (result != 0)
-      {
-        instance = get_card_instance(player, card);
-        pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 3);
-      }
-    }
-  }
-  result = flash(player, card, event);
-  return result;
-}
-
-/* ManalinkEh 2022: 0x24b9a10; original cards/rise_of_the_eldrazi.c:4874. */
-int card_wildheart_invoker(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  target_definition_t td;
-  if (event == EVENT_ACTIVATE)
-  {
-    default_target_definition(player, card, &td, 2);
-    td.preferred_controller = player;
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 2);
-    td.preferred_controller = player;
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (valid_target(&td) != 0))
-    {
-      instance = get_card_instance(player, card);
-      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
-                             5, 5, 0x80, 0);
-    }
-  }
-  return generic_activated_ability(player, card, event, 4, 8, 0, 0, 0, 0, 0, 0, &td,
-                                     "TARGET_CREATURE");
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x24b35e0; original cards/rise_of_the_eldrazi.c:2678. */
-int card_drana_kalastria_bloodchief(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int chosen_x;
-  int target_valid;
-  target_definition_t td;
-
-  check_legend_rule(player, card, event);
-  if (event == EVENT_ACTIVATE)
-  {
-    default_target_definition(player, card, &td, 2);
-    instance = get_card_instance(player, card);
-    instance->info_slot = x_value;
-  }
-  else
-  {
-    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
-    {
-      return 0;
-    }
-    default_target_definition(player, card, &td, 2);
-    instance = get_card_instance(player, card);
-    instance->info_slot = x_value;
-
-    if (((event == EVENT_RESOLVE_ACTIVATION) &&
-         (target_valid = valid_target(&td), chosen_x = x_value, target_valid != 0)) &&
-        (0 < x_value))
-    {
-      pump_until_eot_merge_previous_alt(player, card, instance->parent_controller,
-                                        instance->parent_card, x_value, 0, 2);
-      pump_until_eot_merge_previous_alt(player, card, instance->targets[0].player,
-                                        instance->targets[0].card, 0, -chosen_x, 1);
-    }
-  }
-  return generic_activated_ability(player, card, event, 4, -1, 2, 0, 0, 0, 0, 0, &td,
-                                   "TARGET_CREATURE");
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x24b6540; original cards/rise_of_the_eldrazi.c:3728. */
-int card_lust_for_war(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-  int argument1;
-
-  instance = get_card_instance(player, card);
-  if ((-1 < instance->damage_target_player) &&
-      (result = is_humiliated(player, card, AL_STATIC), result == 0))
-  {
-
-    instance = get_card_instance(player, card);
-    result = instance->damage_target_card;
-    argument1 = (int)instance->damage_target_player;
-    if ((event == EVENT_TAP_CARD) &&
-        ((result == affected_card && (argument1 == affected_card_controller))))
-    {
-      damage_player(argument1, 3, player, card);
-      argument1 = (int)instance->damage_target_player;
-      result = instance->damage_target_card;
-    }
-    attack_if_able(argument1, result, event);
-  }
-  if (event != EVENT_CAN_CAST)
-  {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if ((card == affected_card) && (player == affected_card_controller))
-        return disabling_aura(player, card, event);
-    }
-    else if ((event == EVENT_RESOLVE_SPELL) ||
-             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
-      return disabling_aura(player, card, event);
-    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
-         (((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
-           (event != EVENT_CHANGE_TYPE)))) &&
-        (((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)) &&
-          (event != EVENT_STATIC_EFFECTS))))
-    {
-      return 0;
-    }
-  }
-  return disabling_aura(player, card, event);
-}
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 Level Up/Buddy helpers. */
-
-/* ManalinkEh 2022: 0x24ac850; original cards/rise_of_the_eldrazi.c:25. */
-static void level_up_effects(int player, int card, event_t event, int l1power, int l1toughness,
-                             int l2, int l2power, int l2toughness, keyword_t l2key, sp_keyword_t l2sp,
-                             int l3, int l3power, int l3toughness, keyword_t l3key, sp_keyword_t l3sp)
-{
-  unsigned int characteristic_event_offset;
-  card_instance_t *instance;
-  int level_count;
-  keyword_t sleighted_protection;
-  int ai_score;
-  int level_two_score;
-  keyword_t level_three_keywords;
-  keyword_t level_two_keywords;
-  characteristic_event_offset = event - EVENT_POWER;
-  level_two_keywords = l2key;
-  level_three_keywords = l3key;
-  if (characteristic_event_offset < 3)
-  {
-    if (((affected_card == card) && (affected_card_controller == player)) &&
-        (instance = in_play(player, card), instance != NULL))
-    {
-      level_count = count_counters(player, card, COUNTER_LEVEL);
-      if (level_count < l3)
-      {
-        if (l2 <= level_count)
-        {
-          if (characteristic_event_offset < 2)
-          {
-            if (event != EVENT_POWER)
-            {
-              l2power = l2toughness;
-            }
-            set_base_pt(l2power);
-            return;
-          }
-          if ((l2key & KEYWORD_BASIC_LANDWALK) != KEYWORD_0)
-          {
-            level_two_keywords = get_hacked_walk(player, card, l2key);
-            level_two_keywords = level_two_keywords | l2key & ~KEYWORD_BASIC_LANDWALK;
-          }
-          if ((level_two_keywords & KEYWORD_PROT_COLORED) != KEYWORD_0)
-          {
-            sleighted_protection = get_sleighted_protection(player, card, level_two_keywords);
-            level_two_keywords = sleighted_protection | level_two_keywords & ~KEYWORD_PROT_COLORED;
-          }
-          if (l2sp != SP_KEYWORD_0)
-          {
-            special_abilities(player, card, EVENT_ABILITIES, l2sp, player, card);
-          }
-          event_result = event_result | level_two_keywords;
-        }
-      }
-      else
-      {
-        if (characteristic_event_offset < 2)
-        {
-          l2power = l3power;
-          if (event != EVENT_POWER)
-          {
-            l2power = l3toughness;
-          }
-          set_base_pt(l2power);
-          return;
-        }
-        if ((l3key & KEYWORD_BASIC_LANDWALK) != KEYWORD_0)
-        {
-          level_three_keywords = get_hacked_walk(player, card, l3key);
-          level_three_keywords = level_three_keywords | l3key & ~KEYWORD_BASIC_LANDWALK;
-        }
-        if ((level_three_keywords & KEYWORD_PROT_COLORED) != KEYWORD_0)
-        {
-          sleighted_protection = get_sleighted_protection(player, card, level_three_keywords);
-          level_three_keywords =
-              sleighted_protection | level_three_keywords & ~KEYWORD_PROT_COLORED;
-        }
-        if ((l2key & KEYWORD_BASIC_LANDWALK) != KEYWORD_0)
-        {
-          level_two_keywords = get_hacked_walk(player, card, l2key);
-          level_two_keywords = level_two_keywords | l2key & ~KEYWORD_BASIC_LANDWALK;
-        }
-        if ((level_two_keywords & KEYWORD_PROT_COLORED) != KEYWORD_0)
-        {
-          sleighted_protection = get_sleighted_protection(player, card, level_two_keywords);
-          level_two_keywords = sleighted_protection | level_two_keywords & ~KEYWORD_PROT_COLORED;
-        }
-        if ((l2sp | l3sp) != SP_KEYWORD_0)
-        {
-          special_abilities(player, card, EVENT_ABILITIES, l2sp | l3sp, player, card);
-        }
-        event_result = level_three_keywords | event_result | level_two_keywords;
-      }
-    }
-  }
-  else
-  {
-    if ((event == EVENT_SHOULD_AI_PLAY) &&
-        (level_count = count_counters(player, card, COUNTER_LEVEL), level_count != 0))
-    {
-      if (level_count < l2)
-      {
-        ai_score = (level_count + 1) * (level_count + 1);
-      }
-      else
-      {
-        level_two_score = (l2 + 1) * (l2 + 1);
-        ai_score = level_two_score + 0x18;
-        if (l2 < level_count)
-        {
-          if (l3 <= level_count)
-          {
-            ai_score = level_two_score + 0x30;
-            level_count = l3;
-          }
-          level_count = (level_count - l2) + 1;
-          ai_score = ai_score + level_count * level_count;
-        }
-      }
-      if (player == 1)
-      {
-        ai_modifier = ai_modifier + ai_score;
-      }
-      else
-      {
-        ai_modifier = ai_modifier - ai_score;
-      }
-    }
-  }
-  return;
-}
-
-
-/* ManalinkEh 2022: 0x24ace40; original cards/rise_of_the_eldrazi.c:176. */
-int level_up(int player, int card, event_t event, int x, int b, int u, int g, int r, int w,
-                  int l1power, int l1toughness, int l2, int l2power, int l2toughness,
-                  keyword_t l2key, sp_keyword_t l2sp, int l3, int l3power, int l3toughness,
-                  keyword_t l3key, sp_keyword_t l3sp)
-{
-  int result;
-  level_up_effects(player, card, event, l1power, l1toughness, l2, l2power, l2toughness, l2key, l2sp,
-      l3, l3power, l3toughness, l3key, l3sp);
-  if (event == EVENT_CAN_ACTIVATE)
-  {
-    result = can_use_activated_abilities(player, card);
-    if ((result != 0) &&
-        (result = has_mana_for_activated_ability(player, card, x, b, u, g, r, w), result != 0))
-    {
-      result = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
-      return (unsigned int)(result != 0);
-    }
-  }
-  else
-  {
-    if (event == EVENT_ACTIVATE)
-    {
-      charge_mana_for_activated_ability(player, card, x, b, u, g, r, w);
-      return 0;
-    }
-    if (event == EVENT_RESOLVE_ACTIVATION)
-    {
-      add_counters(player, card, player, card, COUNTER_LEVEL, 1);
-    }
-  }
-  return 0;
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* Recovered October 2022 flag and combat-query consumers. */
-int card_aura_finesse(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x24aff70; original cards/rise_of_the_eldrazi.c:1538. */
-int card_aura_finesse(int player, int card, event_t event)
-{
-  card_instance_t *instance;
-  int result;
-  target_definition_t td;
-
-  if (!IS_GS_EVENT(player, card, event))
-  {
-    return 0;
-  }
-  default_target_definition(player, card, &td, 4);
-  td.required_subtype = 0x4000;
-  td.allowed_controller = player;
-  td.preferred_controller = player;
-  instance = get_card_instance(player, card);
-  if (event == EVENT_RESOLVE_SPELL)
-  {
-    result = valid_target(&td);
-    if (result == 0)
-    {
-      return 0;
-    }
-    set_special_flags(instance->targets[0].player, instance->targets[0].card,
-                           SF_MOVE_AURA_LEGAL_TARGET);
-    result = call_card_function(instance->targets[0].player, instance->targets[0].card,
-                                EVENT_CAN_MOVE_AURA);
-    if (result != 0)
-    {
-      call_card_function(instance->targets[0].player, instance->targets[0].card,
-                         EVENT_MOVE_AURA);
-      call_card_function(instance->targets[0].player, instance->targets[0].card,
-                         EVENT_RESOLVE_MOVING_AURA);
-    }
-    remove_special_flags(instance->targets[0].player, instance->targets[0].card,
-                              SF_MOVE_AURA_LEGAL_TARGET);
-    draw_a_card(player);
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return generic_spell(player, card, event, 0x81, &td, "Select target Aura you control", 1, NULL);
-}
-
-#endif

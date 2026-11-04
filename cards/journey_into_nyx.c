@@ -252,6 +252,11 @@ int card_dawnbringer_charioteers(int player, int card, event_t event){
 
 int card_deicide(int player, int card, event_t event)
 {
+  /* Deicide	|1|W
+   * Instant
+   * Exile target enchantment. If the exiled card is a God card, search its controller's graveyard, hand, and library for any number of cards with the same
+   * name as that card and exile them, then that player shuffles his or her library. */
+
   if (!IS_GS_EVENT(player, card, event))
     return 0;
   target_definition_t td;
@@ -610,6 +615,12 @@ int card_nyx_fleece_ram(int player, int card, event_t event)
 
 int card_oppressive_rays(int player, int card, event_t event)
 {
+  /* Oppressive Rays	|W
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature can't attack or block unless its controller pays |3.
+   * Activated abilities of enchanted creature cost |3 more to activate. */
+
   int32_t attached_card;
   int card_00;
   int aura_result;
@@ -1509,6 +1520,11 @@ int card_rise_of_eagles(int player, int card, event_t event){
 
 int card_sage_of_hours(int player, int card, event_t event)
 {
+  /* Sage of Hours	|1|U
+   * Creature - Human Wizard 1/1
+   * Heroic - Whenever you cast a spell that targets ~, put a +1/+1 counter on ~.
+   * Remove all +1/+1 counters from ~: For each five counters removed this way, take an extra turn after this one. */
+
   int result;
   card_instance_t *instance;
   result = heroic(player, card, event);
@@ -1773,6 +1789,11 @@ static void bloodcrazed_hoplite_effect(int player, int card, int n)
 }
 int card_bloodcrazed_hoplite(int player, int card, event_t event)
 {
+  /* Bloodcrazed Hoplite	|1|B	0x200dba8
+   * Creature - Human Soldier 2/1
+   * Heroic - Whenever you cast a spell that targets ~, put a +1/+1 counter on it.
+   * Whenever a +1/+1 counter is placed on ~, remove a +1/+1 counter from target creature an opponent controls. */
+
   int player_or_trigger_result;
   xtrigger_t current_trigger;
   int counter_count_or_result;
@@ -3156,6 +3177,11 @@ int card_goldenhide_ox(int player, int card, event_t event)
 
 int card_heroes_bane(int player, int card, event_t event)
 {
+  /* Heroes' Bane	|3|G|G
+   * Creature - Hydra 0/0
+   * ~ enters the battlefield with four +1/+1 counters.
+   * |2|G|G: Put X +1/+1 counters on ~, where X is its power. */
+
   int pc;
   int result;
   card_instance_t *instance;
@@ -3265,6 +3291,11 @@ int card_market_festival(int player, int card, event_t event)
 
 int card_natures_panoply(int player, int card, event_t event)
 {
+  /* Nature's Panoply	|G
+   * Instant
+   * Strive - ~ costs |2|G more to cast for each target beyond the first.
+   * Choose any number of target creatures. Put a +1/+1 counter on each of them. */
+
   target_t *target_player_entry;
   target_t *target_card_entry;
   card_instance_t *instance;
@@ -3517,6 +3548,11 @@ int card_setessan_tactics(int player, int card, event_t event){
 
 int card_solidarity_of_heroes(int player, int card, event_t event)
 {
+  /* Solidarity of Heroes	|1|G
+   * Instant
+   * Strive - ~ costs |1|G more to cast for each target beyond the first.
+   * Choose any number of target creatures. Double the number of +1/+1 counters on each of them. */
+
   target_t *target_player_entry;
   target_t *target_card_entry;
   card_instance_t *instance;
@@ -4044,6 +4080,13 @@ int card_keranos_god_of_storms(int player, int card, event_t event)
 
 int card_kruphix_god_of_horizons(int player, int card, event_t event)
 {
+  /* Kruphix, God of Horizons	|3|G|U
+   * Legendary Enchantment Creature - God 4/7
+   * Indestructible
+   * As long as your devotion to green and blue is less than seven, ~ isn't a creature.
+   * You have no maximum hand size.
+   * If unused mana would empty from your mana pool, that mana becomes colorless instead. */
+
   int result;
   check_legend_rule(player, card, event);
   indestructible(player, card, event);
@@ -4253,7 +4296,6 @@ int card_chariot_of_victory(int player, int card, event_t event){
 	return vanilla_equipment(player, card, event, 1, 0, 0, KEYWORD_FIRST_STRIKE | KEYWORD_TRAMPLE, SP_KEYWORD_HASTE);
 }
 
-
 int card_deserters_quarters(int player, int card, event_t event){
 	/* Deserter's Quarters	|2
 	 * Artifact
@@ -4352,10 +4394,20 @@ int card_mana_confluence(int player, int card, event_t event){
 
 // Hero's Artifacts
 int card_lash_of_the_tyrant(int player, int card, event_t event){
+  /* Lash of the Tyrant	""
+   * Hero Artifact - Equipment
+   * Equipped creature gets +1/+2 and has deathtouch.
+   * Equip |2 */
+
 	return vanilla_equipment(player, card, event, 2, 1, 2, 0, SP_KEYWORD_DEATHTOUCH);
 }
 
 int card_cloak_of_the_philospher(int player, int card, event_t event){
+  /* Cloak of the Philosopher	""
+   * Hero Artifact - Equipment
+   * Equipped creature gets +1/+1.
+   * |2: Untap equipped creature.
+   * Equip |2 */
 
 	if( is_equipping(player, card) ){
 		return vanilla_equipment(player, card, event, 2, 1, 1, 0, 0);
@@ -4432,14 +4484,28 @@ int card_cloak_of_the_philospher(int player, int card, event_t event){
 }
 
 int card_spear_of_the_general(int player, int card, event_t event){
+  /* Spear of the General	""
+   * Hero Artifact - Equipment
+   * Equipped creature gets +2/+0 and has first strike.
+   * Equip |2 */
+
 	return vanilla_equipment(player, card, event, 2, 2, 0, KEYWORD_FIRST_STRIKE, 0);
 }
 
 int card_axe_of_the_warmonger(int player, int card, event_t event){
+  /* Axe of the Warmonger	""
+   * Hero Artifact - Equipment
+   * Equipped creature gets +2/+1 and has haste.
+   * Equip |2 */
+
 	return vanilla_equipment(player, card, event, 2, 2, 1, 0, SP_KEYWORD_HASTE);
 }
 
 int card_bow_of_the_hunter(int player, int card, event_t event){
+  /* Bow of the Hunter	""
+   * Hero Artifact - Equipment
+   * Equipped creature has "|T: This creature deals 2 damage to any target."
+   * Equip |2 */
 
 	if( is_equipping(player, card) ){
 		return vanilla_equipment(player, card, event, 2, 1, 1, 0, 0);
@@ -4631,6 +4697,10 @@ static void pump_xenagos(int player, int card, int pow, int tou, int key, int s_
 }
 
 int card_xenagos_ascended(int player, int card, event_t event){
+  /* Xenagos Ascended	""
+   * Legendary Enchantment Creature - God 6/5
+   * ~ can't leave the battlefield as long as a Reveler is on the battlefield.
+   * When ~ leaves the battlefield, each player wins the game. */
 
 	check_legend_rule(player, card, event);
 
@@ -4644,6 +4714,9 @@ int card_xenagos_ascended(int player, int card, event_t event){
 }
 
 int card_rollicking_throng(int player, int card, event_t event){
+  /* Rollicking Throng	""
+   * Creature - Human Reveler 1/3
+   * When ~ enters the battlefield, reveal the top card of Xenagos's library and Xenagos casts that card. (This ability doesn't trigger as the game begins.) */
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
@@ -4668,6 +4741,10 @@ int impulsive_charge_legacy(int player, int card, event_t event){
 }
 
 int card_impulsive_charge(int player, int card, event_t event){
+  /* Impulsive Charge	""
+   * Sorcery
+   * At the beginning of combat this turn, all Revelers gain haste until end of turn and attack this combat if able. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		create_legacy_effect(player, card, &impulsive_charge_legacy);
 		kill_card(player, card, KILL_DESTROY);
@@ -4676,6 +4753,10 @@ int card_impulsive_charge(int player, int card, event_t event){
 }
 
 int card_xenagos_strike(int player, int card, event_t event){
+  /* Xenagos's Strike	""
+   * Sorcery
+   * ~ deals 4 damage to each player. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		damage_player(1-player, 4, player, card);
 		kill_card(player, card, KILL_DESTROY);
@@ -4685,6 +4766,11 @@ int card_xenagos_strike(int player, int card, event_t event){
 
 int card_ecstatic_piper(int player, int card, event_t event)
 {
+  /* Ecstatic Piper	""
+   * Creature - Satyr Reveler 2/2
+   * When ~ enters the battlefield, Xenagos Ascended attacks this turn if able.
+   * Hero's Reward - When ~ leaves the battlefield, each player gains 2 life. */
+
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
@@ -4703,6 +4789,11 @@ int card_ecstatic_piper(int player, int card, event_t event)
 
 int card_wild_maenads(int player, int card, event_t event)
 {
+  /* Wild Maenads	""
+   * Creature - Human Reveler 3/1
+   * First strike
+   * Hero's Reward - When ~ leaves the battlefield, each player gains 3 life. */
+
   leaves_play(player, card, event, 1, 1);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
     gain_life(1-player, 3);
@@ -4711,6 +4802,10 @@ int card_wild_maenads(int player, int card, event_t event)
 
 int card_pheres_band_revelers(int player, int card, event_t event)
 {
+  /* Pheres-Band Revelers	""
+   * Creature - Centaur Reveler 4/4
+   * Hero's Reward - When ~ leaves the battlefield, each player draws a card. */
+
   leaves_play(player, card, event, 1, 1);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
     draw_cards(1-player, 1);
@@ -4732,6 +4827,10 @@ int impulsive_return_legacy(int player, int card, event_t event){
 #define CARD_ID_ECSTATIC_PIPER CARD_ID_SCRYB_SPRITES
 
 int card_impulsive_return(int player, int card, event_t event){
+  /* Impulsive Return	""
+   * Sorcery
+   * Return two cards named Ecstatic Piper from Xenagos's graveyard to the battlefield. At the beginning of combat this turn, ~ deals damage to each player equal to the number of Revelers on the battlefield. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		const int *grave = get_grave(player);
 		int count = count_graveyard(player)-1;
@@ -4750,6 +4849,10 @@ int card_impulsive_return(int player, int card, event_t event){
 }
 
 int card_xenagos_scorn(int player, int card, event_t event){
+  /* Xenagos's Scorn	""
+   * Sorcery
+   * Xenagos Ascended gains trample until end of turn and attacks this turn if able. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		pump_xenagos(player, card, 0, 0, KEYWORD_TRAMPLE, SP_KEYWORD_MUST_ATTACK);
 		kill_card(player, card, KILL_DESTROY);
@@ -4758,6 +4861,10 @@ int card_xenagos_scorn(int player, int card, event_t event){
 }
 
 int card_impulsive_destruction(int player, int card, event_t event){
+  /* Impulsive Destruction	""
+   * Sorcery
+   * Each player may sacrifice an artifact or enchantment. ~ deals 3 damage to each player who didn't sacrifice a permanent this way. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( ! sacrifice(player, card, 1-player, 0, TYPE_ARTIFACT | TYPE_ENCHANTMENT, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
 			damage_player(1-player, 3, player, card);
@@ -4769,6 +4876,11 @@ int card_impulsive_destruction(int player, int card, event_t event){
 
 int card_maddened_oread(int player, int card, event_t event)
 {
+  /* Maddened Oread	""
+   * Enchantment Creature - Nymph Reveler 4/2
+   * As long as five or more Revelers are on the battlefield, ~ attacks each turn if able.
+   * Hero's Reward - When ~ leaves the battlefield, each player gains 3 life. */
+
   int result;
   if (event == EVENT_BEGIN_COMBAT)
   {
@@ -4805,6 +4917,10 @@ int rip_to_pieces_legacy(int player, int card, event_t event){
 }
 
 int card_rip_to_pieces(int player, int card, event_t event){
+  /* Rip to Pieces	""
+   * Sorcery
+   * At the beginning of combat this turn, each Reveler deals 1 damage to each player and each creature those players control. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		create_legacy_effect(player, card, &rip_to_pieces_legacy);
 		kill_card(player, card, KILL_DESTROY);
@@ -4813,6 +4929,9 @@ int card_rip_to_pieces(int player, int card, event_t event){
 }
 
 int card_dance_of_panic(int player, int card, event_t event){
+  /* Dance of Panic	""
+   * Enchantment
+   * As long as five or more Revelers are on the battlefield, all Revelers have haste and attack each turn if able. */
 
 	if (event == EVENT_MUST_ATTACK && current_turn == player && count_subtype(ANYBODY, TYPE_PERMANENT, SUBTYPE_REVELER) > 4 ){
 		int i;
@@ -4831,6 +4950,9 @@ int card_dance_of_panic(int player, int card, event_t event){
 }
 
 int card_dance_of_flame(int player, int card, event_t event){
+  /* Dance of Flame	""
+   * Enchantment
+   * Whenever a Reveler attacks, ~ deals 1 damage to each player. */
 
 	if (event == EVENT_DECLARE_ATTACKERS){
 		test_definition_t test;

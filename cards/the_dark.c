@@ -1,6 +1,7 @@
 #include "manalink.h"
 
 // Functions
+
 void half_damage_to_target_half_to_player(int damaging_player, int damaging_card, int amount, int target_location){
 	int dmg_to_target = amount/2;
 	int dmg_to_player = amount/2;
@@ -55,14 +56,13 @@ static int is_enchanting_a_basic_mountain(int player, int card){
 	return 0;
 }
 
-
 // Cards
+
 int card_amnesia(int player, int card, event_t event){
-	/*
-	  Amnesia |3|U|U|U
-	  Sorcery
-	  Target player reveals his or her hand and discards all nonland cards.
-	*/
+  /* Amnesia |3|U|U|U
+   * 	  Sorcery
+   * 	  Target player reveals his or her hand and discards all nonland cards. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -95,6 +95,11 @@ int card_amnesia(int player, int card, event_t event){
 
 int card_angry_mob(int player, int card, event_t event)
 {
+  /* Angry Mob	|2|W|W
+   * Creature - Human 2+* /2+*
+   * Trample
+   * During your turn, ~'s power and toughness are each equal to 2 plus the number of Swamps your opponents control. During turns other than yours, ~'s power and toughness are each 2. */
+
   int result;
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
@@ -132,10 +137,10 @@ Creature - Human Wizard 0/1
 }
 
 int card_ashes_ot_ashes(int player, int card, event_t event){
-	/*
-	  Ashes to Ashes |1|B|B
-	  Sorcery
-	  Exile two target nonartifact creatures. Ashes to Ashes deals 5 damage to you.*/
+  /* Ashes to Ashes |1|B|B
+   * 	  Sorcery
+   * 	  Exile two target nonartifact creatures. Ashes to Ashes deals 5 damage to you. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -164,13 +169,12 @@ int card_ashes_ot_ashes(int player, int card, event_t event){
 }
 
 int card_ball_lightning(int player, int card, event_t event){
-	/*
-	  Ball Lightning |R|R|R
-	  Creature - Elemental 6/1
-	  Trample
-	  Haste (This creature can attack and {T} as soon as it comes under your control.)
-	  At the beginning of the end step, sacrifice Ball Lightning.
-	*/
+  /* Ball Lightning |R|R|R
+   * 	  Creature - Elemental 6/1
+   * 	  Trample
+   * 	  Haste (This creature can attack and {T} as soon as it comes under your control.)
+   * 	  At the beginning of the end step, sacrifice Ball Lightning. */
+
 	// Used externally
 	haste(player, card, event);
 	if( ! is_humiliated(player, card, AL_TRIG) ){
@@ -392,7 +396,6 @@ int blood_of_the_martyr_legacy(int player, int card, event_t event){
 	return 0;
 }
 
-
 int card_blood_of_the_martyr(int player, int card, event_t event){
 /* CARD_ID_BLOOD_OF_THE_MARTYR	301
 Blood of the Martyr	|W|W|W
@@ -412,7 +415,6 @@ Until end of turn, if damage would be dealt to any creature, you may have that d
   Creature - Imp 1/1
   Flying (This creature can't be blocked except by creatures with flying or reach.)
 */
-
 int card_bog_rats(int player, int card, event_t event)
 {
 /* CARD_ID_BOG_RATS	350
@@ -431,11 +433,9 @@ Creature - Rat 1/1
 }
 
 int card_bone_flute(int player, int card, event_t event){
-	/*
-	  Bone Flute |3
-	  Artifact
-	  {2}, {T}: All creatures get -1/-0 until end of turn.
-	*/
+  /* Bone Flute |3
+   * 	  Artifact
+   * 	  {2}, {T}: All creatures get -1/-0 until end of turn. */
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -447,11 +447,9 @@ int card_bone_flute(int player, int card, event_t event){
 }
 
 int card_book_of_rass(int player, int card, event_t event){
-	/*
-	  Book of Rass |6
-	  Artifact
-	  {2}, Pay 2 life: Draw a card.
-	*/
+  /* Book of Rass |6
+   * 	  Artifact
+   * 	  {2}, Pay 2 life: Draw a card. */
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		draw_cards(player, 1);
@@ -462,12 +460,11 @@ int card_book_of_rass(int player, int card, event_t event){
 }
 
 int card_brainwash(int player, int card, event_t event){
-	/*
-	  Brainwash |W
-	  Enchantment - Aura
-	  Enchant creature
-	  Enchanted creature can't attack unless its controller pays {3}.
-	*/
+  /* Brainwash |W
+   * 	  Enchantment - Aura
+   * 	  Enchant creature
+   * 	  Enchanted creature can't attack unless its controller pays {3}. */
+
 	if ((event == EVENT_PHASE_CHANGED && current_phase == PHASE_BEFORE_BLOCKING) || event == EVENT_SHOULD_AI_PLAY){ get_card_instance(player, card)->info_slot = 0; }
 
 if (((trigger_condition == TRIGGER_PAY_TO_ATTACK && current_phase == PHASE_DECLARE_ATTACKERS && reason_for_trigger_controller == current_turn)
@@ -541,14 +538,12 @@ Carnivorous Plant |3|G --> vanilla
 Creature - Plant Wall 4/5
 Defender
 */
-
 int card_cave_people(int player, int card, event_t event){
-	/*
-	  Cave People |1|R|R
-	  Creature - Human 1/4
-	  Whenever Cave People attacks, it gets +1/-2 until end of turn.
-	  {1}{R}{R}, {T}: Target creature gains mountainwalk until end of turn.
-	*/
+  /* Cave People |1|R|R
+   * 	  Creature - Human 1/4
+   * 	  Whenever Cave People attacks, it gets +1/-2 until end of turn.
+   * 	  {1}{R}{R}, {T}: Target creature gains mountainwalk until end of turn. */
+
 	dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
 	if (event == EVENT_DAT_ABILITY){
 		alternate_legacy_text(1, player, pump_until_eot(player, card, player, card, 1, -2));
@@ -698,11 +693,10 @@ For each land, destroy that land unless any player pays 1 life. */
 }
 
 int card_coal_golem(int player, int card, event_t event){
-	/*
-	  Coal Golem |5
-	  Artifact Creature - Golem 3/3
-	  {3}, Sacrifice Coal Golem: Add {R}{R}{R} to your mana pool.
-	*/
+  /* Coal Golem |5
+   * 	  Artifact Creature - Golem 3/3
+   * 	  {3}, Sacrifice Coal Golem: Add {R}{R}{R} to your mana pool. */
+
 	if( event == EVENT_CAN_ACTIVATE ){
 		if( generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, MANACOST_X(3), 0, NULL, NULL) ){
 			return can_produce_mana(player, card);
@@ -721,12 +715,10 @@ int card_coal_golem(int player, int card, event_t event){
 }
 
 int card_curse_artifact(int player, int card, event_t event){
-	/*
-	  Curse Artifact English |2|B|B
-	  Enchantment - Aura
-	  Enchant artifact
-	  At the beginning of the upkeep of enchanted artifact's controller, Curse Artifact deals 2 damage to that player unless he or she sacrifices that artifact.
-	*/
+  /* Curse Artifact English |2|B|B
+   * 	  Enchantment - Aura
+   * 	  Enchant artifact
+   * 	  At the beginning of the upkeep of enchanted artifact's controller, Curse Artifact deals 2 damage to that player unless he or she sacrifices that artifact. */
 
 	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player != -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -797,14 +789,13 @@ static int dance_of_many_legacy(int player, int card, event_t event)
 }
 
 int card_dance_of_many(int player, int card, event_t event){
-/*
-Dance of Many |U|U
-Enchantment
-When Dance of Many enters the battlefield, put a token that's a copy of target nontoken creature onto the battlefield.
-When Dance of Many leaves the battlefield, exile the token.
-When the token leaves the battlefield, sacrifice Dance of Many.
-At the beginning of your upkeep, sacrifice Dance of Many unless you pay {U}{U}.
-*/
+  /* Dance of Many |U|U
+   * Enchantment
+   * When Dance of Many enters the battlefield, put a token that's a copy of target nontoken creature onto the battlefield.
+   * When Dance of Many leaves the battlefield, exile the token.
+   * When the token leaves the battlefield, sacrifice Dance of Many.
+   * At the beginning of your upkeep, sacrifice Dance of Many unless you pay {U}{U}. */
+
 	basic_upkeep(player, card, event, MANACOST_U(2));
 
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -883,12 +874,57 @@ Artifact
 									MANACOST0, 0, &td, "TARGET_DAMAGE");
 }
 
+/* ManalinkEh 2022: 0x2429bd0; original cards/the_dark.c:861. */
+int deep_water_legacy(int player, int card, event_t event)
+{
+  int c;
+  card_instance_t *instance;
+  int land_match;
+  int player_00;
+
+  if (event == EVENT_MODIFY_MANA_PROD)
+  {
+
+    player_00 = 0;
+    do
+    {
+
+      for (int color_index = 0; color_index < 7; ++color_index)
+      {
+        mana_color_override[player_00][color_index] = 2;
+        mana_quantity_override[player_00][color_index] = 1;
+      }
+      if (0 < active_cards_count[player_00])
+      {
+        c = 0;
+        do
+        {
+          instance = in_play(player_00, c);
+          if (((instance != NULL) &&
+               (land_match = is_what(player_00, c, 1), player == player_00)) &&
+              (land_match != 0))
+          {
+            set_special_flags2(player_00, c, 0x40);
+          }
+          c = c + 1;
+        } while (c < active_cards_count[player_00]);
+      }
+      player_00 = player_00 + 1;
+    } while (player_00 != 2);
+  }
+  if (eot_trigger(player, card, event) != 0)
+  {
+    kill_card(player, card, KILL_EXILE);
+    cant_be_responded_to = 1;
+    return 0;
+  }
+  return 0;
+}
+
 int card_deep_water(int player, int card, event_t event){
-	/*
-	  Deep Water English |U|U
-	  Enchantment
-	  {U}: Until end of turn, if you tap a land you control for mana, it produces {U} instead of any other type.
-	*/
+  /* Deep Water English |U|U
+   * 	  Enchantment
+   * 	  {U}: Until end of turn, if you tap a land you control for mana, it produces {U} instead of any other type. */
 
 	if (event == EVENT_CAST_SPELL){
 		if (affected_card_controller == player && is_what(player, affected_card, TYPE_LAND)){
@@ -904,11 +940,10 @@ int card_deep_water(int player, int card, event_t event){
 }
 
 int card_diabolic_machine(int player, int card, event_t event){
-	/*
-	  Diabolic Machine |7
-	  Artifact Creature - Construct 4/4
-	  {3}: Regenerate Diabolic Machine.
-	*/
+  /* Diabolic Machine |7
+   * 	  Artifact Creature - Construct 4/4
+   * 	  {3}: Regenerate Diabolic Machine. */
+
 	return regeneration(player, card, event, MANACOST_X(3));
 }
 
@@ -917,13 +952,11 @@ Drowned |1|U --> Drudge Skeletons
 Creature - Zombie 1/1
 {B}: Regenerate Drowned.
 */
-
 int card_dust_to_dust(int player, int card, event_t event){
-	/*
-	  Dust to Dust |1|W|W
-	  Sorcery
-	  Exile two target artifacts.
-	*/
+  /* Dust to Dust |1|W|W
+   * 	  Sorcery
+   * 	  Exile two target artifacts. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -999,11 +1032,9 @@ When ~ enters the battlefield, it deals 1 damage to you.
 }
 
 int card_elves_of_the_deep_shadow(int player, int card, event_t event){
-	/*
-	  Elves of Deep Shadow |G
-	  Creature - Elf Druid 1/1
-	  {T}: Add {B} to your mana pool. Elves of Deep Shadow deals 1 damage to you.
-	*/
+  /* Elves of Deep Shadow |G
+   * 	  Creature - Elf Druid 1/1
+   * 	  {T}: Add {B} to your mana pool. Elves of Deep Shadow deals 1 damage to you. */
 
 	if( event == EVENT_ACTIVATE ){
 		damage_player(player, 1, player, card);
@@ -1014,12 +1045,10 @@ int card_elves_of_the_deep_shadow(int player, int card, event_t event){
 }
 
 int card_erosion(int player, int card, event_t event){
-	/*
-	  Erosion English |U|U|U
-	  Enchantment - Aura
-	  Enchant land
-	  At the beginning of the upkeep of enchanted land's controller, destroy that land unless that player pays {1} or 1 life.
-	*/
+  /* Erosion English |U|U|U
+   * 	  Enchantment - Aura
+   * 	  Enchant land
+   * 	  At the beginning of the upkeep of enchanted land's controller, destroy that land unless that player pays {1} or 1 life. */
 
 	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player != -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -1083,11 +1112,10 @@ int card_eternal_flame(int player, int card, event_t event){
 }
 
 int card_exorcist(int player, int card, event_t event){
-	/*
-	  Exorcist |W|W
-	  Creature - Human Cleric 1/1
-	  {1}{W}, {T}: Destroy target black creature.
-	*/
+  /* Exorcist |W|W
+   * 	  Creature - Human Cleric 1/1
+   * 	  {1}{W}, {T}: Destroy target black creature. */
+
 	if (!IS_GAA_EVENT(event))
 		return 0;
 
@@ -1198,11 +1226,10 @@ Creatures can't attack this turn. */
 }
 
 int card_fire_and_brimstone(int player, int card, event_t event){
-	/*
-	  Fire and Brimstone English |3|W|W
-	  Instant
-	  Fire and Brimstone deals 4 damage to target player who declared an attacking creature this turn and 4 damage to you.
-	*/
+  /* Fire and Brimstone English |3|W|W
+   * 	  Instant
+   * 	  Fire and Brimstone deals 4 damage to target player who declared an attacking creature this turn and 4 damage to you. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1243,12 +1270,10 @@ int card_fire_and_brimstone(int player, int card, event_t event){
 }
 
 int card_fire_drake(int player, int card, event_t event){
-	/*
-	  Fire Drake English |1|R|R
-	  Creature - Drake 1/2
-	  Flying
-	  {R}: Fire Drake gets +1/+0 until end of turn. Activate this ability only once each turn.
-	*/
+  /* Fire Drake English |1|R|R
+   * 	  Creature - Drake 1/2
+   * 	  Flying
+   * 	  {R}: Fire Drake gets +1/+0 until end of turn. Activate this ability only once each turn. */
 
 	if(event == EVENT_POW_BOOST ){
 		if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_ONCE_PER_TURN, MANACOST_R(1), 0, NULL, NULL) ){
@@ -1264,11 +1289,10 @@ int card_fire_drake(int player, int card, event_t event){
 }
 
 int card_fissure(int player, int card, event_t event){
-	/*
-	  Fissure |3|R|R
-	  Instant
-	  Destroy target creature or land. It can't be regenerated.
-	*/
+  /* Fissure |3|R|R
+   * 	  Instant
+   * 	  Destroy target creature or land. It can't be regenerated. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1288,11 +1312,9 @@ int card_fissure(int player, int card, event_t event){
 }
 
 int card_flood2(int player, int card, event_t event){
-	/*
-	  Flood English |U
-	  Enchantment
-	  {U}{U}: Tap target creature without flying
-	*/
+  /* Flood English |U
+   * 	  Enchantment
+   * 	  {U}{U}: Tap target creature without flying */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return global_enchantment(player, card, event);
@@ -1327,6 +1349,11 @@ Artifact
 
 int card_frankensteins_monster(int player, int card, event_t event)
 {
+  /* Frankenstein's Monster	|X|B|B
+   * Creature - Zombie 0/1
+   * As ~ enters the battlefield, exile X creature cards from your graveyard. If you can't, put ~ into its owner's graveyard instead of onto the
+   * battlefield. For each creature card exiled this way, ~ enters the battlefield with a +2/+0, +1/+1, or +0/+2 counter on it. */
+
   int i;
   card_instance_t *instance;
   int exiled_count_or_choice;
@@ -1510,18 +1537,23 @@ Sacrifice ~: Add |G|G to your mana pool. */
 }
 
 int card_ghost_ship(int player, int card, event_t event){
-	/*
-	  Ghost Ship |2|U|U
-	  Creature - Spirit 2/4
-	  Flying
-	  {U}{U}{U}: Regenerate Ghost Ship.
-	*/
+  /* Ghost Ship |2|U|U
+   * 	  Creature - Spirit 2/4
+   * 	  Flying
+   * 	  {U}{U}{U}: Regenerate Ghost Ship. */
+
 	return regeneration(player, card, event, MANACOST_U(3));
 }
 
-
 int card_giant_shark(int player, int card, event_t event)
 {
+  /* CARD_ID_GIANT_SHARK	327
+   * Giant Shark	|5|U
+   * Creature - Fish 4/4
+   * ~ can't attack unless defending player controls |Han Island.
+   * Whenever ~ blocks or becomes blocked by a creature that has been dealt damage this turn, ~ gets +2/+0 and gains trample until end of turn.
+   * When you control no |H1Islands, sacrifice ~. */
+
   unsigned char blocked_card;
   int result;
   card_instance_t *instance;
@@ -1615,11 +1647,9 @@ As long as enchanted land is a basic |H2Mountain, Goblin creatures get +0/+2. */
 
 int card_goblin_digging_team(int player, int card, event_t event)
 {
-	/*
-	  Goblin Digging Team |R
-	  Creature - Goblin 1/1
-	  {T}, Sacrifice Goblin Digging Team: Destroy target Wall.
-	*/
+  /* Goblin Digging Team |R
+   * 	  Creature - Goblin 1/1
+   * 	  {T}, Sacrifice Goblin Digging Team: Destroy target Wall. */
 
 	if (!IS_GAA_EVENT(event) ){
 		return 0;
@@ -1642,7 +1672,6 @@ int card_goblin_digging_team(int player, int card, event_t event)
 Goblin Hero English |2|R --> vanilla
 Creature - Goblin 2/2, 2R (3)
 */
-
 int card_goblin_rock_sled(int player, int card, event_t event){
 /* CARD_ID_GOBLIN_ROCK_SLED	937
 Goblin Rock Sled	|1|R
@@ -1699,7 +1728,6 @@ When ~ leaves the battlefield, it deals 1 damage to each Goblin creature. */
 
 	return targeted_aura(player, card, event, &td, "TARGET_LAND");
 }
-
 
 int card_goblin_wizard(int player, int card, event_t event){
 /*
@@ -1776,12 +1804,37 @@ Creature — Goblin Wizard 1/1
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x242fb80; original cards/the_dark.c:1736. */
+int card_goblins_of_the_flarg(int player, int card, event_t event)
+{
+  /* Goblins of the Flarg	|R
+   * Creature - Goblin Warrior 1/1
+   * Mountainwalk (This creature can't be blocked as long as defending player controls a Mountain.)
+   * When you control a Dwarf, sacrifice this creature. */
+
+  int result;
+
+  if (((event == EVENT_STATIC_EFFECTS) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_humiliated(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      result = check_battlefield_for_subtype(player, -1, 0x36);
+      if (result != 0)
+      {
+        kill_card(player, card, KILL_SACRIFICE);
+      }
+    }
+  }
+  return 0;
+}
+
 /*
 Goblins of the Flarg English |R --> vanilla
 Creature - Goblin Warrior 1/1
 Mountainwalk
 */
-
 int card_grave_robbers(int player, int card, event_t event){
 /* CARD_ID_GRAVE_ROBBERS	333
 Grave Robbers	|1|B|B
@@ -1810,11 +1863,9 @@ Creature - Human Rogue 1/1
 }
 
 int card_hidden_path(int player, int card, event_t event){
-	/*
-	  Hidden Path |2|G|G|G|G
-	  Enchantment
-	  Green creatures have forestwalk.
-	*/
+  /* Hidden Path |2|G|G|G|G
+   * 	  Enchantment
+   * 	  Green creatures have forestwalk. */
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) && player == AI  ){
 		test_definition_t this_test;
@@ -1842,11 +1893,10 @@ int card_hidden_path(int player, int card, event_t event){
 }
 
 int card_holy_light(int player, int card, event_t event){
-	/*
-	  Holy Light |2|W
-	  Instant
-	  Nonwhite creatures get -1/-1 until end of turn.
-	*/
+  /* Holy Light |2|W
+   * 	  Instant
+   * 	  Nonwhite creatures get -1/-1 until end of turn. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
@@ -1860,11 +1910,10 @@ int card_holy_light(int player, int card, event_t event){
 }
 
 int card_inferno2(int player, int card, event_t event){
-	/*
-	  Inferno |5|R|R
-	  Instant
-	  Inferno deals 6 damage to each creature and each player.
-	*/
+  /* Inferno |5|R|R
+   * 	  Instant
+   * 	  Inferno deals 6 damage to each creature and each player. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		new_damage_all(player, card, ANYBODY, 6, NDA_ALL_CREATURES | NDA_PLAYER_TOO, NULL);
 		kill_card(player, card, KILL_DESTROY);
@@ -1874,11 +1923,10 @@ int card_inferno2(int player, int card, event_t event){
 }
 
 int card_inquisition2(int player, int card, event_t event){
-	/*
-	  Inquisition |2|B
-	  Sorcery
-	  Target player reveals his or her hand. Inquisition deals damage to that player equal to the number of white cards in his or her hand.
-	*/
+  /* Inquisition |2|B
+   * 	  Sorcery
+   * 	  Target player reveals his or her hand. Inquisition deals damage to that player equal to the number of white cards in his or her hand. */
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -1914,9 +1962,15 @@ Land Leeches English |1|G|G --> vanilla
 Creature - Leech 2/2
 First strike
 */
-
 int card_leviathan(int player, int card, event_t event)
 {
+  /* Leviathan	|5|U|U|U|U
+   * Creature - Leviathan 10/10
+   * Trample
+   * This creature enters tapped and doesn't untap during your untap step.
+   * At the beginning of your upkeep, you may sacrifice two Islands. If you do, untap this creature.
+   * This creature can't attack unless you sacrifice two Islands. (This cost is paid as attackers are declared.) */
+
 #define DECL_TEST(test)																											\
   test_definition_t test;																										\
   new_default_test_definition(&test, TYPE_LAND, get_hacked_land_text(player, card, "Select %a to sacrifice.", SUBTYPE_ISLAND));	\
@@ -1968,6 +2022,10 @@ int card_leviathan(int player, int card, event_t event)
 
 int card_living_armor(int player, int card, event_t event)
 {
+  /* Living Armor	|4
+   * Artifact
+   * |T, Sacrifice ~: Put X +0/+1 counters on target creature, where X is that creature's converted mana cost. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -2001,6 +2059,11 @@ int card_living_armor(int player, int card, event_t event)
 
 int card_lurker(int player, int card, event_t event)
 {
+  /* CARD_ID_LURKER	342
+   * Lurker	|2|G
+   * Creature - Beast 2/3
+   * ~ can't be the target of spells unless it attacked or blocked this turn. */
+
   int result;
   card_instance_t *instance;
   special_abilities2(player, card, event, SP_KEYWORD2_PROT_MISC);
@@ -2063,13 +2126,11 @@ int card_lurker(int player, int card, event_t event)
 }
 
 int card_mana_clash(int player, int card, event_t event){
-	/*
-	  Mana Clash |R
-	  Sorcery
-	  You and target opponent each flip a coin.
-	  Mana Clash deals 1 damage to each player whose coin comes up tails.
-	  Repeat this process until both players' coins come up heads on the same flip.
-	*/
+  /* Mana Clash |R
+   * 	  Sorcery
+   * 	  You and target opponent each flip a coin.
+   * 	  Mana Clash deals 1 damage to each player whose coin comes up tails.
+   * 	  Repeat this process until both players' coins come up heads on the same flip. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -2100,13 +2161,12 @@ int card_mana_clash(int player, int card, event_t event){
 }
 
 int card_mana_vortex(int player, int card, event_t event){
-/*
-Mana Vortex |1|U|U
-Enchantment
-When you cast Mana Vortex, counter it unless you sacrifice a land.
-At the beginning of each player's upkeep, that player sacrifices a land.
-When there are no lands on the battlefield, sacrifice Mana Vortex.
-*/
+  /* Mana Vortex |1|U|U
+   * Enchantment
+   * When you cast Mana Vortex, counter it unless you sacrifice a land.
+   * At the beginning of each player's upkeep, that player sacrifices a land.
+   * When there are no lands on the battlefield, sacrifice Mana Vortex. */
+
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		test_definition_t test;
 		new_default_test_definition(&test, TYPE_LAND, "Select a land to sacrifice.");
@@ -2135,11 +2195,9 @@ When there are no lands on the battlefield, sacrifice Mana Vortex.
 }
 
 int card_marsh_gas(int player, int card, event_t event){
-	/*
-	  Marsh Gas English |B
-	  Instant
-	  All creatures get -2/-0 until end of turn.
-	*/
+  /* Marsh Gas English |B
+   * 	  Instant
+   * 	  All creatures get -2/-0 until end of turn. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		pump_subtype_until_eot(player, card, ANYBODY, -1, -2, 0, 0, 0);
@@ -2154,13 +2212,11 @@ Marsh Goblins |B|R --> vanilla
 Creature - Goblin 1/1
 Swampwalk
 */
-
 int card_marsh_viper(int player, int card, event_t event){
-	/*
-	  Marsh Viper English |3|G
-	  Creature - Snake 1/2
-	  Whenever Marsh Viper deals damage to a player, that player gets two poison counters. (A player with ten or more poison counters loses the game.)
-	*/
+  /* Marsh Viper English |3|G
+   * 	  Creature - Snake 1/2
+   * 	  Whenever Marsh Viper deals damage to a player, that player gets two poison counters. (A player with ten or more poison counters loses the game.) */
+
 	int result = whenever_i_deal_damage_to_a_player(player, card, event, 0);
 	if( result ){
 		int times_damaged[2] = {BYTE0(result), BYTE1(result)};
@@ -2170,11 +2226,9 @@ int card_marsh_viper(int player, int card, event_t event){
 }
 
 int card_martyrs_cry(int player, int card, event_t event){
-	/*
-	  Martyr's Cry English |W|W
-	  Sorcery
-	  Exile all white creatures. For each creature exiled this way, its controller draws a card.
-	*/
+  /* Martyr's Cry English |W|W
+   * 	  Sorcery
+   * 	  Exile all white creatures. For each creature exiled this way, its controller draws a card. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
@@ -2222,16 +2276,18 @@ int maze_of_ith_effect(int player, int card, int t_player, int t_card){
 
 int card_maze_of_ith(int player, int card, event_t event)
 {
+  /* CARD_ID_MAZE_OF_ITH	377
+   * Maze of Ith	""
+   * Land
+   * |T: Untap target attacking creature. Prevent all combat damage that would be dealt to and dealt by that creature this turn. */
+
   enum
   {
     CHOICE_MANA = 1,
     CHOICE_ABILITY = 2
   };
 
-  /* CARD_ID_MAZE_OF_ITH	377
-Maze of Ith	""
-Land
-|T: Untap target attacking creature. Prevent all combat damage that would be dealt to and dealt by that creature this turn. */
+
 
   if (event == EVENT_CAN_ACTIVATE && mana_colors_added[player])
     return mana_producer(player, card, event);
@@ -2316,12 +2372,10 @@ Creature - Merfolk Assassin 1/2
 }
 
 int card_mind_bomb(int player, int card, event_t event){
-/*
-Mind Bomb |U
-Sorcery
-Each player may discard up to three cards. Mind Bomb deals damage to each player equal to 3 minus the number of cards he or she
-	discarded this way.
-*/
+  /* Mind Bomb |U
+   * Sorcery
+   * Each player may discard up to three cards. Mind Bomb deals damage to each player equal to 3 minus the number of cards he or she
+   * 	discarded this way. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
@@ -2360,11 +2414,10 @@ static const char* aura_enchanting_creature(int who_chooses, int player, int car
 }
 
 int card_miracle_worker(int player, int card, event_t event){
-	/*
-	  Miracle Worker |W
-	  Creature - Human Cleric 1/1
-	  {T}: Destroy target Aura attached to a creature you control.
-	*/
+  /* Miracle Worker |W
+   * 	  Creature - Human Cleric 1/1
+   * 	  {T}: Destroy target Aura attached to a creature you control. */
+
 	if (!IS_GAA_EVENT(event))
 		return 0;
 
@@ -2384,11 +2437,9 @@ int card_miracle_worker(int player, int card, event_t event){
 }
 
 int card_morale(int player, int card, event_t event){
-	/*
-	  Morale |1|W|W
-	  Instant
-	  Attacking creatures get +1/+1 until end of turn.
-	*/
+  /* Morale |1|W|W
+   * 	  Instant
+   * 	  Attacking creatures get +1/+1 until end of turn. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
@@ -2402,11 +2453,9 @@ int card_morale(int player, int card, event_t event){
 }
 
 int card_murk_dwellers(int player, int card, event_t event){
-	/*
-	  Murk Dwellers |3|B
-	  Creature - Zombie 2/2
-	  Whenever Murk Dwellers attacks and isn't blocked, it gets +2/+0 until end of combat.
-	*/
+  /* Murk Dwellers |3|B
+   * 	  Creature - Zombie 2/2
+   * 	  Whenever Murk Dwellers attacks and isn't blocked, it gets +2/+0 until end of combat. */
 
 	if( ! is_humiliated(player, card, AL_TRIG) && event == EVENT_DECLARE_BLOCKERS && is_unblocked(player, card) ){
 		pump_until_eot(player, card, player, card, 2, 0);
@@ -2417,6 +2466,12 @@ int card_murk_dwellers(int player, int card, event_t event){
 
 int card_nameless_race(int player, int card, event_t event)
 {
+  /* Nameless Race	|3|B
+   * Creature * / *
+   * Trample
+   * As this creature enters, pay any amount of life. The amount you pay can't be more than the total number of white nontoken permanents your opponents control plus the total number of white cards in their graveyards.
+   * ~'s power and toughness are each equal to the life paid as it entered. */
+
   int life_payment;
   int grave_count_or_choice;
   card_instance_t *instance;
@@ -2480,6 +2535,11 @@ int card_nameless_race(int player, int card, event_t event)
 
 int card_necropolis(int player, int card, event_t event)
 {
+  /* Necropolis	|5
+   * Artifact Creature - Wall 0/1
+   * Defender
+   * Exile a creature card from your graveyard: Put X +0/+1 counters on ~, where X is the exiled card's converted mana cost. */
+
   card_instance_t *instance;
   int grave_index_or_count;
   int exiled_cmc;
@@ -2537,11 +2597,10 @@ int card_necropolis(int player, int card, event_t event)
 }
 
 int card_niall_silvain(int player, int card, event_t event){
-	/*
-	  Niall Silvain English |G|G|G
-	  Creature - Ouphe 2/2
-	  {G}{G}{G}{G}, {T}: Regenerate target creature.
-	*/
+  /* Niall Silvain English |G|G|G
+   * 	  Creature - Ouphe 2/2
+   * 	  {G}{G}{G}{G}, {T}: Regenerate target creature. */
+
 	if (!IS_GAA_EVENT(event))
 		return 0;
 
@@ -2576,11 +2635,10 @@ static const char* is_orc_or_goblin_and_can_be_sacrificed(int who_chooses, int p
 }
 
 int card_orc_general(int player, int card, event_t event){
-/*
-Orc General |2|R
-Creature — Orc Warrior 2/2
-{T}, Sacrifice another Orc or Goblin: Other Orc creatures get +1/+1 until end of turn.
-*/
+  /* Orc General |2|R
+   * Creature — Orc Warrior 2/2
+   * {T}, Sacrifice another Orc or Goblin: Other Orc creatures get +1/+1 until end of turn. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2616,6 +2674,10 @@ Creature — Orc Warrior 2/2
 
 int card_people_of_the_woods(int player, int card, event_t event)
 {
+  /* People of the Woods	|G|G
+   * Creature - Human 1/ *
+   * ~'s toughness is equal to the number of Forests you control. */
+
   int result;
   if ((((event == EVENT_TOUGHNESS) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
@@ -2629,13 +2691,14 @@ int card_people_of_the_woods(int player, int card, event_t event)
 }
 
 int card_preacher(int player, int card, event_t event){
+  /* Preacher	|1|W|W
+   * Creature - Human Cleric 1/1
+   * You may choose not to untap ~ during your untap step.
+   * |T: Gain control of target creature of an opponent's choice that he or she controls for as long as ~ remains tapped. */
 
 	choose_to_untap(player, card, event);
 
-	/* Preacher	|1|W|W
-	 * Creature - Human Cleric 1/1
-	 * You may choose not to untap ~ during your untap step.
-	 * |T: Gain control of target creature of an opponent's choice that he or she controls for as long as ~ remains tapped. */
+
 
 	if (!IS_GAA_EVENT(event)){
 		return 0;
@@ -2662,16 +2725,14 @@ Pikemen English |1|W --> vanilla
 Creature - Human Soldier 1/1
 First strike; banding
 */
-
 int card_psychic_allergy(int player, int card, event_t event){
-/*
-Psychic Allergy |3|U|U
-Enchantment
-As Psychic Allergy enters the battlefield, choose a color.
-At the beginning of each opponent's upkeep, Psychic Allergy deals X damage to that player, where X is the number of nontoken permanents
-	of the chosen color he or she controls.
-At the beginning of your upkeep, destroy Psychic Allergy unless you sacrifice two Islands.
-*/
+  /* Psychic Allergy |3|U|U
+   * Enchantment
+   * As Psychic Allergy enters the battlefield, choose a color.
+   * At the beginning of each opponent's upkeep, Psychic Allergy deals X damage to that player, where X is the number of nontoken permanents
+   * 	of the chosen color he or she controls.
+   * At the beginning of your upkeep, destroy Psychic Allergy unless you sacrifice two Islands. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		int clr = 0;
 		if( player != AI ){
@@ -2730,11 +2791,10 @@ At the beginning of your upkeep, destroy Psychic Allergy unless you sacrifice tw
 }
 
 int card_rag_man(int player, int card, event_t event){
-	/*
-	  Rag Man English |2|B|B
-	  Creature - Human Minion 2/1
-	  {B}{B}{B}, {T}: Target opponent reveals his or her hand and discards a creature card at random. Activate this ability only during your turn.
-	*/
+  /* Rag Man English |2|B|B
+   * 	  Creature - Human Minion 2/1
+   * 	  {B}{B}{B}, {T}: Target opponent reveals his or her hand and discards a creature card at random. Activate this ability only during your turn. */
+
 	if (!IS_GAA_EVENT(event)){
 		return 0;
 	}
@@ -2830,11 +2890,10 @@ The new target must be a player. X is twice the converted mana cost of that spel
 }
 
 int card_riptide2(int player, int card, event_t event){
-	/*
-	  Riptide |U
-	  Instant
-	  Tap all blue creatures.
-	*/
+  /* Riptide |U
+   * 	  Instant
+   * 	  Tap all blue creatures. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
@@ -2924,13 +2983,12 @@ static int effect_runesword(int player, int card, event_t event)
 }
 
 int card_runesword(int player, int card, event_t event){
-/*
-Runesword |6
-Artifact
-{3}, {T}: Target attacking creature gets +2/+0 until end of turn. When that creature leaves the battlefield this turn, sacrifice Runesword.
-	If the creature deals damage to a creature this turn, the creature dealt damage can't be regenerated this turn.
-	If a creature dealt damage by the targeted creature would die this turn, exile that creature instead.
-*/
+  /* Runesword |6
+   * Artifact
+   * {3}, {T}: Target attacking creature gets +2/+0 until end of turn. When that creature leaves the battlefield this turn, sacrifice Runesword.
+   * 	If the creature deals damage to a creature this turn, the creature dealt damage can't be regenerated this turn.
+   * 	If a creature dealt damage by the targeted creature would die this turn, exile that creature instead. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -2957,6 +3015,11 @@ Artifact
 }
 
 int card_safe_haven(int player, int card, event_t event){
+  /* Safe Haven	""
+   * Land
+   * |2, |T: Exile target creature you control.
+   * At the beginning of your upkeep, you may sacrifice this land. If you do, return each card exiled with this land to the battlefield under its owner's control. */
+
   enum
   {
     CHOICE_MANA = 1,
@@ -3085,11 +3148,10 @@ static const char* aura_enchanting_land(int who_chooses, int player, int card){
 }
 
 int card_savaen_elves(int player, int card, event_t event){
-	/*
-	  Savaen Elves |G
-	  Creature - Elf 1/1
-	  {G}{G}, {T}: Destroy target Aura attached to a land.
-	*/
+  /* Savaen Elves |G
+   * 	  Creature - Elf 1/1
+   * 	  {G}{G}, {T}: Destroy target Aura attached to a land. */
+
 	if (!IS_GAA_EVENT(event))
 		return 0;
 
@@ -3191,7 +3253,6 @@ Creature - Human Rogue 2/2
 Scarwood Goblins |R|G --> vanilla
 Creature - Goblin 2/2
 */
-
 int card_scarwood_hag(int player, int card, event_t event){
 /* CARD_ID_SCARWOOD_HAG	322
 Scarwood Hag	|1|G
@@ -3261,11 +3322,9 @@ Creature - Hag 1/1
 
 int card_scavenger_folk(int player, int card, event_t event)
 {
-	/*
-	  Scavenger Folk |G
-	  Creature - Human 1/1
-	  {G}, {T}, Sacrifice Scavenger Folk: Destroy target artifact.
-	*/
+  /* Scavenger Folk |G
+   * 	  Creature - Human 1/1
+   * 	  {G}, {T}, Sacrifice Scavenger Folk: Destroy target artifact. */
 
 	if (!IS_GAA_EVENT(event) ){
 		return 0;
@@ -3395,7 +3454,6 @@ If each of those creatures could block all creatures that the other is blocking,
 Each one then blocks all creatures the other was blocking.
 Whenever Sorrow's Path becomes tapped, it deals 2 damage to you and each creature you control.
 */
-
 static void give_first_strike(int player, int card, int t_player, int t_card)
 {
 	pump_ability_until_eot(player, card, t_player, t_card, 0, 0, KEYWORD_FIRST_STRIKE, 0);
@@ -3403,6 +3461,10 @@ static void give_first_strike(int player, int card, int t_player, int t_card)
 
 int card_spitting_slug(int player, int card, event_t event)
 {
+  /* Spitting Slug	|1|G|G
+   * Creature - Slug 2/4
+   * Whenever this creature blocks or becomes blocked, you may pay |1|G. If you do, this creature gains first strike until end of turn. Otherwise, each creature blocking or blocked by this creature gains first strike until end of turn. */
+
   int result;
   card_instance_t *instance;
   if (event == EVENT_CHECK_ABILITIES)
@@ -3482,7 +3544,6 @@ int card_spitting_slug(int player, int card, event_t event)
 Squire English |1|W --> VANILLAAAAAA !
 Creature - Human Soldier 1/2
 */
-
 int card_standing_stones(int player, int card, event_t event)
 {
   /* CARD_ID_STANDING_STONES	362
@@ -3531,11 +3592,10 @@ if (event == EVENT_COUNT_MANA)
 }
 
 int card_stone_calendar(int player, int card, event_t event){
-	/*
-	  Stone Calendar |5
-	  Artifact
-	  Spells you cast cost up to {1} less to cast.
-	*/
+  /* Stone Calendar |5
+   * 	  Artifact
+   * 	  Spells you cast cost up to {1} less to cast. */
+
 	if( ! is_humiliated(player, card, AL_STATIC) && event == EVENT_MODIFY_COST_GLOBAL && affected_card_controller == player ){
 		COST_COLORLESS--;
 	}
@@ -3544,12 +3604,11 @@ int card_stone_calendar(int player, int card, event_t event){
 }
 
 int card_sunken_city(int player, int card, event_t event){
-	/*
-	  Sunken City |U|U
-	  Enchantment
-	  At the beginning of your upkeep, sacrifice Sunken City unless you pay {U}{U}.
-	  Blue creatures get +1/+1.
-	*/
+  /* Sunken City |U|U
+   * 	  Enchantment
+   * 	  At the beginning of your upkeep, sacrifice Sunken City unless you pay {U}{U}.
+   * 	  Blue creatures get +1/+1. */
+
 	basic_upkeep(player, card, event, MANACOST_U(2));
 
 	boost_creature_by_color(player, card, event, get_sleighted_color_test(player, card, COLOR_TEST_BLUE), 1, 1, 0, 0);
@@ -3557,16 +3616,17 @@ int card_sunken_city(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
-
 int card_tangle_kelp(int player, int card, event_t event)
 {
+  /* CARD_ID_TANGLE_KELP	949
+   * Tangle Kelp	|U
+   * Enchantment - Aura
+   * Enchant creature
+   * When ~ enters the battlefield, tap enchanted creature.
+   * Enchanted creature doesn't untap during its controller's untap step if it attacked during its controller's last turn. */
+
   // 0x40f3f0
-/* CARD_ID_TANGLE_KELP	949
-Tangle Kelp	|U
-Enchantment - Aura
-Enchant creature
-When ~ enters the battlefield, tap enchanted creature.
-Enchanted creature doesn't untap during its controller's untap step if it attacked during its controller's last turn. */
+
 
 	if( event == EVENT_CLEANUP && affect_me(player, card) ){
 		card_instance_t* instance = get_card_instance(player, card);
@@ -3594,10 +3654,12 @@ Enchanted creature doesn't untap during its controller's untap step if it attack
 }
 
 int card_the_fallen(int player, int card, event_t event){
+  /* The Fallen	|1|B|B|B	0x2002073
+   * Creature - Zombie 2/3
+   * At the beginning of your upkeep, ~ deals 1 damage to each opponent and planeswalker it has dealt damage to this game. */
+
 	// !!!DOM: each opponent it has dealt damage to this game=>each opponent or planeswalker it has dealt damage to this game
-	/* The Fallen	|1|B|B|B	0x2002073
-	 * Creature - Zombie 2/3
-	 * At the beginning of your upkeep, ~ deals 1 damage to each opponent and planeswalker it has dealt damage to this game. */
+
 	if( event == EVENT_DEAL_DAMAGE ){
 		card_instance_t *instance = get_card_instance(player, card);
 		if( ! BYTE0(instance->info_slot) && ! BYTE1(instance->info_slot) ){
@@ -3639,11 +3701,10 @@ int card_the_fallen(int player, int card, event_t event){
 }
 
 int card_tivadars_crusade(int player, int card, event_t event){
-	/*
-	  Tivadar's Crusade |1|W|W
-	  Sorcery
-	  Destroy all Goblins.
-	*/
+  /* Tivadar's Crusade |1|W|W
+   * 	  Sorcery
+   * 	  Destroy all Goblins. */
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_PERMANENT);
@@ -3657,11 +3718,13 @@ int card_tivadars_crusade(int player, int card, event_t event){
 
 int card_tormods_crypt(int player, int card, event_t event)
 {
-  // 0x40c080
-
   /* Tormod's Crypt	|0
    * Artifact
    * |T, Sacrifice ~: Exile all cards from target player's graveyard. */
+
+  // 0x40c080
+
+
 
   if (!IS_GAA_EVENT(event))
 	return 0;
@@ -3740,11 +3803,9 @@ Artifact
 }
 
 int card_tracker2(int player, int card, event_t event){
-	/*
-	  Tracker |2|G
-	  Creature - Human 2/2
-	  {G}{G}, {T}: Tracker deals damage equal to its power to target creature. That creature deals damage equal to its power to Tracker.
-	*/
+  /* Tracker |2|G
+   * 	  Creature - Human 2/2
+   * 	  {G}{G}, {T}: Tracker deals damage equal to its power to target creature. That creature deals damage equal to its power to Tracker. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -3774,6 +3835,10 @@ int card_tracker2(int player, int card, event_t event){
 
 int card_uncle_istvan(int player, int card, event_t event)
 {
+  /* Uncle Istvan	|1|B|B|B
+   * Creature - Human 1/3
+   * Prevent all damage that would be dealt to this creature by creatures. */
+
   int result;
   card_instance_t *instance;
   if (event != EVENT_CHECK_ABILITIES)
@@ -3928,12 +3993,11 @@ int war_barge_legacy(int player, int card, event_t event)
 }
 
 int card_war_barge(int player, int card, event_t event){
-	/*
-	  War Barge |4
-	  Artifact
-	  {3}: Target creature gains islandwalk until end of turn.
-	  When War Barge leaves the battlefield this turn, destroy that creature. A creature destroyed this way can't be regenerated.
-	*/
+  /* War Barge |4
+   * 	  Artifact
+   * 	  {3}: Target creature gains islandwalk until end of turn.
+   * 	  When War Barge leaves the battlefield this turn, destroy that creature. A creature destroyed this way can't be regenerated. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -3962,11 +4026,10 @@ int card_war_barge(int player, int card, event_t event){
 }
 
 int card_water_wurm(int player, int card, event_t event){
-	/*
-	  Water Wurm |U
-	  Creature - Wurm 1/1
-	  Water Wurm gets +0/+1 as long as an opponent controls an Island.
-	*/
+  /* Water Wurm |U
+   * 	  Creature - Wurm 1/1
+   * 	  Water Wurm gets +0/+1 as long as an opponent controls an Island. */
+
 	if( ! is_humiliated(player, card, AL_STATIC) && event == EVENT_TOUGHNESS && affect_me(player, card) ){
 		if( check_battlefield_for_subtype(1-player, TYPE_LAND, SUBTYPE_ISLAND) ){
 			event_result++;
@@ -4151,6 +4214,12 @@ Tap X target creatures. */
 
 int card_worms_of_the_earth(int player, int card, event_t event)
 {
+  /* Worms of the Earth	|2|B|B|B
+   * Enchantment
+   * Players can't play lands.
+   * Lands can't enter the battlefield.
+   * At the beginning of each upkeep, any player may sacrifice two lands of their choice or have this enchantment deal 5 damage to that player. If a player does either, destroy this enchantment. */
+
   int choice;
   card_instance_t *instance;
   int life_or_land_limit;
@@ -4214,13 +4283,10 @@ int card_worms_of_the_earth(int player, int card, event_t event)
 }
 
 int card_wormwood_treefolk(int player, int card, event_t event){
-	/*
-	  Wormwood Treefolk English |3|G|G
-	  Creature - Treefolk 4/4
-	  {G}{G}: Wormwood Treefolk gains forestwalk until end of turn and deals 2 damage to you.
-	  {B}{B}: Wormwood Treefolk gains swampwalk until end of turn and deals 2 damage to you.
-	*/
-
+  /* Wormwood Treefolk English |3|G|G
+   * 	  Creature - Treefolk 4/4
+   * 	  {G}{G}: Wormwood Treefolk gains forestwalk until end of turn and deals 2 damage to you.
+   * 	  {B}{B}: Wormwood Treefolk gains swampwalk until end of turn and deals 2 damage to you. */
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		if( generic_activated_ability(player, card, event, 0, MANACOST0, 0, NULL, NULL) ){
@@ -4264,76 +4330,4 @@ int card_wormwood_treefolk(int player, int card, event_t event){
 	}
 
 	return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x242fb80; original cards/the_dark.c:1736. */
-int card_goblins_of_the_flarg(int player, int card, event_t event)
-{
-  int result;
-
-  if (((event == EVENT_STATIC_EFFECTS) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    result = is_humiliated(player, card, AL_STATIC);
-    if (result == 0)
-    {
-      result = check_battlefield_for_subtype(player, -1, 0x36);
-      if (result != 0)
-      {
-        kill_card(player, card, KILL_SACRIFICE);
-      }
-    }
-  }
-  return 0;
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2429bd0; original cards/the_dark.c:861. */
-int deep_water_legacy(int player, int card, event_t event)
-{
-  int c;
-  card_instance_t *instance;
-  int land_match;
-  int player_00;
-
-  if (event == EVENT_MODIFY_MANA_PROD)
-  {
-
-    player_00 = 0;
-    do
-    {
-
-      for (int color_index = 0; color_index < 7; ++color_index)
-      {
-        mana_color_override[player_00][color_index] = 2;
-        mana_quantity_override[player_00][color_index] = 1;
-      }
-      if (0 < active_cards_count[player_00])
-      {
-        c = 0;
-        do
-        {
-          instance = in_play(player_00, c);
-          if (((instance != NULL) &&
-               (land_match = is_what(player_00, c, 1), player == player_00)) &&
-              (land_match != 0))
-          {
-            set_special_flags2(player_00, c, 0x40);
-          }
-          c = c + 1;
-        } while (c < active_cards_count[player_00]);
-      }
-      player_00 = player_00 + 1;
-    } while (player_00 != 2);
-  }
-  if (eot_trigger(player, card, event) != 0)
-  {
-    kill_card(player, card, KILL_EXILE);
-    cant_be_responded_to = 1;
-    return 0;
-  }
-  return 0;
 }

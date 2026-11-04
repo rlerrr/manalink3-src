@@ -180,12 +180,10 @@ int card_combat_medic(int player, int card, event_t event){
 }
 
 int card_farrelite_priest(int player, int card, event_t event){
-/*
-Farrelite Priest |1|W|W
-Creature — Human Cleric 1/3
-{1}: Add {W} to your mana pool. If this ability has been activated four or more times this turn, sacrifice Farrelite Priest
-		at the beginning of the next end step.
-*/
+  /* Farrelite Priest |1|W|W
+   * Creature — Human Cleric 1/3
+   * {1}: Add {W} to your mana pool. If this ability has been activated four or more times this turn, sacrifice Farrelite Priest
+   * 		at the beginning of the next end step. */
 
 	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
 		return has_mana_for_activated_ability(player, card, MANACOST_X(1));
@@ -216,13 +214,11 @@ Creature — Human Cleric 1/3
 }
 
 int card_farrels_mantle(int player, int card, event_t event){
-/*
-Farrel's Mantle |2|W
-Enchantment — Aura
-Enchant creature
-Whenever enchanted creature attacks and isn't blocked, its controller may have it deal damage equal to its power plus 2
-	to another target creature. If that player does, the attacking creature assigns no combat damage this turn.
-*/
+  /* Farrel's Mantle |2|W
+   * Enchantment — Aura
+   * Enchant creature
+   * Whenever enchanted creature attacks and isn't blocked, its controller may have it deal damage equal to its power plus 2
+   * 	to another target creature. If that player does, the attacking creature assigns no combat damage this turn. */
 
 	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -376,10 +372,10 @@ int card_hand_of_justice(int player, int card, event_t event){
 }
 
 int card_heroism(int player, int card, event_t event){
-/* Heroism |2|W
-Enchantment
-Sacrifice a white creature: For each attacking red creature, prevent all combat damage that would be dealt by that creature this turn
-unless its controller pays {2}{R}. */
+  /* Heroism |2|W
+   * Enchantment
+   * Sacrifice a white creature: For each attacking red creature, prevent all combat damage that would be dealt by that creature this turn
+   * unless its controller pays {2}{R}. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return global_enchantment(player, card, event);
@@ -693,7 +689,6 @@ int card_order_of_leitbur(int player, int card, event_t event)
   return fe_knights(player, card, event, COLOR_WHITE);
 }
 
-
 // blue cards
 int card_homarid_warrior(int player, int card, event_t event){
 /* CARD_ID_HOMARID_WARRIOR	1795
@@ -776,6 +771,14 @@ Until end of turn, whenever a player taps |Han Island for mana, that player adds
 
 int card_homarid(int player, int card, event_t event)
 {
+  /* Homarid	|2|U
+   * Creature - Homarid 2/2
+   * ~ enters the battlefield with a tide counter on it.
+   * At the beginning of your upkeep, put a tide counter on ~.
+   * As long as there is exactly one tide counter on ~, it gets -1/-1.
+   * As long as there are exactly three tide counters on ~, it gets +1/+1.
+   * Whenever there are four tide counters on ~, remove all tide counters from it. */
+
   int result;
   enters_the_battlefield_with_counters(player, card, event, COUNTER_TIDE, 1);
   upkeep_trigger_ability(player, card, event, player);
@@ -1138,12 +1141,11 @@ static void gains_first_strike(int player, int card, int t_player, int t_card)
 }
 
 int card_tidal_flats(int player, int card, event_t event){
-	/*
-	  Tidal Flats English |U
-	  Enchantment
-	  {U}{U}: For each attacking creature without flying, its controller may pay {1}.
-	  If he or she doesn't, creatures you control blocking that creature gain first strike until end of turn.
-	*/
+  /* Tidal Flats English |U
+   * 	  Enchantment
+   * 	  {U}{U}: For each attacking creature without flying, its controller may pay {1}.
+   * 	  If he or she doesn't, creatures you control blocking that creature gain first strike until end of turn. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return global_enchantment(player, card, event);
 	}
@@ -1185,6 +1187,15 @@ int card_tidal_flats(int player, int card, event_t event){
 
 int card_tidal_influence(int player, int card, event_t event)
 {
+  /* Tidal Influence	|2|U
+   * Enchantment
+   * Cast ~ only if no permanents named ~ are on the battlefield.
+   * ~ enters the battlefield with a tide counter on it.
+   * At the beginning of your upkeep, put a tide counter on ~.
+   * As long as there is exactly one tide counter on ~, all |Sblue creatures get -2/-0.
+   * As long as there are exactly three tide counters on ~, all |Sblue creatures get +2/+0.
+   * Whenever there are four tide counters on ~, remove all tide counters from it. */
+
   int result;
   unsigned int creature_color;
   unsigned int affected_color;
@@ -1317,15 +1328,13 @@ static int effect_vodalian_war_machine(int player, int card, event_t event)
 }
 int card_vodalian_war_machine(int player, int card, event_t event)
 {
-  /*
-  Vodalian War Machine |1|U|U
-  Creature — Wall 0/4
-  Defender (This creature can't attack.)
-  Tap an untapped Merfolk you control: Vodalian War Machine can attack this turn as though it didn't
-  have defender. Tap an untapped Merfolk you control: Vodalian War Machine gets +2/+1 until end of
-  turn. When Vodalian War Machine dies, destroy all Merfolk tapped this turn to pay for its
-  abilities.
-  */
+  /* Vodalian War Machine |1|U|U
+   *   Creature — Wall 0/4
+   *   Defender (This creature can't attack.)
+   *   Tap an untapped Merfolk you control: Vodalian War Machine can attack this turn as though it didn't
+   *   have defender. Tap an untapped Merfolk you control: Vodalian War Machine gets +2/+1 until end of
+   *   turn. When Vodalian War Machine dies, destroy all Merfolk tapped this turn to pay for its
+   *   abilities. */
 
   if (event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST)
   {
@@ -1416,10 +1425,13 @@ int card_vodalian_war_machine(int player, int card, event_t event)
   return 0;
 }
 
-
 // black cards
 int card_armor_thrull(int player, int card, event_t event)
 {
+  /* Armor Thrull	|2|B
+   * Creature - Thrull 1/3
+   * |T, Sacrifice ~: Put a +1/+2 counter on target creature. */
+
   card_instance_t *instance;
   int result;
   target_definition_t td;
@@ -1669,6 +1681,12 @@ int card_order_of_the_ebon_hand(int player, int card, event_t event)
 
 int card_soul_exchange(int player, int card, event_t event)
 {
+  /* Soul Exchange	|B|B
+   * Sorcery
+   * As an additional cost to cast ~, exile a creature you control.
+   * Return target creature card from your graveyard to the battlefield.  Put a +2/+2 counter on that creature if the exiled creature
+   * 		was a Thrull. */
+
   card_instance_t *instance;
   int grave_index;
   int exiled_or_reanimated_card;
@@ -1858,6 +1876,13 @@ Whenever a player puts |Ha Forest onto the battlefield, ~ deals 3 damage to that
 
 int card_tourachs_gate(int player, int card, event_t event)
 {
+  /* Tourach's Gate	|1|B|B
+   * Enchantment - Aura
+   * Enchant land you control
+   * Sacrifice a Thrull: Put three time counters on ~.
+   * At the beginning of your upkeep, remove a time counter from ~. If there are no time counters on ~, sacrifice it.
+   * Enchanted land has "|T: Attacking creatures you control get +2/-1 until end of turn." */
+
   int choice;
   target_definition_t td;
   card_instance_t *instance;
@@ -2006,7 +2031,6 @@ int card_tourachs_gate(int player, int card, event_t event)
   return targeted_aura_custom_prompt(player, card, event, &td, "Select target land you control");
 }
 
-
 // red
 int card_brassclaw_orcs(int player, int card, event_t event){
 /* CARD_ID_BRASSCLAW_ORCS	1754
@@ -2024,6 +2048,10 @@ Creature - Orc 3/2
 
 int card_dwarven_armorer(int player, int card, event_t event)
 {
+  /* Dwarven Armorer	|R
+   * Creature - Dwarf 0/2
+   * |R, |T, Discard a card: Put a +0/+1 counter or a +1/+0 counter on target creature. */
+
   card_instance_t *instance;
   int target_power_or_valid;
   int target_toughness;
@@ -2509,14 +2537,12 @@ Trample
 }
 
 int card_raiding_party(int player, int card, event_t event){
-/*
-Raiding Party |2|R
-Enchantment
-Raiding Party can't be the target of white spells or abilities from white sources.
-Sacrifice an Orc: Each player may tap any number of untapped white creatures he or she controls.
-	For each creature tapped this way, that player chooses up to two Plains. Then destroy all Plains that weren't chosen this way by
-	any player.
-*/
+  /* Raiding Party |2|R
+   * Enchantment
+   * Raiding Party can't be the target of white spells or abilities from white sources.
+   * Sacrifice an Orc: Each player may tap any number of untapped white creatures he or she controls.
+   * 	For each creature tapped this way, that player chooses up to two Plains. Then destroy all Plains that weren't chosen this way by
+   * 	any player. */
 
     special_abilities2(player, card, event, SP_KEYWORD2_PROT_MISC);
     if (event == EVENT_PROT_MISC){
@@ -2577,7 +2603,6 @@ Sacrifice an Orc: Each player may tap any number of untapped white creatures he 
     }
     return generic_activated_ability_with_sacrifice_as_cost(player, card, event, 0, MANACOST0, 0, NULL, NULL, 0, &test, 0);
 }
-
 
 // green cards
 int card_elven_fortress(int player, int card, event_t event){
@@ -2758,6 +2783,10 @@ int card_feral_thallid(int player, int card, event_t event){
 
 int card_fungal_bloom(int player, int card, event_t event)
 {
+  /* Fungal Bloom	|G|G
+   * Enchantment
+   * |G|G: Put a spore counter on target Fungus. */
+
   int result;
   card_instance_t *instance;
   target_definition_t td;
@@ -3151,7 +3180,6 @@ int card_thorn_thallid(int player, int card, event_t event)
   return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST0, GVC_COUNTERS(COUNTER_SPORE, 3),
 									&td, "TARGET_ANY");
 }
-
 
 // artifacts and lands
 int card_aeolipile(int player, int card, event_t event){

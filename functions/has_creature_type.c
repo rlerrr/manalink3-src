@@ -330,8 +330,6 @@ static int is_changeling(int player, int card){
 	return 0;
 }
 
-
-
 enum{
 	ADD_SUBTYPE = 1,
 	FORCE_SUBTYPE = 2,
@@ -359,17 +357,6 @@ void force_a_subtype(int player, int card, subtype_t subtype)
   update_alter_add_subtype(subtype, instance);
 }
 
-
-
-int force_a_subtype_until_eot(int player, int card, int t_player, int t_card, subtype_t subtype)
-{
-  int legacy = create_targetted_legacy_effect(player, card, add_force_a_subtype_until_eot_legacy,
-                                              t_player, t_card);
-  get_card_instance(player, legacy)->targets[1].player = 2;
-  get_card_instance(player, legacy)->targets[1].card = subtype;
-  return legacy;
-}
-
 void add_a_subtype(int player, int card, subtype_t subtype)
 {
   update_alter_add_subtype(subtype, get_card_instance(player, card));
@@ -382,6 +369,15 @@ int get_added_subtype(int player, int card){
 	} else {
 		return LOWORD(instance->targets[15].player);
 	}
+}
+
+int force_a_subtype_until_eot(int player, int card, int t_player, int t_card, subtype_t subtype)
+{
+  int legacy = create_targetted_legacy_effect(player, card, add_force_a_subtype_until_eot_legacy,
+                                              t_player, t_card);
+  get_card_instance(player, legacy)->targets[1].player = 2;
+  get_card_instance(player, legacy)->targets[1].card = subtype;
+  return legacy;
 }
 
 static int get_forced_subtype(int player, int card){
@@ -400,8 +396,6 @@ int has_forced_subtype(int player, int card){
 int has_added_subtype(int player, int card){
 	return get_added_subtype(player, card) > 0;
 }
-
-
 
 void get_subtypes(int player, int card, reported_subtypes_t *my_subtypes)
 {
@@ -437,8 +431,6 @@ void get_subtypes(int player, int card, reported_subtypes_t *my_subtypes)
     }
   }
 }
-
-
 
 int has_subtype(int player, int card, subtype_t subtype)
 {
@@ -477,7 +469,6 @@ int has_subtype(int player, int card, subtype_t subtype)
   event_result = old_event_result;
   return result;
 }
-
 
 int has_creature_type(int player, int card, subtype_t subtype){
 
@@ -831,7 +822,6 @@ int select_a_subtype(int player, int card){
 int select_a_subtype_full_choice(int player, int card, int t_player, const int *zone, int show_legacy){
 	return select_a_subtype_impl(player, card, t_player, t_player, zone, show_legacy);
 }
-
 
 int target_player_sacrifices_a_subtype(int player, int card, int req_type, int req_subtype, int cannot_cancel){
 	return sacrifice(player, card, player, cannot_cancel, req_type, 0, req_subtype, 0, 0, 0, 0, 0, -1, 0);
@@ -1510,7 +1500,6 @@ int count_all_other_creatures_that_shares_a_creature_type_with_me(int player, in
 	return result;
 }
 
-
 #undef NUM_SUBTYPES
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -1518,6 +1507,145 @@ int add_a_subtype_until_eot(int player, int card, int t_player, int t_card, subt
 int add_a_subtype_permanently(int player, int card, int t_player, int t_card, subtype_t subtype);
 static int add_force_a_subtype_until_eot_legacy(int player, int card, event_t event);
 static int add_force_a_subtype_permanently_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2672900; original functions/has_creature_type.c:404. */
+card_instance_t *update_alter_add_subtype(subtype_t subt, card_instance_t *inst)
+{
+  card_ext_t *extension;
+  uint16_t *subtype_cursor;
+  int i;
+
+  if (inst == NULL)
+  {
+    inst = get_card_instance(affected_card_controller, affected_card);
+  }
+  extension = inst->ext;
+  subtype_cursor = extension->subtype;
+  do
+  {
+    if (*subtype_cursor == subt)
+    {
+      return inst;
+    }
+    subtype_cursor = subtype_cursor + 1;
+  } while (subtype_cursor != extension->subtype + 12);
+  i = 0;
+  do
+  {
+    if (extension->subtype[i] == 0)
+    {
+      extension->subtype[i] = (uint16_t)subt;
+      return inst;
+    }
+    i = i + 1;
+  } while (i != 0xc);
+  return inst;
+}
+
+/* ManalinkEh 2022: 0x2672d90; original functions/has_creature_type.c:433. */
+card_instance_t *update_alter_remove_subtype(subtype_t subt, card_instance_t *inst)
+{
+  card_ext_t *extension;
+  int subtype_index;
+  int next_index;
+  subtype_t shifted_subtype;
+  int shift_index;
+
+  if (inst == NULL)
+  {
+    inst = get_card_instance(affected_card_controller, affected_card);
+  }
+  extension = inst->ext;
+  subtype_index = 0;
+  do
+  {
+    while (extension->subtype[subtype_index] != subt)
+    {
+      subtype_index = subtype_index + 1;
+      if (subtype_index == 0xc)
+      {
+        return inst;
+      }
+    }
+    do
+    {
+      extension->subtype[subtype_index] = 0;
+      shift_index = subtype_index;
+      if (subtype_index < 0xc)
+      {
+        do
+        {
+          next_index = shift_index + 1;
+          if ((shift_index == 11 ? extension->inst_info_data[0].id
+                                 : extension->subtype[shift_index + 1]) == 0)
+            break;
+          extension->subtype[shift_index] =
+              (shift_index == 11 ? extension->inst_info_data[0].id
+                                 : extension->subtype[shift_index + 1]);
+          shift_index = next_index;
+        } while (next_index != 0xc);
+        shifted_subtype = (subtype_t)extension->subtype[subtype_index];
+      }
+      else
+      {
+        shifted_subtype = SUBTYPE_INVALID;
+      }
+    } while (subt == shifted_subtype);
+    subtype_index = subtype_index + 1;
+    if (subtype_index == 0xc)
+    {
+      return inst;
+    }
+  } while (true);
+}
+
+/* ManalinkEh 2022: 0x2672eb0; original functions/has_creature_type.c:458. */
+card_instance_t *update_alter_remove_creature_subtypes(card_instance_t *inst)
+{
+  card_ext_t *extension;
+  int next_index;
+  int i;
+  int shift_index;
+
+  if (inst == NULL)
+  {
+    inst = get_card_instance(affected_card_controller, affected_card);
+  }
+  extension = inst->ext;
+  i = 0;
+  do
+  {
+    while ((0xffeU < (uint32_t)extension->subtype[i] - 1U ||
+            (extension->subtype[i] = 0, shift_index = i, 0xb < i)))
+    {
+      i = i + 1;
+      if (i == 0xc)
+      {
+        return inst;
+      }
+    }
+    do
+    {
+      next_index = shift_index + 1;
+      if ((shift_index == 11 ? extension->inst_info_data[0].id
+                             : extension->subtype[shift_index + 1]) == 0)
+        break;
+      extension->subtype[shift_index] = (shift_index == 11 ? extension->inst_info_data[0].id
+                                                           : extension->subtype[shift_index + 1]);
+      shift_index = next_index;
+    } while (next_index != 0xc);
+  } while (true);
+}
+
+/* ManalinkEh 2022: 0x2672fa0; original functions/has_creature_type.c:500. */
+void remove_a_subtype(int player, int card, subtype_t subtype)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  update_alter_remove_subtype(subtype, instance);
+  return;
+}
 
 /* ManalinkEh 2022: 0x2672360; original functions/has_creature_type.c:505. */
 static int add_force_a_subtype_until_eot_legacy(int player, int card, event_t event)
@@ -1556,6 +1684,11 @@ static int add_force_a_subtype_until_eot_legacy(int player, int card, event_t ev
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int animate_self_remove_type(int player, int card, int pow, int tgh, type_t types_to_remove,
+                             keyword_t kws_to_add, sp_keyword_t sp_kws_to_add, color_test_t color,
+                             int permanent);
 
 /* ManalinkEh 2022: 0x2673040; original functions/has_creature_type.c:534. */
 int add_a_subtype_until_eot(int player, int card, int t_player, int t_card, subtype_t subtype)
@@ -1671,37 +1804,90 @@ void purge_add_force_a_subtype_permanently_legacy(int player, int card, int mode
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int animate_self_remove_type(int player, int card, int pow, int tgh, type_t types_to_remove,
-                             keyword_t kws_to_add, sp_keyword_t sp_kws_to_add, color_test_t color,
-                             int permanent);
 
-/* ManalinkEh 2022: 0x2675a90; original functions/has_creature_type.c:1848. */
-int animate_self_to_artifact_creature(int player, int card, int pow, int tgh, keyword_t kws_to_add,
-                                      sp_keyword_t sp_kws_to_add, color_test_t color, int permanent)
+/* ManalinkEh 2022: 0x2672e30; original functions/has_creature_type.c:597. */
+static int remove_a_subtype_permanently_legacy(int player, int card, event_t event)
 {
-  color_test_t color_00;
-  int result;
+  card_instance_t *effect;
+  card_instance_t *inst;
 
-  color_00 = get_sleighted_color_test(player, card, color);
-  result = add_or_remove_types_legacy_impl(player, card, player, card, TYPE_NONE,
-                                           TYPE_ARTIFACT | TYPE_CREATURE, pow, tgh, kws_to_add,
-                                           sp_kws_to_add, color_00, permanent);
-  return result;
+  if (event == EVENT_CHANGE_TYPE)
+  {
+
+    if ((land_can_be_played & 0x20000U) == 0)
+    {
+      land_can_be_played = land_can_be_played | 0x10000;
+    }
+
+    effect = get_card_instance(player, card);
+    if ((effect->damage_target_card == affected_card) &&
+        (effect->damage_target_player == affected_card_controller))
+    {
+      inst = get_card_instance((int)effect->damage_target_player, effect->damage_target_card);
+      update_alter_remove_subtype(effect->targets[1].card, inst);
+    }
+  }
+  return 0;
 }
 
-/* ManalinkEh 2022: 0x2675b90; original functions/has_creature_type.c:1863. */
-int animate_self_remove_type(int player, int card, int pow, int tgh, type_t types_to_remove,
-                             keyword_t kws_to_add, sp_keyword_t sp_kws_to_add, color_test_t color,
-                             int permanent)
+/* ManalinkEh 2022: 0x26731c0; original functions/has_creature_type.c:610. */
+int remove_a_subtype_permanently(int player, int card, int t_player, int t_card, subtype_t subtype)
 {
-  color_test_t color_00;
-  int result;
+  int legacy;
+  card_instance_t *instance;
 
-  color_00 = get_sleighted_color_test(player, card, color);
-  result =
-      add_or_remove_types_legacy_impl(player, card, player, card, types_to_remove, TYPE_CREATURE,
-                                      pow, tgh, kws_to_add, sp_kws_to_add, color_00, permanent);
-  return result;
+  legacy = create_targetted_legacy_effect(player, card, remove_a_subtype_permanently_legacy,
+                                           t_player, t_card);
+  instance = get_card_instance(player, legacy);
+  instance->targets[1].card = subtype;
+  instance->token_status = 0x10000;
+  return legacy;
+}
+
+/* ManalinkEh 2022: 0x2673220; original functions/has_creature_type.c:636. */
+int add_a_subtype_not_in_play(int player, event_t event, subtype_t subtype)
+{
+  if (event != EVENT_CHANGE_TYPE)
+    return 0;
+  if (!(land_can_be_played & LCBP_DURING_EVENT_CHANGE_TYPE_SECOND_PASS))
+  {
+    land_can_be_played |= LCBP_NEED_EVENT_CHANGE_TYPE_SECOND_PASS;
+    return 0;
+  }
+  for (int index = 0; index < 15; ++index)
+  {
+    subtypes_not_in_play_t *modifier = &added_subtypes_not_in_play[player][index];
+    if (modifier->subtype == SUBTYPE_INVALID)
+    {
+      modifier->subtype = subtype;
+      modifier->added_forced = 1;
+      return 1;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x26732a0; original functions/has_creature_type.c:640. */
+int force_a_subtype_not_in_play(int player, event_t event, subtype_t subtype)
+{
+  if (event != EVENT_CHANGE_TYPE)
+    return 0;
+  if (!(land_can_be_played & LCBP_DURING_EVENT_CHANGE_TYPE_SECOND_PASS))
+  {
+    land_can_be_played |= LCBP_NEED_EVENT_CHANGE_TYPE_SECOND_PASS;
+    return 0;
+  }
+  for (int index = 0; index < 15; ++index)
+  {
+    subtypes_not_in_play_t *modifier = &added_subtypes_not_in_play[player][index];
+    if (modifier->subtype == SUBTYPE_INVALID)
+    {
+      modifier->subtype = subtype;
+      modifier->added_forced = 2;
+      return 1;
+    }
+  }
+  return 0;
 }
 
 /* ManalinkEh 2022: 0x2673320; original functions/has_creature_type.c:644. */
@@ -1731,7 +1917,6 @@ void get_subtypes_by_csvid(int player, int csvid, reported_subtypes_t *my_subtyp
   if (csvid == CARD_ID_GRIST_THE_HUNGER_TIDE)
     my_subtypes->reported_subtypes[count] = SUBTYPE_INSECT;
 }
-
 
 /* ManalinkEh 2022: 0x26736e0; original functions/has_creature_type.c:721. */
 int has_subtype_by_id(int player, int id, subtype_t subtype)
@@ -1787,52 +1972,8 @@ int has_subtype_by_id(int player, int id, subtype_t subtype)
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-
-/* ManalinkEh 2022: 0x2673220; original functions/has_creature_type.c:636. */
-int add_a_subtype_not_in_play(int player, event_t event, subtype_t subtype)
-{
-  if (event != EVENT_CHANGE_TYPE)
-    return 0;
-  if (!(land_can_be_played & LCBP_DURING_EVENT_CHANGE_TYPE_SECOND_PASS))
-  {
-    land_can_be_played |= LCBP_NEED_EVENT_CHANGE_TYPE_SECOND_PASS;
-    return 0;
-  }
-  for (int index = 0; index < 15; ++index)
-  {
-    subtypes_not_in_play_t *modifier = &added_subtypes_not_in_play[player][index];
-    if (modifier->subtype == SUBTYPE_INVALID)
-    {
-      modifier->subtype = subtype;
-      modifier->added_forced = 1;
-      return 1;
-    }
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x26732a0; original functions/has_creature_type.c:640. */
-int force_a_subtype_not_in_play(int player, event_t event, subtype_t subtype)
-{
-  if (event != EVENT_CHANGE_TYPE)
-    return 0;
-  if (!(land_can_be_played & LCBP_DURING_EVENT_CHANGE_TYPE_SECOND_PASS))
-  {
-    land_can_be_played |= LCBP_NEED_EVENT_CHANGE_TYPE_SECOND_PASS;
-    return 0;
-  }
-  for (int index = 0; index < 15; ++index)
-  {
-    subtypes_not_in_play_t *modifier = &added_subtypes_not_in_play[player][index];
-    if (modifier->subtype == SUBTYPE_INVALID)
-    {
-      modifier->subtype = subtype;
-      modifier->added_forced = 2;
-      return 1;
-    }
-  }
-  return 0;
-}
+void remove_a_subtype(int player, int card, subtype_t subtype);
+static int remove_a_subtype_permanently_legacy(int player, int card, event_t event);
 
 /* ManalinkEh 2022: 0x2673b90; original functions/has_creature_type.c:913. */
 int shares_creature_subtype_by_iid(int p0, int c0, int p1, int iid)
@@ -1927,205 +2068,43 @@ int shares_creature_subtype_by_iid(int p0, int c0, int p1, int iid)
   return 0;
 }
 
-
-/* ManalinkEh 2022: 0x2672900; original functions/has_creature_type.c:404. */
-card_instance_t *update_alter_add_subtype(subtype_t subt, card_instance_t *inst)
+/* ManalinkEh 2022: 0x2675a90; original functions/has_creature_type.c:1848. */
+int animate_self_to_artifact_creature(int player, int card, int pow, int tgh, keyword_t kws_to_add,
+                                      sp_keyword_t sp_kws_to_add, color_test_t color, int permanent)
 {
-  card_ext_t *extension;
-  uint16_t *subtype_cursor;
-  int i;
+  color_test_t color_00;
+  int result;
 
-  if (inst == NULL)
-  {
-    inst = get_card_instance(affected_card_controller, affected_card);
-  }
-  extension = inst->ext;
-  subtype_cursor = extension->subtype;
-  do
-  {
-    if (*subtype_cursor == subt)
-    {
-      return inst;
-    }
-    subtype_cursor = subtype_cursor + 1;
-  } while (subtype_cursor != extension->subtype + 12);
-  i = 0;
-  do
-  {
-    if (extension->subtype[i] == 0)
-    {
-      extension->subtype[i] = (uint16_t)subt;
-      return inst;
-    }
-    i = i + 1;
-  } while (i != 0xc);
-  return inst;
+  color_00 = get_sleighted_color_test(player, card, color);
+  result = add_or_remove_types_legacy_impl(player, card, player, card, TYPE_NONE,
+                                           TYPE_ARTIFACT | TYPE_CREATURE, pow, tgh, kws_to_add,
+                                           sp_kws_to_add, color_00, permanent);
+  return result;
 }
 
-
-/* ManalinkEh 2022: 0x2672d90; original functions/has_creature_type.c:433. */
-card_instance_t *update_alter_remove_subtype(subtype_t subt, card_instance_t *inst)
+/* ManalinkEh 2022: 0x2675b90; original functions/has_creature_type.c:1863. */
+int animate_self_remove_type(int player, int card, int pow, int tgh, type_t types_to_remove,
+                             keyword_t kws_to_add, sp_keyword_t sp_kws_to_add, color_test_t color,
+                             int permanent)
 {
-  card_ext_t *extension;
-  int subtype_index;
-  int next_index;
-  subtype_t shifted_subtype;
-  int shift_index;
+  color_test_t color_00;
+  int result;
 
-  if (inst == NULL)
-  {
-    inst = get_card_instance(affected_card_controller, affected_card);
-  }
-  extension = inst->ext;
-  subtype_index = 0;
-  do
-  {
-    while (extension->subtype[subtype_index] != subt)
-    {
-      subtype_index = subtype_index + 1;
-      if (subtype_index == 0xc)
-      {
-        return inst;
-      }
-    }
-    do
-    {
-      extension->subtype[subtype_index] = 0;
-      shift_index = subtype_index;
-      if (subtype_index < 0xc)
-      {
-        do
-        {
-          next_index = shift_index + 1;
-          if ((shift_index == 11 ? extension->inst_info_data[0].id
-                                 : extension->subtype[shift_index + 1]) == 0)
-            break;
-          extension->subtype[shift_index] =
-              (shift_index == 11 ? extension->inst_info_data[0].id
-                                 : extension->subtype[shift_index + 1]);
-          shift_index = next_index;
-        } while (next_index != 0xc);
-        shifted_subtype = (subtype_t)extension->subtype[subtype_index];
-      }
-      else
-      {
-        shifted_subtype = SUBTYPE_INVALID;
-      }
-    } while (subt == shifted_subtype);
-    subtype_index = subtype_index + 1;
-    if (subtype_index == 0xc)
-    {
-      return inst;
-    }
-  } while (true);
+  color_00 = get_sleighted_color_test(player, card, color);
+  result =
+      add_or_remove_types_legacy_impl(player, card, player, card, types_to_remove, TYPE_CREATURE,
+                                      pow, tgh, kws_to_add, sp_kws_to_add, color_00, permanent);
+  return result;
 }
-
-
-/* ManalinkEh 2022: 0x2672eb0; original functions/has_creature_type.c:458. */
-card_instance_t *update_alter_remove_creature_subtypes(card_instance_t *inst)
-{
-  card_ext_t *extension;
-  int next_index;
-  int i;
-  int shift_index;
-
-  if (inst == NULL)
-  {
-    inst = get_card_instance(affected_card_controller, affected_card);
-  }
-  extension = inst->ext;
-  i = 0;
-  do
-  {
-    while ((0xffeU < (uint32_t)extension->subtype[i] - 1U ||
-            (extension->subtype[i] = 0, shift_index = i, 0xb < i)))
-    {
-      i = i + 1;
-      if (i == 0xc)
-      {
-        return inst;
-      }
-    }
-    do
-    {
-      next_index = shift_index + 1;
-      if ((shift_index == 11 ? extension->inst_info_data[0].id
-                             : extension->subtype[shift_index + 1]) == 0)
-        break;
-      extension->subtype[shift_index] = (shift_index == 11 ? extension->inst_info_data[0].id
-                                                           : extension->subtype[shift_index + 1]);
-      shift_index = next_index;
-    } while (next_index != 0xc);
-  } while (true);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-void remove_a_subtype(int player, int card, subtype_t subtype);
-static int remove_a_subtype_permanently_legacy(int player, int card, event_t event);
-
-/* ManalinkEh 2022: 0x2672fa0; original functions/has_creature_type.c:500. */
-void remove_a_subtype(int player, int card, subtype_t subtype)
-{
-  card_instance_t *instance;
-
-  instance = get_card_instance(player, card);
-  update_alter_remove_subtype(subtype, instance);
-  return;
-}
-
-/* ManalinkEh 2022: 0x2672e30; original functions/has_creature_type.c:597. */
-static int remove_a_subtype_permanently_legacy(int player, int card, event_t event)
-{
-  card_instance_t *effect;
-  card_instance_t *inst;
-
-  if (event == EVENT_CHANGE_TYPE)
-  {
-
-    if ((land_can_be_played & 0x20000U) == 0)
-    {
-      land_can_be_played = land_can_be_played | 0x10000;
-    }
-
-    effect = get_card_instance(player, card);
-    if ((effect->damage_target_card == affected_card) &&
-        (effect->damage_target_player == affected_card_controller))
-    {
-      inst = get_card_instance((int)effect->damage_target_player, effect->damage_target_card);
-      update_alter_remove_subtype(effect->targets[1].card, inst);
-    }
-  }
-  return 0;
-}
-
-/* ManalinkEh 2022: 0x26731c0; original functions/has_creature_type.c:610. */
-int remove_a_subtype_permanently(int player, int card, int t_player, int t_card, subtype_t subtype)
-{
-  int legacy;
-  card_instance_t *instance;
-
-  legacy = create_targetted_legacy_effect(player, card, remove_a_subtype_permanently_legacy,
-                                           t_player, t_card);
-  instance = get_card_instance(player, legacy);
-  instance->targets[1].card = subtype;
-  instance->token_status = 0x10000;
-  return legacy;
-}
-
 
 #ifndef SHANDALAR
 /* Recovered October 2022 pump effects and cleanup helpers. */
 
-
 /* ManalinkEh 2022: 0x2672f30; original functions/has_creature_type.c:492. */
-
-
 
 /* ManalinkEh 2022: 0x2672f70; original functions/has_creature_type.c:496. */
 
-
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2672860; original functions/has_creature_type.c:323. */
@@ -2147,15 +2126,18 @@ void reset_subtypes_from_instance(card_instance_t *inst, iid_t iid)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* Recovered October 2022 inline-only helpers; native code remains in their callers. */
-static int is_tribal_by_id(int player, int csvid)
+static int add_force_a_subtype_until_eot_impl(int player, int card, int t_player, int t_card,
+                                             subtype_t subtype, int mode)
 {
-  return has_subtype_by_id(player, csvid, SUBTYPE_TRIBAL);
+  int legacy = create_targetted_legacy_effect(player, card, add_force_a_subtype_until_eot_legacy,
+                                             t_player, t_card);
+  get_card_instance(player, legacy)->targets[1].player = mode;
+  get_card_instance(player, legacy)->targets[1].card = subtype;
+  return legacy;
 }
 #endif
-
 
 #ifndef SHANDALAR
 /* Recovered October 2022 inline helpers; existing native callers contain the expansions. */
@@ -2171,17 +2153,11 @@ static int add_force_a_subtype_permanently(int player, int card, int t_player, i
   return legacy;
 }
 
-static int add_force_a_subtype_until_eot_impl(int player, int card, int t_player, int t_card,
-                                             subtype_t subtype, int mode)
+static int is_tribal_by_id(int player, int csvid)
 {
-  int legacy = create_targetted_legacy_effect(player, card, add_force_a_subtype_until_eot_legacy,
-                                             t_player, t_card);
-  get_card_instance(player, legacy)->targets[1].player = mode;
-  get_card_instance(player, legacy)->targets[1].card = subtype;
-  return legacy;
+  return has_subtype_by_id(player, csvid, SUBTYPE_TRIBAL);
 }
 #endif
-
 
 #ifndef SHANDALAR
 /* Recovered October 2022 inline mechanics; native callers retain their expansions. */

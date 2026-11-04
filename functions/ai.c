@@ -55,12 +55,8 @@ static char backup0_card_counts[14];
 int get_usertime_of_current_thread_in_ms(void);	// exe
 extern int start_usertime_of_current_thread_in_ms;
 
-
-
 int pay_mana_maximally_satisfied(int* pay_mana_array, int x_val, int max_x_val);
 int try_to_pay_for_mana_by_autotapping(int player, int* amt, int* unknown_v46, int autotap_flags, int unknown_v47);
-
-
 
 void memcpy_suppress_size_warning(void* dest, const void* src, size_t sz);
 
@@ -145,9 +141,6 @@ BACKUP_AND_SAVE_LIST
 #undef BACKUP_CMD_A
 #undef BACKUP_CMD_S
 
-
-
-
 /* Copies the same data as backup_data_for_ai()/restore_data_for_ai(), as well as the following four arrays.  They seem to keep track of damage dealt for
  * Reverse Damage, Reverse Polarity, and Simulacrum.
 0x5098b0	dword_5098B0[]
@@ -159,9 +152,6 @@ BACKUP_AND_SAVE_LIST
 BACKUP_AND_SAVE_LIST
 #undef BACKUP_CMD_A
 #undef BACKUP_CMD_S
-
-
-
 
 void copy_to_display_supplement(void)
 {
@@ -175,8 +165,6 @@ void copy_to_display_supplement(void)
 #undef BACKUP
 #undef BACKUP_AND_SAVE_LIST
 
-
-
 /* Sets bit 1 of return value if (attack_player,attack_card) will auto-destroy (defend_player,defend_card) if the latter blocks the former, and bit 2 if
  * (attack_player,attack_card) will be auto-destroyed by (defend_player,defend_card) if the latter blocks the former.
  *
@@ -184,40 +172,17 @@ void copy_to_display_supplement(void)
  * the functionality, and not even all of those did so correctly - it worked properly for Thicket Basilisk/Cockatrice, Abu Ja'far, Abomination, and Venom;
  * partially for Deathgazer; and not at all for Battering Ram. */
 
-
 /* What this seems to do is, during speculation, store value for later retrieval and returns it; and during actual execution, retrieve the value that was stored
  * during the best path.  Not well understood. */
 
-
 // Like internal_rand(), but if player is the AI, stores and retrieves the choice per remember_ai_value()
 
-
 void human_assign_blockers(int player);
-
 
 extern int raw_mana_available[2][8];
 void dispatch_event_raw(event_t event);
 void mana_burn(void);
 int hack_ai_decision_phase_upkeep = 0;
-
-
-/* ManalinkEh 2022: 0x26b2200; original functions/ai.c:377. */
-int network_rand(int player, int upperbound)
-{
-  int result;
-  if (((unsigned char)trace_mode & 2) != 0)
-  {
-    result = EXE_FN(int, 0x44e070, int, int)(player, upperbound);
-    if ((-1 < result) && (result < upperbound))
-    {
-      return result;
-    }
-  }
-  return internal_rand(upperbound);
-}
-
-/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-int can_autotap(int player, int card, autotap_t autotap_flags);
 
 /* ManalinkEh 2022: 0x26b12c0; original functions/ai.c:15. */
 int can_autotap(int player, int card, autotap_t autotap_flags)
@@ -289,6 +254,38 @@ int can_autotap(int player, int card, autotap_t autotap_flags)
   return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int can_autotap(int player, int card, autotap_t autotap_flags);
+
+/* ManalinkEh 2022: 0x26b2200; original functions/ai.c:377. */
+int network_rand(int player, int upperbound)
+{
+  int result;
+  if (((unsigned char)trace_mode & 2) != 0)
+  {
+    result = EXE_FN(int, 0x44e070, int, int)(player, upperbound);
+    if ((-1 < result) && (result < upperbound))
+    {
+      return result;
+    }
+  }
+  return internal_rand(upperbound);
+}
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1280; original functions/ai.c:6. */
+int check_timer_for_ai_speculation(void)
+{
+  int decision_time = get_setting(SETTING_AI_DECISION_TIME);
+  if (decision_time <= 0)
+  {
+    decision_time = 5405;
+  }
+  return (100 * (get_usertime_of_current_thread_in_ms() - start_usertime_of_current_thread_in_ms)) /
+         decision_time;
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b1240; original functions/ai.c:340. */
@@ -311,7 +308,6 @@ static int remember_ai_value_impl(int value)
 
 #endif
 
-
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b2190; original functions/ai.c:340. */
 int remember_ai_value(int player, int value)
@@ -323,7 +319,6 @@ int remember_ai_value(int player, int value)
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b21c0; original functions/ai.c:368. */
@@ -337,23 +332,6 @@ int recorded_rand(int player, int upperbound)
 }
 
 #endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b1280; original functions/ai.c:6. */
-int check_timer_for_ai_speculation(void)
-{
-  int decision_time = get_setting(SETTING_AI_DECISION_TIME);
-  if (decision_time <= 0)
-  {
-    decision_time = 5405;
-  }
-  return (100 * (get_usertime_of_current_thread_in_ms() - start_usertime_of_current_thread_in_ms)) /
-         decision_time;
-}
-
-#endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b2240; original functions/ai.c:394. */
@@ -532,206 +510,11 @@ int ai_decision_phase(int player, int *phase_code_to_go_to,
 
 #endif
 
-
 #ifndef SHANDALAR
 /* October 2022 private counter-type snapshot scalars. */
 static int backup_counters_added_type;
 static int backup0_counters_added_type;
 #endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b1700; original functions/ai.c:195. */
-void backup_data_for_ai(void)
-{
-  memcpy_suppress_size_warning((void *)0x50be70, &must_attack, 0x1a740);
-  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
-  memcpy((void *)0x5265b0, &cards_data[EXE_DWORD(0x7a5380)], 16 * sizeof(card_data_t));
-  EXE_DWORD(0x5b9b3c) = ai_modifier;
-  memcpy(backup_card_ext, card_ext, sizeof(card_ext));
-  memcpy(backup_graveyard_source, graveyard_source, sizeof(graveyard_source));
-  backup_counters_added_type = counters_added_type;
-  backup_next_graveyard_source_id = next_graveyard_source_id;
-  backup_turn_count = turn_count;
-  backup_always_prompt_for_color = always_prompt_for_color;
-  memcpy(backup_mulligans_complete, mulligans_complete, sizeof(mulligans_complete));
-  backup_challenge_round = challenge_round;
-  backup_challenge1 = challenge1;
-  backup_challenge2 = challenge2;
-  backup_challenge3 = challenge3;
-  backup_challenge4 = challenge4;
-  backup_counters_added = counters_added;
-  memcpy(backup_mana_colors_added, mana_colors_added, sizeof(mana_colors_added));
-  memcpy(backup_mana_color_override, mana_color_override, sizeof(mana_color_override));
-  memcpy(backup_mana_quantity_override, mana_quantity_override, sizeof(mana_quantity_override));
-  memcpy(backup_multi_mana_transmutation, multi_mana_transmutation,
-         sizeof(multi_mana_transmutation));
-  memcpy(backup_card_counts, card_counts, sizeof(card_counts));
-  memcpy(backup_card_flags, card_flags, sizeof(card_flags));
-  memcpy(backup_your_spells_cant_be_countered_by_color, your_spells_cant_be_countered_by_color,
-         sizeof(your_spells_cant_be_countered_by_color));
-  memcpy(backup_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
-  memcpy(backup_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
-  memcpy(backup_added_subtypes_not_in_play, added_subtypes_not_in_play,
-         sizeof(added_subtypes_not_in_play));
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b1900; original functions/ai.c:211. */
-void restore_data_for_ai(void)
-{
-  memcpy_suppress_size_warning(&must_attack, (void *)0x50be70, 0x1a740);
-  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
-  memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void *)0x5265b0, 16 * sizeof(card_data_t));
-  ai_modifier = EXE_DWORD(0x5b9b3c);
-  memcpy(card_ext, backup_card_ext, sizeof(card_ext));
-  memcpy(graveyard_source, backup_graveyard_source, sizeof(graveyard_source));
-  counters_added_type = backup_counters_added_type;
-  next_graveyard_source_id = backup_next_graveyard_source_id;
-  turn_count = backup_turn_count;
-  always_prompt_for_color = backup_always_prompt_for_color;
-  memcpy(mulligans_complete, backup_mulligans_complete, sizeof(mulligans_complete));
-  challenge_round = backup_challenge_round;
-  challenge1 = backup_challenge1;
-  challenge2 = backup_challenge2;
-  challenge3 = backup_challenge3;
-  challenge4 = backup_challenge4;
-  counters_added = backup_counters_added;
-  memcpy(mana_colors_added, backup_mana_colors_added, sizeof(mana_colors_added));
-  memcpy(mana_color_override, backup_mana_color_override, sizeof(mana_color_override));
-  memcpy(mana_quantity_override, backup_mana_quantity_override, sizeof(mana_quantity_override));
-  memcpy(multi_mana_transmutation, backup_multi_mana_transmutation,
-         sizeof(multi_mana_transmutation));
-  memcpy(card_counts, backup_card_counts, sizeof(card_counts));
-  memcpy(card_flags, backup_card_flags, sizeof(card_flags));
-  memcpy(your_spells_cant_be_countered_by_color, backup_your_spells_cant_be_countered_by_color,
-         sizeof(your_spells_cant_be_countered_by_color));
-  memcpy(roll_extra_dice, backup_roll_extra_dice, sizeof(roll_extra_dice));
-  memcpy(add_to_die_rolls, backup_add_to_die_rolls, sizeof(add_to_die_rolls));
-  memcpy(added_subtypes_not_in_play, backup_added_subtypes_not_in_play,
-         sizeof(added_subtypes_not_in_play));
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b1b00; original functions/ai.c:237. */
-void backup_data_for_ai_0(void)
-{
-  memcpy_suppress_size_warning((void *)0x526a30, &must_attack, 0x1cd00);
-  EXE_DWORD(0x5bbb44) = 0;
-  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
-  memcpy((void *)0x543730, &cards_data[EXE_DWORD(0x7a5380)], 16 * sizeof(card_data_t));
-  if (stack_size < 0)
-    backtrace_and_abort("functions/ai.c:247\nstack_size >= 0");
-  memcpy(backup0_card_ext, card_ext, sizeof(card_ext));
-  memcpy(backup0_graveyard_source, graveyard_source, sizeof(graveyard_source));
-  backup0_counters_added_type = counters_added_type;
-  backup0_next_graveyard_source_id = next_graveyard_source_id;
-  backup0_turn_count = turn_count;
-  backup0_always_prompt_for_color = always_prompt_for_color;
-  memcpy(backup0_mulligans_complete, mulligans_complete, sizeof(mulligans_complete));
-  backup0_challenge_round = challenge_round;
-  backup0_challenge1 = challenge1;
-  backup0_challenge2 = challenge2;
-  backup0_challenge3 = challenge3;
-  backup0_challenge4 = challenge4;
-  backup0_counters_added = counters_added;
-  memcpy(backup0_mana_colors_added, mana_colors_added, sizeof(mana_colors_added));
-  memcpy(backup0_mana_color_override, mana_color_override, sizeof(mana_color_override));
-  memcpy(backup0_mana_quantity_override, mana_quantity_override, sizeof(mana_quantity_override));
-  memcpy(backup0_multi_mana_transmutation, multi_mana_transmutation,
-         sizeof(multi_mana_transmutation));
-  memcpy(backup0_card_counts, card_counts, sizeof(card_counts));
-  memcpy(backup0_card_flags, card_flags, sizeof(card_flags));
-  memcpy(backup0_your_spells_cant_be_countered_by_color, your_spells_cant_be_countered_by_color,
-         sizeof(your_spells_cant_be_countered_by_color));
-  memcpy(backup0_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
-  memcpy(backup0_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
-  memcpy(backup0_added_subtypes_not_in_play, added_subtypes_not_in_play,
-         sizeof(added_subtypes_not_in_play));
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b1d20; original functions/ai.c:256. */
-void restore_data_for_ai_0(void)
-{
-  memcpy_suppress_size_warning(&must_attack, (void *)0x526a30, 0x1cd00);
-  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
-  memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void *)0x543730, 16 * sizeof(card_data_t));
-  memcpy(card_ext, backup0_card_ext, sizeof(card_ext));
-  memcpy(graveyard_source, backup0_graveyard_source, sizeof(graveyard_source));
-  counters_added_type = backup0_counters_added_type;
-  next_graveyard_source_id = backup0_next_graveyard_source_id;
-  turn_count = backup0_turn_count;
-  always_prompt_for_color = backup0_always_prompt_for_color;
-  memcpy(mulligans_complete, backup0_mulligans_complete, sizeof(mulligans_complete));
-  challenge_round = backup0_challenge_round;
-  challenge1 = backup0_challenge1;
-  challenge2 = backup0_challenge2;
-  challenge3 = backup0_challenge3;
-  challenge4 = backup0_challenge4;
-  counters_added = backup0_counters_added;
-  memcpy(mana_colors_added, backup0_mana_colors_added, sizeof(mana_colors_added));
-  memcpy(mana_color_override, backup0_mana_color_override, sizeof(mana_color_override));
-  memcpy(mana_quantity_override, backup0_mana_quantity_override, sizeof(mana_quantity_override));
-  memcpy(multi_mana_transmutation, backup0_multi_mana_transmutation,
-         sizeof(multi_mana_transmutation));
-  memcpy(card_counts, backup0_card_counts, sizeof(card_counts));
-  memcpy(card_flags, backup0_card_flags, sizeof(card_flags));
-  memcpy(your_spells_cant_be_countered_by_color, backup0_your_spells_cant_be_countered_by_color,
-         sizeof(your_spells_cant_be_countered_by_color));
-  memcpy(roll_extra_dice, backup0_roll_extra_dice, sizeof(roll_extra_dice));
-  memcpy(add_to_die_rolls, backup0_add_to_die_rolls, sizeof(add_to_die_rolls));
-  memcpy(added_subtypes_not_in_play, backup0_added_subtypes_not_in_play,
-         sizeof(added_subtypes_not_in_play));
-}
-
-#endif
-
-
-#ifndef SHANDALAR
-/* ManalinkEh 2022: 0x26b1f10; original functions/ai.c:270. */
-int save_or_load_supplement(int status)
-{
-  status &= save_or_load_data(card_ext, sizeof(card_ext));
-  status &= save_or_load_data(graveyard_source, sizeof(graveyard_source));
-  status &= save_or_load_data(&next_graveyard_source_id, sizeof(next_graveyard_source_id));
-  status &= save_or_load_data(&turn_count, sizeof(turn_count));
-  status &= save_or_load_data(&always_prompt_for_color, sizeof(always_prompt_for_color));
-  status &= save_or_load_data(mulligans_complete, sizeof(mulligans_complete));
-  status &= save_or_load_data(&challenge_round, sizeof(challenge_round));
-  status &= save_or_load_data(&challenge1, sizeof(challenge1));
-  status &= save_or_load_data(&challenge2, sizeof(challenge2));
-  status &= save_or_load_data(&challenge3, sizeof(challenge3));
-  status &= save_or_load_data(&challenge4, sizeof(challenge4));
-  status &= save_or_load_data(&counters_added, sizeof(counters_added));
-  status &= save_or_load_data(&counters_added_type, sizeof(counters_added_type));
-  status &= save_or_load_data(mana_colors_added, sizeof(mana_colors_added));
-  status &= save_or_load_data(mana_color_override, sizeof(mana_color_override));
-  status &= save_or_load_data(mana_quantity_override, sizeof(mana_quantity_override));
-  status &= save_or_load_data(multi_mana_transmutation, sizeof(multi_mana_transmutation));
-  status &= save_or_load_data(card_counts, sizeof(card_counts));
-  status &= save_or_load_data(card_flags, sizeof(card_flags));
-  status &= save_or_load_data(your_spells_cant_be_countered_by_color,
-                              sizeof(your_spells_cant_be_countered_by_color));
-  status &= save_or_load_data(roll_extra_dice, sizeof(roll_extra_dice));
-  status &= save_or_load_data(add_to_die_rolls, sizeof(add_to_die_rolls));
-  status &= save_or_load_data(added_subtypes_not_in_play, sizeof(added_subtypes_not_in_play));
-  if (EXE_DWORD(0x5bc5f8))
-    --turn_count;
-  return status;
-}
-
-#endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b1500; original functions/ai.c:54. */
@@ -788,6 +571,193 @@ void human_autotap_for_mana(int player, int *amt, int *unknown_v46, int unknown_
 
 #endif
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1700; original functions/ai.c:195. */
+void backup_data_for_ai(void)
+{
+  memcpy_suppress_size_warning((void *)0x50be70, &must_attack, 0x1a740);
+  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
+  memcpy((void *)0x5265b0, &cards_data[EXE_DWORD(0x7a5380)], 16 * sizeof(card_data_t));
+  EXE_DWORD(0x5b9b3c) = ai_modifier;
+  memcpy(backup_card_ext, card_ext, sizeof(card_ext));
+  memcpy(backup_graveyard_source, graveyard_source, sizeof(graveyard_source));
+  backup_counters_added_type = counters_added_type;
+  backup_next_graveyard_source_id = next_graveyard_source_id;
+  backup_turn_count = turn_count;
+  backup_always_prompt_for_color = always_prompt_for_color;
+  memcpy(backup_mulligans_complete, mulligans_complete, sizeof(mulligans_complete));
+  backup_challenge_round = challenge_round;
+  backup_challenge1 = challenge1;
+  backup_challenge2 = challenge2;
+  backup_challenge3 = challenge3;
+  backup_challenge4 = challenge4;
+  backup_counters_added = counters_added;
+  memcpy(backup_mana_colors_added, mana_colors_added, sizeof(mana_colors_added));
+  memcpy(backup_mana_color_override, mana_color_override, sizeof(mana_color_override));
+  memcpy(backup_mana_quantity_override, mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(backup_multi_mana_transmutation, multi_mana_transmutation,
+         sizeof(multi_mana_transmutation));
+  memcpy(backup_card_counts, card_counts, sizeof(card_counts));
+  memcpy(backup_card_flags, card_flags, sizeof(card_flags));
+  memcpy(backup_your_spells_cant_be_countered_by_color, your_spells_cant_be_countered_by_color,
+         sizeof(your_spells_cant_be_countered_by_color));
+  memcpy(backup_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
+  memcpy(backup_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(backup_added_subtypes_not_in_play, added_subtypes_not_in_play,
+         sizeof(added_subtypes_not_in_play));
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1900; original functions/ai.c:211. */
+void restore_data_for_ai(void)
+{
+  memcpy_suppress_size_warning(&must_attack, (void *)0x50be70, 0x1a740);
+  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
+  memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void *)0x5265b0, 16 * sizeof(card_data_t));
+  ai_modifier = EXE_DWORD(0x5b9b3c);
+  memcpy(card_ext, backup_card_ext, sizeof(card_ext));
+  memcpy(graveyard_source, backup_graveyard_source, sizeof(graveyard_source));
+  counters_added_type = backup_counters_added_type;
+  next_graveyard_source_id = backup_next_graveyard_source_id;
+  turn_count = backup_turn_count;
+  always_prompt_for_color = backup_always_prompt_for_color;
+  memcpy(mulligans_complete, backup_mulligans_complete, sizeof(mulligans_complete));
+  challenge_round = backup_challenge_round;
+  challenge1 = backup_challenge1;
+  challenge2 = backup_challenge2;
+  challenge3 = backup_challenge3;
+  challenge4 = backup_challenge4;
+  counters_added = backup_counters_added;
+  memcpy(mana_colors_added, backup_mana_colors_added, sizeof(mana_colors_added));
+  memcpy(mana_color_override, backup_mana_color_override, sizeof(mana_color_override));
+  memcpy(mana_quantity_override, backup_mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(multi_mana_transmutation, backup_multi_mana_transmutation,
+         sizeof(multi_mana_transmutation));
+  memcpy(card_counts, backup_card_counts, sizeof(card_counts));
+  memcpy(card_flags, backup_card_flags, sizeof(card_flags));
+  memcpy(your_spells_cant_be_countered_by_color, backup_your_spells_cant_be_countered_by_color,
+         sizeof(your_spells_cant_be_countered_by_color));
+  memcpy(roll_extra_dice, backup_roll_extra_dice, sizeof(roll_extra_dice));
+  memcpy(add_to_die_rolls, backup_add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(added_subtypes_not_in_play, backup_added_subtypes_not_in_play,
+         sizeof(added_subtypes_not_in_play));
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1b00; original functions/ai.c:237. */
+void backup_data_for_ai_0(void)
+{
+  memcpy_suppress_size_warning((void *)0x526a30, &must_attack, 0x1cd00);
+  EXE_DWORD(0x5bbb44) = 0;
+  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
+  memcpy((void *)0x543730, &cards_data[EXE_DWORD(0x7a5380)], 16 * sizeof(card_data_t));
+  if (stack_size < 0)
+    backtrace_and_abort("functions/ai.c:247\nstack_size >= 0");
+  memcpy(backup0_card_ext, card_ext, sizeof(card_ext));
+  memcpy(backup0_graveyard_source, graveyard_source, sizeof(graveyard_source));
+  backup0_counters_added_type = counters_added_type;
+  backup0_next_graveyard_source_id = next_graveyard_source_id;
+  backup0_turn_count = turn_count;
+  backup0_always_prompt_for_color = always_prompt_for_color;
+  memcpy(backup0_mulligans_complete, mulligans_complete, sizeof(mulligans_complete));
+  backup0_challenge_round = challenge_round;
+  backup0_challenge1 = challenge1;
+  backup0_challenge2 = challenge2;
+  backup0_challenge3 = challenge3;
+  backup0_challenge4 = challenge4;
+  backup0_counters_added = counters_added;
+  memcpy(backup0_mana_colors_added, mana_colors_added, sizeof(mana_colors_added));
+  memcpy(backup0_mana_color_override, mana_color_override, sizeof(mana_color_override));
+  memcpy(backup0_mana_quantity_override, mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(backup0_multi_mana_transmutation, multi_mana_transmutation,
+         sizeof(multi_mana_transmutation));
+  memcpy(backup0_card_counts, card_counts, sizeof(card_counts));
+  memcpy(backup0_card_flags, card_flags, sizeof(card_flags));
+  memcpy(backup0_your_spells_cant_be_countered_by_color, your_spells_cant_be_countered_by_color,
+         sizeof(your_spells_cant_be_countered_by_color));
+  memcpy(backup0_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
+  memcpy(backup0_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(backup0_added_subtypes_not_in_play, added_subtypes_not_in_play,
+         sizeof(added_subtypes_not_in_play));
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1d20; original functions/ai.c:256. */
+void restore_data_for_ai_0(void)
+{
+  memcpy_suppress_size_warning(&must_attack, (void *)0x526a30, 0x1cd00);
+  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
+  memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void *)0x543730, 16 * sizeof(card_data_t));
+  memcpy(card_ext, backup0_card_ext, sizeof(card_ext));
+  memcpy(graveyard_source, backup0_graveyard_source, sizeof(graveyard_source));
+  counters_added_type = backup0_counters_added_type;
+  next_graveyard_source_id = backup0_next_graveyard_source_id;
+  turn_count = backup0_turn_count;
+  always_prompt_for_color = backup0_always_prompt_for_color;
+  memcpy(mulligans_complete, backup0_mulligans_complete, sizeof(mulligans_complete));
+  challenge_round = backup0_challenge_round;
+  challenge1 = backup0_challenge1;
+  challenge2 = backup0_challenge2;
+  challenge3 = backup0_challenge3;
+  challenge4 = backup0_challenge4;
+  counters_added = backup0_counters_added;
+  memcpy(mana_colors_added, backup0_mana_colors_added, sizeof(mana_colors_added));
+  memcpy(mana_color_override, backup0_mana_color_override, sizeof(mana_color_override));
+  memcpy(mana_quantity_override, backup0_mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(multi_mana_transmutation, backup0_multi_mana_transmutation,
+         sizeof(multi_mana_transmutation));
+  memcpy(card_counts, backup0_card_counts, sizeof(card_counts));
+  memcpy(card_flags, backup0_card_flags, sizeof(card_flags));
+  memcpy(your_spells_cant_be_countered_by_color, backup0_your_spells_cant_be_countered_by_color,
+         sizeof(your_spells_cant_be_countered_by_color));
+  memcpy(roll_extra_dice, backup0_roll_extra_dice, sizeof(roll_extra_dice));
+  memcpy(add_to_die_rolls, backup0_add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(added_subtypes_not_in_play, backup0_added_subtypes_not_in_play,
+         sizeof(added_subtypes_not_in_play));
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1f10; original functions/ai.c:270. */
+int save_or_load_supplement(int status)
+{
+  status &= save_or_load_data(card_ext, sizeof(card_ext));
+  status &= save_or_load_data(graveyard_source, sizeof(graveyard_source));
+  status &= save_or_load_data(&next_graveyard_source_id, sizeof(next_graveyard_source_id));
+  status &= save_or_load_data(&turn_count, sizeof(turn_count));
+  status &= save_or_load_data(&always_prompt_for_color, sizeof(always_prompt_for_color));
+  status &= save_or_load_data(mulligans_complete, sizeof(mulligans_complete));
+  status &= save_or_load_data(&challenge_round, sizeof(challenge_round));
+  status &= save_or_load_data(&challenge1, sizeof(challenge1));
+  status &= save_or_load_data(&challenge2, sizeof(challenge2));
+  status &= save_or_load_data(&challenge3, sizeof(challenge3));
+  status &= save_or_load_data(&challenge4, sizeof(challenge4));
+  status &= save_or_load_data(&counters_added, sizeof(counters_added));
+  status &= save_or_load_data(&counters_added_type, sizeof(counters_added_type));
+  status &= save_or_load_data(mana_colors_added, sizeof(mana_colors_added));
+  status &= save_or_load_data(mana_color_override, sizeof(mana_color_override));
+  status &= save_or_load_data(mana_quantity_override, sizeof(mana_quantity_override));
+  status &= save_or_load_data(multi_mana_transmutation, sizeof(multi_mana_transmutation));
+  status &= save_or_load_data(card_counts, sizeof(card_counts));
+  status &= save_or_load_data(card_flags, sizeof(card_flags));
+  status &= save_or_load_data(your_spells_cant_be_countered_by_color,
+                              sizeof(your_spells_cant_be_countered_by_color));
+  status &= save_or_load_data(roll_extra_dice, sizeof(roll_extra_dice));
+  status &= save_or_load_data(add_to_die_rolls, sizeof(add_to_die_rolls));
+  status &= save_or_load_data(added_subtypes_not_in_play, sizeof(added_subtypes_not_in_play));
+  if (EXE_DWORD(0x5bc5f8))
+    --turn_count;
+  return status;
+}
+
+#endif
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b1100; original functions/ai.c:292. */
@@ -826,7 +796,6 @@ static int check_destroys_if_blocked_oneside(int lethal_player, int lethal_card,
 }
 
 #endif
-
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b2140; original functions/ai.c:327. */
