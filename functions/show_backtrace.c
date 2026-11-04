@@ -1,6 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include <windows.h>
 
@@ -11,30 +12,29 @@ USHORT WINAPI RtlCaptureStackBackTrace(ULONG FramesToSkip, ULONG FramesToCapture
 
 void popup(const char* title, const char* fmt, ...);
 
-void
-show_backtrace(const char* title, const char* header)
+void show_backtrace(const char *title, const char *header)
 {
   PVOID frames[100];
 
   int numframes = CaptureStackBackTrace(0, 30, &frames[0], NULL);
 
   char buf[4000];
-  char* p = &buf[0];
+  char *p = &buf[0];
   p += sprintf(p, "%s\n", header);
   *p = 0;
   int i;
   for (i = 0; i < numframes; ++i)
-	p += sprintf(p, "%d: 0x%p\n", i, frames[i]);
+    p += sprintf(p, "%d: 0x%p\n", i, frames[i]);
 
-  FILE* f = fopen("dump.dmp", "w");
+  FILE *f = fopen("dump.txt", "w");
   fprintf(f, "%s\n%s", title, buf);
   fclose(f);
 
   p += sprintf(p, "\n"
-			   "This information has been included in a file\n"
-			   "\"dump.dmp\" in your Manalink program directory.\n"
-			   "Please include it (NOT a screenshot) if you\n"
-			   "report this bug.");
+                  "This information has been included in a file\n"
+                  "\"dump.txt\" in your Manalink program directory.\n"
+                  "Please include it (NOT a screenshot) if you\n"
+                  "report this bug.");
 
   popup(title, buf);
 }
@@ -44,4 +44,15 @@ backtrace_and_abort(const char* header)
 {
   show_backtrace("Assertion failed", header);
   abort();
+}
+
+/* ManalinkEh 2022: 0x26c11d0; original functions/show_backtrace.c:50. */
+void fatal(const char *fmt, ...)
+{
+  char buf[2000];
+  va_list args;
+  va_start(args, fmt);
+  _vsnprintf(buf, 2000, fmt, args);
+  va_end(args);
+  backtrace_and_abort(buf);
 }

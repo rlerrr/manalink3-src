@@ -2,6 +2,7 @@
 
 section .text
 
+%ifndef MANALINK_USE_C_HELPERS
 global _in_play
 _in_play:
   push  ebp
@@ -23,6 +24,8 @@ get_out:
   ret
   align 32
 
+%endif
+
 global _is_not_dead
 _is_not_dead:
   push  ebp
@@ -38,6 +41,7 @@ _is_not_dead:
 ;
 ; This really doesn't belong here, but neither does the misnamed is_not_dead()
 ; above, and this is a more general version of that.
+%ifndef MANALINK_USE_C_HELPERS
 global _display_error_message
 _display_error_message:
   push	ebp
@@ -47,3 +51,4 @@ _display_error_message:
   leave
   ret
   align	32
+%endif

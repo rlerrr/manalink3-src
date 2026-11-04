@@ -129,6 +129,7 @@ _LEGACY_EFFECT_TIME_WALK = 0x737E58;
 _LEGACY_EFFECT_CUSTOM = 0x735ed0;
 /* And this was Nafs Asp's. */
 _LEGACY_EFFECT_ACTIVATED = 0x7286F4;
+_LEGACY_EFFECT_ACTIVATED_PROTECT = 0x739D5C;
 
 _pay_mana_xbugrwaU =	0x4EF400;
 _PAY_MANA_COLORLESS =	0x4EF400;
@@ -166,11 +167,10 @@ _real_bounce_permanent = 0x4A65F0;
 _cannot_block_exe = 0x0040B5E0;
 _check_hand_for_type = 0x4E77DD;
 _check_mana_multi = 0x402BE0;
-_choose_a_card = 0x4a9750;
 _choose_a_color_exe = 0x4721c0;
 _choose_a_number = 0x472120;
 _cop2 = 0x4bdc80;
-_count_mana = 0x472400;
+/* count_mana is implemented by the recovered DLL C source. */
 _damage_creature_or_player = 0x4C8B90;
 _damage_player = 0x4A68A0;
 /*_deathtouch = 0x4CA9E0;*/
@@ -190,9 +190,10 @@ _get_usertime_of_current_thread_in_ms = 0x472c90;
 _has_mana = 0x49D510;
 _is_tapped = 0x4E81FE;
 _islandhome = 0x4C8D30;
-_load_text = 0x401F2C;
+/* load_text is implemented by the recovered DLL C source. */
 _obliterate_top_card_of_stack = 0x436930;
-_mana_producer_fixed = 0x47B6C0;
+/* mana_producer_fixed is implemented by the recovered DLL C source. */
+_engine_mana_producer_fixed = 0x47B6C0;
 _not_dying = 0x471d30;
 _pay_mana_maximally_satisfied = 0x42f130;
 _produce_mana = 0x49D490;
@@ -218,8 +219,8 @@ _asp = 0x4c4520;
 _trace_mode = 0x790640;
 _unknown62BCEC = 0x62BCEC;
 _zombie_regen = 0x4C7E30;
-_put_card_on_stack = 0x4338F0;
-_put_card_on_stack2 = 0x433850;
+/* put_card_on_stack is implemented by the recovered DLL C source. */
+/* put_card_on_stack2 is implemented by the recovered DLL C source. */
 _internal_rand = 0x44E050;
 _oubliette_effect = 0x4597F0;
 _create_a_card_type = 0x4A6500;
@@ -544,3 +545,72 @@ SECTIONS
     *(.debug_ranges)
   }
 }
+
+/* Typed October 2022 views of existing native mana lists. */
+_raw_mana_may_be_spent_as_color = 0x60A4B4;
+
+/* Native dynamic card-type pool index used by the 2022 token resolver. */
+_engine_dynamic_iid_start = 0x7A5380;
+
+/* October 2022 network packet interfaces. */
+_receive_network_packet = 0x4A70C0;
+_send_network_packet = 0x4A6BC0;
+
+/* October 2022 life-gain draw counter (inferred name). */
+_life_gain_draw_count = 0x4EF538;
+
+/* Native October 2022 absolute EXE names missing from the retained linker script. */
+_LEGACY_EFFECT_628C64 = 0x628c64;
+_LEGACY_EFFECT_738F30 = 0x738f30;
+_LEGACY_EFFECT_739404 = 0x739404;
+_LEGACY_EFFECT_ADD_ABILITY = 0x715b38;
+_LEGACY_EFFECT_ANIMATE_ARTIFACT_KEEP_ABILITIES = 0x60eea8;
+_LEGACY_EFFECT_ANIMATE_ARTIFACT_LOSE_ABILITIES = 0x62c034;
+_LEGACY_EFFECT_ANIMATE_LAND = 0x7a2fe0;
+_LEGACY_EFFECT_ASWAN_JAGUAR = 0x7afa68;
+_LEGACY_EFFECT_BLAZE_OF_GLORY = 0x728368;
+_LEGACY_EFFECT_COLOR_CHANGE = 0x739b60;
+_LEGACY_EFFECT_CYCLOPEAN_TOMB = 0x620284;
+_LEGACY_EFFECT_DESERT = 0x736810;
+_LEGACY_EFFECT_DOESNT_UNTAP = 0x62879c;
+_LEGACY_EFFECT_DRAIN_LIFE = 0x786228;
+_LEGACY_EFFECT_ERNHAM_DJINN = 0x715b34;
+_LEGACY_EFFECT_FOG = 0x6205fc;
+_LEGACY_EFFECT_GRAVEYARD_CARD = 0x782fec;
+_LEGACY_EFFECT_GUARDIAN_BEAST = 0x739b58;
+_LEGACY_EFFECT_IFH_BIFF_EFREET = 0x62bf04;
+_LEGACY_EFFECT_NETHER_SHADOW = 0x7286fc;
+_LEGACY_EFFECT_NETTLING_IMP = 0x628528;
+_LEGACY_EFFECT_NOATTACK = 0x739400;
+_LEGACY_EFFECT_NO_BLOCKING = 0x739b5c;
+_LEGACY_EFFECT_PHYREXIAN_GREMLINS_FREEZE_ARTIFACT = 0x735f18;
+_LEGACY_EFFECT_POWERUP = 0x728370;
+_LEGACY_EFFECT_RAGING_RIVER = 0x7370bc;
+_LEGACY_EFFECT_SEWERS_OF_ESTARK = 0x7375a8;
+_LEGACY_EFFECT_SIRENS_CALL = 0x620480;
+_LEGACY_EFFECT_TAKE_ABILITY = 0x728700;
+_LEGACY_EFFECT_TIME_ELEMENTAL_EXE = 0x62bdcc;
+_LEGACY_EFFECT_TRANSMOGRANT = 0x7385e4;
+_LEGACY_EFFECT_UNBLOCKABLE = 0x62c368;
+_activating_card = 0x7876e8;
+_activating_player = 0x7a3610;
+_backend_of_control_magic = 0x4585f0;
+_blt_pic = 0x4662f0;
+_critical_section_for_painting = 0x790500;
+_dblbfr_hdc = 0x62047c;
+_dword_628C10 = 0x628c10;
+_event_param1 = 0x73825c;
+_get_path_base = 0x466020;
+_handle_palette_msgs = 0x467fa0;
+_hwnd_MainClass = 0x739d54;
+_main_hinstance = 0x78f0c8;
+_mana_producer_fixed_exe = 0x47b6c0;
+_network_rand_raw = 0x44e070;
+_path_DuelArt = 0x739e30;
+_raw_do_dialog = 0x471b60;
+_read_graphics_file = 0x459fa0;
+_redisplay_all = 0x437ec0;
+_set_palette_and_stretch_mode = 0x466050;
+_str_Cancel = 0x7281a4;
+_str_Done = 0x7375b0;
+_str_OK = 0x78f0a8;

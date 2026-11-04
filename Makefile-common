@@ -11,12 +11,14 @@ OBJCOPY = objcopy
 DLLTOOL = dlltool
 BOOST_SUFFIX ?= mgw46-s-1_45
 OPTIMIZE ?= -O2
+# Set WERROR=-Werror to make warnings fatal again.
+WERROR ?=
 
 # Flags
 COMMONFLAGS = $(OPTIMIZE) -ggdb2 -march=i586 -mpreferred-stack-boundary=2	\
 	-fno-omit-frame-pointer -fno-tree-vrp -Wall -Wextra		\
 	-Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings	\
-	-Wshadow -W -Winline -Wno-unused-parameter -Werror -I.. -I.
+	-Wshadow -W -Winline -Wno-unused-parameter $(WERROR) -I.. -I.
 CFLAGS = $(COMMONFLAGS) -Wbad-function-cast -Wstrict-prototypes -Wnested-externs
 CXXFLAGS = $(COMMONFLAGS) -std=gnu++0x
 AFLAGS = -a x86 -m x86 -p nasm -r nasm -f win32 -I.. -I.
